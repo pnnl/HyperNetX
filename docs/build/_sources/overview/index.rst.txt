@@ -28,7 +28,7 @@ for comments and suggestions.  Expect changes in both class names and methods as
 many of the requirements demanded of the library are worked out. 
 
 For questions and comments you may contact the developers directly at:   
-	HyperNetX-support@pnnl.gov
+	hypernetx@pnnl.gov
 
 Notice
 ------

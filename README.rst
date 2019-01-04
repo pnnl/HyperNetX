@@ -1,7 +1,7 @@
 Installing HyperNetX
 ====================
 
-.. image:: /images/hnxbasics.png
+.. image:: docs/source/images/hnxbasics.png
 	:align: right
 
 The HyperNetX library provides classes and methods for the analysis 
@@ -25,7 +25,7 @@ for comments and suggestions.  Expect changes in both class names and methods as
 many of the requirements demanded of the library are worked out. 
 
 For questions and comments you may contact the developers directly at:   
-	HyperNetX-support@pnnl.gov
+	hypernetx@pnnl.gov
 
 To install in an Anaconda environment
 -------------------------------------

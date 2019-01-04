@@ -14,7 +14,7 @@ The HyperNetX library provides classes and methods for modeling the entities and
 The current version is preliminary. We are actively testing and would be grateful for comments and suggestions.  Expect changes in both class names and methods as many of the requirements demanded of the library are worked out. 
 
 For comments and questions you may contact the developers directly at: 
-	HyperNetX-support@pnnl.gov
+	hypernetx@pnnl.gov
 
 Contents
 ========
