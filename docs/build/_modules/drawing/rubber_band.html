@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>drawing.rubber_band &mdash; HyperNetX 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>drawing.rubber_band</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for drawing.rubber_band</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
+<span class="c1"># All rights reserved.</span>
+
+<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="k">import</span> <span class="n">Hypergraph</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">get_frozenset_label</span><span class="p">,</span> <span class="n">get_set_layering</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="k">import</span> <span class="n">PolyCollection</span><span class="p">,</span> <span class="n">LineCollection</span><span class="p">,</span> <span class="n">CircleCollection</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">pdist</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">ConvexHull</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">Voronoi</span>
+
+
+<span class="n">N_CONTROL_POINTS</span> <span class="o">=</span> <span class="mi">24</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">N_CONTROL_POINTS</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span>
+
+<div class="viewcode-block" id="layout_node_link"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.layout_node_link">[docs]</a><span class="k">def</span> <span class="nf">layout_node_link</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Helper function to use a NetwrokX-like graph layout algorithm on a Hypergraph</span>
+
+<span class="sd">    The hypergraph is converted to a bipartite graph, allowing the usual graph layout</span>
+<span class="sd">    techniques to be applied. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn</span>
+<span class="sd">    layout: function</span>
+<span class="sd">        the layout algorithm which accepts a NetworkX graph and keyword arguments</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        Keyword arguments are passed through to the layout algorithm</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        mapping of node and edge positions to R^2        </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">layout</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">bipartite</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="inflate_kwargs"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.inflate_kwargs">[docs]</a><span class="k">def</span> <span class="nf">inflate_kwargs</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Helper function to expand keyword arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n: int</span>
+<span class="sd">        length of resulting list if argument is expanded</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        keyword arguments to be expanded</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        dictionary with same keys as kwargs and whose values are lists of length n</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">inflated</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">}</span> <span class="k">else</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">inflated</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">inflated</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span></div>
+
+<div class="viewcode-block" id="get_default_radius"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.get_default_radius">[docs]</a><span class="k">def</span> <span class="nf">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate a reasonable default node radius</span>
+
+<span class="sd">    This function iterates over the hyper edges and finds the most distant</span>
+<span class="sd">    pair of points given the positions provided. Then, the node radius is a fraction</span>
+<span class="sd">    of the median of this distance take across all hyper-edges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn</span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        the recommended radius</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">.</span><span class="mi">0125</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="n">pdist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)))</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+                                <span class="k">for</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">()])</span>
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="draw_hyper_edge_labels"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw_hyper_edge_labels">[docs]</a><span class="k">def</span> <span class="nf">draw_hyper_edge_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">polys</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">{},</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws a label on the hyper edge boundary.</span>
+
+<span class="sd">    Should be passed Matplotlib PolyCollection representing the hyper-edges, see</span>
+<span class="sd">    the return value of draw_hyper_edges.</span>
+
+<span class="sd">    The label will be draw on the least curvy part of the polygon, and will be</span>
+<span class="sd">    aligned parallel to the orientation of the polygon where it is drawn.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    polys: PolyCollection</span>
+<span class="sd">        collection of polygons returned by draw_hyper_edges</span>
+<span class="sd">    labels: dict</span>
+<span class="sd">        mapping of node id to string label</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        Keyword arguments are passed through to Matplotlib&#39;s annotate function.</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span> <span class="ow">or</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">inflate_kwargs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">edge</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">polys</span><span class="o">.</span><span class="n">get_paths</span><span class="p">(),</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
+
+        <span class="c1"># calculate the xy location of the annotation</span>
+        <span class="c1"># this is the midpoint of the pair of adjacent points the most distant</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">((</span><span class="n">path</span><span class="o">.</span><span class="n">vertices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">path</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+
+        <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="mi">360</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span><span class="o">%</span><span class="mi">360</span>
+
+        <span class="k">while</span> <span class="n">theta</span> <span class="o">&gt;</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">-=</span> <span class="mi">180</span>
+
+        <span class="c1"># the string is a comma separated list of the edge uid</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">rotation</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="layout_hyper_edges"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.layout_hyper_edges">[docs]</a><span class="k">def</span> <span class="nf">layout_hyper_edges</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="p">{},</span> <span class="n">dr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws a convex hull for each edge in H.</span>
+
+<span class="sd">    Position of the nodes in the graph is specified by the position dictionary,</span>
+<span class="sd">    pos. Convex hulls are spaced out such that if one set contains another, the</span>
+<span class="sd">    convex hull will surround the contained set. The amount of spacing added</span>
+<span class="sd">    between hulls is specified by the parameter, dr.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+<span class="sd">    node_radius: dict</span>
+<span class="sd">        mapping of node to R^1 (radius of each node)</span>
+<span class="sd">    dr: float</span>
+<span class="sd">        the spacing between concentric rings</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A mapping from hyper edge ids to paths (Nx2 numpy matrices)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_radius</span><span class="p">):</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">node_radius</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+
+    <span class="n">dr</span> <span class="o">=</span> <span class="n">dr</span> <span class="ow">or</span> <span class="n">r0</span>
+    
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">get_set_layering</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+    <span class="n">radii</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">levels</span><span class="o">.</span><span class="n">get</span><span class="p">))}</span>
+             <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="nf">get_padded_hull</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+        <span class="c1"># make sure the edge contains at least one node</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">cp</span><span class="o">*</span><span class="p">(</span><span class="n">node_radius</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span> <span class="o">+</span> <span class="n">dr</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">radii</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">edge</span><span class="o">.</span><span class="n">uid</span><span class="p">]))</span> <span class="o">+</span> <span class="n">pos</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">])</span>
+        <span class="c1"># if not, draw an empty edge centered aroudn the location of the edge node (in the bipartite graph)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">r0</span><span class="o">*</span><span class="n">cp</span> <span class="o">+</span> <span class="n">pos</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+        
+        <span class="n">hull</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">hull</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">get_padded_hull</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="draw_hyper_edges"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw_hyper_edges">[docs]</a><span class="k">def</span> <span class="nf">draw_hyper_edges</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="p">{},</span> <span class="n">dr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws a convex hull around the nodes contained within each edge in H</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+<span class="sd">    node_radius: dict</span>
+<span class="sd">        mapping of node to R^1 (radius of each node)</span>
+<span class="sd">    dr: float</span>
+<span class="sd">        the spacing between concentric rings</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        keyword arguments, e.g., linewidth, facecolors, are passed through to the PolyCollection constructor</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PolyCollection</span>
+<span class="sd">        a Matplotlib PolyCollection that can be further styled</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">layout_hyper_edges</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="n">dr</span><span class="p">)</span>
+
+    <span class="n">polys</span> <span class="o">=</span> <span class="n">PolyCollection</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="n">ax</span> <span class="ow">or</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">polys</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">polys</span></div>
+
+<div class="viewcode-block" id="draw_hyper_nodes"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw_hyper_nodes">[docs]</a><span class="k">def</span> <span class="nf">draw_hyper_nodes</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="p">{},</span> <span class="n">r0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws a circle for each node in H.</span>
+
+<span class="sd">    The position of each node is specified by the a dictionary/list-like, pos,</span>
+<span class="sd">    where pos[v] is the xy-coordinate for the vertex. The radius of each node</span>
+<span class="sd">    can be specified as a dictionary where node_radius[v] is the radius. If a</span>
+<span class="sd">    node is missing from this dictionary, or the node_radius is not specified at</span>
+<span class="sd">    all, a sensible default radius is chosen based on distances between nodes</span>
+<span class="sd">    given by pos.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+<span class="sd">    node_radius: dict</span>
+<span class="sd">        mapping of node to R^1 (radius of each node)</span>
+<span class="sd">    r0: float</span>
+<span class="sd">        minimum distance that concentric rings start from the node position</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        keyword arguments, e.g., linewidth, facecolors, are passed through to the PolyCollection constructor</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PolyCollection</span>
+<span class="sd">        a Matplotlib PolyCollection that can be further styled</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span> <span class="ow">or</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">r0</span> <span class="ow">or</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_radius</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span><span class="o">*</span><span class="n">cp</span> <span class="o">+</span> <span class="n">pos</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">]</span>
+
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;facecolors&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+
+    <span class="n">circles</span> <span class="o">=</span> <span class="n">PolyCollection</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">circles</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">circles</span></div>
+
+<div class="viewcode-block" id="draw_hyper_labels"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw_hyper_labels">[docs]</a><span class="k">def</span> <span class="nf">draw_hyper_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="p">{},</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws text labels for the hypergraph nodes.</span>
+
+<span class="sd">    The label is drawn to the right of the node. The node radius is needed (see</span>
+<span class="sd">    draw_hyper_nodes) so the text can be offset appropriately as the node size</span>
+<span class="sd">    changes.</span>
+
+<span class="sd">    The text label can be customized by passing in a dictionary, labels, mapping</span>
+<span class="sd">    a node to its custom label. By default, the label is the string</span>
+<span class="sd">    representation of the node.</span>
+
+<span class="sd">    Keyword arguments are passed through to Matplotlib&#39;s annotate function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+<span class="sd">    node_radius: dict</span>
+<span class="sd">        mapping of node to R^1 (radius of each node)</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+<span class="sd">    labels: dict</span>
+<span class="sd">        mapping of node to text label</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        keyword arguments passed to matplotlib.annotate</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span> <span class="ow">or</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">node_radius</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">pos</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">xy</span><span class="p">,</span>
+                    <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">}</span> <span class="k">else</span> <span class="n">d</span><span class="p">)</span>
+                       <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span></div>
+
+<div class="viewcode-block" id="draw"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw">[docs]</a><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="n">H</span><span class="p">,</span>
+         <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+         <span class="n">with_color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+         <span class="n">with_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">with_edge_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">layout</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">,</span>
+         <span class="n">layout_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+         <span class="n">edges_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">nodes_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">edge_labels_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">node_labels_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">with_edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+         <span class="n">with_node_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+         <span class="n">label_alpha</span><span class="o">=.</span><span class="mi">35</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draw a hypergraph as a Matplotlib figure</span>
+
+<span class="sd">    By default this will draw a colorful &quot;rubber band&quot; like hypergraph, where</span>
+<span class="sd">    convex hulls represent edges and are drawn around the nodes they contain.</span>
+<span class="sd">    </span>
+<span class="sd">    This is a convenience function that wraps calls with sensible parameters to</span>
+<span class="sd">    the following lower-level drawing functions:</span>
+
+<span class="sd">    * draw_hyper_edges,</span>
+<span class="sd">    * draw_hyper_edge_labels,</span>
+<span class="sd">    * draw_hyper_labels, and</span>
+<span class="sd">    * draw_hyper_nodes</span>
+
+<span class="sd">    The default layout algorithm is nx.spring_layout, but other layouts can be</span>
+<span class="sd">    passed in. The Hypergraph is converted to a bipartite graph, and the layout</span>
+<span class="sd">    algorithm is passed the bipartite graph.</span>
+
+<span class="sd">    If you have a pre-determined layout, you can pass in a &quot;pos&quot; dictionary.</span>
+<span class="sd">    This is a dictionary mapping from node id&#39;s to x-y coordinates. For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; pos = {</span>
+<span class="sd">        &gt;&gt;&gt; &#39;A&#39;: (0, 0),</span>
+<span class="sd">        &gt;&gt;&gt; &#39;B&#39;: (1, 2),</span>
+<span class="sd">        &gt;&gt;&gt; &#39;C&#39;: (5, -3)</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+
+<span class="sd">    will position the nodes {A, B, C} manually at the locations specified. The</span>
+<span class="sd">    coordinate system is in Matplotlib &quot;data coordinates&quot;, and the figure will</span>
+<span class="sd">    be centered within the figure.</span>
+
+<span class="sd">    By default, this will draw in a new figure, but the axis to render in can be</span>
+<span class="sd">    specified using :code:`ax`.</span>
+
+<span class="sd">    This approach works well for small hypergraphs, and does not guarantee</span>
+<span class="sd">    a rigorously &quot;correct&quot; drawing. Overlapping of sets in the drawing generally</span>
+<span class="sd">    implies that the sets intersect, but sometimes sets overlap if there is no</span>
+<span class="sd">    intersection. It is not possible, in general, to draw a &quot;correct&quot; hypergraph</span>
+<span class="sd">    this way for an arbitrary hypergraph, in the same way that not all graphs</span>
+<span class="sd">    have planar drawings.    </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H: Hypergraph</span>
+<span class="sd">        the entity to be drawn </span>
+<span class="sd">    pos: dict</span>
+<span class="sd">        mapping of node and edge positions to R^2</span>
+<span class="sd">    with_color: bool</span>
+<span class="sd">        set to False to disable color cycling of edges</span>
+<span class="sd">    with_node_counts: bool</span>
+<span class="sd">        set to True to label collapsed nodes with number of elements</span>
+<span class="sd">    with_edge_counts: bool</span>
+<span class="sd">        set to True to label collapsed edges with number of elements</span>
+<span class="sd">    layout: function</span>
+<span class="sd">        layout algorithm to compute</span>
+<span class="sd">    layout_kwargs: dict</span>
+<span class="sd">        keyword arguments passed to layout function</span>
+<span class="sd">    ax: Axis</span>
+<span class="sd">        matplotlib axis on which the plot is rendered</span>
+<span class="sd">    edges_kwargs: dict</span>
+<span class="sd">        keyword arguments passed to matplotlib.collections.PolyCollection for edges</span>
+<span class="sd">    nodes_kwargs: dict</span>
+<span class="sd">        keyword arguments passed to matplotlib.collections.PolyCollection for nodes</span>
+<span class="sd">    edge_labels_kwargs: dict</span>
+<span class="sd">        keyword arguments passed to matplotlib.annotate for edge laberls</span>
+<span class="sd">    node_labels_kwargs: dict</span>
+<span class="sd">        keyword argumetns passed to matplotlib.annotate for node labels</span>
+<span class="sd">    with_edge_labels: bool</span>
+<span class="sd">        set to False to make edge labels invisible</span>
+<span class="sd">    with_node_labels: bool</span>
+<span class="sd">        set to False to make node labels invisible</span>
+<span class="sd">    label_alpha: float</span>
+<span class="sd">        the transparency (alpha) of the box behind text drawn in the figure</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span> <span class="ow">or</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">layout_node_link</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="o">**</span><span class="n">layout_kwargs</span><span class="p">)</span>
+
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+    <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">node_radius</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a0</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">frozenset</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+    <span class="n">edges_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;edgecolors&#39;</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">))</span><span class="o">%</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">edges_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;facecolors&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+    <span class="n">polys</span> <span class="o">=</span> <span class="n">draw_hyper_edges</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>
+                             <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span>
+                             <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                             <span class="o">**</span><span class="n">edges_kwargs</span>
+                            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">with_edge_labels</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">with_edge_counts</span><span class="p">)</span>
+
+        <span class="n">draw_hyper_edge_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">polys</span><span class="p">,</span>
+                               <span class="n">color</span><span class="o">=</span><span class="n">edges_kwargs</span><span class="p">[</span><span class="s1">&#39;edgecolors&#39;</span><span class="p">],</span>
+                               <span class="n">backgroundcolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label_alpha</span><span class="p">),</span>
+                               <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                               <span class="o">**</span><span class="n">edge_labels_kwargs</span>
+                               <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">with_node_labels</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">with_node_counts</span><span class="p">)</span>
+
+        <span class="n">draw_hyper_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>
+                          <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span>
+                          <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                          <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                          <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                          <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                          <span class="n">textcoords</span><span class="o">=</span><span class="s1">&#39;offset points&#39;</span><span class="p">,</span>
+                          <span class="n">backgroundcolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label_alpha</span><span class="p">),</span>
+                          <span class="o">**</span><span class="n">node_labels_kwargs</span>
+                          <span class="p">)</span>
+
+    <span class="n">draw_hyper_nodes</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>
+                     <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span>
+                     <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">nodes_kwargs</span>
+                    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">20</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="n">x</span> <span class="o">-</span> <span class="n">s</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">s</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span></div>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018 Battelle Memorial Institute.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.2.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/copybutton.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
