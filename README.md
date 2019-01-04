@@ -17,7 +17,7 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the Hyp
 * Software support: Kyle Monson
 
 For questions and comments you may contact the developers directly at:  
-	HyperNetX-support@pnnl.gov
+	hypernetx@pnnl.gov
 
 Installation Instructions
 -------------------------
