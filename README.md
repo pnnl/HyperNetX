@@ -19,6 +19,8 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the Hyp
 For questions and comments you may contact the developers directly at:  
 	hypernetx@pnnl.gov
 
+Documentation is available at: https://pnnl.github.io/HyperNetX/
+
 Installation Instructions
 -------------------------
 
