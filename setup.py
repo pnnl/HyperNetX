@@ -10,7 +10,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'hypernetx'))
 
 setup(
     name='hypernetx',
-    packages=['hypernetx'],
+    packages=['hypernetx'',
+              'hypernetx.classes',
+              'hypernetx.drawing',
+              'hypernetx.reports'],
     version=__version__,
     description='HyperNetX is a Python library for the creation and study of hypergraphs.',
     install_requires=['networkx>=2.2,<3.0','numpy>=1.15.0,<2.0','scipy>=1.1.0,<2.0','matplotlib>3.0','scikit-learn>=0.20.0'],
