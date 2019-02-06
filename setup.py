@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'hypernetx'))
 
 setup(
     name='hypernetx',
-    packages=['hypernetx'',
+    packages=['hypernetx',
               'hypernetx.classes',
               'hypernetx.drawing',
               'hypernetx.reports'],
