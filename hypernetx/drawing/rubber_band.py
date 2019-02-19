@@ -437,6 +437,7 @@ def draw(H,
                                color=edges_kwargs['edgecolors'],
                                backgroundcolor=(1, 1, 1, label_alpha),
                                labels=labels,
+                               ax=ax,
                                **edge_labels_kwargs
                                )
 
