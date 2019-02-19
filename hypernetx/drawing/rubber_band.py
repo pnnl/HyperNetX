@@ -469,6 +469,6 @@ def draw(H,
     else:
         ax.axis('equal')
 
-    plt.xticks([])
-    plt.yticks([])
+    ax.xaxis.set_ticks([])
+    ax.yaxis.set_ticks([])
     
