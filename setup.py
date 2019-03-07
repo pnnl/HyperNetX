@@ -1,7 +1,7 @@
 from setuptools import setup 
 import sys, os.path
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 if sys.version_info < (3,6):
     sys.exit('HyperNetX requires Python 3.6 or later.')
@@ -24,9 +24,9 @@ setup(
     nested data and/or multi-way relationships. The library generalizes traditional 
     graph metrics to hypergraphs. 
 
-    The current version is preliminary and will not be released to the public until 
-    next year. Expect changes in both class names and methods as many of the 
-    requirements demanded of the library are worked out.
+    The current version is preliminary. We are actively testing and would be grateful 
+    for comments and suggestions. Expect changes in both class names and methods as 
+    many of the requirements demanded of the library are worked out.
     ''',
     extras_require={
         'testing':['pytest>=4.0'],

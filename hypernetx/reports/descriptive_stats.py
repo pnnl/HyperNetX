@@ -295,7 +295,7 @@ def info_dict(H, obj=None):
     '''
     report = dict()
     if not H.edges.elements:
-        return f'Hypergraph {H.name} is empty.'
+        return {}
     
     if obj:
         if obj in H.nodes:
