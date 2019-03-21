@@ -12,6 +12,14 @@ classes.entity module
     :undoc-members:
     :show-inheritance:
 
+classes.homology module
+-----------------------
+
+.. automodule:: classes.homology
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 classes.hypergraph module
 -------------------------
 
