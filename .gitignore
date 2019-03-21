@@ -1,2 +1,4 @@
 .DS_Store
 gitmerge.sh
+dist
+hypernetx.egg-info
