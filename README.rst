@@ -65,7 +65,11 @@ Once activated continue to follow the installation instructions below.
 Install using Pip
 -----------------
 
-For a minimal installation: 
+For a minimal installation:
+
+	>>> pip install hypernetx
+
+For an editable installation with access to jupyter notebooks: 
 
     >>> pip install [-e] .
 
