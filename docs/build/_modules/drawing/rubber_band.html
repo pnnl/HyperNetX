@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>drawing.rubber_band &mdash; HyperNetX 0.2.0 documentation</title>
+  <title>drawing.rubber_band &mdash; HyperNetX 0.2.5 documentation</title>
   
 
   
@@ -590,6 +590,7 @@
                                <span class="n">color</span><span class="o">=</span><span class="n">edges_kwargs</span><span class="p">[</span><span class="s1">&#39;edgecolors&#39;</span><span class="p">],</span>
                                <span class="n">backgroundcolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label_alpha</span><span class="p">),</span>
                                <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                               <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
                                <span class="o">**</span><span class="n">edge_labels_kwargs</span>
                                <span class="p">)</span>
 
@@ -621,8 +622,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span></div>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span></div>
     
 </pre></div>
 
@@ -636,7 +637,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018 Battelle Memorial Institute.
+        &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
@@ -655,22 +656,15 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.2.0',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/copybutton.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
