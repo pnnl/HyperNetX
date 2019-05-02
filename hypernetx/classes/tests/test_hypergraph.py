@@ -91,6 +91,16 @@ def test_collapse_nodes(sbsd_hypergraph):
     HC = H.collapse_nodes()
     assert len(HC.nodes) == 7
 
+def test_restrict_to_nodes(sbs_hypergraph):
+    H = sbs_hypergraph
+    assert len(H.nodes) == 7
+    H1 = H.restrict_to_nodes(['A','E','K'])
+    assert len(H.nodes) == 7
+    assert len(H1.nodes) == 3
+    assert len(H1.edges) == 5
+    assert 'C' in H.edges['P']
+    assert not 'C' in H1.edges['P']
+
 def test_toplexes(sbsd_hypergraph):
     H = sbsd_hypergraph
     T = H.toplexes()

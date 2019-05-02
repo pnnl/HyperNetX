@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classes.hypergraph &mdash; HyperNetX 0.2.0 documentation</title>
+  <title>classes.hypergraph &mdash; HyperNetX 0.2.5 documentation</title>
   
 
   
@@ -1079,13 +1079,13 @@
 
 <div class="viewcode-block" id="Hypergraph.restrict_to_nodes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_nodes">[docs]</a>	<span class="k">def</span> <span class="nf">restrict_to_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nodeset</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Constructs a new hypergraph by restricint the edges in hypergraph to</span>
-<span class="sd">		the nodes in nodesetdes restricted to what is in nodeset.</span>
+<span class="sd">		Constructs a new hypergraph by restricting the edges in the hypergraph to</span>
+<span class="sd">		the nodes referenced by nodeset.</span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
-<span class="sd">		nodeset: iterable of hashables or Entities</span>
-<span class="sd">			A subset of elements of the hypergraph nodes</span>
+<span class="sd">		nodeset: iterable of hashables</span>
+<span class="sd">			References a subset of elements of self.nodes</span>
 
 <span class="sd">		name: string, optional, default: None</span>
 
@@ -1100,9 +1100,9 @@
 		<span class="n">newedgeset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-				<span class="n">newe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">restrict_to</span><span class="p">(</span><span class="n">nodeset</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
-				<span class="k">if</span> <span class="ow">not</span> <span class="n">newe</span><span class="o">.</span><span class="n">is_empty</span><span class="p">:</span>
-					<span class="n">newedgeset</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">newe</span>
+				<span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nodeset</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">temp</span><span class="p">:</span>
+					<span class="n">newedgeset</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">temp</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">newedgeset</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Hypergraph.toplexes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.toplexes">[docs]</a>	<span class="k">def</span> <span class="nf">toplexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">collapse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
@@ -1639,7 +1639,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018 Battelle Memorial Institute.
+        &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
@@ -1658,22 +1658,15 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.2.0',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/copybutton.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

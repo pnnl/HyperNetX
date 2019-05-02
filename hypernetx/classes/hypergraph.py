@@ -926,13 +926,13 @@ class Hypergraph():
 
 	def restrict_to_nodes(self,nodeset,name=None):
 		"""
-		Constructs a new hypergraph by restricint the edges in hypergraph to
-		the nodes in nodesetdes restricted to what is in nodeset.
+		Constructs a new hypergraph by restricting the edges in the hypergraph to
+		the nodes referenced by nodeset.
 
 		Parameters
 		----------
-		nodeset: iterable of hashables or Entities
-			A subset of elements of the hypergraph nodes
+		nodeset: iterable of hashables
+			References a subset of elements of self.nodes
 
 		name: string, optional, default: None
 
@@ -947,9 +947,9 @@ class Hypergraph():
 		newedgeset = dict()
 		for e in memberships:
 			if e in self.edges:
-				newe = self.edges[e].restrict_to(nodeset,e)
-				if not newe.is_empty:
-					newedgeset[e] = newe
+				temp = self.edges[e].uidset.intersection(nodeset)
+				if temp:
+					newedgeset[e] = Entity(e,temp,**self.edges[e].properties)
 		return Hypergraph(newedgeset,name) 
 
 	def toplexes(self,name=None,collapse=False,use_reps=False,return_counts=True): 
