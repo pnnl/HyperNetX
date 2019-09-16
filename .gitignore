@@ -2,6 +2,12 @@
 gitmerge.sh
 dist
 hypernetx.egg-info
+
+stashmerge.sh
+homology_log.log
 logfiles/
 stashmerge.sh
 jacksnbs
+
+__pycache__
+*.ipynb_checkpoints
