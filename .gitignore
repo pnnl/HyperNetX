@@ -8,6 +8,7 @@ homology_log.log
 logfiles/
 stashmerge.sh
 jacksnbs
+demos
 
 __pycache__
 *.ipynb_checkpoints
