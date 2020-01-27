@@ -421,6 +421,9 @@ def draw(H,
     node_radius = {v: np.sqrt(a0*(len(v) if type(v) == frozenset else 1)/np.pi)
                    for v in H.nodes}
 
+    # for convenience, we are using setdefault to mutate the argument
+    # however, we need to copy this to prevent side-effects
+    edges_kwargs = edges_kwargs.copy()
     edges_kwargs.setdefault('edgecolors', plt.cm.tab10(np.arange(len(H.edges))%10))
     edges_kwargs.setdefault('facecolors', 'none')
 
