@@ -34,10 +34,12 @@ def layout_two_column(H, spacing=2):
         for i, v in enumerate(vertices):
             pos[v] = (x, i + offset + (height - len(vertices))/2)
 
-    for ci in nx.connected_component_subgraphs(H.bipartite()):
-        key = {v: i for i, v in enumerate(nx.spectral_ordering(ci))}.get
+    G = H.bipartite()
+    for ci in nx.connected_components(G):
+        Gi=G.subgraph(ci)
+        key = {v: i for i, v in enumerate(nx.spectral_ordering(Gi))}.get
         ci_vertices, ci_edges = [sorted([v
-                                         for v, d in ci.nodes(data=True)
+                                         for v, d in Gi.nodes(data=True)
                                          if d['bipartite'] == j],
                                         key=key)
                                  for j in [0, 1]]
