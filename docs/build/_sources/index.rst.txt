@@ -21,11 +21,15 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   
+
    overview/index
    install
    Glossary <glossary>
+   Hypergraphs <classes/modules.rst>
+   Drawing <drawing/modules.rst>
+   Reports <reports/modules.rst>
    license
+
 
 Indices and tables
 ==================

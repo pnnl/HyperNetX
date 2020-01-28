@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>classes.hg_constructors &mdash; HyperNetX 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../drawing/modules.html">Drawing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reports/modules.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>classes.hg_constructors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for classes.hg_constructors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
+<span class="c1"># All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">hypernetx.classes.entity</span> <span class="k">import</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">EntitySet</span>
+<span class="kn">from</span> <span class="nn">hypernetx.classes.hypergraph</span> <span class="k">import</span> <span class="n">Hypergraph</span>
+<span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="k">import</span> <span class="n">HyperNetXError</span>
+
+
+<div class="viewcode-block" id="from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_bipartite">[docs]</a><span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">set_names</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Static method creates a Hypergraph from a bipartite graph.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	B: nx.Graph()</span>
+<span class="sd">		A networkx bipartite graph. Each node in the graph has a property</span>
+<span class="sd">		&#39;bipartite&#39; taking one of two values</span>
+
+<span class="sd">	set_names: iterable</span>
+<span class="sd">		An ordered list :math:`[x_0, x_1]`, corresponding to the values </span>
+<span class="sd">		assigned to the bipartite property in B.</span>
+
+<span class="sd">	name: hashable</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	: Hypergraph</span>
+
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+<span class="sd">	A partition for the nodes in a bipartite graph generates a hypergraph as follows.</span>
+<span class="sd">	For each node n in B with bipartite property equal to set_names[0] there is a </span>
+<span class="sd">	node n in the hypergraph.  For each node e in B with bipartite property</span>
+<span class="sd">	equal to set_names[1], there is an edge in the hypergraph. </span>
+<span class="sd">	For each edge (n,e) in B add n to the edge e in the hypergraph.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span> 
+	<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+	<span class="kn">from</span> <span class="nn">networkx.algorithms</span> <span class="k">import</span> <span class="n">bipartite</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">bipartite</span><span class="o">.</span><span class="n">is_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">HyperNetxError</span><span class="p">(</span><span class="s1">&#39;Error: Method requires a bipartite graph.&#39;</span><span class="p">)</span>
+	<span class="n">entities</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;bipartite&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">set_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+	        <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+	        <span class="k">for</span> <span class="n">nei</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+	            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entity</span><span class="p">(</span><span class="n">nei</span><span class="p">,[],</span><span class="n">properties</span><span class="o">=</span><span class="n">B</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">nei</span><span class="p">]))</span>
+	        <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
+	            <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entity</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">elements</span><span class="p">,</span><span class="n">properties</span><span class="o">=</span><span class="n">d</span><span class="p">))</span>
+	<span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;_&#39;</span>
+	<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">EntitySet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">entities</span><span class="p">),</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_numpy_array"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_numpy_array">[docs]</a><span class="k">def</span> <span class="nf">from_numpy_array</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2 </span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	M : real valued array-like object, dimensions=2x2</span>
+<span class="sd">	    representing a real valued matrix with rows corresponding to nodes and columns to edges</span>
+
+<span class="sd">	node_names : object, array-like, default=None</span>
+<span class="sd">	    List of node names must be the same length as M.shape[0]. </span>
+<span class="sd">	    If None then the node names correspond to row indices with &#39;v&#39; prepended.</span>
+
+<span class="sd">	edge_names : object, array-like, default=None</span>
+<span class="sd">	    List of edge names must have the same length as M.shape[1]. </span>
+<span class="sd">	    If None then the edge names correspond to column indices with &#39;e&#39; prepended.</span>
+
+<span class="sd">	name : hashable</span>
+<span class="sd">	    </span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	 : Hypergraph</span>
+
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The constructor does not generate empty edges. </span>
+<span class="sd">	All zero columns in M are removed and the names corresponding to these</span>
+<span class="sd">	edges are discarded.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>  	    
+	<span class="c1">## Create names for nodes and edges</span>
+	<span class="c1">## Validate the size of the node and edge arrays</span>
+
+	<span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Input requires a 2 dimensional numpy array&#39;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">node_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+	    <span class="n">nodenames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">node_names</span><span class="p">)</span>
+	    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodenames</span><span class="p">)</span> <span class="o">!=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+	        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of node names does not match number of rows.&#39;</span><span class="p">)</span>
+	        <span class="k">return</span> <span class="kc">None</span>
+	<span class="k">else</span><span class="p">:</span>
+	    <span class="n">nodenames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;v</span><span class="si">{idx}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+
+	<span class="k">if</span> <span class="n">edge_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+	    <span class="n">edgenames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edge_names</span><span class="p">)</span>
+	    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edgenames</span><span class="p">)</span> <span class="o">!=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+	        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of edge names does not match number of columns.&#39;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+	    <span class="n">edgenames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;e</span><span class="si">{jdx}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">jdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+
+	<span class="c1">## Remove empty column indices from M columns and edgenames</span>
+	<span class="n">colidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">jdx</span> <span class="k">for</span> <span class="n">jdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">M</span><span class="p">[:,</span><span class="n">jdx</span><span class="p">])])</span>
+	<span class="n">colidxsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">colidx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">colidxsum</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">()</span>
+	<span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="p">[:,</span><span class="n">colidx</span><span class="p">]</span>
+	<span class="n">edgenames</span> <span class="o">=</span> <span class="n">edgenames</span><span class="p">[</span><span class="n">colidx</span><span class="p">]</span>
+
+	<span class="n">edict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+	<span class="c1">## Create an EntitySet of edges from M         </span>
+	<span class="k">for</span> <span class="n">jdx</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edgenames</span><span class="p">):</span>
+	    <span class="n">edict</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodenames</span><span class="p">[[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="n">jdx</span><span class="p">]]]</span>
+	            
+	<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">edict</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_dataframe">[docs]</a><span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Create a hypergraph from a Pandas Dataframe object using index to label vertices</span>
+<span class="sd">    and Columns to label edges. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : Pandas.Dataframe</span>
+<span class="sd">        a real valued dataframe with a single index</span>
+<span class="sd">    fillna : float, default = 0</span>
+<span class="sd">        a real value to place in empty cell, all-zero columns will not generate</span>
+<span class="sd">        an edge</span>
+<span class="sd">    transpose : bool, default = 0</span>
+<span class="sd">        option to transpose the dataframe, in this case df.Index will label the edges</span>
+<span class="sd">        and df.columns will label the nodes</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : Hypergraph</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The constructor does not generate empty edges. </span>
+<span class="sd">    All-zero columns in df are removed and the names corresponding to these</span>
+<span class="sd">    edges are discarded.    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">!=</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Error: Input object must be a pandas dataframe.&#39;</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>   
+    <span class="n">node_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">edge_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">from_numpy_array</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_csv"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.read_csv">[docs]</a><span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Wrapper for pandas from_csv method to generate a hypergraph:</span>
+<span class="sd">    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : str, path object, or file-like object</span>
+<span class="sd">        Any valid string path is acceptable including a URL.</span>
+<span class="sd">        see pandas.read-csv for additional documentation</span>
+<span class="sd">    index_col : int, sequence or bool, default = 0</span>
+<span class="sd">        required for node labels.</span>
+<span class="sd">        see Pandas.from_csv for additional documentation</span>
+<span class="sd">    fillna : float, default = 0</span>
+<span class="sd">        a real value to place in empty cell, all-zero columns will not generate</span>
+<span class="sd">        an edge</span>
+<span class="sd">    transpose : bool, default = False</span>
+<span class="sd">        option to transpose the dataframe, in this case df.Index will label the edges</span>
+<span class="sd">        and df.columns will label the nodes</span>
+<span class="sd">    name : str</span>
+<span class="sd">    	name of hypergraph to be constructed</span>
+<span class="sd">    kwargs : keyword arguments to pass to pandas.from_csv method</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : Hypergraph</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Defaults assume that the csv file has node names in the first column and edge names in the </span>
+<span class="sd">    first (header) row. To change the behavior use key word arguments to pass to pandas method.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_blank_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="n">fillna</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="to_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Generates pandas dataframe based on h.incidence_matrix with h.nodes.uidset </span>
+<span class="sd">	as index name and h.edges.uidset as column names.</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	h : Hypergraph</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	 : pandas.DataFrame</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+	<span class="n">M</span><span class="p">,</span><span class="n">rowdict</span><span class="p">,</span><span class="n">coldict</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">pdindex</span> <span class="o">=</span> <span class="p">[</span><span class="n">rowdict</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rowdict</span><span class="p">))]</span>
+	<span class="n">pdcolumns</span> <span class="o">=</span> <span class="p">[</span><span class="n">coldict</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coldict</span><span class="p">))]</span>
+	<span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">pdindex</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">pdcolumns</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018 Battelle Memorial Institute
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

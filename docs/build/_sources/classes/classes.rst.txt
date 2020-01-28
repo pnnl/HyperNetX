@@ -12,6 +12,14 @@ classes.entity module
    :undoc-members:
    :show-inheritance:
 
+classes.hg\_constructors module
+-------------------------------
+
+.. automodule:: classes.hg_constructors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 classes.hypergraph module
 -------------------------
 
