@@ -14,3 +14,4 @@ __pycache__
 *.ipynb_checkpoints
 build/lib/hypernetx
 build2
+push_commits.sh
