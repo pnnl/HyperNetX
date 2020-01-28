@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classes.hg_constructors &mdash; HyperNetX 0.2.6 documentation</title>
+  <title>classes.hg_constructors1 &mdash; HyperNetX 0.2.7 documentation</title>
   
 
   
@@ -142,7 +142,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>classes.hg_constructors</li>
+      <li>classes.hg_constructors1</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -157,7 +157,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for classes.hg_constructors</h1><div class="highlight"><pre>
+  <h1>Source code for classes.hg_constructors1</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
 <span class="c1"># All rights reserved.</span>
 
@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="k">import</span> <span class="n">HyperNetXError</span>
 
 
-<div class="viewcode-block" id="from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_bipartite">[docs]</a><span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">set_names</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors1.from_bipartite">[docs]</a><span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">set_names</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Static method creates a Hypergraph from a bipartite graph.</span>
 
@@ -216,7 +216,7 @@
 	<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">EntitySet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">entities</span><span class="p">),</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="from_numpy_array"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_numpy_array">[docs]</a><span class="k">def</span> <span class="nf">from_numpy_array</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="from_numpy_array"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors1.from_numpy_array">[docs]</a><span class="k">def</span> <span class="nf">from_numpy_array</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2 </span>
 
@@ -285,7 +285,7 @@
 	<span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">edict</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="from_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.from_dataframe">[docs]</a><span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="from_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors1.from_dataframe">[docs]</a><span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Create a hypergraph from a Pandas Dataframe object using index to label vertices</span>
 <span class="sd">    and Columns to label edges. </span>
@@ -323,7 +323,7 @@
     <span class="k">return</span> <span class="n">from_numpy_array</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="read_csv"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.read_csv">[docs]</a><span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="read_csv"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors1.read_csv">[docs]</a><span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Wrapper for pandas from_csv method to generate a hypergraph:</span>
 <span class="sd">    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html</span>
@@ -360,7 +360,7 @@
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_blank_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="n">fillna</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="to_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors.to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="to_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hg_constructors1.to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">	Generates pandas dataframe based on h.incidence_matrix with h.nodes.uidset </span>
 <span class="sd">	as index name and h.edges.uidset as column names.</span>

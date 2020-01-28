@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classes package &mdash; HyperNetX 0.2.6 documentation</title>
+  <title>classes package &mdash; HyperNetX 0.2.7 documentation</title>
   
 
   
@@ -97,7 +97,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">classes package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes.entity">classes.entity module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-classes.hg_constructors">classes.hg_constructors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-classes.hg_constructors1">classes.hg_constructors1 module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes.hypergraph">classes.hypergraph module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes">Module contents</a></li>
 </ul>
@@ -804,11 +804,11 @@ and element uid : column number</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-classes.hg_constructors">
-<span id="classes-hg-constructors-module"></span><h2>classes.hg_constructors module<a class="headerlink" href="#module-classes.hg_constructors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-classes.hg_constructors1">
+<span id="classes-hg-constructors1-module"></span><h2>classes.hg_constructors1 module<a class="headerlink" href="#module-classes.hg_constructors1" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="classes.hg_constructors.from_bipartite">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_bipartite</code><span class="sig-paren">(</span><em class="sig-param">B, set_names=[0, 1], name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_bipartite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_bipartite" title="Permalink to this definition">¶</a></dt>
+<dt id="classes.hg_constructors1.from_bipartite">
+<code class="sig-prename descclassname">classes.hg_constructors1.</code><code class="sig-name descname">from_bipartite</code><span class="sig-paren">(</span><em class="sig-param">B, set_names=[0, 1], name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors1.html#from_bipartite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors1.from_bipartite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Static method creates a Hypergraph from a bipartite graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -836,8 +836,8 @@ For each edge (n,e) in B add n to the edge e in the hypergraph.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="classes.hg_constructors.from_dataframe">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="classes.hg_constructors1.from_dataframe">
+<code class="sig-prename descclassname">classes.hg_constructors1.</code><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors1.html#from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors1.from_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
 and Columns to label edges.</p>
 <dl class="field-list simple">
@@ -866,8 +866,8 @@ edges are discarded.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="classes.hg_constructors.from_numpy_array">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">node_names=None</em>, <em class="sig-param">edge_names=None</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_numpy_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dt id="classes.hg_constructors1.from_numpy_array">
+<code class="sig-prename descclassname">classes.hg_constructors1.</code><code class="sig-name descname">from_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">node_names=None</em>, <em class="sig-param">edge_names=None</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors1.html#from_numpy_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors1.from_numpy_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -896,8 +896,8 @@ edges are discarded.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="classes.hg_constructors.read_csv">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">read_csv</code><span class="sig-paren">(</span><em class="sig-param">fpath</em>, <em class="sig-param">index_col=0</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#read_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.read_csv" title="Permalink to this definition">¶</a></dt>
+<dt id="classes.hg_constructors1.read_csv">
+<code class="sig-prename descclassname">classes.hg_constructors1.</code><code class="sig-name descname">read_csv</code><span class="sig-paren">(</span><em class="sig-param">fpath</em>, <em class="sig-param">index_col=0</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors1.html#read_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors1.read_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper for pandas from_csv method to generate a hypergraph:
 <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html</a></p>
 <dl class="field-list simple">
@@ -928,8 +928,8 @@ first (header) row. To change the behavior use key word arguments to pass to pan
 </dd></dl>
 
 <dl class="function">
-<dt id="classes.hg_constructors.to_dataframe">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><em class="sig-param">h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="classes.hg_constructors1.to_dataframe">
+<code class="sig-prename descclassname">classes.hg_constructors1.</code><code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><em class="sig-param">h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors1.html#to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors1.to_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates pandas dataframe based on h.incidence_matrix with h.nodes.uidset
 as index name and h.edges.uidset as column names.</p>
 <p>h : Hypergraph</p>
