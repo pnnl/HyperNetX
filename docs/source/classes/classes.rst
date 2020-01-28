@@ -12,10 +12,10 @@ classes.entity module
    :undoc-members:
    :show-inheritance:
 
-classes.hg\_constructors module
--------------------------------
+classes.hg\_constructors1 module
+--------------------------------
 
-.. automodule:: classes.hg_constructors
+.. automodule:: classes.hg_constructors1
    :members:
    :undoc-members:
    :show-inheritance:

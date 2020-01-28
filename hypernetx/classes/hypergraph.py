@@ -1219,8 +1219,8 @@ class Hypergraph():
 		G = nx.from_scipy_sparse_matrix(A) 
 		diams = []
 		comps = []
-		for c in nx.connected_component_subgraphs(G):
-		    diamc = nx.diameter(c)
+		for c in nx.connected_components(G):
+		    diamc = nx.diameter(G.subgraph(c))
 		    temp = set()
 		    for e in c:
 		    	temp.add(coldict[e])
@@ -1253,8 +1253,8 @@ class Hypergraph():
 		G = nx.from_scipy_sparse_matrix(A) 
 		diams = []
 		comps = []
-		for c in nx.connected_component_subgraphs(G):
-		    diamc = nx.diameter(c)
+		for c in nx.connected_components(G):
+		    diamc = nx.diameter(G.subgraph(c))
 		    temp = set()
 		    for e in c:
 		    	temp.add(coldict[e])

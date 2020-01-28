@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>drawing.two_column &mdash; HyperNetX 0.2.6 documentation</title>
+  <title>drawing.two_column &mdash; HyperNetX 0.2.7 documentation</title>
   
 
   
@@ -194,10 +194,12 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
             <span class="n">pos</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="p">(</span><span class="n">height</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">bipartite</span><span class="p">()):</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">spectral_ordering</span><span class="p">(</span><span class="n">ci</span><span class="p">))}</span><span class="o">.</span><span class="n">get</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">bipartite</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+        <span class="n">Gi</span><span class="o">=</span><span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">spectral_ordering</span><span class="p">(</span><span class="n">Gi</span><span class="p">))}</span><span class="o">.</span><span class="n">get</span>
         <span class="n">ci_vertices</span><span class="p">,</span> <span class="n">ci_edges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">([</span><span class="n">v</span>
-                                         <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ci</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                         <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">Gi</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                                          <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;bipartite&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">j</span><span class="p">],</span>
                                         <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
                                  <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>

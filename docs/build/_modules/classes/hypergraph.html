@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classes.hypergraph &mdash; HyperNetX 0.2.6 documentation</title>
+  <title>classes.hypergraph &mdash; HyperNetX 0.2.7 documentation</title>
   
 
   
@@ -1379,8 +1379,8 @@
 		<span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_scipy_sparse_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> 
 		<span class="n">diams</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">comps</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
-		    <span class="n">diamc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+		    <span class="n">diamc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
 		    <span class="n">temp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 		    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
 		    	<span class="n">temp</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coldict</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
@@ -1413,8 +1413,8 @@
 		<span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_scipy_sparse_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> 
 		<span class="n">diams</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">comps</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
-		    <span class="n">diamc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+		    <span class="n">diamc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
 		    <span class="n">temp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 		    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
 		    	<span class="n">temp</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">coldict</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
