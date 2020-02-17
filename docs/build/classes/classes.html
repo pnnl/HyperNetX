@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classes package &mdash; HyperNetX 0.2.6 documentation</title>
+  <title>classes package &mdash; HyperNetX 0.3.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="drawing" href="../drawing/modules.html" />
+    <link rel="next" title="algorithms" href="../algorithms/modules.html" />
     <link rel="prev" title="classes" href="modules.html" /> 
 </head>
 
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -97,13 +97,13 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">classes package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes.entity">classes.entity module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-classes.hg_constructors">classes.hg_constructors module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes.hypergraph">classes.hypergraph module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-classes">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/modules.html">Algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../drawing/modules.html">Drawing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reports/modules.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -804,141 +804,6 @@ and element uid : column number</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-classes.hg_constructors">
-<span id="classes-hg-constructors-module"></span><h2>classes.hg_constructors module<a class="headerlink" href="#module-classes.hg_constructors" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="classes.hg_constructors.from_bipartite">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_bipartite</code><span class="sig-paren">(</span><em class="sig-param">B, set_names=[0, 1], name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_bipartite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_bipartite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Static method creates a Hypergraph from a bipartite graph.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>B</strong> (<em>nx.Graph</em><em>(</em><em>)</em>) – A networkx bipartite graph. Each node in the graph has a property
-‘bipartite’ taking one of two values</p></li>
-<li><p><strong>set_names</strong> (<em>iterable</em>) – An ordered list <span class="math notranslate nohighlight">\([x_0, x_1]\)</span>, corresponding to the values
-assigned to the bipartite property in B.</p></li>
-<li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>A partition for the nodes in a bipartite graph generates a hypergraph as follows.
-For each node n in B with bipartite property equal to set_names[0] there is a
-node n in the hypergraph.  For each node e in B with bipartite property
-equal to set_names[1], there is an edge in the hypergraph.
-For each edge (n,e) in B add n to the edge e in the hypergraph.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="classes.hg_constructors.from_dataframe">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
-and Columns to label edges.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>Pandas.Dataframe</em>) – a real valued dataframe with a single index</p></li>
-<li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
-an edge</p></li>
-<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>default = 0</em>) – option to transpose the dataframe, in this case df.Index will label the edges
-and df.columns will label the nodes</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The constructor does not generate empty edges.
-All-zero columns in df are removed and the names corresponding to these
-edges are discarded.</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="classes.hg_constructors.from_numpy_array">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">from_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">node_names=None</em>, <em class="sig-param">edge_names=None</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#from_numpy_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.from_numpy_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>M</strong> (<em>real valued array-like object</em><em>, </em><em>dimensions=2x2</em>) – representing a real valued matrix with rows corresponding to nodes and columns to edges</p></li>
-<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of node names must be the same length as M.shape[0].
-If None then the node names correspond to row indices with ‘v’ prepended.</p></li>
-<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of edge names must have the same length as M.shape[1].
-If None then the edge names correspond to column indices with ‘e’ prepended.</p></li>
-<li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The constructor does not generate empty edges.
-All zero columns in M are removed and the names corresponding to these
-edges are discarded.</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="classes.hg_constructors.read_csv">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">read_csv</code><span class="sig-paren">(</span><em class="sig-param">fpath</em>, <em class="sig-param">index_col=0</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#read_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.read_csv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for pandas from_csv method to generate a hypergraph:
-<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fpath</strong> (<em>str</em><em>, </em><em>path object</em><em>, or </em><em>file-like object</em>) – Any valid string path is acceptable including a URL.
-see pandas.read-csv for additional documentation</p></li>
-<li><p><strong>index_col</strong> (<em>int</em><em>, </em><em>sequence</em><em> or </em><em>bool</em><em>, </em><em>default = 0</em>) – required for node labels.
-see Pandas.from_csv for additional documentation</p></li>
-<li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
-an edge</p></li>
-<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will label the edges
-and df.columns will label the nodes</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of hypergraph to be constructed</p></li>
-<li><p><strong>kwargs</strong> (<em>keyword arguments to pass to pandas.from_csv method</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Defaults assume that the csv file has node names in the first column and edge names in the
-first (header) row. To change the behavior use key word arguments to pass to pandas method.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="classes.hg_constructors.to_dataframe">
-<code class="sig-prename descclassname">classes.hg_constructors.</code><code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><em class="sig-param">h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hg_constructors.html#to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hg_constructors.to_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates pandas dataframe based on h.incidence_matrix with h.nodes.uidset
-as index name and h.edges.uidset as column names.</p>
-<p>h : Hypergraph</p>
-<blockquote>
-<div><p>: pandas.DataFrame</p>
-</div></blockquote>
-</dd></dl>
-
-</div>
 <div class="section" id="module-classes.hypergraph">
 <span id="classes-hypergraph-module"></span><h2>classes.hypergraph module<a class="headerlink" href="#module-classes.hypergraph" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -1339,7 +1204,7 @@ are s-adjacent. If the graph is not connected, an error will be raised.</p>
 <dl class="method">
 <dt id="classes.hypergraph.Hypergraph.dim">
 <code class="sig-name descname">dim</code><span class="sig-paren">(</span><em class="sig-param">edge</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.dim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Same as size(edge).</p>
+<dd><p>Same as size(edge)-1.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1504,7 +1369,7 @@ generated by the s-edge_adjacency matrix.</p>
 
 <dl class="method">
 <dt id="classes.hypergraph.Hypergraph.from_bipartite">
-<code class="sig-name descname">from_bipartite</code><span class="sig-paren">(</span><em class="sig-param">set_names=[0, 1], name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_bipartite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_bipartite" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_bipartite</code><span class="sig-paren">(</span><em class="sig-param">B, set_names=[0, 1], name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_bipartite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_bipartite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Static method creates a Hypergraph from a bipartite graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1529,6 +1394,70 @@ For each node n in B with bipartite property equal to set_names[0] there is a
 node n in the hypergraph.  For each node e in B with bipartite property
 equal to set_names[1], there is an edge in the hypergraph.
 For each edge (n,e) in B add n to the edge e in the hypergraph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="classes.hypergraph.Hypergraph.from_dataframe">
+<em class="property">classmethod </em><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
+and Columns to label edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>Pandas.Dataframe</em>) – a real valued dataframe with a single index</p></li>
+<li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
+an edge</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will label the edges
+and df.columns will label the nodes</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em>) – boolean function to be evaluated on each cell of the array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The constructor does not generate empty edges.
+All-zero columns in df are removed and the names corresponding to these
+edges are discarded.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="classes.hypergraph.Hypergraph.from_numpy_array">
+<em class="property">classmethod </em><code class="sig-name descname">from_numpy_array</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">node_names=None</em>, <em class="sig-param">edge_names=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_numpy_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2
+The matrix is converted to a matrix of 0’s and 1’s so that any truthy cells are converted to 1’s and
+all others to 0’s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>real valued array-like object</em><em>, </em><em>dimensions=2x2</em>) – representing a real valued matrix with rows corresponding to nodes and columns to edges</p></li>
+<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of node names must be the same length as M.shape[0].
+If None then the node names correspond to row indices with ‘v’ prepended.</p></li>
+<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of edge names must have the same length as M.shape[1].
+If None then the edge names correspond to column indices with ‘e’ prepended.</p></li>
+<li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em>) – boolean function to be evaluated on each cell of the array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The constructor does not generate empty edges.
+All zero columns in M are removed and the names corresponding to these
+edges are discarded.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1993,7 +1922,7 @@ of the set of equivalent edges and their count</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../drawing/modules.html" class="btn btn-neutral float-right" title="drawing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../algorithms/modules.html" class="btn btn-neutral float-right" title="algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral float-left" title="classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

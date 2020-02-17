@@ -47,7 +47,7 @@ def kchainbasis(h,k):
     
     Returns
     -------
-    list
+     : list
         an ordered list of kchains represented as tuples of length k+1
 
     See also
@@ -56,8 +56,7 @@ def kchainbasis(h,k):
 
     Notes
     -----
-    - Method works best if h is simple [Berge], i.e. no edge contains 
-    another and there are no duplicate edges (toplexes). 
+    - Method works best if h is simple [Berge], i.e. no edge contains another and there are no duplicate edges (toplexes). 
     - Hypergraph node uids must be sortable.
 
     """
@@ -71,6 +70,22 @@ def kchainbasis(h,k):
     return sorted(list(kchains))
 
 def interpret(Ck,arr):
+    """
+    Returns the data as represented in Ck associated with the arr
+    
+    Parameters
+    ----------
+    Ck : list
+        a list of k-cells being referenced by arr
+    arr : np.array
+        a 0-1 array
+    
+    Returns
+    ----
+    : list
+        list of k-cells referenced by data in Ck
+    
+    """
     output = list()
     for vec in arr:
         if len(Ck) != len(vec):
@@ -197,8 +212,11 @@ def add_to_row(M,i,j,ri=1,rj=1,mod=2):
     Parameters
     ----------
     M : np.array
+        matrix
     i : int
+        index of row being altered
     j : int
+        index of row being added to altered
     ri : int, optional
         Multiplier for ith row
     rj : int, optional
@@ -223,8 +241,11 @@ def add_to_column(M,i,j,ci=1,cj=1,mod=2):
     Parameters
     ----------
     M : np.array
+        matrix 
     i : int
+        index of column being altered
     j : int
+        index of column being added to altered
     ri : int, optional
         Multiplier for ith column
     rj : int, optional
@@ -312,16 +333,16 @@ def matsumreduce(arr,mod=2):
 
 ## Convenience methods for computing Smith Normal Form 
 ## All of these operations have themselves as inverses 
-def sr(i,j,M,L):
+def _sr(i,j,M,L):
     return swap_rows(i,j,M,L)
 
-def sc(i,j,M,R):
+def _sc(i,j,M,R):
     return swap_columns(i,j,M,R)
 
-def ar(i,j,M,L,mod=2):
+def _ar(i,j,M,L,mod=2):
     return add_to_row(M,i,j,mod=mod),add_to_row(L,i,j,mod=mod)
 
-def ac(i,j,M,R,mod=2):
+def _ac(i,j,M,R,mod=2):
     return add_to_column(M,i,j,mod=mod),add_to_column(R,i,j,mod=mod)
 
 def _get_next_pivot(M,s1,s2=None):
@@ -374,16 +395,17 @@ def smith_normal_form_mod2(M,track=False):
     Returns
     -------
     L, R, S, Linv, Rinv : np.arrays
+        LMR = S is the Smith Normal Form of the matrix M. 
     
-    Note:
-    -----
+    Note
+    ----
     We compute a variant of Smith Normal Form. Given a mxn matrix $M$ with 
     entries in $Z_2$ we start with the equation: $L[0] M R[0] = S$, where 
     $L[0] = I_m$, and $R[0]=I_n$ are identity matrices and $S = M$. We 
     repeatedly multiply the left and right side of the equation by 
     invertible matrices $L[i]$ and $R[j]$ to transform S into a diagonal 
     matrix. At the end we verify the product:
-        $$L M R = S.$$
+    $$L M R = S.$$
     where $L = L[s]L[s-1]...L[1]L[0]$ and $R = R[0]R[1]...R[t]$.
        
     """
@@ -419,7 +441,7 @@ def smith_normal_form_mod2(M,track=False):
             print(f'/nPivot={rdx},{cdx}')
         ## Swap rows and columns as needed so that 1 is in the s,s position
         if rdx > s:
-            S,L = sr(s,rdx,S,L)
+            S,L = _sr(s,rdx,S,L)
 #             This is equivalent to
 #             S = swap_rows(s,rdx,S)[0]
 #             L = swap_rows(s,rdx,L)[0]
@@ -428,7 +450,7 @@ def smith_normal_form_mod2(M,track=False):
                 print(L,f'L\n',S,'S\n',) 
             assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
         if cdx > s:
-            S,R= sc(s,cdx,S,R)
+            S,R= _sc(s,cdx,S,R)
             Rinv.append(swap_columns(s,cdx,IR)[0])
             if track:
                 print(S,'S\n',R,f'R\n') 
@@ -437,7 +459,7 @@ def smith_normal_form_mod2(M,track=False):
         # add sth row to every row with 1 in sth column & sth column to every column with 1 in sth row
         row_indices = [idx for idx in range(dimL) if idx != s and S[idx][s] == 1]
         for rdx in row_indices:
-            S,L = ar(rdx,s,S,L,mod=mod)
+            S,L = _ar(rdx,s,S,L,mod=mod)
             temp = add_to_row(IL,rdx,s,mod=mod)
             Linv.append(temp)
             if track:
@@ -445,7 +467,7 @@ def smith_normal_form_mod2(M,track=False):
             assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
         column_indices = [jdx for jdx in range(dimR) if jdx != s and S[s][jdx] == 1]
         for jdx,cdx in enumerate(column_indices):
-            S,R = ac(cdx,s,S,R)
+            S,R = _ac(cdx,s,S,R)
             temp = add_to_column(IR,cdx,s,mod=mod)
             Rinv.append(temp)
             if track:
@@ -474,8 +496,9 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
     
     Returns
     -------
-    L, S, Linv : np.arrays     
-
+    L, S, Linv : np.arrays 
+        LM = S where S is the reduced echelon form of M
+        and M = LinvS    
         
     Note
     ----
@@ -516,7 +539,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
         else:
             continue
         if rdx > s1:
-            S,L = sr(s1,rdx,S,L)
+            S,L = _sr(s1,rdx,S,L)
             Linv.append(swap_rows(s1,rdx,IL)[0]) ## keep track of transformations on the left to reverse them for the inverse
             if track:
                 print(L,f'L\n',S,'S\n',) 
@@ -525,7 +548,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
         # add sth row to every nonzero row 
         row_indices = [idx for idx in range(dimL) if idx != s1 and S[idx][cdx] == 1]
         for idx in row_indices:
-            S,L = ar(idx,s1,S,L,mod=mod)
+            S,L = _ar(idx,s1,S,L,mod=mod)
             temp = add_to_row(IL,idx,s1,mod=mod)
             Linv.append(temp)
             if track:
@@ -575,7 +598,7 @@ def image_group(im2):
     Returns
     -------
      : list
-        list of 
+        list of elements of the boundary group
     """
     msg = """
     image_group() provides a very inefficient method for generating the boundary
