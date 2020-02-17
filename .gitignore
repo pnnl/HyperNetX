@@ -8,6 +8,14 @@ homology_log.log
 logfiles/
 stashmerge.sh
 jacksnbs
+demos
 
 __pycache__
 *.ipynb_checkpoints
+build/lib/hypernetx
+build2
+push_commits.sh
+hg_constructors1.py
+untitled*
+Untitled*
+

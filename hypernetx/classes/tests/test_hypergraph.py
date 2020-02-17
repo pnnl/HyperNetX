@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import networkx as nx
 from hypernetx import Hypergraph, Entity, EntitySet 
 from hypernetx import HyperNetXError
 
@@ -171,12 +172,6 @@ def test_bipartite(sbs_hypergraph):
     b = h.bipartite()
     assert bipartite.is_bipartite(b)
 
-def test_from_bipartite(bipartite_example):
-    B = bipartite_example
-    h = Hypergraph.from_bipartite(B)
-    assert h.shape == (10,5)
-    assert len(list(h.connected_components())) == 2
-
 def test_distance(lesmis):
     h = lesmis.hypergraph
     assert h.distance('ME','FN') == 2
@@ -189,4 +184,6 @@ def test_edge_distance(lesmis):
     h.remove_edge(5)
     assert h.edge_distance(1,4) == 3
     assert h.edge_distance(1,4,s=2) == np.inf
+
+
 

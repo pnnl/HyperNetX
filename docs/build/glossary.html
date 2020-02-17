@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Glossary of HNX terms &mdash; HyperNetX 0.2.5 documentation</title>
+  <title>Glossary of HNX terms &mdash; HyperNetX 0.2.6 documentation</title>
   
 
   
@@ -17,34 +17,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="License" href="license.html" />
+    <link rel="next" title="classes" href="classes/modules.html" />
     <link rel="prev" title="Installing HyperNetX" href="install.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -89,6 +93,9 @@
 <li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -156,92 +163,92 @@
             
   <div class="section" id="glossary-of-hnx-terms">
 <span id="glossary"></span><h1>Glossary of HNX terms<a class="headerlink" href="#glossary-of-hnx-terms" title="Permalink to this headline">¶</a></h1>
-<dl class="glossary docutils">
-<dt id="term-bipartite-condition">Bipartite Condition</dt>
-<dd>Condition imposed on instances of the class EntitySet.
+<dl class="glossary simple">
+<dt id="term-bipartite-condition">Bipartite Condition</dt><dd><p>Condition imposed on instances of the class EntitySet.
 ities that are elements of the same EntitySet, may not contain each other as elements.*
 elements and children of an EntitySet generate a specific partition for a bipartite graph.
 partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
 children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs
-NX. See methods <a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.bipartite" title="classes.hypergraph.Hypergraph.bipartite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">classes.hypergraph.Hypergraph.bipartite()</span></code></a> and <a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite" title="classes.hypergraph.Hypergraph.from_bipartite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">classes.hypergraph.Hypergraph.from_bipartite()</span></code></a>.</dd>
-<dt id="term-degree">degree</dt>
-<dd>Given a hypergraph (Nodes,Edges), the degree of a node in Nodes is the number of edges in Edges to which the node belongs.
-See also: <a class="reference internal" href="#term-s-degree"><span class="xref std std-term">s-degree</span></a></dd>
-<dt id="term-dual">dual</dt>
-<dd>For a hypergraph (Nodes,Edges), its dual is the hypergraph constructed by switching the roles of Nodes and Edges. More precisely, if node i belongs to edge j in the hypergraph, then node j belongs to edge i in the dual hypergraph.</dd>
-<dt id="term-entity">Entity</dt>
-<dd>Class in entity.py.
+NX. See methods <a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.bipartite" title="classes.hypergraph.Hypergraph.bipartite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">classes.hypergraph.Hypergraph.bipartite()</span></code></a> and <a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite" title="classes.hypergraph.Hypergraph.from_bipartite"><code class="xref py py-meth docutils literal notranslate"><span class="pre">classes.hypergraph.Hypergraph.from_bipartite()</span></code></a>.</p>
+</dd>
+<dt id="term-degree">degree</dt><dd><p>Given a hypergraph (Nodes,Edges), the degree of a node in Nodes is the number of edges in Edges to which the node belongs.
+See also: <a class="reference internal" href="#term-s-degree"><span class="xref std std-term">s-degree</span></a></p>
+</dd>
+<dt id="term-dual">dual</dt><dd><p>For a hypergraph (Nodes,Edges), its dual is the hypergraph constructed by switching the roles of Nodes and Edges. More precisely, if node i belongs to edge j in the hypergraph, then node j belongs to edge i in the dual hypergraph.</p>
+</dd>
+<dt id="term-entity">Entity</dt><dd><p>Class in entity.py.
 The base class for nodes, edges, and other HNX structures. An entity has a unique id, a set of properties, and a set of other entities belonging to it called its <a class="reference internal" href="#term-entity-elements"><span class="xref std std-term">elements</span></a> (an entity may not contain itself).
-If an entity A belongs to another entity B then A has membership in B and A is an element of B. For any entity A access a dictionary of its elements (keyed by uid) using <code class="docutils literal notranslate"><span class="pre">A.elements</span></code> and a dictionary of its memberships using <code class="docutils literal notranslate"><span class="pre">A.memberships</span></code>.</dd>
-<dt id="term-entity-children">Entity.children</dt>
-<dd>Attribute in class Entity. Returns a set of uids for the elements of the elements of entity.
+If an entity A belongs to another entity B then A has membership in B and A is an element of B. For any entity A access a dictionary of its elements (keyed by uid) using <code class="docutils literal notranslate"><span class="pre">A.elements</span></code> and a dictionary of its memberships using <code class="docutils literal notranslate"><span class="pre">A.memberships</span></code>.</p>
+</dd>
+<dt id="term-entity-children">Entity.children</dt><dd><p>Attribute in class Entity. Returns a set of uids for the elements of the elements of entity.
 For any entity A, the set of entities which belong to some entity belonging to A.  Use <code class="docutils literal notranslate"><span class="pre">A.children</span></code> to access the set of uids belonging to the children of A and <code class="docutils literal notranslate"><span class="pre">A.registry</span></code> to access a dictionary of uid,entity key value pairs of the children of A.
-See also <a class="reference internal" href="#term-entity-levelset"><span class="xref std std-term">Entity.levelset</span></a>.</dd>
-<dt id="term-entity-depth">Entity.depth</dt>
-<dd>Method in class Entity.
+See also <a class="reference internal" href="#term-entity-levelset"><span class="xref std std-term">Entity.levelset</span></a>.</p>
+</dd>
+<dt id="term-entity-depth">Entity.depth</dt><dd><p>Method in class Entity.
 The number of non empty <a class="reference internal" href="#term-entity-levelset"><span class="xref std std-term">Level sets</span></a> belonging to an entity.
 For any entity A, if A.elements is empty then it has depth 0 and no non-empty Levels.
 If A.elements contains only Entities of depth 0 then A has depth 1.
 If A.elements contains only Entities of depth 0 and depth 1 then A has depth 2.
-If A.elements contains an entity of depth n and no Entities of depth more than n then it has depth n+1.</dd>
-<dt id="term-entity-elements">Entity.elements</dt>
-<dd>Attribute in class Entity. Returns a dictionary of elements of the entity.
-For any entity A, the elements equal the set of entities belonging to A. Use <code class="docutils literal notranslate"><span class="pre">A.uidset</span></code> to access the set of uids belonging to the elements of A and <code class="docutils literal notranslate"><span class="pre">A.elements</span></code> to access a dictionary of uid,entity key value pairs of elements of A.</dd>
-<dt id="term-entity-levelset">Entity.levelset</dt>
-<dd>Method in class Entity.
+If A.elements contains an entity of depth n and no Entities of depth more than n then it has depth n+1.</p>
+</dd>
+<dt id="term-entity-elements">Entity.elements</dt><dd><p>Attribute in class Entity. Returns a dictionary of elements of the entity.
+For any entity A, the elements equal the set of entities belonging to A. Use <code class="docutils literal notranslate"><span class="pre">A.uidset</span></code> to access the set of uids belonging to the elements of A and <code class="docutils literal notranslate"><span class="pre">A.elements</span></code> to access a dictionary of uid,entity key value pairs of elements of A.</p>
+</dd>
+<dt id="term-entity-levelset">Entity.levelset</dt><dd><p>Method in class Entity.
 For any entity A, Level 1 of A is the set of <a class="reference internal" href="#term-entity-elements"><span class="xref std std-term">elements</span></a> of A.
 The elements of entities in Level 1 of A belong to Level 2 of A. The elements of entities in Level k of A belong to Level k+1 of A.
 The entities in Level 2 of A are called A’s children.
 A single entity may occupy multiple Level sets of an entity. An entity may belong to any of its own Level sets except Level 1 as no entity may contain itself as an element.
 Note that if Level n of A is nonempty then Level k of A is nonempty for all k&lt;n.
-Use <code class="docutils literal notranslate"><span class="pre">A.levelset(k)</span></code> to access a dictionary of uid,entity key value pairs for the entities in Level k of A.</dd>
-<dt id="term-entity-memberships">Entity.memberships</dt>
-<dd>Attribute in class Entity.
-A dictionary of uid,entity key value pairs of entities to which the entity belongs.</dd>
-<dt id="term-entity-registry">Entity.registry</dt>
-<dd>Attribute in class Entity.
-A dictionary of uid,entity key value pairs of the <a class="reference internal" href="#term-entity-children"><span class="xref std std-term">children</span></a> of an entity.</dd>
-<dt id="term-entityset">entityset</dt>
-<dd>An entity A satisfying the <a class="reference internal" href="#term-bipartite-condition"><span class="xref std std-term">Bipartite Condition</span></a>, the property that the set of entities in Level 1 of A is disjoint from the set of entities in Level 2 of A, i.e. the elements of A are disjoint from the children of A. An entityset is instantiated in the class EntitySet.</dd>
-<dt id="term-hypergraph">hypergraph</dt>
-<dd>A pair of entitysets (Nodes,Edges) such that Edges has <a class="reference internal" href="#term-entity-depth"><span class="xref std std-term">depth</span></a> 2, Nodes have depth 1, and the children of Edges is exactly the set of elements of Nodes. Intuitively, every element of Edges is a (hyper)edge, which is either empty or contains elements of Nodes. Every node in Nodes has <a class="reference internal" href="#term-entity-memberships"><span class="xref std std-term">membership</span></a> in some edge in Edges. Since a node has <a class="reference internal" href="#term-entity-depth"><span class="xref std std-term">depth</span></a> 0 it is distinguished by its uid, properties, and memberships. A hypergraph is instantiated in the class Hypergraph.</dd>
-<dt id="term-incidence-matrix">incidence matrix</dt>
-<dd>A rectangular matrix constructed from a hypergraph (Nodes,Edges) where the elements of Nodes index the matrix rows, and the elements of Edges index the matrix columns. Entry (i,j) in the incidence matrix is 1 if the node corresponding to i in Nodes belongs to the edge corresponding to j in Edges, and is 0 otherwise.</dd>
-<dt id="term-s-adjacency-matrix">s-adjacency matrix</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, a square matrix where the elements of Nodes index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if node i and node j belong to at least s shared edges, and is equal to the number of shared edges (if weighted) or 1 (if unweighted).</dd>
-<dt id="term-s-auxiliary-matrix">s-auxiliary matrix</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, the submatrix of the <a class="reference internal" href="#term-s-edge-adjacency-matrix"><span class="xref std std-term">s-edge-adjacency matrix</span></a> obtained by restricting to rows and columns corresponding to edges of size at least s.</dd>
-<dt id="term-s-connected-component-s-node-connected-component">s-connected component, s-node-connected component</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, an s-connected component is a <a class="reference internal" href="#term-subhypergraph"><span class="xref std std-term">subhypergraph</span></a> induced by a subset of Nodes with the property that there exists an s-walk between every pair of nodes in this subset. An s-connected component is the maximal such subset in the sense that it is not properly contained in any other subset satisfying this property.</dd>
-<dt id="term-s-connected-s-node-connected">s-connected, s-node-connected</dt>
-<dd>A hypergraph is s-connected if it has one s-connected component.</dd>
-<dt id="term-s-degree">s-degree</dt>
-<dd>For a hypergraph (Nodes, Edges) and positive integer s, the s-degree of a node is the number of edges in Edges of size at least s to which node belongs. See also: <a class="reference internal" href="#term-degree"><span class="xref std std-term">degree</span></a></dd>
-<dt id="term-s-diameter">s-diameter</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, the s-diameter is the maximum s-Distance over all pairs of nodes in Nodes.</dd>
-<dt id="term-s-distance">s-distance</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, the s-distances between two nodes in Nodes is the length of the shortest <a class="reference internal" href="#term-s-node-walk"><span class="xref std std-term">s-node-walk</span></a> between them. If no s-node-walks between the pair of nodes exists, the s-distance between them is infinite. The s-distance
-between edges is the length of the shortest <a class="reference internal" href="#term-s-edge-walk"><span class="xref std std-term">s-edge-walk</span></a> between them. If no s-edge-walks between the pair of edges exist, then s-distance between them is infinite.</dd>
-<dt id="term-s-edge">s-edge</dt>
-<dd>For a hypergraph (Nodes, Edges) and positive integer s, an s-edge is any edge of size at least s.</dd>
-<dt id="term-s-edge-adjacency-matrix">s-edge-adjacency matrix</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, a square matrix where the elements of Edges index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if edge i and edge j share to at least s nodes, and is equal to the number of shared nodes (if weighted) or 1 (if unweighted).</dd>
-<dt id="term-s-edge-connected">s-edge-connected</dt>
-<dd>A hypergraph is s-edge-connected if it has one s-edge-connected component.</dd>
-<dt id="term-s-edge-connected-component">s-edge-connected component</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, an s-edge-connected component is a <a class="reference internal" href="#term-subhypergraph"><span class="xref std std-term">subhypergraph</span></a> induced by a subset of Edges with the property that there exists an s-edge-walk between every pair of edges in this subset. An s-edge-connected component is the maximal such subset in the sense that it is not properly contained in any other subset satisfying this property.</dd>
-<dt id="term-s-edge-walk">s-edge-walk</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, a sequence of edges in Edges such that each successive pair of edges intersects in at least s nodes in Nodes.</dd>
-<dt id="term-s-node-walk">s-node-walk</dt>
-<dd>For a hypergraph (Nodes,Edges) and positive integer s, a sequence of nodes in Nodes such that each successive pair of nodes share at least s edges in Edges.</dd>
-<dt id="term-s-walk">s-walk</dt>
-<dd>Either an s-node-walk or an s-edge-walk.</dd>
-<dt id="term-simple-hypergraph">simple hypergraph</dt>
-<dd>A hypergraph for which no edge is completely contained in another.</dd>
-<dt id="term-subhypergraph">subhypergraph</dt>
-<dd>Given a hypergraph (Nodes,Edges), a subhypergraph is a pair of subsets of (Nodes,Edges).</dd>
-<dt id="term-toplex">toplex</dt>
-<dd>For a hypergraph (Nodes,Edges), a toplex is an edge in Edges whose elements (i.e. nodes) do not all belong to any other edge in Edge.</dd>
+Use <code class="docutils literal notranslate"><span class="pre">A.levelset(k)</span></code> to access a dictionary of uid,entity key value pairs for the entities in Level k of A.</p>
+</dd>
+<dt id="term-entity-memberships">Entity.memberships</dt><dd><p>Attribute in class Entity.
+A dictionary of uid,entity key value pairs of entities to which the entity belongs.</p>
+</dd>
+<dt id="term-entity-registry">Entity.registry</dt><dd><p>Attribute in class Entity.
+A dictionary of uid,entity key value pairs of the <a class="reference internal" href="#term-entity-children"><span class="xref std std-term">children</span></a> of an entity.</p>
+</dd>
+<dt id="term-entityset">entityset</dt><dd><p>An entity A satisfying the <a class="reference internal" href="#term-bipartite-condition"><span class="xref std std-term">Bipartite Condition</span></a>, the property that the set of entities in Level 1 of A is disjoint from the set of entities in Level 2 of A, i.e. the elements of A are disjoint from the children of A. An entityset is instantiated in the class EntitySet.</p>
+</dd>
+<dt id="term-hypergraph">hypergraph</dt><dd><p>A pair of entitysets (Nodes,Edges) such that Edges has <a class="reference internal" href="#term-entity-depth"><span class="xref std std-term">depth</span></a> 2, Nodes have depth 1, and the children of Edges is exactly the set of elements of Nodes. Intuitively, every element of Edges is a (hyper)edge, which is either empty or contains elements of Nodes. Every node in Nodes has <a class="reference internal" href="#term-entity-memberships"><span class="xref std std-term">membership</span></a> in some edge in Edges. Since a node has <a class="reference internal" href="#term-entity-depth"><span class="xref std std-term">depth</span></a> 0 it is distinguished by its uid, properties, and memberships. A hypergraph is instantiated in the class Hypergraph.</p>
+</dd>
+<dt id="term-incidence-matrix">incidence matrix</dt><dd><p>A rectangular matrix constructed from a hypergraph (Nodes,Edges) where the elements of Nodes index the matrix rows, and the elements of Edges index the matrix columns. Entry (i,j) in the incidence matrix is 1 if the node corresponding to i in Nodes belongs to the edge corresponding to j in Edges, and is 0 otherwise.</p>
+</dd>
+<dt id="term-s-adjacency-matrix">s-adjacency matrix</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, a square matrix where the elements of Nodes index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if node i and node j belong to at least s shared edges, and is equal to the number of shared edges (if weighted) or 1 (if unweighted).</p>
+</dd>
+<dt id="term-s-auxiliary-matrix">s-auxiliary matrix</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, the submatrix of the <a class="reference internal" href="#term-s-edge-adjacency-matrix"><span class="xref std std-term">s-edge-adjacency matrix</span></a> obtained by restricting to rows and columns corresponding to edges of size at least s.</p>
+</dd>
+<dt id="term-s-connected-component-s-node-connected-component">s-connected component, s-node-connected component</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, an s-connected component is a <a class="reference internal" href="#term-subhypergraph"><span class="xref std std-term">subhypergraph</span></a> induced by a subset of Nodes with the property that there exists an s-walk between every pair of nodes in this subset. An s-connected component is the maximal such subset in the sense that it is not properly contained in any other subset satisfying this property.</p>
+</dd>
+<dt id="term-s-connected-s-node-connected">s-connected, s-node-connected</dt><dd><p>A hypergraph is s-connected if it has one s-connected component.</p>
+</dd>
+<dt id="term-s-degree">s-degree</dt><dd><p>For a hypergraph (Nodes, Edges) and positive integer s, the s-degree of a node is the number of edges in Edges of size at least s to which node belongs. See also: <a class="reference internal" href="#term-degree"><span class="xref std std-term">degree</span></a></p>
+</dd>
+<dt id="term-s-diameter">s-diameter</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, the s-diameter is the maximum s-Distance over all pairs of nodes in Nodes.</p>
+</dd>
+<dt id="term-s-distance">s-distance</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, the s-distances between two nodes in Nodes is the length of the shortest <a class="reference internal" href="#term-s-node-walk"><span class="xref std std-term">s-node-walk</span></a> between them. If no s-node-walks between the pair of nodes exists, the s-distance between them is infinite. The s-distance
+between edges is the length of the shortest <a class="reference internal" href="#term-s-edge-walk"><span class="xref std std-term">s-edge-walk</span></a> between them. If no s-edge-walks between the pair of edges exist, then s-distance between them is infinite.</p>
+</dd>
+<dt id="term-s-edge">s-edge</dt><dd><p>For a hypergraph (Nodes, Edges) and positive integer s, an s-edge is any edge of size at least s.</p>
+</dd>
+<dt id="term-s-edge-adjacency-matrix">s-edge-adjacency matrix</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, a square matrix where the elements of Edges index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if edge i and edge j share to at least s nodes, and is equal to the number of shared nodes (if weighted) or 1 (if unweighted).</p>
+</dd>
+<dt id="term-s-edge-connected">s-edge-connected</dt><dd><p>A hypergraph is s-edge-connected if it has one s-edge-connected component.</p>
+</dd>
+<dt id="term-s-edge-connected-component">s-edge-connected component</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, an s-edge-connected component is a <a class="reference internal" href="#term-subhypergraph"><span class="xref std std-term">subhypergraph</span></a> induced by a subset of Edges with the property that there exists an s-edge-walk between every pair of edges in this subset. An s-edge-connected component is the maximal such subset in the sense that it is not properly contained in any other subset satisfying this property.</p>
+</dd>
+<dt id="term-s-edge-walk">s-edge-walk</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, a sequence of edges in Edges such that each successive pair of edges intersects in at least s nodes in Nodes.</p>
+</dd>
+<dt id="term-s-node-walk">s-node-walk</dt><dd><p>For a hypergraph (Nodes,Edges) and positive integer s, a sequence of nodes in Nodes such that each successive pair of nodes share at least s edges in Edges.</p>
+</dd>
+<dt id="term-s-walk">s-walk</dt><dd><p>Either an s-node-walk or an s-edge-walk.</p>
+</dd>
+<dt id="term-simple-hypergraph">simple hypergraph</dt><dd><p>A hypergraph for which no edge is completely contained in another.</p>
+</dd>
+<dt id="term-subhypergraph">subhypergraph</dt><dd><p>Given a hypergraph (Nodes,Edges), a subhypergraph is a pair of subsets of (Nodes,Edges).</p>
+</dd>
+<dt id="term-toplex">toplex</dt><dd><p>For a hypergraph (Nodes,Edges), a toplex is an edge in Edges whose elements (i.e. nodes) do not all belong to any other edge in Edge.</p>
+</dd>
 </dl>
 </div>
 
@@ -253,10 +260,10 @@ between edges is the length of the shortest <a class="reference internal" href="
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classes/modules.html" class="btn btn-neutral float-right" title="classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="Installing HyperNetX" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-left" title="Installing HyperNetX" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -282,27 +289,16 @@ between edges is the length of the shortest <a class="reference internal" href="
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

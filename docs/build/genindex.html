@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; HyperNetX 0.2.5 documentation</title>
+  <title>Index &mdash; HyperNetX 0.2.6 documentation</title>
   
 
   
@@ -18,32 +18,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -88,6 +92,9 @@
 <li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -220,11 +227,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reports/reports.html#reports.descriptive_stats.centrality_stats">centrality_stats() (in module reports.descriptive_stats)</a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.children">children (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.children">children() (classes.entity.Entity property)</a>
 </li>
       <li><a href="classes/classes.html#module-classes">classes (module)</a>
 </li>
       <li><a href="classes/classes.html#module-classes.entity">classes.entity (module)</a>
+</li>
+      <li><a href="classes/classes.html#module-classes.hg_constructors">classes.hg_constructors (module)</a>
 </li>
       <li><a href="classes/classes.html#module-classes.hypergraph">classes.hypergraph (module)</a>
 </li>
@@ -330,9 +339,9 @@
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.edge_size_dist">edge_size_dist() (in module reports.descriptive_stats)</a>
 </li>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edges">edges (classes.hypergraph.Hypergraph attribute)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edges">edges() (classes.hypergraph.Hypergraph property)</a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.elements">elements (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.elements">elements() (classes.entity.Entity property)</a>
 </li>
       <li><a href="glossary.html#term-entity"><strong>Entity</strong></a>
 
@@ -366,9 +375,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reports/reports.html#reports.descriptive_stats.frequency_distribution">frequency_distribution() (in module reports.descriptive_stats)</a>
 </li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">from_bipartite() (classes.hypergraph.Hypergraph method)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.hg_constructors.from_bipartite">(in module classes.hg_constructors)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">from_bipartite() (classes.hypergraph.Hypergraph method)</a>
+      <li><a href="classes/classes.html#classes.hg_constructors.from_dataframe">from_dataframe() (in module classes.hg_constructors)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hg_constructors.from_numpy_array">from_numpy_array() (in module classes.hg_constructors)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.fullregistry">fullregistry() (classes.entity.Entity method)</a>
 </li>
@@ -408,10 +425,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="glossary.html#term-incidence-matrix"><strong>incidence matrix</strong></a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.incidence_dict">incidence_dict (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.incidence_dict">incidence_dict() (classes.entity.Entity property)</a>
 
       <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dict">(classes.hypergraph.Hypergraph attribute)</a>
+        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dict">(classes.hypergraph.Hypergraph property)</a>
 </li>
       </ul></li>
       <li><a href="classes/classes.html#classes.entity.EntitySet.incidence_matrix">incidence_matrix() (classes.entity.EntitySet method)</a>
@@ -430,11 +447,11 @@
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.intersection">intersection() (classes.entity.Entity method)</a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.is_bipartite">is_bipartite (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.is_bipartite">is_bipartite() (classes.entity.Entity property)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.is_connected">is_connected() (classes.hypergraph.Hypergraph method)</a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.is_empty">is_empty (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.is_empty">is_empty() (classes.entity.Entity property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -460,7 +477,7 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.Entity.memberships">memberships (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.memberships">memberships() (classes.entity.Entity property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -480,7 +497,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.nodes">nodes (classes.hypergraph.Hypergraph attribute)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.nodes">nodes() (classes.hypergraph.Hypergraph property)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.number_of_edges">number_of_edges() (classes.hypergraph.Hypergraph method)</a>
 </li>
@@ -500,7 +517,7 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.Entity.properties">properties (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.properties">properties() (classes.entity.Entity property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -508,7 +525,9 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.Entity.registry">registry (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.hg_constructors.read_csv">read_csv() (in module classes.hg_constructors)</a>
+</li>
+      <li><a href="classes/classes.html#classes.entity.Entity.registry">registry() (classes.entity.Entity property)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.remove">remove() (classes.entity.Entity method)</a>
 </li>
@@ -592,7 +611,7 @@
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.s_node_diameter_dist">s_node_diameter_dist() (in module reports.descriptive_stats)</a>
 </li>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.shape">shape (classes.hypergraph.Hypergraph attribute)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.shape">shape() (classes.hypergraph.Hypergraph property)</a>
 </li>
       <li><a href="glossary.html#term-simple-hypergraph"><strong>simple hypergraph</strong></a>
 </li>
@@ -612,6 +631,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.hg_constructors.to_dataframe">to_dataframe() (in module classes.hg_constructors)</a>
+</li>
       <li><a href="glossary.html#term-toplex"><strong>toplex</strong></a>
 </li>
   </ul></td>
@@ -626,11 +647,11 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.Entity.uid">uid (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.uid">uid() (classes.entity.Entity property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.Entity.uidset">uidset (classes.entity.Entity attribute)</a>
+      <li><a href="classes/classes.html#classes.entity.Entity.uidset">uidset() (classes.entity.Entity property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -664,27 +685,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

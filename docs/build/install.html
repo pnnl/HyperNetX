@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installing HyperNetX &mdash; HyperNetX 0.2.5 documentation</title>
+  <title>Installing HyperNetX &mdash; HyperNetX 0.2.6 documentation</title>
   
 
   
@@ -17,34 +17,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/copybutton.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Glossary of HNX terms" href="glossary.html" />
     <link rel="prev" title="Overview" href="overview/index.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -95,6 +99,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -164,29 +171,29 @@
 <h1>Installing HyperNetX<a class="headerlink" href="#installing-hypernetx" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="to-install-in-an-anaconda-environment">
 <h2>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">matplotlib</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">matplotlib</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="to-install-in-a-virtualenv-environment">
 <h2>To install in a virtualenv environment<a class="headerlink" href="#to-install-in-a-virtualenv-environment" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">python</span> <span class="mf">3.6</span> <span class="n">executable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">python</span> <span class="mf">3.6</span> <span class="n">executable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>This will create a virtual environment in the specified location using
 the specified python executable. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Anaconda3</span>\<span class="n">python</span><span class="o">.</span><span class="n">exe</span> <span class="n">hnx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Anaconda3</span>\<span class="n">python</span><span class="o">.</span><span class="n">exe</span> <span class="n">hnx</span>
 </pre></div>
 </div>
 <p>This will create a virtual environment in .hnx using the python
 that comes with Anaconda3.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>\<span class="n">Scripts</span>\<span class="n">activate</span><span class="o">&lt;</span><span class="n">file</span> <span class="n">extension</span><span class="o">&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>\<span class="n">Scripts</span>\<span class="n">activate</span><span class="o">&lt;</span><span class="n">file</span> <span class="n">extension</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>If you are running in Windows PowerShell use &lt;file extension&gt;=.ps1</p>
@@ -197,31 +204,31 @@ that comes with Anaconda3.</p>
 <div class="section" id="install-using-pip">
 <h2>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline">¶</a></h2>
 <p>For a minimal installation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
 </div>
 <p>For an editable installation with access to jupyter notebooks:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span><span class="p">]</span> <span class="o">.</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span><span class="p">]</span> <span class="o">.</span>
 </pre></div>
 </div>
 <p>To install with the tutorials:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;tutorials&#39;</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;tutorials&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>To install with the documentation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sphinx</span><span class="o">-</span><span class="n">build</span> <span class="o">-</span><span class="n">b</span> <span class="n">html</span> <span class="n">docs</span><span class="o">/</span><span class="n">source</span> <span class="n">docs</span><span class="o">/</span><span class="n">build</span>
 <span class="go">## This will generate the documentation in /docs/build</span>
 <span class="go">## Open them in your browser with /docs/build/index.html</span>
 </pre></div>
 </div>
 <p>To install and test using pytest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;testing&#39;</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;testing&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pytest</span>
 </pre></div>
 </div>
 <p>To install the whole shabang:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -242,7 +249,7 @@ that comes with Anaconda3.</p>
         <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary of HNX terms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="overview/index.html" class="btn btn-neutral" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="overview/index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -268,27 +275,16 @@ that comes with Anaconda3.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
