@@ -353,7 +353,7 @@ class Hypergraph():
 
 	def dim(self,edge):
 		"""
-		Same as size(edge).
+		Same as size(edge)-1.
 		"""
 
 		if edge in self.edges:
@@ -1427,7 +1427,8 @@ class Hypergraph():
 			warnings.warn(f'No {s}-path between {source} and {target}')
 			return np.inf
 
-	def from_bipartite(B,set_names=[0,1],name=None):
+	@classmethod
+	def from_bipartite(cls,B,set_names=[0,1],name=None):
 		"""
 		Static method creates a Hypergraph from a bipartite graph.
 
@@ -1457,6 +1458,7 @@ class Hypergraph():
 		For each edge (n,e) in B add n to the edge e in the hypergraph.
 
 		""" 
+
 		if not bipartite.is_bipartite(B):
 			raise HyperNetxError('Error: Method requires a bipartite graph.')
 		entities = []
@@ -1469,6 +1471,129 @@ class Hypergraph():
 		            entities.append(Entity(n,elements,properties=d))
 		name = name or '_'
 		return Hypergraph(EntitySet(name,entities),name=name)
+
+
+	@classmethod
+	def from_numpy_array(cls,M,node_names=None, edge_names=None, name=None, key=None):
+		"""
+		Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2 
+		The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and 
+		all others to 0's. 
+
+		Parameters
+		----------
+		M : real valued array-like object, dimensions=2x2
+		    representing a real valued matrix with rows corresponding to nodes and columns to edges
+
+		node_names : object, array-like, default=None
+		    List of node names must be the same length as M.shape[0]. 
+		    If None then the node names correspond to row indices with 'v' prepended.
+
+		edge_names : object, array-like, default=None
+		    List of edge names must have the same length as M.shape[1]. 
+		    If None then the edge names correspond to column indices with 'e' prepended.
+
+		name : hashable
+
+		key : (optional) function
+			boolean function to be evaluated on each cell of the array
+		    
+		Returns
+		-------
+		 : Hypergraph
+
+		Note
+		----
+		The constructor does not generate empty edges. 
+		All zero columns in M are removed and the names corresponding to these
+		edges are discarded.
+
+
+		"""  	    
+		## Create names for nodes and edges
+		## Validate the size of the node and edge arrays
+
+		M = np.array(M)
+		if len(M.shape) != (2):
+			raise HyperNetXError('Input requires a 2 dimensional numpy array')
+
+		if node_names is not None:
+		    nodenames = np.array(node_names)
+		    if len(nodenames) != M.shape[0]:
+		        raise HyperNetXError('Number of node names does not match number of rows.')
+		else:
+		    nodenames = np.array([f'v{idx}' for idx in range(M.shape[0])])
+
+		if edge_names is not None:
+		    edgenames = np.array(edge_names)
+		    if len(edgenames) != M.shape[1]:
+		    	raise HyperNetXError('Number of edge_names does not match number of columns.')
+		else:
+		    edgenames = np.array([f'e{jdx}' for jdx in range(M.shape[1])])
+
+		## apply boolean key if available
+		if key:
+			M = key(M)
+
+		## Remove empty column indices from M columns and edgenames
+		colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:,jdx])])
+		colidxsum = np.sum(colidx)
+		if not colidxsum:
+			return Hypergraph()
+		else:
+			M = M[:,colidx]
+			edgenames = edgenames[colidx]
+			edict = dict()
+			## Create an EntitySet of edges from M         
+			for jdx,e in enumerate(edgenames):
+			    edict[e] = nodenames[[idx for idx in range(M.shape[0]) if M[idx,jdx]]]		            
+			return Hypergraph(edict,name=name)
+
+
+	@classmethod
+	def from_dataframe(cls, df, fillna=0, transpose=False, name=None, key=None):
+	    '''
+	    Create a hypergraph from a Pandas Dataframe object using index to label vertices
+	    and Columns to label edges. 
+
+	    Parameters
+	    ----------
+	    df : Pandas.Dataframe
+	        a real valued dataframe with a single index
+
+	    fillna : float, default = 0
+	        a real value to place in empty cell, all-zero columns will not generate
+	        an edge
+
+	    transpose : bool, default = False
+	        option to transpose the dataframe, in this case df.Index will label the edges
+	        and df.columns will label the nodes
+
+	    key : (optional) function
+			boolean function to be evaluated on each cell of the array
+	        
+	    Returns
+	    -------
+	    : Hypergraph
+
+	    Note
+	    ----
+	    The constructor does not generate empty edges. 
+	    All-zero columns in df are removed and the names corresponding to these
+	    edges are discarded.    
+	    '''
+	    import pandas as pd
+
+	    if type(df) != pd.core.frame.DataFrame:
+	        raise HyperNetXError('Error: Input object must be a pandas dataframe.') 
+	    if transpose:
+	        df = df.transpose()   
+	    node_names = np.array(df.index)
+	    edge_names = np.array(df.columns)
+	    df = df.fillna(fillna)
+	    if key:
+	    	df = df.apply(key)
+	    return cls.from_numpy_array(df.values,node_names=node_names,edge_names=edge_names,name=name)
 
 
 
