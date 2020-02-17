@@ -26,6 +26,7 @@ Contents
    install
    Glossary <glossary>
    Hypergraphs <classes/modules.rst>
+   Algorithms <algorithms/modules.rst>
    Drawing <drawing/modules.rst>
    Reports <reports/modules.rst>
    license
