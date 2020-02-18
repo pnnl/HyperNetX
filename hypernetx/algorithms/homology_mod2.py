@@ -399,7 +399,7 @@ def smith_normal_form_mod2(M,track=False):
     
     Note
     ----
-    We compute a variant of Smith Normal Form. Given a mxn matrix $M$ with 
+    Given a mxn matrix $M$ with 
     entries in $Z_2$ we start with the equation: $L[0] M R[0] = S$, where 
     $L[0] = I_m$, and $R[0]=I_n$ are identity matrices and $S = M$. We 
     repeatedly multiply the left and right side of the equation by 
