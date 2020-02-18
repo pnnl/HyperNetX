@@ -15,7 +15,7 @@ setup(
               'hypernetx.drawing',
               'hypernetx.reports'],
     version=__version__,
-    author="Brenda Praggastis, Dustin Arendt, Emily Purvine, Cliff Joslyn",
+    author="Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn",
     author_email="hypernetx@pnnl.gov",
     url='https://github.com/pnnl/HyperNetX',
     description='HyperNetX is a Python library for the creation and study of hypergraphs.',
