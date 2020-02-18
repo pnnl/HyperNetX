@@ -1,7 +1,7 @@
 from setuptools import setup 
 import sys, os.path
 
-__version__ = '0.2.6'
+__version__ = '0.3.0'
 
 if sys.version_info < (3,6):
     sys.exit('HyperNetX requires Python 3.6 or later.')
@@ -15,7 +15,7 @@ setup(
               'hypernetx.drawing',
               'hypernetx.reports'],
     version=__version__,
-    author="Brenda Praggastis, Dustin Arendt, Emily Purvine, Cliff Joslyn",
+    author="Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn",
     author_email="hypernetx@pnnl.gov",
     url='https://github.com/pnnl/HyperNetX',
     description='HyperNetX is a Python library for the creation and study of hypergraphs.',
