@@ -1,6 +1,8 @@
 Installing HyperNetX
 ====================
 
+HyperNetX may be cloned or forked from: https://github.com/pnnl/HyperNetX .
+
 To install in an Anaconda environment
 -------------------------------------
 

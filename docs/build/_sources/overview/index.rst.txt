@@ -7,12 +7,12 @@ Overview
 .. image:: /images/hnxbasics.png
 	:align: right
 
-The HyperNetX library provides classes and methods for the analysis 
+The `HyperNetX`_ library provides classes and methods for the analysis 
 and visualization of complex network data. HyperNetX uses data structures 
 designed to represent set systems containing nested data and/or multi-way 
 relationships. The library generalizes traditional graph metrics to hypergraphs.
 
-HypernetX was developed by the Pacific Northwest National Laboratory for the 
+`HypernetX`_ was developed by the Pacific Northwest National Laboratory for the 
 Hypernets project as part of its High Performance Data Analytics (HPDA) program. 
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
@@ -39,5 +39,4 @@ Reference herein to any specific commercial product, process, or service by trad
    :maxdepth: 2
 
 
-
-   
+.. _HyperNetX: https://github.com/pnnl/HyperNetX
