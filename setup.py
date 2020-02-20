@@ -1,7 +1,7 @@
 from setuptools import setup 
 import sys, os.path
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 if sys.version_info < (3,6):
     sys.exit('HyperNetX requires Python 3.6 or later.')

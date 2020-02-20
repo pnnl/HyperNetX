@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>algorithms.homology_mod2 &mdash; HyperNetX 0.3.0 documentation</title>
+  <title>algorithms.homology_mod2 &mdash; HyperNetX 0.3.2 documentation</title>
   
 
   
@@ -221,6 +221,7 @@
 <span class="sd">    - Hypergraph node uids must be sortable.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
     <span class="n">kchains</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
@@ -231,6 +232,7 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">kchains</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="interpret"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.interpret">[docs]</a><span class="k">def</span> <span class="nf">interpret</span><span class="p">(</span><span class="n">Ck</span><span class="p">,</span><span class="n">arr</span><span class="p">):</span>
+
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the data as represented in Ck associated with the arr</span>
 <span class="sd">    </span>
@@ -247,6 +249,7 @@
 <span class="sd">        list of k-cells referenced by data in Ck</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Ck</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
@@ -462,6 +465,7 @@
 <span class="sd">    P : np.array</span>
 <span class="sd">        Product of matrices in the list</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
         <span class="n">items</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -494,6 +498,7 @@
 
 <span class="c1">## Convenience methods for computing Smith Normal Form </span>
 <span class="c1">## All of these operations have themselves as inverses </span>
+
 <span class="k">def</span> <span class="nf">_sr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">swap_rows</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
 
@@ -570,6 +575,7 @@
 <span class="sd">    where $L = L[s]L[s-1]...L[1]L[0]$ and $R = R[0]R[1]...R[t]$.</span>
 <span class="sd">       </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">S</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
     <span class="n">dimL</span><span class="p">,</span><span class="n">dimR</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">mod</span> <span class="o">=</span> <span class="mi">2</span>
@@ -581,8 +587,7 @@
     <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimR</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>    
 
-    <span class="n">Linv</span> <span class="o">=</span> <span class="p">[</span><span class="n">IL</span><span class="p">]</span>  <span class="c1">## keep track of transformations to compute inverses at the end</span>
-    <span class="n">Rinv</span> <span class="o">=</span> <span class="p">[</span><span class="n">IR</span><span class="p">]</span>
+    <span class="n">Linv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="s1">&#39;L</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>  
@@ -590,6 +595,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="s1">&#39;R</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dimR</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">),</span>
         <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">s=</span><span class="si">{s}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="c1">## Find index pair (rdx,cdx) with value 1 in submatrix M[s:,s:] </span>
@@ -603,42 +609,27 @@
         <span class="c1">## Swap rows and columns as needed so that 1 is in the s,s position</span>
         <span class="k">if</span> <span class="n">rdx</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">:</span>
             <span class="n">S</span><span class="p">,</span><span class="n">L</span> <span class="o">=</span> <span class="n">_sr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
-<span class="c1">#             This is equivalent to</span>
-<span class="c1">#             S = swap_rows(s,rdx,S)[0]</span>
-<span class="c1">#             L = swap_rows(s,rdx,L)[0]</span>
-            <span class="n">Linv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">swap_rows</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">IL</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">## keep track of transformations on the left to reverse them for the inverse</span>
+            <span class="n">Linv</span> <span class="o">=</span> <span class="n">swap_columns</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">Linv</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;L</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">R</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
         <span class="k">if</span> <span class="n">cdx</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">:</span>
             <span class="n">S</span><span class="p">,</span><span class="n">R</span><span class="o">=</span> <span class="n">_sc</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">cdx</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
-            <span class="n">Rinv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">swap_columns</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">cdx</span><span class="p">,</span><span class="n">IR</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;R</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">R</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
 
         <span class="c1"># add sth row to every row with 1 in sth column &amp; sth column to every column with 1 in sth row</span>
-        <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimL</span><span class="p">)</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">s</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">dimL</span><span class="p">)</span> <span class="k">if</span> <span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">s</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">rdx</span> <span class="ow">in</span> <span class="n">row_indices</span><span class="p">:</span>
             <span class="n">S</span><span class="p">,</span><span class="n">L</span> <span class="o">=</span> <span class="n">_ar</span><span class="p">(</span><span class="n">rdx</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">add_to_row</span><span class="p">(</span><span class="n">IL</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-            <span class="n">Linv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+            <span class="n">Linv</span> <span class="o">=</span> <span class="n">add_to_column</span><span class="p">(</span><span class="n">Linv</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;L</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">R</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-        <span class="n">column_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">jdx</span> <span class="k">for</span> <span class="n">jdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimR</span><span class="p">)</span> <span class="k">if</span> <span class="n">jdx</span> <span class="o">!=</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">S</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">jdx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">column_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">jdx</span> <span class="k">for</span> <span class="n">jdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">dimR</span><span class="p">)</span> <span class="k">if</span> <span class="n">S</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">jdx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">jdx</span><span class="p">,</span><span class="n">cdx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">column_indices</span><span class="p">):</span>
             <span class="n">S</span><span class="p">,</span><span class="n">R</span> <span class="o">=</span> <span class="n">_ac</span><span class="p">(</span><span class="n">cdx</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">add_to_column</span><span class="p">(</span><span class="n">IR</span><span class="p">,</span><span class="n">cdx</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-            <span class="n">Rinv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;R</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">R</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-    <span class="n">Linv</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">(</span><span class="n">Linv</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-    <span class="n">Rinv</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">(</span><span class="n">Rinv</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">IL</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">Linv</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">IR</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">R</span><span class="p">,</span><span class="n">Rinv</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">L</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">Linv</span><span class="p">,</span><span class="n">Rinv</span></div>
+    <span class="k">return</span> <span class="n">L</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">Linv</span></div>
 
         
 <div class="viewcode-block" id="reduced_row_echelon_form_mod2"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.reduced_row_echelon_form_mod2">[docs]</a><span class="k">def</span> <span class="nf">reduced_row_echelon_form_mod2</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">track</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
@@ -672,6 +663,7 @@
 <span class="sd">    verify the product:</span>
 <span class="sd">    L[s]L[s-1]...L[0] M = S .    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">S</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
     <span class="n">dimL</span><span class="p">,</span><span class="n">dimR</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">mod</span> <span class="o">=</span> <span class="mi">2</span>
@@ -679,7 +671,7 @@
     <span class="c1">## method with numpy</span>
     <span class="n">IL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     
-    <span class="n">Linv</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)]</span>
+    <span class="n">Linv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimL</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
@@ -701,22 +693,17 @@
             <span class="k">continue</span>
         <span class="k">if</span> <span class="n">rdx</span> <span class="o">&gt;</span> <span class="n">s1</span><span class="p">:</span>
             <span class="n">S</span><span class="p">,</span><span class="n">L</span> <span class="o">=</span> <span class="n">_sr</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
-            <span class="n">Linv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">swap_rows</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">IL</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">## keep track of transformations on the left to reverse them for the inverse</span>
+            <span class="n">Linv</span> <span class="o">=</span> <span class="n">swap_columns</span><span class="p">(</span><span class="n">rdx</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">Linv</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> 
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;L</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-
         <span class="c1"># add sth row to every nonzero row </span>
         <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimL</span><span class="p">)</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">s1</span> <span class="ow">and</span> <span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">cdx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">row_indices</span><span class="p">:</span>
             <span class="n">S</span><span class="p">,</span><span class="n">L</span> <span class="o">=</span> <span class="n">_ar</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">add_to_row</span><span class="p">(</span><span class="n">IL</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-            <span class="n">Linv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+            <span class="n">Linv</span> <span class="o">=</span> <span class="n">add_to_column</span><span class="p">(</span><span class="n">Linv</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="n">f</span><span class="s1">&#39;L</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="s1">&#39;S</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span> 
-            <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">M</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
-    <span class="n">Linv</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">(</span><span class="n">Linv</span><span class="p">,</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">IL</span> <span class="o">==</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">Linv</span><span class="p">],</span><span class="n">mod</span><span class="o">=</span><span class="n">mod</span><span class="p">)))</span>
+
     <span class="k">return</span> <span class="n">L</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">Linv</span></div>
 
 <span class="c1">## Private</span>
@@ -835,8 +822,8 @@
 <span class="sd">        k-chains</span>
 <span class="sd">        if shortest then returns a dictionary of shortest cycles for each coset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">L1</span><span class="p">,</span><span class="n">R1</span><span class="p">,</span><span class="n">S1</span><span class="p">,</span><span class="n">L1inv</span><span class="p">,</span><span class="n">R1inv</span> <span class="o">=</span> <span class="n">smith_normal_form_mod2</span><span class="p">(</span><span class="n">bd</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-    <span class="n">L2</span><span class="p">,</span><span class="n">R2</span><span class="p">,</span><span class="n">S2</span><span class="p">,</span><span class="n">L2inv</span><span class="p">,</span><span class="n">R2inv</span> <span class="o">=</span> <span class="n">smith_normal_form_mod2</span><span class="p">(</span><span class="n">bd</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">L1</span><span class="p">,</span><span class="n">R1</span><span class="p">,</span><span class="n">S1</span><span class="p">,</span><span class="n">L1inv</span> <span class="o">=</span> <span class="n">smith_normal_form_mod2</span><span class="p">(</span><span class="n">bd</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="n">L2</span><span class="p">,</span><span class="n">R2</span><span class="p">,</span><span class="n">S2</span><span class="p">,</span><span class="n">L2inv</span> <span class="o">=</span> <span class="n">smith_normal_form_mod2</span><span class="p">(</span><span class="n">bd</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
     
     <span class="n">rank1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">S1</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;rank</span><span class="si">{k}</span><span class="s2"> = </span><span class="si">{rank1}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">rank2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">S2</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;rank{k+1} = </span><span class="si">{rank2}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -847,9 +834,9 @@
     <span class="n">ker1</span> <span class="o">=</span> <span class="n">R1</span><span class="p">[:,</span><span class="n">rank1</span><span class="p">:]</span>
     <span class="n">im2</span> <span class="o">=</span> <span class="n">L2inv</span><span class="p">[:,:</span><span class="n">rank2</span><span class="p">]</span>
     <span class="n">cokernel2</span> <span class="o">=</span> <span class="n">L2inv</span><span class="p">[:,</span><span class="n">rank2</span><span class="p">:]</span>
+    <span class="n">cokproj2</span> <span class="o">=</span> <span class="n">L2</span><span class="p">[</span><span class="n">rank2</span><span class="p">:,:]</span>
     
-    <span class="n">proj</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L2</span><span class="p">,</span><span class="n">ker1</span><span class="p">])[</span><span class="n">rank2</span><span class="p">:,:]</span>
-    <span class="n">proj</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">L2inv</span><span class="p">[:,</span><span class="n">rank2</span><span class="p">:],</span><span class="n">proj</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">proj</span> <span class="o">=</span> <span class="n">matmulreduce</span><span class="p">([</span><span class="n">cokernel2</span><span class="p">,</span><span class="n">cokproj2</span><span class="p">,</span><span class="n">ker1</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
     <span class="n">_</span><span class="p">,</span><span class="n">proj</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">reduced_row_echelon_form_mod2</span><span class="p">(</span><span class="n">proj</span><span class="p">)</span>
     <span class="n">proj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">proj</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hom basis reps</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">proj</span><span class="p">)</span>
