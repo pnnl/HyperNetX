@@ -434,7 +434,6 @@ def smith_normal_form_mod2(M,track=False):
         print(R,'R\n')
 
     for s in range(min(dimL,dimR)):
-        print('.'),
         if track:
             print(f'\ns={s}\n')
         ## Find index pair (rdx,cdx) with value 1 in submatrix M[s:,s:] 
