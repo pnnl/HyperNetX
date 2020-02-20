@@ -24,22 +24,28 @@ def test_bkMatrix(triloop):
 def test_smith_normal_form_mod2(triloop):
 	Ck = {k:hnx.kchainbasis(triloop.hypergraph,k) for k in range(0,2)}
 	bd = bkMatrix(Ck[0],Ck[1])
-	P1,Q1,S1,P1inv,Q1inv = smith_normal_form_mod2(bd)
+	P1,Q1,S1,P1inv = smith_normal_form_mod2(bd)
 	assert np.array_equal(P1[0],np.array([1, 0, 0, 0]))
 	assert np.array_equal(Q1[:,2],np.array([0, 1, 1, 0, 0]))
+	assert(np.all(S1 == matmulreduce([P1,bd,Q1],mod=2)))
+	r = len(P1)
+	assert(np.all(np.eye(r) == modmult(P1,P1inv,mod=2)))
+	assert(np.all(S1 == matmulreduce([P1,bd,Q1],mod=2)))
 
 def test_reduced_row_echelon_form_mod2():
 	m = np.array([[0,1,0,1,0,0,1,0,0,1],
 	[0,0,0,0,0,0,0,0,0,1],
 	[1,0,0,1,0,0,0,0,0,0]])
-	L,rm,R = reduced_row_echelon_form_mod2(m)
-	assert np.array_equal(rm,np.array([[1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-       [0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]))
+	r = 3
+	L,S,Linv = reduced_row_echelon_form_mod2(m)
+	assert np.array_equal(S,np.array([[1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+	[0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]))
 	assert np.array_equal(L,np.array([[0, 0, 1],
-       [1, 1, 0],
-       [0, 1, 0]]))
-
+	[1, 1, 0],
+	[0, 1, 0]]))
+	assert(np.all(S == modmult(L,m,mod=2)))
+	assert(np.all(np.eye(3) == modmult(L,Linv,mod=2)))
 
 def test_homology_basis(triloop):
 	Ck = {k:hnx.kchainbasis(triloop.hypergraph,k) for k in range(0,3)}

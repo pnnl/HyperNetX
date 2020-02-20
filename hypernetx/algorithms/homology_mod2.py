@@ -60,6 +60,7 @@ def kchainbasis(h,k):
     - Hypergraph node uids must be sortable.
 
     """
+
     import itertools as it
     kchains = set()
     for e in h.edges():
@@ -70,6 +71,7 @@ def kchainbasis(h,k):
     return sorted(list(kchains))
 
 def interpret(Ck,arr):
+
     """
     Returns the data as represented in Ck associated with the arr
     
@@ -86,6 +88,7 @@ def interpret(Ck,arr):
         list of k-cells referenced by data in Ck
     
     """
+
     output = list()
     for vec in arr:
         if len(Ck) != len(vec):
@@ -301,6 +304,7 @@ def matmulreduce(arr,reverse=False,mod=2):
     P : np.array
         Product of matrices in the list
     """
+
     if reverse:
         items = range(len(arr)-1,-1,-1)
     else:
@@ -333,6 +337,7 @@ def matsumreduce(arr,mod=2):
 
 ## Convenience methods for computing Smith Normal Form 
 ## All of these operations have themselves as inverses 
+
 def _sr(i,j,M,L):
     return swap_rows(i,j,M,L)
 
@@ -409,6 +414,7 @@ def smith_normal_form_mod2(M,track=False):
     where $L = L[s]L[s-1]...L[1]L[0]$ and $R = R[0]R[1]...R[t]$.
        
     """
+
     S = copy.copy(M)
     dimL,dimR = M.shape
     mod = 2
@@ -420,8 +426,7 @@ def smith_normal_form_mod2(M,track=False):
     L = np.eye(dimL,dtype=int)
     R = np.eye(dimR,dtype=int)    
 
-    Linv = [IL]  ## keep track of transformations to compute inverses at the end
-    Rinv = [IR]
+    Linv = np.eye(dimL,dtype=int)
 
     if track:
         print(L,'L\n')  
@@ -429,6 +434,7 @@ def smith_normal_form_mod2(M,track=False):
         print(R,'R\n')
 
     for s in range(min(dimL,dimR)):
+        print('.'),
         if track:
             print(f'\ns={s}\n')
         ## Find index pair (rdx,cdx) with value 1 in submatrix M[s:,s:] 
@@ -442,42 +448,27 @@ def smith_normal_form_mod2(M,track=False):
         ## Swap rows and columns as needed so that 1 is in the s,s position
         if rdx > s:
             S,L = _sr(s,rdx,S,L)
-#             This is equivalent to
-#             S = swap_rows(s,rdx,S)[0]
-#             L = swap_rows(s,rdx,L)[0]
-            Linv.append(swap_rows(s,rdx,IL)[0]) ## keep track of transformations on the left to reverse them for the inverse
+            Linv = swap_columns(s,rdx,Linv)[0]
             if track:
                 print(L,f'L\n',S,'S\n',) 
-            assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
         if cdx > s:
             S,R= _sc(s,cdx,S,R)
-            Rinv.append(swap_columns(s,cdx,IR)[0])
             if track:
                 print(S,'S\n',R,f'R\n') 
-            assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
 
         # add sth row to every row with 1 in sth column & sth column to every column with 1 in sth row
-        row_indices = [idx for idx in range(dimL) if idx != s and S[idx][s] == 1]
+        row_indices = [idx for idx in range(s+1,dimL) if S[idx][s] == 1]
         for rdx in row_indices:
             S,L = _ar(rdx,s,S,L,mod=mod)
-            temp = add_to_row(IL,rdx,s,mod=mod)
-            Linv.append(temp)
+            Linv = add_to_column(Linv,s,rdx,mod=mod)
             if track:
                 print(L,f'L\n',S,'S\n',) 
-            assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
-        column_indices = [jdx for jdx in range(dimR) if jdx != s and S[s][jdx] == 1]
+        column_indices = [jdx for jdx in range(s+1,dimR) if S[s][jdx] == 1]
         for jdx,cdx in enumerate(column_indices):
             S,R = _ac(cdx,s,S,R)
-            temp = add_to_column(IR,cdx,s,mod=mod)
-            Rinv.append(temp)
             if track:
                 print(R,f'R\n',S,'S\n',) 
-            assert(np.all(S == matmulreduce([L,M,R],mod=mod)))
-    Linv = matmulreduce(Linv,mod=mod)
-    Rinv = matmulreduce(Rinv,reverse=True,mod=mod)
-    assert(np.all(IL == matmulreduce([L,Linv],mod=mod)))
-    assert(np.all(IR == matmulreduce([R,Rinv],mod=mod)))
-    return L,R,S,Linv,Rinv
+    return L,R,S,Linv
 
         
 def reduced_row_echelon_form_mod2(M,track=False,mod=2):
@@ -511,6 +502,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
     verify the product:
     L[s]L[s-1]...L[0] M = S .    
     """
+
     S = copy.copy(M)
     dimL,dimR = M.shape
     mod = 2
@@ -518,7 +510,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
     ## method with numpy
     IL = np.eye(dimL,dtype=int)
     
-    Linv = [np.eye(dimL,dtype=int)]
+    Linv = np.eye(dimL,dtype=int)
     L = np.eye(dimL,dtype=int)
     
     if track:
@@ -540,22 +532,17 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
             continue
         if rdx > s1:
             S,L = _sr(s1,rdx,S,L)
-            Linv.append(swap_rows(s1,rdx,IL)[0]) ## keep track of transformations on the left to reverse them for the inverse
+            Linv = swap_columns(rdx,s1,Linv)[0] 
             if track:
                 print(L,f'L\n',S,'S\n',) 
-            assert(np.all(S == matmulreduce([L,M],mod=mod)))
-
         # add sth row to every nonzero row 
         row_indices = [idx for idx in range(dimL) if idx != s1 and S[idx][cdx] == 1]
         for idx in row_indices:
             S,L = _ar(idx,s1,S,L,mod=mod)
-            temp = add_to_row(IL,idx,s1,mod=mod)
-            Linv.append(temp)
+            Linv = add_to_column(Linv,s1,idx,mod=mod)
             if track:
                 print(L,f'L\n',S,'S\n',) 
-            assert(np.all(S == matmulreduce([L,M],mod=mod)))
-    Linv = matmulreduce(Linv,mod=mod)
-    assert(np.all(IL == matmulreduce([L,Linv],mod=mod)))
+
     return L,S,Linv
 
 ## Private
@@ -674,8 +661,8 @@ def homology_basis(bd,k,C=None,shortest=False):
         k-chains
         if shortest then returns a dictionary of shortest cycles for each coset.
     """
-    L1,R1,S1,L1inv,R1inv = smith_normal_form_mod2(bd[k])
-    L2,R2,S2,L2inv,R2inv = smith_normal_form_mod2(bd[k+1])
+    L1,R1,S1,L1inv = smith_normal_form_mod2(bd[k])
+    L2,R2,S2,L2inv = smith_normal_form_mod2(bd[k+1])
     
     rank1 = np.sum(S1); print(f"rank{k} = {rank1}")
     rank2 = np.sum(S2); print(f"rank{k+1} = {rank2}")
@@ -686,9 +673,9 @@ def homology_basis(bd,k,C=None,shortest=False):
     ker1 = R1[:,rank1:]
     im2 = L2inv[:,:rank2]
     cokernel2 = L2inv[:,rank2:]
+    cokproj2 = L2[rank2:,:]
     
-    proj = matmulreduce([L2,ker1])[rank2:,:]
-    proj = matmulreduce([L2inv[:,rank2:],proj]).transpose()
+    proj = matmulreduce([cokernel2,cokproj2,ker1]).transpose()
     _,proj,_ = reduced_row_echelon_form_mod2(proj)
     proj = np.array([row for row in proj if np.sum(row)>0])
     print('hom basis reps\n',proj)
