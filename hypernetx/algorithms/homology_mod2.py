@@ -415,7 +415,6 @@ def smith_normal_form_mod2(M,track=False):
        
     """
 
-    start = dtm.datetime.now()
     S = copy.copy(M)
     dimL,dimR = M.shape
     mod = 2
@@ -469,7 +468,6 @@ def smith_normal_form_mod2(M,track=False):
             S,R = _ac(cdx,s,S,R)
             if track:
                 print(R,f'R\n',S,'S\n',) 
-    print(dtm.datetime.now() - start)
     return L,R,S,Linv
 
         
