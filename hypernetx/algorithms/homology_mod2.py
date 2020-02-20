@@ -399,7 +399,7 @@ def smith_normal_form_mod2(M,track=False):
     
     Returns
     -------
-    L, R, S, Linv, Rinv : np.arrays
+    L, R, S, Linv : np.arrays
         LMR = S is the Smith Normal Form of the matrix M. 
     
     Note
@@ -434,7 +434,6 @@ def smith_normal_form_mod2(M,track=False):
         print(R,'R\n')
 
     for s in range(min(dimL,dimR)):
-        print('.'),
         if track:
             print(f'\ns={s}\n')
         ## Find index pair (rdx,cdx) with value 1 in submatrix M[s:,s:] 
