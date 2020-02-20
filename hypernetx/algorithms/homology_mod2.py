@@ -35,7 +35,7 @@ import warnings, copy
 from hypernetx import HyperNetXError
 
 import datetime as dtm
-tmstmp = lambda x: print(f'{x}: {dtm.datetime.now().strftime("%H.%M.%S")}')
+
 
 def kchainbasis(h,k):
     """
@@ -63,7 +63,7 @@ def kchainbasis(h,k):
     - Hypergraph node uids must be sortable.
 
     """
-    tmstmp('kchbasis-s')
+
     import itertools as it
     kchains = set()
     for e in h.edges():
@@ -116,7 +116,7 @@ def bkMatrix(km1basis,kbasis):
     bk : np.array
         boundary matrix in $Z_2$
     """
-    tmstmp('bkMatrix-s')
+
     bk = np.zeros((len(km1basis),len(kbasis)),dtype=int)
     for cell in kbasis:
         for idx in range(len(cell)):
@@ -307,7 +307,7 @@ def matmulreduce(arr,reverse=False,mod=2):
     P : np.array
         Product of matrices in the list
     """
-    tmstmp('matmulr-s')
+
     if reverse:
         items = range(len(arr)-1,-1,-1)
     else:
@@ -417,7 +417,7 @@ def smith_normal_form_mod2(M,track=False):
     where $L = L[s]L[s-1]...L[1]L[0]$ and $R = R[0]R[1]...R[t]$.
        
     """
-    tmstmp('snf-start')
+
     start = dtm.datetime.now()
     S = copy.copy(M)
     dimL,dimR = M.shape
@@ -507,7 +507,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
     verify the product:
     L[s]L[s-1]...L[0] M = S .    
     """
-    tmstmp('ref-s')
+
     S = copy.copy(M)
     dimL,dimR = M.shape
     mod = 2
@@ -547,7 +547,7 @@ def reduced_row_echelon_form_mod2(M,track=False,mod=2):
             Linv = add_to_column(Linv,s1,idx,mod=mod)
             if track:
                 print(L,f'L\n',S,'S\n',) 
-        tmstmp('ref-end')
+
     return L,S,Linv
 
 ## Private
@@ -680,9 +680,6 @@ def homology_basis(bd,k,C=None,shortest=False):
     cokernel2 = L2inv[:,rank2:]
     cokproj2 = L2[rank2:,:]
     
-    # proj = matmulreduce([L2,ker1])[rank2:,:]
-    # proj = matmulreduce([L2inv[:,rank2:],proj]).transpose()
-    tmstmp('proj-s')
     proj = matmulreduce([cokernel2,cokproj2,ker1]).transpose()
     _,proj,_ = reduced_row_echelon_form_mod2(proj)
     proj = np.array([row for row in proj if np.sum(row)>0])
