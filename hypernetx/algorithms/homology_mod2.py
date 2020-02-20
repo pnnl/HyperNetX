@@ -34,9 +34,6 @@ import hypernetx as hnx
 import warnings, copy
 from hypernetx import HyperNetXError
 
-import datetime as dtm
-
-
 def kchainbasis(h,k):
     """
     Compute the set of k dimensional cells in the abstract simplicial 
