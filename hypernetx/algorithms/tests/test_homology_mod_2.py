@@ -18,12 +18,12 @@ def test_interpret(triloop):
 
 def test_bkMatrix(triloop):
 	Ck = {k:hnx.kchainbasis(triloop.hypergraph,k) for k in range(0,2)}
-	bd = bkMatrix(Ck[0],Ck[1],sparse=False)
+	bd = bkMatrix(Ck[0],Ck[1])
 	assert np.array_equal(bd[0],np.array([1, 1, 1, 0, 0]))
 
 def test_smith_normal_form_mod2(triloop):
 	Ck = {k:hnx.kchainbasis(triloop.hypergraph,k) for k in range(0,2)}
-	bd = bkMatrix(Ck[0],Ck[1],sparse=False)
+	bd = bkMatrix(Ck[0],Ck[1])
 	P1,Q1,S1,P1inv = smith_normal_form_mod2(bd)
 	assert np.array_equal(P1[0],np.array([1, 0, 0, 0]))
 	assert np.array_equal(Q1[:,2],np.array([0, 1, 1, 0, 0]))
@@ -49,7 +49,7 @@ def test_reduced_row_echelon_form_mod2():
 
 def test_homology_basis(triloop):
 	Ck = {k:hnx.kchainbasis(triloop.hypergraph,k) for k in range(0,3)}
-	bd = {k: hnx.bkMatrix(Ck[k-1],Ck[k],sparse=False) for k in range(1,3)}
+	bd = {k: hnx.bkMatrix(Ck[k-1],Ck[k]) for k in range(1,3)}
 	assert np.array_equal(homology_basis(bd,1),np.array([[1, 0, 1, 1, 1]]))
 	assert np.array_equal(homology_basis(bd,1,C=Ck[1]),[[('A', 'B'), ('A', 'D'), ('B', 'C'), ('C', 'D')]])
 	assert np.array_equal(homology_basis(bd,1,C=Ck[1],shortest=True)[0],[[('A', 'B'), ('A', 'C'), ('B', 'C')]])

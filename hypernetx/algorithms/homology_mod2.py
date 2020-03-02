@@ -30,7 +30,6 @@ http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/
 """
 
 import numpy as np
-from scipy.sparse import csr_matrix, issparse
 import hypernetx as hnx
 import warnings, copy
 from hypernetx import HyperNetXError
@@ -99,7 +98,7 @@ def interpret(Ck,arr):
         output.append([Ck[idx] for idx in range(len(vec)) if vec[idx] == 1])
     return output
 
-def bkMatrix(km1basis,kbasis,sparse=True):
+def bkMatrix(km1basis,kbasis):
     """
     Compute the boundary map from $C_{k-1}$-basis to $C_k$ basis with 
     respect to $Z_2$
@@ -113,14 +112,11 @@ def bkMatrix(km1basis,kbasis,sparse=True):
     
     Returns
     -------
-    bk : scipy.sparse.csr_matrix
+    bk : np.array
         boundary matrix in $Z_2$ stored as boolean
 
     """
-    if sparse:
-        bk = csr_matrix((len(km1basis),len(kbasis)),dtype=bool)
-    else:
-        bk = np.zeros((len(km1basis),len(kbasis)),dtype=bool)
+    bk = np.zeros((len(km1basis),len(kbasis)),dtype=bool)
     for cell in kbasis:
         for idx in range(len(cell)):
             face = cell[:idx]+cell[idx+1:]
@@ -137,12 +133,11 @@ def _rswap(i,j,S):
     ----------
     i : int
     j : int
-    S : np.array or scipy.sparse matrix
-        matrix
+    S : np.array 
 
     Returns
     -------
-    N : np.array or scipy.sparse matrix matching input
+    N : np.array 
     """
     N = copy.deepcopy(S)
     row = copy.deepcopy(N[i])
@@ -159,12 +154,12 @@ def _cswap(i,j,S):
     ----------
     i : int
     j : int
-    S : np.array or scipy.sparse matrix
+    S : np.array 
         matrix
 
     Returns
     -------
-    N : np.array or scipy.sparse matrix matching input
+    N : np.array 
     """ 
     N = _rswap(i,j,S.transpose()).transpose()   
     return N
@@ -178,7 +173,7 @@ def swap_rows(i,j,*args):
     ----------
     i : int
     j : int
-    args : np.arrays or scipy.sparse matrices
+    args : np.arrays 
     
     Returns
     -------
@@ -199,7 +194,7 @@ def swap_columns(i,j,*args):
     ----------
     i : int
     j : int
-    args : np.arrays or scipy.sparse matrices
+    args : np.arrays 
     
     Returns
     -------
@@ -217,7 +212,7 @@ def add_to_row(M,i,j):
     
     Parameters
     ----------
-    M : np.array or scipy.sparse csr matrix or csc matrix
+    M : np.array 
     i : int
         index of row being altered
     j : int
@@ -225,13 +220,10 @@ def add_to_row(M,i,j):
     
     Returns
     -------
-    N : np.array or scipy.sparse matrix matching input
+    N : np.array 
     """
     N = copy.deepcopy(M)
-    if issparse(M):
-        N[i] = csr_matrix(np.logical_xor(N[i].todense(),N[j].todense()))
-    else:
-        N[i] = np.logical_xor(N[i],N[j])
+    N[i] = np.logical_xor(N[i],N[j])
     return N
 
 def add_to_column(M,i,j):
@@ -249,7 +241,7 @@ def add_to_column(M,i,j):
 
     Returns
     -------
-    N : np.array or scipy.sparse matrix matching input
+    N : np.array 
     """
     N = M.transpose()
     return add_to_row(N,i,j).transpose()
@@ -288,14 +280,14 @@ def logical_matmul(mat1,mat2):
     
     Parameters
     ----------
-    mat1 : np.ndarray or scipy.sparse matrix
+    mat1 : np.ndarray 
         2-d array of boolean values
-    mat2 : np.ndarray or scipy.sparse matrix
+    mat2 : np.ndarray 
         2-d array of boolean values
     
     Returns
     -------
-    mat : np.ndarray or scipy.sparse matrix
+    mat : np.ndarray 
         boolean matrix equivalent to the mod 2 matrix multiplication of the 
         matrices as matrices over Z/2Z
     
@@ -304,36 +296,20 @@ def logical_matmul(mat1,mat2):
     HyperNetXError
         If inner dimensions are not equal an error will be raised.
 
-    Note
-    ----
-    The data type of the output depends on the data type of the input.
-    If one or both of the input matrices are sparse, the output matrix will
-    be sparse. If both are dense the output will be dense.
     """
     L1,R1 = mat1.shape
     L2,R2 = mat2.shape
     if R1 != L2:
         raise HyperNetXError("logical_matmul called for matrices with inner dimensions mismatched")
-    if issparse(mat1) or issparse(mat2):
-        mat1 = csr_matrix(mat1)
-        mat2T = csr_matrix(mat2.transpose())
-        mat = csr_matrix((L1,R2),dtype=bool)
-        for i in range(L1):
-            if mat1[i].count_nonzero() == 0:
-                mat[i] = csr_matrix((1,R2),dtype=bool)
-                continue
-            else:
-                for j in range(R2):
-                    mat[i,j] = logical_dot(mat1[i,:].A[0],mat2T[j,:].A[0])
-    else:
-        mat = np.zeros((L1,R2), dtype=bool)
-        mat2T = mat2.transpose()          
-        for i in range(L1):
-            if np.any(mat1[i]):
-                for j in range(R2):
-                    mat[i,j] = logical_dot(mat1[i],mat2T[j])
-            else:
-                mat[i] = np.zeros((1,R2),dtype=bool)
+
+    mat = np.zeros((L1,R2), dtype=bool)
+    mat2T = mat2.transpose()          
+    for i in range(L1):
+        if np.any(mat1[i]):
+            for j in range(R2):
+                mat[i,j] = logical_dot(mat1[i],mat2T[j])
+        else:
+            mat[i] = np.zeros((1,R2),dtype=bool)
     return mat
 
 def matmulreduce(arr,reverse=False):
@@ -391,7 +367,7 @@ def _get_next_pivot(M,s1,s2=None):
     
     Parameters
     ----------
-    M : np.array or scipy.sparse matrix
+    M : np.array 
         matrix represented as np.array
     s1 : int
         index of row position to start submatrix of M
@@ -420,7 +396,7 @@ def smith_normal_form_mod2(M):
     
     Parameters
     ----------
-    M : np.array or scipy.sparse matrix
+    M : np.array 
         a rectangular matrix with data type bool
     track : bool
         if track=True will print out the transformation as Z/2Z matrix as it 
@@ -482,7 +458,7 @@ def reduced_row_echelon_form_mod2(M):
     
     Parameters
     ----------
-    M : np.array or scipy.sparse matrix
+    M : np.array 
         a rectangular matrix with elements in $Z_2$
     
     Returns
@@ -529,7 +505,7 @@ def coset(im2,bs=[],shortest=False):
     
     Parameters
     ----------
-    im2 : np.array or scipy.sparse matrix
+    im2 : np.array 
         columns form a basis for the boundary group
     bs : np.array
         boolean vector from projection of kernel on cokernel
@@ -633,7 +609,7 @@ def homology_basis(bd,k,C=None,shortest=False):
         else:
             return proj
     
-def hypergraph_homology_basis(h,k,shortest=False,sparse=False):
+def hypergraph_homology_basis(h,k,shortest=False):
     """
     Computes the kth-homology group mod 2 for the ASC
     associated with the hypergraph h.
@@ -662,7 +638,7 @@ def hypergraph_homology_basis(h,k,shortest=False,sparse=False):
         C[i] = kchainbasis(h,i)
     bd = dict()
     for i in range(k,k+2):
-        bd[i] = bkMatrix(C[i-1],C[i],sparse=sparse)
+        bd[i] = bkMatrix(C[i-1],C[i])
     return homology_basis(bd,k,C=C[k],shortest=shortest)
 
 
