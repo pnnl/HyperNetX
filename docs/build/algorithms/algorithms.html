@@ -208,22 +208,18 @@ numbers and homology bases are returned.</p>
 <a class="reference external" href="http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/">http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/</a></p>
 <dl class="function">
 <dt id="algorithms.homology_mod2.add_to_column">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_column</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em>, <em class="sig-param">ci=1</em>, <em class="sig-param">cj=1</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces column i (of M) with sum ci multiple of ith column and cj multiple of jth column</p>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_column</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces column i (of M) with logical xor between column i and j</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – matrix</p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of column being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of column being added to altered</p></li>
-<li><p><strong>ri</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplier for ith column</p></li>
-<li><p><strong>rj</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplier for jth column</p></li>
-<li><p><strong>mod</strong> (<em>int</em><em>, </em><em>optional</em>) – modular addition to be used</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>N</strong> – copy of M with ith row replaced with sum of multiples of ith row
-and jth row</p>
+<dd class="field-even"><p><strong>N</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>np.array</p>
@@ -233,22 +229,18 @@ and jth row</p>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.add_to_row">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_row</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em>, <em class="sig-param">ri=1</em>, <em class="sig-param">rj=1</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces row i (of M) with sum ri multiple of ith row and rj multiple of jth row</p>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_row</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces row i with logical xor between row i and j</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>M</strong> (<em>np.array</em>) – matrix</p></li>
+<li><p><strong>M</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of row being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of row being added to altered</p></li>
-<li><p><strong>ri</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplier for ith row</p></li>
-<li><p><strong>rj</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplier for jth row</p></li>
-<li><p><strong>mod</strong> (<em>int</em><em>, </em><em>optional</em>) – modular addition to be used</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>N</strong> – copy of M with ith row replaced with sum of multiples of ith row
-and jth row</p>
+<dd class="field-even"><p><strong>N</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>np.array</p>
@@ -269,10 +261,31 @@ respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bk</strong> – boundary matrix in <span class="math notranslate nohighlight">\(Z_2\)</span></p>
+<dd class="field-even"><p><strong>bk</strong> – boundary matrix in <span class="math notranslate nohighlight">\(Z_2\)</span> stored as boolean</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.homology_mod2.coset">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">coset</code><span class="sig-paren">(</span><em class="sig-param">im2</em>, <em class="sig-param">bs=[]</em>, <em class="sig-param">shortest=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#coset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.coset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the coset represented by bs, if bs=None
+returns the boundary group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>im2</strong> (<em>np.array</em>) – columns form a basis for the boundary group</p></li>
+<li><p><strong>bs</strong> (<em>np.array</em>) – boolean vector from projection of kernel on cokernel</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of elements of the coset of interest</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -288,7 +301,7 @@ matrices given by bd</p>
 <li><p><strong>bd</strong> (<em>dict</em>) – dict of k-boundary matrices keyed on k</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – k must be an integer greater than 0
 bd must have keys for k, and k+1</p></li>
-<li><p><strong>C</strong> (<em>None</em><em> or </em><em>list</em>) – optional, list of k-cells used to interpret the generators
+<li><p><strong>C</strong> (<em>list</em><em>, </em><em>optional</em>) – list of k-cells used to interpret the generators
 bd[k] is boundary matrix with rows and columns indexed by
 k-1 and k cells. C is a list of k chains ordered
 to match the column index of bd[k]</p></li>
@@ -331,23 +344,6 @@ only good for very small examples</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="algorithms.homology_mod2.image_group">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">image_group</code><span class="sig-paren">(</span><em class="sig-param">im2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#image_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.image_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate the boundary group</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>im2</strong> (<em>np.array</em>) – columns form a basis for the boundary group</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of elements of the boundary group</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="algorithms.homology_mod2.interpret">
 <code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">interpret</code><span class="sig-paren">(</span><em class="sig-param">Ck</em>, <em class="sig-param">arr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#interpret"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.interpret" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the data as represented in Ck associated with the arr</p>
@@ -355,7 +351,7 @@ only good for very small examples</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Ck</strong> (<em>list</em>) – a list of k-cells being referenced by arr</p></li>
-<li><p><strong>arr</strong> (<em>np.array</em>) – a 0-1 array</p></li>
+<li><p><strong>arr</strong> (<em>np.array</em>) – array of 0-1 vectors</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -398,9 +394,58 @@ complex associated with the hypergraph.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="algorithms.homology_mod2.logical_dot">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_dot</code><span class="sig-paren">(</span><em class="sig-param">ar1</em>, <em class="sig-param">ar2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the boolean equivalent of the dot product mod 2 on two 1-d arrays of
+the same length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ar1</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
+<li><p><strong>ar2</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>boolean value associated with dot product mod 2</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HyperNetXError</strong> – If arrays are not of the same length an error will be raised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.homology_mod2.logical_matmul">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matmul</code><span class="sig-paren">(</span><em class="sig-param">mat1</em>, <em class="sig-param">mat2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matmul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matmul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the boolean equivalent of matrix multiplication mod 2 on two
+binary arrays stored as type boolean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
+<li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix multiplication of the
+matrices as matrices over Z/2Z</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HyperNetXError</strong> – If inner dimensions are not equal an error will be raised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="algorithms.homology_mod2.matmulreduce">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">matmulreduce</code><span class="sig-paren">(</span><em class="sig-param">arr</em>, <em class="sig-param">reverse=False</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#matmulreduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.matmulreduce" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively multiples a list of matrices.</p>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">matmulreduce</code><span class="sig-paren">(</span><em class="sig-param">arr</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#matmulreduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.matmulreduce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively applies a ‘logical multiplication’ to a list of boolean arrays.</p>
 <p>For arr = [arr[0],arr[1],arr[2]…arr[n]] returns product arr[0]arr[1]…arr[n]
 If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <dl class="field-list simple">
@@ -408,7 +453,6 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>list of np.array</em>) – list of nxm matrices represented as np.array</p></li>
 <li><p><strong>reverse</strong> (<em>bool</em><em>, </em><em>optional</em>) – order to multiply the matrices</p></li>
-<li><p><strong>mod</strong> (<em>int</em><em>, </em><em>optional</em>) – modulus for modulo operations on elements of products</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -421,59 +465,13 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="algorithms.homology_mod2.matsumreduce">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">matsumreduce</code><span class="sig-paren">(</span><em class="sig-param">arr</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#matsumreduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.matsumreduce" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively adds a list of matrices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<em>list of np.array</em>) – list of nxm matrices represented as np.array</p></li>
-<li><p><strong>mod</strong> (<em>int</em><em>, </em><em>optional</em>) – modulus for modulo operations on elements of sums</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>S</strong> – Sum of matrices in the list</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="algorithms.homology_mod2.modmult">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">modmult</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">N</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#modmult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.modmult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matrix multiplication modulo a positive integer</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>N</strong> (<em>M</em><em>,</em>) – M,N must be two dimensional and appropriate dimensions for
-matrix multiplication</p></li>
-<li><p><strong>mod</strong> (<em>int</em>) – modulus for modulo operations on elements of product</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="algorithms.homology_mod2.reduced_row_echelon_form_mod2">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">reduced_row_echelon_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">track=False</em>, <em class="sig-param">mod=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#reduced_row_echelon_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.reduced_row_echelon_form_mod2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">reduced_row_echelon_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#reduced_row_echelon_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.reduced_row_echelon_form_mod2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the invertible transformation matrices needed to compute
 the reduced row echelon form of M modulo 2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with elements in <span class="math notranslate nohighlight">\(Z_2\)</span></p></li>
-<li><p><strong>track</strong> – bool
-if track=True will print out the transformation as it
-discovers L[i]</p></li>
-</ul>
+<dd class="field-odd"><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with elements in <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L, S, Linv</strong> – LM = S where S is the reduced echelon form of M
@@ -483,29 +481,18 @@ and M = LinvS</p>
 <dd class="field-odd"><p>np.arrays</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To get the reduced row echelon form for M of dimensions mxn we
-start with the equation: I(m) M = S,
-where I(m) is the identity matrix and S starts out equal to M.
-We repeatedly multiply the left side of both sides of the equation
-by invertible matrices
-L[i] to transform S into reduced row echelon form. At the end we
-verify the product:
-L[s]L[s-1]…L[0] M = S .</p>
-</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.smith_normal_form_mod2">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">smith_normal_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">track=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#smith_normal_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.smith_normal_form_mod2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">smith_normal_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#smith_normal_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.smith_normal_form_mod2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the invertible transformation matrices needed to compute the
 Smith Normal Form of M modulo 2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with elements in <span class="math notranslate nohighlight">\(Z_2\)</span></p></li>
-<li><p><strong>track</strong> (<em>bool</em>) – if track=True will print out the transformation as it
+<li><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with data type bool</p></li>
+<li><p><strong>track</strong> (<em>bool</em>) – if track=True will print out the transformation as Z/2Z matrix as it
 discovers L[i] and R[j]</p></li>
 </ul>
 </dd>
@@ -519,13 +506,14 @@ discovers L[i] and R[j]</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Given a mxn matrix <span class="math notranslate nohighlight">\(M\)</span> with
-entries in <span class="math notranslate nohighlight">\(Z_2\)</span> we start with the equation: <span class="math notranslate nohighlight">\(L[0] M R[0] = S\)</span>, where
-<span class="math notranslate nohighlight">\(L[0] = I_m\)</span>, and <span class="math notranslate nohighlight">\(R[0]=I_n\)</span> are identity matrices and <span class="math notranslate nohighlight">\(S = M\)</span>. We
-repeatedly multiply the left and right side of the equation by
-invertible matrices <span class="math notranslate nohighlight">\(L[i]\)</span> and <span class="math notranslate nohighlight">\(R[j]\)</span> to transform S into a diagonal
-matrix. At the end we verify the product:
-$$L M R = S.$$
-where <span class="math notranslate nohighlight">\(L = L[s]L[s-1]...L[1]L[0]\)</span> and <span class="math notranslate nohighlight">\(R = R[0]R[1]...R[t]\)</span>.</p>
+entries in <span class="math notranslate nohighlight">\(Z_2\)</span> we start with the equation: <span class="math notranslate nohighlight">\(L M R = S\)</span>, where
+<span class="math notranslate nohighlight">\(L = I_m\)</span>, and <span class="math notranslate nohighlight">\(R=I_n\)</span> are identity matrices and <span class="math notranslate nohighlight">\(S = M\)</span>. We
+repeatedly apply actions to the left and right side of the equation
+to transform S into a diagonal matrix.
+For each action applied to the left side we apply its inverse
+action to the right side of I_m to generate <span class="math notranslate nohighlight">\(L^{-1}\)</span>.
+Finally we verify:
+<span class="math notranslate nohighlight">\(L M R = S\)</span> and  <span class="math notranslate nohighlight">\(LLinv = I_m\)</span>.</p>
 </div>
 </dd></dl>
 
@@ -539,13 +527,11 @@ Returns a list of new matrices</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
-<li><p><strong>M</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of np.arrays, copies of args with ith and jth column
-swapped</p>
+<dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
@@ -563,12 +549,11 @@ Returns a list of new matrices</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
-<li><p><strong>M</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of np.arrays, copies of args with ith and jth row swapped</p>
+<dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
