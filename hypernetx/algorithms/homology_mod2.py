@@ -569,12 +569,14 @@ def homology_basis(bd,k,C=None,shortest=False):
     L1,R1,S1,L1inv = smith_normal_form_mod2(bd[k])
     L2,R2,S2,L2inv = smith_normal_form_mod2(bd[k+1])
     
-    rank1 = np.sum(S1); print(f"rank{k} = {rank1}")
-    rank2 = np.sum(S2); print(f"rank{k+1} = {rank2}")
-    nullity1 = S1.shape[1]-rank1; print(f"nullity{k} = {nullity1}")
-    betti1 = S1.shape[1]-rank1 - rank2; print(f"betti{k} = {betti1}")
-    cokernel2_dim = S1.shape[1] - rank2; print(f"cokernel{k+1} dimension = {cokernel2_dim}")
+    rank1 = np.sum(S1)
+    rank2 = np.sum(S2)
+    nullity1 = S1.shape[1]-rank1
+    betti1 = S1.shape[1]-rank1 - rank2
+    cokernel2_dim = S1.shape[1] - rank2
     
+    print(f'Summary: \nrank{k} = {rank1}\nrank{k+1} = {rank2}\nnullity{k} = {nullity1}')
+
     ker1 = R1[:,rank1:]
     im2 = L2inv[:,:rank2]
     cokernel2 = L2inv[:,rank2:]
@@ -584,7 +586,7 @@ def homology_basis(bd,k,C=None,shortest=False):
     _,proj,_ = reduced_row_echelon_form_mod2(proj)
     proj = np.array(proj)
     proj = np.array([row for row in proj if np.any(row)])
-    print('hom basis reps\n',proj)
+    print(f'hom basis reps: {proj*1}\n')
     if shortest:
         # shortest_basis = defaultdict(list)  
         # img_group = coset(im2)
