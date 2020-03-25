@@ -35,6 +35,7 @@ import warnings, copy
 from hypernetx import HyperNetXError
 from collections import defaultdict
 import itertools as it
+import pickle
 
 def kchainbasis(h,k):
     """
@@ -340,6 +341,45 @@ def matmulreduce(arr,reverse=False):
         P = logical_matmul(P, arr[i])
     return P
 
+def logical_matadd(mat1,mat2):
+    """
+    Returns the boolean equivalent of matrix additon mod 2 on two
+    binary arrays stored as type boolean
+    
+    Parameters
+    ----------
+    mat1 : np.ndarray 
+        2-d array of boolean values
+    mat2 : np.ndarray 
+        2-d array of boolean values
+    
+    Returns
+    -------
+    mat : np.ndarray 
+        boolean matrix equivalent to the mod 2 matrix addition of the 
+        matrices as matrices over Z/2Z
+    
+    Raises
+    ------
+    HyperNetXError
+        If dimensions are not equal an error will be raised.
+
+    """
+    S1 = mat1.shape
+    S2 = mat2.shape
+    mat = np.zeros(S1, dtype=bool)
+    if S1 != S2:
+        raise HyperNetXError("logical_matadd called for matrices with different dimensions")
+    if len(S1)==1:
+        for idx in range(S1[0]):
+            mat[idx] = np.logical_xor(mat1[idx],mat2[idx])*1
+    else:    
+        for idx in range(S1[0]):
+            for jdx in range(S1[1]):
+                mat[idx,jdx] = np.logical_xor(mat1[idx,jdx],mat2[idx,jdx])*1
+    return mat
+
+
 ## Convenience methods for computing Smith Normal Form 
 ## All of these operations have themselves as inverses 
 
@@ -498,7 +538,10 @@ def reduced_row_echelon_form_mod2(M):
 
     return L,S,Linv
 
-def coset(im2,bs=[],shortest=False):
+def coset(im2,bs=[],shortest=False): ## This breaks because line 529 has logical_xor on ndarray. 
+## It only works on a simple array. will need to break it up on each dimension.
+## Do it by creating a method logical_matadd(*arr) and doing logical_xor.reduce on each element of the transpose. 
+## Then transpose back. Will arkouda do this????
     """
     Generate the coset represented by bs, if bs=None
     returns the boundary group
@@ -526,7 +569,7 @@ def coset(im2,bs=[],shortest=False):
     coset = list()
     sh_len = np.sum(bs)
     for alpha in it.product([0,1],repeat=dim):
-        temp = np.logical_xor.reduce([a*image_basis[idx] for idx,a in enumerate(alpha)]+[bs])
+        temp = np.logical_xor.reduce([a*image_basis[idx] for idx,a in enumerate(alpha)]+[bs],dtype=bool)
         if shortest:
             if np.sum(temp) == sh_len:
                 coset.append(temp)
@@ -537,7 +580,7 @@ def coset(im2,bs=[],shortest=False):
             coset.append(temp)
     return coset
 
-def homology_basis(bd,k,C=None,shortest=False):
+def homology_basis(bd,k,C=None,shortest=False,log=None):
     """
     Compute a basis for the kth-homology group with boundary
     matrices given by bd
@@ -545,7 +588,8 @@ def homology_basis(bd,k,C=None,shortest=False):
     Parameters
     ----------
     bd : dict
-        dict of k-boundary matrices keyed on k
+        dict of k-boundary matrices keyed on k,k+1
+
     k : int 
         k must be an integer greater than 0
         bd must have keys for k, and k+1
@@ -554,10 +598,12 @@ def homology_basis(bd,k,C=None,shortest=False):
         bd[k] is boundary matrix with rows and columns indexed by
         k-1 and k cells. C is a list of k chains ordered
         to match the column index of bd[k] 
-
     shortest : bool, optional
         option to look for shortest basis using boundaries
         only good for very small examples
+    log : str, optional
+        path to logfile where intermediate data should be
+        pickled and stored 
 
     Returns
     -------
@@ -586,7 +632,8 @@ def homology_basis(bd,k,C=None,shortest=False):
     _,proj,_ = reduced_row_echelon_form_mod2(proj)
     proj = np.array(proj)
     proj = np.array([row for row in proj if np.any(row)])
-    print(f'hom basis reps: {proj*1}\n')
+    # print(f'hom basis reps: {proj*1}\n')
+    basis = []
     if shortest:
         # shortest_basis = defaultdict(list)  
         # img_group = coset(im2)
@@ -598,20 +645,32 @@ def homology_basis(bd,k,C=None,shortest=False):
         #             shortest_basis[idx].append(x)
         #         else:
         #             break
-        shortest_basis = defaultdict(list)
+        shortest_basis = list()
         for idx,bs in enumerate(proj):
-            shortest_basis[idx] = coset(im2,bs=bs,shortest=True)
+            shortest_basis.append(coset(im2,bs=bs,shortest=True))
         if C:
-            return {idx:interpret(C,shortest_basis[idx]) for idx in shortest_basis.keys()}
-        else:
-            return shortest_basis
+            basis = output = [interpret(C,sb) for sb in shortest_basis]
+        
+        proj = output = shortest_basis
     else:
         if C:
-            return interpret(C,proj)
-        else:
-            return proj
+            basis = output = interpret(C,proj)
+    if log:
+        try:
+            logdict = pickle.load(open(log,'rb'))
+        except:
+            logdict = dict()
+        logdict.update({'k':k,
+                f'betti{k}':betti1,
+                'ker':ker1,
+                'im':im2,
+                'proj':proj,
+                'basis':basis})
+        pickle.dump(logdict,open(log,'wb'))
+
+    return output
     
-def hypergraph_homology_basis(h,k,shortest=False):
+def hypergraph_homology_basis(h,k,shortest=False,log=None):
     """
     Computes the kth-homology group mod 2 for the ASC
     associated with the hypergraph h.
@@ -619,21 +678,23 @@ def hypergraph_homology_basis(h,k,shortest=False):
     Parameters
     ----------
     h : hnx.Hypergraph
-
     k : int
         k must be an integer greater than 0
-
     shortest : bool, optional
         option to look for shortest basis using boundaries
-        only good for very small examples   
+        only good for very small examples 
+    log : str, optional
+        path to logfile where intermediate data should be
+        pickled and stored  
 
     Returns
     -------
     : list
         list of generators as k-chains
     """
-    max_edge_size = np.max([len(e) for e in h.edges()])
-    if k+1 > max_edge_size or k < 1:
+    max_dim = np.max([len(e) for e in h.edges()]) - 1
+
+    if k > max_dim or k < 1:
         return 'wrong dim'
     C = dict()
     for i in range(k-1,k+2):
@@ -641,11 +702,14 @@ def hypergraph_homology_basis(h,k,shortest=False):
     bd = dict()
     for i in range(k,k+2):
         bd[i] = bkMatrix(C[i-1],C[i])
-    return homology_basis(bd,k,C=C[k],shortest=shortest)
-
-
-
-
-
-
+    if log:
+        try:
+            logdict = pickle.load(open(log,'rb'))
+        except:
+            logdict = dict()        
+        logdict.update({'maxdim':max_dim,
+            'kchains':C,
+            'bd':bd,})
+        pickle.dump(logdict,open(log,'wb'))    
+    return homology_basis(bd,k,C=C[k],shortest=shortest,log=log)
 
