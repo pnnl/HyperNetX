@@ -10,7 +10,7 @@ from hypernetx import HyperNetXError
 
 class Entity(object):
     """
-    Base class for objects used in building network-like objects including 
+    Base class for objects used in building network-like objects including
     Hypergraphs, Posets, Cell Complexes.
 
     Parameters
@@ -19,8 +19,8 @@ class Entity(object):
         a unique identifier
 
     elements : list or dict, optional, default: None
-        a list of entities with identifiers different than uid and/or 
-        hashables different than uid, see `Honor System`_ 
+        a list of entities with identifiers different than uid and/or
+        hashables different than uid, see `Honor System`_
 
     props : keyword arguments, optional, default: {}
         properties belonging to the entity added as key=value pairs.
@@ -31,27 +31,27 @@ class Entity(object):
 
     An Entity is a container-like object, which has a unique identifier and
     may contain elements and have properties.
-    The Entity class was created as a generic object providing structure for 
-    Hypergraph nodes and edges. 
+    The Entity class was created as a generic object providing structure for
+    Hypergraph nodes and edges.
 
-    - An Entity is distinguished by its identifier (sortable,hashable) :code:`Entity.uid`  
+    - An Entity is distinguished by its identifier (sortable,hashable) :code:`Entity.uid`
     - An Entity is a container for other entities but may not contain itself, :code:`Entity.elements`
     - An Entity has properties :code:`Entity.properties`
     - An Entity has memberships to other entities, :code:`Entity.memberships`.
     - An Entity has children, :code:`Entity.children`, which are the elements of its elements.
     - :code:`Entity.children` are registered in the :code:`Entity.registry`.
     - All descendents of Entity are registered in :code:`Entity.fullregistry()`.
-      
+
     .. _Honor System:
 
     **Honor System**
 
-    HypernetX has an Honor System that applies to Entity uid values. 
+    HyperNetX has an Honor System that applies to Entity uid values.
     Two entities are equal if their __dict__ objects match.
-    For performance reasons many methods distinguish entities by their uids. 
-    It is, therefore, up to the user to ensure entities with the same uids are indeed the same. 
+    For performance reasons many methods distinguish entities by their uids.
+    It is, therefore, up to the user to ensure entities with the same uids are indeed the same.
     Not doing so may cause undesirable side effects.
-    In particular, the methods in the Hypergraph class assume distinct nodes and edges 
+    In particular, the methods in the Hypergraph class assume distinct nodes and edges
     have distinct uids.
 
     Examples
@@ -81,10 +81,10 @@ class Entity(object):
     EntitySet
 
     """
-    def __init__(self, uid, elements=[], **props): 
+    def __init__(self, uid, elements=[], **props):
         super().__init__()
-        self._uid = uid  
-        self._elements = dict() 
+        self._uid = uid
+        self._elements = dict()
         self._memberships = dict()
         self._registry = dict()
         self.__dict__.update(props)
@@ -126,11 +126,11 @@ class Entity(object):
         """
         Dictionary of elements to which entity belongs.
 
-        This assignment is done on construction and controlled by 
+        This assignment is done on construction and controlled by
         :code:`Entity.add_element()` and :code:`Entity.remove_element()` methods.
         """
-        
-        return {k : self._memberships[k] for k in self._memberships 
+
+        return {k : self._memberships[k] for k in self._memberships
             if not isinstance(self._memberships[k], EntitySet) }
 
     @property
@@ -144,11 +144,11 @@ class Entity(object):
         return set(self.levelset(2).keys())
 
     @property
-    def registry(self): 
+    def registry(self):
         """
         Dictionary of uid:Entity pairs for children entity.
 
-        To return a dictionary of all entities at all depths 
+        To return a dictionary of all entities at all depths
         :code:`Entity.complete_registry()`
         """
         return self.levelset(2)
@@ -176,7 +176,7 @@ class Entity(object):
 
     @property
     def is_empty(self):
-        """Boolean indicating if entity.elements is empty""" 
+        """Boolean indicating if entity.elements is empty"""
         return len(self) == 0
 
     @property
@@ -187,14 +187,14 @@ class Entity(object):
         if self.uidset.isdisjoint(self.children):
             return True
         else:
-            return False    
+            return False
 
 
     def __eq__(self,other):
         """
         Defines equality for Entities based on equivalence of their __dict__ objects.
 
-        Checks all levels of self and other to verify they are 
+        Checks all levels of self and other to verify they are
         referencing the same uids and that they have the same set of properties.
         If at any point we get duplicate addresses we stop checking that branch
         because we are guaranteed equality from there on.
@@ -232,7 +232,7 @@ class Entity(object):
 
     def __repr__(self):
         """Returns a string resembling the constructor for entity without any
-        children""" 
+        children"""
         return f'Entity({self._uid},{list(self.uidset)},{self.properties})'
 
     def __contains__(self, item):
@@ -245,11 +245,11 @@ class Entity(object):
 
         Returns
         -------
-        Boolean 
+        Boolean
 
         Depends on the `Honor System`_ . Allows for uids to be used as shorthand for their entity.
         This is done for performance reasons, but will fail if uids are
-        not unique to their entities. 
+        not unique to their entities.
         Is not transitive.
         """
         if isinstance(item, Entity):
@@ -277,7 +277,7 @@ class Entity(object):
             return self._elements.get(item)
 
     def __iter__(self):
-        """Returns iterator on element ids."""  
+        """Returns iterator on element ids."""
         return iter(self.elements)
 
     def __call__(self):
@@ -292,7 +292,7 @@ class Entity(object):
         ----------
         k : hashable, property key
         v : hashable, property value
-            Will not set uid or change elements or memberships. 
+            Will not set uid or change elements or memberships.
 
         Returns
         -------
@@ -305,7 +305,7 @@ class Entity(object):
                 ' has been created. Create a clone instead.'
              )
         elif k == 'elements':
-            raise HyperNetXError('To add elements to Entity use self.add().')    
+            raise HyperNetXError('To add elements to Entity use self.add().')
         elif k == 'memberships':
             raise HyperNetXError(
                 'Can\'t choose your own memberships, '
@@ -375,7 +375,7 @@ class Entity(object):
 
         An Entity contains other entities, hence the relationships between entities
         and their elements may be represented in a directed graph with entity as root.
-        The levelsets are sets of entities which make up the elements appearing at 
+        The levelsets are sets of entities which make up the elements appearing at
         a certain level.
         """
         if k<=0:
@@ -393,8 +393,8 @@ class Entity(object):
         Parameters
         ----------
         max_depth : int, optional, default: 10
-            If full depth is desired set max_depth to number of entities in 
-            system + 1. 
+            If full depth is desired set max_depth to number of entities in
+            system + 1.
 
         Returns
         -------
@@ -471,7 +471,7 @@ class Entity(object):
         Parameters
         ----------
         level : int, optional, default: 10
-            If level<=1, returns the incidence_dict. 
+            If level<=1, returns the incidence_dict.
 
         Returns
         -------
@@ -491,7 +491,7 @@ class Entity(object):
 
     def clone(self,newuid):
         """
-        Returns shallow copy of entity with newuid. Entity's elements will 
+        Returns shallow copy of entity with newuid. Entity's elements will
         belong to two distinct Entities.
 
         Parameters
@@ -501,9 +501,9 @@ class Entity(object):
 
         Returns
         -------
-        clone : Entity 
-            
-        """      
+        clone : Entity
+
+        """
         return Entity(newuid, elements = self.elements.values(), **self.properties)
 
     def intersection(self,other):
@@ -554,9 +554,9 @@ class Entity(object):
         Returns
         -------
         self : Entity
- 
+
         """
-        for item in args:  
+        for item in args:
             self.add_element(item)
 
         return self
@@ -596,14 +596,14 @@ class Entity(object):
         -----
         If item is in entity elements, no new element is added but properties
         will be updated.
-        If item is in complete_registry(), only the item already known to self will be added. 
-        This method employs the `Honor System`_ since membership in complete_registry is checked 
+        If item is in complete_registry(), only the item already known to self will be added.
+        This method employs the `Honor System`_ since membership in complete_registry is checked
         using the item's uid. It is assumed that the user will only use the same uid
-        for identical instances within the entities registry. 
+        for identical instances within the entities registry.
 
-        """ 
+        """
         checkelts = self.complete_registry()
-        if isinstance(item,Entity): 
+        if isinstance(item,Entity):
         ## if item is an Entity, descendents will be compared to avoid collisions
             if item.uid == self.uid:
                 raise HyperNetXError(
@@ -616,7 +616,7 @@ class Entity(object):
             elif item.uid in checkelts:
                 ## if item belongs to an element or a desendent of an element
                 ## then the existing descendent becomes an element
-                ## and properties are updated. 
+                ## and properties are updated.
                 self._elements[item.uid] = checkelts[item.uid]
                 checkelts[item.uid]._memberships[self.uid] = self
                 checkelts[item.uid].__dict__.update(item.properties)
@@ -626,8 +626,8 @@ class Entity(object):
                 item._memberships[self.uid] = self
                 self._elements[item.uid] = item
         else:
-            ## item must be a hashable. 
-            ## if it appears as a uid in checkelts then 
+            ## item must be a hashable.
+            ## if it appears as a uid in checkelts then
             ## the corresponding Entity will become an element of entity.
             ## Otherwise, at most it will be added as an empty Entity.
             if self.uid == item:
@@ -648,7 +648,7 @@ class Entity(object):
     def remove(self, *args):
         """
         Removes args from entitie's elements if they belong.
-        Does nothing with args not in entity. 
+        Does nothing with args not in entity.
 
         Parameters
         ----------
@@ -683,7 +683,7 @@ class Entity(object):
 
     def remove_element(self,item):
         """
-        Removes item from entity and reference to entity from 
+        Removes item from entity and reference to entity from
         item.memberships
 
         Parameters
@@ -708,7 +708,7 @@ class Entity(object):
     @staticmethod
     def merge_entities(name,ent1,ent2):
         """
-        Merge two entities making sure they do not conflict. 
+        Merge two entities making sure they do not conflict.
 
         Parameters
         ----------
@@ -736,16 +736,18 @@ class Entity(object):
 
 
 
-class EntitySet(Entity):                             
+class EntitySet(Entity):
     """
+    .. _entityset:
+
     Parameters
     ----------
     uid : hashable
         a unique identifier
 
     elements : list or dict, optional, default: None
-        a list of entities with identifiers different than uid and/or 
-        hashables different than uid, see `Honor System`_ 
+        a list of entities with identifiers different than uid and/or
+        hashables different than uid, see `Honor System`_
 
     props : keyword arguments, optional, default: {}
         properties belonging to the entity added as key=value pairs.
@@ -759,26 +761,26 @@ class EntitySet(Entity):
 
     **Bipartite Condition**
 
-    *Entities that are elements of the same EntitySet, may not contain each other as elements.* 
-    The elements and children of an EntitySet generate a specific partition for a bipartite graph. 
+    *Entities that are elements of the same EntitySet, may not contain each other as elements.*
+    The elements and children of an EntitySet generate a specific partition for a bipartite graph.
     The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
     the children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs
     in HNX.
 
-    Example: :: 
+    Example: ::
 
         >>> y = Entity('y')
         >>> x = Entity('x')
         >>> x.add(y)
         >>> y.add(x)
         >>> w = EntitySet('w',[x,y])
-        HyperNetXError: Error: Fails the Bipartite Condition for EntitySet. 
+        HyperNetXError: Error: Fails the Bipartite Condition for EntitySet.
         y references a child of an existing Entity in the EntitySet.
 
     """
 
     def __init__(self, uid, elements=[], **props):
-        super().__init__(uid, elements,  **props)        
+        super().__init__(uid, elements,  **props)
         if not self.is_bipartite:
             raise HyperNetXError('Entity does not satisfy the Bipartite Condition, elements and children are not disjoint.')
 
@@ -788,12 +790,12 @@ class EntitySet(Entity):
 
     def __repr__(self):
         """Returns a string resembling the constructor for entityset without any
-        children""" 
+        children"""
         return f'EntitySet({self._uid},{list(self.uidset)},{self.properties})'
 
-    def add(self,*args):  
+    def add(self,*args):
         """
-        Adds args to entityset's elements, checking to make sure no self references are 
+        Adds args to entityset's elements, checking to make sure no self references are
         made to element ids.
         Ensures Bipartite Condition of EntitySet.
 
@@ -823,8 +825,8 @@ class EntitySet(Entity):
 
     def clone(self,newuid):
         """
-        Returns shallow copy of entityset with newuid. Entityset's 
-        elements will belong to two distinct entitysets. 
+        Returns shallow copy of entityset with newuid. Entityset's
+        elements will belong to two distinct entitysets.
 
 
         Parameters
@@ -834,9 +836,9 @@ class EntitySet(Entity):
 
         Returns
         -------
-        clone : EntitySet 
+        clone : EntitySet
 
-        """      
+        """
         return EntitySet(newuid, elements = self.elements.values(), **self.properties)
 
 
@@ -846,7 +848,7 @@ class EntitySet(Entity):
 
         Parameters
         ----------
-        newuid : hashable 
+        newuid : hashable
 
         use_reps : boolean, optional, default: False
             Choose a single element from the collapsed elements as a representative
@@ -863,9 +865,9 @@ class EntitySet(Entity):
         -----
         Treats elements of the entityset as equal if they have the same uidsets. Using this
         as an equivalence relation, the entityset's uidset is partitioned into equivalence classes.
-        The equivalent elements are identified using a single entity by using the 
+        The equivalent elements are identified using a single entity by using the
         frozenset of uids associated to these elements as the uid for the new element
-        and dropping the properties. 
+        and dropping the properties.
         If use_reps is set to True a representative element of the equivalence class is
         used as identifier instead of the frozenset.
 
@@ -880,7 +882,7 @@ class EntitySet(Entity):
             {'E2': {'a', 'b'}}
 
         """
-        
+
         temp = defaultdict(set)
         for e in self.__call__():
             temp[frozenset(e.uidset)].add(e.uid)
@@ -899,7 +901,7 @@ class EntitySet(Entity):
     def incidence_matrix(self, sparse=True, index=False):
         """
         An incidence matrix for the EntitySet indexed by children x uidset.
-        
+
         Parameters
         ----------
         sparse : boolean, optional, default: True
@@ -922,7 +924,7 @@ class EntitySet(Entity):
         -----
 
         Example: ::
-    
+
             >>> E = EntitySet('E',{'a':{1,2,3},'b':{2,3},'c':{1,4}})
             >>> E.incidence_matrix(sparse=False, index=True)
             (array([[0, 1, 1],
@@ -940,7 +942,7 @@ class EntitySet(Entity):
         edict = dict(zip(self.uidset,range(nuidset)))
 
         if len(ndict) is not 0:
-            
+
             if index:
                 rowdict = {v:k for k,v in ndict.items()}
                 coldict = {v:k for k,v in edict.items()}
@@ -1006,7 +1008,7 @@ class EntitySet(Entity):
 
 
 
- 
+
 
 
 

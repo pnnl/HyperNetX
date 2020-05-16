@@ -619,7 +619,7 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
         to match the column index of bd[k]
     shortest : bool, optional
         option to look for shortest basis using boundaries
-        only good for very small examples
+        *Warning*: This is only good for very small examples
     log : str, optional
         path to logfile where intermediate data should be
         pickled and stored
@@ -656,28 +656,18 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
     # print(f'hom basis reps: {proj*1}\n')
     basis = []
     if shortest:
-        # shortest_basis = defaultdict(list)
-        # img_group = coset(im2)
-        # for idx,bs in enumerate(proj):
-        #     temp = sorted([np.logical_xor(bs,g) for g in img_group],key=lambda x: np.sum(x))
-        #     sh_len = len(temp[0])
-        #     for x in temp:
-        #         if len(x) == sh_len:
-        #             shortest_basis[idx].append(x)
-        #         else:
-        #             break
         shortest_basis = list()
         for idx, bs in enumerate(proj):
             shortest_basis.append(coset(im2, bs=bs, shortest=True))
         if C:
-            basis = output = [interpret(C, sb) for sb in shortest_basis]
+            basis = [interpret(C, sb) for sb in shortest_basis]
 
-        proj = output = shortest_basis
+        proj = shortest_basis
     else:
         if C:
-            basis = output = interpret(C, proj)
+            basis = interpret(C, proj)
         else:
-            basis = output = proj
+            basis = proj
     if log:
         try:
             logdict = pickle.load(open(log, 'rb'))
@@ -691,7 +681,7 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
                         'basis': basis})
         pickle.dump(logdict, open(log, 'wb'))
 
-    return basis  # This isn't outputting the proj!!!!!!!!
+    return basis
 
 
 def hypergraph_homology_basis(h, k, shortest=False, log=None):

@@ -7,11 +7,11 @@ To install in an Anaconda environment
 -------------------------------------
 
 	>>> conda create -n <env name> python=3.6
-	>>> source activate <env name> 
+	>>> source activate <env name>
 
 Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:
-	
+
 	>>> conda install matplotlib
 
 To install in a virtualenv environment
@@ -44,16 +44,16 @@ For a minimal installation:
 
 	>>> pip install hypernetx
 
-For an editable installation with access to jupyter notebooks: 
+For an editable installation with access to jupyter notebooks:
 
     >>> pip install [-e] .
 
-To install with the tutorials: 
+To install with the tutorials:
 
 	>>> pip install -e .['tutorials']
 
-To install with the documentation: 
-	
+To install with the documentation:
+
 	>>> pip install -e .['documentation']
 	>>> chmod 755 build_docs.sh
 	>>> ./build_docs.sh

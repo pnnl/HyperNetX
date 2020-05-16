@@ -292,13 +292,13 @@ returns the boundary group</p>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k</em>, <em class="sig-param">C=None</em>, <em class="sig-param">shortest=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k</em>, <em class="sig-param">C=None</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a basis for the kth-homology group with boundary
 matrices given by bd</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bd</strong> (<em>dict</em>) – dict of k-boundary matrices keyed on k</p></li>
+<li><p><strong>bd</strong> (<em>dict</em>) – dict of k-boundary matrices keyed on k,k+1</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – k must be an integer greater than 0
 bd must have keys for k, and k+1</p></li>
 <li><p><strong>C</strong> (<em>list</em><em>, </em><em>optional</em>) – list of k-cells used to interpret the generators
@@ -306,7 +306,9 @@ bd[k] is boundary matrix with rows and columns indexed by
 k-1 and k cells. C is a list of k chains ordered
 to match the column index of bd[k]</p></li>
 <li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em>) – option to look for shortest basis using boundaries
-only good for very small examples</p></li>
+<em>Warning</em>: This is only good for very small examples</p></li>
+<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional</em>) – path to logfile where intermediate data should be
+pickled and stored</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -322,7 +324,7 @@ if shortest then returns a dictionary of shortest cycles for each coset.</p>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.hypergraph_homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k</em>, <em class="sig-param">shortest=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the kth-homology group mod 2 for the ASC
 associated with the hypergraph h.</p>
 <dl class="field-list simple">
@@ -332,6 +334,8 @@ associated with the hypergraph h.</p>
 <li><p><strong>k</strong> (<em>int</em>) – k must be an integer greater than 0</p></li>
 <li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em>) – option to look for shortest basis using boundaries
 only good for very small examples</p></li>
+<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional</em>) – path to logfile where intermediate data should be
+pickled and stored</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -413,6 +417,31 @@ the same length.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If arrays are not of the same length an error will be raised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.homology_mod2.logical_matadd">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matadd</code><span class="sig-paren">(</span><em class="sig-param">mat1</em>, <em class="sig-param">mat2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the boolean equivalent of matrix additon mod 2 on two
+binary arrays stored as type boolean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
+<li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix addition of the
+matrices as matrices over Z/2Z</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HyperNetXError</strong> – If dimensions are not equal an error will be raised.</p>
 </dd>
 </dl>
 </dd></dl>

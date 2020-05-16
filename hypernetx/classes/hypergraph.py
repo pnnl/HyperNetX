@@ -55,7 +55,8 @@ class Hypergraph():
         >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
         >>> E = EntitySet('sample',elements=[a,b])
         >>> H = Hypergraph(E)
-        >>> H.nodes, H.edges
+        >>> H.nodes, H.edges.
+
         (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
     5. From a networkx bipartite graph using :code:`from_bipartite()`:
@@ -67,12 +68,13 @@ class Hypergraph():
         >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
         >>> H = Hypergraph.from_bipartite(B)
         >>> H.nodes, H.edges
+
         (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
     Parameters
     ----------
-    setsystem : EntitySet or dictionary or iterable of hashables or Entities, optional, default: None
-        If not an EntitySet then setsystem must be acceptable as elements to an EntitySet
+    setsystem : (optional) hnx.EntitySet, dict, or iterable, default: None
+        If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable as elements to an :ref:`EntitySet<entityset>`.
 
     name : hashable, optional, default: None
 
@@ -1496,7 +1498,8 @@ class Hypergraph():
         name : hashable
 
         key : (optional) function
-            boolean function to be evaluated on each cell of the array
+            boolean function to be evaluated on each cell of the array,
+            must be applicable to numpy.array
 
         Returns
         -------
@@ -1552,7 +1555,9 @@ class Hypergraph():
 
     @classmethod
     def from_dataframe(cls, df, fillna=0, transpose=False,
-                        name=None, transforms=[],key=None):
+                        name=None, columns=None, rows=None,
+                        transforms=[],key=None,
+                        ):
         '''
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
         and Columns to label edges.
@@ -1566,18 +1571,29 @@ class Hypergraph():
             a real value to place in empty cell, all-zero columns will not generate
             an edge
 
-        transpose : bool, default = False
-            option to transpose the dataframe, in this case df.Index will label the edges
-            and df.columns will label the nodes
+        columns : (optional) list, default = None
+            restricts df to the columns with headers in this list.
 
-        transforms : (optional) arr, default = []
-            optional list of transformations to apply to the dataframe using
-            pd.DataFrame.apply(). Transformations are applied in the order they are
-            given (ex. abs)
+        rows : (optional) list, default = None
+            restricts df to the rows indexed by the elements in this list.
+
+        transpose : (optional) bool, default = False
+            option to transpose the dataframe, in this case df.Index will label the edges
+            and df.columns will label the nodes, transpose is applied before transforms and
+            key
+
+        transforms : (optional) list, default = []
+            optional list of transformations to apply to each column,
+            of the dataframe using pd.DataFrame.apply().
+            Transformations are applied in the order they are
+            given (ex. abs). To apply transforms to rows or for additional
+            functionality, consider transforming df using pandas.DataFrame methods
+            prior to generating the hypergraph.
 
         key : (optional) function, default = None
             boolean function to be evaluated on each cell of the array,
             key is applied after transforms
+
 
         Returns
         -------
