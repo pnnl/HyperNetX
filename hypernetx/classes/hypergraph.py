@@ -1604,6 +1604,12 @@ class Hypergraph():
         The constructor does not generate empty edges.
         All-zero columns in df are removed and the names corresponding to these
         edges are discarded.
+        Restrictions and data processing will occur in this order:
+
+            1. column and row restrictions.
+            2. transpose the dataframe
+            3. transforms in the order listed
+            4. boolean key
         '''
         import pandas as pd
 
