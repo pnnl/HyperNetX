@@ -1436,7 +1436,16 @@ key is applied after transforms</p></li>
 <p class="admonition-title">Note</p>
 <p>The constructor does not generate empty edges.
 All-zero columns in df are removed and the names corresponding to these
-edges are discarded.</p>
+edges are discarded.
+Restrictions and data processing will occur in this order:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>column and row restrictions.</p></li>
+<li><p>transpose the dataframe</p></li>
+<li><p>transforms in the order listed</p></li>
+<li><p>boolean key</p></li>
+</ol>
+</div></blockquote>
 </div>
 </dd></dl>
 
