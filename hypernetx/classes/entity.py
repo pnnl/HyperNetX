@@ -614,7 +614,7 @@ class Entity(object):
                 ## item is already an element so only the properties will be updated
                 checkelts[item.uid].__dict__.update(item.properties)
             elif item.uid in checkelts:
-                ## if item belongs to an element or a desendent of an element
+                ## if item belongs to an element or a descendent of an element
                 ## then the existing descendent becomes an element
                 ## and properties are updated.
                 self._elements[item.uid] = checkelts[item.uid]
