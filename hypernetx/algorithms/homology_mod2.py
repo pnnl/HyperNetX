@@ -27,6 +27,7 @@ numbers and homology bases are returned.
 
 Methods for obtaining SNF for Z/2Z are based on Ferrario's work:
 http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/
+
 """
 
 import numpy as np
@@ -355,7 +356,7 @@ def matmulreduce(arr, reverse=False):
 
 def logical_matadd(mat1, mat2):
     """
-    Returns the boolean equivalent of matrix additon mod 2 on two
+    Returns the boolean equivalent of matrix addition mod 2 on two
     binary arrays stored as type boolean
 
     Parameters
@@ -556,10 +557,7 @@ def reduced_row_echelon_form_mod2(M):
     return L, S, Linv
 
 
-def coset(im2, bs=[], shortest=False):  # This breaks because line 529 has logical_xor on ndarray.
-    # It only works on a simple array. will need to break it up on each dimension.
-    # Do it by creating a method logical_matadd(*arr) and doing logical_xor.reduce on each element of the transpose.
-    # Then transpose back. Will arkouda do this????
+def coset(im2, bs=[], shortest=False):
     """
     Generate the coset represented by bs, if bs=None
     returns the boundary group
@@ -570,6 +568,10 @@ def coset(im2, bs=[], shortest=False):  # This breaks because line 529 has logic
         columns form a basis for the boundary group
     bs : np.array
         boolean vector from projection of kernel on cokernel
+    shortest : bool
+        if True then only representatives of the coset containing
+        the smallest number of $k$-cells will be returned
+        else all elements of the coset will be returned
 
     Returns
     -------
@@ -577,7 +579,7 @@ def coset(im2, bs=[], shortest=False):  # This breaks because line 529 has logic
         list of elements of the coset of interest
     """
     msg = """
-    coset() is an very inefficient method for all but small examples.
+    coset() is a very inefficient method for all but small examples.
     """
     warnings.warn(msg)
     if np.sum(im2) == 0:
