@@ -939,7 +939,7 @@ class EntitySet(Entity):
         ndict = dict(zip(self.children,range(nchildren)))
         edict = dict(zip(self.uidset,range(nuidset)))
 
-        if len(ndict) is not 0:
+        if len(ndict) != 0:
             
             if index:
                 rowdict = {v:k for k,v in ndict.items()}
