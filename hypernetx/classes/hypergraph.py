@@ -449,7 +449,7 @@ class Hypergraph():
 				else:
 					self._nodes.add(Entity(node)) 
 
-	def add_edge(self,edge):
+	def add_edge(self, edge, **kwargs):
 		"""
 		Adds a single edge to hypergraph.
 
@@ -457,6 +457,8 @@ class Hypergraph():
 		----------
 		edge : hashable or Entity
 			If hashable the edge returned will be empty.
+		kwargs : keyword arguments, optional
+            Edge data can be assigned using keyword arguments.
 
 		Returns
 		-------
@@ -477,6 +479,11 @@ class Hypergraph():
 		elif edge in self._nodes:
 			warnings.warn("Cannot add edge. Edge is already a Node")
 		elif isinstance(edge,Entity):
+			if len(kwargs) > 0:
+				warnings.warn(
+					("Additional parameters provided "+
+					"will be ignored as edge is an Entity.")
+				)
 			if len(edge) > 0:
 				self._add_nodes_from(edge.elements.values())
 				self._edges.add(Entity(edge.uid,
@@ -486,10 +493,13 @@ class Hypergraph():
 			else:
 				self._edges.add(Entity(edge.uid, **edge.properties))		
 		else:
-			self._edges.add(Entity(edge))  ### this generates an empty edge
+			self._add_nodes_from(edge)
+			self._edges.add(Entity(edge, **kwargs))  ### this generates an empty edge
+			for node in edge:
+				self.add_node_to_edge(node, edge)
 		return self
 
-	def add_edges_from(self,edge_set):
+	def add_edges_from(self, edge_set, **kwargs):
 		"""
 		Add edges to hypergraph.
 
@@ -497,6 +507,9 @@ class Hypergraph():
 		----------
 		edge_set : iterable of hashables or Entities
 			For hashables the edges returned will be empty.
+		kwargs : keyword arguments, optional
+            Edge data (the same for all edges in edge_set
+			can be assigned using keyword arguments.
 
 		Returns
 		-------
@@ -504,7 +517,7 @@ class Hypergraph():
 
 		"""
 		for edge in edge_set:
-			self.add_edge(edge)
+			self.add_edge(edge, **kwargs)
 		return self
 
 
