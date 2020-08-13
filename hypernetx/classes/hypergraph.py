@@ -661,6 +661,22 @@ class Hypergraph():
 
 	def __weighted_incidence_matrix(self, weight, index):
 	
+		"""
+		Helper method to calculate the weighted incidence matrix M * sqrt(W)
+		
+		Parameters
+		----------
+		index: boolean
+			if True, will return a rowdict of row to node uid	
+
+		weight: str, the name of an element in the edge dict to 
+			use as weight in the adjacency matrix calculation
+		
+		Returns
+		----------
+		adjacency_matrix : scipy.sparse.csr.csr_matrix
+		"""
+	
 		# this will be a bottleneck in big graphs
 		weight_vec = [np.sqrt(self.edges.elements[ii].__dict__[weight]) for ii in self.edges.elements]
 		return self.incidence_matrix(index=index).dot(sparse.csr_matrix(np.diag(weight_vec)))
