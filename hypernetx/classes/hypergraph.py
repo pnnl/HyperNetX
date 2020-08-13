@@ -631,7 +631,7 @@ class Hypergraph():
 		return self.edges.incidence_matrix(sparse,index)
 
 
-	def __incidence_to_adjacency(M, s=1, weighted=True, weight=None):
+	def __incidence_to_adjacency(M, s=1, weighted=True):
 		"""	
 		Helper method to obtain adjacency matrix from incidence matrix.
 		
@@ -650,20 +650,20 @@ class Hypergraph():
 		a matrix : scipy.sparse.csr.csr_matrix
 
 		"""
-		# Note, the name of the keyword "weighted" is unfortunate as it invites confusion
-		# with the new keyword "weight," which I've used because that is the convention
-		# in networkx. Happy for one or other to be renamed. :)
-		if weight is not None:
-			A = M.dot(sparse.csr_matrix(np.diag(weight))).dot(M.transpose())
-		else:
-			A = M.dot(M.transpose())
-		A.setdiag(0)
+
+		A = M.dot(M.transpose())
+		A.setdiag(0.0)
 		if s > 1:
 			A = A.multiply(A >= s)
 		if not weighted:
 			A = (A > 0)*1
 		return A
 
+	def __weighted_incidence_matrix(self, weight, index):
+	
+		# this will be a bottleneck in big graphs
+		weight_vec = [np.sqrt(self.edges.elements[ii].__dict__[weight]) for ii in self.edges.elements]
+		return self.incidence_matrix(index=index).dot(sparse.csr_matrix(np.diag(weight_vec)))
 
 	def adjacency_matrix(self, index=False, s=1, weighted=True, weight=None):
 		"""
@@ -696,15 +696,19 @@ class Hypergraph():
 		least s edges and 0 otherwise.
 
 		"""
+		# Note, the name of the keyword "weighted" is unfortunate as it invites confusion
+		# with the new keyword "weight," which I've used because that is the convention
+		# in networkx. Happy for one or other to be renamed. :)		
 		
-		M = self.incidence_matrix(index=index)
 		if weight is not None:
-			# this will be a bottleneck in big graphs
-			weight = [self.edges.elements[ii].__dict__[weight] for ii in self.edges.elements]
-		if index:
-			return Hypergraph.__incidence_to_adjacency(M[0],s=s,weighted=weighted, weight=weight), M[1]
+			M = self.__weighted_incidence_matrix(weight, index)
 		else:
-			return Hypergraph.__incidence_to_adjacency(M,s=s,weighted=weighted, weight=weight)
+			M = self.incidence_matrix(index=index)
+			
+		if index:
+			return Hypergraph.__incidence_to_adjacency(M[0],s=s,weighted=weighted), M[1]
+		else:
+			return Hypergraph.__incidence_to_adjacency(M,s=s,weighted=weighted)
 
 	def edge_adjacency_matrix(self, index=False, s=1, weighted=True, weight=None):
 		"""
@@ -734,10 +738,12 @@ class Hypergraph():
 		Two edges are s-adjacent if they share at least s nodes.
 		If index=True, returns a dictionary column_index:edge_uid
 
-		"""
+		"""		
 		if weight is not None:
-			raise NotImplementedError("Weighted dual adjacency matrices are not yet implemented.")
-		M = self.incidence_matrix(index=index)
+			M = self.__weighted_incidence_matrix(weight, index)
+		else:
+			M = self.incidence_matrix(index=index)		
+		
 		if index:
 			return Hypergraph.__incidence_to_adjacency(M[0].transpose(),s=s,weighted=weighted), M[2]
 		else:
