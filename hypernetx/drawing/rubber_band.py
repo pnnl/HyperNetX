@@ -17,6 +17,8 @@ from scipy.spatial.distance import pdist
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
+# increases the default figure size to 8in square.
+plt.rcParams['figure.figsize'] = (8, 8)
 
 N_CONTROL_POINTS = 24
 
