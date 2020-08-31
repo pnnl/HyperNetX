@@ -329,6 +329,7 @@ def draw(H,
          layout=nx.spring_layout,
          layout_kwargs={},
          ax=None,
+         node_radius=None,
          edges_kwargs={},
          nodes_kwargs={},
          edge_labels={},
@@ -400,6 +401,8 @@ def draw(H,
         matplotlib axis on which the plot is rendered
     edges_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for edges
+    node_radius: None, int, float, or dict
+        radius of all nodes, or dictionary of node:value; the default (None) calculates radius based on number of collapsed nodes; reasonable values range between 1 and 3
     nodes_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for nodes
     edge_labels_kwargs: dict
@@ -422,8 +425,18 @@ def draw(H,
     r0 = get_default_radius(H, pos)
     a0 = np.pi*r0**2
 
-    node_radius = {v: np.sqrt(a0*(len(v) if type(v) == frozenset else 1)/np.pi)
-                   for v in H.nodes}
+    def get_node_radius(v):
+        if node_radius is None:
+            return np.sqrt(a0*(len(v) if type(v) == frozenset else 1)/np.pi)
+        elif hasattr(node_radius, 'get'):
+            return node_radius.get(v, 1)*r0
+        return node_radius*r0
+
+    # guarantee that node radius is a dictionary mapping nodes to values
+    node_radius = {
+        v: get_node_radius(v)
+        for v in H.nodes
+    }
 
     # for convenience, we are using setdefault to mutate the argument
     # however, we need to copy this to prevent side-effects
