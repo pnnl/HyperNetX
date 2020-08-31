@@ -482,6 +482,5 @@ def draw(H,
     else:
         ax.axis('equal')
 
-    ax.xaxis.set_ticks([])
-    ax.yaxis.set_ticks([])
+    ax.axis('off')
     
