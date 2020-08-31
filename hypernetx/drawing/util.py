@@ -5,7 +5,7 @@ from itertools import combinations
 
 import networkx as nx
 
-def get_frozenset_label(S, count=False):
+def get_frozenset_label(S, count=False, override={}):
     '''
     Helper function for rendering the labels of possibly collapsed nodes and edges
 
@@ -28,10 +28,10 @@ def get_frozenset_label(S, count=False):
             elif count:
                 return ''
             else:
-                return ', '.join(map(str, v))
+                return ', '.join([override.get(s, s) for s in v])
         return str(v)
 
-    return {v: helper(v) for v in S}
+    return {v: override.get(v, helper(v)) for v in S}
 
 def get_line_graph(H, collapse=True):
     '''

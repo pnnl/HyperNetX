@@ -329,7 +329,9 @@ def draw(H,
          ax=None,
          edges_kwargs={},
          nodes_kwargs={},
+         edge_labels={},
          edge_labels_kwargs={},
+         node_labels={},
          node_labels_kwargs={},
          with_edge_labels=True,
          with_node_labels=True,
@@ -434,7 +436,11 @@ def draw(H,
                             )
 
     if with_edge_labels:
-        labels = get_frozenset_label(H.edges, with_edge_counts)
+        labels = get_frozenset_label(
+            H.edges,
+            count=with_edge_counts,
+            override=edge_labels
+        )
 
         draw_hyper_edge_labels(H, polys,
                                color=edges_kwargs['edgecolors'],
@@ -445,7 +451,11 @@ def draw(H,
                                )
 
     if with_node_labels:
-        labels = get_frozenset_label(H.nodes, with_node_counts)
+        labels = get_frozenset_label(
+            H.nodes,
+            count=with_node_counts,
+            override=node_labels
+        )
 
         draw_hyper_labels(H, pos,
                           node_radius=node_radius,
