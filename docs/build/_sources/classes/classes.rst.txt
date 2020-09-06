@@ -20,14 +20,6 @@ classes.hypergraph module
    :undoc-members:
    :show-inheritance:
 
-classes.untitled\_entity module
--------------------------------
-
-.. automodule:: classes.untitled_entity
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 classes.untitled\_hypergraph module
 -----------------------------------
 
