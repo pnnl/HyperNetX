@@ -23,7 +23,7 @@ Documentation is available at: https://pnnl.github.io/HyperNetX/
 
 Tutorials may be run in colab
 -----------------------------
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb)
 
 Installation Instructions
 -------------------------
