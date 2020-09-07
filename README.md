@@ -27,7 +27,7 @@ Tutorials may be run in colab
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 1 - HNX Basics</span>
 </a>
-
+</br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 2 - Visualization Methods</span>
