@@ -23,11 +23,13 @@ Documentation is available at: https://pnnl.github.io/HyperNetX/
 
 Tutorials may be run in colab
 -----------------------------
-[![Open In Colab: Tutorial 1 - HNX Basics](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb) Tutorial 1 - HNX Basics
-
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 1 - HNX Basics</span>
+</a>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+	<span style={'margin-left':5px}>Tutorial 2 - Visualization Methods</span>
 </a>
 
 Installation Instructions
