@@ -21,8 +21,8 @@ For questions and comments you may contact the developers directly at:
 
 Documentation is available at: https://pnnl.github.io/HyperNetX/
 
-Tutorials may be run in colab
------------------------------
+Tutorials may be run in your browser using Google Colab
+-------------------------------------------------------
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/rel35/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 1 - HNX Basics</span>
