@@ -2,6 +2,7 @@ import pytest
 import itertools as it
 import networkx as nx
 import hypernetx as hnx
+import numpy as np
 
 
 class TriLoop():
@@ -24,6 +25,14 @@ class Fish():
         self.hypergraph = hnx.Hypergraph(self.edgedict, name='Fish')
 
 
+class SixByFive():
+    """Example hypergraph with 6 nodes and 5 edges"""
+
+    def __init__(self):
+        mat = np.array([[1, 1, 1, 0, 0, 0], [1, 0, 1, 0, 1, 0], [1, 1, 0, 0, 1, 1], [0, 1, 1, 1, 0, 0], [1, 1, 1, 1, 0, 0]]).transpose()
+        self.hypergraph = hnx.Hypergraph.from_numpy_array(mat)
+
+
 @pytest.fixture
 def triloop():
     return TriLoop()
@@ -32,3 +41,8 @@ def triloop():
 @pytest.fixture
 def fish():
     return Fish()
+
+
+@pytest.fixture
+def sixbyfive():
+    return SixByFive()
