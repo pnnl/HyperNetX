@@ -212,7 +212,7 @@ Hypergraph nodes and edges.</p>
 <li><p>All descendents of Entity are registered in <code class="code docutils literal notranslate"><span class="pre">Entity.fullregistry()</span></code>.</p></li>
 </ul>
 <p id="honor-system"><strong>Honor System</strong></p>
-<p>HypernetX has an Honor System that applies to Entity uid values.
+<p>HyperNetX has an Honor System that applies to Entity uid values.
 Two entities are equal if their __dict__ objects match.
 For performance reasons many methods distinguish entities by their uids.
 It is, therefore, up to the user to ensure entities with the same uids are indeed the same.
@@ -638,7 +638,7 @@ item.memberships</p>
 <dt id="classes.entity.EntitySet">
 <em class="property">class </em><code class="sig-prename descclassname">classes.entity.</code><code class="sig-name descname">EntitySet</code><span class="sig-paren">(</span><em class="sig-param">uid</em>, <em class="sig-param">elements=[]</em>, <em class="sig-param">**props</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#EntitySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.entity.EntitySet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity"><code class="xref py py-class docutils literal notranslate"><span class="pre">classes.entity.Entity</span></code></a></p>
-<dl class="field-list simple">
+<dl class="field-list simple" id="entityset">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<em>hashable</em>) – a unique identifier</p></li>
@@ -852,28 +852,31 @@ the objects in their hypergraph. See <a class="reference internal" href="#honor-
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">});</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,{</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">E</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span><span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span>
+
 <span class="go">(EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;a&#39;],{}))</span>
 </pre></div>
 </div>
 </li>
 <li><p>From a networkx bipartite graph using <code class="code docutils literal notranslate"><span class="pre">from_bipartite()</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<blockquote>
+<div><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
-<span class="go">(EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}))</span>
 </pre></div>
 </div>
+<p>(EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[‘b’, ‘c’, ‘a’],{}))</p>
+</div></blockquote>
 </li>
 </ol>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>setsystem</strong> (<a class="reference internal" href="#classes.entity.EntitySet" title="classes.entity.EntitySet"><em>EntitySet</em></a><em> or </em><em>dictionary</em><em> or </em><em>iterable of hashables</em><em> or </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If not an EntitySet then setsystem must be acceptable as elements to an EntitySet</p></li>
+<li><p><strong>setsystem</strong> (<em>(</em><em>optional</em><em>) </em><em>hnx.EntitySet</em><em>, </em><em>dict</em><em>, or </em><em>iterable</em><em>, </em><em>default: None</em>) – If not an <a class="reference internal" href="#entityset"><span class="std std-ref">EntitySet</span></a> then setsystem must be acceptable as elements to an <a class="reference internal" href="#entityset"><span class="std std-ref">EntitySet</span></a>.</p></li>
 <li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
 </ul>
 </dd>
@@ -1398,7 +1401,7 @@ For each edge (n,e) in B add n to the edge e in the hypergraph.</p>
 
 <dl class="method">
 <dt id="classes.hypergraph.Hypergraph.from_dataframe">
-<em class="property">classmethod </em><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">rows=None</em>, <em class="sig-param">transforms=[]</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
 and Columns to label edges.</p>
 <dl class="field-list simple">
@@ -1407,9 +1410,19 @@ and Columns to label edges.</p>
 <li><p><strong>df</strong> (<em>Pandas.Dataframe</em>) – a real valued dataframe with a single index</p></li>
 <li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
 an edge</p></li>
-<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will label the edges
-and df.columns will label the nodes</p></li>
-<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em>) – boolean function to be evaluated on each cell of the array</p></li>
+<li><p><strong>columns</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default = None</em>) – restricts df to the columns with headers in this list.</p></li>
+<li><p><strong>rows</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default = None</em>) – restricts df to the rows indexed by the elements in this list.</p></li>
+<li><p><strong>transpose</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will label the edges
+and df.columns will label the nodes, transpose is applied before transforms and
+key</p></li>
+<li><p><strong>transforms</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default =</em><em> [</em><em>]</em>) – optional list of transformations to apply to each column,
+of the dataframe using pd.DataFrame.apply().
+Transformations are applied in the order they are
+given (ex. abs). To apply transforms to rows or for additional
+functionality, consider transforming df using pandas.DataFrame methods
+prior to generating the hypergraph.</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be evaluated on each cell of the array,
+key is applied after transforms</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1423,7 +1436,16 @@ and df.columns will label the nodes</p></li>
 <p class="admonition-title">Note</p>
 <p>The constructor does not generate empty edges.
 All-zero columns in df are removed and the names corresponding to these
-edges are discarded.</p>
+edges are discarded.
+Restrictions and data processing will occur in this order:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>column and row restrictions.</p></li>
+<li><p>transpose the dataframe</p></li>
+<li><p>transforms in the order listed</p></li>
+<li><p>boolean key</p></li>
+</ol>
+</div></blockquote>
 </div>
 </dd></dl>
 
@@ -1442,7 +1464,8 @@ If None then the node names correspond to row indices with ‘v’ prepended.</p
 <li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of edge names must have the same length as M.shape[1].
 If None then the edge names correspond to column indices with ‘e’ prepended.</p></li>
 <li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
-<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em>) – boolean function to be evaluated on each cell of the array</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em>) – boolean function to be evaluated on each cell of the array,
+must be applicable to numpy.array</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
