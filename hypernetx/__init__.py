@@ -4,3 +4,4 @@ from hypernetx.classes import *
 from hypernetx.reports import *
 from hypernetx.drawing import *
 from hypernetx.algorithms import *
+from hypernetx.extras import *

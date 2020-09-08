@@ -2,7 +2,7 @@ from setuptools import setup
 import sys
 import os.path
 
-__version__ = '0.3.5'
+__version__ = '0.3.6'
 
 if sys.version_info < (3, 6):
     sys.exit('HyperNetX requires Python 3.6 or later.')
@@ -13,7 +13,8 @@ setup(
               'hypernetx.algorithms',
               'hypernetx.classes',
               'hypernetx.drawing',
-              'hypernetx.reports'],
+              'hypernetx.reports',
+              'hypernetx.extras'],
     version=__version__,
     author="Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn",
     author_email="hypernetx@pnnl.gov",
