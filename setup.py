@@ -6,8 +6,6 @@ __version__ = '0.3.4'
 if sys.version_info < (3,6):
     sys.exit('HyperNetX requires Python 3.6 or later.')
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'hypernetx'))
-
 setup(
     name='hypernetx',
     packages=['hypernetx',

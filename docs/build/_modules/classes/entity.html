@@ -171,7 +171,7 @@
 
 <div class="viewcode-block" id="Entity"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity">[docs]</a><span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class for objects used in building network-like objects including </span>
+<span class="sd">    Base class for objects used in building network-like objects including</span>
 <span class="sd">    Hypergraphs, Posets, Cell Complexes.</span>
 
 <span class="sd">    Parameters</span>
@@ -180,8 +180,8 @@
 <span class="sd">        a unique identifier</span>
 
 <span class="sd">    elements : list or dict, optional, default: None</span>
-<span class="sd">        a list of entities with identifiers different than uid and/or </span>
-<span class="sd">        hashables different than uid, see `Honor System`_ </span>
+<span class="sd">        a list of entities with identifiers different than uid and/or</span>
+<span class="sd">        hashables different than uid, see `Honor System`_</span>
 
 <span class="sd">    props : keyword arguments, optional, default: {}</span>
 <span class="sd">        properties belonging to the entity added as key=value pairs.</span>
@@ -192,27 +192,27 @@
 
 <span class="sd">    An Entity is a container-like object, which has a unique identifier and</span>
 <span class="sd">    may contain elements and have properties.</span>
-<span class="sd">    The Entity class was created as a generic object providing structure for </span>
-<span class="sd">    Hypergraph nodes and edges. </span>
+<span class="sd">    The Entity class was created as a generic object providing structure for</span>
+<span class="sd">    Hypergraph nodes and edges.</span>
 
-<span class="sd">    - An Entity is distinguished by its identifier (sortable,hashable) :code:`Entity.uid`  </span>
+<span class="sd">    - An Entity is distinguished by its identifier (sortable,hashable) :code:`Entity.uid`</span>
 <span class="sd">    - An Entity is a container for other entities but may not contain itself, :code:`Entity.elements`</span>
 <span class="sd">    - An Entity has properties :code:`Entity.properties`</span>
 <span class="sd">    - An Entity has memberships to other entities, :code:`Entity.memberships`.</span>
 <span class="sd">    - An Entity has children, :code:`Entity.children`, which are the elements of its elements.</span>
 <span class="sd">    - :code:`Entity.children` are registered in the :code:`Entity.registry`.</span>
 <span class="sd">    - All descendents of Entity are registered in :code:`Entity.fullregistry()`.</span>
-<span class="sd">      </span>
+
 <span class="sd">    .. _Honor System:</span>
 
 <span class="sd">    **Honor System**</span>
 
-<span class="sd">    HypernetX has an Honor System that applies to Entity uid values. </span>
+<span class="sd">    HyperNetX has an Honor System that applies to Entity uid values.</span>
 <span class="sd">    Two entities are equal if their __dict__ objects match.</span>
-<span class="sd">    For performance reasons many methods distinguish entities by their uids. </span>
-<span class="sd">    It is, therefore, up to the user to ensure entities with the same uids are indeed the same. </span>
+<span class="sd">    For performance reasons many methods distinguish entities by their uids.</span>
+<span class="sd">    It is, therefore, up to the user to ensure entities with the same uids are indeed the same.</span>
 <span class="sd">    Not doing so may cause undesirable side effects.</span>
-<span class="sd">    In particular, the methods in the Hypergraph class assume distinct nodes and edges </span>
+<span class="sd">    In particular, the methods in the Hypergraph class assume distinct nodes and edges</span>
 <span class="sd">    have distinct uids.</span>
 
 <span class="sd">    Examples</span>
@@ -242,10 +242,10 @@
 <span class="sd">    EntitySet</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span> 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span> <span class="o">=</span> <span class="n">uid</span>  
-        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
@@ -287,11 +287,11 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dictionary of elements to which entity belongs.</span>
 
-<span class="sd">        This assignment is done on construction and controlled by </span>
+<span class="sd">        This assignment is done on construction and controlled by</span>
 <span class="sd">        :code:`Entity.add_element()` and :code:`Entity.remove_element()` methods.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="k">return</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> 
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">EntitySet</span><span class="p">)</span> <span class="p">}</span>
 
     <span class="nd">@property</span>
@@ -305,11 +305,11 @@
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">registry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+    <span class="k">def</span> <span class="nf">registry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dictionary of uid:Entity pairs for children entity.</span>
 
-<span class="sd">        To return a dictionary of all entities at all depths </span>
+<span class="sd">        To return a dictionary of all entities at all depths</span>
 <span class="sd">        :code:`Entity.complete_registry()`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -337,7 +337,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Boolean indicating if entity.elements is empty&quot;&quot;&quot;</span> 
+        <span class="sd">&quot;&quot;&quot;Boolean indicating if entity.elements is empty&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 
     <span class="nd">@property</span>
@@ -348,14 +348,14 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>    
+            <span class="k">return</span> <span class="kc">False</span>
 
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Defines equality for Entities based on equivalence of their __dict__ objects.</span>
 
-<span class="sd">        Checks all levels of self and other to verify they are </span>
+<span class="sd">        Checks all levels of self and other to verify they are</span>
 <span class="sd">        referencing the same uids and that they have the same set of properties.</span>
 <span class="sd">        If at any point we get duplicate addresses we stop checking that branch</span>
 <span class="sd">        because we are guaranteed equality from there on.</span>
@@ -393,7 +393,7 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a string resembling the constructor for entity without any</span>
-<span class="sd">        children&quot;&quot;&quot;</span> 
+<span class="sd">        children&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;Entity(</span><span class="si">{self._uid}</span><span class="s1">,{list(self.uidset)},</span><span class="si">{self.properties}</span><span class="s1">)&#39;</span>
 
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -406,11 +406,11 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Boolean </span>
+<span class="sd">        Boolean</span>
 
 <span class="sd">        Depends on the `Honor System`_ . Allows for uids to be used as shorthand for their entity.</span>
 <span class="sd">        This is done for performance reasons, but will fail if uids are</span>
-<span class="sd">        not unique to their entities. </span>
+<span class="sd">        not unique to their entities.</span>
 <span class="sd">        Is not transitive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
@@ -438,7 +438,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns iterator on element ids.&quot;&quot;&quot;</span>  
+        <span class="sd">&quot;&quot;&quot;Returns iterator on element ids.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -453,7 +453,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        k : hashable, property key</span>
 <span class="sd">        v : hashable, property value</span>
-<span class="sd">            Will not set uid or change elements or memberships. </span>
+<span class="sd">            Will not set uid or change elements or memberships.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -466,7 +466,7 @@
                 <span class="s1">&#39; has been created. Create a clone instead.&#39;</span>
              <span class="p">)</span>
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;elements&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;To add elements to Entity use self.add().&#39;</span><span class="p">)</span>    
+            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;To add elements to Entity use self.add().&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;memberships&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
                 <span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t choose your own memberships, &#39;</span>
@@ -536,7 +536,7 @@
 
 <span class="sd">        An Entity contains other entities, hence the relationships between entities</span>
 <span class="sd">        and their elements may be represented in a directed graph with entity as root.</span>
-<span class="sd">        The levelsets are sets of entities which make up the elements appearing at </span>
+<span class="sd">        The levelsets are sets of entities which make up the elements appearing at</span>
 <span class="sd">        a certain level.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">k</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
@@ -554,8 +554,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        max_depth : int, optional, default: 10</span>
-<span class="sd">            If full depth is desired set max_depth to number of entities in </span>
-<span class="sd">            system + 1. </span>
+<span class="sd">            If full depth is desired set max_depth to number of entities in</span>
+<span class="sd">            system + 1.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -632,7 +632,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        level : int, optional, default: 10</span>
-<span class="sd">            If level&lt;=1, returns the incidence_dict. </span>
+<span class="sd">            If level&lt;=1, returns the incidence_dict.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -652,7 +652,7 @@
 
 <div class="viewcode-block" id="Entity.clone"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">newuid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns shallow copy of entity with newuid. Entity&#39;s elements will </span>
+<span class="sd">        Returns shallow copy of entity with newuid. Entity&#39;s elements will</span>
 <span class="sd">        belong to two distinct Entities.</span>
 
 <span class="sd">        Parameters</span>
@@ -662,9 +662,9 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        clone : Entity </span>
-<span class="sd">            </span>
-<span class="sd">        &quot;&quot;&quot;</span>      
+<span class="sd">        clone : Entity</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Entity</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Entity.intersection"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
@@ -715,9 +715,9 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        self : Entity</span>
-<span class="sd"> </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>  
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -757,14 +757,14 @@
 <span class="sd">        -----</span>
 <span class="sd">        If item is in entity elements, no new element is added but properties</span>
 <span class="sd">        will be updated.</span>
-<span class="sd">        If item is in complete_registry(), only the item already known to self will be added. </span>
-<span class="sd">        This method employs the `Honor System`_ since membership in complete_registry is checked </span>
+<span class="sd">        If item is in complete_registry(), only the item already known to self will be added.</span>
+<span class="sd">        This method employs the `Honor System`_ since membership in complete_registry is checked</span>
 <span class="sd">        using the item&#39;s uid. It is assumed that the user will only use the same uid</span>
-<span class="sd">        for identical instances within the entities registry. </span>
+<span class="sd">        for identical instances within the entities registry.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span> 
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">checkelts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete_registry</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="n">Entity</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="n">Entity</span><span class="p">):</span>
         <span class="c1">## if item is an Entity, descendents will be compared to avoid collisions</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
@@ -777,7 +777,7 @@
             <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">checkelts</span><span class="p">:</span>
                 <span class="c1">## if item belongs to an element or a desendent of an element</span>
                 <span class="c1">## then the existing descendent becomes an element</span>
-                <span class="c1">## and properties are updated. </span>
+                <span class="c1">## and properties are updated.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
                 <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
                 <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
@@ -787,8 +787,8 @@
                 <span class="n">item</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1">## item must be a hashable. </span>
-            <span class="c1">## if it appears as a uid in checkelts then </span>
+            <span class="c1">## item must be a hashable.</span>
+            <span class="c1">## if it appears as a uid in checkelts then</span>
             <span class="c1">## the corresponding Entity will become an element of entity.</span>
             <span class="c1">## Otherwise, at most it will be added as an empty Entity.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
@@ -809,7 +809,7 @@
 <div class="viewcode-block" id="Entity.remove"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes args from entitie&#39;s elements if they belong.</span>
-<span class="sd">        Does nothing with args not in entity. </span>
+<span class="sd">        Does nothing with args not in entity.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -844,7 +844,7 @@
 
 <div class="viewcode-block" id="Entity.remove_element"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.remove_element">[docs]</a>    <span class="k">def</span> <span class="nf">remove_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Removes item from entity and reference to entity from </span>
+<span class="sd">        Removes item from entity and reference to entity from</span>
 <span class="sd">        item.memberships</span>
 
 <span class="sd">        Parameters</span>
@@ -869,7 +869,7 @@
 <div class="viewcode-block" id="Entity.merge_entities"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.merge_entities">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">merge_entities</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">ent1</span><span class="p">,</span><span class="n">ent2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Merge two entities making sure they do not conflict. </span>
+<span class="sd">        Merge two entities making sure they do not conflict.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -897,16 +897,18 @@
 
 
 
-<div class="viewcode-block" id="EntitySet"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet">[docs]</a><span class="k">class</span> <span class="nc">EntitySet</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>                             
+<div class="viewcode-block" id="EntitySet"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet">[docs]</a><span class="k">class</span> <span class="nc">EntitySet</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. _entityset:</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    uid : hashable</span>
 <span class="sd">        a unique identifier</span>
 
 <span class="sd">    elements : list or dict, optional, default: None</span>
-<span class="sd">        a list of entities with identifiers different than uid and/or </span>
-<span class="sd">        hashables different than uid, see `Honor System`_ </span>
+<span class="sd">        a list of entities with identifiers different than uid and/or</span>
+<span class="sd">        hashables different than uid, see `Honor System`_</span>
 
 <span class="sd">    props : keyword arguments, optional, default: {}</span>
 <span class="sd">        properties belonging to the entity added as key=value pairs.</span>
@@ -920,26 +922,26 @@
 
 <span class="sd">    **Bipartite Condition**</span>
 
-<span class="sd">    *Entities that are elements of the same EntitySet, may not contain each other as elements.* </span>
-<span class="sd">    The elements and children of an EntitySet generate a specific partition for a bipartite graph. </span>
+<span class="sd">    *Entities that are elements of the same EntitySet, may not contain each other as elements.*</span>
+<span class="sd">    The elements and children of an EntitySet generate a specific partition for a bipartite graph.</span>
 <span class="sd">    The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and</span>
 <span class="sd">    the children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs</span>
 <span class="sd">    in HNX.</span>
 
-<span class="sd">    Example: :: </span>
+<span class="sd">    Example: ::</span>
 
 <span class="sd">        &gt;&gt;&gt; y = Entity(&#39;y&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; x = Entity(&#39;x&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; x.add(y)</span>
 <span class="sd">        &gt;&gt;&gt; y.add(x)</span>
 <span class="sd">        &gt;&gt;&gt; w = EntitySet(&#39;w&#39;,[x,y])</span>
-<span class="sd">        HyperNetXError: Error: Fails the Bipartite Condition for EntitySet. </span>
+<span class="sd">        HyperNetXError: Error: Fails the Bipartite Condition for EntitySet.</span>
 <span class="sd">        y references a child of an existing Entity in the EntitySet.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span>  <span class="o">**</span><span class="n">props</span><span class="p">)</span>        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span>  <span class="o">**</span><span class="n">props</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bipartite</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Entity does not satisfy the Bipartite Condition, elements and children are not disjoint.&#39;</span><span class="p">)</span>
 
@@ -949,12 +951,12 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a string resembling the constructor for entityset without any</span>
-<span class="sd">        children&quot;&quot;&quot;</span> 
+<span class="sd">        children&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;EntitySet(</span><span class="si">{self._uid}</span><span class="s1">,{list(self.uidset)},</span><span class="si">{self.properties}</span><span class="s1">)&#39;</span>
 
-<div class="viewcode-block" id="EntitySet.add"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>  
+<div class="viewcode-block" id="EntitySet.add"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds args to entityset&#39;s elements, checking to make sure no self references are </span>
+<span class="sd">        Adds args to entityset&#39;s elements, checking to make sure no self references are</span>
 <span class="sd">        made to element ids.</span>
 <span class="sd">        Ensures Bipartite Condition of EntitySet.</span>
 
@@ -984,8 +986,8 @@
 
 <div class="viewcode-block" id="EntitySet.clone"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">newuid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns shallow copy of entityset with newuid. Entityset&#39;s </span>
-<span class="sd">        elements will belong to two distinct entitysets. </span>
+<span class="sd">        Returns shallow copy of entityset with newuid. Entityset&#39;s</span>
+<span class="sd">        elements will belong to two distinct entitysets.</span>
 
 
 <span class="sd">        Parameters</span>
@@ -995,9 +997,9 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        clone : EntitySet </span>
+<span class="sd">        clone : EntitySet</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>      
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
 
 
@@ -1007,7 +1009,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        newuid : hashable </span>
+<span class="sd">        newuid : hashable</span>
 
 <span class="sd">        use_reps : boolean, optional, default: False</span>
 <span class="sd">            Choose a single element from the collapsed elements as a representative</span>
@@ -1024,9 +1026,9 @@
 <span class="sd">        -----</span>
 <span class="sd">        Treats elements of the entityset as equal if they have the same uidsets. Using this</span>
 <span class="sd">        as an equivalence relation, the entityset&#39;s uidset is partitioned into equivalence classes.</span>
-<span class="sd">        The equivalent elements are identified using a single entity by using the </span>
+<span class="sd">        The equivalent elements are identified using a single entity by using the</span>
 <span class="sd">        frozenset of uids associated to these elements as the uid for the new element</span>
-<span class="sd">        and dropping the properties. </span>
+<span class="sd">        and dropping the properties.</span>
 <span class="sd">        If use_reps is set to True a representative element of the equivalence class is</span>
 <span class="sd">        used as identifier instead of the frozenset.</span>
 
@@ -1041,7 +1043,7 @@
 <span class="sd">            {&#39;E2&#39;: {&#39;a&#39;, &#39;b&#39;}}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">temp</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">():</span>
             <span class="n">temp</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uidset</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
@@ -1060,7 +1062,7 @@
 <div class="viewcode-block" id="EntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An incidence matrix for the EntitySet indexed by children x uidset.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sparse : boolean, optional, default: True</span>
@@ -1083,7 +1085,7 @@
 <span class="sd">        -----</span>
 
 <span class="sd">        Example: ::</span>
-<span class="sd">    </span>
+
 <span class="sd">            &gt;&gt;&gt; E = EntitySet(&#39;E&#39;,{&#39;a&#39;:{1,2,3},&#39;b&#39;:{2,3},&#39;c&#39;:{1,4}})</span>
 <span class="sd">            &gt;&gt;&gt; E.incidence_matrix(sparse=False, index=True)</span>
 <span class="sd">            (array([[0, 1, 1],</span>
@@ -1101,7 +1103,7 @@
         <span class="n">edict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="n">nuidset</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ndict</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">:</span>
-            
+
             <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
                 <span class="n">rowdict</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">ndict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
                 <span class="n">coldict</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">edict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -1167,7 +1169,7 @@
 
 
 
- 
+
 
 
 
