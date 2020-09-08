@@ -12,6 +12,14 @@ algorithms.homology\_mod2 module
    :undoc-members:
    :show-inheritance:
 
+algorithms.s\_centrality\_measures module
+-----------------------------------------
+
+.. automodule:: algorithms.s_centrality_measures
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

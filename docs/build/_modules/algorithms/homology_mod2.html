@@ -188,6 +188,7 @@
 
 <span class="sd">Methods for obtaining SNF for Z/2Z are based on Ferrario&#39;s work:</span>
 <span class="sd">http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -516,7 +517,7 @@
 
 <div class="viewcode-block" id="logical_matadd"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.logical_matadd">[docs]</a><span class="k">def</span> <span class="nf">logical_matadd</span><span class="p">(</span><span class="n">mat1</span><span class="p">,</span> <span class="n">mat2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the boolean equivalent of matrix additon mod 2 on two</span>
+<span class="sd">    Returns the boolean equivalent of matrix addition mod 2 on two</span>
 <span class="sd">    binary arrays stored as type boolean</span>
 
 <span class="sd">    Parameters</span>
@@ -717,10 +718,7 @@
     <span class="k">return</span> <span class="n">L</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Linv</span></div>
 
 
-<div class="viewcode-block" id="coset"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.coset">[docs]</a><span class="k">def</span> <span class="nf">coset</span><span class="p">(</span><span class="n">im2</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="p">[],</span> <span class="n">shortest</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># This breaks because line 529 has logical_xor on ndarray.</span>
-    <span class="c1"># It only works on a simple array. will need to break it up on each dimension.</span>
-    <span class="c1"># Do it by creating a method logical_matadd(*arr) and doing logical_xor.reduce on each element of the transpose.</span>
-    <span class="c1"># Then transpose back. Will arkouda do this????</span>
+<div class="viewcode-block" id="coset"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.coset">[docs]</a><span class="k">def</span> <span class="nf">coset</span><span class="p">(</span><span class="n">im2</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="p">[],</span> <span class="n">shortest</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the coset represented by bs, if bs=None</span>
 <span class="sd">    returns the boundary group</span>
@@ -731,6 +729,10 @@
 <span class="sd">        columns form a basis for the boundary group</span>
 <span class="sd">    bs : np.array</span>
 <span class="sd">        boolean vector from projection of kernel on cokernel</span>
+<span class="sd">    shortest : bool</span>
+<span class="sd">        if True then only representatives of the coset containing</span>
+<span class="sd">        the smallest number of $k$-cells will be returned</span>
+<span class="sd">        else all elements of the coset will be returned</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -738,7 +740,7 @@
 <span class="sd">        list of elements of the coset of interest</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    coset() is an very inefficient method for all but small examples.</span>
+<span class="s2">    coset() is a very inefficient method for all but small examples.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">im2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
