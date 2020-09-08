@@ -101,6 +101,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#homology-and-smith-normal-form">Homology and Smith Normal Form</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-algorithms">Module contents</a></li>
 </ul>
 </li>
@@ -279,6 +280,9 @@ returns the boundary group</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>im2</strong> (<em>np.array</em>) – columns form a basis for the boundary group</p></li>
 <li><p><strong>bs</strong> (<em>np.array</em>) – boolean vector from projection of kernel on cokernel</p></li>
+<li><p><strong>shortest</strong> (<em>bool</em>) – if True then only representatives of the coset containing
+the smallest number of <span class="math notranslate nohighlight">\(k\)</span>-cells will be returned
+else all elements of the coset will be returned</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -424,7 +428,7 @@ the same length.</p>
 <dl class="function">
 <dt id="algorithms.homology_mod2.logical_matadd">
 <code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matadd</code><span class="sig-paren">(</span><em class="sig-param">mat1</em>, <em class="sig-param">mat2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matadd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the boolean equivalent of matrix additon mod 2 on two
+<dd><p>Returns the boolean equivalent of matrix addition mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -592,6 +596,74 @@ Returns a list of new matrices</p>
 
 </div>
 </div>
+</div>
+<div class="section" id="module-algorithms.s_centrality_measures">
+<span id="algorithms-s-centrality-measures-module"></span><h2>algorithms.s_centrality_measures module<a class="headerlink" href="#module-algorithms.s_centrality_measures" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="algorithms.s_centrality_measures.s_betweenness_centrality">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_betweenness_centrality</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">s=1</em>, <em class="sig-param">normalized=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_betweenness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>A centrality measure for an s-edge subgraph of H based on shortest paths.
+The betweenness centrality of an s-edge e is the sum of the fraction of all
+shortest s-paths between s-edges that pass through e.</p>
+<p>H : Hypergraph
+s : int</p>
+<blockquote>
+<div><p>minimum size of edges to be considered</p>
+</div></blockquote>
+<dl class="simple">
+<dt>normalized<span class="classifier">bool, default=False,</span></dt><dd><p>If true the betweenness values are normalized by <cite>2/((n-1)(n-2))</cite>,
+where n is the number of edges in H</p>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt>: dict</dt><dd><p>A dictionary of s-betweenness centrality value of the edges.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.s_centrality_measures.s_eccentricity">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_eccentricity</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">f=None</em>, <em class="sig-param">s=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_eccentricity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_eccentricity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max s_distance from edge f to every other edge to which it is connected</p>
+<p>H : Hypergraph
+f : Entity or str
+s : int</p>
+<dl class="simple">
+<dt>if f:</dt><dd><p>eccentricity[f] : float</p>
+</dd>
+<dt>else:</dt><dd><p>eccentricity_dict : dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.s_centrality_measures.s_harmonic_closeness_centrality">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_harmonic_closeness_centrality</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">edge=None</em>, <em class="sig-param">s=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_harmonic_closeness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_harmonic_closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
+intersects every other s-edge in H. All values range between 0 and 1.
+Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.</p>
+<p>H : Hypergraph
+edge : str or Entity, optional</p>
+<blockquote>
+<div><p>an edge or uid of an edge in H
+If None then a dictionary of values for all s-edges is returned.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>s<span class="classifier">int</span></dt><dd><p>minimum size of edges to be considered</p>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt>: dict or float</dt><dd><p>returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
+If edge=None a dictionary of values for each s-edge in H is returned.
+If edge then a single value is returned.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 </div>
 <div class="section" id="module-algorithms">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-algorithms" title="Permalink to this headline">¶</a></h2>
