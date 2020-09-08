@@ -33,7 +33,6 @@ Tutorials may be run in your browser using Google Colab
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
 
 
-
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 2 - Visualization Methods</span>
 </a>
@@ -41,13 +40,11 @@ Tutorials may be run in your browser using Google Colab
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
 
 
-
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 3 - LesMis Case Study</span>
 </a>
 </br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
-
 
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
