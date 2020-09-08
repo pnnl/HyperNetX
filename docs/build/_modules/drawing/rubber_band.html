@@ -178,6 +178,8 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">ConvexHull</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">Voronoi</span>
 
+<span class="c1"># increases the default figure size to 8in square.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 
 <span class="n">N_CONTROL_POINTS</span> <span class="o">=</span> <span class="mi">24</span>
 
@@ -490,9 +492,12 @@
          <span class="n">layout</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">,</span>
          <span class="n">layout_kwargs</span><span class="o">=</span><span class="p">{},</span>
          <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+         <span class="n">node_radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
          <span class="n">edges_kwargs</span><span class="o">=</span><span class="p">{},</span>
          <span class="n">nodes_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">edge_labels</span><span class="o">=</span><span class="p">{},</span>
          <span class="n">edge_labels_kwargs</span><span class="o">=</span><span class="p">{},</span>
+         <span class="n">node_labels</span><span class="o">=</span><span class="p">{},</span>
          <span class="n">node_labels_kwargs</span><span class="o">=</span><span class="p">{},</span>
          <span class="n">with_edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
          <span class="n">with_node_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -559,6 +564,8 @@
 <span class="sd">        matplotlib axis on which the plot is rendered</span>
 <span class="sd">    edges_kwargs: dict</span>
 <span class="sd">        keyword arguments passed to matplotlib.collections.PolyCollection for edges</span>
+<span class="sd">    node_radius: None, int, float, or dict</span>
+<span class="sd">        radius of all nodes, or dictionary of node:value; the default (None) calculates radius based on number of collapsed nodes; reasonable values range between 1 and 3</span>
 <span class="sd">    nodes_kwargs: dict</span>
 <span class="sd">        keyword arguments passed to matplotlib.collections.PolyCollection for nodes</span>
 <span class="sd">    edge_labels_kwargs: dict</span>
@@ -581,8 +588,18 @@
     <span class="n">r0</span> <span class="o">=</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
     <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span>
 
-    <span class="n">node_radius</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a0</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">frozenset</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-                   <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">get_node_radius</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node_radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a0</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">frozenset</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">node_radius</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">node_radius</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">r0</span>
+        <span class="k">return</span> <span class="n">node_radius</span><span class="o">*</span><span class="n">r0</span>
+
+    <span class="c1"># guarantee that node radius is a dictionary mapping nodes to values</span>
+    <span class="n">node_radius</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">v</span><span class="p">:</span> <span class="n">get_node_radius</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span>
+    <span class="p">}</span>
 
     <span class="c1"># for convenience, we are using setdefault to mutate the argument</span>
     <span class="c1"># however, we need to copy this to prevent side-effects</span>
@@ -597,7 +614,11 @@
                             <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">with_edge_labels</span><span class="p">:</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">with_edge_counts</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span>
+            <span class="n">count</span><span class="o">=</span><span class="n">with_edge_counts</span><span class="p">,</span>
+            <span class="n">override</span><span class="o">=</span><span class="n">edge_labels</span>
+        <span class="p">)</span>
 
         <span class="n">draw_hyper_edge_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">polys</span><span class="p">,</span>
                                <span class="n">color</span><span class="o">=</span><span class="n">edges_kwargs</span><span class="p">[</span><span class="s1">&#39;edgecolors&#39;</span><span class="p">],</span>
@@ -608,7 +629,11 @@
                                <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">with_node_labels</span><span class="p">:</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">with_node_counts</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_frozenset_label</span><span class="p">(</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span>
+            <span class="n">count</span><span class="o">=</span><span class="n">with_node_counts</span><span class="p">,</span>
+            <span class="n">override</span><span class="o">=</span><span class="n">node_labels</span>
+        <span class="p">)</span>
 
         <span class="n">draw_hyper_labels</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span>
                           <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span>
@@ -635,8 +660,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
 
-    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span></div>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span></div>
     
 </pre></div>
 
