@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>algorithms.s_centrality_measures &mdash; HyperNetX 0.3.4 documentation</title>
+  <title>algorithms.s_centrality_measures &mdash; HyperNetX 0.3.5 documentation</title>
   
 
   
@@ -193,10 +193,12 @@
 <span class="sd">        A dictionary of s-betweenness centrality value of the edges.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
+
     <span class="c1"># Confirm there is at least 1 s edge for which we can compute the centrality</span>
     <span class="c1"># Find all s-edges</span>
     <span class="c1">#M,rdict,_ = H.incidence_matrix(index=True)</span>
     <span class="c1">#A = M.transpose().dot(M)</span>
+
     <span class="n">A</span><span class="p">,</span> <span class="n">coldict</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">edge_adjacency_matrix</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">A</span><span class="o">.</span><span class="n">setdiag</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
@@ -227,8 +229,10 @@
 <span class="sd">        If edge then a single value is returned.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
+
     <span class="c1"># Confirm there is at least 1 s edge for which we can compute the centrality</span>
     <span class="c1"># Find all s-edges</span>
+
     <span class="k">if</span> <span class="n">edge</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
 
@@ -250,6 +254,7 @@
 
     <span class="c1"># confirm there are at least 2 s-edges</span>
     <span class="c1"># we follow the NX convention that the s-closeness centrality of a single edge Hypergraph is 0</span>
+
     <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">Es</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">Es</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">}</span>
@@ -280,7 +285,11 @@
 <span class="sd">        eccentricity[f] : float</span>
 <span class="sd">    else:</span>
 <span class="sd">        eccentricity_dict : dict</span>
-<span class="sd">        </span>
+<span class="sd">     : dict or float</span>
+<span class="sd">        returns the s-eccentricity value of the edges, a floating point number</span>
+<span class="sd">        If edge=None a dictionary of values for each s-edge in H is returned.</span>
+<span class="sd">        If edge then a single value is returned.</span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>

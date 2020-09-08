@@ -32,10 +32,12 @@ def s_betweenness_centrality(H, s=1, normalized=True):
         A dictionary of s-betweenness centrality value of the edges.
 
     '''
+
     # Confirm there is at least 1 s edge for which we can compute the centrality
     # Find all s-edges
     #M,rdict,_ = H.incidence_matrix(index=True)
     #A = M.transpose().dot(M)
+
     A, coldict = H.edge_adjacency_matrix(s=s, index=True)
     A.setdiag(0)
     A = (A >= s) * 1
@@ -66,8 +68,10 @@ def s_harmonic_closeness_centrality(H, edge=None, s=1):
         If edge then a single value is returned.
 
     '''
+
     # Confirm there is at least 1 s edge for which we can compute the centrality
     # Find all s-edges
+
     if edge and len(H.edges[edge]) < s:
         return 0
 
@@ -89,6 +93,7 @@ def s_harmonic_closeness_centrality(H, edge=None, s=1):
 
     # confirm there are at least 2 s-edges
     # we follow the NX convention that the s-closeness centrality of a single edge Hypergraph is 0
+
     output = {}
     if not bool(Es) or len(Es) == 1:
         output = {e: 0 for e in edges}
@@ -123,6 +128,7 @@ def s_eccentricity(H, f=None, s=1):
         returns the s-eccentricity value of the edges, a floating point number
         If edge=None a dictionary of values for each s-edge in H is returned.
         If edge then a single value is returned.
+
     '''
     if f:
         if isinstance(f, Entity):

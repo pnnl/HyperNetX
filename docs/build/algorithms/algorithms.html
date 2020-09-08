@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>algorithms package &mdash; HyperNetX 0.3.4 documentation</title>
+  <title>algorithms package &mdash; HyperNetX 0.3.5 documentation</title>
   
 
   
@@ -630,10 +630,18 @@ where n is the number of edges in H</p>
 <p>H : Hypergraph
 f : Entity or str
 s : int</p>
-<dl class="simple">
+<dl>
 <dt>if f:</dt><dd><p>eccentricity[f] : float</p>
 </dd>
-<dt>else:</dt><dd><p>eccentricity_dict : dict</p>
+<dt>else:</dt><dd><blockquote>
+<div><p>eccentricity_dict : dict</p>
+</div></blockquote>
+<dl class="simple">
+<dt>: dict or float</dt><dd><p>returns the s-eccentricity value of the edges, a floating point number
+If edge=None a dictionary of values for each s-edge in H is returned.
+If edge then a single value is returned.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
