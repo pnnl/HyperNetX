@@ -161,7 +161,22 @@
   <h1>Source code for algorithms.s_centrality_measures</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
 <span class="c1"># All rights reserved.</span>
-<span class="c1"># This module developed for PNNL&#39;s hyperbio LDRD project summer 2019</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">S-Centrality Measures</span>
+<span class="sd">=====================</span>
+<span class="sd">We generalize graph metrics to s-metrics for a hypergraph by using its s-connected</span>
+<span class="sd">components. This is accomplished by computing the s edge-adjacency matrix and</span>
+<span class="sd">constructing the corresponding graph of the matrix. We then use existing graph metrics</span>
+<span class="sd">on this representation of the hypergraph. In essence we construct an *s*-line graph</span>
+<span class="sd">corresponding to the hypergraph on which to apply our methods.</span>
+
+<span class="sd">S-Metrics for hypergraphs are discussed in depth in:        </span>
+<span class="sd">*Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.</span>
+<span class="sd">EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>

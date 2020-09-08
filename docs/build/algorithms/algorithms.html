@@ -101,7 +101,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#homology-and-smith-normal-form">Homology and Smith Normal Form</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#s-centrality-measures">S-Centrality Measures</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-algorithms">Module contents</a></li>
 </ul>
 </li>
@@ -599,6 +602,16 @@ Returns a list of new matrices</p>
 </div>
 <div class="section" id="module-algorithms.s_centrality_measures">
 <span id="algorithms-s-centrality-measures-module"></span><h2>algorithms.s_centrality_measures module<a class="headerlink" href="#module-algorithms.s_centrality_measures" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-centrality-measures">
+<h3>S-Centrality Measures<a class="headerlink" href="#s-centrality-measures" title="Permalink to this headline">¶</a></h3>
+<p>We generalize graph metrics to s-metrics for a hypergraph by using its s-connected
+components. This is accomplished by computing the s edge-adjacency matrix and
+constructing the corresponding graph of the matrix. We then use existing graph metrics
+on this representation of the hypergraph. In essence we construct an <em>s</em>-line graph
+corresponding to the hypergraph on which to apply our methods.</p>
+<p>S-Metrics for hypergraphs are discussed in depth in:
+<em>Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.
+EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0</em></p>
 <dl class="function">
 <dt id="algorithms.s_centrality_measures.s_betweenness_centrality">
 <code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_betweenness_centrality</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">s=1</em>, <em class="sig-param">normalized=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_betweenness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
@@ -672,6 +685,7 @@ If edge then a single value is returned.</p>
 </div></blockquote>
 </dd></dl>
 
+</div>
 </div>
 <div class="section" id="module-algorithms">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-algorithms" title="Permalink to this headline">¶</a></h2>

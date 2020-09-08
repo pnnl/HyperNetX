@@ -1,6 +1,21 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
-# This module developed for PNNL's hyperbio LDRD project summer 2019
+
+"""
+
+S-Centrality Measures
+=====================
+We generalize graph metrics to s-metrics for a hypergraph by using its s-connected
+components. This is accomplished by computing the s edge-adjacency matrix and
+constructing the corresponding graph of the matrix. We then use existing graph metrics
+on this representation of the hypergraph. In essence we construct an *s*-line graph
+corresponding to the hypergraph on which to apply our methods.
+
+S-Metrics for hypergraphs are discussed in depth in:        
+*Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.
+EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*
+
+"""
 
 import numpy as np
 from collections import defaultdict
