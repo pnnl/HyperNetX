@@ -610,15 +610,16 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
     ----------
     bd : dict
         dict of k-boundary matrices keyed on k,k+1
-
-    k : int
-        k must be an integer greater than 0
-        bd must have keys for k, and k+1
+        if k is a tuple then all boundary matrices from low k to high k + 1
+        must be in the dictionary
+    k : int or tuple 
+        k must be an integer greater than 0 or a tuple = (low k, high k)
+        indicating range of k to be computed
     C : list, optional
         list of k-cells used to interpret the generators
         bd[k] is boundary matrix with rows and columns indexed by
         k-1 and k cells. C is a list of k chains ordered
-        to match the column index of bd[k]
+        to match the column index of each bd[k]
     shortest : bool, optional
         option to look for shortest basis using boundaries
         *Warning*: This is only good for very small examples
@@ -633,6 +634,13 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
         k-chains
         if shortest then returns a dictionary of shortest cycles for each coset.
     """
+    if isinstance(k, tuple):
+        kvals = range(k[0], k[1] + 1)
+    else:
+        kvals = range(k, k + 2)
+    L, R, S, Linv = [dict for i in range(4)]
+    for k in kvals:
+        L[k], R[k], S[k], Linv[k] = smith_normal_form_mod2(bd[k])
     L1, R1, S1, L1inv = smith_normal_form_mod2(bd[k])
     L2, R2, S2, L2inv = smith_normal_form_mod2(bd[k + 1])
 
