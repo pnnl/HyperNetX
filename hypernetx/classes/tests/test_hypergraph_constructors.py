@@ -69,3 +69,25 @@ def test_from_dataframe_with_key():
     h = Hypergraph.from_dataframe(df, key=lambda x: x > 4)
     assert 'A' in h.edges['a']
     assert 'C' not in h.edges['a']
+
+
+def test_from_dataframe_with_transforms_and_fillna(dataframe):
+    df = dataframe.df
+    def key1(x): return x**2
+    def key2(x): return (x < 5) * x
+    def key3(x): return (x > 0) * x
+    h = Hypergraph.from_dataframe(df)
+    assert 'A' in h.edges['a']
+    assert 'A' not in h.edges['b']
+    h = Hypergraph.from_dataframe(df, fillna=1)
+    assert 'A' in h.edges['b']
+    h = Hypergraph.from_dataframe(df, transforms=[key1, key2])
+    assert 'A' in h.edges['c']
+    assert 'C' not in h.edges['b']
+    h = Hypergraph.from_dataframe(df, transforms=[key2, key3])
+    assert 'C' in h.edges['b']
+    h = Hypergraph.from_dataframe(df, transforms=[key3, key1], key=key2)
+    assert 'A' not in h.edges['a']
+    assert 'B' in h.edges['b']
+    assert 'C' not in h.edges['c']
+    assert 'C' in h.edges['a']

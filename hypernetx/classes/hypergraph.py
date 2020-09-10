@@ -6,6 +6,7 @@ from hypernetx.classes.entity import Entity, EntitySet
 import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
+import pandas as pd
 from hypernetx.exception import HyperNetXError
 
 
@@ -1429,6 +1430,32 @@ class Hypergraph():
             warnings.warn(f'No {s}-path between {source} and {target}')
             return np.inf
 
+    def dataframe(self,sort_rows=True,sort_columns=True):
+        """
+        Returns a pandas dataframe for hypergraph indexed by the nodes and 
+        with column headers given by the edge names.
+        
+        Parameters
+        ----------
+        sort_rows : bool, optional, default=True
+            sort rows based on hashable node names
+        sort_columns : bool, optional, default=True
+            sort columns based on hashable edge names
+
+        """
+
+        mat,rdx,cdx = self.incidence_matrix(index=True)
+        index=[rdx[i] for i in rdx]
+        columns=[cdx[j] for j in cdx]
+        df = pd.DataFrame(mat.todense(),
+                          index=index,
+                          columns=columns)
+        if sort_rows:
+            df = df.sort_index()
+        if sort_columns:
+            df = df[sorted(columns)]    
+        return df
+
     @classmethod
     def from_bipartite(cls,B,set_names=[0,1],name=None):
         """
@@ -1554,8 +1581,8 @@ class Hypergraph():
 
 
     @classmethod
-    def from_dataframe(cls, df, fillna=0, transpose=False,
-                        name=None, columns=None, rows=None,
+    def from_dataframe(cls, df, columns=None, rows=None,
+                        name=None, fillna=0, transpose=False,
                         transforms=[],key=None,
                         ):
         '''
@@ -1567,15 +1594,17 @@ class Hypergraph():
         df : Pandas.Dataframe
             a real valued dataframe with a single index
 
-        fillna : float, default = 0
-            a real value to place in empty cell, all-zero columns will not generate
-            an edge
-
         columns : (optional) list, default = None
             restricts df to the columns with headers in this list.
 
         rows : (optional) list, default = None
             restricts df to the rows indexed by the elements in this list.
+
+        name : (optional) string, default = None
+
+        fillna : float, default = 0
+            a real value to place in empty cell, all-zero columns will not generate
+            an edge. 
 
         transpose : (optional) bool, default = False
             option to transpose the dataframe, in this case df.Index will label the edges
@@ -1591,8 +1620,12 @@ class Hypergraph():
             prior to generating the hypergraph.
 
         key : (optional) function, default = None
-            boolean function to be evaluated on each cell of the array,
-            key is applied after transforms
+            boolean function to be applied to dataframe. Must be defined on numpy
+            arrays. 
+
+        See also
+        --------
+        from_numpy_array())
 
 
         Returns
@@ -1606,25 +1639,45 @@ class Hypergraph():
         edges are discarded.
         Restrictions and data processing will occur in this order:
 
-            1. column and row restrictions.
-            2. transpose the dataframe
-            3. transforms in the order listed
-            4. boolean key
+            1. column and row restrictions
+            2. fillna replace NaNs in dataframe
+            3. transpose the dataframe
+            4. transforms in the order listed
+            5. boolean key
+
+        This method offers the above options for wrangling a dataframe into an incidence
+        matrix for a hypergraph. For more flexibility we recommend you use the Pandas
+        library to format the values of your dataframe before submitting it to this
+        constructor.
+
         '''
-        import pandas as pd
 
         if type(df) != pd.core.frame.DataFrame:
             raise HyperNetXError('Error: Input object must be a pandas dataframe.')
+
+        if columns:
+            df = df[columns]
+        if rows:
+            df = df.loc[rows]   
+
+        df = df.fillna(fillna)
         if transpose:
             df = df.transpose()
+
         node_names = np.array(df.index)
         edge_names = np.array(df.columns)
-        df = df.fillna(fillna)
+
         for t in transforms:
             df = df.apply(t)
         if key:
-            df = df.apply(key)
-        return cls.from_numpy_array(df.values,node_names=node_names,edge_names=edge_names,name=name)
+            mat = key(df.values)
+        else:
+            mat = df.values
+
+        return cls.from_numpy_array(mat,node_names=node_names,edge_names=edge_names,name=name)
+
+
+
 
 
 
