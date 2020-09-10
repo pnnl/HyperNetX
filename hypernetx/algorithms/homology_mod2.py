@@ -601,6 +601,73 @@ def coset(im2, bs=[], shortest=False):
     return coset
 
 
+def _compute_matrices_for_snf(bd, k):
+    """
+    Helper method for smith normal form decomposition for boundary maps
+    associated to chain complex 
+
+    Parameters
+    ----------
+    bd : dict
+        dict of k-boundary matrices keyed on k,k+1
+        if k is a tuple then all boundary matrices from low k to high k + 1
+        must be in the dictionary
+    k : int or tuple 
+        k must be an integer greater than 0 or a tuple = (low k, high k)
+        indicating range of k to be computed
+
+    Returns
+    -------
+    L,R,S,Linv : dict
+        dict of matrices ranging over k values 
+
+    """
+    if isinstance(k, tuple):
+        kvals = range(k[0], k[1] + 2)
+    else:
+        kvals = range(k, k + 2)
+    L, R, S, Linv = [dict() for i in range(4)]
+    for kdx in kvals:
+        L[kdx], R[kdx], S[kdx], Linv[kdx] = smith_normal_form_mod2(bd[kdx])
+    return L, R, S, Linv
+
+
+def betti(bd, k):
+    """
+    Generate the kth-betti numbers and  for a chain complex with boundary
+    matrices given by bd
+
+    Parameters
+    ----------
+    bd: dict of k-boundary matrices keyed on k,k+1
+        if k is a tuple then all boundary matrices from low k to (high k) + 1
+        must be in the dictionary
+    k : int or tuple 
+        k must be an integer greater than 0 or a tuple = (low k, high k)
+        indicating range of k to be computed
+
+    Returns
+    -------
+    TYPE
+        Description
+    """
+    _, _, S, _ = _compute_matrices_for_snf(bd, k)
+
+    rank = dict()
+    for kdx in bd:
+        rank[kdx] = np.sum(S[kdx])
+
+    if isinstance(k, tuple):
+        kvals = range(k[0], k[1] + 1)
+    else:
+        kvals = range(k, k + 1)
+
+    betti = dict()
+    for kdx in kvals:
+        betti[kdx] = S[kdx].shape[1] - rank[kdx] - rank[kdx + 1]
+    return betti
+
+
 def homology_basis(bd, k, C=None, shortest=False, log=None):
     """
     Compute a basis for the kth-homology group with boundary
@@ -634,62 +701,54 @@ def homology_basis(bd, k, C=None, shortest=False, log=None):
         k-chains
         if shortest then returns a dictionary of shortest cycles for each coset.
     """
-    if isinstance(k, tuple):
-        kvals = range(k[0], k[1] + 1)
-    else:
-        kvals = range(k, k + 2)
-    L, R, S, Linv = [dict for i in range(4)]
-    for k in kvals:
-        L[k], R[k], S[k], Linv[k] = smith_normal_form_mod2(bd[k])
-    L1, R1, S1, L1inv = smith_normal_form_mod2(bd[k])
-    L2, R2, S2, L2inv = smith_normal_form_mod2(bd[k + 1])
+    L, R, S, Linv = _compute_matrices_for_snf(bd, k)
 
-    rank1 = np.sum(S1)
-    rank2 = np.sum(S2)
-    nullity1 = S1.shape[1] - rank1
-    betti1 = S1.shape[1] - rank1 - rank2
-    cokernel2_dim = S1.shape[1] - rank2
+    rank, betti = _betti(bd, k)
+    # cokernel2_dim = S1.shape[1] - rank2
 
-    print(f'Summary: \nrank{k} = {rank1}\nrank{k+1} = {rank2}\nnullity{k} = {nullity1}')
+    # ker = dict()
+    # im = dict()
+    # cokernel = dict()
+    # cokproj = dict()
+    proj = dict()  # Start here
+    for kdx in betti:
+        ker = R[kdx][:, rank[kdx]:]
+        im = Linv[:, :rank[kdx + 1]]
+        cokernel = Linv[kdx + 1][:, rank[kdx + 1]:]
+        cokproj = L[kdx + 1][rank[kdx + 1]:, :]
+        projection = matmulreduce([cokernel, cokproj, ker]).transpose()
+        _, projection, _ = reduced_row_echelon_form_mod2(projection)
+        projection = np.array(projection)
+        proj[kdx] = np.array([row for row in projection if np.any(row)])
 
-    ker1 = R1[:, rank1:]
-    im2 = L2inv[:, :rank2]
-    cokernel2 = L2inv[:, rank2:]
-    cokproj2 = L2[rank2:, :]
-
-    proj = matmulreduce([cokernel2, cokproj2, ker1]).transpose()
-    ######
-    print(proj)
-    _, proj, _ = reduced_row_echelon_form_mod2(proj)
-    proj = np.array(proj)
-    proj = np.array([row for row in proj if np.any(row)])
     # print(f'hom basis reps: {proj*1}\n')
-    basis = []
-    if shortest:
-        shortest_basis = list()
-        for idx, bs in enumerate(proj):
-            shortest_basis.append(coset(im2, bs=bs, shortest=True))
-        if C:
-            basis = [interpret(C, sb) for sb in shortest_basis]
+    basis = defaultdict(list)
+    for kdx in betti:
+        if shortest:
+            shortest_basis = list()
+            for idx, bs in enumerate(proj[kdx]):
+                shortest_basis.append(coset(im, bs=bs, shortest=True))
+            if C:
+                basis = [interpret(C, sb) for sb in shortest_basis]
 
-        proj = shortest_basis
-    else:
-        if C:
-            basis = interpret(C, proj)
+            proj = shortest_basis
         else:
-            basis = proj
-    if log:
-        try:
-            logdict = pickle.load(open(log, 'rb'))
-        except:
-            logdict = dict()
-        logdict.update({'k': k,
-                        f'betti{k}': betti1,
-                        'ker': ker1,
-                        'im': im2,
-                        'proj': proj,
-                        'basis': basis})
-        pickle.dump(logdict, open(log, 'wb'))
+            if C:
+                basis = interpret(C, proj)
+            else:
+                basis = proj
+        if log:
+            try:
+                logdict = pickle.load(open(log, 'rb'))
+            except:
+                logdict = dict()
+            logdict.update({'k': k,
+                            f'betti{k}': betti1,
+                            'ker': ker1,
+                            'im': im2,
+                            'proj': proj,
+                            'basis': basis})
+            pickle.dump(logdict, open(log, 'wb'))
 
     return basis
 

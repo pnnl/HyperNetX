@@ -1430,7 +1430,7 @@ class Hypergraph():
             warnings.warn(f'No {s}-path between {source} and {target}')
             return np.inf
 
-    def dataframe(self,sort_rows=True,sort_columns=True):
+    def dataframe(self, sort_rows = True, sort_columns = True):
         """
         Returns a pandas dataframe for hypergraph indexed by the nodes and 
         with column headers given by the edge names.
