@@ -95,8 +95,10 @@ def get_default_radius(H, pos):
 
     '''
     if len(H) > 1:
-        return .0125*np.median([pdist(np.vstack(map(pos.get, H.nodes))).max()
-                                for nodes in H.edges()])
+        return .0125*np.median([
+            pdist(np.vstack(list(map(pos.get, H.nodes)))).max()
+            for nodes in H.edges()
+        ])
     return 1
 
 def draw_hyper_edge_labels(H, polys, labels={}, ax=None, **kwargs):
