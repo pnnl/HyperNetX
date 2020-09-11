@@ -28,7 +28,7 @@ def get_frozenset_label(S, count=False, override={}):
             elif count:
                 return ''
             else:
-                return ', '.join([override.get(s, s) for s in v])
+                return ', '.join([str(override.get(s, s)) for s in v])
         return str(v)
 
     return {v: override.get(v, helper(v)) for v in S}
