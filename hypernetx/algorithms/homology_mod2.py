@@ -622,21 +622,20 @@ def _betti(bd):
 
     Returns
     -------
-    TYPE
+    betti : dict
         Description
     """
-    _, _, S, _ = _compute_matrices_for_snf(bd)
-
     rank = dict()
     for kdx in bd:
-        rank[kdx] = np.sum(S[kdx])
+        _, S, _ = hnx.reduced_row_echelon_form_mod2(bd[kdx])
+        rank[kdx] = np.sum(np.sum(S, axis=1).astype(bool))
 
     betti = dict()
     for kdx in bd:
-        try:
-            betti[kdx] = S[kdx].shape[1] - rank[kdx] - rank[kdx + 1]
-        except:
+        if not kdx + 1 in bd:
             continue
+        betti[kdx] = bd[kdx].shape[1] - rank[kdx] - rank[kdx + 1]
+
     return betti
 
 
@@ -663,13 +662,13 @@ def betti_numbers(h, krange):
         krange = (krange, krange)
     if krange[1] > max_dim:
         msg = f'No simplices of size {krange[1]} exist. Range adjusted to max dim.'
-        warnings.warn(msg, stacklevel=3)
+        warnings.warn(msg, stacklevel=2)
         krange[1] = max_dim
     if krange[0] < 1:
         msg = "Only kth simplicial homology groups for k>0 may be computed."\
             "If you are interested in k=0, compute connected components."
         warnings.warn(msg, stacklevel=2)
-        krange[0] == 1
+        krange[0] = 1
 
     # Compute chain complex
     C = dict()
