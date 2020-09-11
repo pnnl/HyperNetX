@@ -58,9 +58,9 @@ def test_homology_basis(triloop):
     Ck = {k: hnx.kchainbasis(triloop.hypergraph, k) for k in range(0, 3)}
     bd = {k: hnx.bkMatrix(Ck[k - 1], Ck[k]) for k in range(1, 3)}
     assert np.array_equal(homology_basis(bd, k=1)[1], np.array([[1, 0, 1, 1, 1]]))
-    # assert np.array_equal(homology_basis(bd, k=1, C=Ck)[1], [[('A', 'B'), ('A', 'D'), ('B', 'C'), ('C', 'D')]])
-    # assert np.array_equal(homology_basis(bd, k=1, C=Ck, shortest=True)[1][0], [[('A', 'B'), ('A', 'C'), ('B', 'C')]])
 
 
-# def test_hypergraph_homology_basis(triloop):
-    # assert np.array_equal(hypergraph_homology_basis(triloop.hypergraph, 1)[1], [[('A', 'B'), ('A', 'D'), ('B', 'C'), ('C', 'D')]])
+def test_hypergraph_homology_basis(triloop):
+    assert np.array_equal(hypergraph_homology_basis(triloop.hypergraph, 1, interpreted=True)[1][1], [[('A', 'B'), ('A', 'D'), ('B', 'C'), ('C', 'D')]])
+    assert np.array_equal(hypergraph_homology_basis(triloop.hypergraph, 1, interpreted=True, shortest=True)[1][1], [[('A', 'B'), ('A', 'C'), ('B', 'C'), ]])
+    assert np.array_equal(hypergraph_homology_basis(triloop.hypergraph, 1, interpreted=False)[1], np.array([[1, 0, 1, 1, 1]]))

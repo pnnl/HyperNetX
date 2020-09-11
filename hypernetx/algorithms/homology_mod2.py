@@ -577,7 +577,7 @@ def boundary_group(image_basis):
         msg = """
         This method is inefficient for large image bases.
         """
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
     if np.sum(image_basis) == 0:
         return None
     dim = image_basis.shape[0]
@@ -625,7 +625,7 @@ def _betti(bd):
     TYPE
         Description
     """
-    _, _, S, _ = _compute_matrices_for_snf(bd, k)
+    _, _, S, _ = _compute_matrices_for_snf(bd)
 
     rank = dict()
     for kdx in bd:
@@ -640,7 +640,49 @@ def _betti(bd):
     return betti
 
 
-def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
+def betti_numbers(h, krange):
+    """
+    Return the kth betti numbers for the simplicial homology of the ASC
+    associated to h
+
+    Parameters
+    ----------
+    h : hnx.Hypergraph
+        Hypergraph to compute the betti numbers from
+    krange : int or list
+        list must be low and high of k values inclusive
+
+    Returns
+    -------
+    betti : dict
+        A dictionary of betti numbers keyed by dimension
+    """
+    max_dim = np.max([len(e) for e in h.edges()]) - 1
+
+    if not isinstance(krange, list):
+        krange = (krange, krange)
+    if krange[1] > max_dim:
+        msg = f'No simplices of size {krange[1]} exist. Range adjusted to max dim.'
+        warnings.warn(msg, stacklevel=3)
+        krange[1] = max_dim
+    if krange[0] < 1:
+        msg = "Only kth simplicial homology groups for k>0 may be computed."\
+            "If you are interested in k=0, compute connected components."
+        warnings.warn(msg, stacklevel=2)
+        krange[0] == 1
+
+    # Compute chain complex
+    C = dict()
+    C[krange[0] - 1] = kchainbasis(h, krange[0] - 1)
+    bd = dict()
+    for kdx in range(krange[0], krange[1] + 2):
+        C[kdx] = kchainbasis(h, kdx)
+        bd[kdx] = bkMatrix(C[kdx - 1], C[kdx])
+
+    return _betti(bd)
+
+
+def homology_basis(bd, krange=None, log=None, boundary=False, **kwargs):
     """
     Compute a basis for the kth-simplicial homology group, $H_k$, defined by a
     chain complex $C$ with boundary maps given by bd $= \{k:\partial_k$\}$
@@ -651,11 +693,8 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
         dict of boundary matrices on k-chains to k-1 chains keyed on k
         if krange is a tuple then all boundary matrices k \in [krange[0],..,krange[1]]
         inclusive must be in the dictionary
-    k : int or list of ints, optional, default=None
+    krange : int or list of ints, optional, default=None
         kth-homologies to be computed, defaults to all k for which bd[k] and bd[k+1] are defined
-    shortest : bool, optional
-        option to look for shortest basis using boundaries
-        *Warning*: This is only good for very small examples
     log : str, optional
         path to logfile where intermediate data should be
         pickled and stored
@@ -678,14 +717,14 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
 
     basis = dict()
     im = dict()
-    if k and isinstance(k, int):
-        kvals = [k]
-    elif k:
-        kvals = k
+    if krange and isinstance(krange, int):
+        kvals = [krange, krange]
+    elif krange:
+        kvals = krange
     else:
         kvals = bd.keys()
     for kdx in kvals:
-        if kdx + 1 not in bd:
+        if not {kdx, kdx + 1}.issubset(bd.keys()):
             continue
         rank1 = rank[kdx]
         rank2 = rank[kdx + 1]
@@ -705,22 +744,6 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
     else:
         return basis
 
-    # print(f'hom basis reps: {proj*1}\n')
-    # basis = defaultdict(list)
-    # for kdx in betti:
-    #     if shortest:
-    #         shortest_basis = list()
-    #         for idx, bs in enumerate(proj[kdx]):
-    #             shortest_basis.append(coset(im, bs=bs, shortest=True))
-    #         if C:
-    #             basis = [interpret(C, sb) for sb in shortest_basis]
-
-    #         proj = shortest_basis
-    #     else:
-    #         if C:
-    #             basis = interpret(C, proj)
-    #         else:
-    #             basis = proj
     #     if log:
     #         try:
     #             logdict = pickle.load(open(log, 'rb'))
@@ -784,7 +807,6 @@ def hypergraph_homology_basis(h, krange, shortest=False, log=None, interpreted=T
     for kdx in range(krange[0], krange[1] + 2):
         C[kdx] = kchainbasis(h, kdx)
         bd[kdx] = bkMatrix(C[kdx - 1], C[kdx])
-
         # if log:
         #     try:
         #         logdict = pickle.load(open(log, 'rb'))
