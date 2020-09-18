@@ -99,7 +99,6 @@ def interpret(Ck, arr):
     output = list()
     for vec in arr:
         if len(Ck) != len(vec):
-            print(Ck, vec)
             raise HyperNetXError('elements of arr must have the same length as Ck')
         output.append([Ck[idx] for idx in range(len(vec)) if vec[idx] == 1])
     return output
@@ -608,9 +607,49 @@ def _compute_matrices_for_snf(bd):
     return L, R, S, Linv
 
 
-def _betti(bd):
+def _get_krange(k, max_dim):
     """
-    Generate the kth-betti numbers and for a chain complex with boundary
+    Helper method to compute range of appropriate k dimensions for homology
+    computations given k and the max dimension of a simplicial complex
+    """
+    if k is None:
+        krange = [1, max_dim]
+    elif isinstance(k, int):
+        if k == 0:
+            msg = "Only kth simplicial homology groups for k>0 may be computed."\
+                "If you are interested in k=0, compute the number connected components."
+            print(msg)
+            return
+        if k > max_dim:
+            msg = f'No simplices of dim {k} exist. k adjusted to max dim.'
+            print(msg)
+        krange = [min([k, max_dim])] * 2
+    elif not len(k) == 2:
+        msg = f'Please enter krange as a positive integer or list of integers: [<min k>,<max k>] inclusive.'
+        print(msg)
+        return None
+    elif not k[0] <= k[1]:
+        msg = f'k must be an integer or a list of two integers [min,max] with min <=max'
+        print(msg)
+        return None
+    else:
+        krange = k
+
+    if krange[1] > max_dim:
+        msg = f'No simplices of dim {krange[1]} exist. Range adjusted to max dim.'
+        print(msg)
+        krange[1] = max_dim
+    if krange[0] < 1:
+        msg = "Only kth simplicial homology groups for k>0 may be computed."\
+            "If you are interested in k=0, compute the number of connected components."
+        print(msg)
+        krange[0] = 1
+    return krange
+
+
+def betti(bd):
+    """
+    Generate the kth-betti numbers for a chain complex with boundary
     matrices given by bd
 
     Parameters
@@ -639,7 +678,7 @@ def _betti(bd):
     return betti
 
 
-def betti_numbers(h, krange):
+def betti_numbers(h, k=None):
     """
     Return the kth betti numbers for the simplicial homology of the ASC
     associated to h
@@ -648,28 +687,21 @@ def betti_numbers(h, krange):
     ----------
     h : hnx.Hypergraph
         Hypergraph to compute the betti numbers from
-    krange : int or list
-        list must be low and high of k values inclusive
+    k : int or list, optional, default=None
+        list must be min value and max value of k values inclusive
+        if None, then all betti numbers for dimensions of existing cells will be
+        computed.
 
     Returns
     -------
     betti : dict
         A dictionary of betti numbers keyed by dimension
     """
+
     max_dim = np.max([len(e) for e in h.edges()]) - 1
-
-    if not isinstance(krange, list):
-        krange = (krange, krange)
-    if krange[1] > max_dim:
-        msg = f'No simplices of size {krange[1]} exist. Range adjusted to max dim.'
-        warnings.warn(msg, stacklevel=2)
-        krange[1] = max_dim
-    if krange[0] < 1:
-        msg = "Only kth simplicial homology groups for k>0 may be computed."\
-            "If you are interested in k=0, compute connected components."
-        warnings.warn(msg, stacklevel=2)
-        krange[0] = 1
-
+    krange = _get_krange(k, max_dim)
+    if not krange:
+        return
     # Compute chain complex
     C = dict()
     C[krange[0] - 1] = kchainbasis(h, krange[0] - 1)
@@ -678,10 +710,10 @@ def betti_numbers(h, krange):
         C[kdx] = kchainbasis(h, kdx)
         bd[kdx] = bkMatrix(C[kdx - 1], C[kdx])
 
-    return _betti(bd)
+    return betti(bd)
 
 
-def homology_basis(bd, krange=None, log=None, boundary=False, **kwargs):
+def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
     """
     Compute a basis for the kth-simplicial homology group, $H_k$, defined by a
     chain complex $C$ with boundary maps given by bd $= \{k:\partial_k$\}$
@@ -692,8 +724,10 @@ def homology_basis(bd, krange=None, log=None, boundary=False, **kwargs):
         dict of boundary matrices on k-chains to k-1 chains keyed on k
         if krange is a tuple then all boundary matrices k \in [krange[0],..,krange[1]]
         inclusive must be in the dictionary
-    krange : int or list of ints, optional, default=None
-        kth-homologies to be computed, defaults to all k for which bd[k] and bd[k+1] are defined
+    k : int or list of ints, optional, default=None
+        k must be a positive integer or a list of
+        2 integers indicating min and max dimensions to be
+        computed
     log : str, optional
         path to logfile where intermediate data should be
         pickled and stored
@@ -705,23 +739,32 @@ def homology_basis(bd, krange=None, log=None, boundary=False, **kwargs):
     -------
     basis : dict
         dict of generators as 0-1 tuples keyed by dim
+        basis for dimension k will be returned only if bd[k] and bd[k+1] have
+        been provided.
     im : dict
         dict of boundary group generators keyed by dim
     """
-    L, R, S, Linv = _compute_matrices_for_snf(bd)
+    max_dim = max(bd.keys())
+    if k:  # kvals are the dimensions of all chain groups needed to compute desired homologies
+        krange = _get_krange(k, max_dim)
+        kvals = sorted(set(bd.keys()).intersection(range(krange[0], krange[1] + 2)))  # to get kth dim need k+1 bdry matrix
+    else:
+        kvals = bd.keys()
+
+    L, R, S, Linv = _compute_matrices_for_snf({k: v for k, v in bd.items() if k in kvals})
 
     rank = dict()
-    for kdx in bd:
+    for kdx in kvals:
         rank[kdx] = np.sum(S[kdx])
 
     basis = dict()
     im = dict()
-    if krange and isinstance(krange, int):
-        kvals = [krange, krange]
-    elif krange:
-        kvals = krange
-    else:
-        kvals = bd.keys()
+    # if k:
+    #     max_dim = max(list(bd.keys()))
+    #     krange = _get_krange(k,max_dim)
+    #     kvals = range(krange[0],krange[1]+1)
+    # else:
+    #     kvals = bd.keys()
     for kdx in kvals:
         if not {kdx, kdx + 1}.issubset(bd.keys()):
             continue
@@ -759,7 +802,7 @@ def homology_basis(bd, krange=None, log=None, boundary=False, **kwargs):
     # return basis, im2
 
 
-def hypergraph_homology_basis(h, krange, shortest=False, log=None, interpreted=True):
+def hypergraph_homology_basis(h, k, shortest=False, log=None, interpreted=True):
     """
     Computes the kth-homology groups mod 2 for the ASC
     associated with the hypergraph h for k in krange inclusive
@@ -767,10 +810,10 @@ def hypergraph_homology_basis(h, krange, shortest=False, log=None, interpreted=T
     Parameters
     ----------
     h : hnx.Hypergraph
-    krange : int or list of length 2 
-        krange must be an integer greater than 0 or a list 
-        with the low and high values of consecutive k's to 
-        be computed.
+    k : int or list of length 2 
+        k must be an integer greater than 0 or a list of
+        length 2 indicating min and max dimensions to be
+        computed
     shortest : bool, optional
         option to look for shortest basis using boundaries
         only good for very small examples
@@ -789,15 +832,15 @@ def hypergraph_homology_basis(h, krange, shortest=False, log=None, interpreted=T
 
     """
     max_dim = np.max([len(e) for e in h.edges()]) - 1
-
-    if not isinstance(krange, list):
-        krange = (krange, krange)
-    if krange[1] > max_dim:
-        warnings.warn(f'No simplices of size {krange[1]} exist. Range adjusted to max dim.')
-        krange[1] = max_dim
-    if krange[0] < 1:
-        warnings.warn(f'Only kth simplicial homology groups for k>0 may be computed. If you are interested in k=0 compute connected components.')
-        krange[0] == 1
+    krange = _get_krange(k, max_dim)
+    # if not isinstance(krange, list):
+    #     krange = (krange, krange)
+    # if krange[1] > max_dim:
+    #     warnings.warn(f'No simplices of size {krange[1]} exist. Range adjusted to max dim.')
+    #     krange[1] = max_dim
+    # if krange[0] < 1:
+    #     warnings.warn(f'Only kth simplicial homology groups for k>0 may be computed. If you are interested in k=0 compute connected components.')
+    #     krange[0] == 1
 
     # Compute chain complex
     C = dict()
