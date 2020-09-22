@@ -23,6 +23,18 @@ class Fish():
         AB, BC, ACD, BEH, CF, AG = 'AB', 'BC', 'ACD', 'BEH', 'CF', 'AG'
         self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D}, BEH: {B, E, H}, CF: {C, F}, AG: {A, G}}
         self.hypergraph = hnx.Hypergraph(self.edgedict, name='Fish')
+        state_dict = {'chains': {0: [('A',), ('B',), ('C',), ('D',), ('E',), ('F',), ('G',), ('H',)],
+                                 1: [('A', 'B'), ('A', 'C'), ('A', 'D'), ('A', 'G'), ('B', 'C'), ('B', 'E'), ('B', 'H'),
+                                     ('C', 'D'), ('C', 'F'), ('E', 'H')],
+                                 2: [('A', 'C', 'D'), ('B', 'E', 'H')],
+                                 3: []},
+                      'bkMatrix': {1: np.array([[1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 1, 1, 0],
+                                          [0, 0, 1, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+                                          [0, 0, 0, 0, 0, 0, 1, 0, 0, 1]]),
+                             2: np.array([[0, 0], [1, 0], [1, 0], [0, 0], [0, 0], [0, 1], [0, 1], [1, 0], [0, 0], [0, 1]]),
+                             3: np.array([[], []], dtype=np.int64)}
+                      }
+        self.state = state_dict
 
 
 class SixByFive():

@@ -5,7 +5,7 @@ from hypernetx.algorithms.homology_mod2 import *
 warnings.simplefilter("ignore")
 
 
-def test_kchainbasis(triloop):
+def test_kchainbasis(triloop, fish):
     C = kchainbasis(triloop.hypergraph, 1)
     assert len(C) == 5
     assert ('A', 'B') in C
@@ -13,6 +13,9 @@ def test_kchainbasis(triloop):
     C = kchainbasis(triloop.hypergraph, 2)
     assert len(C) == 1
     assert ('A', 'C', 'D') in C
+    fh = fish.hypergraph
+    assert kchainbasis(fh, 1) == fish.state['chains'][1]
+    assert kchainbasis(fh, 2) == fish.state['chains'][2]
 
 
 def test_interpret(triloop):
@@ -20,10 +23,14 @@ def test_interpret(triloop):
     assert interpret(C, [(0, 1, 0, 1, 0)]) == [[('A', 'C'), ('B', 'C')]]
 
 
-def test_bkMatrix(triloop):
+def test_bkMatrix(triloop, fish):
     Ck = {k: hnx.kchainbasis(triloop.hypergraph, k) for k in range(0, 2)}
     bd = bkMatrix(Ck[0], Ck[1])
     assert np.array_equal(bd[0], np.array([1, 1, 1, 0, 0]))
+    fh = fish.hypergraph
+    Ck = fish.state['chains']
+    assert np.sum(np.equal(bkMatrix(Ck[0], Ck[1]), fish.state['bkMatrix'][1])) == 80
+    assert np.sum(np.equal(bkMatrix(Ck[1], Ck[2]), fish.state['bkMatrix'][2])) == 20
 
 
 def test_smith_normal_form_mod2(triloop):
@@ -54,8 +61,15 @@ def test_reduced_row_echelon_form_mod2():
     assert(np.all(np.eye(3) == logical_matmul(L, Linv)))
 
 
+def test_betti(fish):
+    bk = fish.state['bkMatrix']
+    Ck = fish.state['chains']
+    assert betti(bk)[1] == 1
+    assert betti(bk)[2] == 0
+
+
 def test_homology_basis(triloop):
-    Ck = {k: hnx.kchainbasis(triloop.hypergraph, k) for k in range(0, 3)}
+    Ck = {k: hnx.kchainbasis(triloop.hypergraph, k) for k in range(0, 4)}
     bd = {k: hnx.bkMatrix(Ck[k - 1], Ck[k]) for k in range(1, 3)}
     assert np.array_equal(homology_basis(bd, k=1)[1], np.array([[1, 0, 1, 1, 1]]))
 

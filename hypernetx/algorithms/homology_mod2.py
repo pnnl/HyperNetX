@@ -587,7 +587,7 @@ def boundary_group(image_basis):
 def _compute_matrices_for_snf(bd):
     """
     Helper method for smith normal form decomposition for boundary maps
-    associated to chain complex 
+    associated to chain complex
 
     Parameters
     ----------
@@ -607,7 +607,7 @@ def _compute_matrices_for_snf(bd):
     return L, R, S, Linv
 
 
-def _get_krange(k, max_dim):
+def _get_krange(max_dim, k=None):
     """
     Helper method to compute range of appropriate k dimensions for homology
     computations given k and the max dimension of a simplicial complex
@@ -647,7 +647,7 @@ def _get_krange(k, max_dim):
     return krange
 
 
-def betti(bd):
+def betti(bd, k=None):
     """
     Generate the kth-betti numbers for a chain complex with boundary
     matrices given by bd
@@ -655,25 +655,35 @@ def betti(bd):
     Parameters
     ----------
     bd: dict of k-boundary matrices keyed on dimension of domain
-    krange : int, list or tuple
-        k must be an integer greater than 0 or a tuple = (low k, high k)
-        indicating range of k to be computed
+    k : int, list or tuple, optional, default=None
+        list must be min value and max value of k values inclusive
+        if None, then all betti numbers for dimensions of existing cells will be
+        computed.
 
     Returns
     -------
     betti : dict
         Description
     """
-    rank = dict()
-    for kdx in bd:
+    rank = defaultdict(int)
+    if k:
+        max_dim = max(bd.keys())
+        krange = _get_krange(max_dim, k)
+        if not krange:
+            return
+        kvals = sorted(set(range(krange[0], krange[1] + 2)).intersection(bd.keys()))
+    else:
+        kvals = bd.keys()
+    for kdx in kvals:
         _, S, _ = hnx.reduced_row_echelon_form_mod2(bd[kdx])
         rank[kdx] = np.sum(np.sum(S, axis=1).astype(bool))
 
     betti = dict()
-    for kdx in bd:
-        if not kdx + 1 in bd:
+    for kdx in kvals:
+        if kdx + 1 in kvals:
+            betti[kdx] = bd[kdx].shape[1] - rank[kdx] - rank[kdx + 1]
+        else:
             continue
-        betti[kdx] = bd[kdx].shape[1] - rank[kdx] - rank[kdx + 1]
 
     return betti
 
@@ -699,11 +709,12 @@ def betti_numbers(h, k=None):
     """
 
     max_dim = np.max([len(e) for e in h.edges()]) - 1
-    krange = _get_krange(k, max_dim)
+    krange = _get_krange(max_dim, k)
     if not krange:
         return
     # Compute chain complex
-    C = dict()
+
+    C = defaultdict(list)
     C[krange[0] - 1] = kchainbasis(h, krange[0] - 1)
     bd = dict()
     for kdx in range(krange[0], krange[1] + 2):
@@ -727,7 +738,8 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
     k : int or list of ints, optional, default=None
         k must be a positive integer or a list of
         2 integers indicating min and max dimensions to be
-        computed
+        computed, if none given all homology groups will be computed from
+        available boundary matrices in bd
     log : str, optional
         path to logfile where intermediate data should be
         pickled and stored
@@ -745,8 +757,8 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
         dict of boundary group generators keyed by dim
     """
     max_dim = max(bd.keys())
-    if k:  # kvals are the dimensions of all chain groups needed to compute desired homologies
-        krange = _get_krange(k, max_dim)
+    if k:
+        krange = _get_krange(max_dim, k)
         kvals = sorted(set(bd.keys()).intersection(range(krange[0], krange[1] + 2)))  # to get kth dim need k+1 bdry matrix
     else:
         kvals = bd.keys()
@@ -759,14 +771,8 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
 
     basis = dict()
     im = dict()
-    # if k:
-    #     max_dim = max(list(bd.keys()))
-    #     krange = _get_krange(k,max_dim)
-    #     kvals = range(krange[0],krange[1]+1)
-    # else:
-    #     kvals = bd.keys()
     for kdx in kvals:
-        if not {kdx, kdx + 1}.issubset(bd.keys()):
+        if kdx + 1 not in kvals:
             continue
         rank1 = rank[kdx]
         rank2 = rank[kdx + 1]
@@ -810,7 +816,7 @@ def hypergraph_homology_basis(h, k, shortest=False, log=None, interpreted=True):
     Parameters
     ----------
     h : hnx.Hypergraph
-    k : int or list of length 2 
+    k : int or list of length 2
         k must be an integer greater than 0 or a list of
         length 2 indicating min and max dimensions to be
         computed
@@ -832,15 +838,7 @@ def hypergraph_homology_basis(h, k, shortest=False, log=None, interpreted=True):
 
     """
     max_dim = np.max([len(e) for e in h.edges()]) - 1
-    krange = _get_krange(k, max_dim)
-    # if not isinstance(krange, list):
-    #     krange = (krange, krange)
-    # if krange[1] > max_dim:
-    #     warnings.warn(f'No simplices of size {krange[1]} exist. Range adjusted to max dim.')
-    #     krange[1] = max_dim
-    # if krange[0] < 1:
-    #     warnings.warn(f'Only kth simplicial homology groups for k>0 may be computed. If you are interested in k=0 compute connected components.')
-    #     krange[0] == 1
+    krange = _get_krange(max_dim, k)
 
     # Compute chain complex
     C = dict()
