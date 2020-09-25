@@ -454,6 +454,7 @@ class Hypergraph():
 
     def add_edge(self,edge):
         """
+
         Adds a single edge to hypergraph.
 
         Parameters
@@ -513,6 +514,7 @@ class Hypergraph():
 
     def add_node_to_edge(self,node,edge):
         """
+
         Adds node to an edge in hypergraph edges
 
         Parameters

@@ -8,6 +8,7 @@ import numpy as np
 import networkx as nx
 from hypernetx import HyperNetXError
 
+
 class Entity(object):
     """
     Base class for objects used in building network-like objects including
@@ -34,13 +35,13 @@ class Entity(object):
     The Entity class was created as a generic object providing structure for
     Hypergraph nodes and edges.
 
-    - An Entity is distinguished by its identifier (sortable,hashable) :code:`Entity.uid`
-    - An Entity is a container for other entities but may not contain itself, :code:`Entity.elements`
-    - An Entity has properties :code:`Entity.properties`
-    - An Entity has memberships to other entities, :code:`Entity.memberships`.
-    - An Entity has children, :code:`Entity.children`, which are the elements of its elements.
-    - :code:`Entity.children` are registered in the :code:`Entity.registry`.
-    - All descendents of Entity are registered in :code:`Entity.fullregistry()`.
+    - An Entity is distinguished by its identifier (sortable,hashable) :func:`Entity.uid`
+    - An Entity is a container for other entities but may not contain itself, :func:`Entity.elements`
+    - An Entity has properties :func:`Entity.properties`
+    - An Entity has memberships to other entities, :func:`Entity.memberships`.
+    - An Entity has children, :func:`Entity.children`, which are the elements of its elements.
+    - :func:`Entity.children` are registered in the :func:`Entity.registry`.
+    - All descendents of Entity are registered in :func:`Entity.fullregistry()`.
 
     .. _Honor System:
 
@@ -81,6 +82,7 @@ class Entity(object):
     EntitySet
 
     """
+
     def __init__(self, uid, elements=[], **props):
         super().__init__()
         self._uid = uid
@@ -90,12 +92,12 @@ class Entity(object):
         self.__dict__.update(props)
         self._registry = self.registry
 
-        if isinstance(elements,dict):
-            for k,v in elements.items():
-                if isinstance(v,Entity):
+        if isinstance(elements, dict):
+            for k, v in elements.items():
+                if isinstance(v, Entity):
                     self.add_element(v)
                 else:
-                    self.add_element(Entity(k,v))
+                    self.add_element(Entity(k, v))
         elif elements is not None:
             self.add(*elements)
 
@@ -127,11 +129,12 @@ class Entity(object):
         Dictionary of elements to which entity belongs.
 
         This assignment is done on construction and controlled by
-        :code:`Entity.add_element()` and :code:`Entity.remove_element()` methods.
+        :func:`Entity.add_element()` 
+        and :func:`Entity.remove_element()` methods.
         """
 
-        return {k : self._memberships[k] for k in self._memberships
-            if not isinstance(self._memberships[k], EntitySet) }
+        return {k: self._memberships[k] for k in self._memberships
+                if not isinstance(self._memberships[k], EntitySet)}
 
     @property
     def children(self):
@@ -140,6 +143,7 @@ class Entity(object):
 
         To return set of ids for deeper level use:
         :code:`Entity.levelset(level).keys()`
+        see: :func:`Entity.levelset`
         """
         return set(self.levelset(2).keys())
 
@@ -149,7 +153,7 @@ class Entity(object):
         Dictionary of uid:Entity pairs for children entity.
 
         To return a dictionary of all entities at all depths
-        :code:`Entity.complete_registry()`
+        :func:`Entity.complete_registry()`
         """
         return self.levelset(2)
 
@@ -159,7 +163,6 @@ class Entity(object):
         Set of uids of elements of entity.
         """
         return frozenset(self._elements.keys())
-
 
     @property
     def incidence_dict(self):
@@ -189,8 +192,7 @@ class Entity(object):
         else:
             return False
 
-
-    def __eq__(self,other):
+    def __eq__(self, other):
         """
         Defines equality for Entities based on equivalence of their __dict__ objects.
 
@@ -202,25 +204,25 @@ class Entity(object):
         May cause a recursion error if depth is too great.
         """
         seen = set()
-        ## Define a compare method to call recursively on each level of self and other
-        def _comp(a,b,seen):
-            ## Compare top level properties: same class? same ids? same children? same parents? same attributes?
+        # Define a compare method to call recursively on each level of self and other
+
+        def _comp(a, b, seen):
+            # Compare top level properties: same class? same ids? same children? same parents? same attributes?
             if (a.__class__ != b.__class__) or (a.uid != b.uid) or (a.uidset != b.uidset) or (a.properties != b.properties) or (a.memberships != b.memberships):
                 return False
-            ## If all agree then look at the next level down since a and b share uidsets.
-            for uid,elt in a.elements.items():
+            # If all agree then look at the next level down since a and b share uidsets.
+            for uid, elt in a.elements.items():
                 if isinstance(elt, Entity):
                     if uid in seen:
                         continue
                     seen.add(uid)
                     if not _comp(elt, b[uid], seen):
                         return False
-                ## if not an Entity then elt is hashable so we usual equality
+                # if not an Entity then elt is hashable so we usual equality
                 elif elt != b[uid]:
                     return False
             return True
-        return _comp(self,other,seen)
-
+        return _comp(self, other, seen)
 
     def __len__(self):
         """Returns the number of elements in entity"""
@@ -259,7 +261,7 @@ class Entity(object):
 
     def __getitem__(self, item):
         """
-        Returns Entity element by uid. Use :code:`E[uid]`.
+        Returns Entity element by uid. Use :func:`E[uid]`.
 
         Parameters
         ----------
@@ -271,8 +273,8 @@ class Entity(object):
 
         If item not in entity, returns None.
         """
-        if isinstance(item,Entity):
-            return self._elements.get(item.uid,'')
+        if isinstance(item, Entity):
+            return self._elements.get(item.uid, '')
         else:
             return self._elements.get(item)
 
@@ -285,7 +287,7 @@ class Entity(object):
         for e in self.elements.values():
             yield e
 
-    def __setattr__(self,k,v):
+    def __setattr__(self, k, v):
         """Sets entity property.
 
         Parameters
@@ -303,14 +305,14 @@ class Entity(object):
             raise HyperNetXError(
                 'Cannot reassign uid to Entity once it'
                 ' has been created. Create a clone instead.'
-             )
+            )
         elif k == 'elements':
             raise HyperNetXError('To add elements to Entity use self.add().')
         elif k == 'memberships':
             raise HyperNetXError(
                 'Can\'t choose your own memberships, '
                 'they are like parents!'
-                )
+            )
         else:
             self.__dict__[k] = v
 
@@ -328,7 +330,7 @@ class Entity(object):
         Dictionary extending entset
         """
         temp = dict()
-        for uid,item in entset.items():
+        for uid, item in entset.items():
             temp.update(item.elements)
         return temp
 
@@ -348,20 +350,22 @@ class Entity(object):
         -------
         level : int
 
+        Note
+        ----
         Item must be the uid of an entity listed
-        in :code:`fullregistry()`
+        in :func:`fullregistry()`
         """
         d = 1
         currentlevel = self.levelset(1)
-        while d <= max_depth+1:
+        while d <= max_depth + 1:
             if item in currentlevel:
                 return d
             else:
-                d +=1
+                d += 1
                 currentlevel = self._depth_finder(currentlevel)
         return None
 
-    def levelset(self,k=1):
+    def levelset(self, k=1):
         """
         A dictionary of level k of self.
 
@@ -373,16 +377,18 @@ class Entity(object):
         -------
         levelset : dict
 
+        Note
+        ----
         An Entity contains other entities, hence the relationships between entities
         and their elements may be represented in a directed graph with entity as root.
         The levelsets are sets of entities which make up the elements appearing at
         a certain level.
         """
-        if k<=0:
+        if k <= 0:
             return None
         currentlevel = self.elements
         if k > 1:
-            for idx in range(k-1):
+            for idx in range(k - 1):
                 currentlevel = self._depth_finder(currentlevel)
         return currentlevel
 
@@ -410,11 +416,11 @@ class Entity(object):
             return 0
         else:
             depth = 1
-        while depth < max_depth+1:
+        while depth < max_depth + 1:
             currentlevel = self._depth_finder(currentlevel)
             if not currentlevel:
                 return depth
-            depth +=1
+            depth += 1
         return np.inf
 
     def fullregistry(self, lastlevel=10, firstlevel=1):
@@ -435,7 +441,7 @@ class Entity(object):
         """
         currentlevel = self.levelset(firstlevel)
         accumulater = dict(currentlevel)
-        for idx in range(firstlevel,lastlevel):
+        for idx in range(firstlevel, lastlevel):
             currentlevel = self._depth_finder(currentlevel)
             accumulater.update(currentlevel)
         return accumulater
@@ -454,17 +460,16 @@ class Entity(object):
         return results
 
     @staticmethod
-    def _complete_registry(entity,results):
+    def _complete_registry(entity, results):
         """
         Helper method for complete_registry
         """
         for uid, e in entity.elements.items():
             if uid not in results:
                 results[uid] = e
-                Entity._complete_registry(e,results)
+                Entity._complete_registry(e, results)
 
-
-    def nested_incidence_dict(self,level=10):
+    def nested_incidence_dict(self, level=10):
         """
         Returns a nested dictionary with keys up to level
 
@@ -479,7 +484,7 @@ class Entity(object):
 
         """
         if level > 1:
-            return {ent.uid : ent.nested_incidence_dict(level-1) for ent in self()}
+            return {ent.uid: ent.nested_incidence_dict(level - 1) for ent in self()}
         else:
             return self.incidence_dict
 
@@ -489,7 +494,7 @@ class Entity(object):
         """
         return len(self)
 
-    def clone(self,newuid):
+    def clone(self, newuid):
         """
         Returns shallow copy of entity with newuid. Entity's elements will
         belong to two distinct Entities.
@@ -504,9 +509,9 @@ class Entity(object):
         clone : Entity
 
         """
-        return Entity(newuid, elements = self.elements.values(), **self.properties)
+        return Entity(newuid, elements=self.elements.values(), **self.properties)
 
-    def intersection(self,other):
+    def intersection(self, other):
         """
         A dictionary of elements belonging to entity and other.
 
@@ -555,6 +560,12 @@ class Entity(object):
         -------
         self : Entity
 
+        Note
+        ----
+        Adding an element to an object in a hypergraph will not add the 
+        element to the hypergraph and will cause an error. Use :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>`
+        or :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph.add_node_to_edge>` instead.
+
         """
         for item in args:
             self.add_element(item)
@@ -563,7 +574,7 @@ class Entity(object):
 
     def add_elements_from(self, arg_set):
         """
-        Similar to :code:`add()` it allows for adding from an interable.
+        Similar to :func:`add()` it allows for adding from an interable.
 
         Parameters
         ----------
@@ -603,38 +614,38 @@ class Entity(object):
 
         """
         checkelts = self.complete_registry()
-        if isinstance(item,Entity):
-        ## if item is an Entity, descendents will be compared to avoid collisions
+        if isinstance(item, Entity):
+            # if item is an Entity, descendents will be compared to avoid collisions
             if item.uid == self.uid:
                 raise HyperNetXError(
                     f'Error: Self reference in submitted elements.'
                     f' Entity {self.uid} may not contain itself. '
-                    )
+                )
             elif item in self:
-                ## item is already an element so only the properties will be updated
+                # item is already an element so only the properties will be updated
                 checkelts[item.uid].__dict__.update(item.properties)
             elif item.uid in checkelts:
-                ## if item belongs to an element or a descendent of an element
-                ## then the existing descendent becomes an element
-                ## and properties are updated.
+                # if item belongs to an element or a descendent of an element
+                # then the existing descendent becomes an element
+                # and properties are updated.
                 self._elements[item.uid] = checkelts[item.uid]
                 checkelts[item.uid]._memberships[self.uid] = self
                 checkelts[item.uid].__dict__.update(item.properties)
             else:
-                ## if item's uid doesn't appear in complete_registry
-                ## then it is added as something new
+                # if item's uid doesn't appear in complete_registry
+                # then it is added as something new
                 item._memberships[self.uid] = self
                 self._elements[item.uid] = item
         else:
-            ## item must be a hashable.
-            ## if it appears as a uid in checkelts then
-            ## the corresponding Entity will become an element of entity.
-            ## Otherwise, at most it will be added as an empty Entity.
+            # item must be a hashable.
+            # if it appears as a uid in checkelts then
+            # the corresponding Entity will become an element of entity.
+            # Otherwise, at most it will be added as an empty Entity.
             if self.uid == item:
                 raise HyperNetXError(
                     f'Error: Self reference in submitted elements.'
                     f' Entity {self.uid} may not contain itself.'
-                    )
+                )
             elif item not in self._elements:
                 if item in checkelts:
                     self._elements[item] = checkelts[item]
@@ -661,12 +672,12 @@ class Entity(object):
 
         """
         for item in args:
-            Entity.remove_element(self,item)
+            Entity.remove_element(self, item)
         return self
 
-    def remove_elements_from(self,arg_set):
+    def remove_elements_from(self, arg_set):
         """
-        Similar to :code:`remove()`. Removes elements in arg_set.
+        Similar to :func:`remove()`. Removes elements in arg_set.
 
         Parameters
         ----------
@@ -678,10 +689,10 @@ class Entity(object):
 
         """
         for item in arg_set:
-            Entity.remove_element(self,item)
+            Entity.remove_element(self, item)
         return self
 
-    def remove_element(self,item):
+    def remove_element(self, item):
         """
         Removes item from entity and reference to entity from
         item.memberships
@@ -696,7 +707,7 @@ class Entity(object):
 
 
         """
-        if isinstance(item,Entity):
+        if isinstance(item, Entity):
             del item._memberships[self.uid]
             del self._elements[item.uid]
         else:
@@ -706,7 +717,7 @@ class Entity(object):
         return self
 
     @staticmethod
-    def merge_entities(name,ent1,ent2):
+    def merge_entities(name, ent1, ent2):
         """
         Merge two entities making sure they do not conflict.
 
@@ -728,12 +739,11 @@ class Entity(object):
         a new entity : Entity
 
         """
-        newent =  ent1.clone(name)
+        newent = ent1.clone(name)
         newent.add_elements_from(ent2.elements.values())
-        for k,v in ent2.properties.items():
-            newent.__setattr__(k,v)
+        for k, v in ent2.properties.items():
+            newent.__setattr__(k, v)
         return newent
-
 
 
 class EntitySet(Entity):
@@ -780,7 +790,7 @@ class EntitySet(Entity):
     """
 
     def __init__(self, uid, elements=[], **props):
-        super().__init__(uid, elements,  **props)
+        super().__init__(uid, elements, **props)
         if not self.is_bipartite:
             raise HyperNetXError('Entity does not satisfy the Bipartite Condition, elements and children are not disjoint.')
 
@@ -793,7 +803,7 @@ class EntitySet(Entity):
         children"""
         return f'EntitySet({self._uid},{list(self.uidset)},{self.properties})'
 
-    def add(self,*args):
+    def add(self, *args):
         """
         Adds args to entityset's elements, checking to make sure no self references are
         made to element ids.
@@ -815,15 +825,15 @@ class EntitySet(Entity):
                 elif not self.uidset.isdisjoint(item.uidset):
                     raise HyperNetXError(f'Error: Fails the bipartite condition for EntitySet.')
                 else:
-                    Entity.add_element(self,item)
+                    Entity.add_element(self, item)
             else:
                 if not item in self.children:
-                    Entity.add_element(self,item)
+                    Entity.add_element(self, item)
                 else:
                     raise HyperNetXError(f'Error: {item} references a child of an existing Entity in the EntitySet.')
         return self
 
-    def clone(self,newuid):
+    def clone(self, newuid):
         """
         Returns shallow copy of entityset with newuid. Entityset's
         elements will belong to two distinct entitysets.
@@ -839,10 +849,9 @@ class EntitySet(Entity):
         clone : EntitySet
 
         """
-        return EntitySet(newuid, elements = self.elements.values(), **self.properties)
+        return EntitySet(newuid, elements=self.elements.values(), **self.properties)
 
-
-    def collapse_identical_elements(self,newuid,use_reps=False,return_counts=False):
+    def collapse_identical_elements(self, newuid, use_reps=False, return_counts=False):
         """
         Returns a deduped copy of the entityset, using equivalence classes as element keys.
 
@@ -888,15 +897,14 @@ class EntitySet(Entity):
             temp[frozenset(e.uidset)].add(e.uid)
         if use_reps:
             if return_counts:
-                ### labels equivalence class as (rep,count) tuple
-                new_entity_dict = {(next(iter(v)),len(v)):set(k) for k,v in temp.items()}
+                # labels equivalence class as (rep,count) tuple
+                new_entity_dict = {(next(iter(v)), len(v)): set(k) for k, v in temp.items()}
             else:
-                ### labels equivalence class as rep;
-                new_entity_dict = {next(iter(v)):set(k) for k,v in temp.items()}
+                # labels equivalence class as rep;
+                new_entity_dict = {next(iter(v)): set(k) for k, v in temp.items()}
         else:
-            new_entity_dict = {frozenset(v):set(k) for k,v in temp.items()}
-        return EntitySet(newuid,new_entity_dict)
-
+            new_entity_dict = {frozenset(v): set(k) for k, v in temp.items()}
+        return EntitySet(newuid, new_entity_dict)
 
     def incidence_matrix(self, sparse=True, index=False):
         """
@@ -938,17 +946,17 @@ class EntitySet(Entity):
         nchildren = len(self.children)
         nuidset = len(self.uidset)
 
-        ndict = dict(zip(self.children,range(nchildren)))
-        edict = dict(zip(self.uidset,range(nuidset)))
+        ndict = dict(zip(self.children, range(nchildren)))
+        edict = dict(zip(self.uidset, range(nuidset)))
 
         if len(ndict) is not 0:
 
             if index:
-                rowdict = {v:k for k,v in ndict.items()}
-                coldict = {v:k for k,v in edict.items()}
+                rowdict = {v: k for k, v in ndict.items()}
+                coldict = {v: k for k, v in edict.items()}
 
             if sparse:
-                ### Create csr sparse matrix
+                # Create csr sparse matrix
                 rows = list()
                 cols = list()
                 data = list()
@@ -957,13 +965,13 @@ class EntitySet(Entity):
                         data.append(1)
                         rows.append(ndict[n])
                         cols.append(edict[e])
-                MP = csr_matrix((data,(rows,cols)))
+                MP = csr_matrix((data, (rows, cols)))
             else:
-                #### Create an np.matrix
-                MP = np.zeros((nchildren,nuidset),dtype=int)
+                # Create an np.matrix
+                MP = np.zeros((nchildren, nuidset), dtype=int)
                 for e in self:
                     for n in self[e].elements:
-                         MP[ndict[n],edict[e]]=1
+                        MP[ndict[n], edict[e]] = 1
             if index:
                 return MP, rowdict, coldict
             else:
@@ -974,7 +982,7 @@ class EntitySet(Entity):
             else:
                 return np.zeros(1)
 
-    def restrict_to(self,element_subset,name=None):
+    def restrict_to(self, element_subset, name=None):
         """
         Shallow copy of entityset removing elements not in element_subset.
 
@@ -999,28 +1007,3 @@ class EntitySet(Entity):
         newelements = [self[e] for e in element_subset if e in self]
         name = name or f'{self.uid}_r'
         return EntitySet(name, newelements, **self.properties)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

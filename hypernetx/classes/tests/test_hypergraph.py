@@ -113,6 +113,13 @@ def test_restrict_to_nodes(sbs_hypergraph):
     assert not 'C' in H1.edges['P']
 
 
+def test_remove_from_restriction(triloop):
+    h = triloop.hypergraph
+    h1 = h.restrict_to_nodes(h.neighbors('A')).remove_node('A')
+    assert 'A' not in h1
+    assert 'A' not in h1.edges['ACD']
+
+
 def test_toplexes(sbsd_hypergraph):
     H = sbsd_hypergraph
     T = H.toplexes()

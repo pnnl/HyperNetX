@@ -167,6 +167,7 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">networkx.algorithms</span> <span class="k">import</span> <span class="n">bipartite</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="k">import</span> <span class="n">HyperNetXError</span>
 
 
@@ -614,6 +615,7 @@
 
 <div class="viewcode-block" id="Hypergraph.add_edge"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">edge</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">        Adds a single edge to hypergraph.</span>
 
 <span class="sd">        Parameters</span>
@@ -673,6 +675,7 @@
 
 <div class="viewcode-block" id="Hypergraph.add_node_to_edge"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.add_node_to_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_node_to_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node</span><span class="p">,</span><span class="n">edge</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">        Adds node to an edge in hypergraph edges</span>
 
 <span class="sd">        Parameters</span>
@@ -1104,13 +1107,15 @@
 <span class="sd">        new hypergraph : Hypergraph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">memberships</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">innernodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodeset</span><span class="p">:</span>
+            <span class="n">innernodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
                 <span class="n">memberships</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span><span class="p">))</span>
         <span class="n">newedgeset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-                <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nodeset</span><span class="p">)</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">innernodes</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">temp</span><span class="p">:</span>
                     <span class="n">newedgeset</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">temp</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">newedgeset</span><span class="p">,</span><span class="n">name</span><span class="p">)</span></div>
@@ -1590,6 +1595,32 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;No </span><span class="si">{s}</span><span class="s1">-path between </span><span class="si">{source}</span><span class="s1"> and </span><span class="si">{target}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
+<div class="viewcode-block" id="Hypergraph.dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_rows</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">sort_columns</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a pandas dataframe for hypergraph indexed by the nodes and </span>
+<span class="sd">        with column headers given by the edge names.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sort_rows : bool, optional, default=True</span>
+<span class="sd">            sort rows based on hashable node names</span>
+<span class="sd">        sort_columns : bool, optional, default=True</span>
+<span class="sd">            sort columns based on hashable edge names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mat</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">cdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">rdx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rdx</span><span class="p">]</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">cdx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cdx</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span>
+                          <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+                          <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sort_rows</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sort_columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">columns</span><span class="p">)]</span>    
+        <span class="k">return</span> <span class="n">df</span></div>
+
 <div class="viewcode-block" id="Hypergraph.from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">set_names</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1715,8 +1746,8 @@
 
 
 <div class="viewcode-block" id="Hypergraph.from_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">transforms</span><span class="o">=</span><span class="p">[],</span><span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1728,15 +1759,17 @@
 <span class="sd">        df : Pandas.Dataframe</span>
 <span class="sd">            a real valued dataframe with a single index</span>
 
-<span class="sd">        fillna : float, default = 0</span>
-<span class="sd">            a real value to place in empty cell, all-zero columns will not generate</span>
-<span class="sd">            an edge</span>
-
 <span class="sd">        columns : (optional) list, default = None</span>
 <span class="sd">            restricts df to the columns with headers in this list.</span>
 
 <span class="sd">        rows : (optional) list, default = None</span>
 <span class="sd">            restricts df to the rows indexed by the elements in this list.</span>
+
+<span class="sd">        name : (optional) string, default = None</span>
+
+<span class="sd">        fillna : float, default = 0</span>
+<span class="sd">            a real value to place in empty cell, all-zero columns will not generate</span>
+<span class="sd">            an edge. </span>
 
 <span class="sd">        transpose : (optional) bool, default = False</span>
 <span class="sd">            option to transpose the dataframe, in this case df.Index will label the edges</span>
@@ -1752,8 +1785,12 @@
 <span class="sd">            prior to generating the hypergraph.</span>
 
 <span class="sd">        key : (optional) function, default = None</span>
-<span class="sd">            boolean function to be evaluated on each cell of the array,</span>
-<span class="sd">            key is applied after transforms</span>
+<span class="sd">            boolean function to be applied to dataframe. Must be defined on numpy</span>
+<span class="sd">            arrays. </span>
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_numpy_array())</span>
 
 
 <span class="sd">        Returns</span>
@@ -1767,25 +1804,45 @@
 <span class="sd">        edges are discarded.</span>
 <span class="sd">        Restrictions and data processing will occur in this order:</span>
 
-<span class="sd">            1. column and row restrictions.</span>
-<span class="sd">            2. transpose the dataframe</span>
-<span class="sd">            3. transforms in the order listed</span>
-<span class="sd">            4. boolean key</span>
+<span class="sd">            1. column and row restrictions</span>
+<span class="sd">            2. fillna replace NaNs in dataframe</span>
+<span class="sd">            3. transpose the dataframe</span>
+<span class="sd">            4. transforms in the order listed</span>
+<span class="sd">            5. boolean key</span>
+
+<span class="sd">        This method offers the above options for wrangling a dataframe into an incidence</span>
+<span class="sd">        matrix for a hypergraph. For more flexibility we recommend you use the Pandas</span>
+<span class="sd">        library to format the values of your dataframe before submitting it to this</span>
+<span class="sd">        constructor.</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">!=</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Error: Input object must be a pandas dataframe.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows</span><span class="p">]</span>   
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
         <span class="n">node_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">edge_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div></div>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">key</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div></div>
+
+
+
 
 
 

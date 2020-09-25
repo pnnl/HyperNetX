@@ -203,13 +203,13 @@ may contain elements and have properties.
 The Entity class was created as a generic object providing structure for
 Hypergraph nodes and edges.</p>
 <ul class="simple">
-<li><p>An Entity is distinguished by its identifier (sortable,hashable) <code class="code docutils literal notranslate"><span class="pre">Entity.uid</span></code></p></li>
-<li><p>An Entity is a container for other entities but may not contain itself, <code class="code docutils literal notranslate"><span class="pre">Entity.elements</span></code></p></li>
-<li><p>An Entity has properties <code class="code docutils literal notranslate"><span class="pre">Entity.properties</span></code></p></li>
-<li><p>An Entity has memberships to other entities, <code class="code docutils literal notranslate"><span class="pre">Entity.memberships</span></code>.</p></li>
-<li><p>An Entity has children, <code class="code docutils literal notranslate"><span class="pre">Entity.children</span></code>, which are the elements of its elements.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Entity.children</span></code> are registered in the <code class="code docutils literal notranslate"><span class="pre">Entity.registry</span></code>.</p></li>
-<li><p>All descendents of Entity are registered in <code class="code docutils literal notranslate"><span class="pre">Entity.fullregistry()</span></code>.</p></li>
+<li><p>An Entity is distinguished by its identifier (sortable,hashable) <a class="reference internal" href="#classes.entity.Entity.uid" title="classes.entity.Entity.uid"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.uid()</span></code></a></p></li>
+<li><p>An Entity is a container for other entities but may not contain itself, <a class="reference internal" href="#classes.entity.Entity.elements" title="classes.entity.Entity.elements"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.elements()</span></code></a></p></li>
+<li><p>An Entity has properties <a class="reference internal" href="#classes.entity.Entity.properties" title="classes.entity.Entity.properties"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.properties()</span></code></a></p></li>
+<li><p>An Entity has memberships to other entities, <a class="reference internal" href="#classes.entity.Entity.memberships" title="classes.entity.Entity.memberships"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.memberships()</span></code></a>.</p></li>
+<li><p>An Entity has children, <a class="reference internal" href="#classes.entity.Entity.children" title="classes.entity.Entity.children"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.children()</span></code></a>, which are the elements of its elements.</p></li>
+<li><p><a class="reference internal" href="#classes.entity.Entity.children" title="classes.entity.Entity.children"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.children()</span></code></a> are registered in the <a class="reference internal" href="#classes.entity.Entity.registry" title="classes.entity.Entity.registry"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.registry()</span></code></a>.</p></li>
+<li><p>All descendents of Entity are registered in <a class="reference internal" href="#classes.entity.Entity.fullregistry" title="classes.entity.Entity.fullregistry"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.fullregistry()</span></code></a>.</p></li>
 </ul>
 <p id="honor-system"><strong>Honor System</strong></p>
 <p>HyperNetX has an Honor System that applies to Entity uid values.
@@ -258,6 +258,12 @@ have distinct uids.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity">Entity</a></p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adding an element to an object in a hypergraph will not add the
+element to the hypergraph and will cause an error. Use <a class="reference internal" href="#classes.hypergraph.Hypergraph.add_edge" title="classes.hypergraph.Hypergraph.add_edge"><code class="xref py py-func docutils literal notranslate"><span class="pre">Hypergraph.add_edge</span></code></a>
+or <a class="reference internal" href="#classes.hypergraph.Hypergraph.add_node_to_edge" title="classes.hypergraph.Hypergraph.add_node_to_edge"><code class="xref py py-func docutils literal notranslate"><span class="pre">Hypergraph.add_node_to_edge</span></code></a> instead.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -287,7 +293,7 @@ for identical instances within the entities registry.</p>
 <dl class="method">
 <dt id="classes.entity.Entity.add_elements_from">
 <code class="sig-name descname">add_elements_from</code><span class="sig-paren">(</span><em class="sig-param">arg_set</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity.add_elements_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.entity.Entity.add_elements_from" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to <code class="code docutils literal notranslate"><span class="pre">add()</span></code> it allows for adding from an interable.</p>
+<dd><p>Similar to <a class="reference internal" href="#classes.entity.Entity.add" title="classes.entity.Entity.add"><code class="xref py py-func docutils literal notranslate"><span class="pre">add()</span></code></a> it allows for adding from an interable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>arg_set</strong> (<em>Iterable of hashables</em><em> or </em><em>entities</em>) – </p>
@@ -306,7 +312,8 @@ for identical instances within the entities registry.</p>
 <em class="property">property </em><code class="sig-name descname">children</code><a class="headerlink" href="#classes.entity.Entity.children" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of uids of the elements of elements of entity.</p>
 <p>To return set of ids for deeper level use:
-<code class="code docutils literal notranslate"><span class="pre">Entity.levelset(level).keys()</span></code></p>
+<code class="code docutils literal notranslate"><span class="pre">Entity.levelset(level).keys()</span></code>
+see: <a class="reference internal" href="#classes.entity.Entity.levelset" title="classes.entity.Entity.levelset"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.levelset()</span></code></a></p>
 </dd></dl>
 
 <dl class="method">
@@ -442,14 +449,17 @@ use nested_incidence_dict</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>level</strong> (<em>int</em>)</p></li>
-<li><p><em>Item must be the uid of an entity listed</em></p></li>
-<li><p>in <code class="code docutils literal notranslate"><span class="pre">fullregistry()</span></code></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>level</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Item must be the uid of an entity listed
+in <a class="reference internal" href="#classes.entity.Entity.fullregistry" title="classes.entity.Entity.fullregistry"><code class="xref py py-func docutils literal notranslate"><span class="pre">fullregistry()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -461,16 +471,19 @@ use nested_incidence_dict</p>
 <dd class="field-odd"><p><strong>k</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>levelset</strong> (<em>dict</em>)</p></li>
-<li><p><em>An Entity contains other entities, hence the relationships between entities</em></p></li>
-<li><p><em>and their elements may be represented in a directed graph with entity as root.</em></p></li>
-<li><p><em>The levelsets are sets of entities which make up the elements appearing at</em></p></li>
-<li><p><em>a certain level.</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>levelset</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An Entity contains other entities, hence the relationships between entities
+and their elements may be represented in a directed graph with entity as root.
+The levelsets are sets of entities which make up the elements appearing at
+a certain level.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -478,7 +491,8 @@ use nested_incidence_dict</p>
 <em class="property">property </em><code class="sig-name descname">memberships</code><a class="headerlink" href="#classes.entity.Entity.memberships" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary of elements to which entity belongs.</p>
 <p>This assignment is done on construction and controlled by
-<code class="code docutils literal notranslate"><span class="pre">Entity.add_element()</span></code> and <code class="code docutils literal notranslate"><span class="pre">Entity.remove_element()</span></code> methods.</p>
+<a class="reference internal" href="#classes.entity.Entity.add_element" title="classes.entity.Entity.add_element"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.add_element()</span></code></a>
+and <a class="reference internal" href="#classes.entity.Entity.remove_element" title="classes.entity.Entity.remove_element"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.remove_element()</span></code></a> methods.</p>
 </dd></dl>
 
 <dl class="method">
@@ -533,7 +547,7 @@ Properties of ent2 will update properties of ent1 in new entity.</p></li>
 <em class="property">property </em><code class="sig-name descname">registry</code><a class="headerlink" href="#classes.entity.Entity.registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Entity pairs for children entity.</p>
 <p>To return a dictionary of all entities at all depths
-<code class="code docutils literal notranslate"><span class="pre">Entity.complete_registry()</span></code></p>
+<a class="reference internal" href="#classes.entity.Entity.complete_registry" title="classes.entity.Entity.complete_registry"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.complete_registry()</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>Dictionary of uid</p>
@@ -580,7 +594,7 @@ item.memberships</p>
 <dl class="method">
 <dt id="classes.entity.Entity.remove_elements_from">
 <code class="sig-name descname">remove_elements_from</code><span class="sig-paren">(</span><em class="sig-param">arg_set</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity.remove_elements_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.entity.Entity.remove_elements_from" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to <code class="code docutils literal notranslate"><span class="pre">remove()</span></code>. Removes elements in arg_set.</p>
+<dd><p>Similar to <a class="reference internal" href="#classes.entity.Entity.remove" title="classes.entity.Entity.remove"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove()</span></code></a>. Removes elements in arg_set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>arg_set</strong> (<em>Iterable of hashables</em><em> or </em><em>entities</em>) – </p>
@@ -1155,6 +1169,21 @@ for each node(edge) entity.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="classes.hypergraph.Hypergraph.dataframe">
+<code class="sig-name descname">dataframe</code><span class="sig-paren">(</span><em class="sig-param">sort_rows=True</em>, <em class="sig-param">sort_columns=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
+with column headers given by the edge names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort rows based on hashable node names</p></li>
+<li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort columns based on hashable edge names</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="classes.hypergraph.Hypergraph.degree">
 <code class="sig-name descname">degree</code><span class="sig-paren">(</span><em class="sig-param">node</em>, <em class="sig-param">s=1</em>, <em class="sig-param">edges=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.degree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the degree of a node in H</p>
@@ -1401,17 +1430,18 @@ For each edge (n,e) in B add n to the edge e in the hypergraph.</p>
 
 <dl class="method">
 <dt id="classes.hypergraph.Hypergraph.from_dataframe">
-<em class="property">classmethod </em><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">name=None</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">rows=None</em>, <em class="sig-param">transforms=[]</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_dataframe</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">rows=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">fillna=0</em>, <em class="sig-param">transpose=False</em>, <em class="sig-param">transforms=[]</em>, <em class="sig-param">key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
 and Columns to label edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>Pandas.Dataframe</em>) – a real valued dataframe with a single index</p></li>
-<li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
-an edge</p></li>
 <li><p><strong>columns</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default = None</em>) – restricts df to the columns with headers in this list.</p></li>
 <li><p><strong>rows</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default = None</em>) – restricts df to the rows indexed by the elements in this list.</p></li>
+<li><p><strong>name</strong> (<em>(</em><em>optional</em><em>) </em><em>string</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not generate
+an edge.</p></li>
 <li><p><strong>transpose</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will label the edges
 and df.columns will label the nodes, transpose is applied before transforms and
 key</p></li>
@@ -1421,15 +1451,21 @@ Transformations are applied in the order they are
 given (ex. abs). To apply transforms to rows or for additional
 functionality, consider transforming df using pandas.DataFrame methods
 prior to generating the hypergraph.</p></li>
-<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be evaluated on each cell of the array,
-key is applied after transforms</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be applied to dataframe. Must be defined on numpy
+arrays.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classes.hypergraph.Hypergraph.from_numpy_array" title="classes.hypergraph.Hypergraph.from_numpy_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_numpy_array()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1440,12 +1476,17 @@ edges are discarded.
 Restrictions and data processing will occur in this order:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>column and row restrictions.</p></li>
+<li><p>column and row restrictions</p></li>
+<li><p>fillna replace NaNs in dataframe</p></li>
 <li><p>transpose the dataframe</p></li>
 <li><p>transforms in the order listed</p></li>
 <li><p>boolean key</p></li>
 </ol>
 </div></blockquote>
+<p>This method offers the above options for wrangling a dataframe into an incidence
+matrix for a hypergraph. For more flexibility we recommend you use the Pandas
+library to format the values of your dataframe before submitting it to this
+constructor.</p>
 </div>
 </dd></dl>
 

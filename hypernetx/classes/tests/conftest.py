@@ -17,6 +17,16 @@ class SevenBySix():
         self.edgedict = {p: {a, c, k}, r: {a, e}, s: {a, k, t2, v}, l: {c, e}, o: {t1, t2}, i: {k, t2}}
 
 
+class TriLoop():
+    """Example hypergraph with 2 two 1-cells and 1 2-cell forming a loop"""
+
+    def __init__(self):
+        A, B, C, D = 'A', 'B', 'C', 'D'
+        AB, BC, ACD = 'AB', 'BC', 'ACD'
+        self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D}}
+        self.hypergraph = hnx.Hypergraph(self.edgedict, name='TriLoop')
+
+
 class SBSDupes():
     def __init__(self):
         self.edgedict = {'I': {'K', 'T2'},
@@ -50,6 +60,11 @@ class Dataframe():
 @ pytest.fixture
 def seven_by_six():
     return SevenBySix()
+
+
+@pytest.fixture
+def triloop():
+    return TriLoop()
 
 
 @ pytest.fixture
