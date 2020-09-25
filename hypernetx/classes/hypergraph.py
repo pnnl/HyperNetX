@@ -364,30 +364,48 @@ class Hypergraph():
         else:
             return None
 
-    def neighbors(self, node, s=2):
+    def neighbors(self, node, s=2, return_edges=False):
         """
         The nodes in hypergraph which share an :term:`s-edge` with node.
 
         Parameters
         ----------
-        node : hashable
-            uid for a node in hypergraph
+        node : hashable or Entity
+            uid for a node in hypergraph or the node Entity
 
-        s : int, optional, default : 2
-            The desired size of the edge connecting node to its neighbors
+        s : int, list, optional, default : 2
+            If int, then desired minimum size of the edge connecting node to its neighbors
+            If list, then [min s, max s] the desired minimum and maximum size of the edges
+            connecting node to its neighbors. If min s = max s, then only edges of size
+            s will be considered.
+
+        return_edges : bool, default : False
+            If True then a list of edges will be returned as well as neighbors.
 
         Returns
         -------
-        neighbors : iterator
+        neighbors : set
+
+        edges : set
 
         """
+        node = self.nodes[node].uid ## this allows node to be an Entity instead of a string
         memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
-        edges = [e for e in memberships if len(self.edges[e]) >=s]
+        if isinstance(s,int):
+            edges = {e for e in memberships if len(self.edges[e]) >=s }
+        elif len(s) !=2 :
+            raise HyperNetXError('s must be a positive integer or a list of two integers: [min s, max s]')
+        else:
+            edges = {e for e in memberships if len(self.edges[e]) >=s[0] and len(self.edges[e]) <=s[1]}
         neigh = set()
         for e in edges:
             neigh.update(self.edges[e].uidset)
-        neigh.discard(node)
-        return iter(neigh)
+        neigh.discard(node) 
+
+        if return_edges:
+            return neigh, edges
+        else:
+            return neigh
 
 
     def remove_node(self,node):
@@ -473,7 +491,7 @@ class Hypergraph():
         Each node (element of edge) must be instantiated as a node,
         making sure its uid isn't already present in the self.
         If an added edge contains nodes that cannot be added to hypergraph
-        then an error will be thrown.
+        then an error will be raised.
 
         """
         if edge in self._edges:
@@ -764,7 +782,7 @@ class Hypergraph():
         V = self.nodes
         B.add_nodes_from(E,bipartite=edge_label)
         B.add_nodes_from(V,bipartite=node_label)
-        B.add_edges_from([(v,e) for e in E for v in V if v in E[e]])
+        B.add_edges_from([(v,e) for e in E for v in self.edges[e]])
         return B
 
     def dual(self, name=None):
@@ -925,8 +943,14 @@ class Hypergraph():
         -------
         new hypergraph : Hypergraph
         """
-        name = name or self.name
-        return Hypergraph({e:self.edges[e] for e in edgeset},name)
+        name = name 
+        inneredges = set()
+        for e in edgeset:
+            if isinstance(e,Entity):
+                inneredges.add(e.uid)
+            else:
+                inneredges.add(e)
+        return Hypergraph({e:self.edges[e] for e in inneredges},name=name)
 
 
     def restrict_to_nodes(self,nodeset,name=None):
@@ -957,7 +981,7 @@ class Hypergraph():
                 temp = self.edges[e].uidset.intersection(innernodes)
                 if temp:
                     newedgeset[e] = Entity(e,temp,**self.edges[e].properties)
-        return Hypergraph(newedgeset,name)
+        return Hypergraph(newedgeset,name=name)
 
     def toplexes(self,name=None,collapse=False,use_reps=False,return_counts=True):
         """
