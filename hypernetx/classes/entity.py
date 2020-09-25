@@ -23,6 +23,11 @@ class Entity(object):
         a list of entities with identifiers different than uid and/or
         hashables different than uid, see `Honor System`_
 
+    entity : Entity
+        an Entity object to be cloned into a new Entity with uid. If the uid is the same as 
+        Entity.uid then the entities will not be distinguishable and error will be raised. 
+        The `elements` in the signature will be added to the cloned entity.
+
     props : keyword arguments, optional, default: {}
         properties belonging to the entity added as key=value pairs.
         Both key and value must be hashable.
@@ -83,12 +88,23 @@ class Entity(object):
 
     """
 
-    def __init__(self, uid, elements=[], **props):
+    def __init__(self, uid, elements=[], entity=None, **props):
         super().__init__()
+
         self._uid = uid
-        self._elements = dict()
-        self._memberships = dict()
-        self._registry = dict()
+
+        if entity is not None:
+            if isinstance(entity, Entity):
+                if uid == entity.uid:
+                    raise HyperNetXError('The new entity will be indistinguishable from the original with the same uid. Use a differen uid.')
+                self._elements = entity.elements
+                self._memberships = entity.memberships
+                self.__dict__.update(entity.properties)
+        else:
+            self._elements = dict()
+            self._memberships = dict()
+            self._registry = dict()
+
         self.__dict__.update(props)
         self._registry = self.registry
 
@@ -509,7 +525,7 @@ class Entity(object):
         clone : Entity
 
         """
-        return Entity(newuid, elements=self.elements.values(), **self.properties)
+        return Entity(newuid, entity=self)
 
     def intersection(self, other):
         """
