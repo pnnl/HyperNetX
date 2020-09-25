@@ -944,13 +944,15 @@ class Hypergraph():
         new hypergraph : Hypergraph
         """
         memberships = set()
+        innernodes = set()
         for node in nodeset:
+            innernodes.add(node)
             if node in self.nodes:
                 memberships.update(set(self.nodes[node].memberships))
         newedgeset = dict()
         for e in memberships:
             if e in self.edges:
-                temp = self.edges[e].uidset.intersection(nodeset)
+                temp = self.edges[e].uidset.intersection(innernodes)
                 if temp:
                     newedgeset[e] = Entity(e,temp,**self.edges[e].properties)
         return Hypergraph(newedgeset,name)
