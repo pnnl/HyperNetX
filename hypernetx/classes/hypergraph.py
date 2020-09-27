@@ -78,13 +78,17 @@ class Hypergraph():
         If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable as elements to an :ref:`EntitySet<entityset>`.
 
     name : hashable, optional, default: None
+        If None then a placeholder '_'  will be inserted as name
 
     """
 
 
-    def __init__(self,setsystem=None, name='_'):
+    def __init__(self,setsystem=None, name=None):
 
-        self.name = name
+        if not name:
+            self.name = '_'
+        else:
+            self.name = name
 
         ##### Check setsystem type and change into an EntitySet before constructing hypergraph:
 
@@ -804,7 +808,7 @@ class Hypergraph():
                 E[n].append(k)
         return Hypergraph(E,name=name)
 
-    def collapse_edges(self, name=None, use_reps=False, return_counts=True):
+    def collapse_edges(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying edges containing the same nodes
 
@@ -818,6 +822,9 @@ class Hypergraph():
 
         return_counts: boolean, optional, default: True
             if use_reps is True the new edges are keyed by a tuple of the rep and the count
+
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
 
         Returns
         -------
@@ -845,20 +852,29 @@ class Hypergraph():
             {('E1', 2): {'a', 'b'}}
 
         """
-        return Hypergraph(self.edges.collapse_identical_elements('_',use_reps=use_reps, return_counts=return_counts), name)
+        temp = self.edges.collapse_identical_elements('_',use_reps=use_reps,return_counts=return_counts,return_equivalence_classes=return_equivalence_classes)
+        if return_equivalence_classes:
+            return Hypergraph(temp[0],name),temp[1]
+        else:
+            return Hypergraph(temp,name)
 
-    def collapse_nodes(self, name=None, use_reps=False, return_counts=True):
+    def collapse_nodes(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by the same edges
 
         Parameters
         ----------
+        name: str, optional, default: None
+
         use_reps : boolean, optional, default: False
             Choose a single element from the collapsed nodes as uid for the new node, otherwise uses
             a frozen set of the uids of nodes in the equivalence class
 
         return_counts: if use_reps is True the new nodes have uids given by a tuple of the rep
             and the count
+
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of node equivalence classes keyed by frozen sets of edges
 
         Returns
         -------
@@ -883,15 +899,21 @@ class Hypergraph():
             {'E1': {('a', 2)}, 'E2': {('a', 2)}}
 
         """
+        temp = self.dual().edges.collapse_identical_elements(name,use_reps=use_reps,return_counts=return_counts,return_equivalence_classes=return_equivalence_classes)
+        if return_equivalence_classes:
+            return Hypergraph(temp[0],name).dual(),temp[1]
+        else:
+            return Hypergraph(temp,name).dual()
 
-        return Hypergraph(self.dual().edges.collapse_identical_elements('_',use_reps=use_reps,return_counts=return_counts),name).dual()
 
-    def collapse_nodes_and_edges(self,name=None, use_reps=False, return_counts=True):
+    def collapse_nodes_and_edges(self,name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """
         Returns a new hypergraph by collapsing nodes and edges.
 
         Parameters
         ----------
+
+        name: str, optional, default: None
 
         use_reps: boolean, optional, default: False
             Choose a single element from the collapsed elements as a representative
@@ -899,6 +921,9 @@ class Hypergraph():
         return_counts: boolean, optional, default: True
             if use_reps is True the new elements are keyed by a tuple of the rep
             and the count
+
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
 
         Returns
         -------
@@ -924,9 +949,13 @@ class Hypergraph():
             {('E1', 2): {('a', 2)}}
 
         """
-
-        temp = self.collapse_nodes(name=name,use_reps=use_reps,return_counts=return_counts)
-        return temp.collapse_edges(name=name,use_reps=use_reps,return_counts=return_counts)
+        if return_equivalence_classes:
+            temp, neq = self.collapse_nodes(name='temp',use_reps=use_reps,return_counts=return_counts,return_equivalence_classes=True)
+            ntemp, eeq = temp.collapse_edges(name=name,use_reps=use_reps,return_counts=return_counts,return_equivalence_classes=True)
+            return ntemp, neq, eeq
+        else:
+            temp= self.collapse_nodes(name='temp',use_reps=use_reps,return_counts=return_counts)
+            return temp.collapse_edges(name=name,use_reps=use_reps,return_counts=return_counts)
 
     def restrict_to_edges(self,edgeset,name=None):
         """
@@ -937,7 +966,7 @@ class Hypergraph():
         edgeset: iterable of hashables or Entities
             A subset of elements of the hypergraph edges
 
-        name: str, optional, default: None
+        name: str, optional, default: '_'
 
         Returns
         -------

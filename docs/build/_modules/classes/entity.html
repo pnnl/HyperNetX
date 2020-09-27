@@ -184,6 +184,11 @@
 <span class="sd">        a list of entities with identifiers different than uid and/or</span>
 <span class="sd">        hashables different than uid, see `Honor System`_</span>
 
+<span class="sd">    entity : Entity</span>
+<span class="sd">        an Entity object to be cloned into a new Entity with uid. If the uid is the same as </span>
+<span class="sd">        Entity.uid then the entities will not be distinguishable and error will be raised. </span>
+<span class="sd">        The `elements` in the signature will be added to the cloned entity.</span>
+
 <span class="sd">    props : keyword arguments, optional, default: {}</span>
 <span class="sd">        properties belonging to the entity added as key=value pairs.</span>
 <span class="sd">        Both key and value must be hashable.</span>
@@ -244,12 +249,23 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="n">entity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span> <span class="o">=</span> <span class="n">uid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">entity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">uid</span> <span class="o">==</span> <span class="n">entity</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;The new entity will be indistinguishable from the original with the same uid. Use a differen uid.&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">elements</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">memberships</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span>
 
@@ -670,7 +686,7 @@
 <span class="sd">        clone : Entity</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Entity</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Entity</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Entity.intersection"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1012,9 +1028,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newuid</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newuid</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a deduped copy of the entityset, using equivalence classes as element keys.</span>
+<span class="sd">        Two elements of an EntitySet are collapsed if they share the same children.</span>
+<span class="sd">        A new EntitySet with entities only on levels 1 and 2 will be returned. </span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1024,12 +1042,18 @@
 <span class="sd">            Choose a single element from the collapsed elements as a representative</span>
 
 <span class="sd">        return_counts : boolean, optional, default: False</span>
-<span class="sd">            If use_reps is True the new elements are keyed the size of the equivalence class</span>
+<span class="sd">            If use_reps is True the new elements are keyed by the size of the equivalence class</span>
 <span class="sd">            otherwise they are keyed by a frozen set of equivalence classes</span>
+
+<span class="sd">        return_equivalence_classes : boolean, default=False</span>
+<span class="sd">            If True, return a dictionary keyed by frozen set of children in collapsed elements with values </span>
+<span class="sd">            equal to the set of collapsed elements</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        new entityset : EntitySet</span>
+<span class="sd">         : EntitySet</span>
+<span class="sd">        eq_classes : dict </span>
+<span class="sd">            if return_equivalence_classes = True</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1053,18 +1077,20 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="n">eq_classes</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">():</span>
-            <span class="n">temp</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uidset</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="n">eq_classes</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uidset</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">use_reps</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">return_counts</span><span class="p">:</span>
                 <span class="c1"># labels equivalence class as (rep,count) tuple</span>
-                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># labels equivalence class as rep;</span>
-                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eq_classes</span><span class="p">)</span>  <span class="c1">######### something is wrong with this!!!!!!!!</span>
         <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>

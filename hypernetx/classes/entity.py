@@ -867,9 +867,11 @@ class EntitySet(Entity):
         """
         return EntitySet(newuid, elements=self.elements.values(), **self.properties)
 
-    def collapse_identical_elements(self, newuid, use_reps=False, return_counts=False):
+    def collapse_identical_elements(self, newuid, use_reps=False, return_counts=False, return_equivalence_classes=False):
         """
         Returns a deduped copy of the entityset, using equivalence classes as element keys.
+        Two elements of an EntitySet are collapsed if they share the same children.
+        A new EntitySet with entities only on levels 1 and 2 will be returned. 
 
         Parameters
         ----------
@@ -879,12 +881,18 @@ class EntitySet(Entity):
             Choose a single element from the collapsed elements as a representative
 
         return_counts : boolean, optional, default: False
-            If use_reps is True the new elements are keyed the size of the equivalence class
+            If use_reps is True the new elements are keyed by the size of the equivalence class
             otherwise they are keyed by a frozen set of equivalence classes
+
+        return_equivalence_classes : boolean, default=False
+            If True, return a dictionary keyed by frozen set of children in collapsed elements with values 
+            equal to the set of collapsed elements
 
         Returns
         -------
-        new entityset : EntitySet
+         : EntitySet
+        eq_classes : dict 
+            if return_equivalence_classes = True
 
         Notes
         -----
@@ -908,18 +916,20 @@ class EntitySet(Entity):
 
         """
 
-        temp = defaultdict(set)
+        eq_classes = defaultdict(set)
         for e in self.__call__():
-            temp[frozenset(e.uidset)].add(e.uid)
+            eq_classes[frozenset(e.uidset)].add(e.uid)
         if use_reps:
             if return_counts:
                 # labels equivalence class as (rep,count) tuple
-                new_entity_dict = {(next(iter(v)), len(v)): set(k) for k, v in temp.items()}
+                new_entity_dict = {(next(iter(v)), len(v)): set(k) for k, v in eq_classes.items()}
             else:
                 # labels equivalence class as rep;
-                new_entity_dict = {next(iter(v)): set(k) for k, v in temp.items()}
+                new_entity_dict = {next(iter(v)): set(k) for k, v in eq_classes.items()}
         else:
-            new_entity_dict = {frozenset(v): set(k) for k, v in temp.items()}
+            new_entity_dict = {frozenset(v): set(k) for k, v in eq_classes.items()}
+        if return_equivalence_classes:
+            return EntitySet(newuid, new_entity_dict), dict(eq_classes)  ######### something is wrong with this!!!!!!!!
         return EntitySet(newuid, new_entity_dict)
 
     def incidence_matrix(self, sparse=True, index=False):
