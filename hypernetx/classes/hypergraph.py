@@ -644,7 +644,7 @@ class Hypergraph():
         return self.edges.incidence_matrix(sparse,index)
 
 
-    def __incidence_to_adjacency(M, s=1, weighted=True):
+    def __incidence_to_adjacency(M, s=1, return_counts=True):
         """
         Helper method to obtain adjacency matrix from incidence matrix.
 
@@ -654,7 +654,7 @@ class Hypergraph():
 
         s : int, optional, default: 1
 
-        weighted : boolean, optional, default: True
+        return_counts : boolean, optional, default: True
 
         Returns
         -------
@@ -665,14 +665,14 @@ class Hypergraph():
         A.setdiag(0)
         if s > 1:
             A = A.multiply(A >= s)
-        if not weighted:
+        if not return_counts:
             A = (A > 0)*1
         return A
 
 
-    def adjacency_matrix(self, index=False, s=1, weighted=True):
+    def adjacency_matrix(self, index=False, s=1, return_counts=True):
         """
-        The sparse weighted :term:`s-adjacency matrix`
+        The sparse :term:`s-adjacency matrix`
 
         Parameters
         ----------
@@ -681,7 +681,7 @@ class Hypergraph():
         index: boolean, optional, default: False
             if True, will return a rowdict of row to node uid
 
-        weighted: boolean, optional, default: True
+        return_counts: boolean, optional, default: True
 
         Returns
         -------
@@ -691,22 +691,22 @@ class Hypergraph():
 
         Notes
         -----
-        If weighted is True each off diagonal cell will equal the number
+        If returned_counts is True each off diagonal cell will equal the number
         of edges shared by the nodes indexing the row and column if that number is
-        greater than s, otherwise the cell will equal 0. If weighted is False, the off
+        greater than s, otherwise the cell will equal 0. If return_counts is False, the off
         diagonal cell will equal 1 if the nodes indexed by the row and column share at
         least s edges and 0 otherwise.
 
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0],s=s,weighted=weighted), M[1]
+            return Hypergraph.__incidence_to_adjacency(M[0],s=s,return_counts=return_counts), M[1]
         else:
-            return Hypergraph.__incidence_to_adjacency(M,s=s,weighted=weighted)
+            return Hypergraph.__incidence_to_adjacency(M,s=s,return_counts=return_counts)
 
-    def edge_adjacency_matrix(self, index=False, s=1, weighted=True):
+    def edge_adjacency_matrix(self, index=False, s=1, return_counts=True):
         """
-        The sparse weighted :term:`s-adjacency matrix` for the dual hypergraph.
+        The sparse :term:`s-adjacency matrix` for the dual hypergraph.
 
         Parameters
         ----------
@@ -715,7 +715,7 @@ class Hypergraph():
         index: boolean, optional, default: False
             if True, will return a coldict of column to edge uid
 
-        weighted: boolean, optional, default: True
+        return_counts: boolean, optional, default: True
 
         Returns
         -------
@@ -732,9 +732,9 @@ class Hypergraph():
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0].transpose(),s=s,weighted=weighted), M[2]
+            return Hypergraph.__incidence_to_adjacency(M[0].transpose(),s=s,return_counts=return_counts), M[2]
         else:
-            return Hypergraph.__incidence_to_adjacency(M.transpose(),s=s,weighted=weighted)
+            return Hypergraph.__incidence_to_adjacency(M.transpose(),s=s,return_counts=return_counts)
 
 
     def auxiliary_matrix(self, s=1):
@@ -757,7 +757,7 @@ class Hypergraph():
         """
         edges = [e for e in self.edges if self.edges[e].size() >=s]
         H = self.restrict_to_edges(edges)
-        return H.edge_adjacency_matrix(s=s, weighted=False)
+        return H.edge_adjacency_matrix(s=s, return_counts=False)
 
     def bipartite(self,node_label=0,edge_label=1):
         """
