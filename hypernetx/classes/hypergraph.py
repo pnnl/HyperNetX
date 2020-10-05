@@ -9,6 +9,10 @@ import numpy as np
 import pandas as pd
 from hypernetx.exception import HyperNetXError
 
+__all__ = [
+    'Hypergraph'
+]
+
 
 class Hypergraph():
     """
@@ -37,29 +41,29 @@ class Hypergraph():
         >>> H.nodes, H.edges
         ({}, {})
 
-    2. From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable) ::
+    2. From a dictionary of iterables (elements of iterables must be of 
+        type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph({'a':[1,2,3],'b':[4,5,6]})
         >>> H.nodes, H.edges
-        (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
+        ## output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-    3. From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable) ::
+    3. From an iterable of iterables: (elements of iterables must be of 
+        type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph([{'a','b'},{'b','c'},{'a','c','d'}])
         >>> H.nodes, H.edges
-        (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}),
-         EntitySet(_:Edges,['_1', '_2', '_0'],{}))
+        ## output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), EntitySet(_:Edges,['_1', '_2', '_0'],{}))
 
-    4. From a hypernetx.EntitySet ::
+    4. From a hypernetx.EntitySet: ::
 
         >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
         >>> E = EntitySet('sample',elements=[a,b])
         >>> H = Hypergraph(E)
         >>> H.nodes, H.edges.
+        ## output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-        (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
-
-    5. From a networkx bipartite graph using :code:`from_bipartite()`:
+    5. From a networkx bipartite graph using :code:`from_bipartite()`: ::
 
         >>> import networkx as nx
         >>> B = nx.Graph()
@@ -68,8 +72,7 @@ class Hypergraph():
         >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
         >>> H = Hypergraph.from_bipartite(B)
         >>> H.nodes, H.edges
-
-        (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
+        ## output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
     Parameters
     ----------
@@ -384,9 +387,9 @@ class Hypergraph():
 
         Returns
         -------
-        neighbors : set
+        neighborset : set
 
-        edges : set
+        edgeset : set
 
         """
         if node in self.nodes:
@@ -396,20 +399,20 @@ class Hypergraph():
             return
         memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
         if isinstance(s, int):
-            edges = {e for e in memberships if len(self.edges[e]) >= s}
+            edgeset = {e for e in memberships if len(self.edges[e]) >= s}
         elif len(s) != 2:
             raise HyperNetXError('s must be a positive integer or a list of two integers: [min s, max s]')
         else:
-            edges = {e for e in memberships if len(self.edges[e]) >= s[0] and len(self.edges[e]) <= s[1]}
-        neigh = set()
-        for e in edges:
-            neigh.update(self.edges[e].uidset)
-        neigh.discard(node)
+            edgeset = {e for e in memberships if len(self.edges[e]) >= s[0] and len(self.edges[e]) <= s[1]}
+        neighborset = set()
+        for e in edgeset:
+            neighborset.update(self.edges[e].uidset)
+        neighborset.discard(node)
 
         if return_edges:
-            return neigh, edges
+            return neighborset, edgeset
         else:
-            return neigh
+            return neighborset
 
     def remove_node(self, node):
         """
