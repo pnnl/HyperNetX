@@ -78,32 +78,6 @@ def kchainbasis(h, k):
     return sorted(list(kchains))
 
 
-def interpret(Ck, arr):
-    """
-    Returns the data as represented in Ck associated with the arr
-
-    Parameters
-    ----------
-    Ck : list
-        a list of k-cells being referenced by arr
-    arr : np.array
-        array of 0-1 vectors
-
-    Returns
-    ----
-    : list
-        list of k-cells referenced by data in Ck
-
-    """
-
-    output = list()
-    for vec in arr:
-        if len(Ck) != len(vec):
-            raise HyperNetXError('elements of arr must have the same length as Ck')
-        output.append([Ck[idx] for idx in range(len(vec)) if vec[idx] == 1])
-    return output
-
-
 def bkMatrix(km1basis, kbasis):
     """
     Compute the boundary map from $C_{k-1}$-basis to $C_k$ basis with
@@ -901,7 +875,43 @@ def hypergraph_homology_basis(h, k=None, shortest=False, log=None, interpreted=T
     if interpreted:
         interpreted_basis = dict()
         for kdx in basis:
-            interpreted_basis[kdx] = interpret(C[kdx], basis[kdx])
+            interpreted_basis[kdx] = _interpret(C[kdx], basis[kdx], labels=h._labels)
         return basis, interpreted_basis
     else:
         return basis
+
+
+def _interpret(Ck, arr, labels=None):
+    """
+    Returns the data as represented in Ck associated with the arr
+
+    Parameters
+    ----------
+    Ck : list
+        a list of k-cells being referenced by arr
+    arr : np.array
+        array of 0-1 vectors
+    labels : dict, optional
+        dictionary of labels to associate to the nodes in the cells
+
+    Returns
+    ----
+    : list
+        list of k-cells referenced by data in Ck
+
+    """
+    def translate(cell, labels=labels):
+        if not labels:
+            return cell
+        else:
+            temp = list()
+            for node in cell:
+                temp.append(labels[node])
+            return tuple(temp)
+
+    output = list()
+    for vec in arr:
+        if len(Ck) != len(vec):
+            raise HyperNetXError('elements of arr must have the same length as Ck')
+        output.append([translate(Ck[idx]) for idx in range(len(vec)) if vec[idx] == 1])
+    return output
