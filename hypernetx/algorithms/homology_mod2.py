@@ -875,13 +875,13 @@ def hypergraph_homology_basis(h, k=None, shortest=False, log=None, interpreted=T
     if interpreted:
         interpreted_basis = dict()
         for kdx in basis:
-            interpreted_basis[kdx] = _interpret(C[kdx], basis[kdx], labels=h._labels)
+            interpreted_basis[kdx] = interpret(C[kdx], basis[kdx], labels=None)
         return basis, interpreted_basis
     else:
         return basis
 
 
-def _interpret(Ck, arr, labels=None):
+def interpret(Ck, arr, labels=None):
     """
     Returns the data as represented in Ck associated with the arr
 
