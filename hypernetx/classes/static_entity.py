@@ -104,6 +104,9 @@ class StaticEntity(object):
         """
         return item in np.concatenate(list(self._labels.values()))
 
+    def __getitem__(self, item):
+        return self._labs(0)[item]
+
     def label_index(self, labels):
         '''labels that you want the header index for'''
         return [self._keyindex(label) for label in labels]
@@ -264,7 +267,8 @@ class StaticEntitySet(StaticEntity):
 
     def __init__(self, arr, labels=None, level1=0, level2=1, uid='test', **props):
         if len(arr.shape) > 2:
-            newarr = np.sum(arr, axis=tuple([level1, level2]))
+            axes = [x for x in range(len(labels)) if x not in [level1, level2]]
+            newarr = np.sum(arr, axis=tuple(axes))
             if labels:
                 newlabels = OrderedDict([(k, labels[k]) for k in np.array(list(labels.keys()))[[level1, level2]]])
         else:
