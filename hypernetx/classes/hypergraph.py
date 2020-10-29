@@ -642,7 +642,7 @@ class Hypergraph():
         """
         return self.edges.incidence_matrix(sparse, index)
 
-    def __incidence_to_adjacency(M, s=1, weighted=True):
+    def _incidence_to_adjacency(M, s=1, weighted=True):
         """
         Helper method to obtain adjacency matrix from incidence matrix.
 
@@ -697,9 +697,9 @@ class Hypergraph():
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0], s=s, weighted=weighted), M[1]
+            return Hypergraph._incidence_to_adjacency(M[0], s=s, weighted=weighted), M[1]
         else:
-            return Hypergraph.__incidence_to_adjacency(M, s=s, weighted=weighted)
+            return Hypergraph._incidence_to_adjacency(M, s=s, weighted=weighted)
 
     def edge_adjacency_matrix(self, index=False, s=1, weighted=True):
         """
@@ -729,9 +729,9 @@ class Hypergraph():
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0].transpose(), s=s, weighted=weighted), M[2]
+            return Hypergraph._incidence_to_adjacency(M[0].transpose(), s=s, weighted=weighted), M[2]
         else:
-            return Hypergraph.__incidence_to_adjacency(M.transpose(), s=s, weighted=weighted)
+            return Hypergraph._incidence_to_adjacency(M.transpose(), s=s, weighted=weighted)
 
     def auxiliary_matrix(self, s=1):
         """
