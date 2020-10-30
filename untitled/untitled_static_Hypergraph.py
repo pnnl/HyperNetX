@@ -89,7 +89,7 @@ class Hypergraph():
 
     """
 
-    def __init__(self, setsystem=None, name=None, static=False):
+    def __init__(self, setsystem=None, name=None, static=False, nwhy=False):
 
         if not name:
             self.name = '_'
@@ -751,10 +751,13 @@ class Hypergraph():
         A = M.dot(M.transpose())
         if issparse(A):
             A.setdiag(0)
+            B = (A > s) * 1
+            A = A.multiply(B)
         else:
             np.fill_diagonal(A, 0)
-        if s > 1:
-            A = A.dot(A >= s)
+            B = (A > s) * 1
+            A = np.multiply(A, B)
+
         if not weighted:
             A = (A > 0) * 1
         return A
@@ -1091,17 +1094,17 @@ class Hypergraph():
             E = self._edges
             setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(edgeset))))
             return Hypergraph(setsystem, name=name)
-        inneredges = set()
-        for e in edgeset:
-            if isinstance(e, Entity):
-                inneredges.add(e.uid)
-            else:
-                inneredges.add(e)
-        return Hypergraph({e: self.edges[e] for e in inneredges}, name=name)
+        else:
+            inneredges = set()
+            for e in edgeset:
+                if isinstance(e, Entity):
+                    inneredges.add(e.uid)
+                else:
+                    inneredges.add(e)
+            return Hypergraph({e: self.edges[e] for e in inneredges}, name=name)
 
-    @ not_implemented_for('static')
     def restrict_to_nodes(self, nodeset, name=None):
-        """XX
+        """
         Constructs a new hypergraph by restricting the edges in the hypergraph to
         the nodes referenced by nodeset.
 
@@ -1116,19 +1119,24 @@ class Hypergraph():
         -------
         new hypergraph : Hypergraph
         """
-        memberships = set()
-        innernodes = set()
-        for node in nodeset:
-            innernodes.add(node)
-            if node in self.nodes:
-                memberships.update(set(self.nodes[node].memberships))
-        newedgeset = dict()
-        for e in memberships:
-            if e in self.edges:
-                temp = self.edges[e].uidset.intersection(innernodes)
-                if temp:
-                    newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
-        return Hypergraph(newedgeset, name=name)
+        if self.isstatic:
+            E = self.edges.restrict_to_levels((1, 0))
+            setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(nodeset))))
+            return Hypergraph(setsystem.restrict_to_levels((1, 0)), name=name)
+        else:
+            memberships = set()
+            innernodes = set()
+            for node in nodeset:
+                innernodes.add(node)
+                if node in self.nodes:
+                    memberships.update(set(self.nodes[node].memberships))
+            newedgeset = dict()
+            for e in memberships:
+                if e in self.edges:
+                    temp = self.edges[e].uidset.intersection(innernodes)
+                    if temp:
+                        newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
+            return Hypergraph(newedgeset, name=name)
 
     @ not_implemented_for('static')
     def toplexes(self, name=None, collapse=False, use_reps=False, return_counts=True):
@@ -1680,7 +1688,7 @@ class Hypergraph():
         return Hypergraph(EntitySet(name, entities), name=name)
 
     @ classmethod
-    def from_numpy_array(cls, M, node_names=None, edge_names=None, name=None, key=None):
+    def from_numpy_array(cls, M, node_names=None, edge_names=None, node_label='nodes', edge_label='edges', name=None, key=None, static=False):
         """XX
         Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
@@ -1720,48 +1728,59 @@ class Hypergraph():
         # Create names for nodes and edges
         # Validate the size of the node and edge arrays
 
-        M = np.array(M)
-        if len(M.shape) != (2):
-            raise HyperNetXError('Input requires a 2 dimensional numpy array')
-
-        if node_names is not None:
-            nodenames = np.array(node_names)
-            if len(nodenames) != M.shape[0]:
-                raise HyperNetXError('Number of node names does not match number of rows.')
+        if static:
+            arr = np.array(M)
+            if key:
+                arr = key(arr) * 1
+            arr = arr.transpose()
+            labels = OrderedDict((edge_label, edge_names), (node_label, node_names))
+            E = StaticEntitySet(arr=arr, labels=labels)
+            return Hypergraph(E, name=name)
         else:
-            nodenames = np.array([f'v{idx}' for idx in range(M.shape[0])])
+            M = np.array(M)
+            if len(M.shape) != (2):
+                raise HyperNetXError('Input requires a 2 dimensional numpy array')
 
-        if edge_names is not None:
-            edgenames = np.array(edge_names)
-            if len(edgenames) != M.shape[1]:
-                raise HyperNetXError('Number of edge_names does not match number of columns.')
-        else:
-            edgenames = np.array([f'e{jdx}' for jdx in range(M.shape[1])])
+            if node_names is not None:
+                nodenames = np.array(node_names)
+                if len(nodenames) != M.shape[0]:
+                    raise HyperNetXError('Number of node names does not match number of rows.')
+            else:
+                nodenames = np.array([f'v{idx}' for idx in range(M.shape[0])])
 
-        # apply boolean key if available
-        if key:
-            M = key(M)
+            if edge_names is not None:
+                edgenames = np.array(edge_names)
+                if len(edgenames) != M.shape[1]:
+                    raise HyperNetXError('Number of edge_names does not match number of columns.')
+            else:
+                edgenames = np.array([f'e{jdx}' for jdx in range(M.shape[1])])
 
-        # Remove empty column indices from M columns and edgenames
-        colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:, jdx])])
-        colidxsum = np.sum(colidx)
-        if not colidxsum:
-            return Hypergraph()
-        else:
-            M = M[:, colidx]
-            edgenames = edgenames[colidx]
-            edict = dict()
-            # Create an EntitySet of edges from M
-            for jdx, e in enumerate(edgenames):
-                edict[e] = nodenames[[idx for idx in range(M.shape[0]) if M[idx, jdx]]]
-            return Hypergraph(edict, name=name)
+            # apply boolean key if available
+            if key:
+                M = key(M)
+
+            # Remove empty column indices from M columns and edgenames
+            colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:, jdx])])
+            colidxsum = np.sum(colidx)
+            if not colidxsum:
+                return Hypergraph()
+            else:
+                M = M[:, colidx]
+                edgenames = edgenames[colidx]
+                edict = dict()
+                # Create an EntitySet of edges from M
+                for jdx, e in enumerate(edgenames):
+                    edict[e] = nodenames[[idx for idx in range(M.shape[0]) if M[idx, jdx]]]
+                return Hypergraph(edict, name=name)
 
     @ classmethod
     def from_dataframe(cls, df, columns=None, rows=None,
                        name=None, fillna=0, transpose=False,
-                       transforms=[], key=None,
-                       ):
-        '''XX
+                       transforms=[], key=None, node_label='nodes',
+                       edge_label='edges'
+                       static=False,
+                       nwhy=False):
+        '''
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
         and Columns to label edges.
 
@@ -1840,14 +1859,29 @@ class Hypergraph():
         if transpose:
             df = df.transpose()
 
-        node_names = np.array(df.index)
-        edge_names = np.array(df.columns)
+        # node_names = np.array(df.index)
+        # edge_names = np.array(df.columns)
 
         for t in transforms:
             df = df.apply(t)
         if key:
-            mat = key(df.values)
+            mat = key(df.values) * 1
         else:
-            mat = df.values
+            mat = df.values * 1
 
-        return cls.from_numpy_array(mat, node_names=node_names, edge_names=edge_names, name=name)
+        params = {node_names: np.array(df.index),
+                  edge_names: np.array(df.columns),
+                  name: name,
+                  node_label: node_label,
+                  edge_label: edge_labels,
+                  static: static
+                  nwhy: nwhy
+                  }
+        # return cls.from_numpy_array(mat, node_names=node_names, edge_names=edge_names, name=name, node_label=node_label, edge_label=edge_labels, static=static)
+        return cls.from_numpy_array(mat, **params)
+# end of Hypergraph class
+
+
+def _make_3_arrays(mat):
+    arr = coo_matrix(mat)
+    return arr.row, arr.col, arr.data

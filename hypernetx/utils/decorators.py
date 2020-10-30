@@ -1,6 +1,5 @@
 import sys
 from warnings import warn
-
 import hypernetx as hnx
 from decorator import decorator
 from hypernetx.exception import HyperNetXError, HyperNetXNotImplementedError

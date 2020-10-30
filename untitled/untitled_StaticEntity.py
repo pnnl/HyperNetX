@@ -295,18 +295,44 @@ class StaticEntity(object):
         newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
         return self.__class__(newarr, newlabels, uid=uid)
 
-    def restrict_to_indices(self, indices, level=0, uid=None, **props):
+    def remove_empties(self, level_to_keep=0):
+        axes = list(np.arange(self.dimsize))
+        axes.remove(level_to_keep)
+        ne = self.__class__(entity=self)
+        for lev in axes:
+            ids = list(range(ne.dimsize))
+            ids.remove(lev)
+            ids = tuple(ids)
+            keepers = np.sum(ne.arr, axis=ids).nonzero()[0]
+            ne = ne.restrict_to_indices(keepers, level=lev, uid=ne.uid, rem_empties=False)
+        return ne
+
+    def restrict_to_indices(self, indices, level=0, uid=None, rem_empties=True):
         # TODO handle sparse case - use scipy.sparse.bmat
         indices = list(indices)
         newlabels = self.labels.copy()
         newlabels[self.keys[level]] = self._labs(level)[indices]
         if issparse(self._arr):
-            newarr = self._arr.tocsr()
-            newarr = self._arr[indices]
+            newarr = self._arr.tocsr
+            if level > 1:
+                print('static entities with sparse arrays have at most 2 levels')
+                return
+            elif level == 1:
+                newarr = self._arr[:, indices]
+            else:
+                newarr = self._arr[indices]
         else:
-            axes = [level] + list(range(1, level)) + [0] + list(range(level + 1, self.dimsize))
-            newarr = self._arr.transpose(axes)[indices].transpose(axes)
-        return self.__class__(newarr, newlabels, uid=uid, **props)
+            if level == 0:
+                newarr = self._arr[indices]
+            else:
+                axes = [level] + list(range(1, level)) + [0] + list(range(level + 1, self.dimsize))
+                newarr = self._arr.transpose(axes)[indices].transpose(axes)
+        temp = self.__class__(arr=newarr, labels=newlabels, uid=uid, **self.properties)
+        # return temp
+        if rem_empties == True:
+            return temp.remove_empties(level)
+        else:
+            return temp
 
     def translate(self, level, index):
         # returns category of dimension and value of index in that dimension
@@ -377,7 +403,7 @@ class StaticEntitySet(StaticEntity):
                          labels=labels,
                          entity=entity,
                          uid=uid,
-                         keep_state_dictdict=keep_state_dict,
+                         keep_state_dict=keep_state_dict,
                          **props)
         if len(E.dimensions) > 2:
             E = E.restrict_to_levels((level1, level2))
