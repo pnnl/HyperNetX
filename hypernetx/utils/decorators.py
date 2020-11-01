@@ -45,7 +45,7 @@ def not_implemented_for(*object_types):
     @decorator
     def _not_implemented_for(not_implemented_for_func, *args, **kwargs):
         this_object = args[0]
-        terms = {'static': this_object.is_static()
+        terms = {'static': this_object.isstatic
                  }
         match = True
         try:

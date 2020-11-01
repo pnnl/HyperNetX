@@ -4,17 +4,28 @@ import itertools as it
 import networkx as nx
 import hypernetx as hnx
 import pandas as pd
+import numpy as np
+from collections import OrderedDict
+from harrypotter import HarryPotter
 
 
 class SevenBySix():
     """Example hypergraph with 7 nodes and 6 edges."""
 
-    def __init__(self):
+    def __init__(self, static=False):
         a, c, e, k, t1, t2, v = nd = ('A', 'C', 'E', 'K', 'T1', 'T2', 'V')
         i, l, o, p, r, s = ('I', 'L', 'O', 'P', 'R', 'S')
         self.edges = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
         self.nodes = set(nd)
         self.edgedict = {p: {a, c, k}, r: {a, e}, s: {a, k, t2, v}, l: {c, e}, o: {t1, t2}, i: {k, t2}}
+
+        self.arr = np.array([[0, 0, 0, 1, 0, 1, 0],
+                             [0, 1, 1, 0, 0, 0, 0],
+                             [0, 0, 0, 0, 1, 1, 0],
+                             [1, 1, 0, 1, 0, 0, 0],
+                             [1, 0, 1, 0, 0, 0, 0],
+                             [1, 0, 0, 1, 0, 1, 1]])
+        self.labels = OrderedDict([('edges', ['I', 'L', 'O', 'P', 'R', 'S']), ('nodes', ['A', 'C', 'E', 'K', 'T1', 'T2', 'V'])])
 
 
 class TriLoop():
@@ -116,3 +127,8 @@ def bipartite_example():
 @ pytest.fixture
 def dataframe():
     return Dataframe()
+
+
+@pytest.fixture
+def harry_potter():
+    return HarryPotter()

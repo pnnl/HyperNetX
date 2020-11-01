@@ -1,21 +1,19 @@
+import os
 from hypernetx import *
-import matplotlib.pyplot as plt
 from collections import OrderedDict, defaultdict
 import scipy
 from scipy.sparse import coo_matrix, issparse
 import pandas as pd
 import numpy as np
 import itertools as it
-import importlib as imp
-import untitled_StaticEntity as us
-
 
 class HarryPotter(object):
 
     def __init__(self):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
-        harrydata = pd.read_csv('HarryPotter/datasets/Characters_edit.csv', encoding='unicode_escape').set_index('Id')
+        fname = os.path.join(os.path.dirname(__file__), 'harrypotter_characters.csv')
+        harrydata = pd.read_csv(fname, encoding='unicode_escape').set_index('Id')
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
@@ -23,17 +21,6 @@ class HarryPotter(object):
         for c in harry.columns:
             harry[c] = harry[c].apply(lambda x: x.replace('\xa0', ' ')).apply(lambda x: x.replace('Unknown', f'Unknown {c}'))
         self.dataframe = harry
-
-        # Generate a counter for each column
-        # - Assign a sid to each value in that column
-        # - Create a reverse counter to grab name from sid
-
-        # **Questions for Tony and Cliff**
-        # - how should we index the objects?
-        # - sids are whole numbers starting with column 0 and running through each column
-        # - ldict and rdict are indexed starting with 0 representing missing values
-        # - would we lose anything if we indexed these as -1 for missing values and then
-        # compute the incidence matrix using only nonnegative indices?
 
         ctr = [HNXCount() for c in range(5)]
         ldict = OrderedDict()
@@ -74,6 +61,6 @@ class HarryPotter(object):
             slabels.update({c: np.array(list(ldict[c].keys()))})
         self.labels = slabels
 
-        self.entity = us.StaticEntity(imat, slabels)
-        self.entityset = us.StaticEntitySet(imat, slabels, 0, 1)
-        self.sparseentity = us.StaticEntitySet(self.coo, slabels, 0, 1)
+        self.entity = StaticEntity(imat, slabels)
+        self.entityset = StaticEntitySet(imat, slabels, 0, 1)
+        self.sparseentity = StaticEntitySet(self.coo, slabels, 0, 1)

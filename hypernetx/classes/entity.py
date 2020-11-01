@@ -8,6 +8,10 @@ import numpy as np
 import networkx as nx
 from hypernetx import HyperNetXError
 
+__all__=[
+    'Entity',
+    'EntitySet'
+]
 
 class Entity(object):
     """

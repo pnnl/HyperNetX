@@ -40,6 +40,28 @@ import itertools as it
 import pickle
 from scipy.sparse import csr_matrix
 
+__all__ = [
+    'kchainbasis',
+    'bkMatrix',
+    'swap_rows',
+    'swap_columns',
+    'add_to_row',
+    'add_to_column',
+    'logical_dot',
+    'logical_matmul',
+    'matmulreduce',
+    'logical_matadd',
+    'smith_normal_form_mod2',
+    'reduced_row_echelon_form_mod2',
+    'boundary_group',
+    'chain_complex',
+    'betti',
+    'betti_numbers',
+    'homology_basis',
+    'hypergraph_homology_basis',
+    'interpret',
+]
+
 
 def kchainbasis(h, k):
     """
@@ -71,10 +93,11 @@ def kchainbasis(h, k):
     import itertools as it
     kchains = set()
     for e in h.edges():
-        if len(e) == k + 1:
-            kchains.add(tuple(sorted(e.uidset)))
-        elif len(e) > k + 1:
-            kchains.update(set(it.combinations(sorted(e.uidset), k + 1)))
+        en = sorted(h.edges[e])
+        if len(en) == k + 1:
+            kchains.add(tuple(en))
+        elif len(en) > k + 1:
+            kchains.update(set(it.combinations(en, k + 1)))
     return sorted(list(kchains))
 
 
@@ -642,7 +665,7 @@ def chain_complex(h, k=None):
         C is a dictionary of lists
         bd is a dictionary of numpy arrays
     """
-    max_dim = np.max([len(e) for e in h.edges()]) - 1
+    max_dim = np.max([len(h.edges[e]) for e in h.edges()]) - 1
     krange = _get_krange(max_dim, k)
     if not krange:
         return
@@ -721,7 +744,7 @@ def betti_numbers(h, k=None):
     return betti(bd)
 
 
-def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
+def homology_basis(bd, k=None, boundary=False, **kwargs):
     """
     Compute a basis for the kth-simplicial homology group, $H_k$, defined by a
     chain complex $C$ with boundary maps given by bd $= \{k:\partial_k$\}$
@@ -737,9 +760,6 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
         2 integers indicating min and max dimensions to be
         computed, if none given all homology groups will be computed from
         available boundary matrices in bd
-    log : str, optional
-        path to logfile where intermediate data should be
-        pickled and stored
     boundary : bool
         option to return a basis for the boundary group from each dimension.
         Needed to compute the shortest generators in the homology group.
@@ -789,23 +809,9 @@ def homology_basis(bd, k=None, log=None, boundary=False, **kwargs):
     else:
         return basis
 
-    #     if log:
-    #         try:
-    #             logdict = pickle.load(open(log, 'rb'))
-    #         except:
-    #             logdict = dict()
-    #         logdict.update({'k': k,
-    #                         f'betti{k}': betti1,
-    #                         'ker': ker1,
-    #                         'im': im2,
-    #                         'proj': proj,
-    #                         'basis': basis})
-    #         pickle.dump(logdict, open(log, 'wb'))
-
-    # return basis, im2
 
 
-def hypergraph_homology_basis(h, k=None, shortest=False, log=None, interpreted=True):
+def hypergraph_homology_basis(h, k=None, shortest=False, interpreted=True):
     """
     Computes the kth-homology groups mod 2 for the ASC
     associated with the hypergraph h for k in krange inclusive
@@ -820,9 +826,6 @@ def hypergraph_homology_basis(h, k=None, shortest=False, log=None, interpreted=T
     shortest : bool, optional, default=False
         option to look for shortest representative for each coset in the 
         homology group, only good for relatively small examples
-    log : str, optional. ## currently not implemented
-        path to logfile where intermediate data should be
-        pickled and stored
     interpreted : bool, optional, default = True
         if True will return an explicit basis in terms of the k-chains
 
@@ -835,26 +838,6 @@ def hypergraph_homology_basis(h, k=None, shortest=False, log=None, interpreted=T
 
     """
     C, bd = chain_complex(h, k)
-    # max_dim = np.max([len(e) for e in h.edges()]) - 1
-    # krange = _get_krange(max_dim, k)
-
-    # # Compute chain complex
-    # C = dict()
-    # C[krange[0] - 1] = kchainbasis(h, krange[0] - 1)
-    # bd = dict()
-    # for kdx in range(krange[0], krange[1] + 2):
-    #     C[kdx] = kchainbasis(h, kdx)
-    #     bd[kdx] = bkMatrix(C[kdx - 1], C[kdx])
-    # if log:
-    #     try:
-    #         logdict = pickle.load(open(log, 'rb'))
-    #     except:
-    #         logdict = dict()
-    #     logdict.update({kdx: {'maxdim': max_dim,
-    #                           'kchains': C,
-    #                           'bd': bd, }}
-    #                    )
-    #     pickle.dump(logdict, open(log, 'wb'))
     if shortest:
         basis = defaultdict(list)
         tbasis, im = homology_basis(bd, boundary=True)

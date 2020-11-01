@@ -24,6 +24,12 @@ import warnings
 import sys
 sys.setrecursionlimit(10000)
 
+__all__ = [
+    's_betweenness_centrality',
+    's_harmonic_closeness_centrality',
+    's_eccentricity',
+]
+
 
 def s_betweenness_centrality(H, s=1, normalized=True):
     '''
