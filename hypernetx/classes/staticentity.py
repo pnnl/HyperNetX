@@ -57,7 +57,7 @@ class StaticEntity(object):
         if entity is not None:
             if isinstance(entity, StaticEntity) or isinstance(entity, StaticEntitySet):
                 self._arr = entity.arr.copy()
-                self._labels = entity.labels.copy()
+                self._labels = OrderedDict((category, np.array(values)) for category, values in entity.labels.items())
                 if keep_state_dict:
                     self.state_dict = entity.state_dict.copy()
                 else:
@@ -90,10 +90,10 @@ class StaticEntity(object):
                     self._labels = self._index = OrderedDict([(dim, np.arange(ct)) for dim, ct in enumerate(self.dims)])
                     self._keyindex = lambda category: category
                     self._keys = np.arange(len(self.dims))
-                    self._index = lambda category, value: value
+                    self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
             else:  # no arr is given
                 if labels is not None:
-                    self._labels = labels
+                    self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())
                     self._dimensions = tuple([len(labels[k]) for k in labels])
                     self._arr = np.zeros(self.dimensions)
                     self._dimsize = len(self._dimensions)
@@ -300,31 +300,41 @@ class StaticEntity(object):
 
     def restrict_to_levels(self, levels, uid=None):
         if len(levels) == 1:
-            newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
-            return self.__class__(labels=newlabels)
+            if levels[0] >= self.dimsize:
+                return self.__class__()
+            else:
+                newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
+                return self.__class__(labels=newlabels)
         if issparse(self._arr):
             if levels == (1, 0):
                 newarr = self._arr.transpose()
             else:
                 newarr = self._arr
         else:
-            axes = [x for x in range(self.dimsize) if x not in levels]
-            temp = self._arr.transpose(tuple(list(levels) + axes))
+            axes = [x for x in range(len(self._arr.shape)) if x not in levels]
+            ids = tuple(list(levels) + axes)
+            temp = self._arr.transpose(ids)
             newarr = np.sum(temp, axis=tuple(range(len(levels), self.dimsize)))
         newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
-        return self.__class__(newarr, newlabels, uid=uid)
+        return self.__class__(arr=newarr, labels=newlabels, uid=uid)
 
     def remove_empties(self, level_to_keep=0):
-        axes = list(np.arange(self.dimsize))
-        axes.remove(level_to_keep)
         ne = self.__class__(entity=self)
-        for lev in axes:
-            ids = list(range(ne.dimsize))
-            ids.remove(lev)
-            ids = tuple(ids)
-            keepers = np.sum(ne.arr, axis=ids).nonzero()[0]
-            ne = ne.restrict_to_indices(keepers, level=lev, uid=ne.uid, rem_empties=False)
-        return ne
+        if issparse(self._arr):
+            mat = csr_matrix(self._arr)
+            axis = np.mod(1 + level_to_keep, 2)
+            keepers = list(mat.sum(axis=level_to_keep).nonzero()[axis])
+            return ne.restrict_to_indices(keepers, level=axis, uid=ne.uid, rem_empties=False)
+        else:
+            axes = list(np.arange(self.dimsize))
+            axes.remove(level_to_keep)
+            for lev in axes:
+                ids = list(range(ne.dimsize))
+                ids.remove(lev)
+                ids = tuple(ids)
+                keepers = np.sum(ne.arr, axis=ids).nonzero()[0]
+                ne = ne.restrict_to_indices(keepers, level=lev, uid=ne.uid, rem_empties=False)
+            return ne
 
     def restrict_to_indices(self, indices, level=0, uid=None, rem_empties=True):
         indices = list(indices)
@@ -346,7 +356,7 @@ class StaticEntity(object):
                 axes = [level] + list(range(1, level)) + [0] + list(range(level + 1, self.dimsize))
                 newarr = self._arr.transpose(axes)[indices].transpose(axes)
         temp = self.__class__(arr=newarr, labels=newlabels, uid=uid, **self.properties)
-        # return temp
+
         if rem_empties == True:
             return temp.remove_empties(level)
         else:
@@ -375,16 +385,6 @@ class StaticEntity(object):
             return self._keyindex(category)
 
     def indices(self, category, values):
-        # returns dimension of category and index of value
-        # results = list()
-        # for val in values:
-        #     try:
-        #         results.append(self._index(category, val))
-        #     except:
-        #         print(category, val)
-        #         return results
-        # else:
-        #     return results
         return [self._index(category, value) for value in values]
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
@@ -416,16 +416,11 @@ class StaticEntitySet(StaticEntity):
                  uid=None,
                  keep_state_dict=False,
                  **props):
-
         E = StaticEntity(arr=arr,
                          labels=labels,
-                         entity=entity,
-                         uid=uid,
-                         keep_state_dict=keep_state_dict,
-                         **props)
-        if len(E.dimensions) > 2:
+                         entity=entity)
+        if E.dimsize > 2:
             E = E.restrict_to_levels((level1, level2))
-
         super().__init__(entity=E)
 
     def __repr__(self):
@@ -476,7 +471,7 @@ def _turn_dict_to_staticentity(dict_object):
     level1 = OrderedDict(level1)
     level2 = OrderedDict(level2)
     ar = np.array(coords, dtype=int).transpose()
-    arr = coo_matrix((np.ones(len(ar[0]), dtype=int), (ar[0], ar[1])))
+    arr = csr_matrix((np.ones(len(ar[0]), dtype=int), (ar[0], ar[1])))
     labels = {'level1': list(level1), 'level2': list(level2)}
     return arr, labels
 

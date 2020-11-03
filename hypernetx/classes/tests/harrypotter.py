@@ -2,7 +2,7 @@ import os
 from hypernetx import *
 from collections import OrderedDict, defaultdict
 import scipy
-from scipy.sparse import coo_matrix, issparse
+from scipy.sparse import coo_matrix, csr_matrix, issparse
 import pandas as pd
 import numpy as np
 import itertools as it
@@ -54,13 +54,13 @@ class HarryPotter(object):
         for d in data:
             imat[tuple(d)] += 1
         self.imat = imat
-        self.coo = coo_matrix(np.sum(imat, axis=(2, 3, 4)))
+        self.csr = csr_matrix(np.sum(imat, axis=(2, 3, 4)))
 
         slabels = OrderedDict()
         for cdx, c in enumerate(list(ldict.keys())):
             slabels.update({c: np.array(list(ldict[c].keys()))})
         self.labels = slabels
 
-        self.entity = StaticEntity(imat, slabels)
-        self.entityset = StaticEntitySet(imat, slabels, 0, 1)
-        self.sparseentity = StaticEntitySet(self.coo, slabels, 0, 1)
+        self.entity = StaticEntity(arr=imat, labels=slabels)
+        self.entityset = StaticEntitySet(arr=imat, labels=slabels, level1=0, level2=1)
+        self.sparseentity = StaticEntitySet(arr=self.csr, labels=slabels, level1=0, level2=1)

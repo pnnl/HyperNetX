@@ -1,4 +1,5 @@
-from collections import OrderedDict, Callable
+from collections import OrderedDict
+from collections.abc import Callable
 
 __all__ = [
     'HNXCount',

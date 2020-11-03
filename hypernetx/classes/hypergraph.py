@@ -104,31 +104,24 @@ class Hypergraph():
         else:
             self.name = name
 
-        if setsystem is not None and (isinstance(setsystem, StaticEntitySet) or isinstance(setsystem, StaticEntity)):
+        if static == True or (isinstance(setsystem, StaticEntitySet) or isinstance(setsystem, StaticEntity)):
             self._static = True
-            staticentity = True
-        else:
-            self._static = static
-            staticentity = False
-
-        if not staticentity:
-            # Check setsystem type and change into an EntitySet before constructing hypergraph:
-            if self._static:
-                if not setsystem:
-                    setsytem = StaticEntitySet()
-
             if not setsystem:
-                if not self._static:
-                    setsystem = EntitySet('_', elements=[])
-                else:
-                    setsystem = StaticEntitySet()
-
+                self._edges = StaticEntitySet()
+                self._nodes = StaticEntitySet()
+            else:
+                self._edges = StaticEntitySet(entity=setsystem)
+                self._nodes = self._edges.restrict_to_levels([1])
+        else:
+            self._static = False
+            if not setsystem:
+                setsystem = EntitySet('_', elements=[])
+            elif isinstance(setsystem, Entity):
+                setsystem = EntitySet('_', setsystem.incidence_dict)
             elif isinstance(setsystem, dict):
                 # Must be a dictionary with values equal to iterables of Entities and hashables.
                 # Keys will be uids for new edges and values of the dictionary will generate the nodes.
-                if not self._static:
-                    setsystem = EntitySet('_', setsystem)
-
+                setsystem = EntitySet('_', setsystem)
             # If no ids are given, return default ids indexed by position in iterator
             # This should be an iterable of sets
             elif not isinstance(setsystem, EntitySet):
@@ -147,15 +140,6 @@ class Hypergraph():
                                     elements=_edges.values(), **setsystem.properties)
             self._nodes = EntitySet(f'{self.name}:Nodes',
                                     elements=_nodes.values())
-
-        else:  # in this case the setsystem must be a StaticEntitySet for now
-            if isinstance(setsystem, StaticEntity):
-                setsystem = StaticEntitySet(entity=setsystem)
-            elif not isinstance(setsystem, StaticEntitySet):
-                setsystem = StaticEntitySet(**setsystem)
-            self._edges = setsystem
-            self._nodes = setsystem.restrict_to_levels([1])
-            # This is not consistent with the dynamic case...is that important?
 
     @property
     def edges(self):
@@ -869,20 +853,16 @@ class Hypergraph():
 
         """
         E = self.edges
-        if sparse:
-            mat = csr_matrix(E.arr)
-        else:
-            mat = E.arr
         if self.isstatic:
-            mat = mat.astype(bool) * 1
-            edges = np.where(np.sum(mat, axis=1) >= s)[0]
-            NE = E.restrict_to(edges)
-            H = Hypergraph(NE)
-
-            # if index:
-            #     return Hypergraph.incidence_to_adjacency(H.arr, s=s, weighted=False), {k: e for k, e in enumerate(H.elements)}
-            # else:
-            #     return Hypergraph.incidence_to_adjacency(H.arr, s=s, weighted=False)
+            if sparse or issparse(mat):
+                mat = csr_matrix(E.arr)
+            else:
+                mat = E.arr
+            if self.isstatic:
+                mat = mat.astype(bool) * 1
+                edges = np.where(np.sum(mat, axis=1) >= s)[0]
+                NE = E.restrict_to(edges)
+                H = Hypergraph(NE)
         else:
             edges = [e for e in self.edges if len(self.edges[e]) >= s]
             H = self.restrict_to_edges(edges)
