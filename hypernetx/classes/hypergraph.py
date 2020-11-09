@@ -97,7 +97,7 @@ class Hypergraph():
 
     """
 
-    def __init__(self, setsystem=None, name=None, static=False, nwhy=False):
+    def __init__(self, setsystem=None, name=None, static=False, ):
 
         if not name:
             self.name = '_'
@@ -1696,15 +1696,15 @@ class Hypergraph():
     def from_numpy_array(cls, M, node_names=None,
                          edge_names=None, node_label='nodes',
                          edge_label='edges', name=None,
-                         key=None, static=False, nwhy=False):
+                         key=None, static=False, ):
         """
-        Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2
+        Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
         all others to 0's.
 
         Parameters
         ----------
-        M : real valued array-like object, dimensions=2x2
+        M : real valued array-like object, 2 dimensions
             representing a real valued matrix with rows corresponding to nodes and columns to edges
 
         node_names : object, array-like, default=None
@@ -1787,7 +1787,7 @@ class Hypergraph():
                        transforms=[], key=None, node_label='nodes',
                        edge_label='edges',
                        static=False,
-                       nwhy=False):
+                       ):
         '''
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
         and Columns to label edges.
@@ -1883,9 +1883,7 @@ class Hypergraph():
                   'node_label': node_label,
                   'edge_label': edge_label,
                   'static': static,
-                  'nwhy': nwhy
                   }
-        # return cls.from_numpy_array(mat, node_names=node_names, edge_names=edge_names, name=name, node_label=node_label, edge_label=edge_labels, static=static)
         return cls.from_numpy_array(mat, **params)
 # end of Hypergraph class
 

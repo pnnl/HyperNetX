@@ -36,8 +36,6 @@ class StaticEntity(object):
 
     keep_state_dict : bool, optional, default=False
 
-    nwhy : bool, optional, default=False
-
     props : user defined keyword arguments, optional
 
     """
@@ -47,7 +45,6 @@ class StaticEntity(object):
                  entity=None,
                  uid=None,
                  keep_state_dict=False,
-                 nwhy=False,
                  **props):
 
         self._uid = uid
