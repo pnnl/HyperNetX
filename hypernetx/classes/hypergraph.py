@@ -435,7 +435,7 @@ class Hypergraph():
         node : hashable or Entity
             uid for a node in hypergraph or the node Entity
 
-        s : int, list, optional, default : 2
+        s : int, list, optional, default : 2  
             If int, then desired minimum size of the edge connecting node to its neighbors
             If list, then [min s, max s] the desired minimum and maximum size of the edges
             connecting node to its neighbors. If min s = max s, then only edges of size
@@ -453,13 +453,22 @@ class Hypergraph():
         """
         if not node in self.nodes:
             print(f'Node is not in hypergraph {self.name}.')
+            return
 
+        msg = 's must be a positive integer or a list of two positive integers: [min s, max s], min s <= max s'
         if self._static:
             imat = self.incidence_matrix()
             idx = self.edges.indices(self.edges.keys[1], [node])[0]
             edx = imat[idx]
-            if s > 1:
-                edx = edx.multiply(imat.sum(axis=0) > s)
+            if isinstance(s, int):
+                if s < 1:
+                    raise HyperNetXError(msg)
+                else:
+                    edx = edx.multiply(imat.sum(axis=0) >= s)
+            elif len(s) != 2 or not isinstance(s[0], int) or not isinstance(s[1], int) or s[0] > s[1] or s[0] < 1:
+                raise HyperNetXError(msg)
+            else:
+                edx = edx.multiply(imat.sum(axis=0) >= s[0]).multiply(imat.sum(axis=0) <= s[1])
             edx = edx.nonzero()[1]
 
             if len(edx) == 0:
