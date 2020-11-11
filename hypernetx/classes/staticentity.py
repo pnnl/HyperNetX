@@ -5,7 +5,7 @@ import numpy as np
 import networkx as nx
 from hypernetx import *
 from hypernetx.exception import HyperNetXError
-from hypernetx.utils import HNXCount, DefaultOrderedDict
+from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates
 from scipy.sparse import coo_matrix, csr_matrix, issparse
 import itertools as it
 
@@ -40,79 +40,105 @@ class StaticEntity(object):
 
     """
 
-    def __init__(self, arr=None,
-                 labels=None,
+    def __init__(self,
                  entity=None,
+                 data=None,
+                 arr=None,
+                 labels=None,
                  uid=None,
-                 keep_state_dict=False,
                  **props):
 
         self._uid = uid
-        self._arr = arr
-        self._labels = labels
         self.properties = {}
         if entity is not None:
             if isinstance(entity, StaticEntity) or isinstance(entity, StaticEntitySet):
-                self._arr = entity.arr.copy()
-                self._labels = OrderedDict((category, np.array(values)) for category, values in entity.labels.items())
-                if keep_state_dict:
-                    self.state_dict = entity.state_dict.copy()
-                else:
-                    self.state_dict = dict()
                 self.properties.update(entity.properties)
-            elif isinstance(entity, dict):  # returns only 2 levels
-                self._arr, self._labels = _turn_dict_to_staticentity(entity)
-            else:  # returns only 2 levels
-                self._arr, self._labels = _turn_iterable_to_staticentity(entity)
-            self._dimensions = self._arr.shape
-            self._dimsize = len(self._arr.shape)
-            self._keys = np.array(list(self._labels.keys()))
-            self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
-            self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+                self.properties.update(props)
+                self.__dict__.update(self.properties)
+                self.__dict__.update(props)
+                self._data = entity.data.copy()
+                self._dimensions = entity.dimensions
+                self._dimsize = entity.dimsize
+                self._labels = OrderedDict((category, np.array(values)) for category, values in entity.labels.items())
+                self._keys = np.array(list(self._labels.keys()))
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+                self._arr = entity.arr
+            else:
+                if isinstance(entity, dict):  # returns only 2 levels
+                    self._data, self._labels = _turn_dict_to_staticentity(entity)  # For now duplicate entries will be removed.
+                else:  # returns only 2 levels
+                    self._data, self._labels = _turn_iterable_to_staticentity(entity)
+                self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
+                self._dimsize = len(self._dimensions)
+                self._keys = np.array(list(self._labels.keys()))
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+                self.properties.update(props)
+                self.__dict__.update(self.properties)  # Add function to set attributes ###########!!!!!!!!!!!!!
+                self._arr = None
+        elif data is not None:
+            self._arr = None
             self.properties.update(props)
-            self.__dict__.update(self.properties)
-        else:
-            if arr is not None:
-                self._arr = arr * 1  # tensor of values instead of booleans
-                if issparse(self._arr):
-                    self._arr = csr_matrix(self._arr)
-                self._dimensions = self._arr.shape
-                self._dimsize = len(self._arr.shape)
-                if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
-                    self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
-                    self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
-                    self._keys = np.array(list(labels.keys()))
-                    self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
-                else:
-                    self._labels = self._index = OrderedDict([(dim, np.arange(ct)) for dim, ct in enumerate(self.dims)])
-                    self._keyindex = lambda category: category
-                    self._keys = np.arange(len(self.dims))
-                    self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
-            else:  # no arr is given
-                if labels is not None:
-                    self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())
-                    self._dimensions = tuple([len(labels[k]) for k in labels])
-                    self._arr = np.zeros(self.dimensions)
-                    self._dimsize = len(self._dimensions)
-                    self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
-                    self._keys = np.array(list(labels.keys()))
-                    self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
-                else:
-                    self._arr = np.array([])
-                    self._labels = OrderedDict([])
-                    self._dimensions = tuple([])
-                    self._dimsize = 0
-                    self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
-                    self._keys = np.array([])
-                    self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+            self.__dict__.update(props)
+            self._data = remove_row_duplicates(data)
+            self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
+            self._dimsize = len(self._dimensions)
+            if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
+                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._keys = np.array(list(labels.keys()))
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+            else:
+                self._labels = OrderedDict([(str(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
+                self._keyindex = lambda category: int(category)
+                self._keys = np.arange(self._dimsize)
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+        elif arr is not None:
+            self._arr = arr
+            self.properties.update(props)
+            self.__dict__.update(props)
+            self._state_dict = {'arr': arr * 1}
+            self._dimensions = arr.shape
+            self._dimsize = len(arr.shape)
+            self._data = _turn_tensor_to_data(arr * 1)
+            if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
+                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._keys = np.array(list(labels.keys()))
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+            else:
+                self._labels = OrderedDict([(str(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
+                self._keyindex = lambda category: str(category)
+                self._keys = np.arange(self._dimsize)
+                self._index = lambda category, value: int(np.where(self._labels[str(category)] == value)[0]) if np.where(self._labels[str(category)] == value)[0].size > 0 else None
+
+        else:  # no entity, data or arr is given
+
+            if labels is not None:
+                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())
+                self._dimensions = tuple([len(labels[k]) for k in labels])
+                self._data = np.zeros((0, len(labels)), dtype=int)
+                self._arr = np.empty(self._dimensions, dtype=int)
+                self._state_dict = {'arr': np.empty(self.dimensions, dtype=int)}
+                self._dimsize = len(self._dimensions)
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._keys = np.array(list(labels.keys()))
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+            else:
+                self._data = np.zeros((0, 0), dtype=int)
+                self._arr = np.array([], dtype=int)
+                self._labels = OrderedDict([])
+                self._dimensions = tuple([])
+                self._dimsize = 0
+                self._keyindex = lambda category: None
+                self._keys = np.array([])
+                self._index = lambda category, value: None
 
             # if labels is a list of categorical values, then change it into an
             # ordered dictionary?
             self.properties = props
-            self.__dict__.update(props)
-
-            self.state_dict = dict()  # add a decorator to each method which stores the result in the statedict
-            # keyed by the method name and signature
+            self.__dict__.update(props)            # keyed by the method name and signature
 
         if len(self._labels) > 0:
             self._labs = lambda kdx: self._labels.get(self._keys[kdx], {})
@@ -121,9 +147,26 @@ class StaticEntity(object):
 
     @ property
     def arr(self):
+        if self._arr is not None:
+            if type(self._arr) == int and self._arr == 0:
+                print('arr cannot be computed')
+        else:
+            try:
+                imat = np.zeros(self.dimensions, dtype=int)
+                for d in self._data:
+                    imat[d] = 1
+                self._arr = imat
+            except Exception as ex:
+                print(ex)
+                print('arr cannot be computed')
+                self._arr = 0
         return self._arr
 
-    @ property
+    @property
+    def data(self):
+        return self._data
+
+    @property
     def labels(self):
         return self._labels
 
@@ -239,21 +282,10 @@ class StaticEntity(object):
             print(f'level1 equals level2')
             elts = OrderedDict([[k, np.array([])] for k in self._labs(level1)])
 
-        elif issparse(self._arr):
-            elts = OrderedDict()
-            if level1 == 0 and level2 == 1:
-                mat = self._incidence_matrix()
-                for e in range(self.dimensions[0]):
-                    elts[e] = mat.getcol(e).nonzero()[0].astype(int)
-            elif level1 == 1 and level2 == 0:
-                for e in range(self.dimensions[1]):
-                    elts[e] = self._arr.getcol(e).nonzero()[0].astype(int)
-            else:
-                print('sparse matrices have only two levels. Use 0,1 or 1,0.')
-                return
-        else:
-            mat = self._incidence_matrix(level1, level2)
-            elts = OrderedDict([[kdx, np.where(mat[:, kdx] != 0)[0]] for kdx in range(self.dimensions[level1])])
+        temp = remove_row_duplicates(self.data[:, [level1, level2]])
+        elts = defaultdict(list)
+        for row in temp:
+            elts[row[0]].append(row[1])
 
         if translate:
             telts = OrderedDict()
@@ -266,30 +298,19 @@ class StaticEntity(object):
         else:
             return elts
 
-    def _incidence_matrix(self, level1=0, level2=1, weighted=False, index=False):
+    def incidence_matrix(self, level1=0, level2=1, weighted=False, index=False):
         '''
         Convenience method to navigate large tensor.
         level1 indexes the columns and level2 indexes the rows
         add decorator which returns a partial result to the function and then continues
         think level1 = edges, level2 = nodes
         '''
-        # Use state dictionary here to retrieve result if already computed
-        # otherwise store result in static dictionary
-        if not issparse(self._arr):
-            if self.dimsize > 2:
-                axes = [x for x in range(len(self._labels)) if x not in [level1, level2]]
-                mat = self._arr.transpose(tuple([level2, level1] + axes))
-                result = np.sum(self._arr, axis=tuple(range(2, self.dimsize)))  # this is the weighted incidence matrix - can we do this with sparse matrices?
-            else:
-                result = self._arr.transpose([level2, level1])
-        else:
-            if level1 == 0 and level2 == 1:
-                result = self._arr.transpose()
-            else:
-                result = self._arr
-
         if not weighted:
-            result = result.astype(bool) * 1
+            temp = remove_row_duplicates(self.data[:, [level2, level1]])
+        else:
+            temp = self.data[:, [level2, level1]]
+        result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
+
         if index:  # give index of rows then columns
             return result, self._labs(level2), self._labs(level1)
         else:
@@ -302,62 +323,20 @@ class StaticEntity(object):
             else:
                 newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
                 return self.__class__(labels=newlabels)
-        if issparse(self._arr):
-            if levels == (1, 0):
-                newarr = self._arr.transpose()
-            else:
-                newarr = self._arr
-        else:
-            axes = [x for x in range(len(self._arr.shape)) if x not in levels]
-            ids = tuple(list(levels) + axes)
-            temp = self._arr.transpose(ids)
-            newarr = np.sum(temp, axis=tuple(range(len(levels), self.dimsize)))
+        temp = remove_row_duplicates(self.data[:, levels])
         newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
-        return self.__class__(arr=newarr, labels=newlabels, uid=uid)
+        return self.__class__(data=temp, labels=newlabels, uid=uid)
 
-    def remove_empties(self, level_to_keep=0):
-        ne = self.__class__(entity=self)
-        if issparse(self._arr):
-            mat = csr_matrix(self._arr)
-            axis = np.mod(1 + level_to_keep, 2)
-            keepers = list(mat.sum(axis=level_to_keep).nonzero()[axis])
-            return ne.restrict_to_indices(keepers, level=axis, uid=ne.uid, rem_empties=False)
-        else:
-            axes = list(np.arange(self.dimsize))
-            axes.remove(level_to_keep)
-            for lev in axes:
-                ids = list(range(ne.dimsize))
-                ids.remove(lev)
-                ids = tuple(ids)
-                keepers = np.sum(ne.arr, axis=ids).nonzero()[0]
-                ne = ne.restrict_to_indices(keepers, level=lev, uid=ne.uid, rem_empties=False)
-            return ne
-
-    def restrict_to_indices(self, indices, level=0, uid=None, rem_empties=True):
+    def restrict_to_indices(self, indices, level=0, uid=None):
         indices = list(indices)
+
+        idx = np.concatenate([np.argwhere(self.data[:, level] == k) for k in indices], axis=0).transpose()[0]
+        temp = self.data[idx]
+
         newlabels = self.labels.copy()
         newlabels[self.keys[level]] = self._labs(level)[indices]
-        if issparse(self._arr):
-            newarr = self._arr.tocsr
-            if level > 1:
-                print('static entities with sparse arrays have at most 2 levels')
-                return
-            elif level == 1:
-                newarr = self._arr[:, indices]
-            else:
-                newarr = self._arr[indices]
-        else:
-            if level == 0:
-                newarr = self._arr[indices]
-            else:
-                axes = [level] + list(range(1, level)) + [0] + list(range(level + 1, self.dimsize))
-                newarr = self._arr.transpose(axes)[indices].transpose(axes)
-        temp = self.__class__(arr=newarr, labels=newlabels, uid=uid, **self.properties)
 
-        if rem_empties == True:
-            return temp.remove_empties(level)
-        else:
-            return temp
+        return self.__class__(data=temp, labels=newlabels, uid=uid, **self.properties)
 
     def translate(self, level, index):
         # returns category of dimension and value of index in that dimension
@@ -385,11 +364,11 @@ class StaticEntity(object):
         return [self._index(category, value) for value in values]
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
-        '''returns first level item appears by order of keys from minlevel to maxlevel'''
+        '''returns first level item appears by order of keys from minlevel to maxlevel
+        inclusive'''
         n = len(self.dimensions)
         if max_level is not None:
             n = min([max_level + 1, n])
-
         for lev in range(min_level, n):
             if item in self._labs(lev):
                 if return_index:
@@ -405,40 +384,58 @@ class StaticEntity(object):
 
 class StaticEntitySet(StaticEntity):
 
-    def __init__(self, arr=None,
+    def __init__(self,
+                 entity=None,
+                 data=None,
+                 arr=None,
                  labels=None,
+                 uid=None,
                  level1=0,
                  level2=1,
-                 entity=None,
-                 uid=None,
-                 keep_state_dict=False,
                  **props):
-        E = StaticEntity(arr=arr,
-                         labels=labels,
-                         entity=entity)
-        if E.dimsize > 2:
-            E = E.restrict_to_levels((level1, level2))
-        super().__init__(entity=E)
+
+        if entity is None:
+            if data is not None:
+                data = data[:, [level1, level2]]
+                arr = None
+            elif arr is not None:
+                data = _turn_tensor_to_data(arr)
+                data = data[:, [level1, level2]]
+                arr = None
+            elif labels is not None:
+                keys = np.array(list(labels.keys()))
+                temp = OrderedDict()
+                for lev in [level1, level2]:
+                    if lev < len(keys):
+                        temp[keys[lev]] = labels[keys[lev]]
+                labels = temp
+            super().__init__(data=data,
+                             arr=arr,
+                             labels=labels,
+                             uid=uid,
+                             **props)
+        else:
+            super().__init__(entity=entity, **props)
+            if self.dimsize > 2:
+                self = self.restrict_to_levels((level2, level2))
+
+        # E = StaticEntity(entity=entity,
+        #                  data=data,
+        #                  arr=arr,
+        #                  labels=labels,
+        #                  uid=uid,
+        #                  **props)
+        # if E.dimsize > 2:
+        #     E = E.restrict_to_levels((level1, level2))
+        # super().__init__(entity=E)
 
     def __repr__(self):
         """Returns a string resembling the constructor for entityset without any
         children"""
         return f'StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})'
 
-    def incidence_matrix(self, sparse=True, index=False):
-
-        mat = self._arr.transpose()
-        if sparse:
-            mat = csr_matrix(mat).astype(bool) * 1
-        elif issparse(mat):
-            mat = mat.todense().astype(bool) * 1
-
-        if index:
-            rdict = dict(zip(range(self.dimensions[1]), self._labs(1)))
-            cdict = dict(zip(range(self.dimensions[0]), self._labs(0)))
-            return mat, rdict, cdict
-        else:
-            return mat
+    def incidence_matrix(self, sparse=True, weighted=False, index=False):
+        return self.incidence_matrix(level1=0, level2=1, weighted=weighted, index=index)
 
     def restrict_to(self, indices, uid=None):
         return self.restrict_to_indices(indices, level=0, uid=uid)
@@ -452,7 +449,23 @@ class StaticEntitySet(StaticEntity):
         pass
 
 
-def _turn_dict_to_staticentity(dict_object):
+def _turn_tensor_to_data(arr, remove_duplicates=True):
+    """
+    Return list of nonzero coordinates in arr.
+
+    Parameters
+    ----------
+    arr : numpy.ndarray
+        Tensor corresponding to incidence of co-occurring labels.
+    """
+    dfa = np.array(arr.nonzero()).transpose()
+    if remove_duplicates:
+        return remove_row_duplicates(dfa)
+    else:
+        return dfa
+
+
+def _turn_dict_to_staticentity(dict_object, remove_duplicates=True):
     '''Create a static entity directly from a dictionary of hashables'''
     d = OrderedDict(dict_object)
     level2ctr = HNXCount()
@@ -465,19 +478,20 @@ def _turn_dict_to_staticentity(dict_object):
         for v in val:
             level2[v]
             coords.append((level1[k], level2[v]))
-    level1 = OrderedDict(level1)
-    level2 = OrderedDict(level2)
-    ar = np.array(coords, dtype=int).transpose()
-    arr = csr_matrix((np.ones(len(ar[0]), dtype=int), (ar[0], ar[1])))
-    labels = {'level1': list(level1), 'level2': list(level2)}
-    return arr, labels
+    if remove_duplicates:
+        coords = remove_row_duplicates(coords)
+    level1 = list(level1)
+    level2 = list(level2)
+    data = np.array(coords, dtype=int)
+    labels = OrderedDict({'0': level1, '1': level2})
+    return data, labels
 
 
-def _turn_iterable_to_staticentity(iter_object):
+def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
     for s in iter_object:
         if not isinstance(s, Iterable):
             raise HyperNetXError('StaticEntity constructor requires an iterable of iterables.')
     else:
         labels = [f'e{str(x)}' for x in range(len(iter_object))]
         dict_object = dict(zip(labels, iter_object))
-    return _turn_dict_to_staticentity(dict_object)
+    return _turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)

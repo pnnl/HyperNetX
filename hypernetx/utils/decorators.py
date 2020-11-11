@@ -45,14 +45,15 @@ def not_implemented_for(*object_types):
     @decorator
     def _not_implemented_for(not_implemented_for_func, *args, **kwargs):
         this_object = args[0]
-        terms = {'static': this_object.isstatic
+        terms = {'static': this_object.isstatic,
+                'dynamic': not this_object.isstatic
                  }
         match = True
         try:
             for t in object_types:
                 match = match and terms[t]
         except KeyError:
-            raise KeyError('use one of [static]')
+            raise KeyError('use one of [static, dynamic]')
         if match:
             msg = f'{not_implemented_for_func.__name__} is not implemented for {" ".join(object_types)} {this_object.__class__.__name__}'
             raise hnx.HyperNetXNotImplementedError(msg)

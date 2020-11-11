@@ -106,7 +106,7 @@ class Hypergraph():
 
         if static == True or (isinstance(setsystem, StaticEntitySet) or isinstance(setsystem, StaticEntity)):
             self._static = True
-            if not setsystem:
+            if setsystem is None:
                 self._edges = StaticEntitySet()
                 self._nodes = StaticEntitySet()
             else:
@@ -114,7 +114,7 @@ class Hypergraph():
                 self._nodes = self._edges.restrict_to_levels([1])
         else:
             self._static = False
-            if not setsystem:
+            if setsystem is None:
                 setsystem = EntitySet('_', elements=[])
             elif isinstance(setsystem, Entity):
                 setsystem = EntitySet('_', setsystem.incidence_dict)
