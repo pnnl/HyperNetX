@@ -63,4 +63,4 @@ class HarryPotter(object):
 
         self.entity = StaticEntity(arr=imat, labels=slabels)
         self.entityset = StaticEntitySet(arr=imat, labels=slabels, level1=0, level2=1)
-        self.sparseentity = StaticEntitySet(arr=self.csr, labels=slabels, level1=0, level2=1)
+        # self.sparseentity = StaticEntitySet(arr=self.csr, labels=slabels, level1=0, level2=1)

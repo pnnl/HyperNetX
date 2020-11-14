@@ -110,8 +110,9 @@ class Hypergraph():
                 self._edges = StaticEntitySet()
                 self._nodes = StaticEntitySet()
             else:
-                self._edges = StaticEntitySet(entity=setsystem)
-                self._nodes = self._edges.restrict_to_levels([1])
+                E = StaticEntitySet(entity=setsystem)
+                self._edges = E
+                self._nodes = E.restrict_to_levels([1])
         else:
             self._static = False
             if setsystem is None:
@@ -714,14 +715,12 @@ class Hypergraph():
             self.remove_edge(edge)
         return self
 
-    def incidence_matrix(self, sparse=True, index=False):
+    def incidence_matrix(self, index=False):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
         Parameters
         ----------
-        sparse : boolean, optional, default: True
-
         index : boolean, optional, default False
             If True return will include a dictionary of node uid : row number
             and edge uid : column number
@@ -737,7 +736,7 @@ class Hypergraph():
             Dictionary identifying columns with edges
 
         """
-        return self.edges.incidence_matrix(sparse, index)
+        return self.edges.incidence_matrix(index=index)
 
     @staticmethod
     def incidence_to_adjacency(M, s=1, weighted=True):
@@ -769,9 +768,9 @@ class Hypergraph():
 
         if not weighted:
             A = (A > 0) * 1
-        return A
+        return csr_matrix(A)
 
-    def adjacency_matrix(self, index=False, s=1, sparse=True, weighted=True):
+    def adjacency_matrix(self, index=False, s=1, weighted=True):
         """XX
         The sparse weighted :term:`s-adjacency matrix`
 
@@ -799,13 +798,13 @@ class Hypergraph():
         least s edges and 0 otherwise.
 
         """
-        M = self.incidence_matrix(sparse=sparse, index=index)
+        M = self.incidence_matrix(index=index)
         if index:
             return Hypergraph.incidence_to_adjacency(M[0], s=s, weighted=weighted), M[1]
         else:
             return Hypergraph.incidence_to_adjacency(M, s=s, weighted=weighted)
 
-    def edge_adjacency_matrix(self, index=False, s=1, sparse=True, weighted=True):
+    def edge_adjacency_matrix(self, index=False, s=1, weighted=True):
         """
         The weighted :term:`s-adjacency matrix` for the dual hypergraph.
 
@@ -833,13 +832,13 @@ class Hypergraph():
         If index=True, returns a dictionary column_index:edge_uid
 
         """
-        M = self.incidence_matrix(index=index, sparse=sparse)
+        M = self.incidence_matrix(index=index)
         if index:
             return Hypergraph.incidence_to_adjacency(M[0].transpose(), s=s, weighted=weighted), M[2]
         else:
             return Hypergraph.incidence_to_adjacency(M.transpose(), s=s, weighted=weighted)
 
-    def auxiliary_matrix(self, s=1, sparse=True, index=False):
+    def auxiliary_matrix(self, s=1, index=False):
         """
         The unweighted :term:`s-auxiliary matrix` for hypergraph
 
@@ -863,7 +862,7 @@ class Hypergraph():
         """
         E = self.edges
         if self.isstatic:
-            if sparse or issparse(mat):
+            if issparse(mat):
                 mat = csr_matrix(E.arr)
             else:
                 mat = E.arr
@@ -875,7 +874,7 @@ class Hypergraph():
         else:
             edges = [e for e in self.edges if len(self.edges[e]) >= s]
             H = self.restrict_to_edges(edges)
-        return H.edge_adjacency_matrix(s=s, index=index, sparse=sparse, weighted=False)
+        return H.edge_adjacency_matrix(s=s, index=index, weighted=False)
 
     def bipartite(self, node_label=0, edge_label=1):
         """XX
@@ -1635,7 +1634,7 @@ class Hypergraph():
 
         """
 
-        mat, rdx, cdx = self.incidence_matrix(index=True)
+        mat, rdx, cdx = self.edges.incidence_matrix(index=True)
         index = [rdx[i] for i in rdx]
         columns = [cdx[j] for j in cdx]
         df = pd.DataFrame(mat.todense(),
@@ -1648,8 +1647,8 @@ class Hypergraph():
         return df
 
     @ classmethod
-    def from_bipartite(cls, B, set_names=[0, 1], name=None):
-        """XX
+    def from_bipartite(cls, B, set_names=[0, 1], name=None, static=False):
+        """
         Static method creates a Hypergraph from a bipartite graph.
 
         Parameters
@@ -1690,7 +1689,7 @@ class Hypergraph():
                 if elements:
                     entities.append(Entity(n, elements, properties=d))
         name = name or '_'
-        return Hypergraph(EntitySet(name, entities), name=name)
+        return Hypergraph(EntitySet(name, entities), name=name, static=static)
 
     @ classmethod
     def from_numpy_array(cls, M, node_names=None,

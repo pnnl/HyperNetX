@@ -5,6 +5,7 @@ import numpy as np
 import networkx as nx
 from hypernetx import *
 from hypernetx.exception import HyperNetXError
+from hypernetx.classes.entity import Entity, EntitySet
 from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates
 from scipy.sparse import coo_matrix, csr_matrix, issparse
 import itertools as it
@@ -63,9 +64,12 @@ class StaticEntity(object):
                 self._keys = np.array(list(self._labels.keys()))
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
                 self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
-                self._arr = entity.arr
+                self._arr = None
             else:
-                if isinstance(entity, dict):  # returns only 2 levels
+                if isinstance(entity, Entity) or isinstance(entity, EntitySet):
+                    d = entity.incidence_dict
+                    self._data, self._labels = _turn_dict_to_staticentity(d)  # For now duplicate entries will be removed.
+                elif isinstance(entity, dict):  # returns only 2 levels
                     self._data, self._labels = _turn_dict_to_staticentity(entity)  # For now duplicate entries will be removed.
                 else:  # returns only 2 levels
                     self._data, self._labels = _turn_iterable_to_staticentity(entity)
@@ -154,7 +158,7 @@ class StaticEntity(object):
             try:
                 imat = np.zeros(self.dimensions, dtype=int)
                 for d in self._data:
-                    imat[d] = 1
+                    imat[tuple(d)] = 1
                 self._arr = imat
             except Exception as ex:
                 print(ex)
@@ -255,7 +259,9 @@ class StaticEntity(object):
     def __call__(self, label_index=0):
         return iter(self._labs(label_index))
 
-    # def __set
+    def labs(self, kdx):
+        """Retrieve labels by index in keys"""
+        return self._labs(kdx)
 
     def is_empty(self, level=0):
         """Boolean indicating if entity.elements is empty"""
@@ -272,10 +278,10 @@ class StaticEntity(object):
         if level1 > self.dimsize - 1 or level1 < 0:
             print(f'This StaticEntity has no level {level1}.')
             return
-        if not level2:
+        if level2 is None:
             level2 = level1 + 1
 
-        if level2 > self.dimsize - 1 or level1 < 0:
+        if level2 > self.dimsize - 1 or level2 < 0:
             print(f'This StaticEntity has no level {level2}.')
             elts = OrderedDict([[k, np.array([])] for k in self._labs(level1)])
         elif level1 == level2:
@@ -312,7 +318,7 @@ class StaticEntity(object):
         result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
 
         if index:  # give index of rows then columns
-            return result, self._labs(level2), self._labs(level1)
+            return result, {k: v for k, v in enumerate(self._labs(level2))}, {k: v for k, v in enumerate(self._labs(level1))}
         else:
             return result
 
@@ -415,19 +421,9 @@ class StaticEntitySet(StaticEntity):
                              uid=uid,
                              **props)
         else:
-            super().__init__(entity=entity, **props)
-            if self.dimsize > 2:
-                self = self.restrict_to_levels((level2, level2))
-
-        # E = StaticEntity(entity=entity,
-        #                  data=data,
-        #                  arr=arr,
-        #                  labels=labels,
-        #                  uid=uid,
-        #                  **props)
-        # if E.dimsize > 2:
-        #     E = E.restrict_to_levels((level1, level2))
-        # super().__init__(entity=E)
+            E = StaticEntity(entity=entity)
+            E = E.restrict_to_levels([level1, level2])
+            super().__init__(entity=E, uid=uid, **props)
 
     def __repr__(self):
         """Returns a string resembling the constructor for entityset without any
@@ -435,7 +431,16 @@ class StaticEntitySet(StaticEntity):
         return f'StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})'
 
     def incidence_matrix(self, sparse=True, weighted=False, index=False):
-        return self.incidence_matrix(level1=0, level2=1, weighted=weighted, index=index)
+        if not weighted:
+            temp = remove_row_duplicates(self.data[:, [1, 0]])
+        else:
+            temp = self.data[:, [1, 0]]
+        result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
+
+        if index:  # give index of rows then columns
+            return result, {k: v for k, v in enumerate(self._labs(1))}, {k: v for k, v in enumerate(self._labs(0))}
+        else:
+            return result
 
     def restrict_to(self, indices, uid=None):
         return self.restrict_to_indices(indices, level=0, uid=uid)
