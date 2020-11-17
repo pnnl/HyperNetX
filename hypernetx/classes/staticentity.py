@@ -1,4 +1,5 @@
-from collections import OrderedDict, defaultdict, Iterable
+from collections import OrderedDict, defaultdict
+from collections.abc import Iterable
 import warnings
 from copy import copy
 import numpy as np
@@ -9,8 +10,7 @@ from hypernetx.classes.entity import Entity, EntitySet
 from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates
 from scipy.sparse import coo_matrix, csr_matrix, issparse
 import itertools as it
-
-import pandas as pd  # do we need this import?
+import pandas as pd
 
 __all__ = [
     'StaticEntity',
@@ -65,6 +65,19 @@ class StaticEntity(object):
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
                 self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
                 self._arr = None
+            elif type(entity) == pd.DataFrame:
+                self.properties.update(props)
+                data, labels, counts = _turn_dataframe_into_entity(entity, return_counts=True)
+                self.properties.update({'data_counts': counts})
+                self.__dict__.update(self.properties)
+                self._data = data
+                self._labels = labels
+                self._arr = None
+                self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
+                self._dimsize = len(self._dimensions)
+                self._keys = np.array(list(self._labels.keys()))
+                self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
+                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
             else:
                 if isinstance(entity, Entity) or isinstance(entity, EntitySet):
                     d = entity.incidence_dict
@@ -212,6 +225,10 @@ class StaticEntity(object):
     def incidence_dict(self):
         return self.elements_by_level(0, 1, translate=True)
 
+    @property
+    def dataframe(self):
+        return self.turn_entity_data_into_dataframe(self.data)
+
     def __len__(self):
         """Returns the number of elements in staticentity"""
         return self._dimensions[0]
@@ -243,7 +260,18 @@ class StaticEntity(object):
         return len(self)
 
     def label_index(self, labels):
-        '''labels that you want the header index for'''
+        """Summary
+
+        Parameters
+        ----------
+        labels : TYPE
+            Description
+
+        Returns
+        -------
+        TYPE
+            Description
+        """
         return [self._keyindex(label) for label in labels]
 
     # def __getitem__(self, level=0):
@@ -333,16 +361,33 @@ class StaticEntity(object):
         newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
         return self.__class__(data=temp, labels=newlabels, uid=uid)
 
-    def restrict_to_indices(self, indices, level=0, uid=None):
-        indices = list(indices)
+    def turn_entity_data_into_dataframe(self, data_subset):  # add option to include multiplicities stored in properties
+        """Summary
 
+        Parameters
+        ----------
+        data : numpy.ndarray
+            Subset of the rows in the original data held in the StaticEntity
+
+        Returns
+        -------
+        pandas.Dataframe
+            Columns and cell entries are derived from data and self.labels
+        """
+        df = pd.DataFrame(data=data_subset, columns=self.keys)
+        width = data_subset.shape[1]
+        for ddx, row in enumerate(data_subset):
+            nrow = [self.labs(idx)[row[idx]] for idx in range(width)]
+            df.iloc[ddx] = nrow
+        return df
+
+    def restrict_to_indices(self, indices, level=0, uid=None):  # restricting to indices requires renumbering the labels.
+
+        indices = list(indices)
         idx = np.concatenate([np.argwhere(self.data[:, level] == k) for k in indices], axis=0).transpose()[0]
         temp = self.data[idx]
-
-        newlabels = self.labels.copy()
-        newlabels[self.keys[level]] = self._labs(level)[indices]
-
-        return self.__class__(data=temp, labels=newlabels, uid=uid, **self.properties)
+        df = self.turn_entity_data_into_dataframe(temp)
+        return self.__class__(entity=df, uid=uid)
 
     def translate(self, level, index):
         # returns category of dimension and value of index in that dimension
@@ -408,7 +453,7 @@ class StaticEntitySet(StaticEntity):
                 data = _turn_tensor_to_data(arr)
                 data = data[:, [level1, level2]]
                 arr = None
-            elif labels is not None:
+            if labels is not None:
                 keys = np.array(list(labels.keys()))
                 temp = OrderedDict()
                 for lev in [level1, level2]:
@@ -500,3 +545,58 @@ def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
         labels = [f'e{str(x)}' for x in range(len(iter_object))]
         dict_object = dict(zip(labels, iter_object))
     return _turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)
+
+
+def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
+    """
+    Convenience method to take labeled data back into entity labeling with integers
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        May not contain nans
+    return_counts : bool, optional, default : False
+        Used for keeping weights
+    include_unknowns : bool, optional, default : False
+        If Unknown <column name> was used to fill in nans
+    
+    Returns
+    -------
+    outputdata : numpy.ndarray
+    counts : numpy.array of ints
+    slabels : numpy.array of strings
+
+    """
+    columns = df.columns
+    ctr = [HNXCount() for c in range(len(columns))]
+    ldict = OrderedDict()
+    rdict = OrderedDict()
+    for idx, c in enumerate(columns):
+        ldict[c] = defaultdict(ctr[idx])
+        rdict[c] = OrderedDict()
+        if include_unknowns:
+            ldict[c][f'Unknown {c}']
+            rdict[c][0] = f'Unknown {c}'
+        for k in df[c]:
+            ldict[c][k]
+            rdict[c][ldict[c][k]] = k
+        ldict[c] = dict(ldict[c])
+    dims = tuple([len(ldict[c]) for c in columns])
+
+    m = len(df)
+    n = len(columns)
+    data = np.zeros((m, n), dtype=int)
+    for rid in range(m):
+        for cid in range(n):
+            c = columns[cid]
+            data[rid, cid] = ldict[c][df.iloc[rid][c]]
+
+    output_data = remove_row_duplicates(data, return_counts=return_counts)
+
+    slabels = OrderedDict()
+    for cdx, c in enumerate(list(ldict.keys())):
+        slabels.update({c: np.array(list(ldict[c].keys()))})
+    if return_counts:
+        return output_data[0], slabels, output_data[1]
+    else:
+        return output_data, slabels

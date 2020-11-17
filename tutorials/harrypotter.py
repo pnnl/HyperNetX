@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import itertools as it
 
-__all__=['HarryPotter']
+__all__ = ['HarryPotter']
 
 class HarryPotter(object):
 
