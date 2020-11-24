@@ -17,7 +17,8 @@ def test_staticentity_constructor(seven_by_six):
 
 
 def test_staticentity_attributes(harry_potter):
-    arr = harry_potter.imat
+
+    arr = harry_potter.arr
     labels = harry_potter.labels
     ent = StaticEntity(arr=arr, labels=labels)
     assert ent.dimensions == (7, 11, 10, 36, 26)
@@ -66,14 +67,15 @@ def test_restrict_to_indices(seven_by_six):
 
 
 def test_staticentityset(harry_potter):
-    arr = harry_potter.imat
+    arr = harry_potter.arr
     labels = harry_potter.labels
     ent = StaticEntitySet(arr=arr, labels=labels, level1=1, level2=3)
-    ent.keys[0] == 'Blood status'
+    assert ent.keys[0] == 'Blood status'
     ent.indices('Blood status', ['Pure-blood', 'Half-blood']) == [2, 1]
-    ent.restrict_to([2, 1]).keys[1] == 'Hair colour'
+    assert ent.restrict_to([2, 1]).keys[1] == 'Hair colour'
 
 
 def test_staticentity_construct_from_entity(seven_by_six):
     sbs = seven_by_six
-    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    ent = StaticEntity(entity=sbs.edgedict)
+    assert len(ent.elements) == 6

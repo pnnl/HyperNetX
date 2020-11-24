@@ -7,11 +7,11 @@ import pandas as pd
 import numpy as np
 import itertools as it
 
-__all__=['HarryPotter']
+__all__ = ['HarryPotter']
 
 class HarryPotter(object):
 
-    def __init__(self):
+    def __init__(self, cols=None):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
         fname = 'Characters.csv'
@@ -19,15 +19,16 @@ class HarryPotter(object):
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
-        harry = harrydata[['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour','Name']].fillna("Unknown")
+        columns = cols or ['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']
+        harry = harrydata[columns].fillna("Unknown")
         for c in harry.columns:
             harry[c] = harry[c].apply(lambda x: x.replace('\xa0', ' ')).apply(lambda x: x.replace('Unknown', f'Unknown {c}'))
         self.dataframe = harry
 
-        ctr = [HNXCount() for c in range(6)]
+        ctr = [HNXCount() for c in range(len(columns))]
         ldict = OrderedDict()
         rdict = OrderedDict()
-        for idx, c in enumerate(harry.columns):
+        for idx, c in enumerate(columns):
             ldict[c] = defaultdict(ctr[idx])
             rdict[c] = OrderedDict()
             ldict[c][f'Unknown {c}']
@@ -50,10 +51,10 @@ class HarryPotter(object):
                 c = harry.columns[cid]
                 data[rid, cid] = ldict[c][harry.iloc[rid][c]]
 
-        self.data = data
+        self.data = remove_row_duplicates(data)
         # Create incidence Tensor and labels
         imat = np.zeros(dims, dtype=int)
-        for d in data:
+        for d in self.data:
             imat[tuple(d)] += 1
         self.arr = imat
 

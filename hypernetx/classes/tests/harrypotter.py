@@ -7,25 +7,29 @@ import pandas as pd
 import numpy as np
 import itertools as it
 
+__all__ = ['HarryPotter']
+
 class HarryPotter(object):
 
-    def __init__(self):
+    def __init__(self, cols=None):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
+        # fname = 'Characters.csv'
         fname = os.path.join(os.path.dirname(__file__), 'harrypotter_characters.csv')
         harrydata = pd.read_csv(fname, encoding='unicode_escape').set_index('Id')
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
-        harry = harrydata[['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']].fillna("Unknown")
+        columns = cols or ['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']
+        harry = harrydata[columns].fillna("Unknown")
         for c in harry.columns:
             harry[c] = harry[c].apply(lambda x: x.replace('\xa0', ' ')).apply(lambda x: x.replace('Unknown', f'Unknown {c}'))
         self.dataframe = harry
 
-        ctr = [HNXCount() for c in range(5)]
+        ctr = [HNXCount() for c in range(len(columns))]
         ldict = OrderedDict()
         rdict = OrderedDict()
-        for idx, c in enumerate(harry.columns):
+        for idx, c in enumerate(columns):
             ldict[c] = defaultdict(ctr[idx])
             rdict[c] = OrderedDict()
             ldict[c][f'Unknown {c}']
@@ -48,19 +52,18 @@ class HarryPotter(object):
                 c = harry.columns[cid]
                 data[rid, cid] = ldict[c][harry.iloc[rid][c]]
 
-        self.data = data
+        self.data = remove_row_duplicates(data)
         # Create incidence Tensor and labels
         imat = np.zeros(dims, dtype=int)
-        for d in data:
+        for d in self.data:
             imat[tuple(d)] += 1
-        self.imat = imat
-        self.csr = csr_matrix(np.sum(imat, axis=(2, 3, 4)))
+        self.arr = imat
 
         slabels = OrderedDict()
         for cdx, c in enumerate(list(ldict.keys())):
             slabels.update({c: np.array(list(ldict[c].keys()))})
         self.labels = slabels
 
-        self.entity = StaticEntity(arr=imat, labels=slabels)
-        self.entityset = StaticEntitySet(arr=imat, labels=slabels, level1=0, level2=1)
-        self.sparseentity = StaticEntitySet(arr=self.csr, labels=slabels, level1=0, level2=1)
+#         self.entity = StaticEntity(self.arr, self.labels)
+#         self.entityset = StaticEntitySet(self.arr, self.labels, 0, 1)
+#         self.sparseentity = StaticEntitySet(self.arr, self.labels, 0, 1)

@@ -1,9 +1,11 @@
 from collections import OrderedDict
 from collections.abc import Callable
+import numpy as np
 
 __all__ = [
     'HNXCount',
-    'DefaultOrderedDict'
+    'DefaultOrderedDict',
+    'remove_row_duplicates'
 ]
 
 
@@ -60,3 +62,27 @@ class DefaultOrderedDict(OrderedDict):
     def __repr__(self):
         return 'OrderedDefaultDict(%s, %s)' % (self.default_factory,
                                                OrderedDict.__repr__(self))
+
+
+def remove_row_duplicates(arr, return_counts=False):
+    """
+    Wrapper for numpy's unique method.
+    Removes duplicate rows in a 2d array and returns counts
+    if requested
+
+    Parameters
+    ----------
+    arr : array_like, 
+        2-dimensional array_like object
+    return_counts : bool, optional.  #### Still to do
+        Returns vector of counts ordered by output order
+
+    Returns
+    -------
+    : numpy.ndarray
+    : numpy.array
+
+
+
+    """
+    return np.unique(arr, axis=0, return_counts=return_counts)
