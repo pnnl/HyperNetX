@@ -296,7 +296,8 @@ class StaticEntity(object):
         return len(self._labs(level)) == 0
 
     def uidset_by_level(self, level=0):
-        return tuple(self._labs(level))  # should be update this to tuples?
+        '''The labels found in columns = level'''
+        return frozenset(self._labs(level))  # should be update this to tuples?
 
     def elements_by_level(self, level1=0, level2=None, translate=False):
         '''
@@ -493,10 +494,27 @@ class StaticEntitySet(StaticEntity):
     def convert_to_entityset(self, uid):
         return(hnx.EntitySet(uid, self.incidence_dict))
 
-    def collapse_identical_elements(self, use_reps=False,
-                                    return_counts=False,
-                                    return_equivalence_classes=False):
-        pass
+    def collapse_identical_elements(self, uid=None, use_reps=True,
+                                    return_counts=True,
+                                    return_equivalence_classes=False,):
+        shared_children = defaultdict(set)
+
+        edict = self.elements
+        for k, v in edict.items():
+            shared_children[frozenset(v)].add(k)
+        if return_equivalence_classes:
+            eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
+        if use_reps:
+            if return_counts:
+                # labels equivalence class as (rep,count) tuple
+                new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
+            else:
+                # labels equivalence class as rep;
+                new_entity_dict = {next(iter(v)): set(k) for k, v in shared_children.items()}
+        else:
+            new_entity_dict = {v: k for k, v in shared_children.items()}
+        if return_equivalence_classes:
+            return StaticEntitySet(uid=uid, entity=new_entity_dict), eq_classes
 
 
 def _turn_tensor_to_data(arr, remove_duplicates=True):
@@ -550,7 +568,7 @@ def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
 def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
     """
     Convenience method to take labeled data back into entity labeling with integers
-    
+
     Parameters
     ----------
     df : pandas.DataFrame
@@ -559,7 +577,7 @@ def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False)
         Used for keeping weights
     include_unknowns : bool, optional, default : False
         If Unknown <column name> was used to fill in nans
-    
+
     Returns
     -------
     outputdata : numpy.ndarray
