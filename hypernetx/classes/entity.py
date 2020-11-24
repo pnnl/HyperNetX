@@ -8,10 +8,11 @@ import numpy as np
 import networkx as nx
 from hypernetx import HyperNetXError
 
-__all__=[
+__all__ = [
     'Entity',
     'EntitySet'
 ]
+
 
 class Entity(object):
     """
@@ -895,7 +896,7 @@ class EntitySet(Entity):
         Returns
         -------
          : EntitySet
-        eq_classes : dict 
+        shared_children : dict 
             if return_equivalence_classes = True
 
         Notes
@@ -920,20 +921,22 @@ class EntitySet(Entity):
 
         """
 
-        eq_classes = defaultdict(set)
+        shared_children = defaultdict(set)
         for e in self.__call__():
-            eq_classes[frozenset(e.uidset)].add(e.uid)
+            shared_children[frozenset(e.uidset)].add(e.uid)
+        if return_equivalence_classes:
+            eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
         if use_reps:
             if return_counts:
                 # labels equivalence class as (rep,count) tuple
-                new_entity_dict = {(next(iter(v)), len(v)): set(k) for k, v in eq_classes.items()}
+                new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
             else:
                 # labels equivalence class as rep;
-                new_entity_dict = {next(iter(v)): set(k) for k, v in eq_classes.items()}
+                new_entity_dict = {next(iter(v)): set(k) for k, v in shared_children.items()}
         else:
-            new_entity_dict = {frozenset(v): set(k) for k, v in eq_classes.items()}
+            new_entity_dict = {frozenset(v): set(k) for k, v in shared_children.items()}
         if return_equivalence_classes:
-            return EntitySet(newuid, new_entity_dict), dict(eq_classes)  ######### something is wrong with this!!!!!!!!
+            return EntitySet(newuid, new_entity_dict), dict(eq_classes)  # something is wrong with this!!!!!!!!
         return EntitySet(newuid, new_entity_dict)
 
     def incidence_matrix(self, sparse=True, index=False):
@@ -979,7 +982,7 @@ class EntitySet(Entity):
         ndict = dict(zip(self.children, range(nchildren)))
         edict = dict(zip(self.uidset, range(nuidset)))
 
-        if len(ndict) is not 0:
+        if len(ndict) != 0:
 
             if index:
                 rowdict = {v: k for k, v in ndict.items()}
