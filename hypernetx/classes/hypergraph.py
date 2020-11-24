@@ -928,7 +928,7 @@ class Hypergraph():
                 E[n].append(k)
         return Hypergraph(E, name=name)
 
-    @ not_implemented_for('static')
+    # @ not_implemented_for('static')
     def collapse_edges(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """XX
         Constructs a new hypergraph gotten by identifying edges containing the same nodes
@@ -979,7 +979,7 @@ class Hypergraph():
         else:
             return Hypergraph(temp, name)
 
-    @ not_implemented_for('static')
+    # @ not_implemented_for('static')
     def collapse_nodes(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """XX
         Constructs a new hypergraph gotten by identifying nodes contained by the same edges
@@ -1027,7 +1027,7 @@ class Hypergraph():
         else:
             return Hypergraph(temp, name).dual()
 
-    @ not_implemented_for('static')
+    # @ not_implemented_for('static')
     def collapse_nodes_and_edges(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """XX
         Returns a new hypergraph by collapsing nodes and edges.
