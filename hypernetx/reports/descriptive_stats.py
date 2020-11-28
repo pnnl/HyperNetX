@@ -82,7 +82,8 @@ def edge_size_dist(H, aggregated=False):
         List of edge sizes or dictionary of edge size distribution.
 
     '''
-    distr = [len(H.edges[e]) for e in H.edges]
+    # distr = [len(H.edges[e]) for e in H.edges]
+    distr = np.sum(H.incidence_matrix(), axis=0)
     # distr = [len(e.uidset) for e in H.edges.elements.values()]
     if aggregated:
         return frequency_distribution(distr)
