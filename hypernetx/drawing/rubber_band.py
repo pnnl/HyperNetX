@@ -2,7 +2,7 @@
 # All rights reserved.
 
 from hypernetx import Hypergraph
-from .util import get_frozenset_label, get_set_layering
+from .util import get_frozenset_label, get_set_layering, inflate_kwargs, transpose_inflated_kwargs
 
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection, LineCollection, CircleCollection
@@ -50,40 +50,6 @@ def layout_node_link(H, layout=nx.spring_layout, **kwargs):
     '''
     return layout(H.bipartite(), **kwargs)
 
-def inflate(items, v):
-    if type(v) in {str, tuple, int, float}:
-        return [v]*len(items)
-    elif type(v) not in {list, np.ndarray} and hasattr(v, '__getitem__'):
-        return [v[i] for i in items]
-    return v
-
-def inflate_kwargs(items, kwargs):
-    '''
-    Helper function to expand keyword arguments.
-
-    Parameters
-    ----------
-    n: int
-        length of resulting list if argument is expanded
-    kwargs: dict
-        keyword arguments to be expanded
-
-    Returns
-    -------
-    dict
-        dictionary with same keys as kwargs and whose values are lists of length n
-    '''
-
-    return {
-        k: inflate(items, v)
-        for k, v in kwargs.items()
-    }
-
-def transpose_inflated_kwargs(inflated):
-    return [
-        dict(zip(inflated, v))
-        for v in zip(*inflated.values())
-    ]
 
 def get_default_radius(H, pos):
     '''
