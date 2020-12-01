@@ -10,6 +10,8 @@ import networkx as nx
 def inflate(items, v):
     if type(v) in {str, tuple, int, float}:
         return [v]*len(items)
+    elif callable(v):
+        return [v(i) for i in items]
     elif type(v) not in {list, np.ndarray} and hasattr(v, '__getitem__'):
         return [v[i] for i in items]
     return v
