@@ -15,7 +15,7 @@ class HarryPotter(object):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
         fname = 'Characters.csv'
-        harrydata = pd.read_csv(fname, encoding='unicode_escape').set_index('Id')
+        harrydata = pd.read_csv(fname, encoding='unicode_escape')
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid

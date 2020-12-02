@@ -68,7 +68,7 @@ class StaticEntity(object):
             elif type(entity) == pd.DataFrame:
                 self.properties.update(props)
                 data, labels, counts = _turn_dataframe_into_entity(entity, return_counts=True)
-                self.properties.update({'data_counts': counts})
+                self.properties.update({'counts': counts})
                 self.__dict__.update(self.properties)
                 self._data = data
                 self._labels = labels
@@ -96,11 +96,12 @@ class StaticEntity(object):
                 self._arr = None
         elif data is not None:
             self._arr = None
-            self.properties.update(props)
-            self.__dict__.update(props)
-            self._data = remove_row_duplicates(data)
+            self._data, counts = remove_row_duplicates(data, return_counts=True)
+            self.properties['counts'] = counts
             self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
             self._dimsize = len(self._dimensions)
+            self.properties.update(props)
+            self.__dict__.update(props)
             if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
                 self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
@@ -180,6 +181,23 @@ class StaticEntity(object):
         return self._arr
 
     @property
+    def array_with_counts(self):
+        if self._arr is not None:
+            if type(self._arr) == int and self._arr == 0:
+                print('arr cannot be computed')
+            else:
+                try:
+                    imat = np.zeros(self.dimensions, dtype=int)
+                    for d in self._data:
+                        imat[tuple(d)] += 1
+                    self._arr = imat
+                except Exception as ex:
+                    print(ex)
+                    print('arr cannot be computed')
+                    self._arr = 0
+        return self._arr
+
+    @property
     def data(self):
         return self._data
 
@@ -198,6 +216,10 @@ class StaticEntity(object):
     @ property
     def keys(self):
         return self._keys
+
+    @property
+    def keyindex(self):
+        return self._keyindex
 
     @ property
     def uid(self):
