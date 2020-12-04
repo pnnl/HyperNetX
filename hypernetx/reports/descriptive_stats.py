@@ -12,6 +12,7 @@ Also computes general hypergraph information: number of nodes, edges, cells, asp
 import numpy as np
 import networkx as nx
 from hypernetx import *
+from hypernetx.utils.decorators import not_implemented_for
 
 __all__ = [
     'centrality_stats',
@@ -83,7 +84,7 @@ def edge_size_dist(H, aggregated=False):
 
     '''
     # distr = [len(H.edges[e]) for e in H.edges]
-    distr = np.sum(H.incidence_matrix(), axis=0)
+    distr = np.array(np.sum(H.incidence_matrix(), axis=0))[0]
     # distr = [len(e.uidset) for e in H.edges.elements.values()]
     if aggregated:
         return frequency_distribution(distr)
@@ -115,6 +116,7 @@ def degree_dist(H, aggregated=False):
         return distr
 
 
+@not_implemented_for('static')
 def comp_dist(H, aggregated=False):
     '''
     Computes component sizes, number of nodes.
@@ -144,6 +146,7 @@ def comp_dist(H, aggregated=False):
         return distr
 
 
+@not_implemented_for('static')
 def s_comp_dist(H, s=1, aggregated=False, edges=True):
     '''
     Computes s-component sizes, counting nodes or edges. 
@@ -182,6 +185,7 @@ def s_comp_dist(H, s=1, aggregated=False, edges=True):
         return distr
 
 
+@not_implemented_for('static')
 def toplex_dist(H, aggregated=False):
     '''
 
@@ -209,6 +213,7 @@ def toplex_dist(H, aggregated=False):
         return distr
 
 
+@not_implemented_for('static')
 def s_node_diameter_dist(H):
     '''
     Parameters
@@ -229,6 +234,7 @@ def s_node_diameter_dist(H):
     return diams
 
 
+@not_implemented_for('static')
 def s_edge_diameter_dist(H):
     '''    
     Parameters
