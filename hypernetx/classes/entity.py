@@ -649,9 +649,9 @@ class Entity(object):
                 # if item belongs to an element or a descendent of an element
                 # then the existing descendent becomes an element
                 # and properties are updated.
-                self._elements[item.uid] = checkelts[item.uid]
                 checkelts[item.uid]._memberships[self.uid] = self
                 checkelts[item.uid].__dict__.update(item.properties)
+                self._elements[item.uid] = checkelts[item.uid]
             else:
                 # if item's uid doesn't appear in complete_registry
                 # then it is added as something new

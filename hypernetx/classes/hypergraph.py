@@ -95,9 +95,24 @@ class Hypergraph():
     name : hashable, optional, default: None
         If None then a placeholder '_'  will be inserted as name
 
+    static : boolean, optional, default: False
+        If True the hypergraph will be immutable, edges and nodes may not be changed.
+
+    use_nwhy : boolean, optional, default = False
+        If True hypergraph will be static and computations will be done using 
+        C++ backend offered by NWHypergraph. This requires installation of the 
+        NWHypergraph C++ library. Please see documentation for more information.
+
+
     """
 
-    def __init__(self, setsystem=None, name=None, static=False, ):
+    def __init__(self, setsystem=None, name=None, static=False, use_nwhy=False):
+        if use_nwhy:
+            static = True
+            try:
+                import nwhy
+            except:
+                print('NWHypergraph is not available. Will continue with static only.')
 
         if not name:
             self.name = '_'
@@ -270,7 +285,7 @@ class Hypergraph():
         else:
             return Hypergraph(self.edges.incidence_dict, name=name)
 
-    def s_degree(self, node, s=1, edges=None):
+    def s_degree(self, node, s=1, edges=None):  # redefine s_degree for s-line graph
         """XX
         Return the degree of a node in H when restricted to edges
 
@@ -297,7 +312,7 @@ class Hypergraph():
         """
         return self.degree(node, s, edges)
 
-    def degree(self, node, s=1, edges=None):
+    def degree(self, node, s=1, edges=None):  # do we want an s parameter with degree of the node?
         """
         Return the degree of a node in H
 
@@ -427,7 +442,7 @@ class Hypergraph():
         else:
             return None
 
-    def neighbors(self, node, s=2, return_edges=False):
+    def neighbors(self, node, s=2, return_edges=False):  # Rewrite this so that s means nodes are 2 adjacent
         """XX
         The nodes in hypergraph which share an :term:`s-edge` with node.
 
@@ -654,16 +669,15 @@ class Hypergraph():
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             if node in self._nodes:
-                if not isinstance(node, Entity):
-                    node = self._nodes[node]
-                self._edges[edge].add(node)
+                self._edges[edge].add(self.nodes[node])
             else:
                 if not isinstance(node, Entity):
                     node = Entity(node)
                 else:
                     node = Entity(node.uid, **node.properties)
-                self._nodes.add(node)
                 self._edges[edge].add(node)
+                self._nodes.add(node)
+
         return self
 
     @not_implemented_for('static')
