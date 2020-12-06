@@ -669,7 +669,7 @@ class Hypergraph():
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             if node in self._nodes:
-                self._edges[edge].add(self.nodes[node])
+                self._edges[edge].add(self._nodes[node])
             else:
                 if not isinstance(node, Entity):
                     node = Entity(node)
