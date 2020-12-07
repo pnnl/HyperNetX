@@ -160,8 +160,6 @@ class Hypergraph():
             temprows, tempcols = self.edges.data.T
             tempdata = np.ones(len(temprows), dtype=int)
             self.statedict = {'sparse_format': (temprows, tempcols, tempdata)}
-        if use_nwhy:
-            self.statedict['nwhy_g'] = nwhy.NWHypergraph(*self.statedict['sparse_format'])
 
     @property
     def edges(self):
@@ -1248,7 +1246,6 @@ class Hypergraph():
                 tops.update({e: thdict[e]})
         return Hypergraph(tops, name)
 
-    @ not_implemented_for('static')
     def is_connected(self, s=1, edges=False):
         """
         Determines if hypergraph is :term:`s-connected <s-connected, s-node-connected>`.
@@ -1297,7 +1294,7 @@ class Hypergraph():
         singletons : list
             A list of edge uids.
         """
-        M, r_, cdict = self.incidence_matrix(index=True)
+        M, rdict, cdict = self.incidence_matrix(index=True)
         idx = np.argmax(M.shape)  # which axis has fewest members? if 1 then columns
         cols = M.sum(idx)  # we add down the row index if there are fewer columns
         edges_to_discard = list()
@@ -1321,7 +1318,7 @@ class Hypergraph():
                         edges_to_discard.append(cdict[r])
         return edges_to_discard
 
-    @ not_implemented_for('static')
+    # @ not_implemented_for('static')
     def remove_singletons(self, name=None):
         """XX
         Constructs clone of hypergraph with singleton edges removed.
@@ -1336,10 +1333,11 @@ class Hypergraph():
 
         """
         singles = self.singletons()
-        edgeset = [e for e in self._edges if e not in singles]
-        return Hypergraph({e: self.edges[e] for e in edgeset}, name)
+        # edgeset = [e for e in self._edges if e not in singles]
+        E = self.edges.restrict_to(singles)
+        # return Hypergraph({e: self.edges[e] for e in edgeset}, name)
+        return Hypergraph(E, name=name)
 
-    @ not_implemented_for('static')
     def s_connected_components(self, s=1, edges=True):
         """XX
         Returns a generator for the :term:`s-edge-connected components <s-edge-connected component>`
@@ -1626,7 +1624,7 @@ class Hypergraph():
             return np.inf
 
     def edge_distance(self, source, target, s=1):
-        """XX
+        """XX TODO: still need to return path and translate into user defined nodes and edges
         Returns the shortest s-walk distance between two edges in the hypergraph.
 
         Parameters
@@ -1642,7 +1640,7 @@ class Hypergraph():
 
         Returns
         -------
-        s-walk distance : the shortest s-walk edge distance
+        s- walk distance : the shortest s-walk edge distance
             A shortest s-walk is computed as a sequence of edges,
             the s-walk distance is the number of edges in the sequence
             minus 1. If no such path exists returns np.inf.
@@ -1676,7 +1674,7 @@ class Hypergraph():
             warnings.warn(f'No {s}-path between {source} and {target}')
             return np.inf
 
-    def dataframe(self, sort_rows=True, sort_columns=True):
+    def dataframe(self, sort_rows=False, sort_columns=False):
         """
         Returns a pandas dataframe for hypergraph indexed by the nodes and
         with column headers given by the edge names.
