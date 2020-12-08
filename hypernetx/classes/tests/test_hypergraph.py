@@ -19,9 +19,7 @@ def test_hypergraph_from_dict(seven_by_six):
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
     assert H.degree('A') == 3
-    assert H.degree('A', edges=['P', 'I', 'R']) == 2
     assert H.size('R') == 2
-    assert H.size('R', nodes=['E', 'K']) == 1
 
 
 def test_hypergraph_from_entity_set(seven_by_six):
@@ -29,19 +27,6 @@ def test_hypergraph_from_entity_set(seven_by_six):
     entityset = EntitySet('_', sbs.edgedict)
     H = Hypergraph(entityset)
     assert H.edges.incidence_dict == sbs.edgedict
-
-
-def test_hypergraph_equality(seven_by_six):
-    sbs = seven_by_six
-    H = Hypergraph(sbs.edgedict)
-    G = Hypergraph(sbs.edgedict, 'G')
-    assert not H == G
-    sbs2 = seven_by_six
-    K = Hypergraph(sbs2.edgedict)
-    assert H == K
-    del sbs2.edgedict['P']
-    J = Hypergraph(sbs2.edgedict)
-    assert not H == J
 
 
 def test_add_node_to_edge(seven_by_six):

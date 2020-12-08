@@ -16,7 +16,7 @@ def not_implemented_for(*object_types):
     Parameters
     ----------
     object_types : container of strings
-        Entries must be one of ['static']
+        Entries must be one of ['static','dynamic']
 
     Returns
     -------
@@ -46,7 +46,7 @@ def not_implemented_for(*object_types):
     def _not_implemented_for(not_implemented_for_func, *args, **kwargs):
         this_object = args[0]
         terms = {'static': this_object.isstatic,
-                'dynamic': not this_object.isstatic
+                 'dynamic': not this_object.isstatic
                  }
         match = True
         try:

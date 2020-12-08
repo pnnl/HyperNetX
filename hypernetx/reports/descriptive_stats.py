@@ -116,7 +116,6 @@ def degree_dist(H, aggregated=False):
         return distr
 
 
-@not_implemented_for('static')
 def comp_dist(H, aggregated=False):
     '''
     Computes component sizes, number of nodes.
@@ -146,7 +145,6 @@ def comp_dist(H, aggregated=False):
         return distr
 
 
-@not_implemented_for('static')
 def s_comp_dist(H, s=1, aggregated=False, edges=True):
     '''
     Computes s-component sizes, counting nodes or edges. 
@@ -213,7 +211,6 @@ def toplex_dist(H, aggregated=False):
         return distr
 
 
-@not_implemented_for('static')
 def s_node_diameter_dist(H):
     '''
     Parameters
@@ -234,7 +231,6 @@ def s_node_diameter_dist(H):
     return diams
 
 
-@not_implemented_for('static')
 def s_edge_diameter_dist(H):
     '''    
     Parameters
@@ -386,46 +382,49 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
+    if 'dist_stats' in H.state_dict:
+        return H['dist_stats']
+    else:
+        basic = dict()
 
-    basic = dict()
+        # Number of rows (nodes), columns (edges), and aspect ratio
+        basic['nrows'] = len(H.nodes)
+        basic['ncols'] = len(H.edges)
+        basic['aspect ratio'] = basic['nrows'] / basic['ncols']
 
-    # Number of rows (nodes), columns (edges), and aspect ratio
-    basic['nrows'] = len(H.nodes)
-    basic['ncols'] = len(H.edges)
-    basic['aspect ratio'] = basic['nrows'] / basic['ncols']
+        # Number of cells and density
+        M = H.incidence_matrix(index=False)
+        basic['ncells'] = M.nnz
+        basic['density'] = basic['ncells'] / (basic['nrows'] * basic['ncols'])
 
-    # Number of cells and density
-    M = H.incidence_matrix(index=False)
-    basic['ncells'] = M.nnz
-    basic['density'] = basic['ncells'] / (basic['nrows'] * basic['ncols'])
+        # Node degree distribution
+        basic['node degree list'] = sorted(degree_dist(H), reverse=True)
+        basic['node degree dist'] = centrality_stats(basic['node degree list'])
+        basic['node degree hist'] = frequency_distribution(basic['node degree list'])
+        basic['max node degree'] = max(basic['node degree list'])
 
-    # Node degree distribution
-    basic['node degree list'] = sorted(degree_dist(H), reverse=True)
-    basic['node degree dist'] = centrality_stats(basic['node degree list'])
-    basic['node degree hist'] = frequency_distribution(basic['node degree list'])
-    basic['max node degree'] = max(basic['node degree list'])
+        # Edge size distribution
+        basic['edge size list'] = sorted(edge_size_dist(H), reverse=True)
+        basic['edge size dist'] = centrality_stats(basic['edge size list'])
+        basic['edge size hist'] = frequency_distribution(basic['edge size list'])
+        basic['max edge size'] = max(basic['edge size list'])
 
-    # Edge size distribution
-    basic['edge size list'] = sorted(edge_size_dist(H), reverse=True)
-    basic['edge size dist'] = centrality_stats(basic['edge size list'])
-    basic['edge size hist'] = frequency_distribution(basic['edge size list'])
-    basic['max edge size'] = max(basic['edge size list'])
+        # Component size distribution (nodes)
+        basic['comp nodes list'] = sorted(s_comp_dist(H, edges=False), reverse=True)
+        basic['comp nodes hist'] = frequency_distribution(basic['comp nodes list'])
+        basic['comp nodes dist'] = centrality_stats(basic['comp nodes list'])
 
-    # Component size distribution (nodes)
-    basic['comp nodes list'] = sorted(s_comp_dist(H, edges=False), reverse=True)
-    basic['comp nodes hist'] = frequency_distribution(basic['comp nodes list'])
-    basic['comp nodes dist'] = centrality_stats(basic['comp nodes list'])
+        # Component size distribution (edges)
+        basic['comp edges list'] = sorted(s_comp_dist(H, edges=True), reverse=True)
+        basic['comp edges hist'] = frequency_distribution(basic['comp edges list'])
+        basic['comp edges dist'] = centrality_stats(basic['comp edges list'])
 
-    # Component size distribution (edges)
-    basic['comp edges list'] = sorted(s_comp_dist(H, edges=True), reverse=True)
-    basic['comp edges hist'] = frequency_distribution(basic['comp edges list'])
-    basic['comp edges dist'] = centrality_stats(basic['comp edges list'])
+        # Number of components
+        basic['num comps'] = len(basic['comp nodes list'])
 
-    # Number of components
-    basic['num comps'] = len(basic['comp nodes list'])
+        # # Diameters
+        # basic['s edge diam list'] = s_edge_diameter_dist(H)
+        # basic['s node diam list'] = s_node_diameter_dist(H)
 
-    # # Diameters
-    # basic['s edge diam list'] = s_edge_diameter_dist(H)
-    # basic['s node diam list'] = s_node_diameter_dist(H)
-
-    return basic
+        H.state_dict['dist_stats'] = basic
+        return basic

@@ -872,31 +872,22 @@ class EntitySet(Entity):
         """
         return EntitySet(newuid, elements=self.elements.values(), **self.properties)
 
-    def collapse_identical_elements(self, newuid, use_reps=False, return_counts=False, return_equivalence_classes=False):
+    def collapse_identical_elements(self, newuid, return_equivalence_classes=False):
         """
-        Returns a deduped copy of the entityset, using equivalence classes as element keys.
+        Returns a deduped copy of the entityset, using representatives of equivalence classes as element keys.
         Two elements of an EntitySet are collapsed if they share the same children.
-        A new EntitySet with entities only on levels 1 and 2 will be returned. 
 
         Parameters
         ----------
         newuid : hashable
 
-        use_reps : boolean, optional, default: False
-            Choose a single element from the collapsed elements as a representative
-
-        return_counts : boolean, optional, default: False
-            If use_reps is True the new elements are keyed by the size of the equivalence class
-            otherwise they are keyed by a frozen set of equivalence classes
-
         return_equivalence_classes : boolean, default=False
-            If True, return a dictionary keyed by frozen set of children in collapsed elements with values 
-            equal to the set of collapsed elements
+            If True, return a dictionary of equivalence classes keyed by new edge names
 
         Returns
         -------
          : EntitySet
-        shared_children : dict 
+        eq_classes : dict 
             if return_equivalence_classes = True
 
         Notes
@@ -914,9 +905,7 @@ class EntitySet(Entity):
             >>> E = EntitySet('E',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])])
             >>> E.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> E.collapse_identical_elements('_').incidence_dict
-            {frozenset({'E1', 'E2'}): {'a', 'b'}}
-            >>> E.collapse_identical_elements('_',use_reps=True).incidence_dict
+            >>> E.collapse_identical_elements('_',).incidence_dict
             {'E2': {'a', 'b'}}
 
         """
@@ -924,20 +913,12 @@ class EntitySet(Entity):
         shared_children = defaultdict(set)
         for e in self.__call__():
             shared_children[frozenset(e.uidset)].add(e.uid)
+        new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
         if return_equivalence_classes:
             eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
-        if use_reps:
-            if return_counts:
-                # labels equivalence class as (rep,count) tuple
-                new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
-            else:
-                # labels equivalence class as rep;
-                new_entity_dict = {next(iter(v)): set(k) for k, v in shared_children.items()}
+            return EntitySet(newuid, new_entity_dict), dict(eq_classes)
         else:
-            new_entity_dict = {frozenset(v): set(k) for k, v in shared_children.items()}
-        if return_equivalence_classes:
-            return EntitySet(newuid, new_entity_dict), dict(eq_classes)  # something is wrong with this!!!!!!!!
-        return EntitySet(newuid, new_entity_dict)
+            return EntitySet(newuid, new_entity_dict)
 
     def incidence_matrix(self, sparse=True, index=False):
         """

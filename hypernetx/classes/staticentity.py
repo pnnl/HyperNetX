@@ -277,37 +277,12 @@ class StaticEntity(object):
     def __iter__(self):
         return iter(self.elements)
 
+    def __call__(self, label_index=0):
+        return iter(self._labs(label_index))
+
     def size(self):
         '''The number of elements in E, the size of dimension 0 in the E.arr'''
         return len(self)
-
-    def label_index(self, labels):
-        """Summary
-
-        Parameters
-        ----------
-        labels : TYPE
-            Description
-
-        Returns
-        -------
-        TYPE
-            Description
-        """
-        return [self._keyindex(label) for label in labels]
-
-    # def __getitem__(self, level=0):
-    #     '''item is the index of a header...this might require an option for translate'''
-    #     if item in self.elements:
-    #         return self.elements[item]
-    #     else:
-    #         return ''
-
-    # def __iter__(self, level=0):
-    #     return iter(self.elements)
-
-    def __call__(self, label_index=0):
-        return iter(self._labs(label_index))
 
     def labs(self, kdx):
         """Retrieve labels by index in keys"""
@@ -516,27 +491,16 @@ class StaticEntitySet(StaticEntity):
     def convert_to_entityset(self, uid):
         return(hnx.EntitySet(uid, self.incidence_dict))
 
-    def collapse_identical_elements(self, uid=None, use_reps=True,
-                                    return_counts=True,
-                                    return_equivalence_classes=False,):
-        shared_children = defaultdict(set)
-
-        edict = self.elements
-        for k, v in edict.items():
-            shared_children[frozenset(v)].add(k)
+    def collapse_identical_elements(self, uid=None, return_equivalence_classes=False,):
+        shared_children = DefaultOrderedDict(list)
+        for k, v in self.elements.items():
+            shared_children[frozenset(v)].append(k)
+        new_entity_dict = OrderedDict([(next(iter(v)), sorted(set(k), key=lambda x: list(self.labs(1)).index(x))) for k, v in shared_children.items()])
         if return_equivalence_classes:
             eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
-        if use_reps:
-            if return_counts:
-                # labels equivalence class as (rep,count) tuple
-                new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
-            else:
-                # labels equivalence class as rep;
-                new_entity_dict = {next(iter(v)): set(k) for k, v in shared_children.items()}
-        else:
-            new_entity_dict = {v: k for k, v in shared_children.items()}
-        if return_equivalence_classes:
             return StaticEntitySet(uid=uid, entity=new_entity_dict), eq_classes
+        else:
+            return StaticEntitySet(uid=uid, entity=new_entity_dict)
 
 
 def _turn_tensor_to_data(arr, remove_duplicates=True):
