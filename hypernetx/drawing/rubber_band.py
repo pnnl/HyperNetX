@@ -2,7 +2,7 @@
 # All rights reserved.
 
 from hypernetx import Hypergraph
-from .util import get_frozenset_label, get_set_layering
+from .util import get_frozenset_label, get_set_layering, inflate_kwargs, transpose_inflated_kwargs
 
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection, LineCollection, CircleCollection
@@ -131,7 +131,9 @@ def draw_hyper_edge_labels(H, polys, labels={}, ax=None, **kwargs):
     '''
     ax = ax or plt.gca()
 
-    params = inflate_kwargs(len(H.edges), **kwargs)
+    params = transpose_inflated_kwargs(
+        inflate_kwargs(H.edges, kwargs)
+    )
 
     for edge, path, params in zip(H.edges, polys.get_paths(), params):
         s = labels.get(edge, edge)
@@ -239,7 +241,7 @@ def draw_hyper_edges(H, pos, ax=None, node_radius={}, dr=None, **kwargs):
     '''
     points = layout_hyper_edges(H, pos, node_radius=node_radius, dr=dr)
 
-    polys = PolyCollection(points, **kwargs)
+    polys = PolyCollection(points, **inflate_kwargs(H.edges, kwargs))
 
     (ax or plt.gca()).add_collection(polys)
 
@@ -286,7 +288,7 @@ def draw_hyper_nodes(H, pos, node_radius={}, r0=None, ax=None, **kwargs):
 
     kwargs.setdefault('facecolors', 'black')
 
-    circles = PolyCollection(points, **kwargs)
+    circles = PolyCollection(points, **inflate_kwargs(H, kwargs))
 
     ax.add_collection(circles)
 
@@ -325,7 +327,11 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
     '''
     ax = ax or plt.gca()
 
-    for v in H.nodes:
+    params = transpose_inflated_kwargs(
+        inflate_kwargs(H.nodes, kwargs)
+    )
+
+    for v, v_kwargs in zip(H.nodes, params):
         xy = np.array([node_radius.get(v, 0), 0]) + pos[v]
         ax.annotate(labels.get(v, v), xy,
                     **{k: (d[v] if hasattr(d, '__getitem__') and type(d) not in {str, tuple} else d)
