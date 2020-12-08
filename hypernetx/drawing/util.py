@@ -3,7 +3,46 @@
 
 from itertools import combinations
 
+import numpy as np
+
 import networkx as nx
+
+def inflate(items, v):
+    if type(v) in {str, tuple, int, float}:
+        return [v]*len(items)
+    elif callable(v):
+        return [v(i) for i in items]
+    elif type(v) not in {list, np.ndarray} and hasattr(v, '__getitem__'):
+        return [v[i] for i in items]
+    return v
+
+def inflate_kwargs(items, kwargs):
+    '''
+    Helper function to expand keyword arguments.
+
+    Parameters
+    ----------
+    n: int
+        length of resulting list if argument is expanded
+    kwargs: dict
+        keyword arguments to be expanded
+
+    Returns
+    -------
+    dict
+        dictionary with same keys as kwargs and whose values are lists of length n
+    '''
+
+    return {
+        k: inflate(items, v)
+        for k, v in kwargs.items()
+    }
+
+def transpose_inflated_kwargs(inflated):
+    return [
+        dict(zip(inflated, v))
+        for v in zip(*inflated.values())
+    ]
 
 def get_frozenset_label(S, count=False, override={}):
     '''
