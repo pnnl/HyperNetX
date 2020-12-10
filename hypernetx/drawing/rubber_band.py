@@ -51,31 +51,6 @@ def layout_node_link(H, layout=nx.spring_layout, **kwargs):
     '''
     return layout(H.bipartite(), **kwargs)
 
-
-def inflate_kwargs(n, **kwargs):
-    '''
-    Helper function to expand keyword arguments.
-
-    Parameters
-    ----------
-    n: int
-        length of resulting list if argument is expanded
-    kwargs: dict
-        keyword arguments to be expanded
-
-    Returns
-    -------
-    dict
-        dictionary with same keys as kwargs and whose values are lists of length n
-    '''
-
-    inflated = {k: v if type(v) not in {str, tuple, int, float} else [v] * n
-                for k, v in kwargs.items()}
-
-    return [dict(zip(inflated, v))
-            for v in zip(*inflated.values())]
-
-
 def get_default_radius(H, pos):
     '''
     Calculate a reasonable default node radius
