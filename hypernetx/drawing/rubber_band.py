@@ -173,21 +173,23 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None):
     radii = {v: {v: i for i, v in enumerate(sorted(e, key=levels.get))}
              for v, e in H.dual().edges.elements.items()}
 
-    def get_padded_hull(edge):
+    def get_padded_hull(uid, edge):
         # make sure the edge contains at least one node
         if len(edge):
-            points = np.vstack([cp * (node_radius.get(v, r0) + dr * (2 + radii[v][edge.uid])) + pos[v]
+            points = np.vstack([cp * (node_radius.get(v, r0) + dr * (2 + radii[v][uid])) + pos[v]
                                 for v in edge])
-        # if not, draw an empty edge centered aroudn the location of the edge node (in the bipartite graph)
+        # if not, draw an empty edge centered around the location of the edge node (in the bipartite graph)
         else:
-            points = 4 * r0 * cp + pos[edge.uid]
+            points = 4 * r0 * cp + pos[uid]
 
         hull = ConvexHull(points)
 
         return hull.points[hull.vertices]
 
-    return [get_padded_hull(e)
-            for e in H.edges()]
+    return [
+        get_padded_hull(uid, list(H.edges[uid]))
+        for uid in H.edges
+    ]
 
 
 def draw_hyper_edges(H, pos, ax=None, node_radius={}, dr=None, **kwargs):
