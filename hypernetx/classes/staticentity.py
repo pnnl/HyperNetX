@@ -65,7 +65,7 @@ class StaticEntity(object):
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
                 self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
                 self._arr = None
-            elif type(entity) == pd.DataFrame:
+            elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
                 data, labels, counts = _turn_dataframe_into_entity(entity, return_counts=True)
                 self.properties.update({'counts': counts})
@@ -553,7 +553,8 @@ def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
 
 def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
     """
-    Convenience method to take labeled data back into entity labeling with integers
+    Convenience method to reformat dataframe object into data,labels format
+    for construction of a static entity 
 
     Parameters
     ----------

@@ -113,6 +113,7 @@ class Hypergraph():
                 import nwhy
                 self.nwhy = True
             except:
+                self.nwhy = False
                 print('NWHypergraph is not available. Will continue with static=True.')
 
         if not name:
@@ -405,7 +406,7 @@ class Hypergraph():
             g = self._get_linegraph(s=s, edges=False)
             ndx = int(np.argwhere(self.nodes.labs(0) == node))
             if self.nwhy:
-                return g.s_degree(ndx)
+                return g.degree(ndx)
             else:
                 return g.degree(ndx)
             # imat = self.incidence_matrix()
