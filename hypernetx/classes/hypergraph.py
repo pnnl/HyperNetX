@@ -170,7 +170,7 @@ class Hypergraph():
             self.nwhy = False
 
     @not_implemented_for('dynamic')
-    def _get_linegraph(self, s, edges=True):
+    def get_linegraph(self, s, edges=True):
         d = self.state_dict
         key = 'sedgelg' if edges else 'snodelg'
         if s in d[key]:
@@ -403,7 +403,7 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            g = self._get_linegraph(s=s, edges=False)
+            g = self.get_linegraph(s=s, edges=False)
             ndx = int(np.argwhere(self.nodes.labs(0) == node))
             if self.nwhy:
                 return g.degree(ndx)
@@ -537,7 +537,7 @@ class Hypergraph():
             return
 
         if self.isstatic:
-            g = self._get_linegraph(s=s, edges=False)
+            g = self.get_linegraph(s=s, edges=False)
             ndx = int(np.argwhere(H.nodes.labs(0) == node))
             if self.nwhy == True:
                 nbrs = g.s_neighbor(ndx)
@@ -1639,7 +1639,7 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            g = self._get_linegraph(s=s, edges=False)
+            g = self.get_linegraph(s=s, edges=False)
             src = int(np.argwhere(self.nodes.labs(0) == source))
             tgt = int(np.argwhere(self.nodes.labs(0) == target))
             try:
@@ -1703,7 +1703,7 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            g = self._get_linegraph(s=s, edges=True)
+            g = self.get_linegraph(s=s, edges=True)
             src = int(np.argwhere(self.edges.labs(0) == source))
             tgt = int(np.argwhere(self.edges.labs(0) == target))
             try:
