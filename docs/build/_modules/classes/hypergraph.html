@@ -167,6 +167,7 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">networkx.algorithms</span> <span class="k">import</span> <span class="n">bipartite</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="k">import</span> <span class="n">HyperNetXError</span>
 
 
@@ -238,13 +239,17 @@
 <span class="sd">        If not an :ref:`EntitySet&lt;entityset&gt;` then setsystem must be acceptable as elements to an :ref:`EntitySet&lt;entityset&gt;`.</span>
 
 <span class="sd">    name : hashable, optional, default: None</span>
+<span class="sd">        If None then a placeholder &#39;_&#39;  will be inserted as name</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">setsystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">setsystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="c1">##### Check setsystem type and change into an EntitySet before constructing hypergraph:</span>
 
@@ -524,30 +529,48 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Hypergraph.neighbors"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.neighbors"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">return_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The nodes in hypergraph which share an :term:`s-edge` with node.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        node : hashable</span>
-<span class="sd">            uid for a node in hypergraph</span>
+<span class="sd">        node : hashable or Entity</span>
+<span class="sd">            uid for a node in hypergraph or the node Entity</span>
 
-<span class="sd">        s : int, optional, default : 2</span>
-<span class="sd">            The desired size of the edge connecting node to its neighbors</span>
+<span class="sd">        s : int, list, optional, default : 2</span>
+<span class="sd">            If int, then desired minimum size of the edge connecting node to its neighbors</span>
+<span class="sd">            If list, then [min s, max s] the desired minimum and maximum size of the edges</span>
+<span class="sd">            connecting node to its neighbors. If min s = max s, then only edges of size</span>
+<span class="sd">            s will be considered.</span>
+
+<span class="sd">        return_edges : bool, default : False</span>
+<span class="sd">            If True then a list of edges will be returned as well as neighbors.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        neighbors : iterator</span>
+<span class="sd">        neighbors : set</span>
+
+<span class="sd">        edges : set</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span> <span class="c1">## this allows node to be an Entity instead of a string</span>
         <span class="n">memberships</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">&gt;=</span><span class="n">s</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">&gt;=</span><span class="n">s</span> <span class="p">}</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">!=</span><span class="mi">2</span> <span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;s must be a positive integer or a list of two integers: [min s, max s]&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">&gt;=</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">&lt;=</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
         <span class="n">neigh</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
             <span class="n">neigh</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span>
-        <span class="n">neigh</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">neigh</span><span class="p">)</span></div>
+        <span class="n">neigh</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> 
+
+        <span class="k">if</span> <span class="n">return_edges</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">neigh</span><span class="p">,</span> <span class="n">edges</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">neigh</span></div>
 
 
 <div class="viewcode-block" id="Hypergraph.remove_node"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.remove_node">[docs]</a>    <span class="k">def</span> <span class="nf">remove_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node</span><span class="p">):</span>
@@ -614,6 +637,7 @@
 
 <div class="viewcode-block" id="Hypergraph.add_edge"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">edge</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">        Adds a single edge to hypergraph.</span>
 
 <span class="sd">        Parameters</span>
@@ -632,7 +656,7 @@
 <span class="sd">        Each node (element of edge) must be instantiated as a node,</span>
 <span class="sd">        making sure its uid isn&#39;t already present in the self.</span>
 <span class="sd">        If an added edge contains nodes that cannot be added to hypergraph</span>
-<span class="sd">        then an error will be thrown.</span>
+<span class="sd">        then an error will be raised.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">:</span>
@@ -673,6 +697,7 @@
 
 <div class="viewcode-block" id="Hypergraph.add_node_to_edge"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.add_node_to_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_node_to_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">node</span><span class="p">,</span><span class="n">edge</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">        Adds node to an edge in hypergraph edges</span>
 
 <span class="sd">        Parameters</span>
@@ -922,7 +947,7 @@
         <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
         <span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">E</span><span class="p">,</span><span class="n">bipartite</span><span class="o">=</span><span class="n">edge_label</span><span class="p">)</span>
         <span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="n">bipartite</span><span class="o">=</span><span class="n">node_label</span><span class="p">)</span>
-        <span class="n">B</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">E</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">V</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">E</span><span class="p">[</span><span class="n">e</span><span class="p">]])</span>
+        <span class="n">B</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">E</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]])</span>
         <span class="k">return</span> <span class="n">B</span></div>
 
 <div class="viewcode-block" id="Hypergraph.dual"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.dual">[docs]</a>    <span class="k">def</span> <span class="nf">dual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -944,7 +969,7 @@
                 <span class="n">E</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">E</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Hypergraph.collapse_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.collapse_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a new hypergraph gotten by identifying edges containing the same nodes</span>
 
@@ -958,6 +983,9 @@
 
 <span class="sd">        return_counts: boolean, optional, default: True</span>
 <span class="sd">            if use_reps is True the new edges are keyed by a tuple of the rep and the count</span>
+
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
+<span class="sd">            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -985,20 +1013,29 @@
 <span class="sd">            {(&#39;E1&#39;, 2): {&#39;a&#39;, &#39;b&#39;}}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">collapse_identical_elements</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span></div>
+        <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">collapse_identical_elements</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">,</span><span class="n">return_equivalence_classes</span><span class="o">=</span><span class="n">return_equivalence_classes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">name</span><span class="p">),</span><span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Hypergraph.collapse_nodes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.collapse_nodes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a new hypergraph gotten by identifying nodes contained by the same edges</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        name: str, optional, default: None</span>
+
 <span class="sd">        use_reps : boolean, optional, default: False</span>
 <span class="sd">            Choose a single element from the collapsed nodes as uid for the new node, otherwise uses</span>
 <span class="sd">            a frozen set of the uids of nodes in the equivalence class</span>
 
 <span class="sd">        return_counts: if use_reps is True the new nodes have uids given by a tuple of the rep</span>
 <span class="sd">            and the count</span>
+
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
+<span class="sd">            Returns a dictionary of node equivalence classes keyed by frozen sets of edges</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1023,15 +1060,21 @@
 <span class="sd">            {&#39;E1&#39;: {(&#39;a&#39;, 2)}, &#39;E2&#39;: {(&#39;a&#39;, 2)}}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">collapse_identical_elements</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">,</span><span class="n">return_equivalence_classes</span><span class="o">=</span><span class="n">return_equivalence_classes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">dual</span><span class="p">(),</span><span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span></div>
 
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">collapse_identical_elements</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">),</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Hypergraph.collapse_nodes_and_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes_and_edges">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_nodes_and_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.collapse_nodes_and_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes_and_edges">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_nodes_and_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a new hypergraph by collapsing nodes and edges.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+
+<span class="sd">        name: str, optional, default: None</span>
 
 <span class="sd">        use_reps: boolean, optional, default: False</span>
 <span class="sd">            Choose a single element from the collapsed elements as a representative</span>
@@ -1039,6 +1082,9 @@
 <span class="sd">        return_counts: boolean, optional, default: True</span>
 <span class="sd">            if use_reps is True the new elements are keyed by a tuple of the rep</span>
 <span class="sd">            and the count</span>
+
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
+<span class="sd">            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1064,9 +1110,13 @@
 <span class="sd">            {(&#39;E1&#39;, 2): {(&#39;a&#39;, 2)}}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collapse_nodes</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">temp</span><span class="o">.</span><span class="n">collapse_edges</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="n">temp</span><span class="p">,</span> <span class="n">neq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collapse_nodes</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">,</span><span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ntemp</span><span class="p">,</span> <span class="n">eeq</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">collapse_edges</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">,</span><span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ntemp</span><span class="p">,</span> <span class="n">neq</span><span class="p">,</span> <span class="n">eeq</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temp</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collapse_nodes</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">temp</span><span class="o">.</span><span class="n">collapse_edges</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="n">use_reps</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.restrict_to_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_edges">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">edgeset</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1077,14 +1127,20 @@
 <span class="sd">        edgeset: iterable of hashables or Entities</span>
 <span class="sd">            A subset of elements of the hypergraph edges</span>
 
-<span class="sd">        name: str, optional, default: None</span>
+<span class="sd">        name: str, optional, default: &#39;_&#39;</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        new hypergraph : Hypergraph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="n">e</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edgeset</span><span class="p">},</span><span class="n">name</span><span class="p">)</span></div>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> 
+        <span class="n">inneredges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edgeset</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">Entity</span><span class="p">):</span>
+                <span class="n">inneredges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inneredges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="n">e</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">inneredges</span><span class="p">},</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Hypergraph.restrict_to_nodes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nodeset</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1104,16 +1160,18 @@
 <span class="sd">        new hypergraph : Hypergraph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">memberships</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">innernodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodeset</span><span class="p">:</span>
+            <span class="n">innernodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
                 <span class="n">memberships</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span><span class="p">))</span>
         <span class="n">newedgeset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">memberships</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-                <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nodeset</span><span class="p">)</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">innernodes</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">temp</span><span class="p">:</span>
                     <span class="n">newedgeset</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">temp</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">newedgeset</span><span class="p">,</span><span class="n">name</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">newedgeset</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.toplexes"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.toplexes">[docs]</a>    <span class="k">def</span> <span class="nf">toplexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">collapse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1590,6 +1648,32 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;No </span><span class="si">{s}</span><span class="s1">-path between </span><span class="si">{source}</span><span class="s1"> and </span><span class="si">{target}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
+<div class="viewcode-block" id="Hypergraph.dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_rows</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">sort_columns</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a pandas dataframe for hypergraph indexed by the nodes and </span>
+<span class="sd">        with column headers given by the edge names.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sort_rows : bool, optional, default=True</span>
+<span class="sd">            sort rows based on hashable node names</span>
+<span class="sd">        sort_columns : bool, optional, default=True</span>
+<span class="sd">            sort columns based on hashable edge names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mat</span><span class="p">,</span><span class="n">rdx</span><span class="p">,</span><span class="n">cdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">rdx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rdx</span><span class="p">]</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">cdx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cdx</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span>
+                          <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+                          <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sort_rows</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sort_columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">columns</span><span class="p">)]</span>    
+        <span class="k">return</span> <span class="n">df</span></div>
+
 <div class="viewcode-block" id="Hypergraph.from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">set_names</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1715,8 +1799,8 @@
 
 
 <div class="viewcode-block" id="Hypergraph.from_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">transforms</span><span class="o">=</span><span class="p">[],</span><span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1728,15 +1812,17 @@
 <span class="sd">        df : Pandas.Dataframe</span>
 <span class="sd">            a real valued dataframe with a single index</span>
 
-<span class="sd">        fillna : float, default = 0</span>
-<span class="sd">            a real value to place in empty cell, all-zero columns will not generate</span>
-<span class="sd">            an edge</span>
-
 <span class="sd">        columns : (optional) list, default = None</span>
 <span class="sd">            restricts df to the columns with headers in this list.</span>
 
 <span class="sd">        rows : (optional) list, default = None</span>
 <span class="sd">            restricts df to the rows indexed by the elements in this list.</span>
+
+<span class="sd">        name : (optional) string, default = None</span>
+
+<span class="sd">        fillna : float, default = 0</span>
+<span class="sd">            a real value to place in empty cell, all-zero columns will not generate</span>
+<span class="sd">            an edge. </span>
 
 <span class="sd">        transpose : (optional) bool, default = False</span>
 <span class="sd">            option to transpose the dataframe, in this case df.Index will label the edges</span>
@@ -1752,8 +1838,12 @@
 <span class="sd">            prior to generating the hypergraph.</span>
 
 <span class="sd">        key : (optional) function, default = None</span>
-<span class="sd">            boolean function to be evaluated on each cell of the array,</span>
-<span class="sd">            key is applied after transforms</span>
+<span class="sd">            boolean function to be applied to dataframe. Must be defined on numpy</span>
+<span class="sd">            arrays. </span>
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        from_numpy_array())</span>
 
 
 <span class="sd">        Returns</span>
@@ -1767,25 +1857,45 @@
 <span class="sd">        edges are discarded.</span>
 <span class="sd">        Restrictions and data processing will occur in this order:</span>
 
-<span class="sd">            1. column and row restrictions.</span>
-<span class="sd">            2. transpose the dataframe</span>
-<span class="sd">            3. transforms in the order listed</span>
-<span class="sd">            4. boolean key</span>
+<span class="sd">            1. column and row restrictions</span>
+<span class="sd">            2. fillna replace NaNs in dataframe</span>
+<span class="sd">            3. transpose the dataframe</span>
+<span class="sd">            4. transforms in the order listed</span>
+<span class="sd">            5. boolean key</span>
+
+<span class="sd">        This method offers the above options for wrangling a dataframe into an incidence</span>
+<span class="sd">        matrix for a hypergraph. For more flexibility we recommend you use the Pandas</span>
+<span class="sd">        library to format the values of your dataframe before submitting it to this</span>
+<span class="sd">        constructor.</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">!=</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Error: Input object must be a pandas dataframe.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows</span><span class="p">]</span>   
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
         <span class="n">node_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">edge_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div></div>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">key</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">,</span><span class="n">edge_names</span><span class="o">=</span><span class="n">edge_names</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div></div>
+
+
+
 
 
 

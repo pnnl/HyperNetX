@@ -253,6 +253,52 @@ numbers and homology bases are returned.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="algorithms.homology_mod2.betti">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the kth-betti numbers for a chain complex with boundary
+matrices given by bd</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bd</strong> (<em>dict of k-boundary matrices keyed on dimension of domain</em>) – </p></li>
+<li><p><strong>k</strong> (<em>int</em><em>, </em><em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
+if None, then all betti numbers for dimensions of existing cells will be
+computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>betti</strong> – Description</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.homology_mod2.betti_numbers">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti_numbers</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the kth betti numbers for the simplicial homology of the ASC
+associated to h</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – Hypergraph to compute the betti numbers from</p></li>
+<li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
+if None, then all betti numbers for dimensions of existing cells will be
+computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>betti</strong> – A dictionary of betti numbers keyed by dimension</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="algorithms.homology_mod2.bkMatrix">
 <code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">bkMatrix</code><span class="sig-paren">(</span><em class="sig-param">km1basis</em>, <em class="sig-param">kbasis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#bkMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.bkMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the boundary map from <span class="math notranslate nohighlight">\(C_{k-1}\)</span>-basis to <span class="math notranslate nohighlight">\(C_k\)</span> basis with
@@ -274,82 +320,107 @@ respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </dd></dl>
 
 <dl class="function">
-<dt id="algorithms.homology_mod2.coset">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">coset</code><span class="sig-paren">(</span><em class="sig-param">im2</em>, <em class="sig-param">bs=[]</em>, <em class="sig-param">shortest=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#coset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.coset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate the coset represented by bs, if bs=None
-returns the boundary group</p>
+<dt id="algorithms.homology_mod2.boundary_group">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">boundary_group</code><span class="sig-paren">(</span><em class="sig-param">image_basis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#boundary_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.boundary_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a csr_matrix with rows corresponding to the elements of the
+group  generated by image basis over <span class="math notranslate nohighlight">\(\mathbb{Z}_2\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>image_basis</strong> (<em>numpy.ndarray</em><em> or </em><em>scipy.sparse.csr_matrix</em>) – 2d-array of basis elements</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>scipy.sparse.csr_matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="algorithms.homology_mod2.chain_complex">
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">chain_complex</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#chain_complex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.chain_complex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the k-chains and k-boundary maps required to compute homology
+for all values in k</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>im2</strong> (<em>np.array</em>) – columns form a basis for the boundary group</p></li>
-<li><p><strong>bs</strong> (<em>np.array</em>) – boolean vector from projection of kernel on cokernel</p></li>
-<li><p><strong>shortest</strong> (<em>bool</em>) – if True then only representatives of the coset containing
-the smallest number of <span class="math notranslate nohighlight">\(k\)</span>-cells will be returned
-else all elements of the coset will be returned</p></li>
+<li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
+<li><p><strong>k</strong> (<em>int</em><em> or </em><em>list of length 2</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – k must be an integer greater than 0 or a list of
+length 2 indicating min and max dimensions to be
+computed. eg. if k = [1,2] then 0,1,2,3-chains
+and boundary maps for k=1,2,3 will be returned,
+if None than k = [1,max dimension of edge in h]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of elements of the coset of interest</p>
+<dd class="field-even"><p><strong>C, bd</strong> – C is a dictionary of lists
+bd is a dictionary of numpy arrays</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k</em>, <em class="sig-param">C=None</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute a basis for the kth-homology group with boundary
-matrices given by bd</p>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k=None</em>, <em class="sig-param">log=None</em>, <em class="sig-param">boundary=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a basis for the kth-simplicial homology group, <span class="math notranslate nohighlight">\(H_k\)</span>, defined by a
+chain complex <span class="math notranslate nohighlight">\(C\)</span> with boundary maps given by bd <span class="math notranslate nohighlight">\(= \{k:\partial_k\)</span>}$</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bd</strong> (<em>dict</em>) – dict of k-boundary matrices keyed on k,k+1</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – k must be an integer greater than 0
-bd must have keys for k, and k+1</p></li>
-<li><p><strong>C</strong> (<em>list</em><em>, </em><em>optional</em>) – list of k-cells used to interpret the generators
-bd[k] is boundary matrix with rows and columns indexed by
-k-1 and k cells. C is a list of k chains ordered
-to match the column index of bd[k]</p></li>
-<li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em>) – option to look for shortest basis using boundaries
-<em>Warning</em>: This is only good for very small examples</p></li>
+<li><p><strong>bd</strong> (<em>dict</em>) – dict of boundary matrices on k-chains to k-1 chains keyed on k
+if krange is a tuple then all boundary matrices k in [krange[0],..,krange[1]]
+inclusive must be in the dictionary</p></li>
+<li><p><strong>k</strong> (<em>int</em><em> or </em><em>list of ints</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – k must be a positive integer or a list of
+2 integers indicating min and max dimensions to be
+computed, if none given all homology groups will be computed from
+available boundary matrices in bd</p></li>
 <li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional</em>) – path to logfile where intermediate data should be
 pickled and stored</p></li>
+<li><p><strong>boundary</strong> (<em>bool</em>) – option to return a basis for the boundary group from each dimension.
+Needed to compute the shortest generators in the homology group.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of generators as 0-1 tuples, if C then generators will be
-k-chains
-if shortest then returns a dictionary of shortest cycles for each coset.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list or dict</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>basis</strong> (<em>dict</em>) – dict of generators as 0-1 tuples keyed by dim
+basis for dimension k will be returned only if bd[k] and bd[k+1] have
+been provided.</p></li>
+<li><p><strong>im</strong> (<em>dict</em>) – dict of boundary group generators keyed by dim</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="algorithms.homology_mod2.hypergraph_homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the kth-homology group mod 2 for the ASC
-associated with the hypergraph h.</p>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em>, <em class="sig-param">interpreted=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the kth-homology groups mod 2 for the ASC
+associated with the hypergraph h for k in krange inclusive</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
-<li><p><strong>k</strong> (<em>int</em>) – k must be an integer greater than 0</p></li>
-<li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em>) – option to look for shortest basis using boundaries
-only good for very small examples</p></li>
-<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional</em>) – path to logfile where intermediate data should be
+<li><p><strong>k</strong> (<em>int</em><em> or </em><em>list of length 2</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – k must be an integer greater than 0 or a list of
+length 2 indicating min and max dimensions to be
+computed</p></li>
+<li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=False</em>) – option to look for shortest representative for each coset in the
+homology group, only good for relatively small examples</p></li>
+<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional. ## currently not implemented</em>) – path to logfile where intermediate data should be
 pickled and stored</p></li>
+<li><p><strong>interpreted</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if True will return an explicit basis in terms of the k-chains</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of generators as k-chains</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>basis</strong> (<em>list</em>) – list of generators as k-chains as boolean vectors</p></li>
+<li><p><em>interpreted_basis</em> – lists of kchains in basis</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

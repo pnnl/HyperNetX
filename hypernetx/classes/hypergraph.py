@@ -2,12 +2,21 @@
 # All rights reserved.
 
 import warnings
-from hypernetx.classes.entity import Entity, EntitySet
 import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
+import pandas as pd
+from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
+from collections import OrderedDict, defaultdict
+from hypernetx.classes.entity import Entity, EntitySet
+from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
 from hypernetx.exception import HyperNetXError
+from hypernetx.utils.decorators import not_implemented_for
 
+
+__all__ = [
+    'Hypergraph'
+]
 
 
 class Hypergraph():
@@ -15,7 +24,12 @@ class Hypergraph():
     Hypergraph H = (V,E) references a pair of disjoint sets:
     V = nodes (vertices) and E = (hyper)edges E.
 
-    The objects in V and E must be distinguishable entities,
+    A Hypergraph has a boolean property called static. A static
+    hypergraph is immutable, no edges or nodes may be added or
+    removed incrementally. Hypergraphs are not static by default.
+
+    If a hypergraph is not static then
+    the objects in V and E must be distinguishable entities,
     allowing for multi-edge graphs and inseperable nodes.
     For example: Let V = {1,2,3} and E = {e1,e2,e3},
     where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
@@ -29,6 +43,9 @@ class Hypergraph():
     to keep a one to one correspondence between their set of uids and
     the objects in their hypergraph. See `Honor System`_
 
+    Static hypergraphs create an internal identifier used for computations
+    so do not require unique ids or an honor system.
+
     We will create hypergraphs in multiple ways:
 
     1. As an empty instance: ::
@@ -37,29 +54,29 @@ class Hypergraph():
         >>> H.nodes, H.edges
         ({}, {})
 
-    2. From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable) ::
+    2. From a dictionary of iterables (elements of iterables must be of
+        type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph({'a':[1,2,3],'b':[4,5,6]})
         >>> H.nodes, H.edges
-        (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
+        # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-    3. From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable) ::
+    3. From an iterable of iterables: (elements of iterables must be of
+        type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph([{'a','b'},{'b','c'},{'a','c','d'}])
         >>> H.nodes, H.edges
-        (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}),
-         EntitySet(_:Edges,['_1', '_2', '_0'],{}))
+        # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), EntitySet(_:Edges,['_1', '_2', '_0'],{}))
 
-    4. From a hypernetx.EntitySet ::
+    4. From a hypernetx.EntitySet: ::
 
         >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
         >>> E = EntitySet('sample',elements=[a,b])
         >>> H = Hypergraph(E)
         >>> H.nodes, H.edges.
+        # output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-        (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
-
-    5. From a networkx bipartite graph using :code:`from_bipartite()`:
+    5. From a networkx bipartite graph using :code:`from_bipartite()`: ::
 
         >>> import networkx as nx
         >>> B = nx.Graph()
@@ -68,8 +85,7 @@ class Hypergraph():
         >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
         >>> H = Hypergraph.from_bipartite(B)
         >>> H.nodes, H.edges
-
-        (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
+        # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
     Parameters
     ----------
@@ -77,43 +93,98 @@ class Hypergraph():
         If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable as elements to an :ref:`EntitySet<entityset>`.
 
     name : hashable, optional, default: None
+        If None then a placeholder '_'  will be inserted as name
+
+    static : boolean, optional, default: False
+        If True the hypergraph will be immutable, edges and nodes may not be changed.
+
+    use_nwhy : boolean, optional, default = False
+        If True hypergraph will be static and computations will be done using 
+        C++ backend offered by NWHypergraph. This requires installation of the 
+        NWHypergraph C++ library. Please see documentation for more information.
+
 
     """
 
+    def __init__(self, setsystem=None, name=None, static=False, use_nwhy=False):
+        if use_nwhy:
+            static = True
+            try:
+                import nwhy
+                self.nwhy = True
+            except:
+                self.nwhy = False
+                print('NWHypergraph is not available. Will continue with static=True.')
 
-    def __init__(self,setsystem=None, name='_'):
+        if not name:
+            self.name = '_'
+        else:
+            self.name = name
 
-        self.name = name
+        if static == True or (isinstance(setsystem, StaticEntitySet) or isinstance(setsystem, StaticEntity)):
+            self._static = True
+            if setsystem is None:
+                self._edges = StaticEntitySet()
+                self._nodes = StaticEntitySet()
+            else:
+                E = StaticEntitySet(entity=setsystem)
+                self._edges = E
+                self._nodes = E.restrict_to_levels([1])
+        else:
+            self._static = False
+            if setsystem is None:
+                setsystem = EntitySet('_', elements=[])
+            elif isinstance(setsystem, Entity):
+                setsystem = EntitySet('_', setsystem.incidence_dict)
+            elif isinstance(setsystem, dict):
+                # Must be a dictionary with values equal to iterables of Entities and hashables.
+                # Keys will be uids for new edges and values of the dictionary will generate the nodes.
+                setsystem = EntitySet('_', setsystem)
+            elif not isinstance(setsystem, EntitySet):
+                # If no ids are given, return default ids indexed by position in iterator
+                # This should be an iterable of sets
+                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
+                setsystem = EntitySet('_', dict(zip(edge_labels, setsystem)))
 
-        ##### Check setsystem type and change into an EntitySet before constructing hypergraph:
+            _reg = setsystem.registry
+            _nodes = {k: Entity(k, **_reg[k].properties) for k in _reg}
+            _elements = {j: {k: _nodes[k] for k in setsystem[j]}
+                         for j in setsystem}
+            _edges = {j: Entity(j,
+                                elements=_elements[j].values(),
+                                **setsystem[j].properties) for j in setsystem}
 
-        if not setsystem:
-            setsystem = EntitySet('_',elements=[])
+            self._edges = EntitySet(f'{self.name}:Edges',
+                                    elements=_edges.values(), **setsystem.properties)
+            self._nodes = EntitySet(f'{self.name}:Nodes',
+                                    elements=_nodes.values())
+        if self._static:
+            temprows, tempcols = self.edges.data.T
+            tempdata = np.ones(len(temprows), dtype=int)
+            self.state_dict = {'data': (temprows, tempcols, tempdata)}
+            self.state_dict['snodelg'] = dict()
+            self.state_dict['sedgelg'] = dict()
+        if use_nwhy:
+            self.state_dict['g'] = nwhy.NWHypergraph(*self.state_dict['data'])
+        else:
+            self.nwhy = False
 
-        elif isinstance(setsystem,dict):
-            ### Must be a dictionary with values equal to iterables of Entities and hashables.
-            ### Keys will be uids for new edges and values of the dictionary will generate the nodes.
-            setsystem = EntitySet('_',setsystem)
-
-        ### If no ids are given, return default ids indexed by position in iterator
-        ### This should be an iterable of sets
-        elif not isinstance(setsystem, EntitySet):
-            labels = [self.name+str(x) for x in range(len(setsystem))]
-            setsystem = EntitySet('_',dict(zip(labels, setsystem)))
-
-        _reg = setsystem.registry
-        _nodes = {k: Entity(k,**_reg[k].properties) for k in _reg }
-        _elements = {j: {k : _nodes[k] for k in setsystem[j]}
-                        for j in setsystem}
-        _edges = {j: Entity(j,
-                    elements = _elements[j].values(),
-                    **setsystem[j].properties) for j in setsystem}
-
-        self._edges = EntitySet(f'{self.name}:Edges',
-                        elements = _edges.values(), **setsystem.properties)
-        self._nodes = EntitySet(f'{self.name}:Nodes',
-                        elements = _nodes.values())
-
+    @not_implemented_for('dynamic')
+    def _get_linegraph(self, s, edges=True):
+        d = self.state_dict
+        key = 'sedgelg' if edges else 'snodelg'
+        if s in d[key]:
+            return d[key][s]
+        else:
+            if self.nwhy == True:
+                d[key][s] = d['g'].s_linegraph(s=s, edges=edges)
+            else:
+                if edges:
+                    A = self.edge_adjacency_matrix(s=s)
+                else:
+                    A = self.adjacency_matrix(s=s)
+                d[key][s] = nx.from_scipy_sparse_matrix(A)
+            return d[key][s]
 
     @property
     def edges(self):
@@ -129,6 +200,9 @@ class Hypergraph():
         """
         return self._nodes
 
+    @property
+    def isstatic(self):
+        return self._static
 
     @property
     def incidence_dict(self):
@@ -143,7 +217,7 @@ class Hypergraph():
         Tuple giving (number of nodes, number of edgess)
         """
 
-        return (len(self._nodes),len(self._edges))
+        return (len(self._nodes.elements), len(self._edges.elements))
 
     def __str__(self):
         """
@@ -163,38 +237,13 @@ class Hypergraph():
         """
         return len(self._nodes)
 
-    def __eq__(self,other):
-        """
-        Determine if two hypergraphs are equal.
-
-        Parameters
-        ----------
-        other : Hypergraph
-
-        Returns
-        -------
-        boolean : boolean
-
-        Notes
-        -----
-        Two Hypergraphs are equal if they have the same name and
-        are generated by the same EntitySet(=self.edges). If one of them does not
-        have a name only the EntitySets are checked.
-
-        """
-        assert isinstance(other,Hypergraph)
-        if self.name and other.name and self.name is not other.name:
-            return False
-        else:
-            return self._edges.incidence_dict == other._edges.incidence_dict
-
     def __iter__(self):
         """
         Iterate over the nodes of the hypergraph
         """
         return iter(self.nodes)
 
-    def __contains__(self,item):
+    def __contains__(self, item):
         """
         Returns boolean indicating if item is in self.nodes
 
@@ -203,12 +252,12 @@ class Hypergraph():
         item : hashable or Entity
 
         """
-        if isinstance(item,Entity):
+        if isinstance(item, Entity):
             return item.uid in self.nodes
         else:
             return item in self.nodes
 
-    def __getitem__(self,node):
+    def __getitem__(self, node):
         """
         Return the neighbors of node
 
@@ -224,9 +273,89 @@ class Hypergraph():
         """
         return self.neighbors(node)
 
-    def s_degree(self,node,s=1,edges=None):
+    def convert_to_static(self, name=None, nodes_name='nodes', edges_name='edges'):
         """
-        Return the degree of a node in H when restricted to edges
+        Returns new static hypergraph with the same dictionary as original hypergraph
+
+        Parameters
+        ----------
+        name : None, optional
+            Name 
+        nodes_name : str, optional
+            name for list of node labels
+        edges_name : str, optional
+            name for list of edge labels
+
+        Returns
+        -------
+        hnx.Hypergraph
+            Will have attribute static = True
+
+        Note
+        ----
+        Static hypergraphs store the user defined node and edge names in
+        a dictionary of labeled lists. The order of the lists provides an 
+        index, which the hypergraph uses in place of the node and edge names
+        for fast processing. 
+        """
+        arr, cdict, rdict = self.edges.incidence_matrix(index=True)
+        labels = OrderedDict([(edges_name, [cdict[k] for k in range(len(cdict))]), (nodes_name, [rdict[k] for k in range(len(rdict))])])
+        E = StaticEntity(arr=arr.T, labels=labels)
+        return Hypergraph(setsystem=E, name=name)
+
+    def remove_static(self, name=None):
+        """
+        Returns dynamic hypergraph 
+
+        Parameters
+        ----------
+        name : None, optional
+            User defined namae of hypergraph
+
+        Returns
+        -------
+        hnx.Hypergraph
+            A new hypergraph with the same dictionary as self but allowing dynamic
+            changes to nodes and edges.
+            If hypergraph is not static, returns self.
+        """
+        if not self.isstatic:
+            return self
+        else:
+            return Hypergraph(self.edges.incidence_dict, name=name)
+
+    def translate(self, idx, nodes=True):
+        """
+        Returns the translation of numeric values associated with hypergraph.
+        Only needed if exposing the static identifiers assigned by the class.
+        If not static then the idx is returned.
+
+        Parameters
+        ----------
+        idx : int
+            class assigned integer for internal manipulation of Hypergraph data
+        nodes : bool, optional, default: True
+            If True then translates from node index. Otherwise will translate from
+            edge index
+
+        Returns
+        -------
+         : int or string 
+            User assigned identifier corresponding to idx
+        """
+        if self.isstatic:
+            E = self.edges
+            if nodes:
+                key = E.keys[1]
+            else:
+                key = E.keys[0]
+            return E.labels[key][idx]
+        else:
+            return idx
+
+    def s_degree(self, node, s=1):  # deprecate the edges
+        """
+        Same as `degree`
 
         Parameters
         ----------
@@ -234,8 +363,6 @@ class Hypergraph():
             If hashable, then must be uid of node in hypergraph
 
         s : positive integer, optional, default: 1
-
-        edges : iterable of edge.uids, optional, default: None
 
         Returns
         -------
@@ -249,9 +376,9 @@ class Hypergraph():
         at least s that contain the node.
 
         """
-        return self.degree(node,s,edges)
+        return self.degree(node, s)
 
-    def degree(self,node,s=1,edges=None):
+    def degree(self, node, s=1):
         """
         Return the degree of a node in H
 
@@ -275,15 +402,33 @@ class Hypergraph():
             at least s that contain the node.
 
         """
-        memberships = set(self.nodes[node].memberships)
-        if edges:
-            memberships = memberships.intersection(edges)
-        if s>1:
-            return len(set(e for e in memberships if len(self.edges[e])>=s))
+        if self.isstatic:
+            g = self._get_linegraph(s=s, edges=False)
+            ndx = int(np.argwhere(self.nodes.labs(0) == node))
+            if self.nwhy:
+                return g.degree(ndx)
+            else:
+                return g.degree(ndx)
+            # imat = self.incidence_matrix()
+            # idx = self.edges.indices(self.edges.keys[1], [node])[0]
+            # if edges is not None:
+            #     jdx = self.edges.indices(self.edges.keys[0], edges)
+            #     if s > 1:
+            #         jdx = sorted(set(np.asarray(np.sum(imat, axis=0) > s).nonzero()[1]).intersection(jdx))
+            #         imat = imat[:, jdx]
+            # else:
+            #     if s > 1:
+            #         jdx = np.array(np.sum(imat, axis=0) > s).nonzero()[1]
+            #         imat = imat[:, jdx]
+            # return int(np.sum(imat, axis=1)[idx])
         else:
-            return len(memberships)
+            memberships = set(self.nodes[node].memberships)
+            if s > 1:
+                return len(set(e for e in memberships if len(self.edges[e]) >= s))
+            else:
+                return len(memberships)
 
-    def number_of_nodes(self,nodeset=None):
+    def number_of_nodes(self, nodeset=None):
         """
         The number of nodes in nodeset belonging to hypergraph.
 
@@ -302,7 +447,7 @@ class Hypergraph():
         else:
             return len(self.nodes)
 
-    def number_of_edges(self,edgeset=None):
+    def number_of_edges(self, edgeset=None):
         """
         The number of edges in edgeset belonging to hypergraph.
 
@@ -328,9 +473,12 @@ class Hypergraph():
         -------
         order : int
         """
-        return len(self.nodes)
+        if self.nwhy:
+            return self.state_dict['g'].number_of_nodes()
+        else:
+            return len(self.nodes)
 
-    def size(self,edge,nodes=None):
+    def size(self, edge):
         """
         The number of nodes in nodes that belong to edge.
         If nodes=None, returns the number of nodes in edge.
@@ -340,56 +488,113 @@ class Hypergraph():
         edge : hashable
             The uid of an edge in the hypergraph
 
-        nodes : iterable, optional, default: hypergraph.nodes.uidset
-            An iterable of uids for nodes in hypergraph.
-
         Returns
         -------
         size : int
 
         """
-        if nodes:
-            return len(self.edges[edge].uidset.intersection(nodes))
+        if self.nwhy:
+            return self.state_dict['g'].number_of_edges()
         else:
             return len(self.edges[edge])
 
-    def dim(self,edge):
+    def dim(self, edge):
         """
         Same as size(edge)-1.
         """
-
-        if edge in self.edges:
-            return self.edges[edge].size() - 1
+        if self.nwhy:
+            return self.state_dict['g'].number_of_edges() - 1
         else:
-            return None
+            return len(self.edges[edge]) - 1
 
-    def neighbors(self, node, s=2):
+    def neighbors(self, node, s=1, return_edges=False):  # Rewrite this so that s means nodes are s adjacent
         """
-        The nodes in hypergraph which share an :term:`s-edge` with node.
+        The nodes in hypergraph which share s edges with node.
 
         Parameters
         ----------
-        node : hashable
-            uid for a node in hypergraph
+        node : hashable or Entity
+            uid for a node in hypergraph or the node Entity
 
-        s : int, optional, default : 2
-            The desired size of the edge connecting node to its neighbors
+        s : int, list, optional, default : 2  
+            If int, then desired minimum size of the edge connecting node to its neighbors
+            If list, then [min s, max s] the desired minimum and maximum size of the edges
+            connecting node to its neighbors. If min s = max s, then only edges of size
+            s will be considered.
+
+        return_edges : bool, default : False
+            If True then a list of incident edges of node will also be returned.
 
         Returns
         -------
-        neighbors : iterator
+        neighborset : set
+
+        edgeset : set
 
         """
-        memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
-        edges = [e for e in memberships if len(self.edges[e]) >=s]
-        neigh = set()
-        for e in edges:
-            neigh.update(self.edges[e].uidset)
-        neigh.discard(node)
-        return iter(neigh)
+        if not node in self.nodes:
+            print(f'Node is not in hypergraph {self.name}.')
+            return
 
+        if self.isstatic:
+            g = self._get_linegraph(s=s, edges=False)
+            ndx = int(np.argwhere(H.nodes.labs(0) == node))
+            if self.nwhy == True:
+                nbrs = g.s_neighbor(ndx)
+            else:
+                nbrs = list(g.neighbors(ndx))
+            return [self.translate(nb) for nb in nbrs]
 
-    def remove_node(self,node):
+        msg = 's must be a positive integer or a list of two positive integers: [min s, max s], min s <= max s'
+        if self._static:
+            imat = self.incidence_matrix()
+            idx = self.edges.indices(self.edges.keys[1], [node])[0]
+            edx = imat[idx]
+            if isinstance(s, int):
+                if s < 1:
+                    raise HyperNetXError(msg)
+                else:
+                    edx = edx.multiply(imat.sum(axis=0) >= s)
+            elif len(s) != 2 or not isinstance(s[0], int) or not isinstance(s[1], int) or s[0] > s[1] or s[0] < 1:
+                raise HyperNetXError(msg)
+            else:
+                edx = edx.multiply(imat.sum(axis=0) >= s[0]).multiply(imat.sum(axis=0) <= s[1])
+            edx = edx.nonzero()[1]
+
+            if len(edx) == 0:
+                edges = set()
+                neighbors = set()
+            else:
+                neighbors = list(np.sum(imat[:, edx], axis=1).nonzero()[0])
+                neighbors.remove(idx)
+                neighbors = set(self.edges.translate(1, neighbors))
+                if return_edges:
+                    edges = set(self.edges.translate(0, edx))
+                    return neighbors, edges
+                else:
+                    return neighbors
+
+        else:
+            node = self.nodes[node].uid  # this allows node to be an Entity instead of a string
+            memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
+            if isinstance(s, int):
+                edgeset = {e for e in memberships if len(self.edges[e]) >= s}
+            elif len(s) != 2:
+                raise HyperNetXError('s must be a positive integer or a list of two integers: [min s, max s]')
+            else:
+                edgeset = {e for e in memberships if len(self.edges[e]) >= s[0] and len(self.edges[e]) <= s[1]}
+            neighborset = set()
+            for e in edgeset:
+                neighborset.update(self.edges[e].uidset)
+            neighborset.discard(node)
+
+            if return_edges:
+                return neighborset, edgeset
+            else:
+                return neighborset
+
+    @not_implemented_for('static')
+    def remove_node(self, node):
         """
         Removes node from edges and deletes reference in hypergraph nodes
 
@@ -406,14 +611,15 @@ class Hypergraph():
         if not node in self._nodes:
             return self
         else:
-            if not isinstance(node,Entity):
+            if not isinstance(node, Entity):
                 node = self._nodes[node]
             for edge in node.memberships:
                 self._edges[edge].remove(node)
             self._nodes.remove(node)
         return self
 
-    def remove_nodes(self,node_set):
+    @not_implemented_for('static')
+    def remove_nodes(self, node_set):
         """
         Removes nodes from edges and deletes references in hypergraph nodes
 
@@ -431,7 +637,8 @@ class Hypergraph():
             self.remove_node(node)
         return self
 
-    def _add_nodes_from(self,nodes):
+    @not_implemented_for('static')
+    def _add_nodes_from(self, nodes):
         """
         Private helper method instantiates new nodes when edges added to hypergraph.
 
@@ -443,16 +650,18 @@ class Hypergraph():
         for node in nodes:
             if node in self._edges:
                 raise HyperNetxError("Node already an edge.")
-            elif node in self._nodes and isinstance(node,Entity):
+            elif node in self._nodes and isinstance(node, Entity):
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
-                if isinstance(node,Entity):
+                if isinstance(node, Entity):
                     self._nodes.add(Entity(node.uid, **node.properties))
                 else:
                     self._nodes.add(Entity(node))
 
-    def add_edge(self,edge):
+    @not_implemented_for('static')
+    def add_edge(self, edge):
         """
+
         Adds a single edge to hypergraph.
 
         Parameters
@@ -471,27 +680,28 @@ class Hypergraph():
         Each node (element of edge) must be instantiated as a node,
         making sure its uid isn't already present in the self.
         If an added edge contains nodes that cannot be added to hypergraph
-        then an error will be thrown.
+        then an error will be raised.
 
         """
         if edge in self._edges:
             warnings.warn("Cannot add edge. Edge already in hypergraph")
         elif edge in self._nodes:
             warnings.warn("Cannot add edge. Edge is already a Node")
-        elif isinstance(edge,Entity):
+        elif isinstance(edge, Entity):
             if len(edge) > 0:
                 self._add_nodes_from(edge.elements.values())
                 self._edges.add(Entity(edge.uid,
-                    elements=[self._nodes[k] for k in edge], **edge.properties))
+                                       elements=[self._nodes[k] for k in edge], **edge.properties))
                 for n in edge.elements:
                     self._nodes[n].memberships[edge.uid] = self._edges[edge.uid]
             else:
                 self._edges.add(Entity(edge.uid, **edge.properties))
         else:
-            self._edges.add(Entity(edge))  ### this generates an empty edge
+            self._edges.add(Entity(edge))  # this generates an empty edge
         return self
 
-    def add_edges_from(self,edge_set):
+    @not_implemented_for('static')
+    def add_edges_from(self, edge_set):
         """
         Add edges to hypergraph.
 
@@ -509,9 +719,10 @@ class Hypergraph():
             self.add_edge(edge)
         return self
 
-
-    def add_node_to_edge(self,node,edge):
+    @not_implemented_for('static')
+    def add_node_to_edge(self, node, edge):
         """
+
         Adds node to an edge in hypergraph edges
 
         Parameters
@@ -529,22 +740,22 @@ class Hypergraph():
 
         """
         if edge in self._edges:
-            if not isinstance(edge,Entity):
+            if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             if node in self._nodes:
                 self._edges[edge].add(self._nodes[node])
             else:
-                if not isinstance(node,Entity):
+                if not isinstance(node, Entity):
                     node = Entity(node)
                 else:
                     node = Entity(node.uid, **node.properties)
-                self._nodes.add(node)
                 self._edges[edge].add(node)
+                self._nodes.add(node)
+
         return self
 
-
-
-    def remove_edge(self,edge):
+    @not_implemented_for('static')
+    def remove_edge(self, edge):
         """
         Removes a single edge from hypergraph.
 
@@ -565,7 +776,7 @@ class Hypergraph():
 
         """
         if edge in self._edges:
-            if not isinstance(edge,Entity):
+            if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             for node in edge.uidset:
                 edge.remove(node)
@@ -574,7 +785,8 @@ class Hypergraph():
             self._edges.remove(edge)
         return self
 
-    def remove_edges(self,edge_set):
+    @not_implemented_for('static')
+    def remove_edges(self, edge_set):
         """
         Removes edges from hypergraph.
 
@@ -591,14 +803,12 @@ class Hypergraph():
             self.remove_edge(edge)
         return self
 
-    def incidence_matrix(self,sparse=True,index=False):
+    def incidence_matrix(self, index=False):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
         Parameters
         ----------
-        sparse : boolean, optional, default: True
-
         index : boolean, optional, default False
             If True return will include a dictionary of node uid : row number
             and edge uid : column number
@@ -614,10 +824,10 @@ class Hypergraph():
             Dictionary identifying columns with edges
 
         """
-        return self.edges.incidence_matrix(sparse,index)
+        return self.edges.incidence_matrix(index=index)
 
-
-    def __incidence_to_adjacency(M, s=1, weighted=True):
+    @staticmethod
+    def incidence_to_adjacency(M, s=1, weighted=True):
         """
         Helper method to obtain adjacency matrix from incidence matrix.
 
@@ -635,13 +845,18 @@ class Hypergraph():
 
         """
         A = M.dot(M.transpose())
-        A.setdiag(0)
-        if s > 1:
-            A = A.multiply(A >= s)
-        if not weighted:
-            A = (A > 0)*1
-        return A
+        if issparse(A):
+            A.setdiag(0)
+            B = (A >= s) * 1
+            A = A.multiply(B)
+        else:
+            np.fill_diagonal(A, 0)
+            B = (A >= s) * 1
+            A = np.multiply(A, B)
 
+        if not weighted:
+            A = (A > 0) * 1
+        return csr_matrix(A)
 
     def adjacency_matrix(self, index=False, s=1, weighted=True):
         """
@@ -673,13 +888,13 @@ class Hypergraph():
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0],s=s,weighted=weighted), M[1]
+            return Hypergraph.incidence_to_adjacency(M[0], s=s, weighted=weighted), M[1]
         else:
-            return Hypergraph.__incidence_to_adjacency(M,s=s,weighted=weighted)
+            return Hypergraph.incidence_to_adjacency(M, s=s, weighted=weighted)
 
     def edge_adjacency_matrix(self, index=False, s=1, weighted=True):
         """
-        The sparse weighted :term:`s-adjacency matrix` for the dual hypergraph.
+        The weighted :term:`s-adjacency matrix` for the dual hypergraph.
 
         Parameters
         ----------
@@ -688,11 +903,13 @@ class Hypergraph():
         index: boolean, optional, default: False
             if True, will return a coldict of column to edge uid
 
+        sparse: boolean, optional, default: True
+
         weighted: boolean, optional, default: True
 
         Returns
         -------
-        edge_adjacency_matrix : scipy.sparse.csr.csr_matrix
+        edge_adjacency_matrix : scipy.sparse.csr.csr_matrix or numpy.ndarray
 
         column dictionary : dict
 
@@ -705,22 +922,25 @@ class Hypergraph():
         """
         M = self.incidence_matrix(index=index)
         if index:
-            return Hypergraph.__incidence_to_adjacency(M[0].transpose(),s=s,weighted=weighted), M[2]
+            return Hypergraph.incidence_to_adjacency(M[0].transpose(), s=s, weighted=weighted), M[2]
         else:
-            return Hypergraph.__incidence_to_adjacency(M.transpose(),s=s,weighted=weighted)
+            return Hypergraph.incidence_to_adjacency(M.transpose(), s=s, weighted=weighted)
 
-
-    def auxiliary_matrix(self, s=1):
+    def auxiliary_matrix(self, s=1, index=False):
         """
-        The sparse unweighted :term:`s-auxiliary matrix` for hypergraph
+        The unweighted :term:`s-auxiliary matrix` for hypergraph
 
         Parameters
         ----------
         s : int
+        index : bool, optional, default: False
+            return a dictionary of labels for the rows of the matrix
+
 
         Returns
         -------
-        auxiliary_matrix : scipy.sparse.csr.csr_matrix
+        auxiliary_matrix : scipy.sparse.csr.csr_matrix or numpy.ndarray
+            Will return the same type of matrix as self.arr
 
         Notes
         -----
@@ -728,11 +948,11 @@ class Hypergraph():
         Returns the unweighted s-edge adjacency matrix for the subgraph.
 
         """
-        edges = [e for e in self.edges if self.edges[e].size() >=s]
+        edges = [e for e in self.edges if len(self.edges[e]) >= s]
         H = self.restrict_to_edges(edges)
-        return H.edge_adjacency_matrix(s=s, weighted=False)
+        return H.edge_adjacency_matrix(s=s, index=index, weighted=False)
 
-    def bipartite(self,node_label=0,edge_label=1):
+    def bipartite(self, node_label=0, edge_label=1):
         """
         Constructs the networkX bipartite graph associated to hypergraph.
 
@@ -757,9 +977,9 @@ class Hypergraph():
         B = nx.Graph()
         E = self.edges
         V = self.nodes
-        B.add_nodes_from(E,bipartite=edge_label)
-        B.add_nodes_from(V,bipartite=node_label)
-        B.add_edges_from([(v,e) for e in E for v in V if v in E[e]])
+        B.add_nodes_from(E, bipartite=edge_label)
+        B.add_nodes_from(V, bipartite=node_label)
+        B.add_edges_from([(v, e) for e in E for v in self.edges[e]])
         return B
 
     def dual(self, name=None):
@@ -774,41 +994,45 @@ class Hypergraph():
         -------
         dual : hypergraph
         """
-        from collections import defaultdict
+        if self.isstatic:
+            E = self.edges.restrict_to_levels((1, 0))
+            return Hypergraph(E, name=name)
+
         E = defaultdict(list)
-        for k,v in self.edges.incidence_dict.items():
+        for k, v in self.edges.incidence_dict.items():
             for n in v:
                 E[n].append(k)
-        return Hypergraph(E,name=name)
+        return Hypergraph(E, name=name)
 
-    def collapse_edges(self, name=None, use_reps=False, return_counts=True):
+    def collapse_edges(self, name=None, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying edges containing the same nodes
 
         Parameters
         ----------
-        name : hashable, optional, default: None
+        name : hashable, optional, default: None         
 
-        use_reps : boolean, optional, default: False
-            Choose a single edge from the collapsed edges as uid for the new edge, otherwise uses
-            a frozen set of the uids of edges in the equivalence class
-
-        return_counts: boolean, optional, default: True
-            if use_reps is True the new edges are keyed by a tuple of the rep and the count
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
 
         Returns
         -------
         new hypergraph : Hypergraph
+            Equivalent edges are collapsed to a single edge named by a representative of the equivalent 
+            edges followed by a colon and the number of edges it represents.
+
+        equivalence_classes : dict
+            A dictionary keyed by representative edge names with values equal to the edges in
+            its equivalence class
 
         Notes
         -----
         Two edges are identified if their respective elements are the same.
         Using this as an equivalence relation, the uids of the edges are partitioned into
-        equivalence classes. A frozenset of equivalent edges serves as uid
-        for each edge entity.
+        equivalence classes. 
 
-        If use_reps=True the frozen sets will be replaced with a representative
-        from the equivalence classes.
+        A single edge from the collapsed edges followed by a colon and the number of elements
+        in its equivalence class as uid for the new edge
 
         Example
         -------
@@ -816,26 +1040,42 @@ class Hypergraph():
             >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> h.collapse_edges().incidence_dict
+            >>> h.collapse_edges(use_reps=False).incidence_dict
             {frozenset({'E1', 'E2'}): {'a', 'b'}}
             >>> h.collapse_edges(use_reps=True).incidence_dict
             {('E1', 2): {'a', 'b'}}
 
         """
-        return Hypergraph(self.edges.collapse_identical_elements('_',use_reps=use_reps, return_counts=return_counts), name)
+        if self.isstatic:
+            if 'collapse_edges' in self.state_dict:
+                temp = self.state_dict['collapse_edges']
+            else:
+                temp = self.edges.collapse_identical_elements('_', return_equivalence_classes=True)
+                self.state_dict['collapse_edges'] = [temp[0], temp[1]]
+        else:
+            temp = self.edges.collapse_identical_elements('_', return_equivalence_classes=return_equivalence_classes)
+        if return_equivalence_classes:
+            return Hypergraph(temp[0], name), temp[1]
+        else:
+            return Hypergraph(temp, name)
 
-    def collapse_nodes(self, name=None, use_reps=False, return_counts=True):
+    def collapse_nodes(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by the same edges
 
         Parameters
         ----------
+        name: str, optional, default: None
+
         use_reps : boolean, optional, default: False
             Choose a single element from the collapsed nodes as uid for the new node, otherwise uses
             a frozen set of the uids of nodes in the equivalence class
 
         return_counts: if use_reps is True the new nodes have uids given by a tuple of the rep
             and the count
+
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of node equivalence classes keyed by frozen sets of edges
 
         Returns
         -------
@@ -855,20 +1095,34 @@ class Hypergraph():
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
             >>> h.collapse_nodes().incidence_dict
-            {'E1': {frozenset({'a', 'b'})}, 'E2': {frozenset({'a', 'b'})}}
+            {'E1': {frozenset({'a', 'b'})}, 'E2': {frozenset({'a', 'b'})}} ### Fix this
             >>> h.collapse_nodes(use_reps=True).incidence_dict
             {'E1': {('a', 2)}, 'E2': {('a', 2)}}
 
         """
+        if self.isstatic:
+            if 'collapse_nodes' in self.state_dict:
+                temp, counts = self.state_dict['collapse_nodes']
+            else:
+                temp, counts = self.dual().edges.collapse_identical_elements('_', return_equivalence_classes=True)
+                self.state_dict['collapse_nodes'] = [temp, counts]
+        else:
+            temp = self.dual().edges.collapse_identical_elements('_', return_equivalence_classes=return_equivalence_classes)
+            if return_equivalence_classes:
+                temp, counts = temp
+        if return_equivalence_classes:
+            return Hypergraph(temp, name).dual(), counts
+        else:
+            return Hypergraph(temp, name).dual()
 
-        return Hypergraph(self.dual().edges.collapse_identical_elements('_',use_reps=use_reps,return_counts=return_counts),name).dual()
-
-    def collapse_nodes_and_edges(self,name=None, use_reps=False, return_counts=True):
+    def collapse_nodes_and_edges(self, name=None, return_equivalence_classes=False):
         """
         Returns a new hypergraph by collapsing nodes and edges.
 
         Parameters
         ----------
+
+        name: str, optional, default: None
 
         use_reps: boolean, optional, default: False
             Choose a single element from the collapsed elements as a representative
@@ -876,6 +1130,9 @@ class Hypergraph():
         return_counts: boolean, optional, default: True
             if use_reps is True the new elements are keyed by a tuple of the rep
             and the count
+
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
 
         Returns
         -------
@@ -895,17 +1152,19 @@ class Hypergraph():
             >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> h.collapse_nodes_and_edges().incidence_dict
-            {frozenset({'E1', 'E2'}): {frozenset({'a', 'b'})}}
-            >>> h.collapse_nodes_and_edges(use_reps=True).incidence_dict
+            >>> h.collapse_nodes_and_edges().incidence_dict   ### Fix this
             {('E1', 2): {('a', 2)}}
 
         """
+        if return_equivalence_classes:
+            temp, neq = self.collapse_nodes(name='temp', return_equivalence_classes=True)
+            ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)
+            return ntemp, neq, eeq
+        else:
+            temp = self.collapse_nodes(name='temp')
+            return temp.collapse_edges(name=name)
 
-        temp = self.collapse_nodes(name=name,use_reps=use_reps,return_counts=return_counts)
-        return temp.collapse_edges(name=name,use_reps=use_reps,return_counts=return_counts)
-
-    def restrict_to_edges(self,edgeset,name=None):
+    def restrict_to_edges(self, edgeset, name=None):
         """
         Constructs a hypergraph using a subset of the edges in hypergraph
 
@@ -914,17 +1173,26 @@ class Hypergraph():
         edgeset: iterable of hashables or Entities
             A subset of elements of the hypergraph edges
 
-        name: str, optional, default: None
+        name: str, optional, default: '_'
 
         Returns
         -------
         new hypergraph : Hypergraph
         """
-        name = name or self.name
-        return Hypergraph({e:self.edges[e] for e in edgeset},name)
+        if self._static:
+            E = self._edges
+            setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(edgeset))))
+            return Hypergraph(setsystem, name=name)
+        else:
+            inneredges = set()
+            for e in edgeset:
+                if isinstance(e, Entity):
+                    inneredges.add(e.uid)
+                else:
+                    inneredges.add(e)
+            return Hypergraph({e: self.edges[e] for e in inneredges}, name=name)
 
-
-    def restrict_to_nodes(self,nodeset,name=None):
+    def restrict_to_nodes(self, nodeset, name=None):
         """
         Constructs a new hypergraph by restricting the edges in the hypergraph to
         the nodes referenced by nodeset.
@@ -940,20 +1208,27 @@ class Hypergraph():
         -------
         new hypergraph : Hypergraph
         """
-        memberships = set()
-        for node in nodeset:
-            if node in self.nodes:
-                memberships.update(set(self.nodes[node].memberships))
-        newedgeset = dict()
-        for e in memberships:
-            if e in self.edges:
-                temp = self.edges[e].uidset.intersection(nodeset)
-                if temp:
-                    newedgeset[e] = Entity(e,temp,**self.edges[e].properties)
-        return Hypergraph(newedgeset,name)
+        if self.isstatic:
+            E = self.edges.restrict_to_levels((1, 0))
+            setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(nodeset))))
+            return Hypergraph(setsystem.restrict_to_levels((1, 0)), name=name)
+        else:
+            memberships = set()
+            innernodes = set()
+            for node in nodeset:
+                innernodes.add(node)
+                if node in self.nodes:
+                    memberships.update(set(self.nodes[node].memberships))
+            newedgeset = dict()
+            for e in memberships:
+                if e in self.edges:
+                    temp = self.edges[e].uidset.intersection(innernodes)
+                    if temp:
+                        newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
+            return Hypergraph(newedgeset, name=name)
 
-    def toplexes(self,name=None,collapse=False,use_reps=False,return_counts=True):
-        """
+    def toplexes(self, name=None, collapse=False, use_reps=False, return_counts=True):
+        """XX
         Returns a :term:`simple hypergraph` corresponding to self.
 
         Warning
@@ -979,29 +1254,33 @@ class Hypergraph():
 
         """
         if collapse:
-            if len(self.edges) > 20:  ### TODO: Determine how big is too big.
+            if len(self.edges) > 20:  # TODO: Determine how big is too big.
                 warnings.warn('Collapsing a hypergraph can take a long time. It may be preferable to collapse the graph first and pickle it then apply the toplex method separately.')
-            temp = self.collapse_edges(use_reps=use_reps,return_counts=return_counts)
+            temp = self.collapse_edges()
         else:
             temp = self
         thdict = dict()
-        for e in temp.edges:
-            thdict[e] = temp.edges[e].uidset
+        if self.isstatic:
+            for e in temp.edges:
+                thdict[e] = temp.edges[e]
+        else:
+            for e in temp.edges:
+                thdict[e] = temp.edges[e].uidset
         tops = dict()
         for e in temp.edges:
             flag = True
             old_tops = dict(tops)
             for top in old_tops:
-                if thdict[e].issubset(thdict[top]):
+                if set(thdict[e]).issubset(thdict[top]):
                     flag = False
                     break
                 elif set(thdict[top]).issubset(thdict[e]):
                     del tops[top]
             if flag:
-                tops.update({e : thdict[e]})
-        return Hypergraph(tops,name)
+                tops.update({e: thdict[e]})
+        return Hypergraph(tops, name=name, static=self.isstatic)
 
-    def is_connected(self,s=1,edges=False):
+    def is_connected(self, s=1, edges=False):
         """
         Determines if hypergraph is :term:`s-connected <s-connected, s-node-connected>`.
 
@@ -1045,15 +1324,15 @@ class Hypergraph():
 
         Returns
         -------
-        singletons : list
+        singles : list
             A list of edge uids.
         """
-        M,r_,cdict = self.incidence_matrix(index=True)
-        idx = np.argmax(M.shape) ## which axis has fewest members? if 1 then columns
-        cols = M.sum(idx) ## we add down the row index if there are fewer columns
-        edges_to_discard = list()
-        for c in range(cols.shape[(idx+1)%2]): ## index along opposite axis
-            if cols[idx*c,c*((idx+1)%2)] == 1:
+        M, rdict, cdict = self.incidence_matrix(index=True)
+        idx = np.argmax(M.shape)  # which axis has fewest members? if 1 then columns
+        cols = M.sum(idx)  # we add down the row index if there are fewer columns
+        singles = list()
+        for c in range(cols.shape[(idx + 1) % 2]):  # index along opposite axis
+            if cols[idx * c, c * ((idx + 1) % 2)] == 1:
                 # then see if the singleton entry in that column is also singleton in its row
                 # find the entry
                 if idx == 0:
@@ -1064,16 +1343,16 @@ class Hypergraph():
                     # so we want to change that entry to 0 and remove the row.
                     # this means we want to remove the edge corresponding to c
                     if s == 1:
-                        edges_to_discard.append(cdict[c])
-                else: #switch the role of r and c
+                        singles.append(cdict[c])
+                else:  # switch the role of r and c
                     r = np.argmax(M.getrow(c))
                     s = np.sum(M.getcol(r))
                     if s == 1:
-                        edges_to_discard.append(cdict[r])
-        return edges_to_discard
+                        singles.append(cdict[r])
+        return singles
 
     def remove_singletons(self, name=None):
-        """
+        """XX
         Constructs clone of hypergraph with singleton edges removed.
 
         Parameters
@@ -1085,12 +1364,11 @@ class Hypergraph():
         new hypergraph : Hypergraph
 
         """
-        singles = self.singletons()
-        edgeset = [e for e in self._edges if e not in singles]
-        return Hypergraph({e:self.edges[e] for e in edgeset},name)
+        E = [e for e in self.edges if e not in self.singletons()]
+        return self.restrict_to_edges(E)
 
-    def s_connected_components(self,s=1,edges=True):
-        """
+    def s_connected_components(self, s=1, edges=True):
+        """XX
         Returns a generator for the :term:`s-edge-connected components <s-edge-connected component>`
         or the :term:`s-node-connected components <s-connected component, s-node-connected component>`
         of the hypergraph.
@@ -1136,17 +1414,17 @@ class Hypergraph():
         """
 
         if edges:
-            A,coldict = self.edge_adjacency_matrix(s=s,index=True)
+            A, coldict = self.edge_adjacency_matrix(s=s, index=True)
             G = nx.from_scipy_sparse_matrix(A)
             for c in nx.connected_components(G):
                 yield {coldict[e] for e in c}
         else:
-            A,rowdict = self.adjacency_matrix(s=s,index=True)
+            A, rowdict = self.adjacency_matrix(s=s, index=True)
             G = nx.from_scipy_sparse_matrix(A)
             for c in nx.connected_components(G):
                 yield {rowdict[n] for n in c}
 
-    def s_component_subgraphs(self,s=1,edges=True):
+    def s_component_subgraphs(self, s=1, edges=True):
         """
         Returns a generator for the induced subgraphs of s_connected components.
 
@@ -1166,44 +1444,43 @@ class Hypergraph():
             s-edge(node) components of hypergraph.
 
         """
-        for idx,c in enumerate(self.s_components(s=s,edges=edges)):
+        for idx, c in enumerate(self.s_components(s=s, edges=edges)):
             if edges:
-                yield self.restrict_to_edges(c,name=f'{self.name}:{idx}')
+                yield self.restrict_to_edges(c, name=f'{self.name}:{idx}')
             else:
-                yield self.restrict_to_nodes(c,name=f'{self.name}:{idx}')
+                yield self.restrict_to_nodes(c, name=f'{self.name}:{idx}')
 
-    def s_components(self,s=1,edges=True):
-        """
+    def s_components(self, s=1, edges=True):
+        """XX
         Same as s_connected_components
         """
-        return self.s_connected_components(s=s,edges=edges)
+        return self.s_connected_components(s=s, edges=edges)
 
     def connected_components(self, edges=False):
-        """
+        """XX
         Same as :meth:`s_connected_components` with s=1.
         """
         return self.s_connected_components(edges=edges)
 
     def connected_component_subgraphs(self, edges=False):
-        """
+        """XX
         Same as :meth:`s_component_subgraphs` with s=1
         """
         return self.s_component_subgraphs(edges=edges)
 
-
     def components(self, edges=False):
-        """
+        """XX
         Same as :meth:`s_connected_components` with s=1
         """
-        return self.s_components(s=1,edges=edges)
+        return self.s_components(s=1, edges=edges)
 
     def component_subgraphs(self, edges=False):
-        """
+        """XX
         Same as :meth:`s_components_subgraphs` with s=1
         """
         return self.s_component_subgraphs(edges=False)
 
-    def node_diameters(self,s=1):
+    def node_diameters(self, s=1):
         """
         Returns the node diameters of the connected components in hypergraph.
 
@@ -1215,7 +1492,7 @@ class Hypergraph():
         an array of the diameters of the s-components and
         an array of the s-component nodes.
         """
-        A,coldict = self.adjacency_matrix(s=s, index=True)
+        A, coldict = self.adjacency_matrix(s=s, index=True)
         G = nx.from_scipy_sparse_matrix(A)
         diams = []
         comps = []
@@ -1229,8 +1506,8 @@ class Hypergraph():
         loc = np.argmax(diams)
         return diams[loc], diams, comps
 
-    def edge_diameters(self,s=1):
-        """
+    def edge_diameters(self, s=1):
+        """XX
         Returns the edge diameters of the s_edge_connected component subgraphs
         in hypergraph.
 
@@ -1249,7 +1526,7 @@ class Hypergraph():
             List of the edge uids in the s-edge component subgraphs.
 
         """
-        A,coldict = self.edge_adjacency_matrix(s=s, index=True)
+        A, coldict = self.edge_adjacency_matrix(s=s, index=True)
         G = nx.from_scipy_sparse_matrix(A)
         diams = []
         comps = []
@@ -1263,7 +1540,7 @@ class Hypergraph():
         loc = np.argmax(diams)
         return diams[loc], diams, comps
 
-    def diameter(self,s=1):
+    def diameter(self, s=1):
         """
         Returns the length of the longest shortest s-walk between nodes in hypergraph
 
@@ -1295,7 +1572,7 @@ class Hypergraph():
         else:
             raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
 
-    def edge_diameter(self,s=1):
+    def edge_diameter(self, s=1):
         """
         Returns the length of the longest shortest s-walk between edges in hypergraph
 
@@ -1327,8 +1604,7 @@ class Hypergraph():
         else:
             raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
 
-
-    def distance(self,source,target,s=1):
+    def distance(self, source, target, s=1):
         """
         Returns the shortest s-walk distance between two nodes in the hypergraph.
 
@@ -1362,22 +1638,35 @@ class Hypergraph():
         generated by the s-adjacency matrix.
 
         """
-        if isinstance(source,Entity):
-            source = source.uid
-        if isinstance(target,Entity):
-            target = target.uid
-        A,rowdict = self.adjacency_matrix(s=s,index=True)
-        g = nx.from_scipy_sparse_matrix(A)
-        rkey = {v:k for k,v in rowdict.items()}
-        try:
-            path = nx.shortest_path_length(g,rkey[source],rkey[target])
-            return path
-        except:
-            warnings.warn(f'No {s}-path between {source} and {target}')
-            return np.inf
+        if self.isstatic:
+            g = self._get_linegraph(s=s, edges=False)
+            src = int(np.argwhere(self.nodes.labs(0) == source))
+            tgt = int(np.argwhere(self.nodes.labs(0) == target))
+            try:
+                if self.nwhy:
+                    return g.s_distance(src=src, dest=tgt)
+                else:
+                    return nx.shortest_path_length(src, tgt)
+            except:
+                warnings.warn(f'No {s}-path between {source} and {target}')
+                return np.inf
+        else:
+            if isinstance(source, Entity):
+                source = source.uid
+            if isinstance(target, Entity):
+                target = target.uid
+            A, rowdict = self.adjacency_matrix(s=s, index=True)
+            g = nx.from_scipy_sparse_matrix(A)
+            rkey = {v: k for k, v in rowdict.items()}
+            try:
+                path = nx.shortest_path_length(g, rkey[source], rkey[target])
+                return path
+            except:
+                warnings.warn(f'No {s}-path between {source} and {target}')
+                return np.inf
 
-    def edge_distance(self,source,target,s=1):
-        """
+    def edge_distance(self, source, target, s=1):
+        """XX TODO: still need to return path and translate into user defined nodes and edges
         Returns the shortest s-walk distance between two edges in the hypergraph.
 
         Parameters
@@ -1393,7 +1682,7 @@ class Hypergraph():
 
         Returns
         -------
-        s-walk distance : the shortest s-walk edge distance
+        s- walk distance : the shortest s-walk edge distance
             A shortest s-walk is computed as a sequence of edges,
             the s-walk distance is the number of edges in the sequence
             minus 1. If no such path exists returns np.inf.
@@ -1413,22 +1702,61 @@ class Hypergraph():
             generated by the s-edge_adjacency matrix.
 
         """
-        if isinstance(source,Entity):
-            source = source.uid
-        if isinstance(target,Entity):
-            target = target.uid
-        A,coldict = self.edge_adjacency_matrix(s=s,index=True)
-        g = nx.from_scipy_sparse_matrix(A)
-        ckey = {v:k for k,v in coldict.items()}
-        try:
-            path =  nx.shortest_path_length(g,ckey[source],ckey[target])
-            return path
-        except:
-            warnings.warn(f'No {s}-path between {source} and {target}')
-            return np.inf
+        if self.isstatic:
+            g = self._get_linegraph(s=s, edges=True)
+            src = int(np.argwhere(self.edges.labs(0) == source))
+            tgt = int(np.argwhere(self.edges.labs(0) == target))
+            try:
+                if self.nwhy == True:
+                    return g.s_distance(src=src, dest=tgt)
+                else:
+                    return nx.shortest_path_length(src, target)
+            except:
+                warnings.warn(f'No {s}-path between {source} and {target}')
+                return np.inf
+        else:
+            if isinstance(source, Entity):
+                source = source.uid
+            if isinstance(target, Entity):
+                target = target.uid
+            A, coldict = self.edge_adjacency_matrix(s=s, index=True)
+            g = nx.from_scipy_sparse_matrix(A)
+            ckey = {v: k for k, v in coldict.items()}
+            try:
+                path = nx.shortest_path_length(g, ckey[source], ckey[target])
+                return path
+            except:
+                warnings.warn(f'No {s}-path between {source} and {target}')
+                return np.inf
 
-    @classmethod
-    def from_bipartite(cls,B,set_names=[0,1],name=None):
+    def dataframe(self, sort_rows=False, sort_columns=False):
+        """
+        Returns a pandas dataframe for hypergraph indexed by the nodes and
+        with column headers given by the edge names.
+
+        Parameters
+        ----------
+        sort_rows : bool, optional, default=True
+            sort rows based on hashable node names
+        sort_columns : bool, optional, default=True
+            sort columns based on hashable edge names
+
+        """
+
+        mat, rdx, cdx = self.edges.incidence_matrix(index=True)
+        index = [rdx[i] for i in rdx]
+        columns = [cdx[j] for j in cdx]
+        df = pd.DataFrame(mat.todense(),
+                          index=index,
+                          columns=columns)
+        if sort_rows:
+            df = df.sort_index()
+        if sort_columns:
+            df = df[sorted(columns)]
+        return df
+
+    @ classmethod
+    def from_bipartite(cls, B, set_names=[0, 1], name=None, static=False):
         """
         Static method creates a Hypergraph from a bipartite graph.
 
@@ -1462,27 +1790,29 @@ class Hypergraph():
         if not bipartite.is_bipartite(B):
             raise HyperNetxError('Error: Method requires a bipartite graph.')
         entities = []
-        for n,d in B.nodes(data=True):
+        for n, d in B.nodes(data=True):
             if d['bipartite'] == set_names[1]:
                 elements = []
                 for nei in B.neighbors(n):
-                    elements.append(Entity(nei,[],properties=B.nodes(data=True)[nei]))
+                    elements.append(Entity(nei, [], properties=B.nodes(data=True)[nei]))
                 if elements:
-                    entities.append(Entity(n,elements,properties=d))
+                    entities.append(Entity(n, elements, properties=d))
         name = name or '_'
-        return Hypergraph(EntitySet(name,entities),name=name)
+        return Hypergraph(EntitySet(name, entities), name=name, static=static)
 
-
-    @classmethod
-    def from_numpy_array(cls,M,node_names=None, edge_names=None, name=None, key=None):
+    @ classmethod
+    def from_numpy_array(cls, M, node_names=None,
+                         edge_names=None, node_label='nodes',
+                         edge_label='edges', name=None,
+                         key=None, static=False, ):
         """
-        Create a hypergraph from a real valued matrix represented as a numpy array with dimensions 2x2
+        Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
         all others to 0's.
 
         Parameters
         ----------
-        M : real valued array-like object, dimensions=2x2
+        M : real valued array-like object, 2 dimensions
             representing a real valued matrix with rows corresponding to nodes and columns to edges
 
         node_names : object, array-like, default=None
@@ -1511,51 +1841,61 @@ class Hypergraph():
 
 
         """
-        ## Create names for nodes and edges
-        ## Validate the size of the node and edge arrays
+        # Create names for nodes and edges
+        # Validate the size of the node and edge arrays
 
-        M = np.array(M)
-        if len(M.shape) != (2):
-            raise HyperNetXError('Input requires a 2 dimensional numpy array')
-
-        if node_names is not None:
-            nodenames = np.array(node_names)
-            if len(nodenames) != M.shape[0]:
-                raise HyperNetXError('Number of node names does not match number of rows.')
+        if static:
+            arr = np.array(M)
+            if key:
+                arr = key(arr) * 1
+            arr = arr.transpose()
+            labels = OrderedDict((edge_label, edge_names), (node_label, node_names))
+            E = StaticEntitySet(arr=arr, labels=labels)
+            return Hypergraph(E, name=name)
         else:
-            nodenames = np.array([f'v{idx}' for idx in range(M.shape[0])])
+            M = np.array(M)
+            if len(M.shape) != (2):
+                raise HyperNetXError('Input requires a 2 dimensional numpy array')
 
-        if edge_names is not None:
-            edgenames = np.array(edge_names)
-            if len(edgenames) != M.shape[1]:
-                raise HyperNetXError('Number of edge_names does not match number of columns.')
-        else:
-            edgenames = np.array([f'e{jdx}' for jdx in range(M.shape[1])])
+            if node_names is not None:
+                nodenames = np.array(node_names)
+                if len(nodenames) != M.shape[0]:
+                    raise HyperNetXError('Number of node names does not match number of rows.')
+            else:
+                nodenames = np.array([f'v{idx}' for idx in range(M.shape[0])])
 
-        ## apply boolean key if available
-        if key:
-            M = key(M)
+            if edge_names is not None:
+                edgenames = np.array(edge_names)
+                if len(edgenames) != M.shape[1]:
+                    raise HyperNetXError('Number of edge_names does not match number of columns.')
+            else:
+                edgenames = np.array([f'e{jdx}' for jdx in range(M.shape[1])])
 
-        ## Remove empty column indices from M columns and edgenames
-        colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:,jdx])])
-        colidxsum = np.sum(colidx)
-        if not colidxsum:
-            return Hypergraph()
-        else:
-            M = M[:,colidx]
-            edgenames = edgenames[colidx]
-            edict = dict()
-            ## Create an EntitySet of edges from M
-            for jdx,e in enumerate(edgenames):
-                edict[e] = nodenames[[idx for idx in range(M.shape[0]) if M[idx,jdx]]]
-            return Hypergraph(edict,name=name)
+            # apply boolean key if available
+            if key:
+                M = key(M)
 
+            # Remove empty column indices from M columns and edgenames
+            colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:, jdx])])
+            colidxsum = np.sum(colidx)
+            if not colidxsum:
+                return Hypergraph()
+            else:
+                M = M[:, colidx]
+                edgenames = edgenames[colidx]
+                edict = dict()
+                # Create an EntitySet of edges from M
+                for jdx, e in enumerate(edgenames):
+                    edict[e] = nodenames[[idx for idx in range(M.shape[0]) if M[idx, jdx]]]
+                return Hypergraph(edict, name=name)
 
-    @classmethod
-    def from_dataframe(cls, df, fillna=0, transpose=False,
-                        name=None, columns=None, rows=None,
-                        transforms=[],key=None,
-                        ):
+    @ classmethod
+    def from_dataframe(cls, df, columns=None, rows=None,
+                       name=None, fillna=0, transpose=False,
+                       transforms=[], key=None, node_label='nodes',
+                       edge_label='edges',
+                       static=False,
+                       ):
         '''
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
         and Columns to label edges.
@@ -1565,15 +1905,17 @@ class Hypergraph():
         df : Pandas.Dataframe
             a real valued dataframe with a single index
 
-        fillna : float, default = 0
-            a real value to place in empty cell, all-zero columns will not generate
-            an edge
-
         columns : (optional) list, default = None
             restricts df to the columns with headers in this list.
 
         rows : (optional) list, default = None
             restricts df to the rows indexed by the elements in this list.
+
+        name : (optional) string, default = None
+
+        fillna : float, default = 0
+            a real value to place in empty cell, all-zero columns will not generate
+            an edge.
 
         transpose : (optional) bool, default = False
             option to transpose the dataframe, in this case df.Index will label the edges
@@ -1589,8 +1931,12 @@ class Hypergraph():
             prior to generating the hypergraph.
 
         key : (optional) function, default = None
-            boolean function to be evaluated on each cell of the array,
-            key is applied after transforms
+            boolean function to be applied to dataframe. Must be defined on numpy
+            arrays.
+
+        See also
+        --------
+        from_numpy_array())
 
 
         Returns
@@ -1604,27 +1950,52 @@ class Hypergraph():
         edges are discarded.
         Restrictions and data processing will occur in this order:
 
-            1. column and row restrictions.
-            2. transpose the dataframe
-            3. transforms in the order listed
-            4. boolean key
+            1. column and row restrictions
+            2. fillna replace NaNs in dataframe
+            3. transpose the dataframe
+            4. transforms in the order listed
+            5. boolean key
+
+        This method offers the above options for wrangling a dataframe into an incidence
+        matrix for a hypergraph. For more flexibility we recommend you use the Pandas
+        library to format the values of your dataframe before submitting it to this
+        constructor.
+
         '''
-        import pandas as pd
 
         if type(df) != pd.core.frame.DataFrame:
             raise HyperNetXError('Error: Input object must be a pandas dataframe.')
+
+        if columns:
+            df = df[columns]
+        if rows:
+            df = df.loc[rows]
+
+        df = df.fillna(fillna)
         if transpose:
             df = df.transpose()
-        node_names = np.array(df.index)
-        edge_names = np.array(df.columns)
-        df = df.fillna(fillna)
+
+        # node_names = np.array(df.index)
+        # edge_names = np.array(df.columns)
+
         for t in transforms:
             df = df.apply(t)
         if key:
-            df = df.apply(key)
-        return cls.from_numpy_array(df.values,node_names=node_names,edge_names=edge_names,name=name)
+            mat = key(df.values) * 1
+        else:
+            mat = df.values * 1
+
+        params = {'node_names': np.array(df.index),
+                  'edge_names': np.array(df.columns),
+                  'name': name,
+                  'node_label': node_label,
+                  'edge_label': edge_label,
+                  'static': static,
+                  }
+        return cls.from_numpy_array(mat, **params)
+# end of Hypergraph class
 
 
-
-
-
+def _make_3_arrays(mat):
+    arr = coo_matrix(mat)
+    return arr.row, arr.col, arr.data
