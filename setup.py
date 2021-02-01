@@ -2,10 +2,10 @@ from setuptools import setup
 import sys
 import os.path
 
-__version__ = '0.3.7'
+__version__ = '0.3.8'
 
-if sys.version_info < (3, 6):
-    sys.exit('HyperNetX requires Python 3.6 or later.')
+if sys.version_info < (3, 8):
+    sys.exit('HyperNetX requires Python 3.8 or later.')
 
 setup(
     name='hypernetx',
@@ -19,7 +19,13 @@ setup(
     author_email="hypernetx@pnnl.gov",
     url='https://github.com/pnnl/HyperNetX',
     description='HyperNetX is a Python library for the creation and study of hypergraphs.',
-    install_requires=['networkx>=2.2,<3.0', 'numpy>=1.15.0,<2.0', 'scipy>=1.1.0,<2.0', 'matplotlib>3.0', 'scikit-learn>=0.20.0'],
+    install_requires=['networkx>=2.2,<3.0',
+                      'numpy>=1.15.0,<2.0',
+                      'scipy>=1.1.0,<2.0',
+                      'matplotlib>3.0',
+                      'scikit-learn>=0.20.0',
+                      'tbb',
+                      ],
     license='3-Clause BSD license',
     long_description='''
     The HyperNetX library provides classes and methods for complex network data.

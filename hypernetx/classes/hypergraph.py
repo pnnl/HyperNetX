@@ -353,7 +353,7 @@ class Hypergraph():
         else:
             return idx
 
-    def s_degree(self, node, s=1):  # deprecate the edges
+    def s_degree(self, node, s=1):  # deprecate this to degree
         """
         Same as `degree`
 
@@ -377,7 +377,7 @@ class Hypergraph():
 
         """
         msg = ("s-degree is deprecated and will be removed in"
-               " release 1.0.0. Use degree(s=) instead.")
+               " release 1.0.0. Use degree(node,s=int) instead.")
 
         warnings.warn(msg, DeprecationWarning)
         return self.degree(node, s)
@@ -420,11 +420,11 @@ class Hypergraph():
                 #     return self.state_dict['g'].degree(ndx, size=s)
             elif s == 1:
                 return np.sum(self.edges.data.T[1] == ndx)
-            elif isinstance(s,tuple):
-                imat = self.incidence_matrix()
-                edge_sizes = np.array(np.sum(imat, axis=0))[0]
-                jdx = np.where(np.logical_and(edge_sizes>=s[0],edge_sizes<s[1]))[0]
-                return np.sum(imat[ndx,jdx])
+            # elif isinstance(s,tuple):
+            #     imat = self.incidence_matrix()
+            #     edge_sizes = np.array(np.sum(imat, axis=0))[0]
+            #     jdx = np.where(np.logical_and(edge_sizes>=s[0],edge_sizes<s[1]))[0]
+            #     return np.sum(imat[ndx,jdx])
             else:
                 imat = self.incidence_matrix()
                 edge_sizes = np.array(np.sum(imat, axis=0))[0]
@@ -436,6 +436,36 @@ class Hypergraph():
                 return len(set(e for e in memberships if len(self.edges[e]) >= s))
             else:
                 return len(memberships)
+
+    def size(self, edge):
+        """
+        The number of nodes in nodes that belong to edge.
+        If nodes=None, returns the number of nodes in edge.
+
+        Parameters
+        ----------
+        edge : hashable
+            The uid of an edge in the hypergraph
+
+        Returns
+        -------
+        size : int
+
+        """
+        if self.isstatic:
+            edx = int(np.argwhere(self.edges.labs(0) == edge))
+            if self.nwhy:
+                return self.state_dict['g'].size(edx)
+            else:
+                return np.sum(self.edges.data.T[0] == edx)
+            # elif isinstance(s,tuple):
+            #     imat = self.incidence_matrix()
+            #     edge_sizes = np.array(np.sum(imat, axis=0))[0]
+            #     jdx = np.where(np.logical_and(edge_sizes>=s[0],edge_sizes<s[1]))[0]
+            #     return np.sum(imat[ndx,jdx])
+        else:
+            return len(self.edges[edge])
+
 
     def number_of_nodes(self, nodeset=None):
         """
@@ -487,25 +517,6 @@ class Hypergraph():
         else:
             return len(self.nodes)
 
-    def size(self, edge):
-        """
-        The number of nodes in nodes that belong to edge.
-        If nodes=None, returns the number of nodes in edge.
-
-        Parameters
-        ----------
-        edge : hashable
-            The uid of an edge in the hypergraph
-
-        Returns
-        -------
-        size : int
-
-        """
-        if self.nwhy:
-            return self.state_dict['g'].number_of_edges()
-        else:
-            return len(self.edges[edge])
 
     def dim(self, edge):
         """
