@@ -117,7 +117,7 @@ class Hypergraph():
                 print('NWHypergraph is not available. Will continue with static=True.')
 
         if not name:
-            self.name = '_'
+            self.name = ''
         else:
             self.name = name
 
@@ -368,7 +368,7 @@ class Hypergraph():
         -------
         s_degree : int
             The degree of a node in the subgraph induced by edges
-            if edges = None return the s-degree of the node
+            of size s
 
         Note
         ----
@@ -376,17 +376,25 @@ class Hypergraph():
         at least s that contain the node.
 
         """
+        msg = ("s-degree is deprecated and will be removed in"
+               " release 1.0.0. Use degree(s=) instead.")
+
+        warnings.warn(msg, DeprecationWarning)
         return self.degree(node, s)
 
     def degree(self, node, s=1):
         """
+        TODO : upgrade to s a tuple for min max dimensions
         Return the degree of a node in H
 
         Parameters
         ----------
         node : node.uid
 
-        s : positive integer, optional
+        s : positive integer, 2-tuple, optional
+            restricts count to edges of size s or if
+            2-tuple edges of size at least s[0] and less
+            than s[1]
 
         edges : iterable of edge.uids, optional
 
@@ -403,24 +411,25 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            g = self.get_linegraph(s=s, edges=False)
             ndx = int(np.argwhere(self.nodes.labs(0) == node))
             if self.nwhy:
-                return g.degree(ndx)
+                return self.state_dict['g'].degree(ndx, size=s)
+                # if isinstance(s, tuple):
+                #     return self.state_dict['g'].degree(ndx, min_size=s[0], max_size=s[1])
+                # else:
+                #     return self.state_dict['g'].degree(ndx, size=s)
+            elif s == 1:
+                return np.sum(self.edges.data.T[1] == ndx)
+            elif isinstance(s,tuple):
+                imat = self.incidence_matrix()
+                edge_sizes = np.array(np.sum(imat, axis=0))[0]
+                jdx = np.where(np.logical_and(edge_sizes>=s[0],edge_sizes<s[1]))[0]
+                return np.sum(imat[ndx,jdx])
             else:
-                return g.degree(ndx)
-            # imat = self.incidence_matrix()
-            # idx = self.edges.indices(self.edges.keys[1], [node])[0]
-            # if edges is not None:
-            #     jdx = self.edges.indices(self.edges.keys[0], edges)
-            #     if s > 1:
-            #         jdx = sorted(set(np.asarray(np.sum(imat, axis=0) > s).nonzero()[1]).intersection(jdx))
-            #         imat = imat[:, jdx]
-            # else:
-            #     if s > 1:
-            #         jdx = np.array(np.sum(imat, axis=0) > s).nonzero()[1]
-            #         imat = imat[:, jdx]
-            # return int(np.sum(imat, axis=1)[idx])
+                imat = self.incidence_matrix()
+                edge_sizes = np.array(np.sum(imat, axis=0))[0]
+                jdx = np.where(edge_sizes >= s)[0]
+                return np.sum(imat[ndx,jdx])
         else:
             memberships = set(self.nodes[node].memberships)
             if s > 1:
@@ -1679,6 +1688,12 @@ class Hypergraph():
 
         s : positive integer
             the number of intersections between pairwise consecutive edges
+        
+        TODO: add edge weights
+        weight : None or string, optional, default: None
+            if None then all edges have weight 1. If string then edge attribute
+            string is used if available.
+            
 
         Returns
         -------
@@ -1707,10 +1722,10 @@ class Hypergraph():
             src = int(np.argwhere(self.edges.labs(0) == source))
             tgt = int(np.argwhere(self.edges.labs(0) == target))
             try:
-                if self.nwhy == True:
+                if self.nwhy == True:  ## TODO add edge weights
                     return g.s_distance(src=src, dest=tgt)
                 else:
-                    return nx.shortest_path_length(src, target)
+                    return nx.shortest_path_length(g, src, target)
             except:
                 warnings.warn(f'No {s}-path between {source} and {target}')
                 return np.inf
@@ -1756,7 +1771,7 @@ class Hypergraph():
         return df
 
     @ classmethod
-    def from_bipartite(cls, B, set_names=[0, 1], name=None, static=False):
+    def from_bipartite(cls, B, set_names=('nodes','edges'), name=None, static=False, use_nwhy=False):
         """
         Static method creates a Hypergraph from a bipartite graph.
 
@@ -1765,13 +1780,14 @@ class Hypergraph():
 
         B: nx.Graph()
             A networkx bipartite graph. Each node in the graph has a property
-            'bipartite' taking one of two values
+            'bipartite' taking the value of 0 or 1 indicating a 2-coloring of the graph.
 
-        set_names: iterable
-            An ordered list :math:`[x_0, x_1]`, corresponding to the values
-            assigned to the bipartite property in B.
+        set_names: iterable of length 2, optional, default = ['nodes','edges']
+            Category names assigned to the graph nodes associated to each bipartite set
 
         name: hashable
+
+        static: bool
 
         Returns
         -------
@@ -1779,32 +1795,42 @@ class Hypergraph():
 
         Notes
         -----
-        A partition for the nodes in a bipartite graph generates a hypergraph as follows.
-        For each node n in B with bipartite property equal to set_names[0] there is a
-        node n in the hypergraph.  For each node e in B with bipartite property
-        equal to set_names[1], there is an edge in the hypergraph.
-        For each edge (n,e) in B add n to the edge e in the hypergraph.
+        A partition for the nodes in a bipartite graph generates a hypergraph. 
 
         """
+        edges = []
+        nodes = []
+        for n,d in B.nodes(data=True):
+            if d['bipartite']==0:
+                nodes.append(n)
+            else:
+                edges.append(n)        
 
-        if not bipartite.is_bipartite(B):
-            raise HyperNetxError('Error: Method requires a bipartite graph.')
-        entities = []
-        for n, d in B.nodes(data=True):
-            if d['bipartite'] == set_names[1]:
-                elements = []
-                for nei in B.neighbors(n):
-                    elements.append(Entity(nei, [], properties=B.nodes(data=True)[nei]))
-                if elements:
-                    entities.append(Entity(n, elements, properties=d))
-        name = name or '_'
-        return Hypergraph(EntitySet(name, entities), name=name, static=static)
+        if not bipartite.is_bipartite_node_set(B, nodes):
+            raise HyperNetxError('Error: Method requires a 2-coloring of a bipartite graph.')
+                             
+        if static:
+            elist = []
+            for e in list(B.edges):
+                if e[0] in nodes:
+                    elist.append([e[0],e[1]])
+                else:
+                    elist.append([e[1],e[0]])             
+            df = pd.DataFrame(elist,columns=set_names)           
+            E = StaticEntitySet(entity=df)
+            name = name or '_'
+            return Hypergraph(E, name=name, use_nwhy=use_nwhy)
+        else:
+            node_entities = {n: Entity(n, [], properties=B.nodes(data=True)[n]) for n in nodes}
+            edge_dict = {e: [node_entities[n] for n in list(B.neighbors(e))] for e in edges}
+            name = name or '_'
+            return Hypergraph(setsystem = edge_dict, name=name)
 
     @ classmethod
     def from_numpy_array(cls, M, node_names=None,
                          edge_names=None, node_label='nodes',
                          edge_label='edges', name=None,
-                         key=None, static=False, ):
+                         key=None, static=False, use_nwhy=False ):
         """
         Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
@@ -1851,7 +1877,7 @@ class Hypergraph():
             arr = arr.transpose()
             labels = OrderedDict((edge_label, edge_names), (node_label, node_names))
             E = StaticEntitySet(arr=arr, labels=labels)
-            return Hypergraph(E, name=name)
+            return Hypergraph(E, name=name, use_nwhy=use_nwhy)
         else:
             M = np.array(M)
             if len(M.shape) != (2):
@@ -1894,7 +1920,7 @@ class Hypergraph():
                        name=None, fillna=0, transpose=False,
                        transforms=[], key=None, node_label='nodes',
                        edge_label='edges',
-                       static=False,
+                       static=False, use_nwhy=False
                        ):
         '''
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
@@ -1943,9 +1969,9 @@ class Hypergraph():
         -------
         : Hypergraph
 
-        Note
-        ----
-        The constructor does not generate empty edges.
+        Notes
+        -----
+        1. The constructor does not generate empty edges.
         All-zero columns in df are removed and the names corresponding to these
         edges are discarded.
         Restrictions and data processing will occur in this order:
@@ -1960,6 +1986,9 @@ class Hypergraph():
         matrix for a hypergraph. For more flexibility we recommend you use the Pandas
         library to format the values of your dataframe before submitting it to this
         constructor.
+
+        2. The dataframe constructor for a hypergraph transforms the values portion of the dataframe
+        into an incidence matrix. This is different from the use of dataframe in :ref:`StaticEntity<staticentity>`.
 
         '''
 
@@ -1991,6 +2020,7 @@ class Hypergraph():
                   'node_label': node_label,
                   'edge_label': edge_label,
                   'static': static,
+                  'use_nwhy': use_nwhy
                   }
         return cls.from_numpy_array(mat, **params)
 # end of Hypergraph class

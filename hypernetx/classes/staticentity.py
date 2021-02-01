@@ -19,7 +19,10 @@ __all__ = [
 
 class StaticEntity(object):
 
+
     """
+    .. _staticentity:
+
     arr = np.ndarray (there can be no empty cells) of boolean or integer values
     labels = OrderedDict of labelnames by dimension, keys = header names , ## rdict with numeric keys
     levels are given by the order of these labels
@@ -28,7 +31,7 @@ class StaticEntity(object):
     ----------
     arr : numpy.ndarray or scip.sparse.matrix, optional, default=None
 
-    labels : OrderedDict, optional, default=None
+    labels : OrderedDict of lists, optional, default=None
         dictionary lists
 
     entity : hypernetx.StaticEntity or hypernets.StaticEntitySet, optional, default=None
@@ -103,15 +106,16 @@ class StaticEntity(object):
             self.properties.update(props)
             self.__dict__.update(props)
             if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
-                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
+                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) is aligned to arr
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
                 self._keys = np.array(list(labels.keys()))
                 self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
             else:
-                self._labels = OrderedDict([(str(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
+                self._labels = OrderedDict([(int(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
                 self._keyindex = lambda category: int(category)
                 self._keys = np.arange(self._dimsize)
-                self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+                self._index = lambda category, value: value if value in self._labels[category] else None
+                # self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
         elif arr is not None:
             self._arr = arr
             self.properties.update(props)
@@ -121,16 +125,15 @@ class StaticEntity(object):
             self._dimsize = len(arr.shape)
             self._data = _turn_tensor_to_data(arr * 1)
             if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
-                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())  # OrderedDict(category,np.array([categorical values ....])) aligned to arr
+                self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
                 self._keys = np.array(list(labels.keys()))
                 self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
             else:
-                self._labels = OrderedDict([(str(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
-                self._keyindex = lambda category: str(category)
+                self._labels = OrderedDict([(int(dim), np.arange(ct)) for dim, ct in enumerate(self.dimensions)])
+                self._keyindex = lambda category: int(category)
                 self._keys = np.arange(self._dimsize)
-                self._index = lambda category, value: int(np.where(self._labels[str(category)] == value)[0]) if np.where(self._labels[str(category)] == value)[0].size > 0 else None
-
+                self._index = lambda category, value: value if value in self._labels[category] else None
         else:  # no entity, data or arr is given
 
             if labels is not None:
@@ -433,6 +436,10 @@ class StaticEntity(object):
 
 class StaticEntitySet(StaticEntity):
 
+    """
+    .. _staticentityset:
+    """
+    
     def __init__(self,
                  entity=None,
                  data=None,
@@ -577,10 +584,10 @@ def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False)
     ldict = OrderedDict()
     rdict = OrderedDict()
     for idx, c in enumerate(columns):
-        ldict[c] = defaultdict(ctr[idx])
+        ldict[c] = defaultdict(ctr[idx])  # TODO make this an Ordered default dict
         rdict[c] = OrderedDict()
         if include_unknowns:
-            ldict[c][f'Unknown {c}']
+            ldict[c][f'Unknown {c}']  # TODO: update this to take a dict assign for each column
             rdict[c][0] = f'Unknown {c}'
         for k in df[c]:
             ldict[c][k]
@@ -599,7 +606,7 @@ def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False)
     output_data = remove_row_duplicates(data, return_counts=return_counts)
 
     slabels = OrderedDict()
-    for cdx, c in enumerate(list(ldict.keys())):
+    for cdx, c in enumerate(columns):
         slabels.update({c: np.array(list(ldict[c].keys()))})
     if return_counts:
         return output_data[0], slabels, output_data[1]
