@@ -337,7 +337,6 @@ class StaticEntity(object):
         '''
         Convenience method to navigate large tensor.
         level1 indexes the columns and level2 indexes the rows
-        add decorator which returns a partial result to the function and then continues
         think level1 = edges, level2 = nodes
         '''
         if not weighted:
