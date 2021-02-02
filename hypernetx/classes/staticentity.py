@@ -19,7 +19,6 @@ __all__ = [
 
 class StaticEntity(object):
 
-
     """
     .. _staticentity:
 
@@ -438,7 +437,7 @@ class StaticEntitySet(StaticEntity):
     """
     .. _staticentityset:
     """
-    
+
     def __init__(self,
                  entity=None,
                  data=None,
@@ -518,11 +517,12 @@ def _turn_tensor_to_data(arr, remove_duplicates=True):
     arr : numpy.ndarray
         Tensor corresponding to incidence of co-occurring labels.
     """
-    dfa = np.array(arr.nonzero()).transpose()
-    if remove_duplicates:
-        return remove_row_duplicates(dfa)
-    else:
-        return dfa
+    return np.array(arr.nonzero()).transpose()
+    # dfa = np.array(arr.nonzero()).transpose()
+    # if remove_duplicates:
+    #     return remove_row_duplicates(dfa)
+    # else:
+    #     return dfa
 
 
 def _turn_dict_to_staticentity(dict_object, remove_duplicates=True):

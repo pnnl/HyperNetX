@@ -11,7 +11,7 @@ from collections import OrderedDict, defaultdict
 from hypernetx.classes.entity import Entity, EntitySet
 from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
 from hypernetx.exception import HyperNetXError
-from hypernetx.utils.decorators import not_implemented_for, use_nwhy
+from hypernetx.utils.decorators import not_implemented_for
 
 
 __all__ = [
@@ -385,7 +385,7 @@ class Hypergraph():
         warnings.warn(msg, DeprecationWarning)
         return self.degree(node, s)
 
-    def degree(self, node, s=1): #Changed s to size to match nwhy
+    def degree(self, node, s=1):  # Changed s to size to match nwhy
         """
         Returns the number of edges of size s or of size between min_size
         and max_size inclusive that contain node.
@@ -416,7 +416,7 @@ class Hypergraph():
                 imat = self.incidence_matrix()
                 edge_sizes = np.array(np.sum(imat, axis=0))[0]
                 jdx = np.where(edge_sizes >= s)[0]
-                return np.sum(imat[ndx,jdx])
+                return np.sum(imat[ndx, jdx])
         else:
             memberships = set(self.nodes[node].memberships)
             if s > 1:
@@ -452,7 +452,6 @@ class Hypergraph():
             #     return np.sum(imat[ndx,jdx])
         else:
             return len(self.edges[edge])
-
 
     def number_of_nodes(self, nodeset=None):
         """
@@ -509,7 +508,6 @@ class Hypergraph():
             return self.g.number_of_nodes()
         else:
             return len(self.nodes)
-
 
     def dim(self, edge):
         """
@@ -590,7 +588,6 @@ class Hypergraph():
                 neighborlist.update(self.edges[e].uidset)
             neighborset.discard(node)
             return list(neighborset)
-
 
     @not_implemented_for('static')
     def remove_node(self, node):
@@ -1664,12 +1661,12 @@ class Hypergraph():
 
         s : positive integer
             the number of intersections between pairwise consecutive edges
-        
+
         TODO: add edge weights
         weight : None or string, optional, default: None
             if None then all edges have weight 1. If string then edge attribute
             string is used if available.
-            
+
 
         Returns
         -------
@@ -1698,7 +1695,7 @@ class Hypergraph():
             src = int(np.argwhere(self.edges.labs(0) == source))
             tgt = int(np.argwhere(self.edges.labs(0) == target))
             try:
-                if self.nwhy == True:  ## TODO add edge weights
+                if self.nwhy == True:  # TODO add edge weights
                     return g.s_distance(src=src, dest=tgt)
                 else:
                     return nx.shortest_path_length(g, src, target)
@@ -1747,7 +1744,7 @@ class Hypergraph():
         return df
 
     @ classmethod
-    def from_bipartite(cls, B, set_names=('nodes','edges'), name=None, static=False, use_nwhy=False):
+    def from_bipartite(cls, B, set_names=('nodes', 'edges'), name=None, static=False, use_nwhy=False):
         """
         Static method creates a Hypergraph from a bipartite graph.
 
@@ -1776,23 +1773,23 @@ class Hypergraph():
         """
         edges = []
         nodes = []
-        for n,d in B.nodes(data=True):
-            if d['bipartite']==0:
+        for n, d in B.nodes(data=True):
+            if d['bipartite'] == 0:
                 nodes.append(n)
             else:
-                edges.append(n)        
+                edges.append(n)
 
         if not bipartite.is_bipartite_node_set(B, nodes):
             raise HyperNetxError('Error: Method requires a 2-coloring of a bipartite graph.')
-                             
+
         if static:
             elist = []
             for e in list(B.edges):
                 if e[0] in nodes:
-                    elist.append([e[0],e[1]])
+                    elist.append([e[0], e[1]])
                 else:
-                    elist.append([e[1],e[0]])             
-            df = pd.DataFrame(elist,columns=set_names)           
+                    elist.append([e[1], e[0]])
+            df = pd.DataFrame(elist, columns=set_names)
             E = StaticEntitySet(entity=df)
             name = name or '_'
             return Hypergraph(E, name=name, use_nwhy=use_nwhy)
@@ -1800,13 +1797,13 @@ class Hypergraph():
             node_entities = {n: Entity(n, [], properties=B.nodes(data=True)[n]) for n in nodes}
             edge_dict = {e: [node_entities[n] for n in list(B.neighbors(e))] for e in edges}
             name = name or '_'
-            return Hypergraph(setsystem = edge_dict, name=name)
+            return Hypergraph(setsystem=edge_dict, name=name)
 
     @ classmethod
     def from_numpy_array(cls, M, node_names=None,
                          edge_names=None, node_label='nodes',
                          edge_label='edges', name=None,
-                         key=None, static=False, use_nwhy=False ):
+                         key=None, static=False, use_nwhy=False):
         """
         Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
