@@ -4,8 +4,14 @@ import hypernetx as hnx
 from decorator import decorator
 from hypernetx.exception import HyperNetXError, HyperNetXNotImplementedError
 
+try:
+    import nwhy
+except:
+    pass
+
 __all__ = [
-    'not_implemented_for'
+    'not_implemented_for',
+    'use_nwhy'
 ]
 
 
@@ -60,3 +66,21 @@ def not_implemented_for(*object_types):
         else:
             return not_implemented_for_func(*args, **kwargs)
     return _not_implemented_for
+
+def use_nwhy(object_name):
+    """
+    Replaces the NWHy
+    
+    Parameters
+    ----------
+    object_type : nwhy.NWHypergraph or 
+        Description
+    """
+    @decorator
+    def _use_nwhy(func, *args, **kwargs):
+        this_object = args[0]
+        if this_object.nwhy != True:
+            return func(*args,**kwargs)
+        else:
+            object_type = getattr(nwhy, object_name)
+            return getattr(object_type,func.__name__)(*args,**kwargs)
