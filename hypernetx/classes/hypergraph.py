@@ -312,7 +312,7 @@ class Hypergraph():
                 self.state_dict['edge_size_dist'] = dist
                 return dist
         else:
-            return list(np.array(np.sum(H.incidence_matrix(), axis=0))[0])
+            return list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
 
     def convert_to_static(self, name=None, nodes_name='nodes', edges_name='edges'):
         """
