@@ -180,7 +180,7 @@ class StaticEntity(object):
                 print(ex)
                 print('arr cannot be computed')
                 self._arr = 0
-        return self._arr
+        return self._arr  # Do we need to return anything here
 
     @property
     def array_with_counts(self):
@@ -500,9 +500,9 @@ class StaticEntitySet(StaticEntity):
         shared_children = DefaultOrderedDict(list)
         for k, v in self.elements.items():
             shared_children[frozenset(v)].append(k)
-        new_entity_dict = OrderedDict([(next(iter(v)), sorted(set(k), key=lambda x: list(self.labs(1)).index(x))) for k, v in shared_children.items()])
+        new_entity_dict = OrderedDict([(f"{next(iter(v))}:{len(v)}", sorted(set(k), key=lambda x: list(self.labs(1)).index(x))) for k, v in shared_children.items()])
         if return_equivalence_classes:
-            eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
+            eq_classes = OrderedDict([(f"{next(iter(v))}:{len(v)}", sorted(v, key=lambda x: list(self.labs(0)).index(x))) for k, v in shared_children.items()])
             return StaticEntitySet(uid=uid, entity=new_entity_dict), eq_classes
         else:
             return StaticEntitySet(uid=uid, entity=new_entity_dict)

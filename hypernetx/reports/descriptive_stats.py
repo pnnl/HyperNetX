@@ -64,15 +64,10 @@ def edge_size_dist(H, aggregated=False):
         List of edge sizes or dictionary of edge size distribution.
 
     '''
-    if H.nwhy:
-        distr = H.g.edge_size_dist()
-    else:
-        distr = [H.size(e) for e in H.edges]
-    # distr = [len(e.uidset) for e in H.edges.elements.values()]
     if aggregated:
-        return Counter(distr)
+        return Counter(H.edge_size_dist)
     else:
-        return distr
+        return H.edge_size_dist()
 
 
 def degree_dist(H, aggregated=False):
@@ -357,7 +352,7 @@ def dist_stats(H):
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
     if H.isstatic and 'dist_stats' in H.state_dict:
-        return H['dist_stats']
+        return H.state_dict['dist_stats']
     else:
         cstats = ['min', 'max', 'mean', 'median', 'std']
         basic = dict()
