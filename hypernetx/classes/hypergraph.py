@@ -170,23 +170,6 @@ class Hypergraph():
         else:
             self.nwhy = False
 
-    @not_implemented_for('dynamic')
-    def get_linegraph(self, s, edges=True):
-        d = self.state_dict
-        key = 'sedgelg' if edges else 'snodelg'
-        if s in d[key]:
-            return d[key][s]
-        else:
-            if self.nwhy == True:
-                d[key][s] = d['g'].s_linegraph(s=s, edges=edges)
-            else:
-                if edges:
-                    A = self.edge_adjacency_matrix(s=s)
-                else:
-                    A = self.adjacency_matrix(s=s)
-                d[key][s] = nx.from_scipy_sparse_matrix(A)
-            return d[key][s]
-
     @property
     def edges(self):
         """
@@ -275,6 +258,61 @@ class Hypergraph():
 
         """
         return self.neighbors(node)
+
+    @not_implemented_for('dynamic')
+    def get_id(self, uid, edges=False):
+        kdx = (edges + 1) % 2
+        return int(np.argwhere(self.edges.labs(kdx) == uid))
+
+    @not_implemented_for('dynamic')
+    def get_name(self, id, edges=False):
+        kdx = (edges + 1) % 2
+        return self.edges.labs(kdx)[id]
+
+    @not_implemented_for('dynamic')
+    def get_linegraph(self, s, edges=True):
+        d = self.state_dict
+        key = 'sedgelg' if edges else 'snodelg'
+        if s in d[key]:
+            return d[key][s]
+        else:
+            if self.nwhy == True:
+                d[key][s] = d['g'].s_linegraph(s=s, edges=edges)
+            else:
+                if edges:
+                    A = self.edge_adjacency_matrix(s=s)
+                else:
+                    A = self.adjacency_matrix(s=s)
+                d[key][s] = nx.from_scipy_sparse_matrix(A)
+            return d[key][s]
+
+    def set_state(self, **kwargs):
+        """
+        Allow state_dict updates from outside of class. Use with caution.
+
+        Parameters
+        ----------
+        **kwargs
+            key=value pairs to save in state dictionary
+        """
+        for k, v in kwargs.items():
+            self.state_dict[k] = v
+
+    def edge_size_dist(self):
+        if self.isstatic:
+            dist = self.state_dict.get('edge_size_dist', None)
+            if dist:
+                return dist
+            else:
+                if self.nwhy:
+                    dist = self.g.edge_size_dist()
+                else:
+                    dist = list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+
+                self.state_dict['edge_size_dist'] = dist
+                return dist
+        else:
+            return list(np.array(np.sum(H.incidence_matrix(), axis=0))[0])
 
     def convert_to_static(self, name=None, nodes_name='nodes', edges_name='edges'):
         """
@@ -387,14 +425,15 @@ class Hypergraph():
 
     def degree(self, node, s=1):  # Changed s to size to match nwhy
         """
-        Returns the number of edges of size s or of size between min_size
-        and max_size inclusive that contain node.
+        The number of edges of size s that contain node.
 
         Parameters
         ----------
         node : hashable
             identifier for the node.
         s : positive integer, optional, default: 1
+
+        TODO: add
         ##min_size : positive integer, optional, default: 1
         ##max_size : positive integer or None, optional, default: None
 
@@ -404,19 +443,19 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            ndx = int(np.argwhere(self.nodes.labs(0) == node))
-            if self.nwhy:
-                return self.g.degree(ndx, size=s)
-
-                # return g.degree(ndx, mins_size=min_size, max_size=max_size)
-            elif s == 1:
+            ndx = self.get_id(node)
+            if s == 1:
                 return np.sum(self.edges.data.T[1] == ndx)
+            # if self.nwhy:
+            #     return self.g.degree(ndx, size=s)
+            #     # return g.degree(ndx, mins_size=min_size, max_size=max_size)
+            # elif s == 1:
+            #     return np.sum(self.edges.data.T[1] == ndx)
 
             else:
+                ids = np.where(np.array(self.edge_size_dist()) >= s)[0]
                 imat = self.incidence_matrix()
-                edge_sizes = np.array(np.sum(imat, axis=0))[0]
-                jdx = np.where(edge_sizes >= s)[0]
-                return np.sum(imat[ndx, jdx])
+                return np.sum(imat[ndx, ids])
         else:
             memberships = set(self.nodes[node].memberships)
             if s > 1:
@@ -426,8 +465,7 @@ class Hypergraph():
 
     def size(self, edge):
         """
-        The number of nodes in nodes that belong to edge.
-        If nodes=None, returns the number of nodes in edge.
+        The number of nodes that belong to edge.
 
         Parameters
         ----------
@@ -440,16 +478,15 @@ class Hypergraph():
 
         """
         if self.isstatic:
-            edx = int(np.argwhere(self.edges.labs(0) == edge))
-            if self.nwhy:
-                return self.state_dict['g'].size(edx)
+            edx = self.get_id(edge, edges=True)
+            esd = self.state_dict.get('edge_size_dist', None)
+            if esd is not None:
+                return esd[edx]
             else:
-                return np.sum(self.edges.data.T[0] == edx)
-            # elif isinstance(s,tuple):
-            #     imat = self.incidence_matrix()
-            #     edge_sizes = np.array(np.sum(imat, axis=0))[0]
-            #     jdx = np.where(np.logical_and(edge_sizes>=s[0],edge_sizes<s[1]))[0]
-            #     return np.sum(imat[ndx,jdx])
+                if self.nwhy:
+                    return self.g.size(edx)
+                else:
+                    return np.sum(self.edges.data.T[0] == edx)
         else:
             return len(self.edges[edge])
 
@@ -542,9 +579,9 @@ class Hypergraph():
 
         if self.isstatic:
             g = self.get_linegraph(s=s, edges=False)
-            ndx = int(np.argwhere(H.nodes.labs(0) == node))
+            ndx = int(np.argwhere(self.nodes.labs(0) == node))
             if self.nwhy == True:
-                nbrs = g.s_neighbor(ndx)
+                nbrs = g.s_neighbors(ndx)
             else:
                 nbrs = list(g.neighbors(ndx))
             return [self.translate(nb) for nb in nbrs]
@@ -586,7 +623,7 @@ class Hypergraph():
             g = self.get_linegraph(s=s, edges=True)
             edx = int(np.argwhere(H.edges.labs(0) == edge))
             if self.nwhy == True:
-                nbrs = g.s_neighbor(edx)
+                nbrs = g.s_neighbors(edx)
             else:
                 nbrs = list(g.neighbors(ndx))
             return [self.translate(nb, nodes=False) for nb in nbrs]
@@ -826,7 +863,20 @@ class Hypergraph():
             Dictionary identifying columns with edges
 
         """
-        return self.edges.incidence_matrix(index=index)
+        if self.isstatic:
+            mat = self.state_dict.get('incidence_matrix', None)
+            if mat is None:
+                mat = self.edges.incidence_matrix()
+                self.state_dict['incidence_matrix'] = mat
+            if index:
+                rdict = dict(enumerate(self.edges.labs(1)))
+                cdict = dict(enumerate(self.edges.labs(0)))
+                return mat, rdict, cdict
+            else:
+                return mat
+
+        else:
+            return self.edges.incidence_matrix(index=index)
 
     @staticmethod
     def incidence_to_adjacency(M, s=1, weighted=True):
@@ -950,6 +1000,7 @@ class Hypergraph():
         Returns the unweighted s-edge adjacency matrix for the subgraph.
 
         """
+
         edges = [e for e in self.edges if len(self.edges[e]) >= s]
         H = self.restrict_to_edges(edges)
         return H.edge_adjacency_matrix(s=s, index=index, weighted=False)
@@ -1006,7 +1057,7 @@ class Hypergraph():
                     E[n].append(k)
             return Hypergraph(E, name=name)
 
-    def collapse_edges(self, name=None, return_equivalence_classes=False):
+    def collapse_edges(self, name=None, use_reps=None, return_counts=None, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying edges containing the same nodes
 
@@ -1038,13 +1089,20 @@ class Hypergraph():
 
 
         """
+        if use_reps is not None or return_counts is not None:
+            msg = '''
+            use_reps ane return_counts are no longer supported keyword arguments and will throw
+            an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            '''
+            warnings.warn(msg, DeprecationWarning)
         temp = self.edges.collapse_identical_elements('_', return_equivalence_classes=return_equivalence_classes)
         if return_equivalence_classes:
             return Hypergraph(temp[0], name), temp[1]
         else:
             return Hypergraph(temp, name)
 
-    def collapse_nodes(self, name=None, return_equivalence_classes=False):
+    def collapse_nodes(self, name=None, use_reps=True, return_counts=True, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by the same edges
 
@@ -1085,6 +1143,13 @@ class Hypergraph():
             {'E1': {('a', 2)}, 'E2': {('a', 2)}}
 
         """
+        if use_reps is not None or return_counts is not None:
+            msg = '''
+            use_reps ane return_counts are no longer supported keyword arguments and will throw
+            an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            '''
+            warnings.warn(msg, DeprecationWarning)
 
         temp = self.dual().edges.collapse_identical_elements('_', return_equivalence_classes=return_equivalence_classes)
 
@@ -1093,7 +1158,7 @@ class Hypergraph():
         else:
             return Hypergraph(temp, name).dual()
 
-    def collapse_nodes_and_edges(self, name=None, return_equivalence_classes=False):
+    def collapse_nodes_and_edges(self, name=None, use_reps=True, return_counts=True, return_equivalence_classes=False):
         """
         Returns a new hypergraph by collapsing nodes and edges.
 
@@ -1134,6 +1199,14 @@ class Hypergraph():
             {('E1', 2): {('a', 2)}}
 
         """
+        if use_reps is not None or return_counts is not None:
+            msg = '''
+            use_reps ane return_counts are no longer supported keyword arguments and will throw
+            an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            '''
+            warnings.warn(msg, DeprecationWarning)
+
         if return_equivalence_classes:
             temp, neq = self.collapse_nodes(name='temp', return_equivalence_classes=True)
             ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)

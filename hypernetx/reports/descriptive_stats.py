@@ -8,7 +8,7 @@ This module contains methods which compute various distributions for hypergraphs
 
 Also computes general hypergraph information: number of nodes, edges, cells, aspect ratio, incidence matrix density
 """
-
+from collections import Counter
 import numpy as np
 import networkx as nx
 from hypernetx import *
@@ -16,7 +16,6 @@ from hypernetx.utils.decorators import not_implemented_for
 
 __all__ = [
     'centrality_stats',
-    'frequency_distribution',
     'edge_size_dist',
     'degree_dist',
     'comp_dist',
@@ -47,24 +46,6 @@ def centrality_stats(X):
     return [min(X), max(X), np.mean(X), np.median(X), np.std(X)]
 
 
-def frequency_distribution(X):
-    '''
-    Computes frequencies of elements of X.
-
-    Parameters
-    ----------
-    X : iterable
-        an iterable of numbers
-
-    Returns
-    -------
-     frequency_distribution : dict
-        Dictionary keyed on unique elements of X with values equal to their frequencies within X.
-    '''
-    x = np.unique(X, return_counts=True)
-    return dict(zip(x[0], x[1]))
-
-
 def edge_size_dist(H, aggregated=False):
     '''
     Computes edge sizes of a hypergraph.
@@ -83,11 +64,13 @@ def edge_size_dist(H, aggregated=False):
         List of edge sizes or dictionary of edge size distribution.
 
     '''
-    # distr = [len(H.edges[e]) for e in H.edges]
-    distr = np.array(np.sum(H.incidence_matrix(), axis=0))[0]
+    if H.nwhy:
+        distr = H.g.edge_size_dist()
+    else:
+        distr = [H.size(e) for e in H.edges]
     # distr = [len(e.uidset) for e in H.edges.elements.values()]
     if aggregated:
-        return frequency_distribution(distr)
+        return Counter(distr)
     else:
         return distr
 
@@ -109,9 +92,12 @@ def degree_dist(H, aggregated=False):
      degree_dist : list or dict
         List of degrees or dictionary of degree distribution
     '''
-    distr = [H.degree(n) for n in H.nodes]
+    if H.nwhy:
+        distr = H.g.node_size_dist()
+    else:
+        distr = [H.degree(n) for n in H.nodes]
     if aggregated:
-        return frequency_distribution(distr)
+        return Counter(distr)
     else:
         return distr
 
@@ -140,12 +126,12 @@ def comp_dist(H, aggregated=False):
     '''
     distr = [len(c) for c in H.components()]
     if aggregated:
-        return frequency_distribution(distr)
+        return Counter(distr)
     else:
         return distr
 
 
-def s_comp_dist(H, s=1, aggregated=False, edges=True):
+def s_comp_dist(H, s=1, aggregated=False, edges=True, return_singletons=True):
     '''
     Computes s-component sizes, counting nodes or edges. 
 
@@ -160,6 +146,7 @@ def s_comp_dist(H, s=1, aggregated=False, edges=True):
     edges :
         If edges is True, the component size is number of edges.
         If edges is False, the component size is number of nodes.
+    return_singletons : bool, optional, default=True
 
     Returns
     -------
@@ -171,14 +158,13 @@ def s_comp_dist(H, s=1, aggregated=False, edges=True):
     comp_dist
 
     '''
-    comps = list(H.s_component_subgraphs(s=s))
-    if edges:
-        distr = [len(c.edges) for c in comps]
-    else:
-        distr = [len(c.nodes) for c in comps]
+    distr = list()
+    comps = H.s_connected_components(s=s, edges=edges, return_singletons=return_singletons)
+
+    distr = [len(c) for c in comps]
 
     if aggregated:
-        return frequency_distribution(distr)
+        return Counter(distr)
     else:
         return distr
 
@@ -202,11 +188,9 @@ def toplex_dist(H, aggregated=False):
      toplex_dist : list or dictionary
         List of toplex sizes or dictionary of toplex size distribution in H
     '''
-    tops = H.toplexes()
-    distr = [len(e) for e in tops.edges()]
-
+    distr = [H.size(e) for e in H.toplexes().edges]
     if aggregated:
-        return frequency_distribution(distr)
+        return Counter(distr)
     else:
         return distr
 
@@ -251,7 +235,7 @@ def s_edge_diameter_dist(H):
     return diams
 
 
-def info(H, obj=None, dictionary=False):
+def info(H, node=None, edge=None):
     '''
     Print a summary of simple statistics for H
 
@@ -273,38 +257,29 @@ def info(H, obj=None, dictionary=False):
         Print the string to see it formatted.
 
     '''
-    if dictionary:
-        return info_dict(H, obj=obj)
-
-    report = dict()
     if not H.edges.elements:
-        return f'Hypergraph {H.name} is empty.'
-    info = ""
-    if obj:
-        if obj in H.nodes:
-            membs = list(H.nodes[obj].memberships)
-            info += f'Node "{obj}" has the following properties:\n'
-            info += f'Degree: {len(membs)}\n'
-            info += f'Contained in: {membs}\n'
-            info += f'Neighbors: {list(H.neighbors(obj))}'
-        if obj in H.edges:
-            info += f'Edge "{obj}" has the following properties:\n'
-            info += f'Size: {H.edges[obj].size()}\n'
-            info += f'Elements: {list(H.edges[obj].uidset)}'
+        return f"Hypergraph {H.name} is empty."
+    report = info_dict(H, node=node, edge=edge)
+    info = ''
+    if node:
+        info += f"Node '{node}' has the following properties:\n"
+        info += f"Degree: {report['degree']}\n"
+        info += f"Contained in: {report['membs']}\n"
+        info += f"Neighbors: {report['neighbors']}"
+    elif edge:
+        info += f"Edge '{edge}' has the following properties:\n"
+        info += f"Size: {report['size']}\n"
+        info += f"Elements: {report['elements']}"
     else:
-        lnodes = len(H.nodes)
-        ledges = len(H.edges)
-        M = H.incidence_matrix(index=False)
-        ncells = M.nnz
-        info += f'Number of Rows: {lnodes}\n'
-        info += f'Number of Columns: {ledges}\n'
-        info += f'Aspect Ratio: {lnodes/(ledges)}\n'
-        info += f'Number of non-empty Cells: {ncells}\n'
-        info += f'Density: {ncells/(lnodes*ledges)}'
+        info += f"Number of Rows: {report['nrows']}\n"
+        info += f"Number of Columns: {report['ncols']}\n"
+        info += f"Aspect Ratio: {report['aspect ratio']}\n"
+        info += f"Number of non-empty Cells: {report['ncells']}\n"
+        info += f"Density: {report['density']}"
     return info
 
 
-def info_dict(H, obj=None):
+def info_dict(H, node=None, edge=None):
     '''
     Create a summary of simple statistics for H
 
@@ -322,20 +297,20 @@ def info_dict(H, obj=None):
 
     '''
     report = dict()
-    if not H.edges.elements:
+    if len(H.edges.elements) == 0:
         return {}
 
-    if obj:
-        if obj in H.nodes:
-            membs = list(H.nodes[obj].memberships)
-            report['degree'] = len(membs)
-
-        if obj in H.edges:
-            report['size'] = H.edges[obj].size()
-
+    if node:
+        report['membs'] = list(H.dual().edges[node])
+        report['degree'] = len(report['membs'])
+        report['neighbors'] = H.neighbors(node)
+        return report
+    if edge:
+        report['size'] = H.size(edge)
+        report['elements'] = list(H.edges[edge])
+        return report
     else:
-        lnodes = len(H.nodes)
-        ledges = len(H.edges)
+        lnodes, ledges = H.shape
         M = H.incidence_matrix(index=False)
         ncells = M.nnz
 
@@ -344,8 +319,7 @@ def info_dict(H, obj=None):
         report['aspect ratio'] = lnodes / ledges
         report['ncells'] = ncells
         report['density'] = ncells / (lnodes * ledges)
-
-    return report
+        return report
 
 
 def dist_stats(H):
@@ -359,18 +333,18 @@ def dist_stats(H):
         * density = ncells/(nrows*ncols)
         * node degree list = degree_dist(H)
         * node degree dist = centrality_stats(degree_dist(H))
-        * node degree hist = frequency_distribution(degree_dist(H))
+        * node degree hist = Counter(degree_dist(H))
         * max node degree = max(degree_dist(H))
         * edge size list = edge_size_dist(H)
         * edge size dist = centrality_stats(edge_size_dist(H))
-        * edge size hist = frequency_distribution(edge_size_dist(H))
+        * edge size hist = Counter(edge_size_dist(H))
         * max edge size = max(edge_size_dist(H))
         * comp nodes list = s_comp_dist(H, s=1, edges=False)
         * comp nodes dist = centrality_stats(s_comp_dist(H, s=1, edges=False))
-        * comp nodes hist = frequency_distribution(s_comp_dist(H, s=1, edges=False))
+        * comp nodes hist = Counter(s_comp_dist(H, s=1, edges=False))
         * comp edges list = s_comp_dist(H, s=1, edges=True)
         * comp edges dist = centrality_stats(s_comp_dist(H, s=1, edges=True))
-        * comp edges hist = frequency_distribution(s_comp_dist(H, s=1, edges=True))
+        * comp edges hist = Counter(s_comp_dist(H, s=1, edges=True))
         * num comps = len(s_comp_dist(H))
 
     Parameters
@@ -382,9 +356,10 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
-    if 'dist_stats' in H.state_dict:
+    if H.isstatic and 'dist_stats' in H.state_dict:
         return H['dist_stats']
     else:
+        cstats = ['min', 'max', 'mean', 'median', 'std']
         basic = dict()
 
         # Number of rows (nodes), columns (edges), and aspect ratio
@@ -399,25 +374,25 @@ def dist_stats(H):
 
         # Node degree distribution
         basic['node degree list'] = sorted(degree_dist(H), reverse=True)
-        basic['node degree dist'] = centrality_stats(basic['node degree list'])
-        basic['node degree hist'] = frequency_distribution(basic['node degree list'])
+        basic['node degree centrality stats'] = dict(zip(cstats, centrality_stats(basic['node degree list'])))
+        basic['node degree hist'] = Counter(basic['node degree list'])
         basic['max node degree'] = max(basic['node degree list'])
 
         # Edge size distribution
-        basic['edge size list'] = sorted(edge_size_dist(H), reverse=True)
-        basic['edge size dist'] = centrality_stats(basic['edge size list'])
-        basic['edge size hist'] = frequency_distribution(basic['edge size list'])
-        basic['max edge size'] = max(basic['edge size list'])
+        basic['edge size list'] = sorted(H.edge_size_dist(), reverse=True)
+        basic['edge size centrality stats'] = dict(zip(cstats, centrality_stats(basic['edge size list'])))
+        basic['edge size hist'] = Counter(basic['edge size list'])
+        basic['max edge size'] = max(basic['edge size hist'])
 
         # Component size distribution (nodes)
         basic['comp nodes list'] = sorted(s_comp_dist(H, edges=False), reverse=True)
-        basic['comp nodes hist'] = frequency_distribution(basic['comp nodes list'])
-        basic['comp nodes dist'] = centrality_stats(basic['comp nodes list'])
+        basic['comp nodes hist'] = Counter(basic['comp nodes list'])
+        basic['comp nodes centrality stats'] = dict(zip(cstats, centrality_stats(basic['comp nodes list'])))
 
         # Component size distribution (edges)
         basic['comp edges list'] = sorted(s_comp_dist(H, edges=True), reverse=True)
-        basic['comp edges hist'] = frequency_distribution(basic['comp edges list'])
-        basic['comp edges dist'] = centrality_stats(basic['comp edges list'])
+        basic['comp edges hist'] = Counter(basic['comp edges list'])
+        basic['comp edges centrality stats'] = dict(zip(cstats, centrality_stats(basic['comp edges list'])))
 
         # Number of components
         basic['num comps'] = len(basic['comp nodes list'])
@@ -425,6 +400,6 @@ def dist_stats(H):
         # # Diameters
         # basic['s edge diam list'] = s_edge_diameter_dist(H)
         # basic['s node diam list'] = s_node_diameter_dist(H)
-
-        H.state_dict['dist_stats'] = basic
+        if H.isstatic:
+            H.set_state(dist_stats=basic)
         return basic
