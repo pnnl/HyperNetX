@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!-- saved from url=(0215)https://gbc-excel.officeapps.live.com/clipboard/shared.aspx?CreatorOrigin=https%3A%2F%2Fgbc-excel.officeapps.live.com&usid=43f2c6a7-309c-46fc-9243-e044de7ccd5f&corrid=f6f6d13e-9ed2-4739-8ddd-2405a462c6d8&NoAuth=true -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>
+	Shared Clipboard iframe content
+</title>
+  <script type="text/javascript">
+var sharedClipboardSettings = {
+ whitelistOriginComponents: 1,
+ staticContentURLPrefix: "https://s1-excel-15.cdn.office.net:443/clipboard/s/161340535050_App_Scripts/",
+ sharedClipboardExpirationInMinutes: 3600,
+ clipboardPromiseTimeoutInMinutes: 2,
+ sharedClipboardSchemaVersion: 2,
+ remoteLoggerPath: "/x/RemoteUls.ashx",
+
+ sharedClipboardHostingApp: "shared",
+ sharedClipboardHostingApps: "[\"broadcast\", \"excel\", \"onenote\", \"powerpoint\", \"view\", \"visio\", \"word-edit\", \"word-view\", \"shared\"]",
+ sharedClipboardHostingEnvironments: "[\"officeapps.live.com\", \"officeapps-df.live.com\", \"online.office.de\", \"gov.online.office365.us\", \"dod.online.office365.us\", \"partner.officewebapps.cn\"]"
+
+};
+
+var es6PromiseScriptFileName = 'es6-promise.auto.min.js';
+var sharedClipboardScriptFileName = 'sharedclipboard.min.js';
+
+var promisesCapability = typeof Promise !== 'undefined' && typeof Promise.resolve === 'function' && Promise.resolve(0) &&
+ typeof Promise.resolve(0).then === 'function';
+
+function loadScript(fileName) {
+  var scriptElement = document.createElement('script');
+  scriptElement.setAttribute('src', getScriptSrc(fileName));
+  scriptElement.setAttribute('type', 'text/javascript');
+  scriptElement.setAttribute('async', 'false');
+  scriptElement.setAttribute('defer', 'defer');
+  var body = document.getElementsByTagName('body')[0];
+  body.appendChild(scriptElement);
+}
+
+function getScriptSrc(fileName) {
+  var prefix = sharedClipboardSettings.staticContentURLPrefix;
+  if (!prefix) {
+    return fileName;
+  }
+
+  var queryMark = prefix.indexOf('?');
+  if (queryMark < 0) {
+    return prefix + fileName;
+  }
+
+  var postfix = prefix.substr(queryMark);
+  prefix = prefix.substr(0, queryMark);
+  return prefix + fileName + postfix;
+}
+  </script>
+ <meta name="swx-chrome-extension" id="blakpkgjpemejpbmfiglncklihnhjkij"></head>
+ <body onload="window.sharedClipboard.initialize();">
+  <script>
+if (!promisesCapability) {
+ loadScript(es6PromiseScriptFileName);
+}
+loadScript(sharedClipboardScriptFileName);
+  </script><script src="./sharedclipboard.min.js" type="text/javascript" async="false" defer="defer"></script>
+ 
+
+
+</body></html>

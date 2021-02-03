@@ -1,0 +1,39 @@
+https://stackoverflow.com/questions/6307761/how-to-decorate-all-functions-of-a-class-without-typing-it-over-and-over-for-eac
+
+Decorate the class with a function that walks through the class's attributes and decorates callables.
+This may be the wrong thing to do if you have class variables that may happen to be callable, and will also decorate nested classes
+(credits to Sven Marnach for pointing this out) but generally it's a rather clean and simple solution. Example implementation (note that
+this will not exclude special methods (__init__ etc.), which may or may not be desired):
+
+def for_all_methods(decorator):
+    def decorate(cls):
+        for attr in cls.__dict__: # there's propably a better way to do this
+            if callable(getattr(cls, attr)):
+                setattr(cls, attr, decorator(getattr(cls, attr)))
+        return cls
+    return decorate
+
+
+Use like this:
+
+@for_all_methods(mydecorator)
+class C(object):
+    def m1(self): pass
+    def m2(self, x): pass
+    ...
+In Python 3.0 and 3.1, callable does not exist. It existed since forever in Python 2.x and is back in Python 3.2 as wrapper for isinstance(x, collections.Callable), so you can use that (or define your own callable replacement using this) in those versions.
+
+share  improve this answer  follow
+edited Jun 10 '11 at 14:44
+answered Jun 10 '11 at 14:36
+user395760
+4
+Note that this will also decorate nested classes. (My implementation had the same problem.) – Sven Marnach Jun 10 '11 at 14:41
+10
+why not use inspect.getmembers(cls, inspect.ismethod) instead of __dict__ and callable() ? of course static method will be out of the question in this case. – mouad Jun 10 '11 at 15:51
+10
+In Python 3 inspect.getmembers(cls, inspect.ismethod) won't work because inspect.ismethod returns False for unbound methods. In Python 2 inspect.ismethod returns True for unbound methods but inspect.isfunction returns False. Maybe it's best to write inspect.getmembers(cls, inspect.isroutine) instead as that works for both. – user634175 Feb 8 '13 at 12:45
+1
+I'm about to do something similar. Is this still a good method in 2014? Could you update your answer to use inspect rather than the __dict__ stuff? – wim Jan 2 '14 at 17:33
+2
+Using cls.__dict__ would not decorate inherited methods, but the inspect approach would. – osa Jun 10 '15 at 18:38
