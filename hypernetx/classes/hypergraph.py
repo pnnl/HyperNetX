@@ -1609,14 +1609,14 @@ class Hypergraph():
             if g.is_s_connected():
                 return g.s_diameter()
             else:
-                raise HyperNetXError(f'Hypergraph is not node s-connected. s={s}')
+                raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
         else:
             A = self.adjacency_matrix(s=s)
             G = nx.from_scipy_sparse_matrix(A)
             if nx.is_connected(G):
                 return nx.diameter(G)
             else:
-                raise HyperNetXError(f'Hypergraph is not node s-connected. s={s}')
+                raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
 
     def edge_diameter(self, s=1):
         """
@@ -1648,14 +1648,14 @@ class Hypergraph():
             if g.is_s_connected():
                 return g.s_diameter()
             else:
-                raise HyperNetXError(f'Hypergraph is not edge s-connected. s={s}')
+                raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
         else:
             A = self.edge_adjacency_matrix(s=s)
             G = nx.from_scipy_sparse_matrix(A)
             if nx.is_connected(G):
                 return nx.diameter(G)
             else:
-                raise HyperNetXError(f'Hypergraph is not edge s-connected. s={s}')
+                raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
 
     def distance(self, source, target, s=1):
         """
@@ -1782,7 +1782,8 @@ class Hypergraph():
                     return nx.shortest_path_length(src, tgt)
             except:
                 warnings.warn(f'No {s}-path between {source} and {target}')
-                return np.inf else:
+                return np.inf
+        else:
             if isinstance(source, Entity):
                 source = source.uid
             if isinstance(target, Entity):
