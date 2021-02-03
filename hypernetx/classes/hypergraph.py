@@ -518,17 +518,17 @@ class Hypergraph():
         else:
             return len(self.edges[edge]) - 1
 
-    def neighbors(self, node, s=2):  # Rewrite this so that s means nodes are s adjacent
+    def neighbors(self, node, s=1):
         """
-        The nodes in hypergraph which share s edges with node.
+        The nodes in hypergraph which share s edge(s) with node.
 
         Parameters
         ----------
         node : hashable or Entity
             uid for a node in hypergraph or the node Entity
 
-        s : int, list, optional, default : 2  
-            Minimum size of the edge connecting node to its neighbors
+        s : int, list, optional, default : 1  
+            Minimum number of edges shared by neighbors with node.
 
         Returns
         -------
@@ -549,35 +549,6 @@ class Hypergraph():
                 nbrs = list(g.neighbors(ndx))
             return [self.translate(nb) for nb in nbrs]
 
-        # msg = 's must be a positive integer or a list of two positive integers: [min s, max s], min s <= max s'
-        # if self._static:
-        #     imat = self.incidence_matrix()
-        #     idx = self.edges.indices(self.edges.keys[1], [node])[0]
-        #     edx = imat[idx]
-        #     if isinstance(s, int):
-        #         if s < 1:
-        #             raise HyperNetXError(msg)
-        #         else:
-        #             edx = edx.multiply(imat.sum(axis=0) >= s)
-        #     elif len(s) != 2 or not isinstance(s[0], int) or not isinstance(s[1], int) or s[0] > s[1] or s[0] < 1:
-        #         raise HyperNetXError(msg)
-        #     else:
-        #         edx = edx.multiply(imat.sum(axis=0) >= s[0]).multiply(imat.sum(axis=0) <= s[1])
-        #     edx = edx.nonzero()[1]
-
-        #     if len(edx) == 0:
-        #         edges = set()
-        #         neighbors = set()
-        #     else:
-        #         neighbors = list(np.sum(imat[:, edx], axis=1).nonzero()[0])
-        #         neighbors.remove(idx)
-        #         neighbors = set(self.edges.translate(1, neighbors))
-        #         if return_edges:
-        #             edges = set(self.edges.translate(0, edx))
-        #             return neighbors, edges
-        #         else:
-        #             return neighbors
-
         else:
             node = self.nodes[node].uid  # this allows node to be an Entity instead of a string
             memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
@@ -586,8 +557,43 @@ class Hypergraph():
             neighborlist = set()
             for e in edgeset:
                 neighborlist.update(self.edges[e].uidset)
-            neighborset.discard(node)
-            return list(neighborset)
+            neighborlist.discard(node)
+            return list(neighborlist)
+
+    def edge_neighbors(self, edge, s=1):
+        """
+        The edges in hypergraph which share s nodes(s) with edge.
+
+        Parameters
+        ----------
+        edge : hashable or Entity
+            uid for a edge in hypergraph or the edge Entity
+
+        s : int, list, optional, default : 1  
+            Minimum number of nodes shared by neighbors edge node.
+
+        Returns
+        -------
+         : list
+            List of edge neighbors
+
+        """
+        if not edge in self.edges:
+            print(f'Edge is not in hypergraph {self.name}.')
+            return
+
+        if self.isstatic:
+            g = self.get_linegraph(s=s, edges=True)
+            edx = int(np.argwhere(H.edges.labs(0) == edge))
+            if self.nwhy == True:
+                nbrs = g.s_neighbor(edx)
+            else:
+                nbrs = list(g.neighbors(ndx))
+            return [self.translate(nb, nodes=False) for nb in nbrs]
+
+        else:
+            node = self.edges[edge].uid
+            return self.dual().neighbors(node, s=s)
 
     @not_implemented_for('static')
     def remove_node(self, node):
@@ -1030,16 +1036,6 @@ class Hypergraph():
         A single edge from the collapsed edges followed by a colon and the number of elements
         in its equivalence class as uid for the new edge
 
-        Example
-        -------
-
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])]))
-            >>> h.incidence_dict
-            {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> h.collapse_edges(use_reps=False).incidence_dict
-            {frozenset({'E1', 'E2'}): {'a', 'b'}}
-            >>> h.collapse_edges(use_reps=True).incidence_dict
-            {('E1', 2): {'a', 'b'}}
 
         """
         temp = self.edges.collapse_identical_elements('_', return_equivalence_classes=return_equivalence_classes)
@@ -1048,7 +1044,7 @@ class Hypergraph():
         else:
             return Hypergraph(temp, name)
 
-    def collapse_nodes(self, name=None, use_reps=False, return_counts=True, return_equivalence_classes=False):
+    def collapse_nodes(self, name=None, return_equivalence_classes=False):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by the same edges
 
@@ -1155,7 +1151,7 @@ class Hypergraph():
         edgeset: iterable of hashables or Entities
             A subset of elements of the hypergraph edges
 
-        name: str, optional, default: '_'
+        name: str, optional
 
         Returns
         -------
@@ -1292,12 +1288,16 @@ class Hypergraph():
         share at least s nodes.
 
         """
-        if edges:
-            A = self.edge_adjacency_matrix(s=s)
+        if self.nwhy:
+            g = self.get_linegraph(s=s, edges=edges)
+            return g.is_s_connected()
         else:
-            A = self.adjacency_matrix(s=s)
-        G = nx.from_scipy_sparse_matrix(A)
-        return nx.is_connected(G)
+            if edges:
+                A = self.edge_adjacency_matrix(s=s)
+            else:
+                A = self.adjacency_matrix(s=s)
+            G = nx.from_scipy_sparse_matrix(A)
+            return nx.is_connected(G)
 
     def singletons(self):
         """
@@ -1309,29 +1309,32 @@ class Hypergraph():
         singles : list
             A list of edge uids.
         """
-        M, rdict, cdict = self.incidence_matrix(index=True)
-        idx = np.argmax(M.shape)  # which axis has fewest members? if 1 then columns
-        cols = M.sum(idx)  # we add down the row index if there are fewer columns
-        singles = list()
-        for c in range(cols.shape[(idx + 1) % 2]):  # index along opposite axis
-            if cols[idx * c, c * ((idx + 1) % 2)] == 1:
-                # then see if the singleton entry in that column is also singleton in its row
-                # find the entry
-                if idx == 0:
-                    r = np.argmax(M.getcol(c))
-                    # and get its sum
-                    s = np.sum(M.getrow(r))
-                    # if this is also 1 then the entry in r,c represents a singleton
-                    # so we want to change that entry to 0 and remove the row.
-                    # this means we want to remove the edge corresponding to c
-                    if s == 1:
-                        singles.append(cdict[c])
-                else:  # switch the role of r and c
-                    r = np.argmax(M.getrow(c))
-                    s = np.sum(M.getcol(r))
-                    if s == 1:
-                        singles.append(cdict[r])
-        return singles
+        if self.nwhy:
+            return self.edges.translate(0, self.g.singletons())
+        else:
+            M, rdict, cdict = self.incidence_matrix(index=True)
+            idx = np.argmax(M.shape)  # which axis has fewest members? if 1 then columns
+            cols = M.sum(idx)  # we add down the row index if there are fewer columns
+            singles = list()
+            for c in range(cols.shape[(idx + 1) % 2]):  # index along opposite axis
+                if cols[idx * c, c * ((idx + 1) % 2)] == 1:
+                    # then see if the singleton entry in that column is also singleton in its row
+                    # find the entry
+                    if idx == 0:
+                        r = np.argmax(M.getcol(c))
+                        # and get its sum
+                        s = np.sum(M.getrow(r))
+                        # if this is also 1 then the entry in r,c represents a singleton
+                        # so we want to change that entry to 0 and remove the row.
+                        # this means we want to remove the edge corresponding to c
+                        if s == 1:
+                            singles.append(cdict[c])
+                    else:  # switch the role of r and c
+                        r = np.argmax(M.getrow(c))
+                        s = np.sum(M.getcol(r))
+                        if s == 1:
+                            singles.append(cdict[r])
+            return singles
 
     def remove_singletons(self, name=None):
         """XX
@@ -1349,23 +1352,19 @@ class Hypergraph():
         E = [e for e in self.edges if e not in self.singletons()]
         return self.restrict_to_edges(E)
 
-    def s_connected_components(self, s=1, edges=True):
-        """XX
+    def s_connected_components(self, s=1, edges=True, return_singletons=True):
+        """
         Returns a generator for the :term:`s-edge-connected components <s-edge-connected component>`
         or the :term:`s-node-connected components <s-connected component, s-node-connected component>`
         of the hypergraph.
 
         Parameters
         ----------
-        s: int, optional, default: 1
+        s : int, optional, default: 1
 
-        edges: boolean, optional, default: True
+        edges : boolean, optional, default: True
             If True will return edge components, if False will return node components
-
-        Returns
-        -------
-        s_connected_components: iterator
-            Iterator returns sets of uids of the edges (or nodes) in the s-edge(node) components of hypergraph.
+        return_singletons : bool, optional, default : True
 
         Notes
         -----
@@ -1393,74 +1392,111 @@ class Hypergraph():
             >>> list(H.s_components(edges=False))
             [{1, 2, 3, 4}, {5, 6}]
 
-        """
+        Yields
+        ------
+        s_connected_components : iterator
+            Iterator returns sets of uids of the edges (or nodes) in the s-edge(node) components of hypergraph.
 
-        if edges:
-            A, coldict = self.edge_adjacency_matrix(s=s, index=True)
-            G = nx.from_scipy_sparse_matrix(A)
-            for c in nx.connected_components(G):
-                yield {coldict[e] for e in c}
+        """
+        if self.nwhy:
+            g = self.get_linegraph(s, edges=edges)
+            for c in g.s_connected_components(return_singleton=return_singletons):
+                yield self.edges.translate((edges + 1) % 2, c)
+
         else:
-            A, rowdict = self.adjacency_matrix(s=s, index=True)
-            G = nx.from_scipy_sparse_matrix(A)
-            for c in nx.connected_components(G):
-                yield {rowdict[n] for n in c}
+            if edges:
+                A, coldict = self.edge_adjacency_matrix(s=s, index=True)
+                G = nx.from_scipy_sparse_matrix(A)
+                for c in nx.connected_components(G):
+                    yield {coldict[e] for e in c}
+            else:
+                A, rowdict = self.adjacency_matrix(s=s, index=True)
+                G = nx.from_scipy_sparse_matrix(A)
+                for c in nx.connected_components(G):
+                    yield {rowdict[n] for n in c}
 
-    def s_component_subgraphs(self, s=1, edges=True):
+    def s_component_subgraphs(self, s=1, edges=True, return_singletons=False):
         """
+
         Returns a generator for the induced subgraphs of s_connected components.
+        Removes singletons unless return_singletons is set to True. Computed using
+        s-linegraph generated either by the hypergraph (edges=True) or its dual 
+        (edges = False)
 
         Parameters
         ----------
         s : int, optional, default: 1
 
-        edges: boolean, optional, edges=False
+        edges : boolean, optional, edges=False
             Determines if edge or node components are desired. Returns
             subgraphs equal to the hypergraph restricted to each set of nodes(edges) in the
             s-connected components or s-edge-connected components
+        return_singletons : bool, optional
 
-        Returns
-        -------
+        Yields
+        ------
         s_component_subgraphs : iterator
             Iterator returns subgraphs generated by the edges (or nodes) in the
             s-edge(node) components of hypergraph.
 
         """
-        for idx, c in enumerate(self.s_components(s=s, edges=edges)):
+        for idx, c in enumerate(self.s_components(s=s, edges=edges, return_singletons=return_singletons)):
             if edges:
                 yield self.restrict_to_edges(c, name=f'{self.name}:{idx}')
             else:
                 yield self.restrict_to_nodes(c, name=f'{self.name}:{idx}')
 
-    def s_components(self, s=1, edges=True):
-        """XX
+    def s_components(self, s=1, edges=True, return_singletons=True):
+        """
         Same as s_connected_components
-        """
-        return self.s_connected_components(s=s, edges=edges)
 
-    def connected_components(self, edges=False):
-        """XX
-        Same as :meth:`s_connected_components` with s=1.
+        See Also
+        --------
+        s_connected_components
         """
-        return self.s_connected_components(edges=edges)
+        return self.s_connected_components(s=s, edges=edges, return_singletons=return_singletons)
 
-    def connected_component_subgraphs(self, edges=False):
-        """XX
-        Same as :meth:`s_component_subgraphs` with s=1
+    def connected_components(self, edges=False, return_singletons=True):
         """
-        return self.s_component_subgraphs(edges=edges)
+        Same as :meth:`s_connected_components` with s=1, but nodes are returned
+        by default. Return iterator.
 
-    def components(self, edges=False):
-        """XX
-        Same as :meth:`s_connected_components` with s=1
+        See Also
+        --------
+        s_connected_components
+        """
+        return self.s_connected_components(edges=edges, return_singletons=True)
+
+    def connected_component_subgraphs(self, return_singletons=True):
+        """
+        Same as :meth:`s_component_subgraphs` with s=1. Returns iterator
+
+        See Also
+        --------
+        s_component_subgraphs
+        """
+        return self.s_component_subgraphs(return_singletons=return_singletons)
+
+    def components(self, edges=False, return_singletons=True):
+        """
+        Same as :meth:`s_connected_components` with s=1, but nodes are returned
+        by default. Return iterator.
+
+        See Also
+        --------
+        s_connected_components
         """
         return self.s_components(s=1, edges=edges)
 
-    def component_subgraphs(self, edges=False):
-        """XX
-        Same as :meth:`s_components_subgraphs` with s=1
+    def component_subgraphs(self, return_singletons=False):
         """
-        return self.s_component_subgraphs(edges=False)
+        Same as :meth:`s_components_subgraphs` with s=1. Returns iterator.
+
+        See Also
+        --------
+        s_component_subgraphs
+        """
+        return self.s_component_subgraphs(return_singletons=return_singletons)
 
     def node_diameters(self, s=1):
         """
@@ -1468,25 +1504,34 @@ class Hypergraph():
 
         Parameters
         ----------
-
-
-        Returns:
-        an array of the diameters of the s-components and
-        an array of the s-component nodes.
+        list of the diameters of the s-components and
+        list of the s-component nodes
         """
-        A, coldict = self.adjacency_matrix(s=s, index=True)
-        G = nx.from_scipy_sparse_matrix(A)
-        diams = []
-        comps = []
-        for c in nx.connected_components(G):
-            diamc = nx.diameter(G.subgraph(c))
-            temp = set()
-            for e in c:
-                temp.add(coldict[e])
-            comps.append(temp)
-            diams.append(diamc)
-        loc = np.argmax(diams)
-        return diams[loc], diams, comps
+        if self.nwhy:
+            g = self.get_linegraph(s, edges=False)
+            if g.is_s_connected():
+                return g.s_diameter()
+            else:
+                diameters = list()
+                nodelists = list()
+                for c in g.s_connected_components():
+                    tc = self.edges.labs(1)[c]
+                    nodelists.append(tc)
+                    diameters.append(self.restrict_to_nodes(tc).node_diameters(s=s))
+        else:
+            A, coldict = self.adjacency_matrix(s=s, index=True)
+            G = nx.from_scipy_sparse_matrix(A)
+            diams = []
+            comps = []
+            for c in nx.connected_components(G):
+                diamc = nx.diameter(G.subgraph(c))
+                temp = set()
+                for e in c:
+                    temp.add(coldict[e])
+                comps.append(temp)
+                diams.append(diamc)
+            loc = np.argmax(diams)
+            return diams[loc], diams, comps
 
     def edge_diameters(self, s=1):
         """XX
@@ -1508,19 +1553,31 @@ class Hypergraph():
             List of the edge uids in the s-edge component subgraphs.
 
         """
-        A, coldict = self.edge_adjacency_matrix(s=s, index=True)
-        G = nx.from_scipy_sparse_matrix(A)
-        diams = []
-        comps = []
-        for c in nx.connected_components(G):
-            diamc = nx.diameter(G.subgraph(c))
-            temp = set()
-            for e in c:
-                temp.add(coldict[e])
-            comps.append(temp)
-            diams.append(diamc)
-        loc = np.argmax(diams)
-        return diams[loc], diams, comps
+        if self.nwhy:
+            g = self.get_linegraph(s, edges=True)
+            if g.is_s_connected():
+                return g.s_diameter()
+            else:
+                diameters = list()
+                edgelists = list()
+                for c in g.s_connected_components():
+                    tc = self.edges.labs(0)[c]
+                    edgelists.append(tc)
+                    diameters.append(self.restrict_to_edges(tc).edge_diameters(s=s))
+        else:
+            A, coldict = self.edge_adjacency_matrix(s=s, index=True)
+            G = nx.from_scipy_sparse_matrix(A)
+            diams = []
+            comps = []
+            for c in nx.connected_components(G):
+                diamc = nx.diameter(G.subgraph(c))
+                temp = set()
+                for e in c:
+                    temp.add(coldict[e])
+                comps.append(temp)
+                diams.append(diamc)
+            loc = np.argmax(diams)
+            return diams[loc], diams, comps
 
     def diameter(self, s=1):
         """
@@ -1547,12 +1604,19 @@ class Hypergraph():
         are s-adjacent. If the graph is not connected, an error will be raised.
 
         """
-        A = self.adjacency_matrix(s=s)
-        G = nx.from_scipy_sparse_matrix(A)
-        if nx.is_connected(G):
-            return nx.diameter(G)
+        if self.nwhy:
+            g = self.get_linegraph(s, edges=False)
+            if g.is_s_connected():
+                return g.s_diameter()
+            else:
+                raise HyperNetXError(f'Hypergraph is not node s-connected. s={s}')
         else:
-            raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
+            A = self.adjacency_matrix(s=s)
+            G = nx.from_scipy_sparse_matrix(A)
+            if nx.is_connected(G):
+                return nx.diameter(G)
+            else:
+                raise HyperNetXError(f'Hypergraph is not node s-connected. s={s}')
 
     def edge_diameter(self, s=1):
         """
@@ -1579,12 +1643,19 @@ class Hypergraph():
         are s-adjacent. If the graph is not connected, an error will be raised.
 
         """
-        A = self.edge_adjacency_matrix(s=s)
-        G = nx.from_scipy_sparse_matrix(A)
-        if nx.is_connected(G):
-            return nx.diameter(G)
+        if self.nwhy:
+            g = self.get_linegraph(s, edges=True)
+            if g.is_s_connected():
+                return g.s_diameter()
+            else:
+                raise HyperNetXError(f'Hypergraph is not edge s-connected. s={s}')
         else:
-            raise HyperNetXError(f'Hypergraph is not s-connected. s={s}')
+            A = self.edge_adjacency_matrix(s=s)
+            G = nx.from_scipy_sparse_matrix(A)
+            if nx.is_connected(G):
+                return nx.diameter(G)
+            else:
+                raise HyperNetXError(f'Hypergraph is not edge s-connected. s={s}')
 
     def distance(self, source, target, s=1):
         """
@@ -1626,7 +1697,12 @@ class Hypergraph():
             tgt = int(np.argwhere(self.nodes.labs(0) == target))
             try:
                 if self.nwhy:
-                    return g.s_distance(src=src, dest=tgt)
+                    d = g.s_distance(src=src, dest=tgt)
+                    if d == -1:
+                        warnings.warn(f'No {s}-path between {source} and {target}')
+                        return np.inf
+                    else:
+                        return d
                 else:
                     return nx.shortest_path_length(src, tgt)
             except:
@@ -1695,14 +1771,18 @@ class Hypergraph():
             src = int(np.argwhere(self.edges.labs(0) == source))
             tgt = int(np.argwhere(self.edges.labs(0) == target))
             try:
-                if self.nwhy == True:  # TODO add edge weights
-                    return g.s_distance(src=src, dest=tgt)
+                if self.nwhy:
+                    d = g.s_distance(src=src, dest=tgt)
+                    if d == -1:
+                        warnings.warn(f'No {s}-path between {source} and {target}')
+                        return np.inf
+                    else:
+                        return d
                 else:
-                    return nx.shortest_path_length(g, src, target)
+                    return nx.shortest_path_length(src, tgt)
             except:
                 warnings.warn(f'No {s}-path between {source} and {target}')
-                return np.inf
-        else:
+                return np.inf else:
             if isinstance(source, Entity):
                 source = source.uid
             if isinstance(target, Entity):
