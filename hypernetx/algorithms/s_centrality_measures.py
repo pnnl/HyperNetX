@@ -59,7 +59,6 @@ def s_betweenness_centrality(H, s=1, normalized=True):
     #A = M.transpose().dot(M)
 
     A, coldict = H.edge_adjacency_matrix(s=s, index=True)
-    A.setdiag(0)
     A = (A >= s) * 1
     g = nx.from_scipy_sparse_matrix(A)
     return {coldict[k]: v for k, v in nx.betweenness_centrality(g, normalized=normalized).items()}
