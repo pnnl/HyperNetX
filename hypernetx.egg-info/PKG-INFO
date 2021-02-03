@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: hypernetx
+Version: 0.3.8
+Summary: HyperNetX is a Python library for the creation and study of hypergraphs.
+Home-page: https://github.com/pnnl/HyperNetX
+Author: Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn
+Author-email: hypernetx@pnnl.gov
+License: 3-Clause BSD license
+Description: 
+            The HyperNetX library provides classes and methods for complex network data.
+            HyperNetX uses data structures designed to represent set systems containing
+            nested data and/or multi-way relationships. The library generalizes traditional
+            graph metrics to hypergraphs.
+        
+            The current version is preliminary. We are actively testing and would be grateful
+            for comments and suggestions. Expect changes in both class names and methods as
+            many of the requirements demanded of the library are worked out.
+            
+Platform: UNKNOWN
+Provides-Extra: testing
+Provides-Extra: notebooks
+Provides-Extra: tutorials
+Provides-Extra: documentation
+Provides-Extra: all

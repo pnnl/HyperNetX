@@ -1,7 +1,4 @@
-.DS_Store
-gitmerge.sh
-dist
-hypernetx.egg-info
+.DS_Store gitmerge.sh dist hypernetx.egg-info
 
 stashmerge.sh
 homology_log.log
