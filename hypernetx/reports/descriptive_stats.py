@@ -65,7 +65,7 @@ def edge_size_dist(H, aggregated=False):
 
     '''
     if aggregated:
-        return Counter(H.edge_size_dist)
+        return Counter(H.edge_size_dist())
     else:
         return H.edge_size_dist()
 
