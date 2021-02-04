@@ -106,6 +106,7 @@ class Hypergraph():
 
 
     """
+    ### TODO: remove lambda functions from constructor in H and E.
 
     def __init__(self, setsystem=None, name=None, static=False, use_nwhy=False):
         if use_nwhy:
