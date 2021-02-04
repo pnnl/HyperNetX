@@ -1,6 +1,5 @@
 from setuptools import setup
 import sys
-import os.path
 
 __version__ = '0.3.8'
 

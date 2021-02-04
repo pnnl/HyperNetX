@@ -2,6 +2,7 @@
 # All rights reserved.
 
 import warnings
+import pickle
 import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
@@ -41,7 +42,7 @@ class Hypergraph():
     hypergraphs can be quite large, only these identifiers will be used
     for computation intensive methods, this means the user must take care
     to keep a one to one correspondence between their set of uids and
-    the objects in their hypergraph. See `Honor System`_
+    the objects in their hypergraph. See `Honor System`_ 
 
     Static hypergraphs create an internal identifier used for computations
     so do not require unique ids or an honor system.
@@ -286,6 +287,7 @@ class Hypergraph():
                 d[key][s] = nx.from_scipy_sparse_matrix(A)
             return d[key][s]
 
+    @not_implemented_for('dynamic')
     def set_state(self, **kwargs):
         """
         Allow state_dict updates from outside of class. Use with caution.
@@ -295,8 +297,46 @@ class Hypergraph():
         **kwargs
             key=value pairs to save in state dictionary
         """
-        for k, v in kwargs.items():
-            self.state_dict[k] = v
+        self.state_dict.update(kwargs)
+
+    @not_implemented_for('dynamic')
+    def save_state(self,fpath='current_state.p'):
+        """
+        Save the hypergraph as an ordered pair: [state_dict,labels]
+        The hypergraph can be recovered using the command:
+            
+            >>> H = hnx.Hypergraph.recover_from_state(fpath)
+        
+        Parameters
+        ----------
+        fpath : str, optional
+        """
+        pickle.dump([self.state_dict,self.edges.labels],open(fpath,'wb'))
+
+    @classmethod
+    def recover_from_state(cls, fpath):
+        """
+        Recover a static hypergraph pickled using save_state.
+
+        Parameters
+        ----------
+        fpath : str
+            Full path to pickle file containing state_dict and labels
+            of hypergraph
+        
+        Returns
+        -------
+        H : Hypergraph
+            static hypergraph with state dictionary prefilled
+        """
+        temp,labels = pickle.load(open(fpath,'rb'))
+        recovered_data = np.array(temp['data'])[[0,1]].T
+        E = StaticEntitySet(data=recovered_data, labels=labels)
+        H = Hypergraph(E)
+        H.state_dict.update(temp)
+        return H
+            
+
 
     def edge_size_dist(self):
         if self.isstatic:
