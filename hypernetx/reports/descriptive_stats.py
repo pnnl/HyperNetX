@@ -351,7 +351,8 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
-    if H.isstatic and 'dist_stats' in H.state_dict:
+    stats = H.state_dict.get('dist_stats', None)
+    if stats is not None:
         return H.state_dict['dist_stats']
     else:
         cstats = ['min', 'max', 'mean', 'median', 'std']

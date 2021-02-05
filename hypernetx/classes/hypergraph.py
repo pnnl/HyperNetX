@@ -315,7 +315,7 @@ class Hypergraph():
         pickle.dump([self.state_dict,self.edges.labels],open(fpath,'wb'))
 
     @classmethod
-    def recover_from_state(cls, fpath):
+    def recover_from_state(cls, fpath='current_state.p'):
         """
         Recover a static hypergraph pickled using save_state.
 
