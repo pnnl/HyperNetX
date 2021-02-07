@@ -3,7 +3,6 @@ numpy<2.0,>=1.15.0
 scipy<2.0,>=1.1.0
 matplotlib>3.0
 scikit-learn>=0.20.0
-tbb
 
 [all]
 sphinx>=1.8.2
