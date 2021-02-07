@@ -119,6 +119,7 @@ def comp_dist(H, aggregated=False):
     s_comp_dist
 
     '''
+    
     distr = [len(c) for c in H.components()]
     if aggregated:
         return Counter(distr)

@@ -117,6 +117,7 @@ class Hypergraph():
             except:
                 self.nwhy = False
                 print('NWHypergraph is not available. Will continue with static=True.')
+                use_nwhy = False
 
         if not name:
             self.name = ''
@@ -340,6 +341,7 @@ class Hypergraph():
 
 
     def edge_size_dist(self):
+        
         if self.isstatic:
             dist = self.state_dict.get('edge_size_dist', None)
             if dist:
