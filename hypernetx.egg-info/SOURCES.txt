@@ -16,7 +16,6 @@ hypernetx/classes/__init__.py
 hypernetx/classes/entity.py
 hypernetx/classes/hypergraph.py
 hypernetx/classes/staticentity.py
-hypernetx/classes/untitled_hypergraph.py
 hypernetx/drawing/__init__.py
 hypernetx/drawing/rubber_band.py
 hypernetx/drawing/two_column.py

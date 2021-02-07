@@ -1,11 +1,10 @@
 from setuptools import setup
 import sys
-import os.path
 
-__version__ = '0.3.8'
+__version__ = '0.3.9'
 
 if sys.version_info < (3, 8):
-    sys.exit('HyperNetX requires Python 3.8 or later.')
+  sys.exit('HyperNetX requires Python 3.8 or later.')
 
 setup(
     name='hypernetx',
@@ -24,7 +23,6 @@ setup(
                       'scipy>=1.1.0,<2.0',
                       'matplotlib>3.0',
                       'scikit-learn>=0.20.0',
-                      'tbb',
                       ],
     license='3-Clause BSD license',
     long_description='''
