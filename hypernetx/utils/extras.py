@@ -86,3 +86,32 @@ def remove_row_duplicates(arr, return_counts=False):
 
     """
     return np.unique(arr, axis=0, return_counts=return_counts)
+
+
+def create_labels(num_edges, num_nodes, edgeprefix='e', nodeprefix='v', edgelabel='Edges', nodelabel='Nodes'):
+    """
+    Creates default labels for static entity sets derived without labels
+    
+    Parameters
+    ----------
+    num_edges : int
+
+    num_nodes : int
+         
+    edgeprefix : str, optional, default : 'e'
+         
+    nodeprefix : str, optional, default : 'v'
+         
+    edgelabel : str, optional, default : 'Edges'
+         
+    nodelabel : str, optional, default : 'Nodes'
+         
+    
+    Returns
+    -------
+    OrderedDict
+        used for labels in constructing a StaticEntitySet
+    """
+    enames = np.array([f'{edgeprefix}{idx}' for idx in range(num_edges)])
+    nnames = np.array([f'{nodeprefix}{jdx}' for jdx in range(num_nodes)])
+    return OrderedDict([(edgelabel, enames), (nodelabel, nnames)])

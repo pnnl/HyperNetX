@@ -171,12 +171,10 @@ class Hypergraph():
             if self.nwhy:
                 self.g = nwhy.NWHypergraph(*self.state_dict['data'])
                 self.nwhy_dict = {'snodelg':dict(), 'sedgelg':dict()}
-#                 self.nwhy_dict['g'] = self.g
             else:
                 self.state_dict['snodelg'] = dict()
                 self.state_dict['sedgelg'] = dict()
-            if filepath is not None:
-                self.filepath = filepath
+            if self.filepath is not None:
                 self.save_state(fpath=self.filepath)
 
     @property
@@ -315,7 +313,7 @@ class Hypergraph():
             self.save_state(fpath=self.filepath)
 
     @not_implemented_for('dynamic')
-    def save_state(self,fpath='current_state.p'):
+    def save_state(self,fpath=None):
         """
         Save the hypergraph as an ordered pair: [state_dict,labels]
         The hypergraph can be recovered using the command:
@@ -326,6 +324,8 @@ class Hypergraph():
         ----------
         fpath : str, optional
         """
+        if fpath is None:
+            fpath = self.filepath or 'current_state.p'
         pickle.dump([self.state_dict,self.edges.labels],open(fpath,'wb'))
 
     @classmethod
@@ -1409,7 +1409,7 @@ class Hypergraph():
             if self.nwhy:
                 return g.is_s_connected()
             else:
-                return nx.is_connected(g)
+                return g.is_connected()
         else:
             if edges:
                 A = self.edge_adjacency_matrix(s=s)
