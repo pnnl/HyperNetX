@@ -65,5 +65,3 @@ def not_implemented_for(*object_types):
         else:
             return not_implemented_for_func(*args, **kwargs)
     return _not_implemented_for
-
-

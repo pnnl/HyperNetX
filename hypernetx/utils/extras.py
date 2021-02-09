@@ -5,7 +5,8 @@ import numpy as np
 __all__ = [
     'HNXCount',
     'DefaultOrderedDict',
-    'remove_row_duplicates'
+    'remove_row_duplicates',
+    'create_labels',
 ]
 
 
@@ -91,22 +92,22 @@ def remove_row_duplicates(arr, return_counts=False):
 def create_labels(num_edges, num_nodes, edgeprefix='e', nodeprefix='v', edgelabel='Edges', nodelabel='Nodes'):
     """
     Creates default labels for static entity sets derived without labels
-    
+
     Parameters
     ----------
     num_edges : int
 
     num_nodes : int
-         
+
     edgeprefix : str, optional, default : 'e'
-         
+
     nodeprefix : str, optional, default : 'v'
-         
+
     edgelabel : str, optional, default : 'Edges'
-         
+
     nodelabel : str, optional, default : 'Nodes'
-         
-    
+
+
     Returns
     -------
     OrderedDict
