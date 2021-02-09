@@ -277,8 +277,8 @@ class Hypergraph():
         return self.edges.labs(kdx)[id]
 
     @not_implemented_for('dynamic')
-    def get_linegraph(self, s, edges=True):
-        if self.nwhy:
+    def get_linegraph(self, s, edges=True, use_nwhy=self.nwhy):
+        if use_nwhy and self.nwhy:
             d = self.nwhy_dict
         else:
             d = self.state_dict
@@ -286,7 +286,7 @@ class Hypergraph():
         if s in d[key]:
             return d[key][s]
         else:
-            if self.nwhy == True:
+            if use_nwhy and self.nwhy == True:
                 d[key][s] = self.g.s_linegraph(s=s, edges=edges)
             else:
                 if edges:
