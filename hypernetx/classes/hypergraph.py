@@ -167,13 +167,12 @@ class Hypergraph():
         if self._static:
             temprows, tempcols = self.edges.data.T
             tempdata = np.ones(len(temprows), dtype=int)
-            self.state_dict = {'data': (temprows, tempcols, tempdata)}
+            self.state_dict = {'data': (temprows, tempcols, tempdata)} ## how can we incorporate the counts into the nwhy hypergraph?
             if self.nwhy:
                 self.g = nwhy.NWHypergraph(*self.state_dict['data'])
                 self.nwhy_dict = {'snodelg':dict(), 'sedgelg':dict()}
-            else:
-                self.state_dict['snodelg'] = dict()
-                self.state_dict['sedgelg'] = dict()
+            self.state_dict['snodelg'] = dict() 
+            self.state_dict['sedgelg'] = dict()
             if self.filepath is not None:
                 self.save_state(fpath=self.filepath)
 
@@ -286,7 +285,7 @@ class Hypergraph():
         if s in d[key]:
             return d[key][s]
         else:
-            if use_nwhy and self.nwhy == True:
+            if use_nwhy and self.nwhy:
                 d[key][s] = self.g.s_linegraph(s=s, edges=edges)
             else:
                 if edges:
@@ -329,7 +328,7 @@ class Hypergraph():
         pickle.dump([self.state_dict,self.edges.labels],open(fpath,'wb'))
 
     @classmethod
-    def recover_from_state(cls, fpath='current_state.p'):
+    def recover_from_state(cls, fpath='current_state.p', use_nwhy=True):
         """
         Recover a static hypergraph pickled using save_state.
 
@@ -345,13 +344,39 @@ class Hypergraph():
             static hypergraph with state dictionary prefilled
         """
         temp,labels = pickle.load(open(fpath,'rb'))
-        recovered_data = np.array(temp['data'])[[0,1]].T
+        recovered_data = np.array(temp['data'])[[0,1]].T.  ### need to save counts as well
+        recovered_counts = np.array(temp['data'])[[2]]
         E = StaticEntitySet(data=recovered_data, labels=labels)
-        H = Hypergraph(E)
+        E.properties['counts'] = recovered_counts
+        H = Hypergraph(E, use_nwhy=use_nwhy)
         H.state_dict.update(temp)
         return H
-            
 
+    @classmethod     
+    def add_nwhy(cls, h, fpath=None):
+    """
+    Add nwhy functionality to a hypergraph.
+
+    Parameters
+    ----------
+    h : hnx.Hypergraph
+    fpath : file path for storage of hypergraph state dictionary
+
+    Returns
+    -------
+    hnx.Hypergraph
+        Returns a copy of h with static set to true and nwhy set to True
+        if it is available.
+
+    """
+
+    if h.isstatic:
+        sd = h.state_dict
+        H = Hypergraph(h.edges, use_nwhy=True, filepath=fpath)
+        H.state_dict.update(sd)
+        return H
+    else:
+        return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
 
     def edge_size_dist(self):
         
@@ -431,9 +456,9 @@ class Hypergraph():
         ----------
         idx : int
             class assigned integer for internal manipulation of Hypergraph data
-        nodes : bool, optional, default: True
-            If True then translates from node index. Otherwise will translate from
-            edge index
+        edges : bool, optional, default: True
+            If True then translates from edge index. Otherwise will translate from
+            node index, default=False
 
         Returns
         -------
@@ -1946,7 +1971,7 @@ class Hypergraph():
     @ classmethod
     def from_bipartite(cls, B, set_names=('nodes', 'edges'), name=None, static=False, use_nwhy=False):
         """
-        Static method creates a Hypergraph from a bipartite graph.
+        Static method creates a Hypergraph from a bipartite graph.  
 
         Parameters
         ----------
@@ -1971,6 +1996,7 @@ class Hypergraph():
         A partition for the nodes in a bipartite graph generates a hypergraph. 
 
         """
+        ## TODO: Add filepath keyword to signatures here and with dataframe and numpy array
         edges = []
         nodes = []
         for n, d in B.nodes(data=True):
