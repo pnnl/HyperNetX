@@ -344,7 +344,7 @@ class Hypergraph():
             static hypergraph with state dictionary prefilled
         """
         temp,labels = pickle.load(open(fpath,'rb'))
-        recovered_data = np.array(temp['data'])[[0,1]].T.  ### need to save counts as well
+        recovered_data = np.array(temp['data'])[[0,1]].T  ### need to save counts as well
         recovered_counts = np.array(temp['data'])[[2]]
         E = StaticEntitySet(data=recovered_data, labels=labels)
         E.properties['counts'] = recovered_counts
@@ -354,29 +354,29 @@ class Hypergraph():
 
     @classmethod     
     def add_nwhy(cls, h, fpath=None):
-    """
-    Add nwhy functionality to a hypergraph.
+        """
+        Add nwhy functionality to a hypergraph.
 
-    Parameters
-    ----------
-    h : hnx.Hypergraph
-    fpath : file path for storage of hypergraph state dictionary
+        Parameters
+        ----------
+        h : hnx.Hypergraph
+        fpath : file path for storage of hypergraph state dictionary
 
-    Returns
-    -------
-    hnx.Hypergraph
-        Returns a copy of h with static set to true and nwhy set to True
-        if it is available.
+        Returns
+        -------
+        hnx.Hypergraph
+            Returns a copy of h with static set to true and nwhy set to True
+            if it is available.
 
-    """
+        """
 
-    if h.isstatic:
-        sd = h.state_dict
-        H = Hypergraph(h.edges, use_nwhy=True, filepath=fpath)
-        H.state_dict.update(sd)
-        return H
-    else:
-        return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
+        if h.isstatic:
+            sd = h.state_dict
+            H = Hypergraph(h.edges, use_nwhy=True, filepath=fpath)
+            H.state_dict.update(sd)
+            return H
+        else:
+            return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
 
     def edge_size_dist(self):
         
