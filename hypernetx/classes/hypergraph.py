@@ -1551,6 +1551,10 @@ class Hypergraph():
             if edges:
                 A, coldict = self.edge_adjacency_matrix(s=s, index=True)
                 G = nx.from_scipy_sparse_matrix(A)
+                # if not return_singletons:
+                #     temp = [c for c in nx.connected_components(G) if len(c) > 1]
+                # else:
+                #     temp = nx.connected_components(G)
                 for c in nx.connected_components(G):
                     yield {coldict[e] for e in c}
             else:
