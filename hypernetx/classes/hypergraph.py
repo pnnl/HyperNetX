@@ -328,7 +328,7 @@ class Hypergraph():
         pickle.dump([self.state_dict,self.edges.labels],open(fpath,'wb'))
 
     @classmethod
-    def recover_from_state(cls, fpath='current_state.p', use_nwhy=True):
+    def recover_from_state(cls, fpath='current_state.p', newfpath=None, use_nwhy=True):
         """
         Recover a static hypergraph pickled using save_state.
 
@@ -350,6 +350,11 @@ class Hypergraph():
         E.properties['counts'] = recovered_counts
         H = Hypergraph(E, use_nwhy=use_nwhy)
         H.state_dict.update(temp)
+        if newfpath == 'same':
+            newfpath = fpath
+        if newfpath is not None:
+            H.filepath = newfpath
+            H.save_state()
         return H
 
     @classmethod     
@@ -466,7 +471,7 @@ class Hypergraph():
             User assigned identifier corresponding to idx
         """
         if self.isstatic:
-            return self.get_name(idx, edges=False)
+            return self.get_name(idx, edges=edges)
         else:
             return idx
 
@@ -693,11 +698,11 @@ class Hypergraph():
 
         if self.isstatic:
             g = self.get_linegraph(s=s, edges=True)
-            edx = int(np.argwhere(H.edges.labs(0) == edge))
+            edx = self.get_id(edge, edges=True)
             if self.nwhy == True:
                 nbrs = g.s_neighbors(edx)
             else:
-                nbrs = list(g.neighbors(ndx))
+                nbrs = list(g.neighbors(edx))
             return [self.translate(nb, edges=True) for nb in nbrs]
 
         else:
