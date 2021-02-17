@@ -98,7 +98,7 @@ class StaticEntity(object):
                 self._arr = None
         elif data is not None:
             self._arr = None
-            self._data, counts = remove_row_duplicates(data, return_counts=True). ###TODO Incorporate counts into data for distance 
+            self._data, counts = remove_row_duplicates(data, return_counts=True)  # TODO Incorporate counts into data for distance
             self.properties['counts'] = counts
             self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
             self._dimsize = len(self._dimensions)
