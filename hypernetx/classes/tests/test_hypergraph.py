@@ -155,8 +155,8 @@ def test_s_components():
 def test_s_component_subgraphs():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
-    assert {5, 4}.issubset([len(g) for g in h.s_component_subgraphs(s=2)])
-    assert {3, 4}.issubset([len(g) for g in h.s_component_subgraphs(s=3)])
+    assert {5, 4}.issubset([len(g) for g in h.s_component_subgraphs(s=2, return_singletons=True)])
+    assert {3, 4}.issubset([len(g) for g in h.s_component_subgraphs(s=3, return_singletons=True)])
 
 
 def test_diameter(seven_by_six):

@@ -22,32 +22,91 @@ from collections import defaultdict
 import networkx as nx
 import warnings
 import sys
+
+try:
+    import nwhy
+    nwhy_available = True
+except:
+    nwhy_available = False
+
 sys.setrecursionlimit(10000)
 
 __all__ = [
     's_betweenness_centrality',
     's_harmonic_closeness_centrality',
+    's_harmonic_centrality',
     's_eccentricity',
 ]
 
+def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, **kwargs):
 
-def s_betweenness_centrality(H, s=1, normalized=True):
+    comps = H.s_component_subgraphs(s=s, edges=edges, return_singletons=return_singletons)
+    if f is not None:
+        for cps in comps:
+            if (edges and f in cps.edges) or (not edges and f in cps.nodes):
+                comps = [cps]
+                break
+        else:
+            return 0
+
+    stats = dict()
+    if H.isstatic:
+        for h in comps:
+            if edges:
+                vertices = h.edges
+            else:
+                vertices = h.nodes
+
+            if edges and h.shape[1] == 1:
+                stats.update({e: 0 for e in vertices})
+            elif not edges and h.shape[0] == 1:
+                stats.update({n: 0 for n in h.nodes})
+            elif nwhy_available and h.nwhy:
+                g = h.get_linegraph(s=s, edges=edges, use_nwhy=True)
+                stats.update(dict(zip(vertices, func(g, **kwargs))))
+            else:
+                g = h.get_linegraph(s=s, edges=edges, use_nwhy=False)
+                stats.update({h.get_name(k, edges=edges): v for k, v in func(g, **kwargs).items()})
+            if f:
+                return {f: stats[f]}
+    else:
+        for h in comps:
+            if edges:
+                A, Adict = h.edge_adjacency_matrix(s=s, index=True)
+            else:
+                A, Adict = h.adjacency_matrix(s=s, index=True)
+            A = (A >= s) * 1
+            g = nx.from_scipy_sparse_matrix(A)
+            stats.update({Adict[k]: v for k, v in func(g, **kwargs).items()})
+            if f:
+                return {f: stats[f]}
+
+    return stats
+
+
+def s_betweenness_centrality(H, s=1, edges=True, normalized=True, return_singletons=True):
     '''
     A centrality measure for an s-edge subgraph of H based on shortest paths.
     The betweenness centrality of an s-edge e is the sum of the fraction of all
     shortest s-paths between s-edges that pass through e.
 
-    Parameters:
-    -----------
-    H : Hypergraph
+    Parameters
+    ----------
+    H : hnx.Hypergraph
     s : int
-        minimum size of edges to be considered
-    normalized : bool, default=False,
+        s connectedness requirement
+    edges : bool, optional
+        determines if edge or node linegraph
+    normalized
+        bool, default=False,
         If true the betweenness values are normalized by `2/((n-1)(n-2))`,
         where n is the number of edges in H
+    return_singletons : bool, optional
+        if False will ignore singleton components of linegraph
 
-    Returns:
-    --------
+
+    Returns
+    -------
      : dict
         A dictionary of s-betweenness centrality value of the edges.
 
@@ -57,14 +116,24 @@ def s_betweenness_centrality(H, s=1, normalized=True):
     # Find all s-edges
     #M,rdict,_ = H.incidence_matrix(index=True)
     #A = M.transpose().dot(M)
+    if H.nwhy:
+        func = nwhy.Slinegraph.s_betweenness_centrality
+    else:
+        func = nx.betweenness_centrality
+    result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons)
+    if normalized:
+        n = H.shape[edges * 1]
+        return {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
+    else:
+        return result
 
-    A, coldict = H.edge_adjacency_matrix(s=s, index=True)
-    A = (A >= s) * 1
-    g = nx.from_scipy_sparse_matrix(A)
-    return {coldict[k]: v for k, v in nx.betweenness_centrality(g, normalized=normalized).items()}
+
+def s_harmonic_closeness_centrality(H, s=1, edges=True, edge=None):
+    warnings.warn('s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality and will not be available in future releases')
+    return s_harmonic_centrality(H, s=s, edges=edges, normalized=True, source=edge)
 
 
-def s_harmonic_closeness_centrality(H, edge=None, s=1):
+def s_harmonic_centrality(H, s=1, edges=True, normalized=False, source=None, return_singletons=True):
     '''
     A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
     intersects every other s-edge in H. All values range between 0 and 1.
@@ -91,87 +160,80 @@ def s_harmonic_closeness_centrality(H, edge=None, s=1):
     # Confirm there is at least 1 s edge for which we can compute the centrality
     # Find all s-edges
 
-    if edge and len(H.edges[edge]) < s:
-        return 0
-
-    Es = [e for e in H.edges if len(H.edges[e]) >= s]
-    if edge:
-        edges = [H.edges[edge].uid]
+    if H.nwhy:
+        func = nwhy.Slinegraph.s_harmonic_closeness_centrality
     else:
-        edges = Es
-
-    A, coldict = H.edge_adjacency_matrix(s=s, index=True)
-    g = nx.from_scipy_sparse_matrix(A)
-    ckey = {v: k for k, v in coldict.items()}
-
-    def temp(e, f):
-        try:
-            return nx.shortest_path_length(g, ckey[e], ckey[f])
-        except:
-            return np.inf
-
-    # confirm there are at least 2 s-edges
-    # we follow the NX convention that the s-closeness centrality of a single edge Hypergraph is 0
-
-    output = {}
-    if not bool(Es) or len(Es) == 1:
-        output = {e: 0 for e in edges}
+        func = nx.harmonic_centrality
+    result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, f=source)
+    if normalized:
+        n = H.shape[edges * 1]
+        return {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
     else:
-        for e in edges:
-            summands_recip = [temp(e, f) for f in Es if f != e]
-            summands = [1 / x for x in summands_recip if not x == np.inf and x != 0]
-            output[e] = 1 / (len(Es) - 1) * sum(summands)
-    if len(edges) == 1:
-        return output[edges[0]]
-    else:
-        return output
+        return result
+
+    # if edge and len(H.edges[edge]) < s:
+    #     return 0
+
+    # Es = [e for e in H.edges if len(H.edges[e]) >= s]
+    # if edge:
+    #     edges = [H.edges[edge].uid]
+    # else:
+    #     edges = Es
+
+    # A, coldict = H.edge_adjacency_matrix(s=s, index=True)
+    # g = nx.from_scipy_sparse_matrix(A)
+    # ckey = {v: k for k, v in coldict.items()}
+
+    # def temp(e, f):
+    #     try:
+    #         return nx.shortest_path_length(g, ckey[e], ckey[f])
+    #     except:
+    #         return np.inf
+
+    # # confirm there are at least 2 s-edges
+    # # we follow the NX convention that the s-closeness centrality of a single edge Hypergraph is 0
+
+    # output = {}
+    # if not bool(Es) or len(Es) == 1:
+    #     output = {e: 0 for e in edges}
+    # else:
+    #     for e in edges:
+    #         summands_recip = [temp(e, f) for f in Es if f != e]
+    #         summands = [1 / x for x in summands_recip if not x == np.inf and x != 0]
+    #         output[e] = 1 / (len(Es) - 1) * sum(summands)
+    # if len(edges) == 1:
+    #     return output[edges[0]]
+    # else:
+    #     return output
 
 
-def s_eccentricity(H, f=None, s=1):
+def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True):
     '''
     Max s_distance from edge f to every other edge to which it is connected
 
-    Parameters:
-    -----------
-    H : Hypergraph
-    f : Entity or str
+    Parameters
+    ----------
+    H : hnx.Hypergraph
     s : int
+    edges : bool, optional
+        Description
+    source : str
+        source object identifier
 
-    Returns:
-    --------
-    if f:
-        eccentricity[f] : float
-    else:
-        eccentricity_dict : dict
-     : dict or float
-        returns the s-eccentricity value of the edges, a floating point number
-        If edge=None a dictionary of values for each s-edge in H is returned.
-        If edge then a single value is returned.
+    Returns
+    -------
+     : float or dict
 
     '''
-    if f:
-        if isinstance(f, Entity):
-            source = [f.uid]
-        else:
-            source = [f]
+    if nwhy_available and H.nwhy:
+        func = nwhy.Slinegraph.s_eccentricity
     else:
-        source = H.edges
+        func = nx.eccentricity
 
-    eccentricity_dict = defaultdict()
-
-    A, coldict = H.edge_adjacency_matrix(s=s, index=True)
-    g = nx.from_scipy_sparse_matrix(A)
-    ckey = {v: k for k, v in coldict.items()}
-    for sedge in source:
-        ecclist = []
-        for e in H.edges:
-            try:
-                ecclist.append(nx.shortest_path_length(g, ckey[sedge], ckey[e]))
-            except:
-                pass
-        eccentricity_dict[sedge] = np.max(ecclist)
-
-    if f:
-        return eccentricity_dict[f]
+    if source is not None:
+        return _s_centrality(func, H, s=s,
+                             edges=edges, f=source,
+                             return_singletons=return_singletons)
     else:
-        return dict(eccentricity_dict)
+        return _s_centrality(func, H, s=s,
+                             edges=edges, return_singletons=return_singletons)

@@ -345,7 +345,7 @@ class Hypergraph():
         """
         temp,labels = pickle.load(open(fpath,'rb'))
         recovered_data = np.array(temp['data'])[[0,1]].T  ### need to save counts as well
-        recovered_counts = np.array(temp['data'])[[2]]
+        recovered_counts = np.array(temp['data'])[[2]]  ### ammend this to store cell weights
         E = StaticEntitySet(data=recovered_data, labels=labels)
         E.properties['counts'] = recovered_counts
         H = Hypergraph(E, use_nwhy=use_nwhy)
@@ -1000,6 +1000,7 @@ class Hypergraph():
 
         weighted: boolean, optional, default: True
 
+
         Returns
         -------
         adjacency_matrix : scipy.sparse.csr.csr_matrix
@@ -1440,6 +1441,7 @@ class Hypergraph():
                 return g.is_s_connected()
             else:
                 return g.is_connected()
+            return result
         else:
             if edges:
                 A = self.edge_adjacency_matrix(s=s)
@@ -1550,8 +1552,15 @@ class Hypergraph():
         if self.nwhy:
             g = self.get_linegraph(s, edges=edges)
             for c in g.s_connected_components(return_singleton=return_singletons):
-                yield self.edges.translate((edges + 1) % 2, c)
+                yield {self.get_name(n, edges=edges) for n in c}
+                # yield self.edges.translate((edges + 1) % 2, c)
 
+        elif self.isstatic:
+            g = self.get_linegraph(s, edges=edges)
+            for c in nx.connected_components(g):
+                if not return_singletons and len(c) == 1:
+                    continue                    
+                yield {self.get_name(n, edges=edges) for n in c}
         else:
             if edges:
                 A, coldict = self.edge_adjacency_matrix(s=s, index=True)
@@ -1561,11 +1570,16 @@ class Hypergraph():
                 # else:
                 #     temp = nx.connected_components(G)
                 for c in nx.connected_components(G):
-                    yield {coldict[e] for e in c}
+                    if not return_singletons and len(c) == 1:
+                        continue                    
+                    yield {coldict[n] for n in c}
             else:
                 A, rowdict = self.adjacency_matrix(s=s, index=True)
                 G = nx.from_scipy_sparse_matrix(A)
                 for c in nx.connected_components(G):
+                    if not return_singletons:
+                        if len(c) == 1:
+                            continue                    
                     yield {rowdict[n] for n in c}
 
     def s_component_subgraphs(self, s=1, edges=True, return_singletons=False):
