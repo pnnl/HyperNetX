@@ -20,17 +20,17 @@ def test_s_betweenness_centrality(fish):
 def test_s_harmonic_centrality(sixbyfive):
     h = sixbyfive.hypergraph
     shcc = s_harmonic_centrality(h, s=1, normalized=True)
-    s1 = {'e0': 1.0, 'e1': 1.0, 'e2': 1.0, 'e3': 1.0, 'e4': 1.0}
+    s1 = {'e4': 0.66667, 'e1': 0.66667, 'e0': 0.66667, 'e2': 0.66667, 'e3': 0.66667}
     for e in h.edges:
-        assert shcc[e] == s1[e]
+        assert shcc[e] - s1[e] < 10e-5
     shcc = s_harmonic_centrality(h, s=2, normalized=True)
-    s2 = {'e0': 1.0, 'e1': 0.875, 'e2': 0.875, 'e3': 0.75, 'e4': 1.0}
+    s2 = {'e4': 0.66667, 'e1': 0.58333, 'e0': 0.66667, 'e2': 0.58333, 'e3': 0.5}
     for e in h.edges:
-        assert shcc[e] == s2[e]
+        assert shcc[e] - s2[e] < 10e-5
     shcc = s_harmonic_centrality(h, s=3, normalized=True)
-    s3 = {'e0': 0.375, 'e1': 0.0, 'e2': 0.0, 'e3': 0.375, 'e4': 0.5}
+    s3 = {'e0': 0.25, 'e3': 0.25, 'e4': 0.33333, 'e1': 0.0, 'e2': 0.0}
     for e in h.edges:
-        assert shcc[e] == s3[e]
+        assert shcc[e] - s3[e] < 10e-5
 
 
 def test_s_eccentricity(sixbyfive):
