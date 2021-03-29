@@ -208,8 +208,10 @@ class Hypergraph():
         """
         Tuple giving (number of nodes, number of edgess)
         """
-
-        return (len(self._nodes.elements), len(self._edges.elements))
+        if self.nwhy:
+            return(self.g.number_of_nodes(),self.g.number_of_edges())
+        else:
+            return (len(self._nodes.elements), len(self._edges.elements))
 
     def __str__(self):
         """
@@ -227,7 +229,10 @@ class Hypergraph():
         """
         Number of nodes
         """
-        return len(self._nodes)
+        if self.nwhy:
+            return self.g.number_of_nodes()
+        else:
+            return len(self._nodes)
 
     def __iter__(self):
         """
@@ -538,7 +543,9 @@ class Hypergraph():
                 return np.sum(imat[ndx, ids])
         else:
             memberships = set(self.nodes[node].memberships)
-            if s > 1:
+            if max_size is not None:
+                return len(set(e for e in memberships if len(self.edges[e]) in range(s,max_size+1)))
+            elif s > 1:
                 return len(set(e for e in memberships if len(self.edges[e]) >= s))
             else:
                 return len(memberships)
@@ -1503,7 +1510,7 @@ class Hypergraph():
         E = [e for e in self.edges if e not in self.singletons()]
         return self.restrict_to_edges(E)
 
-    def s_connected_components(self, s=1, edges=True, return_singletons=True):
+    def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
         Returns a generator for the :term:`s-edge-connected components <s-edge-connected component>`
         or the :term:`s-node-connected components <s-connected component, s-node-connected component>`
@@ -1515,7 +1522,7 @@ class Hypergraph():
 
         edges : boolean, optional, default: True
             If True will return edge components, if False will return node components
-        return_singletons : bool, optional, default : True
+        return_singletons : bool, optional, default : False
 
         Notes
         -----
@@ -1549,11 +1556,23 @@ class Hypergraph():
             Iterator returns sets of uids of the edges (or nodes) in the s-edge(node) components of hypergraph.
 
         """
+        components = list()
+
         if self.nwhy:
             g = self.get_linegraph(s, edges=edges)
-            for c in g.s_connected_components(return_singleton=return_singletons):
-                yield {self.get_name(n, edges=edges) for n in c}
-                # yield self.edges.translate((edges + 1) % 2, c)
+            if return_singletons:
+                allobjects = set(self.edges) if edges==True else set(self.nodes)
+                for c in g.s_connected_components():
+                    comp = {self.get_name(nd, edges=edges) for nd in c}
+                    allobjects.difference_update(comp)    
+                for c in g.s_connected_components():
+                    yield {self.get_name(nd, edges=edges) for nd in c}
+                for obj in allobjects:
+                    yield {obj}        
+            else:
+                for c in g.s_connected_components():
+                    comp = {self.get_name(nd, edges=edges) for nd in c}
+                    yield comp
 
         elif self.isstatic:
             g = self.get_linegraph(s, edges=edges)

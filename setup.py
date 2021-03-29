@@ -23,6 +23,7 @@ setup(
                       'scipy>=1.1.0,<2.0',
                       'matplotlib>3.0',
                       'scikit-learn>=0.20.0',
+                      'pandas>=0.23'
                       ],
     license='3-Clause BSD license',
     long_description='''
@@ -37,10 +38,10 @@ setup(
     ''',
     extras_require={
         'testing': ['pytest>=4.0'],
-        'notebooks': ['jupyter>=1.0', 'pandas>=0.23'],
-        'tutorials': ['jupyter>=1.0', 'pandas>=0.23'],
+        'notebooks': ['jupyter>=1.0', ],
+        'tutorials': ['jupyter>=1.0'],
         'documentation': ['sphinx>=1.8.2', 'nb2plots>=0.6', 'sphinx-rtd-theme>=0.4.2'],
-        'all': ['sphinx>=1.8.2', 'nb2plots>=0.6', 'sphinx-rtd-theme>=0.4.2', 'pytest>=4.0', 'jupyter>=1.0', 'pandas>=0.23']
+        'all': ['sphinx>=1.8.2', 'nb2plots>=0.6', 'sphinx-rtd-theme>=0.4.2', 'pytest>=4.0', 'jupyter>=1.0']
     }
 )
 

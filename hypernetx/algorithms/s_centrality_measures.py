@@ -40,8 +40,34 @@ __all__ = [
     's_eccentricity',
 ]
 
-def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_nwhy=True, **kwargs):
 
+def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_nwhy=True, **kwargs):
+    """
+    Wrapper for computing s-centrality either in NetworkX or in NWHy
+
+    Parameters
+    ----------
+    func : function
+        Function or partial function from NetworkX or NWHy
+    H : hnx.Hypergraph
+
+    s : int, optional
+        s-width for computation
+    edges : bool, optional
+        If True, an edge linegraph will be used, otherwise a node linegraph will be used
+    f : str, optional
+        Identifier or node or edge of interest for computing centrality
+    return_singletons : bool, optional
+        If True will return 0 value for each singleton in the s-linegraph
+    use_nwhy : bool, optional
+        If True will attempt to use nwhy centrality methods if availaable
+    **kwargs
+        Centrality metric specific keyword arguments to be passed to func
+
+    Returns
+    : dict
+        dictionary of centrality scores keyed by names
+    """
     comps = H.s_component_subgraphs(s=s, edges=edges, return_singletons=return_singletons)
     if f is not None:
         for cps in comps:
@@ -118,7 +144,7 @@ def s_betweenness_centrality(H, s=1, edges=True, normalized=True, return_singlet
         func = partial(nx.betweenness_centrality, normalized=False)
     result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, use_nwhy=use_nwhy)
 
-    if normalized:
+    if normalized and H.shape[edges * 1] > 2:
         n = H.shape[edges * 1]
         return {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
     else:
@@ -174,7 +200,7 @@ def s_harmonic_centrality(H, s=1, edges=True, source=None, normalized=False, ret
         func = partial(nx.harmonic_centrality)
     result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, f=source, use_nwhy=use_nwhy)
 
-    if normalized:
+    if normalized and H.shape[edges * 1] > 2:
         n = H.shape[edges * 1]
         return {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
     else:
