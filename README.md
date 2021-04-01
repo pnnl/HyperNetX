@@ -1,3 +1,31 @@
+HyperNetX - `hnxbeta` Branch
+==========================
+
+Notes: `hnxbeta` is a development branch available for those who are interested in watching and collaborating in the evolution of HNX.
+It includes cool new features such as:
+- Immutable hypergraphs for faster creation and computational methods: add `static=True` to the signature when constructing a hypergraph.
+- The `s-centrality.py` methods have been refactored and are much faster when using hypergraphs with static=True.
+- Two new tutorials: `Tutorial 6 - Static Hypergraphs and Entities.ipynb` and `Tutorial 7 - s-centrality.ipynb`.
+
+**Warning**: This is a development branch. It is not fully documented or tested. It can be downloaded to your environment using `pip install hnxbeta`. We are actively working on this branch so let us know if you find a bug!! We will regularly push updates and these will match the `hnxbeta` version downloadable from PyPI.
+
+The new tutorials may be run in your browser using Google Colab
+---------------------------------------------------------------
+
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
+
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+	<span style={'margin-left':5px}>Tutorial 6 - Static Hypergraphs and Entities</span>
+</a>
+</br>
+
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%207%20-%20s-centrality.ipynb.ipynb" target="_blank">
+
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+	<span style={'margin-left':5px}>Tutorial 7 - s-centrality</span>
+</a>
+</br>
+
 HyperNetX
 =========
 
