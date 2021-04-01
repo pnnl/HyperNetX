@@ -166,7 +166,7 @@ def s_harmonic_closeness_centrality(H, s=1, edge=None, use_nwhy=True):
     and will not be available in future releases. 
     '''
     warnings.warn(msg)
-    return s_harmonic_centrality(H, s=s, edges=True, normalized=True, source=source)
+    return s_harmonic_centrality(H, s=s, edges=True, normalized=True, source=edge)
 
 
 def s_harmonic_centrality(H, s=1, edges=True, source=None, normalized=False, return_singletons=True, use_nwhy=True):
