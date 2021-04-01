@@ -18,8 +18,7 @@ The new tutorials may be run in your browser using Google Colab
 	<span style={'margin-left':5px}>Tutorial 6 - Static Hypergraphs and Entities</span>
 </a>
 </br>
-
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%207%20-%20s-centrality.ipynb.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%207%20-%20s-centrality.ipynb" target="_blank">
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span style={'margin-left':5px}>Tutorial 7 - s-centrality</span>
