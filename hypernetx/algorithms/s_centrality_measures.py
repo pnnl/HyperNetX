@@ -56,7 +56,7 @@ def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_
     edges : bool, optional
         If True, an edge linegraph will be used, otherwise a node linegraph will be used
     f : str, optional
-        Identifier or node or edge of interest for computing centrality
+        Identifier of node or edge of interest for computing centrality
     return_singletons : bool, optional
         If True will return 0 value for each singleton in the s-linegraph
     use_nwhy : bool, optional
