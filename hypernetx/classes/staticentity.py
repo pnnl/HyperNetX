@@ -69,7 +69,7 @@ class StaticEntity(object):
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
-                data, labels, counts = _turn_dataframe_into_entity(entity, return_counts=True)
+                data, labels, counts = turn_dataframe_into_entity(entity, return_counts=True)
                 self.properties.update({'counts': counts})
                 self.__dict__.update(self.properties)
                 self._data = data
@@ -83,11 +83,11 @@ class StaticEntity(object):
             else:
                 if isinstance(entity, Entity) or isinstance(entity, EntitySet):
                     d = entity.incidence_dict
-                    self._data, self._labels = _turn_dict_to_staticentity(d)  # For now duplicate entries will be removed.
+                    self._data, self._labels = turn_dict_to_staticentity(d)  # For now duplicate entries will be removed.
                 elif isinstance(entity, dict):  # returns only 2 levels
-                    self._data, self._labels = _turn_dict_to_staticentity(entity)  # For now duplicate entries will be removed.
+                    self._data, self._labels = turn_dict_to_staticentity(entity)  # For now duplicate entries will be removed.
                 else:  # returns only 2 levels
-                    self._data, self._labels = _turn_iterable_to_staticentity(entity)
+                    self._data, self._labels = turn_iterable_to_staticentity(entity)
                 self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
@@ -122,7 +122,7 @@ class StaticEntity(object):
             self._state_dict = {'arr': arr * 1}
             self._dimensions = arr.shape
             self._dimsize = len(arr.shape)
-            self._data = _turn_tensor_to_data(arr * 1)
+            self._data = turn_tensor_to_data(arr * 1)
             if labels is not None:  # determine if hashmaps might be better than lambda expressions to recover indices
                 self._labels = OrderedDict((category, np.array(values)) for category, values in labels.items())
                 self._keyindex = lambda category: int(np.where(np.array(list(self._labels.keys())) == category)[0])
@@ -453,7 +453,7 @@ class StaticEntitySet(StaticEntity):
                 data = data[:, [level1, level2]]
                 arr = None
             elif arr is not None:
-                data = _turn_tensor_to_data(arr)
+                data = turn_tensor_to_data(arr)
                 data = data[:, [level1, level2]]
                 arr = None
             if labels is not None:
@@ -508,7 +508,7 @@ class StaticEntitySet(StaticEntity):
             return StaticEntitySet(uid=uid, entity=new_entity_dict)
 
 
-def _turn_tensor_to_data(arr, remove_duplicates=True):
+def turn_tensor_to_data(arr, remove_duplicates=True):
     """
     Return list of nonzero coordinates in arr.
 
@@ -525,7 +525,7 @@ def _turn_tensor_to_data(arr, remove_duplicates=True):
     #     return dfa
 
 
-def _turn_dict_to_staticentity(dict_object, remove_duplicates=True):
+def turn_dict_to_staticentity(dict_object, remove_duplicates=True):
     '''Create a static entity directly from a dictionary of hashables'''
     d = OrderedDict(dict_object)
     level2ctr = HNXCount()
@@ -547,17 +547,17 @@ def _turn_dict_to_staticentity(dict_object, remove_duplicates=True):
     return data, labels
 
 
-def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
+def turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
     for s in iter_object:
         if not isinstance(s, Iterable):
             raise HyperNetXError('StaticEntity constructor requires an iterable of iterables.')
     else:
         labels = [f'e{str(x)}' for x in range(len(iter_object))]
         dict_object = dict(zip(labels, iter_object))
-    return _turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)
+    return turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)
 
 
-def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
+def turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
     """
     Convenience method to reformat dataframe object into data,labels format
     for construction of a static entity 
