@@ -1364,24 +1364,24 @@ class Hypergraph():
 
         Warning
         -------
-        Collapsing a hypergraph can take a long time. It may be preferable to collapse the graph first and
-        pickle it, then apply the toplexes method separately.
+        Collapsing is no longer supported inside the toplexes method. Instead generate a new
+        collapsed hypergraph and compute the toplexes of the new hypergraph.
 
         Parameters
         ----------
         name: str, optional, default: None
 
-        collapse: boolean, optional, default: False
-            Should the hypergraph be collapsed? This would preserve a link between duplicate maximal sets.
-            If False then only one of these sets will be used and uniqueness will be up to sets of equal size.
+        # collapse: boolean, optional, default: False
+        #     Should the hypergraph be collapsed? This would preserve a link between duplicate maximal sets.
+        #     If False then only one of these sets will be used and uniqueness will be up to sets of equal size.
 
-        use_reps: boolean, optional, default: False
-            If collapse=True then each toplex will be named by a representative of the set of
-            equivalent edges, default is False (see collapse_edges).
+        # use_reps: boolean, optional, default: False
+        #     If collapse=True then each toplex will be named by a representative of the set of
+        #     equivalent edges, default is False (see collapse_edges).
 
         return_counts: boolean, optional, default: True
-            If collapse=True then each toplex will be named by a tuple of the representative
-            of the set of equivalent edges and their count
+            # If collapse=True then each toplex will be named by a tuple of the representative
+            # of the set of equivalent edges and their count
 
         """
         ### TODO: There is a better way to do this....need to refactor
@@ -1395,7 +1395,7 @@ class Hypergraph():
 
         if collapse:
             msg = '''
-            collapse, return_counts, and use_reps are no longer a supported keyword arguments 
+            collapse, return_counts, and use_reps are no longer supported keyword arguments 
             and will throw an error in the next release.
             '''
             warnings.warn(msg, DeprecationWarning)
