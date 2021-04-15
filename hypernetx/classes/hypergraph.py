@@ -1189,15 +1189,16 @@ class Hypergraph():
         ----------
         name: str, optional, default: None
 
-        use_reps : boolean, optional, default: False
+        return_equivalence_classes: boolean, optional, default: False
+            Returns a dictionary of node equivalence classes keyed by frozen sets of edges
+
+        use_reps : boolean, optional, default: False - Deprecated, this no longer works and will be removed
             Choose a single element from the collapsed nodes as uid for the new node, otherwise uses
             a frozen set of the uids of nodes in the equivalence class
 
-        return_counts: if use_reps is True the new nodes have uids given by a tuple of the rep
+        return_counts: boolean, - Deprecated, this no longer works and will be removed
+            if use_reps is True the new nodes have uids given by a tuple of the rep
             and the count
-
-        return_equivalence_classes: boolean, optional, default: False
-            Returns a dictionary of node equivalence classes keyed by frozen sets of edges
 
         Returns
         -------
@@ -1207,8 +1208,8 @@ class Hypergraph():
         -----
         Two nodes are identified if their respective memberships are the same.
         Using this as an equivalence relation, the uids of the nodes are partitioned into
-        equivalence classes. A frozenset of equivalent nodes serves as uid
-        for each node entity.
+        equivalence classes. A single member of the equivalence class is chosen to represent 
+        the class followed by the number of members of the class.
 
         Example
         -------
@@ -1265,8 +1266,8 @@ class Hypergraph():
         Collapses the Nodes and Edges EntitySets. Two nodes(edges) are duplicates
         if their respective memberships(elements) are the same. Using this as an
         equivalence relation, the uids of the nodes(edges) are partitioned into
-        equivalence classes. A frozenset of equivalent nodes(edges) serves as unique id
-        for each node(edge) entity.
+        equivalence classes. A single member of the equivalence class is chosen to represent 
+        the class followed by the number of members of the class.
 
         Example
         -------
@@ -1390,26 +1391,41 @@ class Hypergraph():
             temp = self.collapse_edges()
         else:
             temp = self
+
+
+        if collapse:
+            msg = '''
+            collapse, return_counts, and use_reps are no longer a supported keyword arguments 
+            and will throw an error in the next release.
+            '''
+            warnings.warn(msg, DeprecationWarning)
+
+
         thdict = dict()
-        if self.isstatic:
-            for e in temp.edges:
-                thdict[e] = temp.edges[e]
+        if self.nwhy:
+            tops = self.g.toplexes()
+            E = self.edges.restrict_to(tops)
+            return hnx.Hypergraph(E,use_nwhy=True)
         else:
+            if self.isstatic:
+                for e in temp.edges:
+                    thdict[e] = temp.edges[e]
+            else:
+                for e in temp.edges:
+                    thdict[e] = temp.edges[e].uidset
+            tops = list()
             for e in temp.edges:
-                thdict[e] = temp.edges[e].uidset
-        tops = list()
-        for e in temp.edges:
-            flag = True
-            old_tops = list(tops)
-            for top in old_tops:
-                if set(thdict[e]).issubset(thdict[top]):
-                    flag = False
-                    break
-                elif set(thdict[top]).issubset(thdict[e]):
-                    tops.remove(top)
-            if flag:
-                tops += [e]
-        return self.restrict_to_edges(tops, name=name)
+                flag = True
+                old_tops = list(tops)
+                for top in old_tops:
+                    if set(thdict[e]).issubset(thdict[top]):
+                        flag = False
+                        break
+                    elif set(thdict[top]).issubset(thdict[e]):
+                        tops.remove(top)
+                if flag:
+                    tops += [e]
+            return self.restrict_to_edges(tops, name=name)
 
     def is_connected(self, s=1, edges=False):
         """
