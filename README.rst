@@ -9,24 +9,14 @@ It includes cool new features such as:
 
 **Warning**: This is a development branch. It is not fully documented or tested. It can be downloaded to your environment using `pip install hnxbeta`. We are actively working on this branch so let us know if you find a bug!! We will regularly push updates and these will match the `hnxbeta` version downloadable from PyPI.
 
-The new tutorials may be run in your browser using Google Colab
----------------------------------------------------------------
-
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
-
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 6 - Static Hypergraphs and Entities</span>
-</a>
-</br>
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%207%20-%20s-centrality.ipynb" target="_blank">
-
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 7 - s-centrality</span>
-</a>
-</br>
 
 HyperNetX
 =========
+
+### Super Users: HNXBeta is now available on a development branch. 
+Go to 
+<a href="https://github.com/pnnl/HyperNetX/tree/hnxbeta" target="_blank">HNXBeta</a>
+to see some of our cool new features!
 
 ![](docs/source/images/hnxbasics.png)
 
@@ -37,14 +27,14 @@ The current version is preliminary. We are actively testing and would be gratefu
 HypernetX was developed by the Pacific Northwest National Laboratory for the Hypernets project as part of its High Performance Data Analytics (HPDA) program. PNNL is operated by Battelle Memorial Institute under Contract DE-AC05-76RL01830.
 
 * Principle Developer and Designer: Brenda Praggastis
-* Graphics Developer and Designer: Dustin Arendt
-* Principle Investigator: Emilie Purvine
-* Program Manager: Cliff Joslyn, Mark Raugas
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Brenda Praggastis, and Emilie Purvine
-* Software support: Kyle Monson
+* Visualization: Dustin Arendt, Ji Young Yun
+* Principle Investigator: Cliff Joslyn
+* Program Manager: Mark Raugas, Brian Kritzstein
+* High Performance Computing: Tony Liu, Andrew Lumsdaine
+* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
 For questions and comments you may contact the developers directly at:  
-	hypernetx@pnnl.gov
+    hypernetx@pnnl.gov
 
 Documentation is available at: https://pnnl.github.io/HyperNetX/
 
@@ -54,37 +44,37 @@ Tutorials may be run in your browser using Google Colab
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 1 - HNX Basics</span>
+    <span style={'margin-left':5px}>Tutorial 1 - HNX Basics</span>
 </a>
 </br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
 
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 2 - Visualization Methods</span>
+    <span style={'margin-left':5px}>Tutorial 2 - Visualization Methods</span>
 </a>
 </br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
 
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 3 - LesMis Case Study</span>
+    <span style={'margin-left':5px}>Tutorial 3 - LesMis Case Study</span>
 </a>
 </br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
 
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 4 - LesMis Visualizations-Book Tour</span>
+    <span style={'margin-left':5px}>Tutorial 4 - LesMis Visualizations-Book Tour</span>
 </a>
 </br>
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
 
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 5 - Homology mod2 for TriLoop Example</span>
+    <span style={'margin-left':5px}>Tutorial 5 - Homology mod2 for TriLoop Example</span>
 </a>
 
-	
+    
 
 Installation Instructions
 -------------------------
@@ -95,28 +85,28 @@ We recommend installation in a virtual environment.
 To install in an Anaconda environment
 -------------------------------------
 
-	>>> conda create -n <env name> python=3.6
-	>>> source activate <env name> 
+    >>> conda create -n <env name> python=3.6
+    >>> source activate <env name> 
 
 Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:
-	
-	>>> conda install matplotlib
+    
+    >>> conda install matplotlib
 
 To install in a virtualenv environment
 --------------------------------------
 
-	>>> virtualenv --python=<path to python 3.6 executable> <path to env name>
+    >>> virtualenv --python=<path to python 3.6 executable> <path to env name>
 
 This will create a virtual environment in the specified location using
 the specified python executable. For example:
 
-	>>> virtualenv --python=C:\Anaconda3\python.exe hnx
+    >>> virtualenv --python=C:\Anaconda3\python.exe hnx
 
 This will create a virtual environment in .\hnx using the python
 that comes with Anaconda3.
 
-	>>> <path to env name>\Scripts\activate<file extension>
+    >>> <path to env name>\Scripts\activate<file extension>
 
 If you are running in Windows PowerShell use <file extension>=.ps1
 
@@ -132,7 +122,7 @@ Install using Pip
 
 For a minimal installation:
 
-	>>> pip install hypernetx
+    >>> pip install hypernetx
 
 For an editable installation with access to jupyter notebooks: 
 
@@ -140,23 +130,23 @@ For an editable installation with access to jupyter notebooks:
 
 To install with the tutorials: 
 
-	>>> pip install -e .['tutorials']
+    >>> pip install -e .['tutorials']
 
 To install with the documentation: 
-	
-	>>> pip install -e .['documentation']
-	>>> sphinx-build -b html docs/source docs/build 
-	## This will generate the documentation in /docs/build
-	## Open them in your browser with /docs/build/index.html
+    
+    >>> pip install -e .['documentation']
+    >>> sphinx-build -b html docs/source docs/build 
+    ## This will generate the documentation in /docs/build
+    ## Open them in your browser with /docs/build/index.html
 
 To install and test using pytest:
 
-	>>> pip install -e .['testing']
-	>>> pytest
+    >>> pip install -e .['testing']
+    >>> pytest
 
 To install the whole shabang:
 
-	>>> pip install -e .['all']
+    >>> pip install -e .['all']
 
 License
 -------
