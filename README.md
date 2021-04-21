@@ -22,9 +22,9 @@ The current version is preliminary. We are actively testing and would be gratefu
 HypernetX was developed by the Pacific Northwest National Laboratory for the Hypernets project as part of its High Performance Data Analytics (HPDA) program. PNNL is operated by Battelle Memorial Institute under Contract DE-AC05-76RL01830.
 
 * Principle Developer and Designer: Brenda Praggastis
+* Visualization: Dustin Arendt, Ji Young Yun
 * Principle Investigator: Cliff Joslyn
 * Program Manager: Mark Raugas, Brian Kritzstein
-* Visualization: Dustin Arendt, Ji Young Yun
 * High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
