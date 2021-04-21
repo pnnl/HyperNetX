@@ -1,6 +1,11 @@
 HyperNetX
 =========
 
+### Super Users: HNXBeta is now available on a development branch. 
+Go to 
+<a href="https://github.com/pnnl/HyperNetX/tree/hnxbeta" target="_blank">HNXBeta</a>
+to see some of our cool new features!
+
 ![](docs/source/images/hnxbasics.png)
 
 The HyperNetX library provides classes and methods for the analysis and visualization of complex network data. HyperNetX uses data structures designed to represent set systems containing nested data and/or multi-way relationships. The library generalizes traditional graph metrics to hypergraphs.
