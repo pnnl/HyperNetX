@@ -9,21 +9,6 @@ It includes cool new features such as:
 
 **Warning**: This is a development branch. It is not fully documented or tested. It can be downloaded to your environment using `pip install hnxbeta`. We are actively working on this branch so let us know if you find a bug!! We will regularly push updates and these will match the `hnxbeta` version downloadable from PyPI.
 
-The new tutorials may be run in your browser using Google Colab
----------------------------------------------------------------
-
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
-
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 6 - Static Hypergraphs and Entities</span>
-</a>
-</br>
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/hnxbeta/tutorials/Tutorial%207%20-%20s-centrality.ipynb" target="_blank">
-
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span style={'margin-left':5px}>Tutorial 7 - s-centrality</span>
-</a>
-</br>
 
 HyperNetX
 =========
@@ -37,11 +22,11 @@ The current version is preliminary. We are actively testing and would be gratefu
 HypernetX was developed by the Pacific Northwest National Laboratory for the Hypernets project as part of its High Performance Data Analytics (HPDA) program. PNNL is operated by Battelle Memorial Institute under Contract DE-AC05-76RL01830.
 
 * Principle Developer and Designer: Brenda Praggastis
-* Graphics Developer and Designer: Dustin Arendt
-* Principle Investigator: Emilie Purvine
-* Program Manager: Cliff Joslyn, Mark Raugas
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Brenda Praggastis, and Emilie Purvine
-* Software support: Kyle Monson
+* Principle Investigator: Cliff Joslyn
+* Program Manager: Mark Raugas, Brian Kritzstein
+* Visualization: Dustin Arendt, Ji Young Yun
+* High Performance Computing: Tony Liu, Andrew Lumsdaine
+* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
 For questions and comments you may contact the developers directly at:  
 	hypernetx@pnnl.gov
