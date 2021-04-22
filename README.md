@@ -28,9 +28,9 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the Hyp
 
 * Principle Developer and Designer: Brenda Praggastis
 * Visualization: Dustin Arendt, Ji Young Yun
+* High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Principle Investigator: Cliff Joslyn
 * Program Manager: Mark Raugas, Brian Kritzstein
-* High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
 For questions and comments you may contact the developers directly at:  
