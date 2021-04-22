@@ -16,7 +16,7 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the Hyp
 
 * Principle Developer and Designer: Brenda Praggastis
 * Graphics Developer and Designer: Dustin Arendt
-* Principle Investigator: Emilie Purvine
+* Principal Investigator: Emilie Purvine
 * Program Manager: Cliff Joslyn, Mark Raugas
 * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Brenda Praggastis, and Emilie Purvine
 * Software support: Kyle Monson
