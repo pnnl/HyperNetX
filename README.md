@@ -33,6 +33,7 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the Hyp
 * High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
+
 For questions and comments you may contact the developers directly at:  
 	hypernetx@pnnl.gov
 
