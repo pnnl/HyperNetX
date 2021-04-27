@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,29 +11,31 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-        <script type="text/javascript" src="../../_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -50,7 +51,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
           
 
           
@@ -80,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -101,6 +103,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -139,7 +142,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -162,12 +165,17 @@
 <span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
 <span class="c1"># All rights reserved.</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="k">import</span> <span class="n">HyperNetXError</span>
+<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">HyperNetXError</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EntitySet&#39;</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="Entity"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity">[docs]</a><span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -249,7 +257,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="n">entity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="n">entity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span> <span class="o">=</span> <span class="n">uid</span>
@@ -369,7 +377,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Defines equality for Entities based on equivalence of their __dict__ objects.</span>
 
@@ -401,20 +409,20 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">_comp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the number of elements in entity&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the entity uid.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.uid}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1">&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a string resembling the constructor for entity without any</span>
 <span class="sd">        children&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;Entity(</span><span class="si">{self._uid}</span><span class="s1">,{list(self.uidset)},</span><span class="si">{self.properties}</span><span class="s1">)&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Entity(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="si">}</span><span class="s1">)&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Defines containment for Entities.</span>
 
@@ -436,7 +444,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns Entity element by uid. Use :func:`E[uid]`.</span>
 
@@ -455,16 +463,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns iterator on element ids.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns an iterator on elements&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">e</span>
 
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets entity property.</span>
 
 <span class="sd">        Parameters</span>
@@ -722,7 +730,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newelements</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">element_subset</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.uid}</span><span class="s1">_r&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1">_r&#39;</span>
         <span class="k">return</span> <span class="n">Entity</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">newelements</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Entity.add"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -795,8 +803,8 @@
             <span class="c1"># if item is an Entity, descendents will be compared to avoid collisions</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s1">&#39;Error: Self reference in submitted elements.&#39;</span>
-                    <span class="n">f</span><span class="s1">&#39; Entity </span><span class="si">{self.uid}</span><span class="s1"> may not contain itself. &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Error: Self reference in submitted elements.&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; Entity </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1"> may not contain itself. &#39;</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
                 <span class="c1"># item is already an element so only the properties will be updated</span>
@@ -805,9 +813,9 @@
                 <span class="c1"># if item belongs to an element or a descendent of an element</span>
                 <span class="c1"># then the existing descendent becomes an element</span>
                 <span class="c1"># and properties are updated.</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
                 <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
                 <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkelts</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># if item&#39;s uid doesn&#39;t appear in complete_registry</span>
                 <span class="c1"># then it is added as something new</span>
@@ -820,8 +828,8 @@
             <span class="c1"># Otherwise, at most it will be added as an empty Entity.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s1">&#39;Error: Self reference in submitted elements.&#39;</span>
-                    <span class="n">f</span><span class="s1">&#39; Entity </span><span class="si">{self.uid}</span><span class="s1"> may not contain itself.&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Error: Self reference in submitted elements.&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; Entity </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1"> may not contain itself.&#39;</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">checkelts</span><span class="p">:</span>
@@ -966,19 +974,19 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bipartite</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;Entity does not satisfy the Bipartite Condition, elements and children are not disjoint.&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the entityset uid.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.uid}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1">&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a string resembling the constructor for entityset without any</span>
 <span class="sd">        children&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;EntitySet(</span><span class="si">{self._uid}</span><span class="s1">,{list(self.uidset)},</span><span class="si">{self.properties}</span><span class="s1">)&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;EntitySet(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="si">}</span><span class="s1">)&#39;</span>
 
 <div class="viewcode-block" id="EntitySet.add"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -998,16 +1006,16 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Error: Fails the Bipartite Condition for EntitySet. </span><span class="si">{item.uid}</span><span class="s1"> references a child of an existing Entity in the EntitySet.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: Fails the Bipartite Condition for EntitySet. </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1"> references a child of an existing Entity in the EntitySet.&#39;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">uidset</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Error: Fails the bipartite condition for EntitySet.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: Fails the bipartite condition for EntitySet.&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">Entity</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
                     <span class="n">Entity</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Error: </span><span class="si">{item}</span><span class="s1"> references a child of an existing Entity in the EntitySet.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1"> references a child of an existing Entity in the EntitySet.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="EntitySet.clone"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newuid</span><span class="p">):</span>
@@ -1028,26 +1036,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newuid</span><span class="p">,</span> <span class="n">use_reps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newuid</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a deduped copy of the entityset, using equivalence classes as element keys.</span>
+<span class="sd">        Returns a deduped copy of the entityset, using representatives of equivalence classes as element keys.</span>
 <span class="sd">        Two elements of an EntitySet are collapsed if they share the same children.</span>
-<span class="sd">        A new EntitySet with entities only on levels 1 and 2 will be returned. </span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        newuid : hashable</span>
 
-<span class="sd">        use_reps : boolean, optional, default: False</span>
-<span class="sd">            Choose a single element from the collapsed elements as a representative</span>
-
-<span class="sd">        return_counts : boolean, optional, default: False</span>
-<span class="sd">            If use_reps is True the new elements are keyed by the size of the equivalence class</span>
-<span class="sd">            otherwise they are keyed by a frozen set of equivalence classes</span>
-
 <span class="sd">        return_equivalence_classes : boolean, default=False</span>
-<span class="sd">            If True, return a dictionary keyed by frozen set of children in collapsed elements with values </span>
-<span class="sd">            equal to the set of collapsed elements</span>
+<span class="sd">            If True, return a dictionary of equivalence classes keyed by new edge names</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1070,28 +1069,20 @@
 <span class="sd">            &gt;&gt;&gt; E = EntitySet(&#39;E&#39;,elements=[Entity(&#39;E1&#39;, [&#39;a&#39;,&#39;b&#39;]),Entity(&#39;E2&#39;,[&#39;a&#39;,&#39;b&#39;])])</span>
 <span class="sd">            &gt;&gt;&gt; E.incidence_dict</span>
 <span class="sd">            {&#39;E1&#39;: {&#39;a&#39;, &#39;b&#39;}, &#39;E2&#39;: {&#39;a&#39;, &#39;b&#39;}}</span>
-<span class="sd">            &gt;&gt;&gt; E.collapse_identical_elements(&#39;_&#39;).incidence_dict</span>
-<span class="sd">            {frozenset({&#39;E1&#39;, &#39;E2&#39;}): {&#39;a&#39;, &#39;b&#39;}}</span>
-<span class="sd">            &gt;&gt;&gt; E.collapse_identical_elements(&#39;_&#39;,use_reps=True).incidence_dict</span>
+<span class="sd">            &gt;&gt;&gt; E.collapse_identical_elements(&#39;_&#39;,).incidence_dict</span>
 <span class="sd">            {&#39;E2&#39;: {&#39;a&#39;, &#39;b&#39;}}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">eq_classes</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="n">shared_children</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">():</span>
-            <span class="n">eq_classes</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uidset</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">use_reps</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">return_counts</span><span class="p">:</span>
-                <span class="c1"># labels equivalence class as (rep,count) tuple</span>
-                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># labels equivalence class as rep;</span>
-                <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eq_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">shared_children</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uidset</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shared_children</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eq_classes</span><span class="p">)</span>  <span class="c1">######### something is wrong with this!!!!!!!!</span>
-        <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">)</span></div>
+            <span class="n">eq_classes</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shared_children</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eq_classes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1128,7 +1119,7 @@
 <span class="sd">                    [0, 0, 1]]), {0: 1, 1: 2, 2: 3, 3: 4}, {0: &#39;b&#39;, 1: &#39;a&#39;, 2: &#39;c&#39;})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sparse</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">csr_matrix</span>
+            <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
 
         <span class="n">nchildren</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
         <span class="n">nuidset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span>
@@ -1136,7 +1127,7 @@
         <span class="n">ndict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">nchildren</span><span class="p">)))</span>
         <span class="n">edict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">nuidset</span><span class="p">)))</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ndict</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ndict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
                 <span class="n">rowdict</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ndict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -1192,7 +1183,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newelements</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">element_subset</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.uid}</span><span class="s1">_r&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1">_r&#39;</span>
         <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">newelements</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span></div></div>
 </pre></div>
 
@@ -1206,11 +1197,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1221,7 +1220,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

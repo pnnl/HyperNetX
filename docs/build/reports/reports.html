@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,29 +11,31 @@
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script type="text/javascript" src="../_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="License" href="../license.html" />
@@ -52,7 +53,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> HyperNetX
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
           
 
           
@@ -82,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -111,6 +113,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -149,7 +152,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="modules.html">reports</a> &raquo;</li>
         
@@ -190,9 +193,9 @@
 </dd>
 </dl>
 <p>Also computes general hypergraph information: number of nodes, edges, cells, aspect ratio, incidence matrix density</p>
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.centrality_stats">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">centrality_stats</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#centrality_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.centrality_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">centrality_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#centrality_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.centrality_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes basic centrality statistics for X</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -207,9 +210,9 @@
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.comp_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">comp_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">aggregated=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#comp_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.comp_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">comp_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">aggregated</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#comp_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.comp_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes component sizes, number of nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -233,9 +236,9 @@ is False, returns a list of components sizes in H.</p></li>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.degree_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">degree_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">aggregated=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#degree_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.degree_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">degree_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">aggregated</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#degree_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.degree_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes degrees of nodes of a hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -255,9 +258,9 @@ list of degrees in H.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.dist_stats">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">dist_stats</code><span class="sig-paren">(</span><em class="sig-param">H</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#dist_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.dist_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">dist_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#dist_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.dist_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes many basic hypergraph stats and puts them all into a single dictionary object</p>
 <blockquote>
 <div><ul class="simple">
@@ -268,18 +271,18 @@ list of degrees in H.</p></li>
 <li><p>density = ncells/(nrows*ncols)</p></li>
 <li><p>node degree list = degree_dist(H)</p></li>
 <li><p>node degree dist = centrality_stats(degree_dist(H))</p></li>
-<li><p>node degree hist = frequency_distribution(degree_dist(H))</p></li>
+<li><p>node degree hist = Counter(degree_dist(H))</p></li>
 <li><p>max node degree = max(degree_dist(H))</p></li>
 <li><p>edge size list = edge_size_dist(H)</p></li>
 <li><p>edge size dist = centrality_stats(edge_size_dist(H))</p></li>
-<li><p>edge size hist = frequency_distribution(edge_size_dist(H))</p></li>
+<li><p>edge size hist = Counter(edge_size_dist(H))</p></li>
 <li><p>max edge size = max(edge_size_dist(H))</p></li>
 <li><p>comp nodes list = s_comp_dist(H, s=1, edges=False)</p></li>
 <li><p>comp nodes dist = centrality_stats(s_comp_dist(H, s=1, edges=False))</p></li>
-<li><p>comp nodes hist = frequency_distribution(s_comp_dist(H, s=1, edges=False))</p></li>
+<li><p>comp nodes hist = Counter(s_comp_dist(H, s=1, edges=False))</p></li>
 <li><p>comp edges list = s_comp_dist(H, s=1, edges=True)</p></li>
 <li><p>comp edges dist = centrality_stats(s_comp_dist(H, s=1, edges=True))</p></li>
-<li><p>comp edges hist = frequency_distribution(s_comp_dist(H, s=1, edges=True))</p></li>
+<li><p>comp edges hist = Counter(s_comp_dist(H, s=1, edges=True))</p></li>
 <li><p>num comps = len(s_comp_dist(H))</p></li>
 </ul>
 </div></blockquote>
@@ -296,9 +299,9 @@ list of degrees in H.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.edge_size_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">edge_size_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">aggregated=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#edge_size_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.edge_size_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">edge_size_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">aggregated</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#edge_size_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.edge_size_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes edge sizes of a hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -318,26 +321,9 @@ list of edge sizes in H.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="reports.descriptive_stats.frequency_distribution">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">frequency_distribution</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#frequency_distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.frequency_distribution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes frequencies of elements of X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>iterable</em>) – an iterable of numbers</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>frequency_distribution</strong> – Dictionary keyed on unique elements of X with values equal to their frequencies within X.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.info">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">info</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">obj=None</em>, <em class="sig-param">dictionary=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">node</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">edge</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of simple statistics for H</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -360,9 +346,9 @@ Print the string to see it formatted.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.info_dict">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">info_dict</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#info_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.info_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">info_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">node</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">edge</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#info_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.info_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a summary of simple statistics for H</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -381,9 +367,9 @@ aspect ratio, and density of the hypergraph.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.s_comp_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_comp_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">s=1</em>, <em class="sig-param">aggregated=False</em>, <em class="sig-param">edges=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_comp_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_comp_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_comp_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">aggregated</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">return_singletons</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_comp_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_comp_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes s-component sizes, counting nodes or edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -395,6 +381,7 @@ s-component sizes and counts in H. If aggregated is
 False, returns a list of s-component sizes in H.</p></li>
 <li><p><strong>edges</strong> – If edges is True, the component size is number of edges.
 If edges is False, the component size is number of nodes.</p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -410,9 +397,9 @@ If edges is False, the component size is number of nodes.</p></li>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.s_edge_diameter_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_edge_diameter_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_edge_diameter_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_edge_diameter_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_edge_diameter_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_edge_diameter_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_edge_diameter_dist" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
@@ -427,9 +414,9 @@ and going up as long as the hypergraph is s-edge-connected</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.s_node_diameter_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_node_diameter_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_node_diameter_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_node_diameter_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">s_node_diameter_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#s_node_diameter_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.s_node_diameter_dist" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
@@ -444,9 +431,9 @@ and going up as long as the hypergraph is s-node-connected</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="reports.descriptive_stats.toplex_dist">
-<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">toplex_dist</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">aggregated=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#toplex_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.toplex_dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reports.descriptive_stats.</code><code class="sig-name descname">toplex_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">aggregated</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reports/descriptive_stats.html#toplex_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reports.descriptive_stats.toplex_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes toplex sizes for hypergraph H.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -492,11 +479,19 @@ is False, returns a list of toplex sizes in H.</p></li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -507,7 +502,6 @@ is False, returns a list of toplex sizes in H.</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -23,29 +23,37 @@ __all__ = [
 class Hypergraph():
     """
     Hypergraph H = (V,E) references a pair of disjoint sets:
-    V = nodes (vertices) and E = (hyper)edges E.
+    V = nodes (vertices) and E = (hyper)edges.
 
-    A Hypergraph has a boolean property called static. A static
-    hypergraph is immutable, no edges or nodes may be added or
-    removed incrementally. Hypergraphs are not static by default.
+    An HNX Hypergraph is either dynamic or static.
+    Dynamic hypergraphs can change by adding or subtracting objects
+    from them. Static hypergraphs require that all of the nodes and edges
+    be known at creation. A hypergraph is dynamic by default.
 
-    If a hypergraph is not static then
-    the objects in V and E must be distinguishable entities,
-    allowing for multi-edge graphs and inseperable nodes.
+    *Dynamic hypergraphs* require the user to keep track of its objects, 
+    by using a unique names for each node and edge. This allows for multi-edge graphs and
+    inseperable nodes.
+
     For example: Let V = {1,2,3} and E = {e1,e2,e3},
     where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
     The edges e1 and e2 contain the same set of nodes and yet
-    are distinct and must be distinguishable within H.
+    are distinct and must be distinguishable within H. 
 
-    To keep track of the objects in a hypergraph each node and edge is
-    instantiated as an Entity and given an identifier, uid. Since
-    hypergraphs can be quite large, only these identifiers will be used
+    In a dynamic hypergraph each node and edge is
+    instantiated as an Entity and given an identifier or uid. Entities
+    keep track of inclusion relationships and can be nested. Since
+    hypergraphs can be quite large, only the entity identifiers will be used
     for computation intensive methods, this means the user must take care
     to keep a one to one correspondence between their set of uids and
     the objects in their hypergraph. See `Honor System`_ 
+    Dynamic hypergraphs are most practical for small to modestly sized
+    hypergraphs (<1000 objects).
 
-    Static hypergraphs create an internal identifier used for computations
-    so do not require unique ids or an honor system.
+    *Static hypergraphs* store node and edge information in numpy arrays and
+    are immutable. Each node and edge receives a class generated internal 
+    identifier used for computations so do not require the user to create
+    different ids for nodes and edges. To create a static hypergraph set
+    `static = True` in the signature.
 
     We will create hypergraphs in multiple ways:
 
@@ -69,7 +77,7 @@ class Hypergraph():
         >>> H.nodes, H.edges
         # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), EntitySet(_:Edges,['_1', '_2', '_0'],{}))
 
-    4. From a hypernetx.EntitySet: ::
+    4. From a hypernetx.EntitySet or StaticEntitySet: ::
 
         >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
         >>> E = EntitySet('sample',elements=[a,b])
@@ -87,6 +95,12 @@ class Hypergraph():
         >>> H = Hypergraph.from_bipartite(B)
         >>> H.nodes, H.edges
         # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
+
+    All of these constructions apply for both dynamic and static hypergraphs. In addition
+    any set system that generates a StaticEntity may also be used. See :ref:`staticentity`<StaticEntity> .
+
+
+
 
     Parameters
     ----------

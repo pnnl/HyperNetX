@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,29 +11,31 @@
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script type="text/javascript" src="../_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="reports" href="../reports/modules.html" />
@@ -52,7 +53,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> HyperNetX
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
           
 
           
@@ -82,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -113,6 +115,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -151,7 +154,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="modules.html">drawing</a> &raquo;</li>
         
@@ -181,9 +184,9 @@
 </div>
 <div class="section" id="module-drawing.rubber_band">
 <span id="drawing-rubber-band-module"></span><h2>drawing.rubber_band module<a class="headerlink" href="#module-drawing.rubber_band" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.draw">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos=None</em>, <em class="sig-param">with_color=True</em>, <em class="sig-param">with_node_counts=False</em>, <em class="sig-param">with_edge_counts=False</em>, <em class="sig-param">layout=&lt;function fruchterman_reingold_layout&gt;</em>, <em class="sig-param">layout_kwargs={}</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">node_radius=None</em>, <em class="sig-param">edges_kwargs={}</em>, <em class="sig-param">nodes_kwargs={}</em>, <em class="sig-param">edge_labels={}</em>, <em class="sig-param">edge_labels_kwargs={}</em>, <em class="sig-param">node_labels={}</em>, <em class="sig-param">node_labels_kwargs={}</em>, <em class="sig-param">with_edge_labels=True</em>, <em class="sig-param">with_node_labels=True</em>, <em class="sig-param">label_alpha=0.35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos=None</em>, <em class="sig-param">with_color=True</em>, <em class="sig-param">with_node_counts=False</em>, <em class="sig-param">with_edge_counts=False</em>, <em class="sig-param">layout=&lt;function fruchterman_reingold_layout&gt;</em>, <em class="sig-param">layout_kwargs={}</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">node_radius=None</em>, <em class="sig-param">edges_kwargs={}</em>, <em class="sig-param">nodes_kwargs={}</em>, <em class="sig-param">edge_labels={}</em>, <em class="sig-param">edge_labels_kwargs={}</em>, <em class="sig-param">node_labels={}</em>, <em class="sig-param">node_labels_kwargs={}</em>, <em class="sig-param">with_edge_labels=True</em>, <em class="sig-param">with_node_labels=True</em>, <em class="sig-param">label_alpha=0.35</em>, <em class="sig-param">return_pos=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw a hypergraph as a Matplotlib figure</p>
 <p>By default this will draw a colorful “rubber band” like hypergraph, where
 convex hulls represent edges and are drawn around the nodes they contain.</p>
@@ -242,9 +245,9 @@ have planar drawings.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.draw_hyper_edge_labels">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_edge_labels</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">polys</em>, <em class="sig-param">labels={}</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_edge_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_edge_labels" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_edge_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">polys</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_edge_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_edge_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a label on the hyper edge boundary.</p>
 <p>Should be passed Matplotlib PolyCollection representing the hyper-edges, see
 the return value of draw_hyper_edges.</p>
@@ -263,9 +266,9 @@ aligned parallel to the orientation of the polygon where it is drawn.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.draw_hyper_edges">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">node_radius={}</em>, <em class="sig-param">dr=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_edges" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">node_radius</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">dr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a convex hull around the nodes contained within each edge in H</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,9 +290,9 @@ aligned parallel to the orientation of the polygon where it is drawn.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.draw_hyper_labels">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_labels</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">node_radius={}</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">labels={}</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_labels" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">node_radius</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws text labels for the hypergraph nodes.</p>
 <p>The label is drawn to the right of the node. The node radius is needed (see
 draw_hyper_nodes) so the text can be offset appropriately as the node size
@@ -312,9 +315,9 @@ representation of the node.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.draw_hyper_nodes">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_nodes</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">node_radius={}</em>, <em class="sig-param">r0=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_nodes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">draw_hyper_nodes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">node_radius</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">r0</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a circle for each node in H.</p>
 <p>The position of each node is specified by the a dictionary/list-like, pos,
 where pos[v] is the xy-coordinate for the vertex. The radius of each node
@@ -342,9 +345,9 @@ given by pos.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.get_default_radius">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">get_default_radius</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#get_default_radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.get_default_radius" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">get_default_radius</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#get_default_radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.get_default_radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate a reasonable default node radius</p>
 <p>This function iterates over the hyper edges and finds the most distant
 pair of points given the positions provided. Then, the node radius is a fraction
@@ -365,29 +368,9 @@ of the median of this distance take across all hyper-edges.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="drawing.rubber_band.inflate_kwargs">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">inflate_kwargs</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#inflate_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.inflate_kwargs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to expand keyword arguments.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<em>int</em>) – length of resulting list if argument is expanded</p></li>
-<li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments to be expanded</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dictionary with same keys as kwargs and whose values are lists of length n</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.layout_hyper_edges">
-<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">layout_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">node_radius={}</em>, <em class="sig-param">dr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#layout_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.layout_hyper_edges" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">layout_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">node_radius</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">dr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#layout_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.layout_hyper_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a convex hull for each edge in H.</p>
 <p>Position of the nodes in the graph is specified by the position dictionary,
 pos. Convex hulls are spaced out such that if one set contains another, the
@@ -412,7 +395,7 @@ between hulls is specified by the parameter, dr.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.rubber_band.layout_node_link">
 <code class="sig-prename descclassname">drawing.rubber_band.</code><code class="sig-name descname">layout_node_link</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">layout=&lt;function fruchterman_reingold_layout&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#layout_node_link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.rubber_band.layout_node_link" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to use a NetwrokX-like graph layout algorithm on a Hypergraph</p>
@@ -438,9 +421,9 @@ techniques to be applied.</p>
 </div>
 <div class="section" id="module-drawing.two_column">
 <span id="drawing-two-column-module"></span><h2>drawing.two_column module<a class="headerlink" href="#module-drawing.two_column" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.two_column.draw">
-<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">with_node_labels=True</em>, <em class="sig-param">with_edge_labels=True</em>, <em class="sig-param">with_node_counts=False</em>, <em class="sig-param">with_edge_counts=False</em>, <em class="sig-param">with_color=True</em>, <em class="sig-param">edge_kwargs=None</em>, <em class="sig-param">ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">with_node_labels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">with_edge_labels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">with_node_counts</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">with_edge_counts</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">with_color</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">edge_kwargs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw a hypergraph using a two-collumn layout.</p>
 <p>This is intended reproduce an illustrative technique for bipartite graphs
 and hypergraphs that is typically used in papers and textbooks.</p>
@@ -465,9 +448,9 @@ the diagram easier to read, by reducing the angle of the lines.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.two_column.draw_hyper_edges">
-<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw_hyper_edges" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw_hyper_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw_hyper_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw_hyper_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders hyper edges for the two column layout.</p>
 <p>Each node-hyper edge membership is rendered as a line connecting the node
 in the left column to the edge in the right column.</p>
@@ -489,9 +472,9 @@ in the left column to the edge in the right column.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.two_column.draw_hyper_labels">
-<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw_hyper_labels</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">pos</em>, <em class="sig-param">labels={}</em>, <em class="sig-param">with_node_labels=True</em>, <em class="sig-param">with_edge_labels=True</em>, <em class="sig-param">ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw_hyper_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw_hyper_labels" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">draw_hyper_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">with_node_labels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">with_edge_labels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw_hyper_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.draw_hyper_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders hyper labels (nodes and edges) for the two column layout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -508,9 +491,9 @@ in the left column to the edge in the right column.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.two_column.layout_two_column">
-<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">layout_two_column</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">spacing=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#layout_two_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.layout_two_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.two_column.</code><code class="sig-name descname">layout_two_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">spacing</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#layout_two_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.two_column.layout_two_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Two column (bipartite) layout algorithm.</p>
 <p>This algorithm first converts the hypergraph into a bipartite graph and
 then computes connected components. Disonneccted components are handled
@@ -531,9 +514,9 @@ diagram.</p>
 </div>
 <div class="section" id="module-drawing.util">
 <span id="drawing-util-module"></span><h2>drawing.util module<a class="headerlink" href="#module-drawing.util" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.util.get_frozenset_label">
-<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_frozenset_label</code><span class="sig-paren">(</span><em class="sig-param">S</em>, <em class="sig-param">count=False</em>, <em class="sig-param">override={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_frozenset_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_frozenset_label" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_frozenset_label</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em>, <em class="sig-param"><span class="n">count</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">override</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_frozenset_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_frozenset_label" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for rendering the labels of possibly collapsed nodes and edges</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -551,9 +534,9 @@ diagram.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.util.get_line_graph">
-<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_line_graph</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">collapse=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_line_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_line_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_line_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">collapse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_line_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_line_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the line graph, a directed graph, where a directed edge (u, v)
 exists if the edge u is a subset of the edge v in the hypergraph.</p>
 <dl class="field-list simple">
@@ -572,9 +555,9 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="drawing.util.get_set_layering">
-<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_set_layering</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">collapse=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_set_layering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_set_layering" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">get_set_layering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">collapse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_set_layering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.get_set_layering" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes a layering of the edges in the hyper graph.</p>
 <p>In this layering, each edge is assigned a level. An edge u will be above
 (e.g., have a smaller level value) another edge v if v is a subset of u.</p>
@@ -593,6 +576,36 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="drawing.util.inflate">
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">inflate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#inflate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.inflate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="drawing.util.inflate_kwargs">
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">inflate_kwargs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em>, <em class="sig-param"><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#inflate_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.inflate_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to expand keyword arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – length of resulting list if argument is expanded</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments to be expanded</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with same keys as kwargs and whose values are lists of length n</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="drawing.util.transpose_inflated_kwargs">
+<code class="sig-prename descclassname">drawing.util.</code><code class="sig-name descname">transpose_inflated_kwargs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inflated</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#transpose_inflated_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#drawing.util.transpose_inflated_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-drawing">
@@ -620,11 +633,19 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -635,7 +656,6 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

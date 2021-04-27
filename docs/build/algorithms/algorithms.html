@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,29 +11,31 @@
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script type="text/javascript" src="../_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="drawing" href="../drawing/modules.html" />
@@ -52,7 +53,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> HyperNetX
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
           
 
           
@@ -82,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -118,6 +120,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -156,7 +159,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="modules.html">algorithms</a> &raquo;</li>
         
@@ -210,9 +213,9 @@ Normal Form. The kernel and image bases are computed and the Betti
 numbers and homology bases are returned.</p>
 <p>Methods for obtaining SNF for Z/2Z are based on Ferrario’s work:
 <a class="reference external" href="http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/">http://www.dlfer.xyz/post/2016-10-27-smith-normal-form/</a></p>
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.add_to_column">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_column</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces column i (of M) with logical xor between column i and j</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -231,9 +234,9 @@ numbers and homology bases are returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.add_to_row">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_row</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">i</em>, <em class="sig-param">j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">add_to_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces row i with logical xor between row i and j</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -252,9 +255,9 @@ numbers and homology bases are returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.betti">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bd</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate the kth-betti numbers for a chain complex with boundary
 matrices given by bd</p>
 <dl class="field-list simple">
@@ -275,9 +278,9 @@ computed.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.betti_numbers">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti_numbers</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti_numbers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">betti_numbers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#betti_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.betti_numbers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the kth betti numbers for the simplicial homology of the ASC
 associated to h</p>
 <dl class="field-list simple">
@@ -298,9 +301,9 @@ computed.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.bkMatrix">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">bkMatrix</code><span class="sig-paren">(</span><em class="sig-param">km1basis</em>, <em class="sig-param">kbasis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#bkMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.bkMatrix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">bkMatrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">km1basis</span></em>, <em class="sig-param"><span class="n">kbasis</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#bkMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.bkMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the boundary map from <span class="math notranslate nohighlight">\(C_{k-1}\)</span>-basis to <span class="math notranslate nohighlight">\(C_k\)</span> basis with
 respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 <dl class="field-list simple">
@@ -319,9 +322,9 @@ respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.boundary_group">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">boundary_group</code><span class="sig-paren">(</span><em class="sig-param">image_basis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#boundary_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.boundary_group" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">boundary_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image_basis</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#boundary_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.boundary_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a csr_matrix with rows corresponding to the elements of the
 group  generated by image basis over <span class="math notranslate nohighlight">\(\mathbb{Z}_2\)</span></p>
 <dl class="field-list simple">
@@ -337,9 +340,9 @@ group  generated by image basis over <span class="math notranslate nohighlight">
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.chain_complex">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">chain_complex</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#chain_complex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.chain_complex" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">chain_complex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#chain_complex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.chain_complex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the k-chains and k-boundary maps required to compute homology
 for all values in k</p>
 <dl class="field-list simple">
@@ -363,9 +366,9 @@ bd is a dictionary of numpy arrays</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param">bd</em>, <em class="sig-param">k=None</em>, <em class="sig-param">log=None</em>, <em class="sig-param">boundary=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">homology_basis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bd</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">boundary</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.homology_basis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a basis for the kth-simplicial homology group, <span class="math notranslate nohighlight">\(H_k\)</span>, defined by a
 chain complex <span class="math notranslate nohighlight">\(C\)</span> with boundary maps given by bd <span class="math notranslate nohighlight">\(= \{k:\partial_k\)</span>}$</p>
 <dl class="field-list simple">
@@ -378,8 +381,6 @@ inclusive must be in the dictionary</p></li>
 2 integers indicating min and max dimensions to be
 computed, if none given all homology groups will be computed from
 available boundary matrices in bd</p></li>
-<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional</em>) – path to logfile where intermediate data should be
-pickled and stored</p></li>
 <li><p><strong>boundary</strong> (<em>bool</em>) – option to return a basis for the boundary group from each dimension.
 Needed to compute the shortest generators in the homology group.</p></li>
 </ul>
@@ -396,9 +397,9 @@ been provided.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.hypergraph_homology_basis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k=None</em>, <em class="sig-param">shortest=False</em>, <em class="sig-param">log=None</em>, <em class="sig-param">interpreted=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">hypergraph_homology_basis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shortest</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">interpreted</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#hypergraph_homology_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.hypergraph_homology_basis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the kth-homology groups mod 2 for the ASC
 associated with the hypergraph h for k in krange inclusive</p>
 <dl class="field-list simple">
@@ -410,8 +411,6 @@ length 2 indicating min and max dimensions to be
 computed</p></li>
 <li><p><strong>shortest</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=False</em>) – option to look for shortest representative for each coset in the
 homology group, only good for relatively small examples</p></li>
-<li><p><strong>log</strong> (<em>str</em><em>, </em><em>optional. ## currently not implemented</em>) – path to logfile where intermediate data should be
-pickled and stored</p></li>
 <li><p><strong>interpreted</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if True will return an explicit basis in terms of the k-chains</p></li>
 </ul>
 </dd>
@@ -425,15 +424,16 @@ pickled and stored</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.interpret">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">interpret</code><span class="sig-paren">(</span><em class="sig-param">Ck</em>, <em class="sig-param">arr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#interpret"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.interpret" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">interpret</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Ck</span></em>, <em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#interpret"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.interpret" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the data as represented in Ck associated with the arr</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Ck</strong> (<em>list</em>) – a list of k-cells being referenced by arr</p></li>
 <li><p><strong>arr</strong> (<em>np.array</em>) – array of 0-1 vectors</p></li>
+<li><p><strong>labels</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary of labels to associate to the nodes in the cells</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -445,9 +445,9 @@ pickled and stored</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.kchainbasis">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">kchainbasis</code><span class="sig-paren">(</span><em class="sig-param">h</em>, <em class="sig-param">k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#kchainbasis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.kchainbasis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">kchainbasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#kchainbasis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.kchainbasis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the set of k dimensional cells in the abstract simplicial
 complex associated with the hypergraph.</p>
 <dl class="field-list simple">
@@ -475,9 +475,9 @@ complex associated with the hypergraph.</p>
 </ul>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.logical_dot">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_dot</code><span class="sig-paren">(</span><em class="sig-param">ar1</em>, <em class="sig-param">ar2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_dot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ar1</span></em>, <em class="sig-param"><span class="n">ar2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the boolean equivalent of the dot product mod 2 on two 1-d arrays of
 the same length.</p>
 <dl class="field-list simple">
@@ -499,9 +499,9 @@ the same length.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.logical_matadd">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matadd</code><span class="sig-paren">(</span><em class="sig-param">mat1</em>, <em class="sig-param">mat2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matadd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matadd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat1</span></em>, <em class="sig-param"><span class="n">mat2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matadd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the boolean equivalent of matrix addition mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
@@ -524,9 +524,9 @@ matrices as matrices over Z/2Z</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.logical_matmul">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matmul</code><span class="sig-paren">(</span><em class="sig-param">mat1</em>, <em class="sig-param">mat2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matmul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matmul" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">logical_matmul</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat1</span></em>, <em class="sig-param"><span class="n">mat2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#logical_matmul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.logical_matmul" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the boolean equivalent of matrix multiplication mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
@@ -549,9 +549,9 @@ matrices as matrices over Z/2Z</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.matmulreduce">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">matmulreduce</code><span class="sig-paren">(</span><em class="sig-param">arr</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#matmulreduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.matmulreduce" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">matmulreduce</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">reverse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#matmulreduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.matmulreduce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively applies a ‘logical multiplication’ to a list of boolean arrays.</p>
 <p>For arr = [arr[0],arr[1],arr[2]…arr[n]] returns product arr[0]arr[1]…arr[n]
 If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
@@ -571,9 +571,9 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.reduced_row_echelon_form_mod2">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">reduced_row_echelon_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#reduced_row_echelon_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.reduced_row_echelon_form_mod2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">reduced_row_echelon_form_mod2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#reduced_row_echelon_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.reduced_row_echelon_form_mod2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the invertible transformation matrices needed to compute
 the reduced row echelon form of M modulo 2</p>
 <dl class="field-list simple">
@@ -590,9 +590,9 @@ and M = LinvS</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.smith_normal_form_mod2">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">smith_normal_form_mod2</code><span class="sig-paren">(</span><em class="sig-param">M</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#smith_normal_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.smith_normal_form_mod2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">smith_normal_form_mod2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#smith_normal_form_mod2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.smith_normal_form_mod2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the invertible transformation matrices needed to compute the
 Smith Normal Form of M modulo 2</p>
 <dl class="field-list simple">
@@ -624,9 +624,9 @@ Finally we verify:
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.swap_columns">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">swap_columns</code><span class="sig-paren">(</span><em class="sig-param">i</em>, <em class="sig-param">j</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#swap_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.swap_columns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">swap_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#swap_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.swap_columns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swaps ith and jth column of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
@@ -646,9 +646,9 @@ Returns a list of new matrices</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.homology_mod2.swap_rows">
-<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">swap_rows</code><span class="sig-paren">(</span><em class="sig-param">i</em>, <em class="sig-param">j</em>, <em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#swap_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.swap_rows" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.homology_mod2.</code><code class="sig-name descname">swap_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#swap_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.homology_mod2.swap_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swaps ith and jth row of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
@@ -683,56 +683,63 @@ corresponding to the hypergraph on which to apply our methods.</p>
 <p>S-Metrics for hypergraphs are discussed in depth in:
 <em>Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.
 EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0</em></p>
-<dl class="function">
+<dl class="py function">
 <dt id="algorithms.s_centrality_measures.s_betweenness_centrality">
-<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_betweenness_centrality</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">s=1</em>, <em class="sig-param">normalized=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_betweenness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_betweenness_centrality</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">return_singletons</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_nwhy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_betweenness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
 <dd><p>A centrality measure for an s-edge subgraph of H based on shortest paths.
 The betweenness centrality of an s-edge e is the sum of the fraction of all
 shortest s-paths between s-edges that pass through e.</p>
-<p>H : Hypergraph
-s : int</p>
-<blockquote>
-<div><p>minimum size of edges to be considered</p>
-</div></blockquote>
-<dl class="simple">
-<dt>normalized<span class="classifier">bool, default=False,</span></dt><dd><p>If true the betweenness values are normalized by <cite>2/((n-1)(n-2))</cite>,
-where n is the number of edges in H</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em>) – s connectedness requirement</p></li>
+<li><p><strong>edges</strong> (<em>bool</em><em>, </em><em>optional</em>) – determines if edge or node linegraph</p></li>
+<li><p><strong>normalized</strong> – bool, default=False,
+If true the betweenness values are normalized by <cite>2/((n-1)(n-2))</cite>,
+where n is the number of edges in H</p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em>) – if False will ignore singleton components of linegraph</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of s-betweenness centrality value of the edges.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
-<blockquote>
-<div><dl class="simple">
-<dt>: dict</dt><dd><p>A dictionary of s-betweenness centrality value of the edges.</p>
-</dd>
-</dl>
-</div></blockquote>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
+<dt id="algorithms.s_centrality_measures.s_closeness_centrality">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_closeness_centrality</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">return_singletons</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_nwhy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_closeness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="algorithms.s_centrality_measures.s_eccentricity">
-<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_eccentricity</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">f=None</em>, <em class="sig-param">s=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_eccentricity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_eccentricity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_eccentricity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_singletons</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_nwhy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_eccentricity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_eccentricity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Max s_distance from edge f to every other edge to which it is connected</p>
-<p>H : Hypergraph
-f : Entity or str
-s : int</p>
-<dl>
-<dt>if f:</dt><dd><p>eccentricity[f] : float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>bool</em><em>, </em><em>optional</em>) – Description</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – source object identifier</p></li>
+</ul>
 </dd>
-<dt>else:</dt><dd><blockquote>
-<div><p>eccentricity_dict : dict</p>
-</div></blockquote>
-<dl class="simple">
-<dt>: dict or float</dt><dd><p>returns the s-eccentricity value of the edges, a floating point number
-If edge=None a dictionary of values for each s-edge in H is returned.
-If edge then a single value is returned.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float or dict</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="algorithms.s_centrality_measures.s_harmonic_closeness_centrality">
-<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_harmonic_closeness_centrality</code><span class="sig-paren">(</span><em class="sig-param">H</em>, <em class="sig-param">edge=None</em>, <em class="sig-param">s=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_harmonic_closeness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_harmonic_closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="algorithms.s_centrality_measures.s_harmonic_centrality">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_harmonic_centrality</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_singletons</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_nwhy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_harmonic_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_harmonic_centrality" title="Permalink to this definition">¶</a></dt>
 <dd><p>A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
 intersects every other s-edge in H. All values range between 0 and 1.
 Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.</p>
@@ -755,6 +762,11 @@ If edge then a single value is returned.</p>
 </dl>
 </div></blockquote>
 </dd></dl>
+
+<dl class="py function">
+<dt id="algorithms.s_centrality_measures.s_harmonic_closeness_centrality">
+<code class="sig-prename descclassname">algorithms.s_centrality_measures.</code><code class="sig-name descname">s_harmonic_closeness_centrality</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">edge</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_nwhy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_harmonic_closeness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_harmonic_closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>
@@ -783,11 +795,19 @@ If edge then a single value is returned.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -798,7 +818,6 @@ If edge then a single value is returned.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

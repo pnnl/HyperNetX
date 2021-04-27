@@ -1,9 +1,7 @@
 
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -13,29 +11,31 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script type="text/javascript" src="_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -51,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> HyperNetX
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
           
 
           
@@ -81,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -102,6 +103,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -140,7 +142,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Index</li>
     
@@ -203,19 +205,40 @@
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.add_node_to_edge">add_node_to_edge() (classes.hypergraph.Hypergraph method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.add_nwhy">add_nwhy() (classes.hypergraph.Hypergraph class method)</a>
+</li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.add_to_column">add_to_column() (in module algorithms.homology_mod2)</a>
 </li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.add_to_row">add_to_row() (in module algorithms.homology_mod2)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.adjacency_matrix">adjacency_matrix() (classes.hypergraph.Hypergraph method)</a>
 </li>
-      <li><a href="algorithms/algorithms.html#module-algorithms">algorithms (module)</a>
+      <li>
+    algorithms
+
+      <ul>
+        <li><a href="algorithms/algorithms.html#module-algorithms">module</a>
 </li>
-      <li><a href="algorithms/algorithms.html#module-algorithms.homology_mod2">algorithms.homology_mod2 (module)</a>
+      </ul></li>
+      <li>
+    algorithms.homology_mod2
+
+      <ul>
+        <li><a href="algorithms/algorithms.html#module-algorithms.homology_mod2">module</a>
 </li>
-      <li><a href="algorithms/algorithms.html#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures (module)</a>
+      </ul></li>
+      <li>
+    algorithms.s_centrality_measures
+
+      <ul>
+        <li><a href="algorithms/algorithms.html#module-algorithms.s_centrality_measures">module</a>
+</li>
+      </ul></li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.arr">arr() (classes.staticentity.StaticEntity property)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.array_with_counts">array_with_counts() (classes.staticentity.StaticEntity property)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.auxiliary_matrix">auxiliary_matrix() (classes.hypergraph.Hypergraph method)</a>
 </li>
@@ -229,7 +252,7 @@
 </li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.betti_numbers">betti_numbers() (in module algorithms.homology_mod2)</a>
 </li>
-      <li><a href="glossary.html#term-bipartite-condition"><strong>Bipartite Condition</strong></a>
+      <li><a href="glossary.html#term-Bipartite-Condition"><strong>Bipartite Condition</strong></a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -250,25 +273,55 @@
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.chain_complex">chain_complex() (in module algorithms.homology_mod2)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.children">children() (classes.entity.Entity property)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.children">(classes.staticentity.StaticEntity property)</a>
 </li>
-      <li><a href="classes/classes.html#module-classes">classes (module)</a>
+      </ul></li>
+      <li>
+    classes
+
+      <ul>
+        <li><a href="classes/classes.html#module-classes">module</a>
 </li>
-      <li><a href="classes/classes.html#module-classes.entity">classes.entity (module)</a>
+      </ul></li>
+      <li>
+    classes.entity
+
+      <ul>
+        <li><a href="classes/classes.html#module-classes.entity">module</a>
 </li>
-      <li><a href="classes/classes.html#module-classes.hypergraph">classes.hypergraph (module)</a>
+      </ul></li>
+      <li>
+    classes.hypergraph
+
+      <ul>
+        <li><a href="classes/classes.html#module-classes.hypergraph">module</a>
 </li>
+      </ul></li>
+      <li>
+    classes.staticentity
+
+      <ul>
+        <li><a href="classes/classes.html#module-classes.staticentity">module</a>
+</li>
+      </ul></li>
       <li><a href="classes/classes.html#classes.entity.Entity.clone">clone() (classes.entity.Entity method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.entity.EntitySet.clone">(classes.entity.EntitySet method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">collapse_edges() (classes.hypergraph.Hypergraph method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">collapse_identical_elements() (classes.entity.EntitySet method)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">collapse_edges() (classes.hypergraph.Hypergraph method)</a>
 </li>
+      <li><a href="classes/classes.html#classes.entity.EntitySet.collapse_identical_elements">collapse_identical_elements() (classes.entity.EntitySet method)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntitySet.collapse_identical_elements">(classes.staticentity.StaticEntitySet method)</a>
+</li>
+      </ul></li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes">collapse_nodes() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes_and_edges">collapse_nodes_and_edges() (classes.hypergraph.Hypergraph method)</a>
@@ -285,14 +338,24 @@
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.connected_components">connected_components() (classes.hypergraph.Hypergraph method)</a>
 </li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntitySet.convert_to_entityset">convert_to_entityset() (classes.staticentity.StaticEntitySet method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.convert_to_static">convert_to_static() (classes.hypergraph.Hypergraph method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.dataframe">dataframe() (classes.hypergraph.Hypergraph method)</a>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.data">data() (classes.staticentity.StaticEntity property)</a>
 </li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.dataframe">dataframe() (classes.hypergraph.Hypergraph method)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.dataframe">(classes.staticentity.StaticEntity property)</a>
+</li>
+      </ul></li>
       <li><a href="glossary.html#term-degree"><strong>degree</strong></a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.degree">degree() (classes.hypergraph.Hypergraph method)</a>
@@ -304,6 +367,10 @@
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.diameter">diameter() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.dim">dim() (classes.hypergraph.Hypergraph method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.dimensions">dimensions() (classes.staticentity.StaticEntity property)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.dimsize">dimsize() (classes.staticentity.StaticEntity property)</a>
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.dist_stats">dist_stats() (in module reports.descriptive_stats)</a>
 </li>
@@ -333,14 +400,34 @@
       </ul></li>
       <li><a href="drawing/drawing.html#drawing.rubber_band.draw_hyper_nodes">draw_hyper_nodes() (in module drawing.rubber_band)</a>
 </li>
-      <li><a href="drawing/drawing.html#module-drawing">drawing (module)</a>
+      <li>
+    drawing
+
+      <ul>
+        <li><a href="drawing/drawing.html#module-drawing">module</a>
 </li>
-      <li><a href="drawing/drawing.html#module-drawing.rubber_band">drawing.rubber_band (module)</a>
+      </ul></li>
+      <li>
+    drawing.rubber_band
+
+      <ul>
+        <li><a href="drawing/drawing.html#module-drawing.rubber_band">module</a>
 </li>
-      <li><a href="drawing/drawing.html#module-drawing.two_column">drawing.two_column (module)</a>
+      </ul></li>
+      <li>
+    drawing.two_column
+
+      <ul>
+        <li><a href="drawing/drawing.html#module-drawing.two_column">module</a>
 </li>
-      <li><a href="drawing/drawing.html#module-drawing.util">drawing.util (module)</a>
+      </ul></li>
+      <li>
+    drawing.util
+
+      <ul>
+        <li><a href="drawing/drawing.html#module-drawing.util">module</a>
 </li>
+      </ul></li>
       <li><a href="glossary.html#term-dual"><strong>dual</strong></a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.dual">dual() (classes.hypergraph.Hypergraph method)</a>
@@ -359,31 +446,43 @@
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edge_distance">edge_distance() (classes.hypergraph.Hypergraph method)</a>
 </li>
-      <li><a href="reports/reports.html#reports.descriptive_stats.edge_size_dist">edge_size_dist() (in module reports.descriptive_stats)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edge_neighbors">edge_neighbors() (classes.hypergraph.Hypergraph method)</a>
 </li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edge_size_dist">edge_size_dist() (classes.hypergraph.Hypergraph method)</a>
+
+      <ul>
+        <li><a href="reports/reports.html#reports.descriptive_stats.edge_size_dist">(in module reports.descriptive_stats)</a>
+</li>
+      </ul></li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.edges">edges() (classes.hypergraph.Hypergraph property)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.elements">elements() (classes.entity.Entity property)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.elements">(classes.staticentity.StaticEntity property)</a>
 </li>
-      <li><a href="glossary.html#term-entity"><strong>Entity</strong></a>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.elements_by_level">elements_by_level() (classes.staticentity.StaticEntity method)</a>
+</li>
+      <li><a href="glossary.html#term-Entity"><strong>Entity</strong></a>
 
       <ul>
         <li><a href="classes/classes.html#classes.entity.Entity">(class in classes.entity)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="glossary.html#term-entity-children"><strong>Entity.children</strong></a>
+      <li><a href="glossary.html#term-Entity.children"><strong>Entity.children</strong></a>
 </li>
-      <li><a href="glossary.html#term-entity-depth"><strong>Entity.depth</strong></a>
+      <li><a href="glossary.html#term-Entity.depth"><strong>Entity.depth</strong></a>
 </li>
-      <li><a href="glossary.html#term-entity-elements"><strong>Entity.elements</strong></a>
+      <li><a href="glossary.html#term-Entity.elements"><strong>Entity.elements</strong></a>
 </li>
-      <li><a href="glossary.html#term-entity-levelset"><strong>Entity.levelset</strong></a>
+      <li><a href="glossary.html#term-Entity.levelset"><strong>Entity.levelset</strong></a>
 </li>
-      <li><a href="glossary.html#term-entity-memberships"><strong>Entity.memberships</strong></a>
+      <li><a href="glossary.html#term-Entity.memberships"><strong>Entity.memberships</strong></a>
 </li>
-      <li><a href="glossary.html#term-entity-registry"><strong>Entity.registry</strong></a>
+      <li><a href="glossary.html#term-Entity.registry"><strong>Entity.registry</strong></a>
 </li>
       <li><a href="glossary.html#term-entityset"><strong>entityset</strong></a>
 </li>
@@ -395,14 +494,12 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reports/reports.html#reports.descriptive_stats.frequency_distribution">frequency_distribution() (in module reports.descriptive_stats)</a>
-</li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">from_bipartite() (classes.hypergraph.Hypergraph class method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_dataframe">from_dataframe() (classes.hypergraph.Hypergraph class method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_dataframe">from_dataframe() (classes.hypergraph.Hypergraph class method)</a>
-</li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.from_numpy_array">from_numpy_array() (classes.hypergraph.Hypergraph class method)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.fullregistry">fullregistry() (classes.entity.Entity method)</a>
@@ -417,9 +514,15 @@
 </li>
       <li><a href="drawing/drawing.html#drawing.util.get_frozenset_label">get_frozenset_label() (in module drawing.util)</a>
 </li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.get_id">get_id() (classes.hypergraph.Hypergraph method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="drawing/drawing.html#drawing.util.get_line_graph">get_line_graph() (in module drawing.util)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.get_linegraph">get_linegraph() (classes.hypergraph.Hypergraph method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.get_name">get_name() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="drawing/drawing.html#drawing.util.get_set_layering">get_set_layering() (in module drawing.util)</a>
 </li>
@@ -452,17 +555,31 @@
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dict">(classes.hypergraph.Hypergraph property)</a>
 </li>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.incidence_dict">(classes.staticentity.StaticEntity property)</a>
+</li>
       </ul></li>
       <li><a href="classes/classes.html#classes.entity.EntitySet.incidence_matrix">incidence_matrix() (classes.entity.EntitySet method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_matrix">(classes.hypergraph.Hypergraph method)</a>
 </li>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.incidence_matrix">(classes.staticentity.StaticEntity method)</a>
+</li>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntitySet.incidence_matrix">(classes.staticentity.StaticEntitySet method)</a>
+</li>
       </ul></li>
-      <li><a href="drawing/drawing.html#drawing.rubber_band.inflate_kwargs">inflate_kwargs() (in module drawing.rubber_band)</a>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_to_adjacency">incidence_to_adjacency() (classes.hypergraph.Hypergraph static method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.index">index() (classes.staticentity.StaticEntity method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.indices">indices() (classes.staticentity.StaticEntity method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="drawing/drawing.html#drawing.util.inflate">inflate() (in module drawing.util)</a>
+</li>
+      <li><a href="drawing/drawing.html#drawing.util.inflate_kwargs">inflate_kwargs() (in module drawing.util)</a>
+</li>
       <li><a href="reports/reports.html#reports.descriptive_stats.info">info() (in module reports.descriptive_stats)</a>
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.info_dict">info_dict() (in module reports.descriptive_stats)</a>
@@ -476,6 +593,12 @@
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.is_connected">is_connected() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.is_empty">is_empty() (classes.entity.Entity property)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.is_empty">(classes.staticentity.StaticEntity method)</a>
+</li>
+      </ul></li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.isstatic">isstatic() (classes.hypergraph.Hypergraph property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -486,21 +609,35 @@
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.kchainbasis">kchainbasis() (in module algorithms.homology_mod2)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.keyindex">keyindex() (classes.staticentity.StaticEntity property)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.keys">keys() (classes.staticentity.StaticEntity property)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.labels">labels() (classes.staticentity.StaticEntity property)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.labs">labs() (classes.staticentity.StaticEntity method)</a>
+</li>
       <li><a href="drawing/drawing.html#drawing.rubber_band.layout_hyper_edges">layout_hyper_edges() (in module drawing.rubber_band)</a>
 </li>
       <li><a href="drawing/drawing.html#drawing.rubber_band.layout_node_link">layout_node_link() (in module drawing.rubber_band)</a>
 </li>
       <li><a href="drawing/drawing.html#drawing.two_column.layout_two_column">layout_two_column() (in module drawing.two_column)</a>
 </li>
-      <li><a href="classes/classes.html#classes.entity.Entity.level">level() (classes.entity.Entity method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.entity.Entity.level">level() (classes.entity.Entity method)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.level">(classes.staticentity.StaticEntity method)</a>
+</li>
+      </ul></li>
       <li><a href="classes/classes.html#classes.entity.Entity.levelset">levelset() (classes.entity.Entity method)</a>
 </li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.logical_dot">logical_dot() (in module algorithms.homology_mod2)</a>
@@ -517,12 +654,41 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.matmulreduce">matmulreduce() (in module algorithms.homology_mod2)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.entity.Entity.memberships">memberships() (classes.entity.Entity property)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.merge_entities">merge_entities() (classes.entity.Entity static method)</a>
 </li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="algorithms/algorithms.html#module-algorithms">algorithms</a>
+</li>
+        <li><a href="algorithms/algorithms.html#module-algorithms.homology_mod2">algorithms.homology_mod2</a>
+</li>
+        <li><a href="algorithms/algorithms.html#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures</a>
+</li>
+        <li><a href="classes/classes.html#module-classes">classes</a>
+</li>
+        <li><a href="classes/classes.html#module-classes.entity">classes.entity</a>
+</li>
+        <li><a href="classes/classes.html#module-classes.hypergraph">classes.hypergraph</a>
+</li>
+        <li><a href="classes/classes.html#module-classes.staticentity">classes.staticentity</a>
+</li>
+        <li><a href="drawing/drawing.html#module-drawing">drawing</a>
+</li>
+        <li><a href="drawing/drawing.html#module-drawing.rubber_band">drawing.rubber_band</a>
+</li>
+        <li><a href="drawing/drawing.html#module-drawing.two_column">drawing.two_column</a>
+</li>
+        <li><a href="drawing/drawing.html#module-drawing.util">drawing.util</a>
+</li>
+        <li><a href="reports/reports.html#module-reports">reports</a>
+</li>
+        <li><a href="reports/reports.html#module-reports.descriptive_stats">reports.descriptive_stats</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -565,6 +731,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.recover_from_state">recover_from_state() (classes.hypergraph.Hypergraph class method)</a>
+</li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.reduced_row_echelon_form_mod2">reduced_row_echelon_form_mod2() (in module algorithms.homology_mod2)</a>
 </li>
       <li><a href="classes/classes.html#classes.entity.Entity.registry">registry() (classes.entity.Entity property)</a>
@@ -581,23 +749,41 @@
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_node">remove_node() (classes.hypergraph.Hypergraph method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_nodes">remove_nodes() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_singletons">remove_singletons() (classes.hypergraph.Hypergraph method)</a>
 </li>
-      <li><a href="reports/reports.html#module-reports">reports (module)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_static">remove_static() (classes.hypergraph.Hypergraph method)</a>
 </li>
-      <li><a href="reports/reports.html#module-reports.descriptive_stats">reports.descriptive_stats (module)</a>
+      <li>
+    reports
+
+      <ul>
+        <li><a href="reports/reports.html#module-reports">module</a>
 </li>
+      </ul></li>
+      <li>
+    reports.descriptive_stats
+
+      <ul>
+        <li><a href="reports/reports.html#module-reports.descriptive_stats">module</a>
+</li>
+      </ul></li>
       <li><a href="classes/classes.html#classes.entity.Entity.restrict_to">restrict_to() (classes.entity.Entity method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.entity.EntitySet.restrict_to">(classes.entity.EntitySet method)</a>
 </li>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntitySet.restrict_to">(classes.staticentity.StaticEntitySet method)</a>
+</li>
       </ul></li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_edges">restrict_to_edges() (classes.hypergraph.Hypergraph method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.restrict_to_indices">restrict_to_indices() (classes.staticentity.StaticEntity method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.restrict_to_levels">restrict_to_levels() (classes.staticentity.StaticEntity method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_nodes">restrict_to_nodes() (classes.hypergraph.Hypergraph method)</a>
 </li>
@@ -637,25 +823,33 @@
 </li>
       <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_betweenness_centrality">s_betweenness_centrality() (in module algorithms.s_centrality_measures)</a>
 </li>
+      <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_closeness_centrality">s_closeness_centrality() (in module algorithms.s_centrality_measures)</a>
+</li>
       <li><a href="reports/reports.html#reports.descriptive_stats.s_comp_dist">s_comp_dist() (in module reports.descriptive_stats)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_component_subgraphs">s_component_subgraphs() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_components">s_components() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_connected_components">s_connected_components() (classes.hypergraph.Hypergraph method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_degree">s_degree() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_eccentricity">s_eccentricity() (in module algorithms.s_centrality_measures)</a>
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.s_edge_diameter_dist">s_edge_diameter_dist() (in module reports.descriptive_stats)</a>
 </li>
+      <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_centrality">s_harmonic_centrality() (in module algorithms.s_centrality_measures)</a>
+</li>
       <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_closeness_centrality">s_harmonic_closeness_centrality() (in module algorithms.s_centrality_measures)</a>
 </li>
       <li><a href="reports/reports.html#reports.descriptive_stats.s_node_diameter_dist">s_node_diameter_dist() (in module reports.descriptive_stats)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.save_state">save_state() (classes.hypergraph.Hypergraph method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.set_state">set_state() (classes.hypergraph.Hypergraph method)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.shape">shape() (classes.hypergraph.Hypergraph property)</a>
 </li>
@@ -668,8 +862,14 @@
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.size">(classes.hypergraph.Hypergraph method)</a>
 </li>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.size">(classes.staticentity.StaticEntity method)</a>
+</li>
       </ul></li>
       <li><a href="algorithms/algorithms.html#algorithms.homology_mod2.smith_normal_form_mod2">smith_normal_form_mod2() (in module algorithms.homology_mod2)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity">StaticEntity (class in classes.staticentity)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntitySet">StaticEntitySet (class in classes.staticentity)</a>
 </li>
       <li><a href="glossary.html#term-subhypergraph"><strong>subhypergraph</strong></a>
 </li>
@@ -685,11 +885,23 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="glossary.html#term-toplex"><strong>toplex</strong></a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reports/reports.html#reports.descriptive_stats.toplex_dist">toplex_dist() (in module reports.descriptive_stats)</a>
 </li>
       <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.toplexes">toplexes() (classes.hypergraph.Hypergraph method)</a>
+</li>
+      <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.translate">translate() (classes.hypergraph.Hypergraph method)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.translate">(classes.staticentity.StaticEntity method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.translate_arr">translate_arr() (classes.staticentity.StaticEntity method)</a>
+</li>
+      <li><a href="drawing/drawing.html#drawing.util.transpose_inflated_kwargs">transpose_inflated_kwargs() (in module drawing.util)</a>
+</li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.turn_entity_data_into_dataframe">turn_entity_data_into_dataframe() (classes.staticentity.StaticEntity method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -698,10 +910,20 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.entity.Entity.uid">uid() (classes.entity.Entity property)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.uid">(classes.staticentity.StaticEntity property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.entity.Entity.uidset">uidset() (classes.entity.Entity property)</a>
+
+      <ul>
+        <li><a href="classes/classes.html#classes.staticentity.StaticEntity.uidset">(classes.staticentity.StaticEntity property)</a>
+</li>
+      </ul></li>
+      <li><a href="classes/classes.html#classes.staticentity.StaticEntity.uidset_by_level">uidset_by_level() (classes.staticentity.StaticEntity method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -718,11 +940,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018 Battelle Memorial Institute
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -733,7 +963,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
