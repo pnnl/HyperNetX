@@ -26,6 +26,7 @@ from functools import partial
 
 try:
     import nwhy
+
     nwhy_available = True
 except:
     nwhy_available = False
@@ -33,15 +34,17 @@ except:
 sys.setrecursionlimit(10000)
 
 __all__ = [
-    's_betweenness_centrality',
-    's_harmonic_closeness_centrality',
-    's_harmonic_centrality',
-    's_closeness_centrality',
-    's_eccentricity',
+    "s_betweenness_centrality",
+    "s_harmonic_closeness_centrality",
+    "s_harmonic_centrality",
+    "s_closeness_centrality",
+    "s_eccentricity",
 ]
 
 
-def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_nwhy=True, **kwargs):
+def _s_centrality(
+    func, H, s=1, edges=True, f=None, return_singletons=True, use_nwhy=True, **kwargs
+):
     """
     Wrapper for computing s-centrality either in NetworkX or in NWHy
 
@@ -68,7 +71,9 @@ def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_
     : dict
         dictionary of centrality scores keyed by names
     """
-    comps = H.s_component_subgraphs(s=s, edges=edges, return_singletons=return_singletons)
+    comps = H.s_component_subgraphs(
+        s=s, edges=edges, return_singletons=return_singletons
+    )
     if f is not None:
         for cps in comps:
             if (edges and f in cps.edges) or (not edges and f in cps.nodes):
@@ -92,7 +97,12 @@ def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_
                 stats.update(dict(zip(vertices, func(g, **kwargs))))
             else:
                 g = h.get_linegraph(s=s, edges=edges, use_nwhy=False)
-                stats.update({h.get_name(k, edges=edges): v for k, v in func(g, **kwargs).items()})
+                stats.update(
+                    {
+                        h.get_name(k, edges=edges): v
+                        for k, v in func(g, **kwargs).items()
+                    }
+                )
             if f:
                 return {f: stats[f]}
     else:
@@ -110,8 +120,10 @@ def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, use_
     return stats
 
 
-def s_betweenness_centrality(H, s=1, edges=True, normalized=True, return_singletons=True, use_nwhy=True):
-    '''
+def s_betweenness_centrality(
+    H, s=1, edges=True, normalized=True, return_singletons=True, use_nwhy=True
+):
+    """
     A centrality measure for an s-edge subgraph of H based on shortest paths.
     The betweenness centrality of an s-edge e is the sum of the fraction of all
     shortest s-paths between s-edges that pass through e.
@@ -136,13 +148,20 @@ def s_betweenness_centrality(H, s=1, edges=True, normalized=True, return_singlet
      : dict
         A dictionary of s-betweenness centrality value of the edges.
 
-    '''
+    """
     if use_nwhy and nwhy_available and H.nwhy:
         func = partial(nwhy.Slinegraph.s_betweenness_centrality, normalized=False)
     else:
         use_nwhy = False
         func = partial(nx.betweenness_centrality, normalized=False)
-    result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, use_nwhy=use_nwhy)
+    result = _s_centrality(
+        func,
+        H,
+        s=s,
+        edges=edges,
+        return_singletons=return_singletons,
+        use_nwhy=use_nwhy,
+    )
 
     if normalized and H.shape[edges * 1] > 2:
         n = H.shape[edges * 1]
@@ -150,27 +169,46 @@ def s_betweenness_centrality(H, s=1, edges=True, normalized=True, return_singlet
     else:
         return result
 
-def s_closeness_centrality(H, s=1, edges=True, return_singletons=True, source=None, use_nwhy=True):
+
+def s_closeness_centrality(
+    H, s=1, edges=True, return_singletons=True, source=None, use_nwhy=True
+):
 
     if use_nwhy and nwhy_available and H.nwhy:
         func = partial(nwhy.Slinegraph.s_closeness_centrality)
     else:
         use_nwhy = False
         func = partial(nx.closeness_centrality)
-    return _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, f=source, use_nwhy=use_nwhy)
+    return _s_centrality(
+        func,
+        H,
+        s=s,
+        edges=edges,
+        return_singletons=return_singletons,
+        f=source,
+        use_nwhy=use_nwhy,
+    )
 
 
 def s_harmonic_closeness_centrality(H, s=1, edge=None, use_nwhy=True):
-    msg = '''
+    msg = """
     s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality 
     and will not be available in future releases. 
-    '''
+    """
     warnings.warn(msg)
     return s_harmonic_centrality(H, s=s, edges=True, normalized=True, source=edge)
 
 
-def s_harmonic_centrality(H, s=1, edges=True, source=None, normalized=False, return_singletons=True, use_nwhy=True):
-    '''
+def s_harmonic_centrality(
+    H,
+    s=1,
+    edges=True,
+    source=None,
+    normalized=False,
+    return_singletons=True,
+    use_nwhy=True,
+):
+    """
     A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
     intersects every other s-edge in H. All values range between 0 and 1.
     Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.
@@ -191,14 +229,22 @@ def s_harmonic_centrality(H, s=1, edges=True, source=None, normalized=False, ret
         If edge=None a dictionary of values for each s-edge in H is returned.
         If edge then a single value is returned.
 
-    '''
+    """
 
     if use_nwhy and nwhy_available and H.nwhy:
         func = partial(nwhy.Slinegraph.s_harmonic_closeness_centrality)
     else:
         use_nwhy = False
         func = partial(nx.harmonic_centrality)
-    result = _s_centrality(func, H, s=s, edges=edges, return_singletons=return_singletons, f=source, use_nwhy=use_nwhy)
+    result = _s_centrality(
+        func,
+        H,
+        s=s,
+        edges=edges,
+        return_singletons=return_singletons,
+        f=source,
+        use_nwhy=use_nwhy,
+    )
 
     if normalized and H.shape[edges * 1] > 2:
         n = H.shape[edges * 1]
@@ -207,8 +253,10 @@ def s_harmonic_centrality(H, s=1, edges=True, source=None, normalized=False, ret
         return result
 
 
-def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True):
-    '''
+def s_eccentricity(
+    H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True
+):
+    """
     Max s_distance from edge f to every other edge to which it is connected
 
     Parameters
@@ -224,7 +272,7 @@ def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True, use_
     -------
      : float or dict
 
-    '''
+    """
     if use_nwhy and nwhy_available and H.nwhy:
         func = nwhy.Slinegraph.s_eccentricity
     else:
@@ -232,10 +280,21 @@ def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True, use_
         func = nx.eccentricity
 
     if source is not None:
-        return _s_centrality(func, H, s=s,
-                             edges=edges, f=source,
-                             return_singletons=return_singletons, use_nwhy=use_nwhy)
+        return _s_centrality(
+            func,
+            H,
+            s=s,
+            edges=edges,
+            f=source,
+            return_singletons=return_singletons,
+            use_nwhy=use_nwhy,
+        )
     else:
-        return _s_centrality(func, H, s=s,
-                             edges=edges,
-                             return_singletons=return_singletons, use_nwhy=use_nwhy)
+        return _s_centrality(
+            func,
+            H,
+            s=s,
+            edges=edges,
+            return_singletons=return_singletons,
+            use_nwhy=use_nwhy,
+        )

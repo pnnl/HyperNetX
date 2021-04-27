@@ -8,8 +8,9 @@ import networkx as nx
 
 from .util import get_frozenset_label
 
+
 def layout_two_column(H, spacing=2):
-    '''
+    """
     Two column (bipartite) layout algorithm.
 
     This algorithm first converts the hypergraph into a bipartite graph and
@@ -18,43 +19,43 @@ def layout_two_column(H, spacing=2):
 
     Within a connected component, the spectral ordering of the bipartite graph
     provides a quick and dirty ordering that minimizes edge crossings in the
-    diagram. 
+    diagram.
 
     Parameters
     ----------
     H: Hypergraph
-        the entity to be drawn 
+        the entity to be drawn
     spacing: float
         amount of whitespace between disconnected components
-    '''
+    """
     offset = 0
     pos = {}
 
     def stack(vertices, x, height):
         for i, v in enumerate(vertices):
-            pos[v] = (x, i + offset + (height - len(vertices))/2)
+            pos[v] = (x, i + offset + (height - len(vertices)) / 2)
 
     G = H.bipartite()
     for ci in nx.connected_components(G):
-        Gi=G.subgraph(ci)
+        Gi = G.subgraph(ci)
         key = {v: i for i, v in enumerate(nx.spectral_ordering(Gi))}.get
-        ci_vertices, ci_edges = [sorted([v
-                                         for v, d in Gi.nodes(data=True)
-                                         if d['bipartite'] == j],
-                                        key=key)
-                                 for j in [0, 1]]
-        
+        ci_vertices, ci_edges = [
+            sorted([v for v, d in Gi.nodes(data=True) if d["bipartite"] == j], key=key)
+            for j in [0, 1]
+        ]
+
         height = max(len(ci_vertices), len(ci_edges))
 
         stack(ci_vertices, 0, height)
         stack(ci_edges, 1, height)
 
         offset += height + spacing
-        
+
     return pos
 
+
 def draw_hyper_edges(H, pos, ax=None, **kwargs):
-    '''
+    """
     Renders hyper edges for the two column layout.
 
     Each node-hyper edge membership is rendered as a line connecting the node
@@ -63,7 +64,7 @@ def draw_hyper_edges(H, pos, ax=None, **kwargs):
     Parameters
     ----------
     H: Hypergraph
-        the entity to be drawn 
+        the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
     ax: Axis
@@ -75,30 +76,33 @@ def draw_hyper_edges(H, pos, ax=None, **kwargs):
     -------
     LineCollection
         the hyper edges
-    '''
+    """
     ax = ax or plt.gca()
-    
-    pairs = [(v, e.uid)
-             for e in H.edges()
-             for v in e]
-        
-    kwargs = {k: v if type(v) != dict else [v.get(e) for _, e in pairs]
-              for k, v in kwargs.items()}
-    
+
+    pairs = [(v, e.uid) for e in H.edges() for v in e]
+
+    kwargs = {
+        k: v if type(v) != dict else [v.get(e) for _, e in pairs]
+        for k, v in kwargs.items()
+    }
+
     lines = LineCollection([(pos[u], pos[v]) for u, v in pairs], **kwargs)
 
     ax.add_collection(lines)
 
     return lines
 
-def draw_hyper_labels(H, pos, labels={}, with_node_labels=True, with_edge_labels=True, ax=None):
-    '''
+
+def draw_hyper_labels(
+    H, pos, labels={}, with_node_labels=True, with_edge_labels=True, ax=None
+):
+    """
     Renders hyper labels (nodes and edges) for the two column layout.
 
     Parameters
     ----------
     H: Hypergraph
-        the entity to be drawn 
+        the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
     labels: dict
@@ -112,32 +116,35 @@ def draw_hyper_labels(H, pos, labels={}, with_node_labels=True, with_edge_labels
     kwargs: dict
         keyword arguments passed to matplotlib.LineCollection
 
-    '''
+    """
 
     ax = ax or plt.gca()
-    
+
     edges = [e.uid for e in H.edges()]
 
     to_draw = []
     if with_node_labels:
-        to_draw.append((H.nodes(), 'right'))
+        to_draw.append((H.nodes(), "right"))
 
     if with_edge_labels:
-        to_draw.append((H.edges(), 'left'))
-    
+        to_draw.append((H.edges(), "left"))
+
     for points, ha in to_draw:
         for p in points:
-            ax.annotate(labels.get(p.uid, p.uid), pos[p.uid], ha=ha, va='center')
-            
-def draw(H,
-         with_node_labels=True,
-         with_edge_labels=True,
-         with_node_counts=False,
-         with_edge_counts=False,
-         with_color=True,
-         edge_kwargs=None,
-         ax=None):
-    '''
+            ax.annotate(labels.get(p.uid, p.uid), pos[p.uid], ha=ha, va="center")
+
+
+def draw(
+    H,
+    with_node_labels=True,
+    with_edge_labels=True,
+    with_node_counts=False,
+    with_edge_counts=False,
+    with_color=True,
+    edge_kwargs=None,
+    ax=None,
+):
+    """
     Draw a hypergraph using a two-collumn layout.
 
     This is intended reproduce an illustrative technique for bipartite graphs
@@ -153,7 +160,7 @@ def draw(H,
     Parameters
     ----------
     H: Hypergraph
-        the entity to be drawn 
+        the entity to be drawn
     with_node_labels: bool
         False to disable node labels
     with_edge_labels: bool
@@ -168,31 +175,35 @@ def draw(H,
         keyword arguments to pass to matplotlib.LineCollection
     ax: Axis
         matplotlib axis on which the plot is rendered
-    '''
+    """
 
     edge_kwargs = edge_kwargs or {}
-        
+
     ax = ax or plt.gca()
-    
+
     pos = layout_two_column(H)
-    
+
     V = [v.uid for v in H.nodes()]
     E = [e.uid for e in H.edges()]
-    
+
     labels = {}
     labels.update(get_frozenset_label(V, count=with_node_counts))
     labels.update(get_frozenset_label(E, count=with_edge_counts))
-        
+
     if with_color:
-        edge_kwargs['color'] = {e.uid: plt.cm.tab10(i%10)
-                                for i, e in enumerate(H.edges())}
+        edge_kwargs["color"] = {
+            e.uid: plt.cm.tab10(i % 10) for i, e in enumerate(H.edges())
+        }
 
     draw_hyper_edges(H, pos, ax=ax, **edge_kwargs)
-    draw_hyper_labels(H, pos, labels,
-                      ax=ax,
-                      with_node_labels=with_node_labels,
-                      with_edge_labels=with_edge_labels)
+    draw_hyper_labels(
+        H,
+        pos,
+        labels,
+        ax=ax,
+        with_node_labels=with_node_labels,
+        with_edge_labels=with_edge_labels,
+    )
     ax.autoscale_view()
-        
-    ax.axis('off')
-    
+
+    ax.axis("off")

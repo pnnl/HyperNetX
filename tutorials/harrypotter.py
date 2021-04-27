@@ -7,22 +7,32 @@ import pandas as pd
 import numpy as np
 import itertools as it
 
-__all__ = ['HarryPotter']
+__all__ = ["HarryPotter"]
+
 
 class HarryPotter(object):
-
     def __init__(self, cols=None):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
-        fname = 'Characters.csv'
-        harrydata = pd.read_csv(fname, encoding='unicode_escape')
+        fname = "Characters.csv"
+        harrydata = pd.read_csv(fname, encoding="unicode_escape")
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
-        columns = cols or ['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']
+        columns = cols or [
+            "House",
+            "Blood status",
+            "Species",
+            "Hair colour",
+            "Eye colour",
+        ]
         harry = harrydata[columns].fillna("Unknown")
         for c in harry.columns:
-            harry[c] = harry[c].apply(lambda x: x.replace('\xa0', ' ')).apply(lambda x: x.replace('Unknown', f'Unknown {c}'))
+            harry[c] = (
+                harry[c]
+                .apply(lambda x: x.replace("\xa0", " "))
+                .apply(lambda x: x.replace("Unknown", f"Unknown {c}"))
+            )
         self.dataframe = harry
 
         ctr = [HNXCount() for c in range(len(columns))]
@@ -31,8 +41,8 @@ class HarryPotter(object):
         for idx, c in enumerate(columns):
             ldict[c] = defaultdict(ctr[idx])
             rdict[c] = OrderedDict()
-            ldict[c][f'Unknown {c}']
-            rdict[c][0] = f'Unknown {c}'
+            ldict[c][f"Unknown {c}"]
+            rdict[c][0] = f"Unknown {c}"
             for k in harry[c]:
                 ldict[c][k]
                 rdict[c][ldict[c][k]] = k
@@ -62,6 +72,7 @@ class HarryPotter(object):
         for cdx, c in enumerate(list(ldict.keys())):
             slabels.update({c: np.array(list(ldict[c].keys()))})
         self.labels = slabels
+
 
 #         self.entity = StaticEntity(self.arr, self.labels)
 #         self.entityset = StaticEntitySet(self.arr, self.labels, 0, 1)
