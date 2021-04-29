@@ -17,12 +17,18 @@ def test_staticentity_constructor(seven_by_six):
 
 
 def test_staticentity_attributes(harry_potter):
-
     arr = harry_potter.arr
     labels = harry_potter.labels
     ent = StaticEntity(arr=arr, labels=labels)
+    df = ent.dataframe
     assert ent.dimensions == (7, 11, 10, 36, 26)
+    assert ent.dimsize == 5
+    assert len(ent.keys) == 5
+    assert ent.keyindex('House') == 0
     assert len(ent.elements) == 7
+    assert ent.is_empty(2) == False
+    assert len(ent.labs(0)) == 7
+    assert df.shape == (126, 5)
 
 
 def test_staticentity_level(seven_by_six):
@@ -31,6 +37,25 @@ def test_staticentity_level(seven_by_six):
     assert ent.level("I") == (0, 0)
     assert ent.level("K") == (1, 3)
     assert ent.level("K", max_level=0) == None
+
+
+def test_staticentity_uidset_by_level(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    ent.uidset_by_level(0) == {'I', 'L', 'O', 'P', 'R', 'S'}
+    ent.uidset_by_level(1) == {'A', 'C', 'E', 'K', 'T1', 'T2', 'V'}
+
+
+def test_staticentity_elements_by_level(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    assert ent.elements_by_level(0)
+
+
+def test_staticentity_incidence_matrix(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    assert ent.incidence_matrix(1, 0).todense().shape == (6, 7)
 
 
 def test_staticentity_indices(seven_by_six):
@@ -60,6 +85,19 @@ def test_staticentity_index(seven_by_six):
     assert ent.index("nodes", "K") == (1, 3)
 
 
+def test_staticentity_turn_entity_data_into_dataframe(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    subset = ent.data[0:5]
+    assert ent.turn_entity_data_into_dataframe(subset).shape == (5, 2)
+
+
+def test_restrict_to_levels(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
+    assert ent.restrict_to_levels([0, 1])
+
+
 def test_restrict_to_indices(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
@@ -73,9 +111,13 @@ def test_staticentityset(harry_potter):
     assert ent.keys[0] == "Blood status"
     ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
     assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
+    assert ent.incidence_matrix().shape == (36, 11)
+    assert isinstance(ent.convert_to_entityset('Hair colour'), EntitySet)
 
 
 def test_staticentity_construct_from_entity(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(entity=sbs.edgedict)
     assert len(ent.elements) == 6
+
+
