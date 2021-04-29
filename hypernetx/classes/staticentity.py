@@ -635,11 +635,6 @@ def turn_tensor_to_data(arr, remove_duplicates=True):
         Tensor corresponding to incidence of co-occurring labels.
     """
     return np.array(arr.nonzero()).transpose()
-    # dfa = np.array(arr.nonzero()).transpose()
-    # if remove_duplicates:
-    #     return remove_row_duplicates(dfa)
-    # else:
-    #     return dfa
 
 
 def turn_dict_to_staticentity(dict_object, remove_duplicates=True):
