@@ -1,5 +1,7 @@
 import numpy as np
+import pandas as pd
 import pytest
+from collections.abc import Iterable
 from hypernetx import Entity, EntitySet
 from hypernetx import StaticEntity, StaticEntitySet
 from hypernetx import HyperNetXError
@@ -20,15 +22,40 @@ def test_staticentity_attributes(harry_potter):
     arr = harry_potter.arr
     labels = harry_potter.labels
     ent = StaticEntity(arr=arr, labels=labels)
-    df = ent.dataframe
+    assert isinstance(ent.arr, np.ndarray)
+    assert isinstance(ent.data, np.ndarray)
+    assert ent.data.shape == ent.dataframe.shape
+    assert isinstance(ent.labels, dict)
+    assert isinstance(ent.array_with_counts, np.ndarray)
+    # uid??
+    assert len(ent.uidset) == 7
+    assert isinstance(ent.uidset, frozenset)
+    assert len(ent.elements) == 7
+    assert isinstance(ent.elements, dict)
+    assert isinstance(ent.elements['Hufflepuff'], list)
+    assert len(ent.incidence_dict['Gryffindor']) == 6
     assert ent.dimensions == (7, 11, 10, 36, 26)
     assert ent.dimsize == 5
     assert len(ent.keys) == 5
     assert ent.keyindex('House') == 0
-    assert len(ent.elements) == 7
     assert ent.is_empty(2) == False
     assert len(ent.labs(0)) == 7
-    assert df.shape == (126, 5)
+    assert isinstance(ent.children, set)
+    assert isinstance(ent.dataframe, pd.DataFrame)
+
+
+def test_staticentity_custom_attributes(harry_potter):
+    arr = harry_potter.arr
+    labels = harry_potter.labels
+    ent = StaticEntity(arr=arr, labels=labels)
+    assert ent.__len__() == 7
+    assert isinstance(ent.__str__(), str)
+    assert isinstance(ent.__repr__(), str)
+    assert isinstance(ent.__contains__('Muggle'), bool)
+    assert ent.__contains__('Muggle') == True
+    assert ent.__getitem__('Slytherin') == ['Half-blood', 'Pure-blood', 'Pure-blood or half-blood']
+    assert isinstance(ent.__iter__(), Iterable)
+    assert isinstance(ent.__call__(), Iterable)
 
 
 def test_staticentity_level(seven_by_six):
