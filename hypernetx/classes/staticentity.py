@@ -284,34 +284,58 @@ class StaticEntity(object):
 
     @property
     def data(self):
+        """
+        -- Data array or tensor array of staticentity
+        """
         return self._data
 
     @property
     def labels(self):
+        """
+        <<<>>> Ordered dictionary of labels
+        """
         return self._labels
 
     @property
     def dimensions(self):
+        """
+        <<<>>> Dimension of staticentity data
+        """
         return self._dimensions
 
     @property
     def dimsize(self):
+        """
+        <<<>>> Number of categories in the data
+        """
         return self._dimsize
 
     @property
     def keys(self):
+        """
+        <<<>>> Array of keys of labels
+        """
         return self._keys
 
     @property
     def keyindex(self):
+        """
+        <<<>>> Returns the index of a category in keys array
+        """
         return self._keyindex
 
     @property
     def uid(self):
+        """
+        <<<>>>
+        """
         return self._uid
 
     @property
     def uidset(self):
+        """
+        <<<>>> Returns a set of the string identifiers for staticentity.
+        """
         return self.uidset_by_level(0)
 
     @property
@@ -334,6 +358,9 @@ class StaticEntity(object):
 
     @property
     def dataframe(self):
+        """
+        <<<>>> Returns the entity data in DataFrame format
+        """
         return self.turn_entity_data_into_dataframe(self.data)
 
     def __len__(self):
@@ -485,6 +512,9 @@ class StaticEntity(object):
 
     def translate(self, level, index):
         # returns category of dimension and value of index in that dimension
+        """
+        <<<>>> Translates a category index and value index to label
+        """
         if isinstance(index, int):
             return self._labs(level)[index]
         else:
@@ -499,13 +529,18 @@ class StaticEntity(object):
         return translation
 
     def index(self, category, value=None):
-        # returns dimension of category and index of value
+        """
+        <<<>>> Returns dimension of category and index of value
+        """
         if value is not None:
             return self._keyindex(category), self._index(category, value)
         else:
             return self._keyindex(category)
 
     def indices(self, category, values):
+        """
+        <<<>>> Returns dimension of category and index of values (array)
+        """
         return [self._index(category, value) for value in values]
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
@@ -591,7 +626,7 @@ class StaticEntitySet(StaticEntity):
         return self.restrict_to_indices(indices, level=0, uid=uid)
 
     def convert_to_entityset(self, uid):
-        return hnx.EntitySet(uid, self.incidence_dict)
+        return EntitySet(uid, self.incidence_dict)
 
     def collapse_identical_elements(
         self,
@@ -635,11 +670,6 @@ def turn_tensor_to_data(arr, remove_duplicates=True):
         Tensor corresponding to incidence of co-occurring labels.
     """
     return np.array(arr.nonzero()).transpose()
-    # dfa = np.array(arr.nonzero()).transpose()
-    # if remove_duplicates:
-    #     return remove_row_duplicates(dfa)
-    # else:
-    #     return dfa
 
 
 def turn_dict_to_staticentity(dict_object, remove_duplicates=True):
