@@ -11,10 +11,14 @@ import matplotlib.pyplot as plt
 
 import hypernetx as hnx
 
-volume_names = {1:{"title":"Fantine"}, 2:{"title":"Cosette"}, 
-        3:{"title":"Marius"}, 4:{"title":"St. Denis"} ,
-        5:{"title":"Jean Valjean"}}
-volumes = pd.DataFrame.from_dict(volume_names,orient="index")
+volume_names = {
+    1: {"title": "Fantine"},
+    2: {"title": "Cosette"},
+    3: {"title": "Marius"},
+    4: {"title": "St. Denis"},
+    5: {"title": "Jean Valjean"},
+}
+volumes = pd.DataFrame.from_dict(volume_names, orient="index")
 
 names = """AZ Anzelma, daughter of TH and TM
 BA Bahorel, `Friends of the ABC' cutup
@@ -97,7 +101,7 @@ XA Child 1, son of TH sold to MN
 XB Child 2, son of TH sold to MN
 ZE Zephine, lover of FA"""
 
-interactions="""1.1.1:MY,NP;MY,MB
+interactions = """1.1.1:MY,NP;MY,MB
 1.1.2:MY,ME;ME,MB
 1.1.3:MY
 1.1.4:MY,ME;MY,CL;MY,GE;MY,MC;MY,MB
@@ -454,44 +458,49 @@ interactions="""1.1.1:MY,NP;MY,MB
 5.9.5:JV,CO,MA
 5.9.6"""
 
-accents = {
-    '\`e': 'è',
-    '\\`e': 'è',
-    "\'e": 'é',    
-    '\\c{c}': 'ç',
-    '\^o': 'ô'
-}
+accents = {"\`e": "è", "\\`e": "è", "'e": "é", "\\c{c}": "ç", "\^o": "ô"}
 
-for k,v in accents.items():
+for k, v in accents.items():
     names = names.replace(k, v)
 
+
 def parse_name_row(row):
-    abbrev, descr = row.split(' ', 1)
-    fullname, descr = descr.split(',')
+    abbrev, descr = row.split(" ", 1)
+    fullname, descr = descr.split(",")
     return abbrev, fullname, descr
 
-df_names = pd.DataFrame([parse_name_row(row) for row in names.split('\n')], columns=['Symbol', 'FullName', 'Description'])
+
+df_names = pd.DataFrame(
+    [parse_name_row(row) for row in names.split("\n")],
+    columns=["Symbol", "FullName", "Description"],
+)
+
 
 def get_scene_data():
     t = 0
-    for row in interactions.split('\n'):
-        numbers, characters = islice(chain(row.split(':'), repeat(None)), 2)
+    for row in interactions.split("\n"):
+        numbers, characters = islice(chain(row.split(":"), repeat(None)), 2)
 
-        volume, book, chapter = numbers.split('.')
+        volume, book, chapter = numbers.split(".")
 
         if characters:
-            for i, si in enumerate(characters.split(';')):
-                for c in si.split(','):
+            for i, si in enumerate(characters.split(";")):
+                for c in si.split(","):
                     yield int(volume), int(book), int(chapter), i, t, c
                 t += 1
 
-df_scenes = pd.DataFrame(list(get_scene_data()), columns=['Volume', 'Book', 'Chapter', 'Scene', 'Step', 'Characters'])
 
-def bipartite_from_df(df, by='Chapter', on='Characters'):
+df_scenes = pd.DataFrame(
+    list(get_scene_data()),
+    columns=["Volume", "Book", "Chapter", "Scene", "Step", "Characters"],
+)
+
+
+def bipartite_from_df(df, by="Chapter", on="Characters"):
     cols = df.columns.tolist()
-    grouped = df.groupby(cols[:cols.index(by) + 1])[on].value_counts()
+    grouped = df.groupby(cols[: cols.index(by) + 1])[on].value_counts()
 
-    U = ['.'.join(map(str, x[:-1])) for x in grouped.index.get_values()]
+    U = [".".join(map(str, x[:-1])) for x in grouped.index.get_values()]
     V = grouped.index.get_level_values(-1)
     W = grouped.values
 
@@ -501,18 +510,24 @@ def bipartite_from_df(df, by='Chapter', on='Characters'):
 
     for u, v, w in zip(U, V, W):
         G.add_edge(u, v, weight=w)
-    
+
     return G
 
-def hypergraph_from_df(df, by='Chapter', on='Characters'):
+
+def hypergraph_from_df(df, by="Chapter", on="Characters"):
     cols = df.columns.tolist()
 
-    return hnx.Hypergraph({'.'.join(map(str, t)): set(dft)
-                           for t, dft in df.groupby(cols[:cols.index(by) + 1])[on]})
+    return hnx.Hypergraph(
+        {
+            ".".join(map(str, t)): set(dft)
+            for t, dft in df.groupby(cols[: cols.index(by) + 1])[on]
+        }
+    )
+
 
 def book_tour_data():
-    return df_scenes.groupby(['Volume', 'Book'])\
-        .apply(hypergraph_from_df, by='Chapter')
+    return df_scenes.groupby(["Volume", "Book"]).apply(hypergraph_from_df, by="Chapter")
+
 
 def book_tour():
     df_book_tour = book_tour_data()
@@ -520,15 +535,14 @@ def book_tour():
     nrows, ncols = df_book_tour.index.max()
 
     s = 3.5
-    plt.figure(figsize=(s*ncols, s*nrows))
+    plt.figure(figsize=(s * ncols, s * nrows))
     for (v, b), G in df_book_tour.items():
-        ax = plt.subplot(nrows, ncols, (v - 1)*ncols + b, label=f'{v}.{b}')
-        
-        ax.set_xlabel('Book %d'%b)
+        ax = plt.subplot(nrows, ncols, (v - 1) * ncols + b, label=f"{v}.{b}")
+
+        ax.set_xlabel("Book %d" % b)
         if b == 1:
-            ax.set_ylabel('Volume %d'%v)
+            ax.set_ylabel("Volume %d" % v)
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
 
         yield (v, b), G, ax
-

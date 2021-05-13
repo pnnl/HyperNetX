@@ -41,25 +41,25 @@ import pickle
 from scipy.sparse import csr_matrix
 
 __all__ = [
-    'kchainbasis',
-    'bkMatrix',
-    'swap_rows',
-    'swap_columns',
-    'add_to_row',
-    'add_to_column',
-    'logical_dot',
-    'logical_matmul',
-    'matmulreduce',
-    'logical_matadd',
-    'smith_normal_form_mod2',
-    'reduced_row_echelon_form_mod2',
-    'boundary_group',
-    'chain_complex',
-    'betti',
-    'betti_numbers',
-    'homology_basis',
-    'hypergraph_homology_basis',
-    'interpret',
+    "kchainbasis",
+    "bkMatrix",
+    "swap_rows",
+    "swap_columns",
+    "add_to_row",
+    "add_to_column",
+    "logical_dot",
+    "logical_matmul",
+    "matmulreduce",
+    "logical_matadd",
+    "smith_normal_form_mod2",
+    "reduced_row_echelon_form_mod2",
+    "boundary_group",
+    "chain_complex",
+    "betti",
+    "betti_numbers",
+    "homology_basis",
+    "hypergraph_homology_basis",
+    "interpret",
 ]
 
 
@@ -91,6 +91,7 @@ def kchainbasis(h, k):
     """
 
     import itertools as it
+
     kchains = set()
     for e in h.edges():
         en = sorted(h.edges[e])
@@ -122,7 +123,7 @@ def bkMatrix(km1basis, kbasis):
     bk = np.zeros((len(km1basis), len(kbasis)), dtype=int)
     for cell in kbasis:
         for idx in range(len(cell)):
-            face = cell[:idx] + cell[idx + 1:]
+            face = cell[:idx] + cell[idx + 1 :]
             row = km1basis.index(face)
             col = kbasis.index(cell)
             bk[row, col] = 1
@@ -278,7 +279,7 @@ def logical_dot(ar1, ar2):
         If arrays are not of the same length an error will be raised.
     """
     if len(ar1) != len(ar2):
-        raise HyperNetXError('logical_dot requires two 1-d arrays of the same length')
+        raise HyperNetXError("logical_dot requires two 1-d arrays of the same length")
     else:
         return 1 * np.logical_xor.reduce(np.logical_and(ar1, ar2))
 
@@ -310,7 +311,9 @@ def logical_matmul(mat1, mat2):
     L1, R1 = mat1.shape
     L2, R2 = mat2.shape
     if R1 != L2:
-        raise HyperNetXError("logical_matmul called for matrices with inner dimensions mismatched")
+        raise HyperNetXError(
+            "logical_matmul called for matrices with inner dimensions mismatched"
+        )
 
     mat = np.zeros((L1, R2), dtype=int)
     mat2T = mat2.transpose()
@@ -380,7 +383,9 @@ def logical_matadd(mat1, mat2):
     S2 = mat2.shape
     mat = np.zeros(S1, dtype=int)
     if S1 != S2:
-        raise HyperNetXError("logical_matadd called for matrices with different dimensions")
+        raise HyperNetXError(
+            "logical_matadd called for matrices with different dimensions"
+        )
     if len(S1) == 1:
         for idx in range(S1[0]):
             mat[idx] = 1 * np.logical_xor(mat1[idx], mat2[idx])
@@ -393,6 +398,7 @@ def logical_matadd(mat1, mat2):
 
 # Convenience methods for computing Smith Normal Form
 # All of these operations have themselves as inverses
+
 
 def _sr(i, j, M, L):
     return swap_rows(i, j, M, L)
@@ -546,7 +552,9 @@ def reduced_row_echelon_form_mod2(M):
                 S, L = _sr(s1, rdx, S, L)
                 Linv = swap_columns(rdx, s1, Linv)[0]
             # add s1th row to every nonzero row
-            row_indices = [idx for idx in range(0, dimL) if idx != s1 and S[idx, cdx] == 1]
+            row_indices = [
+                idx for idx in range(0, dimL) if idx != s1 and S[idx, cdx] == 1
+            ]
             for idx in row_indices:
                 S, L = _ar(idx, s1, S, L)
                 Linv = add_to_column(Linv, s1, idx)
@@ -613,32 +621,36 @@ def _get_krange(max_dim, k=None):
         krange = [1, max_dim]
     elif isinstance(k, int):
         if k == 0:
-            msg = "Only kth simplicial homology groups for k>0 may be computed."\
+            msg = (
+                "Only kth simplicial homology groups for k>0 may be computed."
                 "If you are interested in k=0, compute the number connected components."
+            )
             print(msg)
             return
         if k > max_dim:
-            msg = f'No simplices of dim {k} exist. k adjusted to max dim.'
+            msg = f"No simplices of dim {k} exist. k adjusted to max dim."
             print(msg)
         krange = [min([k, max_dim])] * 2
     elif not len(k) == 2:
-        msg = f'Please enter krange as a positive integer or list of integers: [<min k>,<max k>] inclusive.'
+        msg = f"Please enter krange as a positive integer or list of integers: [<min k>,<max k>] inclusive."
         print(msg)
         return None
     elif not k[0] <= k[1]:
-        msg = f'k must be an integer or a list of two integers [min,max] with min <=max'
+        msg = f"k must be an integer or a list of two integers [min,max] with min <=max"
         print(msg)
         return None
     else:
         krange = k
 
     if krange[1] > max_dim:
-        msg = f'No simplices of dim {krange[1]} exist. Range adjusted to max dim.'
+        msg = f"No simplices of dim {krange[1]} exist. Range adjusted to max dim."
         print(msg)
         krange[1] = max_dim
     if krange[0] < 1:
-        msg = "Only kth simplicial homology groups for k>0 may be computed."\
+        msg = (
+            "Only kth simplicial homology groups for k>0 may be computed."
             "If you are interested in k=0, compute the number of connected components."
+        )
         print(msg)
         krange[0] = 1
     return krange
@@ -776,11 +788,15 @@ def homology_basis(bd, k=None, boundary=False, **kwargs):
     max_dim = max(bd.keys())
     if k:
         krange = _get_krange(max_dim, k)
-        kvals = sorted(set(bd.keys()).intersection(range(krange[0], krange[1] + 2)))  # to get kth dim need k+1 bdry matrix
+        kvals = sorted(
+            set(bd.keys()).intersection(range(krange[0], krange[1] + 2))
+        )  # to get kth dim need k+1 bdry matrix
     else:
         kvals = bd.keys()
 
-    L, R, S, Linv = _compute_matrices_for_snf({k: v for k, v in bd.items() if k in kvals})
+    L, R, S, Linv = _compute_matrices_for_snf(
+        {k: v for k, v in bd.items() if k in kvals}
+    )
 
     rank = dict()
     for kdx in kvals:
@@ -810,7 +826,6 @@ def homology_basis(bd, k=None, boundary=False, **kwargs):
         return basis
 
 
-
 def hypergraph_homology_basis(h, k=None, shortest=False, interpreted=True):
     """
     Computes the kth-homology groups mod 2 for the ASC
@@ -824,7 +839,7 @@ def hypergraph_homology_basis(h, k=None, shortest=False, interpreted=True):
         length 2 indicating min and max dimensions to be
         computed
     shortest : bool, optional, default=False
-        option to look for shortest representative for each coset in the 
+        option to look for shortest representative for each coset in the
         homology group, only good for relatively small examples
     interpreted : bool, optional, default = True
         if True will return an explicit basis in terms of the k-chains
@@ -847,7 +862,9 @@ def hypergraph_homology_basis(h, k=None, shortest=False, interpreted=True):
                 basis[kdx] = tbasis[kdx]
             else:
                 for b in tbasis[kdx]:
-                    coset = np.array(np.mod(imgrp + b, 2))  # dimensions appear to be wrong. See tests2 cell 5
+                    coset = np.array(
+                        np.mod(imgrp + b, 2)
+                    )  # dimensions appear to be wrong. See tests2 cell 5
                     idx = np.argmin(np.sum(coset, axis=1))
                     basis[kdx].append(coset[idx])
         basis = dict(basis)
@@ -883,6 +900,7 @@ def interpret(Ck, arr, labels=None):
         list of k-cells referenced by data in Ck
 
     """
+
     def translate(cell, labels=labels):
         if not labels:
             return cell
@@ -895,6 +913,6 @@ def interpret(Ck, arr, labels=None):
     output = list()
     for vec in arr:
         if len(Ck) != len(vec):
-            raise HyperNetXError('elements of arr must have the same length as Ck')
+            raise HyperNetXError("elements of arr must have the same length as Ck")
         output.append([translate(Ck[idx]) for idx in range(len(vec)) if vec[idx] == 1])
     return output

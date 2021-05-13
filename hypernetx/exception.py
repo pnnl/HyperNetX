@@ -1,9 +1,9 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
 
-'''
+"""
 Base classes for HyperNetX exceptions
-'''
+"""
 
 
 class HyperNetXException(Exception):

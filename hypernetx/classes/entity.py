@@ -8,10 +8,7 @@ import numpy as np
 import networkx as nx
 from hypernetx import HyperNetXError
 
-__all__ = [
-    'Entity',
-    'EntitySet'
-]
+__all__ = ["Entity", "EntitySet"]
 
 
 class Entity(object):
@@ -29,8 +26,8 @@ class Entity(object):
         hashables different than uid, see `Honor System`_
 
     entity : Entity
-        an Entity object to be cloned into a new Entity with uid. If the uid is the same as 
-        Entity.uid then the entities will not be distinguishable and error will be raised. 
+        an Entity object to be cloned into a new Entity with uid. If the uid is the same as
+        Entity.uid then the entities will not be distinguishable and error will be raised.
         The `elements` in the signature will be added to the cloned entity.
 
     props : keyword arguments, optional, default: {}
@@ -101,7 +98,9 @@ class Entity(object):
         if entity is not None:
             if isinstance(entity, Entity):
                 if uid == entity.uid:
-                    raise HyperNetXError('The new entity will be indistinguishable from the original with the same uid. Use a differen uid.')
+                    raise HyperNetXError(
+                        "The new entity will be indistinguishable from the original with the same uid. Use a differen uid."
+                    )
                 self._elements = entity.elements
                 self._memberships = entity.memberships
                 self.__dict__.update(entity.properties)
@@ -126,10 +125,10 @@ class Entity(object):
     def properties(self):
         """Dictionary of properties of entity"""
         temp = self.__dict__.copy()
-        del temp['_elements']
-        del temp['_memberships']
-        del temp['_registry']
-        del temp['_uid']
+        del temp["_elements"]
+        del temp["_memberships"]
+        del temp["_registry"]
+        del temp["_uid"]
         return temp
 
     @property
@@ -150,12 +149,15 @@ class Entity(object):
         Dictionary of elements to which entity belongs.
 
         This assignment is done on construction and controlled by
-        :func:`Entity.add_element()` 
+        :func:`Entity.add_element()`
         and :func:`Entity.remove_element()` methods.
         """
 
-        return {k: self._memberships[k] for k in self._memberships
-                if not isinstance(self._memberships[k], EntitySet)}
+        return {
+            k: self._memberships[k]
+            for k in self._memberships
+            if not isinstance(self._memberships[k], EntitySet)
+        }
 
     @property
     def children(self):
@@ -229,7 +231,13 @@ class Entity(object):
 
         def _comp(a, b, seen):
             # Compare top level properties: same class? same ids? same children? same parents? same attributes?
-            if (a.__class__ != b.__class__) or (a.uid != b.uid) or (a.uidset != b.uidset) or (a.properties != b.properties) or (a.memberships != b.memberships):
+            if (
+                (a.__class__ != b.__class__)
+                or (a.uid != b.uid)
+                or (a.uidset != b.uidset)
+                or (a.properties != b.properties)
+                or (a.memberships != b.memberships)
+            ):
                 return False
             # If all agree then look at the next level down since a and b share uidsets.
             for uid, elt in a.elements.items():
@@ -243,6 +251,7 @@ class Entity(object):
                 elif elt != b[uid]:
                     return False
             return True
+
         return _comp(self, other, seen)
 
     def __len__(self):
@@ -251,12 +260,12 @@ class Entity(object):
 
     def __str__(self):
         """Return the entity uid."""
-        return f'{self.uid}'
+        return f"{self.uid}"
 
     def __repr__(self):
         """Returns a string resembling the constructor for entity without any
         children"""
-        return f'Entity({self._uid},{list(self.uidset)},{self.properties})'
+        return f"Entity({self._uid},{list(self.uidset)},{self.properties})"
 
     def __contains__(self, item):
         """
@@ -295,7 +304,7 @@ class Entity(object):
         If item not in entity, returns None.
         """
         if isinstance(item, Entity):
-            return self._elements.get(item.uid, '')
+            return self._elements.get(item.uid, "")
         else:
             return self._elements.get(item)
 
@@ -322,17 +331,16 @@ class Entity(object):
         None
 
         """
-        if k == 'uid':
+        if k == "uid":
             raise HyperNetXError(
-                'Cannot reassign uid to Entity once it'
-                ' has been created. Create a clone instead.'
+                "Cannot reassign uid to Entity once it"
+                " has been created. Create a clone instead."
             )
-        elif k == 'elements':
-            raise HyperNetXError('To add elements to Entity use self.add().')
-        elif k == 'memberships':
+        elif k == "elements":
+            raise HyperNetXError("To add elements to Entity use self.add().")
+        elif k == "memberships":
             raise HyperNetXError(
-                'Can\'t choose your own memberships, '
-                'they are like parents!'
+                "Can't choose your own memberships, " "they are like parents!"
             )
         else:
             self.__dict__[k] = v
@@ -566,7 +574,7 @@ class Entity(object):
 
         """
         newelements = [self[e] for e in element_subset if e in self]
-        name = name or f'{self.uid}_r'
+        name = name or f"{self.uid}_r"
         return Entity(name, newelements, **self.properties)
 
     def add(self, *args):
@@ -583,7 +591,7 @@ class Entity(object):
 
         Note
         ----
-        Adding an element to an object in a hypergraph will not add the 
+        Adding an element to an object in a hypergraph will not add the
         element to the hypergraph and will cause an error. Use :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>`
         or :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph.add_node_to_edge>` instead.
 
@@ -639,8 +647,8 @@ class Entity(object):
             # if item is an Entity, descendents will be compared to avoid collisions
             if item.uid == self.uid:
                 raise HyperNetXError(
-                    f'Error: Self reference in submitted elements.'
-                    f' Entity {self.uid} may not contain itself. '
+                    f"Error: Self reference in submitted elements."
+                    f" Entity {self.uid} may not contain itself. "
                 )
             elif item in self:
                 # item is already an element so only the properties will be updated
@@ -664,16 +672,15 @@ class Entity(object):
             # Otherwise, at most it will be added as an empty Entity.
             if self.uid == item:
                 raise HyperNetXError(
-                    f'Error: Self reference in submitted elements.'
-                    f' Entity {self.uid} may not contain itself.'
+                    f"Error: Self reference in submitted elements."
+                    f" Entity {self.uid} may not contain itself."
                 )
             elif item not in self._elements:
                 if item in checkelts:
                     self._elements[item] = checkelts[item]
                     checkelts[item]._memberships[self.uid] = self
                 else:
-                    self._elements[item] = \
-                        Entity(item, _memberships={self.uid: self})
+                    self._elements[item] = Entity(item, _memberships={self.uid: self})
 
         return self
 
@@ -813,16 +820,18 @@ class EntitySet(Entity):
     def __init__(self, uid, elements=[], **props):
         super().__init__(uid, elements, **props)
         if not self.is_bipartite:
-            raise HyperNetXError('Entity does not satisfy the Bipartite Condition, elements and children are not disjoint.')
+            raise HyperNetXError(
+                "Entity does not satisfy the Bipartite Condition, elements and children are not disjoint."
+            )
 
     def __str__(self):
         """Return the entityset uid."""
-        return f'{self.uid}'
+        return f"{self.uid}"
 
     def __repr__(self):
         """Returns a string resembling the constructor for entityset without any
         children"""
-        return f'EntitySet({self._uid},{list(self.uidset)},{self.properties})'
+        return f"EntitySet({self._uid},{list(self.uidset)},{self.properties})"
 
     def add(self, *args):
         """
@@ -842,16 +851,22 @@ class EntitySet(Entity):
         for item in args:
             if isinstance(item, Entity):
                 if item.uid in self.children:
-                    raise HyperNetXError(f'Error: Fails the Bipartite Condition for EntitySet. {item.uid} references a child of an existing Entity in the EntitySet.')
+                    raise HyperNetXError(
+                        f"Error: Fails the Bipartite Condition for EntitySet. {item.uid} references a child of an existing Entity in the EntitySet."
+                    )
                 elif not self.uidset.isdisjoint(item.uidset):
-                    raise HyperNetXError(f'Error: Fails the bipartite condition for EntitySet.')
+                    raise HyperNetXError(
+                        f"Error: Fails the bipartite condition for EntitySet."
+                    )
                 else:
                     Entity.add_element(self, item)
             else:
                 if not item in self.children:
                     Entity.add_element(self, item)
                 else:
-                    raise HyperNetXError(f'Error: {item} references a child of an existing Entity in the EntitySet.')
+                    raise HyperNetXError(
+                        f"Error: {item} references a child of an existing Entity in the EntitySet."
+                    )
         return self
 
     def clone(self, newuid):
@@ -887,7 +902,7 @@ class EntitySet(Entity):
         Returns
         -------
          : EntitySet
-        eq_classes : dict 
+        eq_classes : dict
             if return_equivalence_classes = True
 
         Notes
@@ -913,9 +928,13 @@ class EntitySet(Entity):
         shared_children = defaultdict(set)
         for e in self.__call__():
             shared_children[frozenset(e.uidset)].add(e.uid)
-        new_entity_dict = {f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()}
+        new_entity_dict = {
+            f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()
+        }
         if return_equivalence_classes:
-            eq_classes = {f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()}
+            eq_classes = {
+                f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()
+            }
             return EntitySet(newuid, new_entity_dict), dict(eq_classes)
         else:
             return EntitySet(newuid, new_entity_dict)
@@ -1019,5 +1038,5 @@ class EntitySet(Entity):
 
         """
         newelements = [self[e] for e in element_subset if e in self]
-        name = name or f'{self.uid}_r'
+        name = name or f"{self.uid}_r"
         return EntitySet(name, newelements, **self.properties)
