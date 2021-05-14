@@ -250,6 +250,13 @@ class StaticEntity(object):
 
     @property
     def arr(self):
+        """
+        Summary
+        
+        Returns
+        -------
+        np.ndarray
+        """
         if self._arr is not None:
             if type(self._arr) == int and self._arr == 0:
                 print("arr cannot be computed")
@@ -267,6 +274,12 @@ class StaticEntity(object):
 
     @property
     def array_with_counts(self):
+        """Summary
+        
+        Returns
+        -------
+        np.ndarray
+        """
         if self._arr is not None:
             if type(self._arr) == int and self._arr == 0:
                 print("arr cannot be computed")
@@ -285,62 +298,101 @@ class StaticEntity(object):
     @property
     def data(self):
         """
-        -- Data array or tensor array of staticentity
+        Data array or tensor array of staticentity
+        
+        Returns
+        -------
+        np.ndarray
         """
+
         return self._data
 
     @property
     def labels(self):
         """
-        <<<>>> Ordered dictionary of labels
+        Ordered dictionary of labels
+        
+        Returns
+        -------
+        collections.OrderedDict
         """
         return self._labels
 
     @property
     def dimensions(self):
         """
-        <<<>>> Dimension of staticentity data
+        Dimension of staticentity data
+        
+        Returns
+        -------
+        tuple
         """
         return self._dimensions
 
     @property
     def dimsize(self):
         """
-        <<<>>> Number of categories in the data
+        Number of categories in the data
+        
+        Returns
+        -------
+        int
         """
         return self._dimsize
 
     @property
     def keys(self):
         """
-        <<<>>> Array of keys of labels
+        Array of keys of labels
+        
+        Returns
+        -------
+        np.ndarray
         """
         return self._keys
 
     @property
     def keyindex(self):
         """
-        <<<>>> Returns the index of a category in keys array
+        Returns the index of a category in keys array
+        
+        Returns
+        -------
+        int
         """
         return self._keyindex
 
     @property
     def uid(self):
         """
-        <<<>>>
+        ???
+        
+        Returns
+        -------
+        NoneType
         """
         return self._uid
 
     @property
     def uidset(self):
         """
-        <<<>>> Returns a set of the string identifiers for staticentity.
+        Returns a set of the string identifiers for staticentity
+        
+        Returns
+        -------
+        frozenset
         """
         return self.uidset_by_level(0)
 
     @property
     def elements(self):
         """
+        Keys and values in the order of insertion 
+        
+        Returns
+        -------
+        collections.OrderedDict
+        
         level1 = elements, level2 = children
         """
         if len(self._keys) == 1:
@@ -350,69 +402,184 @@ class StaticEntity(object):
 
     @property
     def children(self):
+        """
+        Labels of keys of first index
+
+        Returns
+        -------
+        set
+        """
         return set(self._labs(1))
 
     @property
     def incidence_dict(self):
+        """
+        Dictionary using index 0 as nodes and index 1 as edges
+
+        Returns
+        -------
+        collections.OrderedDict
+        """
         return self.elements_by_level(0, 1, translate=True)
 
     @property
     def dataframe(self):
         """
-        <<<>>> Returns the entity data in DataFrame format
+        Returns the entity data in DataFrame format
+        
+        Returns
+        -------
+        pandas.core.frame.DataFrame
         """
         return self.turn_entity_data_into_dataframe(self.data)
 
     def __len__(self):
-        """Returns the number of elements in staticentity"""
+        """
+        Returns the number of elements in staticentity
+        
+        Returns
+        -------
+        int
+        """
         return self._dimensions[0]
 
     def __str__(self):
-        """Return the staticentity uid."""
+        """
+        Return the staticentity uid
+        
+        Returns
+        -------
+        string
+        """
         return f"{self.uid}"
 
     def __repr__(self):
-        """Returns a string resembling the constructor for staticentity without any
-        children"""
+        """
+        Returns a string resembling the constructor for staticentity without any
+        children
+        
+        Returns
+        -------
+        string
+        """
         return f"StaticEntity({self._uid},{list(self.uidset)},{self.properties})"
 
     def __contains__(self, item):
         """
         Defines containment for StaticEntity based on labels/categories.
+        
+        Parameters
+        ----------
+        item : string
+        
+        Returns
+        -------
+        bool
         """
         return item in np.concatenate(list(self._labels.values()))
 
     def __getitem__(self, item):
+        """
+        Get value of key in E.elements
+        
+        Parameters
+        ----------
+        item : string
+        
+        Returns
+        -------
+        list
+        """
         # return self.elements_by_level(0, 1)[item]
         return self.elements[item]
 
     def __iter__(self):
+        """
+        Create iterator from E.elements
+
+        Returns
+        -------
+        odict_iterator
+        """
         return iter(self.elements)
 
     def __call__(self, label_index=0):
         return iter(self._labs(label_index))
 
     def size(self):
-        """The number of elements in E, the size of dimension 0 in the E.arr"""
+        """
+        The number of elements in E, the size of dimension 0 in the E.arr
+        
+        Returns
+        -------
+        int
+        """
         return len(self)
 
     def labs(self, kdx):
-        """Retrieve labels by index in keys"""
+        """
+        Retrieve labels by index in keys
+        
+        Parameters
+        ----------
+        kdx : int
+            index of key in E.keys
+        
+        Returns
+        -------
+        np.ndarray
+        """
         return self._labs(kdx)
 
     def is_empty(self, level=0):
-        """Boolean indicating if entity.elements is empty"""
+        """
+        Boolean indicating if entity.elements is empty
+        
+        Parameters
+        ----------
+        level : int, optional
+        
+        Returns
+        -------
+        bool
+        """
         return len(self._labs(level)) == 0
 
     def uidset_by_level(self, level=0):
-        """The labels found in columns = level"""
+        """
+        The labels found in columns = level
+        
+        Parameters
+        ----------
+        level : int, optional
+        
+        Returns
+        -------
+        frozenset
+        """
         return frozenset(self._labs(level))  # should be update this to tuples?
 
     def elements_by_level(self, level1=0, level2=None, translate=False):
+
         """
+        Elements of staticentity by specified column
+        
+        Parameters
+        ----------
+        level1 : int, optional
+            edges
+        level2 : int, optional
+            nodes
+        translate : bool, optional
+            whether to replace indices with labels
+        
+        Returns
+        -------
+        collections.defaultdict
+
         think: level1 = edges, level2 = nodes
-        Is there a better way to view a slice of self._arr?
         """
+        # Is there a better way to view a slice of self._arr?
         if level1 > self.dimsize - 1 or level1 < 0:
             print(f"This StaticEntity has no level {level1}.")
             return
@@ -444,8 +611,21 @@ class StaticEntity(object):
 
     def incidence_matrix(self, level1=0, level2=1, weighted=False, index=False):
         """
-        Convenience method to navigate large tensor.
-        level1 indexes the columns and level2 indexes the rows
+        Convenience method to navigate large tensor
+        
+        Parameters
+        ----------
+        level1 : int, optional
+            indexes columns
+        level2 : int, optional
+            indexes rows
+        weighted : bool, optional
+        index : bool, optional
+        
+        Returns
+        -------
+        scipy.sparse.csr.csr_matrix
+
         think level1 = edges, level2 = nodes
         """
         if not weighted:
@@ -479,7 +659,8 @@ class StaticEntity(object):
     def turn_entity_data_into_dataframe(
         self, data_subset
     ):  # add option to include multiplicities stored in properties
-        """Summary
+        """
+        Convert rows of original data in StaticEntity to dataframe
 
         Parameters
         ----------
@@ -488,7 +669,7 @@ class StaticEntity(object):
 
         Returns
         -------
-        pandas.Dataframe
+        pandas.core.frame.DataFrame
             Columns and cell entries are derived from data and self.labels
         """
         df = pd.DataFrame(data=data_subset, columns=self.keys)
@@ -511,9 +692,17 @@ class StaticEntity(object):
         return self.__class__(entity=df, uid=uid)
 
     def translate(self, level, index):
-        # returns category of dimension and value of index in that dimension
         """
-        <<<>>> Translates a category index and value index to label
+        Replaces a category index and value index with label
+        
+        Parameters
+        ----------
+        level : int
+        index : int
+        
+        Returns
+        -------
+        numpy.str_
         """
         if isinstance(index, int):
             return self._labs(level)[index]
@@ -521,7 +710,17 @@ class StaticEntity(object):
             return [self._labs(level)[idx] for idx in index]
 
     def translate_arr(self, coords):
-        """Translates a single cell in the entity array"""
+        """
+        Translates a single cell in the entity array
+        
+        Parameters
+        ----------
+        coords : tuple of ints
+        
+        Returns
+        -------
+        list
+        """
         assert len(coords) == self.dimsize
         translation = list()
         for idx in range(self.dimsize):
@@ -530,7 +729,16 @@ class StaticEntity(object):
 
     def index(self, category, value=None):
         """
-        <<<>>> Returns dimension of category and index of value
+        Returns dimension of category and index of value
+        
+        Parameters
+        ----------
+        category : string
+        value : string, optional
+        
+        Returns
+        -------
+        int or tuple of ints
         """
         if value is not None:
             return self._keyindex(category), self._index(category, value)
@@ -539,13 +747,36 @@ class StaticEntity(object):
 
     def indices(self, category, values):
         """
-        <<<>>> Returns dimension of category and index of values (array)
+        Returns dimension of category and index of values (array)
+        
+        Parameters
+        ----------
+        category : string
+        values : single string or array of strings
+        
+        Returns
+        -------
+        list
         """
         return [self._index(category, value) for value in values]
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
-        """returns first level item appears by order of keys from minlevel to maxlevel
-        inclusive"""
+        """
+        Returns first level item appears by order of keys from minlevel to maxlevel
+        inclusive
+        
+        Parameters
+        ----------
+        item : string
+        min_level : int, optional
+        max_level : int, optional
+
+        return_index : bool, optional
+            
+        Returns
+        -------
+        tuple
+        """
         n = len(self.dimensions)
         if max_level is not None:
             n = min([max_level + 1, n])
@@ -602,8 +833,14 @@ class StaticEntitySet(StaticEntity):
             super().__init__(entity=E, uid=uid, **props)
 
     def __repr__(self):
-        """Returns a string resembling the constructor for entityset without any
-        children"""
+        """
+        Returns a string resembling the constructor for entityset without any
+        children
+        
+        Returns
+        -------
+        string
+        """
         return f"StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})"
 
     def incidence_matrix(self, sparse=True, weighted=False, index=False):

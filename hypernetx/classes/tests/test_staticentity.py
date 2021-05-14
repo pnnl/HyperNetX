@@ -17,6 +17,18 @@ def test_staticentity_constructor(seven_by_six):
     assert "I" in ent
     assert "K" in ent
 
+def test_staticentity_property(harry_potter):
+    arr = harry_potter.arr
+    labels = harry_potter.labels
+    ent = StaticEntity(arr=arr, labels=labels)
+    assert len(ent.keys) == 5
+    assert ent.arr is not ent.array_with_counts
+    assert len(ent.uidset) == 7
+    assert len(ent.elements) == 7
+    assert isinstance(ent.elements['Hufflepuff'], list)
+    assert ent.is_empty(2) == False
+    assert len(ent.incidence_dict['Gryffindor']) == 6
+    assert ent.keyindex('House') == 0
 
 def test_staticentity_attributes(harry_potter):
     arr = harry_potter.arr
@@ -26,22 +38,14 @@ def test_staticentity_attributes(harry_potter):
     assert isinstance(ent.data, np.ndarray)
     assert ent.data.shape == ent.dataframe.shape
     assert isinstance(ent.labels, dict)
-    assert isinstance(ent.array_with_counts, np.ndarray)
     # uid??
-    assert len(ent.uidset) == 7
-    assert isinstance(ent.uidset, frozenset)
-    assert len(ent.elements) == 7
-    assert isinstance(ent.elements, dict)
-    assert isinstance(ent.elements['Hufflepuff'], list)
-    assert len(ent.incidence_dict['Gryffindor']) == 6
     assert ent.dimensions == (7, 11, 10, 36, 26)
     assert ent.dimsize == 5
-    assert len(ent.keys) == 5
-    assert ent.keyindex('House') == 0
-    assert ent.is_empty(2) == False
     assert len(ent.labs(0)) == 7
-    assert isinstance(ent.children, set)
-    assert isinstance(ent.dataframe, pd.DataFrame)
+    df = ent.dataframe
+    assert list(df.columns) == ['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']
+    assert ent.dimensions == tuple(df.nunique())
+    assert list(ent.labels['House']) == list(df['House'].unique())
 
 
 def test_staticentity_custom_attributes(harry_potter):
@@ -56,6 +60,7 @@ def test_staticentity_custom_attributes(harry_potter):
     assert ent.__getitem__('Slytherin') == ['Half-blood', 'Pure-blood', 'Pure-blood or half-blood']
     assert isinstance(ent.__iter__(), Iterable)
     assert isinstance(ent.__call__(), Iterable)
+    assert ent.__call__().__next__() == 'Unknown House'
 
 
 def test_staticentity_level(seven_by_six):
@@ -136,10 +141,11 @@ def test_staticentityset(harry_potter):
     labels = harry_potter.labels
     ent = StaticEntitySet(arr=arr, labels=labels, level1=1, level2=3)
     assert ent.keys[0] == "Blood status"
-    ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
+    assert len(ent.keys) == 2
+    assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
     assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
     assert ent.incidence_matrix().shape == (36, 11)
-    assert isinstance(ent.convert_to_entityset('Hair colour'), EntitySet)
+    assert len(ent.convert_to_entityset('Hair colour')) == 11
 
 
 def test_staticentity_construct_from_entity(seven_by_six):
