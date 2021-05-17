@@ -2235,106 +2235,298 @@ levels are given by the order of these labels</p>
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.arr">
 <em class="property">property </em><code class="sig-name descname">arr</code><a class="headerlink" href="#classes.staticentity.StaticEntity.arr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="classes.staticentity.StaticEntity.array_with_counts">
-<em class="property">property </em><code class="sig-name descname">array_with_counts</code><a class="headerlink" href="#classes.staticentity.StaticEntity.array_with_counts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Summary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.children">
 <em class="property">property </em><code class="sig-name descname">children</code><a class="headerlink" href="#classes.staticentity.StaticEntity.children" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Labels of keys of first index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.data">
 <em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#classes.staticentity.StaticEntity.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Data array or tensor array of staticentity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.dataframe">
 <em class="property">property </em><code class="sig-name descname">dataframe</code><a class="headerlink" href="#classes.staticentity.StaticEntity.dataframe" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the entity data in DataFrame format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.core.frame.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.dimensions">
 <em class="property">property </em><code class="sig-name descname">dimensions</code><a class="headerlink" href="#classes.staticentity.StaticEntity.dimensions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Dimension of staticentity data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.dimsize">
 <em class="property">property </em><code class="sig-name descname">dimsize</code><a class="headerlink" href="#classes.staticentity.StaticEntity.dimsize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Number of categories in the data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.elements">
 <em class="property">property </em><code class="sig-name descname">elements</code><a class="headerlink" href="#classes.staticentity.StaticEntity.elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>level1 = elements, level2 = children</p>
+<dd><p>Keys and values in the order of insertion</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>collections.OrderedDict</em></p></li>
+<li><p><em>level1 = elements, level2 = children</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.elements_by_level">
 <code class="sig-name descname">elements_by_level</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level1</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">level2</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">translate</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.elements_by_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.elements_by_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>think: level1 = edges, level2 = nodes
-Is there a better way to view a slice of self._arr?</p>
+<dd><p>Elements of staticentity by specified column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level1</strong> (<em>int</em><em>, </em><em>optional</em>) – edges</p></li>
+<li><p><strong>level2</strong> (<em>int</em><em>, </em><em>optional</em>) – nodes</p></li>
+<li><p><strong>translate</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to replace indices with labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>collections.defaultdict</em></p></li>
+<li><p><strong>think</strong> (<em>level1 = edges, level2 = nodes</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.incidence_dict">
 <em class="property">property </em><code class="sig-name descname">incidence_dict</code><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Dictionary using index 0 as nodes and index 1 as edges</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>collections.OrderedDict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.incidence_matrix">
 <code class="sig-name descname">incidence_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level1</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">level2</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">weighted</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.incidence_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method to navigate large tensor.
-level1 indexes the columns and level2 indexes the rows
-think level1 = edges, level2 = nodes</p>
+<dd><p>Convenience method to navigate large tensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level1</strong> (<em>int</em><em>, </em><em>optional</em>) – indexes columns</p></li>
+<li><p><strong>level2</strong> (<em>int</em><em>, </em><em>optional</em>) – indexes rows</p></li>
+<li><p><strong>weighted</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>scipy.sparse.csr.csr_matrix</em></p></li>
+<li><p><em>think level1 = edges, level2 = nodes</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.index">
 <code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">category</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.index" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns dimension of category and index of value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category</strong> (<em>string</em>) – </p></li>
+<li><p><strong>value</strong> (<em>string</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int or tuple of ints</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.indices">
 <code class="sig-name descname">indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">category</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.indices" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns dimension of category and index of values (array)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category</strong> (<em>string</em>) – </p></li>
+<li><p><strong>values</strong> (<em>single string</em><em> or </em><em>array of strings</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.is_empty">
 <code class="sig-name descname">is_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.is_empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.is_empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Boolean indicating if entity.elements is empty</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.keyindex">
 <em class="property">property </em><code class="sig-name descname">keyindex</code><a class="headerlink" href="#classes.staticentity.StaticEntity.keyindex" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the index of a category in keys array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.keys">
 <em class="property">property </em><code class="sig-name descname">keys</code><a class="headerlink" href="#classes.staticentity.StaticEntity.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Array of keys of labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#classes.staticentity.StaticEntity.labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Ordered dictionary of labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>collections.OrderedDict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.labs">
 <code class="sig-name descname">labs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kdx</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.labs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.labs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve labels by index in keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kdx</strong> (<em>int</em>) – index of key in E.keys</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.level">
 <code class="sig-name descname">level</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em>, <em class="sig-param"><span class="n">min_level</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_level</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_index</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.level" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns first level item appears by order of keys from minlevel to maxlevel
+<dd><p>Returns first level item appears by order of keys from minlevel to maxlevel
 inclusive</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> (<em>string</em>) – </p></li>
+<li><p><strong>min_level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>max_level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>return_index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2351,23 +2543,57 @@ inclusive</p>
 <dt id="classes.staticentity.StaticEntity.size">
 <code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of elements in E, the size of dimension 0 in the E.arr</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.translate">
 <code class="sig-name descname">translate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.translate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Replaces a category index and value index with label</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<em>int</em>) – </p></li>
+<li><p><strong>index</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a href="#id3"><span class="problematic" id="id4">numpy.str_</span></a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.translate_arr">
 <code class="sig-name descname">translate_arr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coords</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.translate_arr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.translate_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translates a single cell in the entity array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>coords</strong> (<em>tuple of ints</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.turn_entity_data_into_dataframe">
 <code class="sig-name descname">turn_entity_data_into_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_subset</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.turn_entity_data_into_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.turn_entity_data_into_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Summary</p>
+<dd><p>Convert rows of original data in StaticEntity to dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>numpy.ndarray</em>) – Subset of the rows in the original data held in the StaticEntity</p>
@@ -2376,7 +2602,7 @@ inclusive</p>
 <dd class="field-even"><p>Columns and cell entries are derived from data and self.labels</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.Dataframe</p>
+<dd class="field-odd"><p>pandas.core.frame.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2384,17 +2610,46 @@ inclusive</p>
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.uid">
 <em class="property">property </em><code class="sig-name descname">uid</code><a class="headerlink" href="#classes.staticentity.StaticEntity.uid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>???</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>NoneType</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.uidset">
 <em class="property">property </em><code class="sig-name descname">uidset</code><a class="headerlink" href="#classes.staticentity.StaticEntity.uidset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a set of the string identifiers for staticentity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>frozenset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntity.uidset_by_level">
 <code class="sig-name descname">uidset_by_level</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.uidset_by_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.uidset_by_level" title="Permalink to this definition">¶</a></dt>
 <dd><p>The labels found in columns = level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>frozenset</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2416,9 +2671,24 @@ inclusive</p>
 <dl class="py method">
 <dt id="classes.staticentity.StaticEntitySet.incidence_matrix">
 <code class="sig-name descname">incidence_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sparse</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">weighted</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet.incidence_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet.incidence_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method to navigate large tensor.
-level1 indexes the columns and level2 indexes the rows
-think level1 = edges, level2 = nodes</p>
+<dd><p>Convenience method to navigate large tensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level1</strong> (<em>int</em><em>, </em><em>optional</em>) – indexes columns</p></li>
+<li><p><strong>level2</strong> (<em>int</em><em>, </em><em>optional</em>) – indexes rows</p></li>
+<li><p><strong>weighted</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>scipy.sparse.csr.csr_matrix</em></p></li>
+<li><p><em>think level1 = edges, level2 = nodes</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
