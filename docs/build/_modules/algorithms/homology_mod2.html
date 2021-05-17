@@ -97,6 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../algorithms/modules.html">Algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../drawing/modules.html">Drawing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reports/modules.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nwhy_api.html">NWHY API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
@@ -205,25 +206,25 @@
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;kchainbasis&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;bkMatrix&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;swap_rows&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;swap_columns&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;add_to_row&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;add_to_column&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;logical_dot&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;logical_matmul&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;matmulreduce&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;logical_matadd&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;smith_normal_form_mod2&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;reduced_row_echelon_form_mod2&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;boundary_group&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;chain_complex&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;betti&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;betti_numbers&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;homology_basis&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;hypergraph_homology_basis&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;interpret&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;kchainbasis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bkMatrix&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;swap_rows&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;swap_columns&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;add_to_row&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;add_to_column&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;logical_dot&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;logical_matmul&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;matmulreduce&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;logical_matadd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;smith_normal_form_mod2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;reduced_row_echelon_form_mod2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;boundary_group&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;chain_complex&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;betti&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;betti_numbers&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;homology_basis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hypergraph_homology_basis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;interpret&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -255,6 +256,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+
     <span class="n">kchains</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
         <span class="n">en</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
@@ -286,7 +288,7 @@
     <span class="n">bk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">km1basis</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">kbasis</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">kbasis</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">)):</span>
-            <span class="n">face</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">cell</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">cell</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">km1basis</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
             <span class="n">col</span> <span class="o">=</span> <span class="n">kbasis</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
             <span class="n">bk</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
@@ -442,7 +444,7 @@
 <span class="sd">        If arrays are not of the same length an error will be raised.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar2</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;logical_dot requires two 1-d arrays of the same length&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;logical_dot requires two 1-d arrays of the same length&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">ar1</span><span class="p">,</span> <span class="n">ar2</span><span class="p">))</span></div>
 
@@ -474,7 +476,9 @@
     <span class="n">L1</span><span class="p">,</span> <span class="n">R1</span> <span class="o">=</span> <span class="n">mat1</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">L2</span><span class="p">,</span> <span class="n">R2</span> <span class="o">=</span> <span class="n">mat2</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">if</span> <span class="n">R1</span> <span class="o">!=</span> <span class="n">L2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;logical_matmul called for matrices with inner dimensions mismatched&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
+            <span class="s2">&quot;logical_matmul called for matrices with inner dimensions mismatched&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">L1</span><span class="p">,</span> <span class="n">R2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">mat2T</span> <span class="o">=</span> <span class="n">mat2</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
@@ -544,7 +548,9 @@
     <span class="n">S2</span> <span class="o">=</span> <span class="n">mat2</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">S1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">S1</span> <span class="o">!=</span> <span class="n">S2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;logical_matadd called for matrices with different dimensions&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
+            <span class="s2">&quot;logical_matadd called for matrices with different dimensions&quot;</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">S1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">S1</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">mat</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">mat1</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">mat2</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
@@ -557,6 +563,7 @@
 
 <span class="c1"># Convenience methods for computing Smith Normal Form</span>
 <span class="c1"># All of these operations have themselves as inverses</span>
+
 
 <span class="k">def</span> <span class="nf">_sr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">swap_rows</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
@@ -710,7 +717,9 @@
                 <span class="n">S</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">_sr</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">rdx</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
                 <span class="n">Linv</span> <span class="o">=</span> <span class="n">swap_columns</span><span class="p">(</span><span class="n">rdx</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Linv</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># add s1th row to every nonzero row</span>
-            <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dimL</span><span class="p">)</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">s1</span> <span class="ow">and</span> <span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">cdx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">row_indices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dimL</span><span class="p">)</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">s1</span> <span class="ow">and</span> <span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">cdx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">]</span>
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">row_indices</span><span class="p">:</span>
                 <span class="n">S</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">_ar</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
                 <span class="n">Linv</span> <span class="o">=</span> <span class="n">add_to_column</span><span class="p">(</span><span class="n">Linv</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
@@ -777,32 +786,36 @@
         <span class="n">krange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only kth simplicial homology groups for k&gt;0 may be computed.&quot;</span>\
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Only kth simplicial homology groups for k&gt;0 may be computed.&quot;</span>
                 <span class="s2">&quot;If you are interested in k=0, compute the number connected components.&quot;</span>
+            <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">max_dim</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No simplices of dim </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> exist. k adjusted to max dim.&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No simplices of dim </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> exist. k adjusted to max dim.&quot;</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">krange</span> <span class="o">=</span> <span class="p">[</span><span class="nb">min</span><span class="p">([</span><span class="n">k</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">])]</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Please enter krange as a positive integer or list of integers: [&lt;min k&gt;,&lt;max k&gt;] inclusive.&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please enter krange as a positive integer or list of integers: [&lt;min k&gt;,&lt;max k&gt;] inclusive.&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;k must be an integer or a list of two integers [min,max] with min &lt;=max&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;k must be an integer or a list of two integers [min,max] with min &lt;=max&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">krange</span> <span class="o">=</span> <span class="n">k</span>
 
     <span class="k">if</span> <span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_dim</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No simplices of dim </span><span class="si">{</span><span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> exist. Range adjusted to max dim.&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No simplices of dim </span><span class="si">{</span><span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> exist. Range adjusted to max dim.&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_dim</span>
     <span class="k">if</span> <span class="n">krange</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only kth simplicial homology groups for k&gt;0 may be computed.&quot;</span>\
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Only kth simplicial homology groups for k&gt;0 may be computed.&quot;</span>
             <span class="s2">&quot;If you are interested in k=0, compute the number of connected components.&quot;</span>
+        <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">krange</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">krange</span>
@@ -940,11 +953,15 @@
     <span class="n">max_dim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bd</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">k</span><span class="p">:</span>
         <span class="n">krange</span> <span class="o">=</span> <span class="n">_get_krange</span><span class="p">(</span><span class="n">max_dim</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">kvals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">bd</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">krange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)))</span>  <span class="c1"># to get kth dim need k+1 bdry matrix</span>
+        <span class="n">kvals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">bd</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">krange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">krange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="p">)</span>  <span class="c1"># to get kth dim need k+1 bdry matrix</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">kvals</span> <span class="o">=</span> <span class="n">bd</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-    <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Linv</span> <span class="o">=</span> <span class="n">_compute_matrices_for_snf</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kvals</span><span class="p">})</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Linv</span> <span class="o">=</span> <span class="n">_compute_matrices_for_snf</span><span class="p">(</span>
+        <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kvals</span><span class="p">}</span>
+    <span class="p">)</span>
 
     <span class="n">rank</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">kdx</span> <span class="ow">in</span> <span class="n">kvals</span><span class="p">:</span>
@@ -974,7 +991,6 @@
         <span class="k">return</span> <span class="n">basis</span></div>
 
 
-
 <div class="viewcode-block" id="hypergraph_homology_basis"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.hypergraph_homology_basis">[docs]</a><span class="k">def</span> <span class="nf">hypergraph_homology_basis</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shortest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpreted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the kth-homology groups mod 2 for the ASC</span>
@@ -988,7 +1004,7 @@
 <span class="sd">        length 2 indicating min and max dimensions to be</span>
 <span class="sd">        computed</span>
 <span class="sd">    shortest : bool, optional, default=False</span>
-<span class="sd">        option to look for shortest representative for each coset in the </span>
+<span class="sd">        option to look for shortest representative for each coset in the</span>
 <span class="sd">        homology group, only good for relatively small examples</span>
 <span class="sd">    interpreted : bool, optional, default = True</span>
 <span class="sd">        if True will return an explicit basis in terms of the k-chains</span>
@@ -1011,7 +1027,9 @@
                 <span class="n">basis</span><span class="p">[</span><span class="n">kdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbasis</span><span class="p">[</span><span class="n">kdx</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">tbasis</span><span class="p">[</span><span class="n">kdx</span><span class="p">]:</span>
-                    <span class="n">coset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">imgrp</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># dimensions appear to be wrong. See tests2 cell 5</span>
+                    <span class="n">coset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">imgrp</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">)</span>  <span class="c1"># dimensions appear to be wrong. See tests2 cell 5</span>
                     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">coset</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
                     <span class="n">basis</span><span class="p">[</span><span class="n">kdx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coset</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="n">basis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
@@ -1047,6 +1065,7 @@
 <span class="sd">        list of k-cells referenced by data in Ck</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cell</span>
@@ -1059,7 +1078,7 @@
     <span class="n">output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Ck</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s1">&#39;elements of arr must have the same length as Ck&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;elements of arr must have the same length as Ck&quot;</span><span class="p">)</span>
         <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">translate</span><span class="p">(</span><span class="n">Ck</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span> <span class="k">if</span> <span class="n">vec</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">output</span></div>
 </pre></div>

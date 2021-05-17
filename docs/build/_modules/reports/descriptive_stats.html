@@ -97,6 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../algorithms/modules.html">Algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../drawing/modules.html">Drawing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reports/modules.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nwhy_api.html">NWHY API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
@@ -179,47 +180,47 @@
 <span class="kn">from</span> <span class="nn">hypernetx.utils.decorators</span> <span class="kn">import</span> <span class="n">not_implemented_for</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;centrality_stats&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;edge_size_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;degree_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;comp_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;s_comp_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;toplex_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;s_node_diameter_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;s_edge_diameter_dist&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;info&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;info_dict&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;dist_stats&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;centrality_stats&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;edge_size_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;degree_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;comp_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s_comp_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;toplex_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s_node_diameter_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s_edge_diameter_dist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;info_dict&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="centrality_stats"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.centrality_stats">[docs]</a><span class="k">def</span> <span class="nf">centrality_stats</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes basic centrality statistics for X</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X : </span>
+<span class="sd">    X :</span>
 <span class="sd">        an iterable of numbers</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    [min, max, mean, median, standard deviation] : list</span>
 <span class="sd">        List of centrality statistics for X</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span></div>
 
 
 <div class="viewcode-block" id="edge_size_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.edge_size_dist">[docs]</a><span class="k">def</span> <span class="nf">edge_size_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes edge sizes of a hypergraph.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
-<span class="sd">    aggregated : </span>
-<span class="sd">        If aggregated is True, returns a dictionary of </span>
-<span class="sd">        edge sizes and counts. If aggregated is False, returns a </span>
+<span class="sd">    aggregated :</span>
+<span class="sd">        If aggregated is True, returns a dictionary of</span>
+<span class="sd">        edge sizes and counts. If aggregated is False, returns a</span>
 <span class="sd">        list of edge sizes in H.</span>
 
 <span class="sd">    Returns</span>
@@ -227,7 +228,7 @@
 <span class="sd">     edge_size_dist : list or dict</span>
 <span class="sd">        List of edge sizes or dictionary of edge size distribution.</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Counter</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">())</span>
     <span class="k">else</span><span class="p">:</span>
@@ -235,22 +236,22 @@
 
 
 <div class="viewcode-block" id="degree_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.degree_dist">[docs]</a><span class="k">def</span> <span class="nf">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes degrees of nodes of a hypergraph.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
-<span class="sd">    aggregated : </span>
-<span class="sd">        If aggregated is True, returns a dictionary of </span>
-<span class="sd">        degrees and counts. If aggregated is False, returns a </span>
+<span class="sd">    aggregated :</span>
+<span class="sd">        If aggregated is True, returns a dictionary of</span>
+<span class="sd">        degrees and counts. If aggregated is False, returns a</span>
 <span class="sd">        list of degrees in H.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     degree_dist : list or dict</span>
 <span class="sd">        List of degrees or dictionary of degree distribution</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">nwhy</span><span class="p">:</span>
         <span class="n">distr</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">node_size_dist</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -262,15 +263,15 @@
 
 
 <div class="viewcode-block" id="comp_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.comp_dist">[docs]</a><span class="k">def</span> <span class="nf">comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes component sizes, number of nodes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
-<span class="sd">    aggregated : </span>
-<span class="sd">        If aggregated is True, returns a dictionary of </span>
-<span class="sd">        component sizes (number of nodes) and counts. If aggregated </span>
+<span class="sd">    aggregated :</span>
+<span class="sd">        If aggregated is True, returns a dictionary of</span>
+<span class="sd">        component sizes (number of nodes) and counts. If aggregated</span>
 <span class="sd">        is False, returns a list of components sizes in H.</span>
 
 <span class="sd">    Returns</span>
@@ -282,8 +283,8 @@
 <span class="sd">    --------</span>
 <span class="sd">    s_comp_dist</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
-    
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">distr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">components</span><span class="p">()]</span>
     <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Counter</span><span class="p">(</span><span class="n">distr</span><span class="p">)</span>
@@ -292,8 +293,8 @@
 
 
 <div class="viewcode-block" id="s_comp_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_comp_dist">[docs]</a><span class="k">def</span> <span class="nf">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Computes s-component sizes, counting nodes or edges. </span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes s-component sizes, counting nodes or edges.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -301,7 +302,7 @@
 <span class="sd">    s : positive integer, default is 1</span>
 <span class="sd">    aggregated :</span>
 <span class="sd">        If aggregated is True, returns a dictionary of</span>
-<span class="sd">        s-component sizes and counts in H. If aggregated is </span>
+<span class="sd">        s-component sizes and counts in H. If aggregated is</span>
 <span class="sd">        False, returns a list of s-component sizes in H.</span>
 <span class="sd">    edges :</span>
 <span class="sd">        If edges is True, the component size is number of edges.</span>
@@ -317,9 +318,11 @@
 <span class="sd">    --------</span>
 <span class="sd">    comp_dist</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-    <span class="n">comps</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">s_connected_components</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="n">return_singletons</span><span class="p">)</span>
+    <span class="n">comps</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">s_connected_components</span><span class="p">(</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="n">return_singletons</span>
+    <span class="p">)</span>
 
     <span class="n">distr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">]</span>
 
@@ -329,25 +332,25 @@
         <span class="k">return</span> <span class="n">distr</span></div>
 
 
-<div class="viewcode-block" id="toplex_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.toplex_dist">[docs]</a><span class="nd">@not_implemented_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="toplex_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.toplex_dist">[docs]</a><span class="nd">@not_implemented_for</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">toplex_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Computes toplex sizes for hypergraph H.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
-<span class="sd">    aggregated : </span>
-<span class="sd">        If aggregated is True, returns a dictionary of </span>
-<span class="sd">        toplex sizes and counts in H. If aggregated </span>
+<span class="sd">    aggregated :</span>
+<span class="sd">        If aggregated is True, returns a dictionary of</span>
+<span class="sd">        toplex sizes and counts in H. If aggregated</span>
 <span class="sd">        is False, returns a list of toplex sizes in H.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     toplex_dist : list or dictionary</span>
 <span class="sd">        List of toplex sizes or dictionary of toplex size distribution in H</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distr</span> <span class="o">=</span> <span class="p">[</span><span class="n">H</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">toplexes</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Counter</span><span class="p">(</span><span class="n">distr</span><span class="p">)</span>
@@ -356,7 +359,7 @@
 
 
 <div class="viewcode-block" id="s_node_diameter_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_node_diameter_dist">[docs]</a><span class="k">def</span> <span class="nf">s_node_diameter_dist</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
@@ -364,9 +367,9 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     s_node_diameter_dist : list</span>
-<span class="sd">        List of s-node-diameters for hypergraph H starting with s=1 </span>
+<span class="sd">        List of s-node-diameters for hypergraph H starting with s=1</span>
 <span class="sd">        and going up as long as the hypergraph is s-node-connected</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">diams</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="n">H</span><span class="o">.</span><span class="n">is_connected</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">i</span><span class="p">):</span>
@@ -376,7 +379,7 @@
 
 
 <div class="viewcode-block" id="s_edge_diameter_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_edge_diameter_dist">[docs]</a><span class="k">def</span> <span class="nf">s_edge_diameter_dist</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;    </span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
@@ -384,9 +387,9 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     s_edge_diameter_dist : list</span>
-<span class="sd">        List of s-edge-diameters for hypergraph H starting with s=1 </span>
+<span class="sd">        List of s-edge-diameters for hypergraph H starting with s=1</span>
 <span class="sd">        and going up as long as the hypergraph is s-edge-connected</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">diams</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="n">H</span><span class="o">.</span><span class="n">is_connected</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -396,31 +399,31 @@
 
 
 <div class="viewcode-block" id="info"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.info">[docs]</a><span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a summary of simple statistics for H</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
 <span class="sd">    obj : optional</span>
-<span class="sd">        either a node or edge uid from the hypergraph  </span>
+<span class="sd">        either a node or edge uid from the hypergraph</span>
 <span class="sd">    dictionary : optional</span>
-<span class="sd">        If True then returns the info as a dictionary rather </span>
+<span class="sd">        If True then returns the info as a dictionary rather</span>
 <span class="sd">        than a string</span>
 <span class="sd">        If False (default) returns the info as a string</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     info : string</span>
-<span class="sd">        Returns a string of statistics of the size, </span>
-<span class="sd">        aspect ratio, and density of the hypergraph. </span>
+<span class="sd">        Returns a string of statistics of the size,</span>
+<span class="sd">        aspect ratio, and density of the hypergraph.</span>
 <span class="sd">        Print the string to see it formatted.</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hypergraph </span><span class="si">{</span><span class="n">H</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is empty.&quot;</span>
     <span class="n">report</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="n">edge</span><span class="p">)</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
         <span class="n">info</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Node &#39;</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&#39; has the following properties:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">info</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Degree: </span><span class="si">{</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -440,51 +443,51 @@
 
 
 <div class="viewcode-block" id="info_dict"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.info_dict">[docs]</a><span class="k">def</span> <span class="nf">info_dict</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a summary of simple statistics for H</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
 <span class="sd">    obj : optional</span>
-<span class="sd">        either a node or edge uid from the hypergraph  </span>
+<span class="sd">        either a node or edge uid from the hypergraph</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     info_dict : dict</span>
-<span class="sd">        Returns a dictionary of statistics of the size, </span>
-<span class="sd">        aspect ratio, and density of the hypergraph. </span>
+<span class="sd">        Returns a dictionary of statistics of the size,</span>
+<span class="sd">        aspect ratio, and density of the hypergraph.</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">report</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;membs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;membs&#39;</span><span class="p">])</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;neighbors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;membs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;membs&quot;</span><span class="p">])</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;neighbors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">report</span>
     <span class="k">if</span> <span class="n">edge</span><span class="p">:</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">])</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">report</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lnodes</span><span class="p">,</span> <span class="n">ledges</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ncells</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">nnz</span>
 
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;nrows&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lnodes</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;ncols&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ledges</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;aspect ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lnodes</span> <span class="o">/</span> <span class="n">ledges</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;ncells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncells</span>
-        <span class="n">report</span><span class="p">[</span><span class="s1">&#39;density&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncells</span> <span class="o">/</span> <span class="p">(</span><span class="n">lnodes</span> <span class="o">*</span> <span class="n">ledges</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lnodes</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ledges</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;aspect ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lnodes</span> <span class="o">/</span> <span class="n">ledges</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncells</span>
+        <span class="n">report</span><span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncells</span> <span class="o">/</span> <span class="p">(</span><span class="n">lnodes</span> <span class="o">*</span> <span class="n">ledges</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">report</span></div>
 
 
 <div class="viewcode-block" id="dist_stats"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.dist_stats">[docs]</a><span class="k">def</span> <span class="nf">dist_stats</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes many basic hypergraph stats and puts them all into a single dictionary object </span>
+<span class="sd">    Computes many basic hypergraph stats and puts them all into a single dictionary object</span>
 
 <span class="sd">        * nrows = number of nodes (rows in the incidence matrix)</span>
 <span class="sd">        * ncols = number of edges (columns in the incidence matrix)</span>
@@ -516,47 +519,55 @@
 <span class="sd">     dist_stats : dict</span>
 <span class="sd">        Dictionary which keeps track of each of the above items (e.g., basic[&#39;nrows&#39;] = the number of nodes in H)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dist_stats&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;dist_stats&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">cstats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">]</span>
+        <span class="n">cstats</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">]</span>
         <span class="n">basic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
         <span class="c1"># Number of rows (nodes), columns (edges), and aspect ratio</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;nrows&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;ncols&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;aspect ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;nrows&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;ncols&#39;</span><span class="p">]</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;aspect ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span>
 
         <span class="c1"># Number of cells and density</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;ncells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">nnz</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;density&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;ncells&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;nrows&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;ncols&#39;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">nnz</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">])</span>
 
         <span class="c1"># Node degree distribution</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree centrality stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree list&#39;</span><span class="p">])))</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree hist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree list&#39;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;max node degree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;node degree list&#39;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]))</span>
+        <span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max node degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
 
         <span class="c1"># Edge size distribution</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size centrality stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size list&#39;</span><span class="p">])))</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size hist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size list&#39;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;max edge size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;edge size hist&#39;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]))</span>
+        <span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max edge size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">])</span>
 
         <span class="c1"># Component size distribution (nodes)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes hist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes list&#39;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes centrality stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes list&#39;</span><span class="p">])))</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]))</span>
+        <span class="p">)</span>
 
         <span class="c1"># Component size distribution (edges)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp edges list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp edges hist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp edges list&#39;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp edges centrality stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp edges list&#39;</span><span class="p">])))</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]))</span>
+        <span class="p">)</span>
 
         <span class="c1"># Number of components</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;num comps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s1">&#39;comp nodes list&#39;</span><span class="p">])</span>
+        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;num comps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
 
         <span class="c1"># # Diameters</span>
         <span class="c1"># basic[&#39;s edge diam list&#39;] = s_edge_diameter_dist(H)</span>
