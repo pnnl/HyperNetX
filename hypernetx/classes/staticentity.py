@@ -74,7 +74,7 @@ class StaticEntity(object):
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
-                data, labels, counts = turn_dataframe_into_entity(
+                data, labels, counts = _turn_dataframe_into_entity(
                     entity, return_counts=True
                 )
                 self.properties.update({"counts": counts})
@@ -98,15 +98,15 @@ class StaticEntity(object):
             else:
                 if isinstance(entity, Entity) or isinstance(entity, EntitySet):
                     d = entity.incidence_dict
-                    self._data, self._labels = turn_dict_to_staticentity(
+                    self._data, self._labels = _turn_dict_to_staticentity(
                         d
                     )  # For now duplicate entries will be removed.
                 elif isinstance(entity, dict):  # returns only 2 levels
-                    self._data, self._labels = turn_dict_to_staticentity(
+                    self._data, self._labels = _turn_dict_to_staticentity(
                         entity
                     )  # For now duplicate entries will be removed.
                 else:  # returns only 2 levels
-                    self._data, self._labels = turn_iterable_to_staticentity(entity)
+                    self._data, self._labels = _turn_iterable_to_staticentity(entity)
                 self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
@@ -174,7 +174,7 @@ class StaticEntity(object):
             self._state_dict = {"arr": arr * 1}
             self._dimensions = arr.shape
             self._dimsize = len(arr.shape)
-            self._data = turn_tensor_to_data(arr * 1)
+            self._data = _turn_tensor_to_data(arr * 1)
             if (
                 labels is not None
             ):  # determine if hashmaps might be better than lambda expressions to recover indices
@@ -282,11 +282,36 @@ class StaticEntity(object):
                     self._arr = 0
         return self._arr
 
+    # @property
+    # def array_with_counts(self):
+    #     """
+    #     This method will be included in future release.
+    #     It allows duplicate rows in the data table
+    #     Returns
+    #     -------
+    #     np.ndarray
+    #     """
+    #     if self._arr is not None:
+    #         if type(self._arr) == int and self._arr == 0:
+    #             print("arr cannot be computed")
+    #         else:
+    #             try:
+    #                 imat = np.zeros(self.dimensions, dtype=int)
+    #                 for d in self._data:
+    #                     imat[tuple(d)] += 1
+    #                 self._arr = imat
+    #             except Exception as ex:
+    #                 print(ex)
+    #                 print("arr cannot be computed")
+    #                 self._arr = 0
+    #     return self._arr
+
+
     @property
     def data(self):
         """
         Data array or tensor array of staticentity
-        
+
         Returns
         -------
         np.ndarray
@@ -298,7 +323,7 @@ class StaticEntity(object):
     def labels(self):
         """
         Ordered dictionary of labels
-        
+
         Returns
         -------
         collections.OrderedDict
@@ -309,7 +334,7 @@ class StaticEntity(object):
     def dimensions(self):
         """
         Dimension of Static Entity data
-        
+
         Returns
         -------
         tuple
@@ -320,7 +345,7 @@ class StaticEntity(object):
     def dimsize(self):
         """
         Number of categories in the data
-        
+
         Returns
         -------
         int
@@ -331,7 +356,7 @@ class StaticEntity(object):
     def keys(self):
         """
         Array of keys of labels
-        
+
         Returns
         -------
         np.ndarray
@@ -342,7 +367,7 @@ class StaticEntity(object):
     def keyindex(self):
         """
         Returns the index of a category in keys array
-        
+
         Returns
         -------
         int
@@ -357,7 +382,7 @@ class StaticEntity(object):
     def uidset(self):
         """
         Returns a set of the string identifiers for staticentity
-        
+
         Returns
         -------
         frozenset
@@ -368,11 +393,11 @@ class StaticEntity(object):
     def elements(self):
         """
         Keys and values in the order of insertion 
-        
+
         Returns
         -------
         collections.OrderedDict
-        
+
         level1 = elements, level2 = children
         """
         if len(self._keys) == 1:
@@ -406,7 +431,7 @@ class StaticEntity(object):
     def dataframe(self):
         """
         Returns the entity data in DataFrame format
-        
+
         Returns
         -------
         pandas.core.frame.DataFrame
@@ -416,7 +441,7 @@ class StaticEntity(object):
     def __len__(self):
         """
         Returns the number of elements in Static Entity
-        
+
         Returns
         -------
         int
@@ -426,7 +451,7 @@ class StaticEntity(object):
     def __str__(self):
         """
         Return the Static Entity uid
-        
+
         Returns
         -------
         string
@@ -437,7 +462,7 @@ class StaticEntity(object):
         """
         Returns a string resembling the constructor for staticentity without any
         children
-        
+
         Returns
         -------
         string
@@ -447,11 +472,11 @@ class StaticEntity(object):
     def __contains__(self, item):
         """
         Defines containment for StaticEntity based on labels/categories.
-        
+
         Parameters
         ----------
         item : string
-        
+
         Returns
         -------
         bool
@@ -461,11 +486,11 @@ class StaticEntity(object):
     def __getitem__(self, item):
         """
         Get value of key in E.elements
-        
+
         Parameters
         ----------
         item : string
-        
+
         Returns
         -------
         list
@@ -489,7 +514,7 @@ class StaticEntity(object):
     def size(self):
         """
         The number of elements in E, the size of dimension 0 in the E.arr
-        
+
         Returns
         -------
         int
@@ -499,12 +524,12 @@ class StaticEntity(object):
     def labs(self, kdx):
         """
         Retrieve labels by index in keys
-        
+
         Parameters
         ----------
         kdx : int
             index of key in E.keys
-        
+
         Returns
         -------
         np.ndarray
@@ -514,11 +539,11 @@ class StaticEntity(object):
     def is_empty(self, level=0):
         """
         Boolean indicating if entity.elements is empty
-        
+
         Parameters
         ----------
         level : int, optional
-        
+
         Returns
         -------
         bool
@@ -528,11 +553,11 @@ class StaticEntity(object):
     def uidset_by_level(self, level=0):
         """
         The labels found in columns = level
-        
+
         Parameters
         ----------
         level : int, optional
-        
+
         Returns
         -------
         frozenset
@@ -540,10 +565,9 @@ class StaticEntity(object):
         return frozenset(self._labs(level))  # should be update this to tuples?
 
     def elements_by_level(self, level1=0, level2=None, translate=False):
-
         """
         Elements of staticentity by specified column
-        
+
         Parameters
         ----------
         level1 : int, optional
@@ -552,7 +576,7 @@ class StaticEntity(object):
             nodes
         translate : bool, optional
             whether to replace indices with labels
-        
+
         Returns
         -------
         collections.defaultdict
@@ -592,7 +616,7 @@ class StaticEntity(object):
     def incidence_matrix(self, level1=0, level2=1, weighted=False, index=False):
         """
         Convenience method to navigate large tensor
-        
+
         Parameters
         ----------
         level1 : int, optional
@@ -601,7 +625,7 @@ class StaticEntity(object):
             indexes rows
         weighted : bool, optional
         index : bool, optional
-        
+
         Returns
         -------
         scipy.sparse.csr.csr_matrix
@@ -674,12 +698,12 @@ class StaticEntity(object):
     def translate(self, level, index):
         """
         Replaces a category index and value index with label
-        
+
         Parameters
         ----------
         level : int
         index : int
-        
+
         Returns
         -------
         numpy.str_
@@ -692,11 +716,11 @@ class StaticEntity(object):
     def translate_arr(self, coords):
         """
         Translates a single cell in the entity array
-        
+
         Parameters
         ----------
         coords : tuple of ints
-        
+
         Returns
         -------
         list
@@ -710,12 +734,12 @@ class StaticEntity(object):
     def index(self, category, value=None):
         """
         Returns dimension of category and index of value
-        
+
         Parameters
         ----------
         category : string
         value : string, optional
-        
+
         Returns
         -------
         int or tuple of ints
@@ -728,12 +752,12 @@ class StaticEntity(object):
     def indices(self, category, values):
         """
         Returns dimension of category and index of values (array)
-        
+
         Parameters
         ----------
         category : string
         values : single string or array of strings
-        
+
         Returns
         -------
         list
@@ -744,7 +768,7 @@ class StaticEntity(object):
         """
         Returns first level item appears by order of keys from minlevel to maxlevel
         inclusive
-        
+
         Parameters
         ----------
         item : string
@@ -752,7 +776,7 @@ class StaticEntity(object):
         max_level : int, optional
 
         return_index : bool, optional
-            
+
         Returns
         -------
         tuple
@@ -796,7 +820,7 @@ class StaticEntitySet(StaticEntity):
                 data = data[:, [level1, level2]]
                 arr = None
             elif arr is not None:
-                data = turn_tensor_to_data(arr)
+                data = _turn_tensor_to_data(arr)
                 data = data[:, [level1, level2]]
                 arr = None
             if labels is not None:
@@ -816,7 +840,7 @@ class StaticEntitySet(StaticEntity):
         """
         Returns a string resembling the constructor for entityset without any
         children
-        
+
         Returns
         -------
         string
@@ -877,7 +901,7 @@ class StaticEntitySet(StaticEntity):
             return StaticEntitySet(uid=uid, entity=new_entity_dict)
 
 
-def turn_tensor_to_data(arr, remove_duplicates=True):
+def _turn_tensor_to_data(arr, remove_duplicates=True):
     """
     Return list of nonzero coordinates in arr.
 
@@ -887,14 +911,9 @@ def turn_tensor_to_data(arr, remove_duplicates=True):
         Tensor corresponding to incidence of co-occurring labels.
     """
     return np.array(arr.nonzero()).transpose()
-    # dfa = np.array(arr.nonzero()).transpose()
-    # if remove_duplicates:
-    #     return remove_row_duplicates(dfa)
-    # else:
-    #     return dfa
 
 
-def turn_dict_to_staticentity(dict_object, remove_duplicates=True):
+def _turn_dict_to_staticentity(dict_object, remove_duplicates=True):
     """Create a static entity directly from a dictionary of hashables"""
     d = OrderedDict(dict_object)
     level2ctr = HNXCount()
@@ -916,7 +935,7 @@ def turn_dict_to_staticentity(dict_object, remove_duplicates=True):
     return data, labels
 
 
-def turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
+def _turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
     for s in iter_object:
         if not isinstance(s, Iterable):
             raise HyperNetXError(
@@ -925,10 +944,10 @@ def turn_iterable_to_staticentity(iter_object, remove_duplicates=True):
     else:
         labels = [f"e{str(x)}" for x in range(len(iter_object))]
         dict_object = dict(zip(labels, iter_object))
-    return turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)
+    return _turn_dict_to_staticentity(dict_object, remove_duplicates=remove_duplicates)
 
 
-def turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
+def _turn_dataframe_into_entity(df, return_counts=False, include_unknowns=False):
     """
     Convenience method to reformat dataframe object into data,labels format
     for construction of a static entity
