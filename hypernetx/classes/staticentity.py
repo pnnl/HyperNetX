@@ -250,13 +250,6 @@ class StaticEntity(object):
 
     @property
     def arr(self):
-        """
-        Summary
-        
-        Returns
-        -------
-        np.ndarray
-        """
         if self._arr is not None:
             if type(self._arr) == int and self._arr == 0:
                 print("arr cannot be computed")
@@ -274,12 +267,6 @@ class StaticEntity(object):
 
     @property
     def array_with_counts(self):
-        """Summary
-        
-        Returns
-        -------
-        np.ndarray
-        """
         if self._arr is not None:
             if type(self._arr) == int and self._arr == 0:
                 print("arr cannot be computed")
@@ -321,7 +308,7 @@ class StaticEntity(object):
     @property
     def dimensions(self):
         """
-        Dimension of staticentity data
+        Dimension of Static Entity data
         
         Returns
         -------
@@ -364,13 +351,6 @@ class StaticEntity(object):
 
     @property
     def uid(self):
-        """
-        ???
-        
-        Returns
-        -------
-        NoneType
-        """
         return self._uid
 
     @property
@@ -435,7 +415,7 @@ class StaticEntity(object):
 
     def __len__(self):
         """
-        Returns the number of elements in staticentity
+        Returns the number of elements in Static Entity
         
         Returns
         -------
@@ -445,7 +425,7 @@ class StaticEntity(object):
 
     def __str__(self):
         """
-        Return the staticentity uid
+        Return the Static Entity uid
         
         Returns
         -------

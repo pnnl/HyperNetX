@@ -38,7 +38,6 @@ def test_staticentity_attributes(harry_potter):
     assert isinstance(ent.data, np.ndarray)
     assert ent.data.shape == ent.dataframe.shape
     assert isinstance(ent.labels, dict)
-    # uid??
     assert ent.dimensions == (7, 11, 10, 36, 26)
     assert ent.dimsize == 5
     assert len(ent.labs(0)) == 7
