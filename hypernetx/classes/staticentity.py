@@ -265,23 +265,6 @@ class StaticEntity(object):
                 self._arr = 0
         return self._arr  # Do we need to return anything here
 
-    @property
-    def array_with_counts(self):
-        if self._arr is not None:
-            if type(self._arr) == int and self._arr == 0:
-                print("arr cannot be computed")
-            else:
-                try:
-                    imat = np.zeros(self.dimensions, dtype=int)
-                    for d in self._data:
-                        imat[tuple(d)] += 1
-                    self._arr = imat
-                except Exception as ex:
-                    print(ex)
-                    print("arr cannot be computed")
-                    self._arr = 0
-        return self._arr
-
     # @property
     # def array_with_counts(self):
     #     """
@@ -310,7 +293,7 @@ class StaticEntity(object):
     @property
     def data(self):
         """
-        Data array or tensor array of staticentity
+        Data array or tensor array of Static Entity
 
         Returns
         -------
@@ -381,7 +364,7 @@ class StaticEntity(object):
     @property
     def uidset(self):
         """
-        Returns a set of the string identifiers for staticentity
+        Returns a set of the string identifiers for Static Entity
 
         Returns
         -------
@@ -648,6 +631,21 @@ class StaticEntity(object):
             return result
 
     def restrict_to_levels(self, levels, uid=None):
+        """
+        Limit Static Entity data to specific labels
+        
+        Parameters
+        ----------
+        levels : array
+            index of labels in data
+        uid : None, optional
+        
+        Returns
+        -------
+        Static Entity class
+            hnx.classes.staticentity.StaticEntity
+        """
+
         if len(levels) == 1:
             if levels[0] >= self.dimsize:
                 return self.__class__()
@@ -686,7 +684,22 @@ class StaticEntity(object):
     def restrict_to_indices(
         self, indices, level=0, uid=None
     ):  # restricting to indices requires renumbering the labels.
+        """
+        Limit Static Entity data to specific indices of keys
+        
+        Parameters
+        ----------
+        indices : array
+            array of category indices
+        level : int, optional
+            index of label
+        uid : None, optional
 
+        Returns
+        -------
+        Static Entity class
+            hnx.classes.staticentity.StaticEntity
+        """
         indices = list(indices)
         idx = np.concatenate(
             [np.argwhere(self.data[:, level] == k) for k in indices], axis=0
@@ -702,7 +715,9 @@ class StaticEntity(object):
         Parameters
         ----------
         level : int
+            category index of label
         index : int
+            value index of label
 
         Returns
         -------
@@ -848,13 +863,28 @@ class StaticEntitySet(StaticEntity):
         return f"StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})"
 
     def incidence_matrix(self, sparse=True, weighted=False, index=False):
+        """
+        Incidence matrix of StaticEntitySet indexed by uidset
+        
+        Parameters
+        ----------
+        sparse : bool, optional
+        weighted : bool, optional
+        index : bool, optional
+            give index of rows then columns
+        
+        Returns
+        -------
+        matrix
+            scipy.sparse.csr.csr_matrix
+        """
         if not weighted:
             temp = remove_row_duplicates(self.data[:, [1, 0]])
         else:
             temp = self.data[:, [1, 0]]
         result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
 
-        if index:  # give index of rows then columns
+        if index:  
             return (
                 result,
                 {k: v for k, v in enumerate(self._labs(1))},
@@ -864,9 +894,36 @@ class StaticEntitySet(StaticEntity):
             return result
 
     def restrict_to(self, indices, uid=None):
+        """
+        Limit Static Entityset data to specific indices of keys
+
+        Parameters
+        ----------
+        indices : array
+            array of indices in keys
+        uid : None, optional
+        
+        Returns
+        -------
+        StaticEntitySet
+            hnx.classes.staticentity.StaticEntitySet
+
+        """
         return self.restrict_to_indices(indices, level=0, uid=uid)
 
     def convert_to_entityset(self, uid):
+        """
+        Convert given uid of Static EntitySet into EntitySet
+        
+        Parameters
+        ----------
+        uid : string
+        
+        Returns
+        -------
+        EntitySet
+            hnx.classes.entity.EntitySet
+        """
         return EntitySet(uid, self.incidence_dict)
 
     def collapse_identical_elements(
@@ -874,6 +931,21 @@ class StaticEntitySet(StaticEntity):
         uid=None,
         return_equivalence_classes=False,
     ):
+        """
+        Returns StaticEntitySet after collapsing elements if they have same children
+        If no elements share same children, a copy of the original StaticEntitySet is returned
+        Parameters
+        ----------
+        uid : None, optional
+        return_equivalence_classes : bool, optional
+            If True, return a dictionary of equivalence classes keyed by new edge names
+
+
+        Returns
+        -------
+        StaticEntitySet
+            hnx.classes.staticentity.StaticEntitySet
+        """
         shared_children = DefaultOrderedDict(list)
         for k, v in self.elements.items():
             shared_children[frozenset(v)].append(k)

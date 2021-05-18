@@ -22,7 +22,6 @@ def test_staticentity_property(harry_potter):
     labels = harry_potter.labels
     ent = StaticEntity(arr=arr, labels=labels)
     assert len(ent.keys) == 5
-    assert ent.arr is not ent.array_with_counts
     assert len(ent.uidset) == 7
     assert len(ent.elements) == 7
     assert isinstance(ent.elements['Hufflepuff'], list)
@@ -123,16 +122,18 @@ def test_staticentity_turn_entity_data_into_dataframe(seven_by_six):
     assert ent.turn_entity_data_into_dataframe(subset).shape == (5, 2)
 
 
-def test_restrict_to_levels(seven_by_six):
-    sbs = seven_by_six
-    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    assert ent.restrict_to_levels([0, 1])
+def test_restrict_to_levels(harry_potter):
+    arr = harry_potter.arr
+    labels = harry_potter.labels
+    ent = StaticEntity(arr=arr, labels=labels)
+    assert len(ent.restrict_to_levels([0]).uidset) == 7
 
 
-def test_restrict_to_indices(seven_by_six):
-    sbs = seven_by_six
-    ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    assert ent.restrict_to_indices([0, 1])
+def test_restrict_to_indices(harry_potter):
+    arr = harry_potter.arr
+    labels = harry_potter.labels
+    ent = StaticEntity(arr=arr, labels=labels)
+    assert ent.restrict_to_indices([1, 2]).uidset == {'Gryffindor', 'Ravenclaw'}
 
 
 def test_staticentityset(harry_potter):
@@ -145,6 +146,7 @@ def test_staticentityset(harry_potter):
     assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
     assert ent.incidence_matrix().shape == (36, 11)
     assert len(ent.convert_to_entityset('Hair colour')) == 11
+    assert len(ent.collapse_identical_elements('House')) == 11
 
 
 def test_staticentity_construct_from_entity(seven_by_six):
