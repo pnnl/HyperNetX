@@ -29,6 +29,7 @@ Contents
    Algorithms <algorithms/modules.rst>
    Drawing <drawing/modules.rst>
    Reports <reports/modules.rst>
+   NWHY API <nwhy_api>
    license
 
 

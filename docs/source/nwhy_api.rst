@@ -1,8 +1,8 @@
-.. _glossary:
+.. _nwhy_api:
 
-=====================
-Glossary of HNX terms
-=====================
+====================
+NWHy API Description
+====================
 
 .. glossary::
 	:sorted:
@@ -111,20 +111,12 @@ Glossary of HNX terms
 	s-edge
 		For a hypergraph (Nodes, Edges) and positive integer s, an s-edge is any edge of size at least s.
 
-	s-linegraph
-		For a hypergraph (Nodes, Edges) and positive integer s, an s-linegraph is a graph representing
-		the node to node or edge to edge connections according to the *width* s of the connections.
-		The node s-linegraph is a graph on the set Nodes. Two nodes in Nodes are incident in the node s-linegraph if they
-		share at lease s incident edges in Edges; that is, there are at least s elements of Edges to which they both belong.
-		The edge s-linegraph is a graph on the set Edges. Two edges in Edges are incident in the edge s-linegraph if they
-		share at least s incident nodes in Nodes; that is, the edges intersect in at least s nodes in Nodes.
-
 	Bipartite Condition
 		Condition imposed on instances of the class EntitySet.
 	    *Entities that are elements of the same EntitySet, may not contain each other as elements.* 
 	    The elements and children of an EntitySet generate a specific partition for a bipartite graph. 
 	    The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
-	    the children correspond to the nodes. EntitySets are the basic objects used to construct dynamic hypergraphs
+	    the children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs
 	    in HNX. See methods :py:meth:`classes.hypergraph.Hypergraph.bipartite` and :py:meth:`classes.hypergraph.Hypergraph.from_bipartite`.
 
 	simple hypergraph

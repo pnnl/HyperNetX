@@ -103,7 +103,8 @@ class Hypergraph:
     Parameters
     ----------
     setsystem : (optional) hnx.EntitySet, dict, or iterable, default: None
-        If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable as elements to an :ref:`EntitySet<entityset>`.
+        If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable
+        as elements to an :ref:`EntitySet<entityset>`.
 
     name : hashable, optional, default: None
         If None then a placeholder '_'  will be inserted as name
@@ -119,7 +120,7 @@ class Hypergraph:
 
     """
 
-    ### TODO: remove lambda functions from constructor in H and E.
+    # TODO: remove lambda functions from constructor in H and E.
 
     def __init__(
         self, setsystem=None, name=None, static=False, use_nwhy=False, filepath=None
@@ -188,7 +189,7 @@ class Hypergraph:
             tempdata = np.ones(len(temprows), dtype=int)
             self.state_dict = {
                 "data": (temprows, tempcols, tempdata)
-            }  ## how can we incorporate the counts into the nwhy hypergraph?
+            }  # how can we incorporate the counts into the nwhy hypergraph?
             if self.nwhy:
                 self.g = nwhy.NWHypergraph(*self.state_dict["data"])
                 self.nwhy_dict = {"snodelg": dict(), "sedgelg": dict()}
@@ -303,6 +304,29 @@ class Hypergraph:
 
     @not_implemented_for("dynamic")
     def get_linegraph(self, s, edges=True, use_nwhy=True):
+        """
+        Creates an ::term::s-linegraph for the Hypergraph.
+        If edges=True (default)then the edges will be the vertices of the line graph.
+        Two vertices are connected by an s-line-graph edge if the corresponding
+        hypergraphedges intersect in at least s hypergraph nodes.
+        If edges=False, the hypergraph nodes will be the vertices of the line graph.
+        Two vertices are connected if the nodes they correspond to share at least s
+        incident hyper edges.
+
+        Parameters
+        ----------
+        s : int
+            The width of the connections.
+        edges : bool, optional
+            Determine if edges or nodes will be the vertices in the linegraph.
+        use_nwhy : bool, optional
+            Requests that nwhy be used to construct the linegraph. If NWHy is not available this is ignored.
+
+        Returns
+        -------
+        nx.Graph
+            A NetworkX graph.
+        """
         if use_nwhy and self.nwhy:
             d = self.nwhy_dict
         else:
@@ -370,12 +394,10 @@ class Hypergraph:
             static hypergraph with state dictionary prefilled
         """
         temp, labels = pickle.load(open(fpath, "rb"))
-        recovered_data = np.array(temp["data"])[
-            [0, 1]
-        ].T  ### need to save counts as well
+        recovered_data = np.array(temp["data"])[[0, 1]].T  # need to save counts as well
         recovered_counts = np.array(temp["data"])[
             [2]
-        ]  ### ammend this to store cell weights
+        ]  # ammend this to store cell weights
         E = StaticEntitySet(data=recovered_data, labels=labels)
         E.properties["counts"] = recovered_counts
         H = Hypergraph(E, use_nwhy=use_nwhy)
@@ -1473,7 +1495,7 @@ class Hypergraph:
             # of the set of equivalent edges and their count
 
         """
-        ### TODO: There is a better way to do this....need to refactor
+        # TODO: There is a better way to do this....need to refactor
         if collapse:
             if len(self.edges) > 20:  # TODO: Determine how big is too big.
                 warnings.warn(
@@ -1658,7 +1680,8 @@ class Hypergraph:
         Yields
         ------
         s_connected_components : iterator
-            Iterator returns sets of uids of the edges (or nodes) in the s-edge(node) components of hypergraph.
+            Iterator returns sets of uids of the edges (or nodes) in the s-edge(node)
+            components of hypergraph.
 
         """
         components = list()
@@ -1829,7 +1852,7 @@ class Hypergraph:
             return diams[loc], diams, comps
 
     def edge_diameters(self, s=1):
-        """XX
+        """
         Returns the edge diameters of the s_edge_connected component subgraphs
         in hypergraph.
 
@@ -2018,7 +2041,7 @@ class Hypergraph:
                 warnings.warn(f"No {s}-path between {source} and {target}")
                 return np.inf
 
-    def edge_distance(self, source, target, s=1):
+    def edge_distance(self, source, target):
         """XX TODO: still need to return path and translate into user defined nodes and edges
         Returns the shortest s-walk distance between two edges in the hypergraph.
 
@@ -2147,7 +2170,7 @@ class Hypergraph:
         A partition for the nodes in a bipartite graph generates a hypergraph.
 
         """
-        ## TODO: Add filepath keyword to signatures here and with dataframe and numpy array
+        # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
         edges = []
         nodes = []
         for n, d in B.nodes(data=True):
