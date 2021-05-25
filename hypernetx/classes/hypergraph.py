@@ -1221,6 +1221,54 @@ class Hypergraph:
                     E[n].append(k)
             return Hypergraph(E, name=name)
 
+    def _collapse_nwhy(self, edges, rec):
+        """
+        Helper method for collapsing nodes and edges when hypergraph
+        is static and using nwhy
+
+        Parameters
+        ----------
+        edges : bool
+            Collapse the edges if True, otherwise the nodes
+        rec : bool
+            return the equivalence classes
+        """
+
+        if edges:
+            d = self.g.collapse_edges(return_equivalence_class=rec)
+            lev = "0"
+        else:
+            d = self.g.collapse_nodes(return_equivalence_class=rec)
+            lev = "1"
+        if rec:
+            en = {
+                self.get_name(
+                    k, edges=edges
+                ): f"{self.get_name(k,edges=edges)}:{len(v)}"
+                for k, v in d.items()
+            }
+            ec = {
+                f"{self.get_name(k,edges=edges)}:{len(v)}": {
+                    self.get_name(vd, edges=edges) for vd in v
+                }
+                for k, v in d.items()
+            }
+        else:
+            en = {
+                self.get_name(
+                    k, edges=edges
+                ): f"{self.get_name(k,edges=edges)}:{v.pop()}"
+                for k, v in d.items()
+            }
+            ec = {}
+        lev = 1 - 1 * edges
+        E = self.edges.restrict_to_indices(sorted(d.keys()), level=lev)
+        E.labels[str(lev)] = np.array([en[k] for k in E.labels[str(lev)]])
+        if rec:
+            return E, ec
+        else:
+            return E
+
     def collapse_edges(
         self,
         name=None,
@@ -1266,9 +1314,13 @@ class Hypergraph:
             collapsed hypergraph automatically names collapsed objects by a string "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
-        temp = self.edges.collapse_identical_elements(
-            "_", return_equivalence_classes=return_equivalence_classes
-        )
+
+        if self.nwhy:
+            temp = self._collapse_nwhy(True, return_equivalence_classes)
+        else:
+            temp = self.edges.collapse_identical_elements(
+                "_", return_equivalence_classes=return_equivalence_classes
+            )
         if return_equivalence_classes:
             return Hypergraph(temp[0], name, use_nwhy=self.nwhy), temp[1]
         else:
@@ -1330,14 +1382,21 @@ class Hypergraph:
             """
             warnings.warn(msg, DeprecationWarning)
 
-        temp = self.dual().edges.collapse_identical_elements(
-            "_", return_equivalence_classes=return_equivalence_classes
-        )
-
-        if return_equivalence_classes:
-            return Hypergraph(temp[0], name, use_nwhy=self.nwhy).dual(), temp[1]
+        if self.nwhy:
+            temp = self._collapse_nwhy(False, return_equivalence_classes)
+            if return_equivalence_classes:
+                return Hypergraph(temp[0], name, use_nwhy=self.nwhy), temp[1]
+            else:
+                return Hypergraph(temp, name, use_nwhy=self.nwhy)
         else:
-            return Hypergraph(temp, name, use_nwhy=self.nwhy).dual()
+            temp = self.dual().edges.collapse_identical_elements(
+                "_", return_equivalence_classes=return_equivalence_classes
+            )
+
+            if return_equivalence_classes:
+                return Hypergraph(temp[0], name, use_nwhy=self.nwhy).dual(), temp[1]
+            else:
+                return Hypergraph(temp, name, use_nwhy=self.nwhy).dual()
 
     def collapse_nodes_and_edges(
         self,
@@ -2041,7 +2100,7 @@ class Hypergraph:
                 warnings.warn(f"No {s}-path between {source} and {target}")
                 return np.inf
 
-    def edge_distance(self, source, target):
+    def edge_distance(self, source, target, s=1):
         """XX TODO: still need to return path and translate into user defined nodes and edges
         Returns the shortest s-walk distance between two edges in the hypergraph.
 
