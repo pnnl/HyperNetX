@@ -202,15 +202,24 @@ class Hypergraph:
     def edges(self):
         """
         Object associated with self._edges.
-        If self.isstatic the StaticEntitySet, otherwise EntitySet.
+        
+        Returns
+        -------
+        StaticEntitySet or EntitySet
+            If self.isstatic the StaticEntitySet, otherwise EntitySet.
         """
         return self._edges
 
     @property
     def nodes(self):
         """
-        Object associated with self._edges.
-        If self.isstatic the StaticEntitySet, otherwise EntitySet.
+        Object associated with self._nodes.
+        
+        Returns
+        -------
+        StaticEntitySet or EntitySet
+            If self.isstatic the StaticEntitySet, otherwise EntitySet.
+
         """
         return self._nodes
 

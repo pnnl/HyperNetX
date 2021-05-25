@@ -21,6 +21,17 @@ def test_hypergraph_from_dict(seven_by_six):
     assert H.degree("A") == 3
     assert H.size("R") == 2
 
+def test_hypergraph_custom_attributes(seven_by_six):
+    sbs = seven_by_six
+    H = Hypergraph(sbs.edges)
+    assert isinstance(H.__str__(), str)
+    assert isinstance(H.__repr__(), str)
+    assert H.__contains__("A") 
+    assert H.__len__() == 7
+    nodes = [key for key in H.__iter__()]
+    assert sorted(nodes) == ['A', 'C', 'E', 'K','T1', 'T2', 'V']
+    assert sorted(H.__getitem__("C")) == ['A', 'E', 'K']
+
 
 def test_hypergraph_from_entity_set(seven_by_six):
     sbs = seven_by_six
@@ -152,6 +163,15 @@ def test_s_components():
     assert len(list(h.s_components(s=4, edges=False))) == 8
 
 
+def test_s_connected_components():
+    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+    h = Hypergraph(setsystem)
+    assert list(h.s_connected_components()) == [{'0', '1', '2', '3'}]
+    assert list(h.s_connected_components(s=2)) == [{'1', '2', '3'}]
+    assert list(h.s_connected_components(s=2, edges=False)) == [{5, 6}]
+     
+
+
 def test_s_component_subgraphs():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
@@ -171,6 +191,11 @@ def test_diameter(seven_by_six):
         h.diameter(s=2)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
+def test_node_diameters(seven_by_six):
+    sbs = seven_by_six
+    h = Hypergraph(sbs.edgedict)
+    assert h.node_diameters()[0] == 3
+    assert h.node_diameters()[2] == [{'A', 'C', 'E', 'K', 'T1', 'T2', 'V'}]
 
 def test_edge_diameter(seven_by_six):
     sbs = seven_by_six
