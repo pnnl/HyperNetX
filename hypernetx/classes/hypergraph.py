@@ -225,19 +225,37 @@ class Hypergraph:
 
     @property
     def isstatic(self):
+        """
+        Checks whether nodes and edges are immutable
+        
+        Returns
+        -------
+        Boolean
+    
+        """
         return self._static
 
     @property
     def incidence_dict(self):
         """
         Dictionary keyed by edge uids with values the uids of nodes in each edge
+        
+        Returns
+        -------
+        dict
+        
         """
         return self._edges.incidence_dict
 
     @property
     def shape(self):
         """
-        Tuple giving (number of nodes, number of edgess)
+        (number of nodes, number of edges)
+        
+        Returns
+        -------
+        tuple
+            
         """
         if self.nwhy:
             return (self.g.number_of_nodes(), self.g.number_of_edges())
@@ -247,18 +265,33 @@ class Hypergraph:
     def __str__(self):
         """
         String representation of hypergraph
+        
+        Returns
+        -------
+        str
+            
         """
         return f"Hypergraph({self.edges.elements},name={self.name})"
 
     def __repr__(self):
         """
         String representation of hypergraph
+        
+        Returns
+        -------
+        str
+            
         """
         return f"Hypergraph({self.edges.elements},name={self.name})"
 
     def __len__(self):
         """
         Number of nodes
+        
+        Returns
+        -------
+        int
+            
         """
         if self.nwhy:
             return self.g.number_of_nodes()
@@ -268,6 +301,11 @@ class Hypergraph:
     def __iter__(self):
         """
         Iterate over the nodes of the hypergraph
+        
+        Returns
+        -------
+        dict_keyiterator
+            
         """
         return iter(self.nodes)
 
@@ -287,7 +325,7 @@ class Hypergraph:
 
     def __getitem__(self, node):
         """
-        Return the neighbors of node
+        Returns the neighbors of node
 
         Parameters
         ----------
