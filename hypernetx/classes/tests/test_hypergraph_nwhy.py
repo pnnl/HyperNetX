@@ -8,7 +8,6 @@ from hypernetx import HyperNetXError
 def test_static_hypergraph_constructor_setsystem(seven_by_six):
     sbs = seven_by_six
     edict = sbs.edgedict
-    h = hnx.Hypergraph(edict, static=True)
+    h = hnx.Hypergraph(edict, use_nwhy=True)
     assert isinstance(h.edges, StaticEntitySet)
-    assert h.isstatic == True
-    assert h.nwhy == False
+    assert h.nwhy == True
