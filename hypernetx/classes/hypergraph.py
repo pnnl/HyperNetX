@@ -483,7 +483,14 @@ class Hypergraph:
             return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
 
     def edge_size_dist(self):
-
+        """
+        Returns the size for each edge
+        
+        Returns
+        -------
+        np.array
+            
+        """
         if self.isstatic:
             dist = self.state_dict.get("edge_size_dist", None)
             if dist:
