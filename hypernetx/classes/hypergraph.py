@@ -341,11 +341,42 @@ class Hypergraph:
 
     @not_implemented_for("dynamic")
     def get_id(self, uid, edges=False):
+        """
+        Return the internally assigned id associated with a label.
+
+        Parameters
+        ----------
+        uid : string
+            User provided name/id/label for hypergraph object
+        edges : bool, optional
+            Determines if uid is an edge or node name
+        
+        Returns
+        -------
+        : int
+            internal id assigned at construction
+        """
         kdx = (edges + 1) % 2
         return int(np.argwhere(self.edges.labs(kdx) == uid)[0])
 
     @not_implemented_for("dynamic")
     def get_name(self, id, edges=False):
+        """
+        Return the user defined name/id/label associated to an
+        internally assigned id.
+
+        Parameters
+        ----------
+        id : int
+            Internally assigned id
+        edges : bool, optional
+            Determines if id references an edge or node
+        
+        Returns
+        -------
+        str
+            User provided name/id/label for hypergraph object
+        """
         kdx = (edges + 1) % 2
         return self.edges.labs(kdx)[id]
 
