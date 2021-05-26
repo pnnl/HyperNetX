@@ -17,6 +17,7 @@ def test_staticentity_constructor(seven_by_six):
     assert "I" in ent
     assert "K" in ent
 
+
 def test_staticentity_property(harry_potter):
     arr = harry_potter.arr
     labels = harry_potter.labels
@@ -28,6 +29,7 @@ def test_staticentity_property(harry_potter):
     assert ent.is_empty(2) == False
     assert len(ent.incidence_dict['Gryffindor']) == 6
     assert ent.keyindex('House') == 0
+
 
 def test_staticentity_attributes(harry_potter):
     arr = harry_potter.arr
@@ -64,7 +66,7 @@ def test_staticentity_custom_attributes(harry_potter):
 def test_staticentity_level(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    assert ent.level("I") == (0, 0)
+    assert ent.level("I") == (0, 5)
     assert ent.level("K") == (1, 3)
     assert ent.level("K", max_level=0) == None
 
@@ -98,14 +100,14 @@ def test_staticentity_indices(seven_by_six):
 def test_staticentity_translate(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    assert ent.translate(0, 0) == "I"
+    assert ent.translate(0, 0) == "P"
     assert ent.translate(1, [3, 4]) == ["K", "T1"]
 
 
 def test_staticentity_translate_arr(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    assert ent.translate_arr((0, 0)) == ["I", "A"]
+    assert ent.translate_arr((0, 0)) == ["P", "A"]
 
 
 def test_staticentity_index(seven_by_six):
@@ -153,5 +155,3 @@ def test_staticentity_construct_from_entity(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(entity=sbs.edgedict)
     assert len(ent.elements) == 6
-
-

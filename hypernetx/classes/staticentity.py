@@ -20,24 +20,25 @@ class StaticEntity(object):
     """
     .. _staticentity:
 
-    arr = np.ndarray (there can be no empty cells) of boolean or integer values
-    labels = OrderedDict of labelnames by dimension, keys = header names , ## rdict with numeric keys
-    levels are given by the order of these labels
-
     Parameters
     ----------
+    entity : StaticEntity, StaticEntitySet, Entity, EntitySet, pandas.DataFrame, dict, or list of lists
+        If a pandas.DataFrame, an error will be raised if there are nans. 
+    data : array or array-like
+        Two dimensional array of integers. Provides sparse tensor indices for incidence
+        tensor. 
     arr : numpy.ndarray or scip.sparse.matrix, optional, default=None
-
+        Incidence tensor of data. 
     labels : OrderedDict of lists, optional, default=None
-        dictionary lists
+        User defined labels corresponding to integers in data.  
+    uid : hashable, optional, default=None  
 
-    entity : hypernetx.StaticEntity or hypernets.StaticEntitySet, optional, default=None
+    props : user defined keyword arguments to be added to a properties dictionary, optional
 
-    uid : hashable, optional, default=None
-
-    keep_state_dict : bool, optional, default=False
-
-    props : user defined keyword arguments, optional
+    Attributes
+    ----------
+    properties : dict
+        Description
 
     """
 
@@ -288,7 +289,6 @@ class StaticEntity(object):
     #                 print("arr cannot be computed")
     #                 self._arr = 0
     #     return self._arr
-
 
     @property
     def data(self):
@@ -633,13 +633,13 @@ class StaticEntity(object):
     def restrict_to_levels(self, levels, uid=None):
         """
         Limit Static Entity data to specific labels
-        
+
         Parameters
         ----------
         levels : array
             index of labels in data
         uid : None, optional
-        
+
         Returns
         -------
         Static Entity class
@@ -686,7 +686,7 @@ class StaticEntity(object):
     ):  # restricting to indices requires renumbering the labels.
         """
         Limit Static Entity data to specific indices of keys
-        
+
         Parameters
         ----------
         indices : array
@@ -865,14 +865,14 @@ class StaticEntitySet(StaticEntity):
     def incidence_matrix(self, sparse=True, weighted=False, index=False):
         """
         Incidence matrix of StaticEntitySet indexed by uidset
-        
+
         Parameters
         ----------
         sparse : bool, optional
         weighted : bool, optional
         index : bool, optional
             give index of rows then columns
-        
+
         Returns
         -------
         matrix
@@ -884,7 +884,7 @@ class StaticEntitySet(StaticEntity):
             temp = self.data[:, [1, 0]]
         result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
 
-        if index:  
+        if index:
             return (
                 result,
                 {k: v for k, v in enumerate(self._labs(1))},
@@ -902,7 +902,7 @@ class StaticEntitySet(StaticEntity):
         indices : array
             array of indices in keys
         uid : None, optional
-        
+
         Returns
         -------
         StaticEntitySet
@@ -914,11 +914,11 @@ class StaticEntitySet(StaticEntity):
     def convert_to_entityset(self, uid):
         """
         Convert given uid of Static EntitySet into EntitySet
-        
+
         Parameters
         ----------
         uid : string
-        
+
         Returns
         -------
         EntitySet
