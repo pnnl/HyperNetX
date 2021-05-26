@@ -35,6 +35,18 @@ def test_hypergraph_custom_attributes(seven_by_six):
     assert sorted(nodes) == ['A', 'C', 'E', 'K','T1', 'T2', 'V']
     assert sorted(H.__getitem__("C")) == ['A', 'E', 'K']
 
+def test_hypergraph_static(seven_by_six):
+    sbs = seven_by_six
+    H = Hypergraph(sbs.edges, static=True)
+    assert len(H.edges) == 6
+    assert len(H.nodes) == 7
+    assert H.get_id("E") == 3
+    assert list(H.get_linegraph(s=1)) == [0, 1, 2, 3, 4, 5]
+    # H.get_name 
+    # H.translate
+
+
+
 
 def test_hypergraph_from_entity_set(seven_by_six):
     sbs = seven_by_six
@@ -44,6 +56,7 @@ def test_hypergraph_from_entity_set(seven_by_six):
     assert H.s_degree("A") == 3 
     assert H.dim('O') == 1
     assert len(H.edge_size_dist()) == 6
+    assert len(H.edge_neighbors("S")) == 4
 
 
 
