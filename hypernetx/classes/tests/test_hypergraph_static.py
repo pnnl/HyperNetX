@@ -38,4 +38,11 @@ def test_static_hypergraph_get_name(seven_by_six):
 
 def test_static_hypergraph_get_linegraph(lesmis):
     H = Hypergraph(lesmis.edgedict, static=True)
+    assert H.shape == (40, 8)
+    G = H.get_linegraph(edges=True, s=2)
+    assert G.number_of_edges, G.number_of_nodes == (8, 8)
+
+
+def test_static_hypergraph_s_connected_components(lesmis):
+    H = Hypergraph(lesmis.edgedict, static=True)
     assert {7, 8} in list(H.s_connected_components(edges=True, s=4))
