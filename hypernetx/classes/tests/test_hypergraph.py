@@ -11,6 +11,8 @@ def test_hypergraph_from_iterable_of_sets(seven_by_six):
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
     assert H.degree("A") == 3
+    assert H.number_of_edges() == 6
+    assert H.number_of_nodes() == 7
 
 
 def test_hypergraph_from_dict(seven_by_six):
@@ -20,6 +22,7 @@ def test_hypergraph_from_dict(seven_by_six):
     assert len(H.nodes) == 7
     assert H.degree("A") == 3
     assert H.size("R") == 2
+    assert H.order() == 7
 
 def test_hypergraph_custom_attributes(seven_by_six):
     sbs = seven_by_six
@@ -38,6 +41,10 @@ def test_hypergraph_from_entity_set(seven_by_six):
     entityset = EntitySet("_", sbs.edgedict)
     H = Hypergraph(entityset)
     assert H.edges.incidence_dict == sbs.edgedict
+    assert H.s_degree("A") == 3 
+    assert H.dim('O') == 1
+    assert len(H.edge_size_dist()) == 6
+
 
 
 def test_add_node_to_edge(seven_by_six):
@@ -83,6 +90,13 @@ def test_remove_node():
     assert a not in hbug.edges[1]
     assert a not in hbug.edges[2]
 
+
+def test_matrix(sbs_hypergraph):
+    H = sbs_hypergraph
+    assert H.incidence_matrix().todense().shape == (7, 6)
+    assert H.adjacency_matrix(s=2).todense().shape == (7, 7)
+    assert H.edge_adjacency_matrix().todense().shape == (6, 6)
+    assert H.auxiliary_matrix().todense().shape == (6, 6)
 
 def test_collapse_edges(sbsd_hypergraph):
     H = sbsd_hypergraph
@@ -240,6 +254,11 @@ def test_bipartite(sbs_hypergraph):
     b = h.bipartite()
     assert bipartite.is_bipartite(b)
 
+def test_dual(sbs_hypergraph):
+    H = sbs_hypergraph
+    HD = H.dual()
+    assert set(H.nodes) == set(HD.edges)
+    assert set(H.edges) == set(HD.nodes)
 
 def test_distance(lesmis):
     h = lesmis.hypergraph
