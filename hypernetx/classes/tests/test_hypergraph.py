@@ -197,6 +197,8 @@ def test_remove_singletons():
 def test_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
+    # h.components() causes an error
+    assert [len(g) for g in h.component_subgraphs()] == [8]
 
 
 
@@ -255,6 +257,7 @@ def test_edge_diameter(seven_by_six):
     sbs = seven_by_six
     h = Hypergraph(sbs.edgedict)
     assert h.edge_diameter() == 3
+    assert h.edge_diameters()[2] == [{'I', 'L', 'O', 'P', 'R', 'S'}]
     with pytest.raises(Exception) as excinfo:
         h.edge_diameter(s=2)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
