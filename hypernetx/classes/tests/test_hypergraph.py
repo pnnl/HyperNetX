@@ -45,8 +45,27 @@ def test_hypergraph_static(seven_by_six):
     # H.get_name 
     # H.translate
 
+def test_hypergraph_from_dataframe(lesmis):
+    df = lesmis.hypergraph.dataframe()
+    H = Hypergraph.from_dataframe(df)
+    assert H.shape == (40, 8)
+    assert H.size(3) == 8
+    assert H.degree("JA") == 3
 
+def test_hypergraph_from_numpy_array(seven_by_six):
+    sbs = seven_by_six
+    H = Hypergraph.from_numpy_array(sbs.arr)
+    assert len(H.nodes) == 6
+    assert len(H.edges) == 7
+    assert H.dim('e5') == 2
+    assert set(H.neighbors('v2')) == {'v0', 'v5'}
 
+def test_hypergraph_from_bipartite(sbsd_hypergraph):
+    H = sbsd_hypergraph
+    HB = Hypergraph.from_bipartite(H.bipartite())
+    assert len(HB.edges) == 7
+    assert len(HB.nodes) == 8
+    assert HB.s_degree("T1") == 1
 
 def test_hypergraph_from_entity_set(seven_by_six):
     sbs = seven_by_six
@@ -57,7 +76,6 @@ def test_hypergraph_from_entity_set(seven_by_six):
     assert H.dim('O') == 1
     assert len(H.edge_size_dist()) == 6
     assert len(H.edge_neighbors("S")) == 4
-
 
 
 def test_add_node_to_edge(seven_by_six):
