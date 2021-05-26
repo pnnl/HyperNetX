@@ -97,6 +97,21 @@ def test_collapse_nodes(sbsd_hypergraph):
     HC = H.collapse_nodes()
     assert len(HC.nodes) == 7
 
+def test_collapse_nodes_and_edges(sbsd_hypergraph):
+    H = sbsd_hypergraph
+    HC2 = H.collapse_nodes_and_edges()
+    assert len(H.edges) == 7
+    assert len(HC2.edges) == 6
+    assert len(H.nodes) == 8
+    assert len(HC2.nodes) == 7
+
+
+def test_restrict_to_edges(sbs_hypergraph):
+    H = sbs_hypergraph
+    HS = H.restrict_to_edges(["P", "O"])
+    assert len(H.edges) == 6
+    assert len(HS.edges) == 2
+
 
 def test_restrict_to_nodes(sbs_hypergraph):
     H = sbs_hypergraph
@@ -152,6 +167,19 @@ def test_remove_singletons():
     assert h1.shape == (7, 3)
     assert h.shape == (9, 5)
 
+def test_components():
+    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+    h = Hypergraph(setsystem)
+
+
+
+def test_connected_components():
+    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+    h = Hypergraph(setsystem)
+    assert len(list(h.connected_components())) == 1
+    assert list(h.connected_components(edges=True)) == [{'0', '1', '2', '3'}]
+    assert [len(g) for g in h.connected_component_subgraphs()] == [8]
+
 
 def test_s_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
@@ -169,7 +197,6 @@ def test_s_connected_components():
     assert list(h.s_connected_components()) == [{'0', '1', '2', '3'}]
     assert list(h.s_connected_components(s=2)) == [{'1', '2', '3'}]
     assert list(h.s_connected_components(s=2, edges=False)) == [{5, 6}]
-     
 
 
 def test_s_component_subgraphs():
