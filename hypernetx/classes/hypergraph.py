@@ -1948,7 +1948,7 @@ class Hypergraph:
         --------
         s_connected_components
         """
-        return s_connected_components(s=1, edges=edges)
+        return self.s_connected_components(s=1, edges=edges)
 
     def component_subgraphs(self, return_singletons=False):
         """
