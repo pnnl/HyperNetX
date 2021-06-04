@@ -721,7 +721,7 @@ class StaticEntity(object):
 
         Returns
         -------
-        numpy.str_
+         : numpy.array(str)
         """
         if isinstance(index, int):
             return self._labs(level)[index]

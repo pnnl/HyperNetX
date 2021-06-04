@@ -1,22 +1,24 @@
 .. _nwhy:
 
 ====
-NWhy
+NWHy
 ====
 
 Overview
 ========
-		NWhy is a C++-based, scalable, high-performance hypergraph library. It has three dependencies.
-		It uses NWGraph library as the building block. NWGraph provides graph data structures, a rich set of adaptors over the graph data structures, various high-performance graph algorithms implementations.
-		It relies Intel OneAPI Threading Building Blocks (oneTBB) to provide parallelism.
-		To expose the C++ implementations to Python, Pybind11 are adopted to encapsulate NWhy as a python module.
-		The goal of the NWhy python APIs is to share a ID space between NWhy and its user for hypergraph processing, instead of copying the sparse matrix of the hypergraph back and forth between NWhy and its user.
-		NWhy is developed by Xu Tony Liu. The current version is preliminary and under active development.
+NWHy is a C++ based, scalable, high-performance hypergraph library. It has three dependencies.
+		
+	1. NWGraph library: provides graph data structures, a rich set of adaptors over the graph data structures, and various high-performance graph algorithms implementations.
+	2. Intel OneAPI Threading Building Blocks (oneTBB): to provide parallelism.
+	3. It uses Pybind11 to encapsulate NWHy as a python module.
+	
+The goal of the NWHy python API is to share an ID space between NWHy and its user for hypergraph processing, instead of copying the sparse matrix of the hypergraph back and forth between NWHy and its user.
+NWHy was developed by Xu Tony Liu. The current version is preliminary and under active development.
 
-Installing NWhy
+Installing NWHy
 ===============
 
-The NWhy library provides Pybind11_ APIs for analysis of complex data set intepret as hypergraphs.
+The NWHy library provides Pybind11_ APIs for analysis of complex data sets interpreted as hypergraphs.
 
 .. _Pybind11: https://github.com/pybind/pybind11
 
@@ -39,7 +41,7 @@ To install TBB_:
 
 	>>> conda install tbb
 
-If a local TBB has been install, we can specify TBBROOT
+If a local TBB has been installed, we can specify TBBROOT
 
     >>> export TBBROOT=/opt/tbb/
 	
@@ -68,7 +70,7 @@ For quick test:
 
 If there is no import error, then installation is done.
 
-NWhy APIs
+NWHy APIs
 =========
 
 .. _nwhy::

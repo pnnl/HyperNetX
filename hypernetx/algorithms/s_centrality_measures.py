@@ -213,8 +213,8 @@ def s_harmonic_centrality(
     intersects every other s-edge in H. All values range between 0 and 1.
     Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     H : Hypergraph
     edge : str or Entity, optional
         an edge or uid of an edge in H
@@ -222,8 +222,8 @@ def s_harmonic_centrality(
     s : int
         minimum size of edges to be considered
 
-    Returns:
-    --------
+    Returns
+    -------
      : dict or float
         returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
         If edge=None a dictionary of values for each s-edge in H is returned.
