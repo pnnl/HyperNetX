@@ -126,86 +126,86 @@ def get_scene_data():
 
 
 # LesMis Data:
-names = """ AZ Anzelma, daughter of TH and TM
-            BA Bahorel, `Friends of the ABC' cutup
-            BB Babet, tooth-pulling bandit of Paris
-            BJ Brujon, notorious criminal
-            BL Blacheville, Parisian student from Montauban
-            BM Monsieur Bamatabois, idler of M-- sur M--
-            BO Bossuet (Lesgle), `Friends of the ABC' klutz
-            BR Brevet, convict in the galleys with JV
-            BS Bruneseau, explorer and mapper of the sewers of Paris
-            BT Baroness of T--, friend of GI
-            BU Madame Burgon, new landlady at Gorbeau House
-            BZ Boulatruelle, former convict and road mender in Montfermeil
-            CC Cochepaille, convict in the galleys with JV
-            CH Champmathieu, accused thief mistaken for JV
-            CL Countess de L\^o, distant relative of MY
-            CM Combeferre, `Friends of the ABC' guide
-            CN Chenildieu, convict in the galleys with JV
-            CO Cosette, daughter of FN and FT
-            CR Courfeyrac, `Friends of the ABC' center
-            CV Cravatte, mountain bandit
-            DA Dahlia, lover of LI
-            EN Enjolras, `Friends of the ABC' chief
-            EP Eponine, daughter of TH and TM
-            FA Fameuil, Parisian student from Limoges
-            FE Feuilly, `Friends of the ABC' political idealist
-            FF Fauchelevent, aged notary of M-- sur M--
-            FN Fantine, lover of FT
-            FT F\'elix Tholomy\`es, Parisian student from Toulouse
-            FV Favourite, lover of BL
-            GA Gavroche, young urchin living at Gorbeau House
-            GE G\'eborand, retired merchant of D--
-            GG G--, former member of National Convention
-            GI Monsieur Luke Esprit Gillenormand, grand bourgeois
-            GP George Pontmercy, father of MA and son-in-law of GI
-            GR Gribier, new gravedigger at cemetery
-            GT Grantaire, `Friends of the ABC' skeptic
-            GU Gueulemer, Herculean bandit of Paris
-            HL Madame Hucheloup, keeper of Corinth Inn
-            IS Isabeau, baker
-            JA Javert, police officer of M-- sur M--
-            JD Jondrette, father of GA
-            JL Jacquin Labarre, innkeeper of La Croix de Calbas
-            JO Joly, `Friends of the ABC' medic
-            JP Jean Prouvaire, `Friends of the ABC' poet
-            JU Judge of Douai, judge at the court trying CH
-            JV Jean Valjean, thief of bread
-            LI Listolier, Parisian student from Cahors
-            LL Old woman 2, landlady of JV in Paris at Gorbeau House
-            LP Louis Philippe, Orleans King of France
-            MA Marius, grandson of GI
-            MB Mademoiselle Baptistine, sister of MY
-            MC Marquis de Champtercier, ultra-royalist miser
-            ME Madame Magloire, housekeeper to MY
-            MG Madamoiselle Gillenormand, unmarried daughter of GI
-            MI Mother Innocent, prioress of Convent of Petite Rue Picpus
-            MM Monsieur Mabeuf, prefect of church
-            MN Magnon, servant of GI
-            MO Montparnasse, genteel bandit of Paris
-            MP Madame Pontmercy, younger daughter of GI
-            MR Madame de R--, Marquise de R--
-            MT Marguerite, old lady who teaches FN to live poor
-            MV Madamoiselle Vaubois, friend of MG
-            MY Monsieur Charles Fran\c{c}ois Bienvenu Myriel, Bishop of D--
-            NP Napoleon, Emperor of France
-            PG Petit Gervais, a small boy in D--
-            PL Mother Plutarch, maid of MM
-            PO Old woman 1, portress of JV in M-- sur M--
-            QU Claquesous, night-like bandit of Paris
-            SC Monsieur Scaufflaire, keeper of horses and chaises in M-- sur M--
-            SN Count ***, `philosophic' senator
-            SP Sister Perp\'etue, stout nun at infirmary in M-- sur M--
-            SS Sister Simplice, saintly nun at infirmary in M-- sur M--
-            TG Lieutenant Theodule Gillenormand, soldier and grandnephew of GI
-            TH Th\'enardier, sergeant of Waterloo and keeper of a chophouse
-            TM Madame Th\'enardier, wife of TH
-            TS Toussaint, servant of JV at Rue Plumet
-            VI Madame Victurnien, snoop in M-- sur M--
-            XA Child 1, son of TH sold to MN
-            XB Child 2, son of TH sold to MN
-            ZE Zephine, lover of FA"""
+names = """AZ Anzelma, daughter of TH and TM
+BA Bahorel, `Friends of the ABC' cutup
+BB Babet, tooth-pulling bandit of Paris
+BJ Brujon, notorious criminal
+BL Blacheville, Parisian student from Montauban
+BM Monsieur Bamatabois, idler of M-- sur M--
+BO Bossuet (Lesgle), `Friends of the ABC' klutz
+BR Brevet, convict in the galleys with JV
+BS Bruneseau, explorer and mapper of the sewers of Paris
+BT Baroness of T--, friend of GI
+BU Madame Burgon, new landlady at Gorbeau House
+BZ Boulatruelle, former convict and road mender in Montfermeil
+CC Cochepaille, convict in the galleys with JV
+CH Champmathieu, accused thief mistaken for JV
+CL Countess de L\^o, distant relative of MY
+CM Combeferre, `Friends of the ABC' guide
+CN Chenildieu, convict in the galleys with JV
+CO Cosette, daughter of FN and FT
+CR Courfeyrac, `Friends of the ABC' center
+CV Cravatte, mountain bandit
+DA Dahlia, lover of LI
+EN Enjolras, `Friends of the ABC' chief
+EP Eponine, daughter of TH and TM
+FA Fameuil, Parisian student from Limoges
+FE Feuilly, `Friends of the ABC' political idealist
+FF Fauchelevent, aged notary of M-- sur M--
+FN Fantine, lover of FT
+FT F\'elix Tholomy\`es, Parisian student from Toulouse
+FV Favourite, lover of BL
+GA Gavroche, young urchin living at Gorbeau House
+GE G\'eborand, retired merchant of D--
+GG G--, former member of National Convention
+GI Monsieur Luke Esprit Gillenormand, grand bourgeois
+GP George Pontmercy, father of MA and son-in-law of GI
+GR Gribier, new gravedigger at cemetery
+GT Grantaire, `Friends of the ABC' skeptic
+GU Gueulemer, Herculean bandit of Paris
+HL Madame Hucheloup, keeper of Corinth Inn
+IS Isabeau, baker
+JA Javert, police officer of M-- sur M--
+JD Jondrette, father of GA
+JL Jacquin Labarre, innkeeper of La Croix de Calbas
+JO Joly, `Friends of the ABC' medic
+JP Jean Prouvaire, `Friends of the ABC' poet
+JU Judge of Douai, judge at the court trying CH
+JV Jean Valjean, thief of bread
+LI Listolier, Parisian student from Cahors
+LL Old woman 2, landlady of JV in Paris at Gorbeau House
+LP Louis Philippe, Orleans King of France
+MA Marius, grandson of GI
+MB Mademoiselle Baptistine, sister of MY
+MC Marquis de Champtercier, ultra-royalist miser
+ME Madame Magloire, housekeeper to MY
+MG Madamoiselle Gillenormand, unmarried daughter of GI
+MI Mother Innocent, prioress of Convent of Petite Rue Picpus
+MM Monsieur Mabeuf, prefect of church
+MN Magnon, servant of GI
+MO Montparnasse, genteel bandit of Paris
+MP Madame Pontmercy, younger daughter of GI
+MR Madame de R--, Marquise de R--
+MT Marguerite, old lady who teaches FN to live poor
+MV Madamoiselle Vaubois, friend of MG
+MY Monsieur Charles Fran\c{c}ois Bienvenu Myriel, Bishop of D--
+NP Napoleon, Emperor of France
+PG Petit Gervais, a small boy in D--
+PL Mother Plutarch, maid of MM
+PO Old woman 1, portress of JV in M-- sur M--
+QU Claquesous, night-like bandit of Paris
+SC Monsieur Scaufflaire, keeper of horses and chaises in M-- sur M--
+SN Count ***, `philosophic' senator
+SP Sister Perp\'etue, stout nun at infirmary in M-- sur M--
+SS Sister Simplice, saintly nun at infirmary in M-- sur M--
+TG Lieutenant Theodule Gillenormand, soldier and grandnephew of GI
+TH Th\'enardier, sergeant of Waterloo and keeper of a chophouse
+TM Madame Th\'enardier, wife of TH
+TS Toussaint, servant of JV at Rue Plumet
+VI Madame Victurnien, snoop in M-- sur M--
+XA Child 1, son of TH sold to MN
+XB Child 2, son of TH sold to MN
+ZE Zephine, lover of FA"""
 
 volume_names = {
     1: {"title": "Fantine"},

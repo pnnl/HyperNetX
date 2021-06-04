@@ -78,13 +78,13 @@ Tutorials may be run in your browser using Google Colab
 Installation Instructions
 -------------------------
 
-HyperNetX requires Python>=3.6.
+HyperNetX requires Python>=3.7.
 We recommend installation in a virtual environment.
 
 To install in an Anaconda environment
 -------------------------------------
 
-	>>> conda create -n <env name> python=3.6
+	>>> conda create -n <env name> python=3.7
 	>>> source activate <env name> 
 
 Mac Users: If you wish to build the documentation you will need
@@ -92,10 +92,16 @@ the conda version of matplotlib:
 	
 	>>> conda install matplotlib
 
+To use NWHy use python=3.9 and conda install tbb into your environment. 
+**Note** that NWHy only works on linux and some OSX systems. See [NWHy docs](https://pypi.org/project/nwhy/) for more.:
+
+	>>> conda create -n <env name> python=3.9 tbb
+	>>> source activate <env name>
+
 To install in a virtualenv environment
 --------------------------------------
 
-	>>> virtualenv --python=<path to python 3.6 executable> <path to env name>
+	>>> virtualenv --python=<path to python 3.7 executable> <path to env name>
 
 This will create a virtual environment in the specified location using
 the specified python executable. For example:

@@ -6,7 +6,8 @@ import hypernetx as hnx
 import pandas as pd
 import numpy as np
 from collections import OrderedDict
-from harrypotter import HarryPotter
+from hypernetx.utils.toys import HarryPotter
+# from harrypotter import HarryPotter
 
 
 class SevenBySix:

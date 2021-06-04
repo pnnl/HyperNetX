@@ -9,13 +9,15 @@ import itertools as it
 
 __all__ = ["HarryPotter"]
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 class HarryPotter(object):
     def __init__(self, cols=None):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
-        fname = "Characters.csv"
-        harrydata = pd.read_csv(fname, encoding="unicode_escape")
+        fname = "HarryPotter_Characters.csv"
+        harrydata = pd.read_csv(f'{current_dir}/{fname}', encoding="unicode_escape")
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
@@ -72,8 +74,3 @@ class HarryPotter(object):
         for cdx, c in enumerate(list(ldict.keys())):
             slabels.update({c: np.array(list(ldict[c].keys()))})
         self.labels = slabels
-
-
-#         self.entity = StaticEntity(self.arr, self.labels)
-#         self.entityset = StaticEntitySet(self.arr, self.labels, 0, 1)
-#         self.sparseentity = StaticEntitySet(self.arr, self.labels, 0, 1)

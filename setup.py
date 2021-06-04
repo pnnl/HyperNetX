@@ -1,10 +1,10 @@
 from setuptools import setup
 import sys
 
-__version__ = "0.3.9"
+__version__ = "1.0"
 
-if sys.version_info < (3, 8):
-    sys.exit("HyperNetX requires Python 3.8 or later.")
+if sys.version_info < (3, 7):
+    sys.exit("HyperNetX requires Python 3.7 or later.")
 
 setup(
     name="hypernetx",
