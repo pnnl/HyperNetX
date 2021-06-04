@@ -29,7 +29,9 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -183,24 +185,25 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    .. _staticentity:</span>
 
-<span class="sd">    arr = np.ndarray (there can be no empty cells) of boolean or integer values</span>
-<span class="sd">    labels = OrderedDict of labelnames by dimension, keys = header names , ## rdict with numeric keys</span>
-<span class="sd">    levels are given by the order of these labels</span>
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    entity : StaticEntity, StaticEntitySet, Entity, EntitySet, pandas.DataFrame, dict, or list of lists</span>
+<span class="sd">        If a pandas.DataFrame, an error will be raised if there are nans. </span>
+<span class="sd">    data : array or array-like</span>
+<span class="sd">        Two dimensional array of integers. Provides sparse tensor indices for incidence</span>
+<span class="sd">        tensor. </span>
 <span class="sd">    arr : numpy.ndarray or scip.sparse.matrix, optional, default=None</span>
-
+<span class="sd">        Incidence tensor of data. </span>
 <span class="sd">    labels : OrderedDict of lists, optional, default=None</span>
-<span class="sd">        dictionary lists</span>
+<span class="sd">        User defined labels corresponding to integers in data.  </span>
+<span class="sd">    uid : hashable, optional, default=None  </span>
 
-<span class="sd">    entity : hypernetx.StaticEntity or hypernets.StaticEntitySet, optional, default=None</span>
+<span class="sd">    props : user defined keyword arguments to be added to a properties dictionary, optional</span>
 
-<span class="sd">    uid : hashable, optional, default=None</span>
-
-<span class="sd">    keep_state_dict : bool, optional, default=False</span>
-
-<span class="sd">    props : user defined keyword arguments, optional</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    properties : dict</span>
+<span class="sd">        Description</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -451,7 +454,6 @@
     <span class="c1">#                 print(&quot;arr cannot be computed&quot;)</span>
     <span class="c1">#                 self._arr = 0</span>
     <span class="c1">#     return self._arr</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -796,13 +798,13 @@
 <div class="viewcode-block" id="StaticEntity.restrict_to_levels"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.restrict_to_levels">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Limit Static Entity data to specific labels</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        levels : array</span>
 <span class="sd">            index of labels in data</span>
 <span class="sd">        uid : None, optional</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Static Entity class</span>
@@ -849,7 +851,7 @@
     <span class="p">):</span>  <span class="c1"># restricting to indices requires renumbering the labels.</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Limit Static Entity data to specific indices of keys</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        indices : array</span>
@@ -1028,14 +1030,14 @@
 <div class="viewcode-block" id="StaticEntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Incidence matrix of StaticEntitySet indexed by uidset</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sparse : bool, optional</span>
 <span class="sd">        weighted : bool, optional</span>
 <span class="sd">        index : bool, optional</span>
 <span class="sd">            give index of rows then columns</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matrix</span>
@@ -1047,7 +1049,7 @@
             <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>  
+        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">result</span><span class="p">,</span>
                 <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="mi">1</span><span class="p">))},</span>
@@ -1065,7 +1067,7 @@
 <span class="sd">        indices : array</span>
 <span class="sd">            array of indices in keys</span>
 <span class="sd">        uid : None, optional</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        StaticEntitySet</span>
@@ -1077,11 +1079,11 @@
 <div class="viewcode-block" id="StaticEntitySet.convert_to_entityset"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.convert_to_entityset">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_entityset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert given uid of Static EntitySet into EntitySet</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        uid : string</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        EntitySet</span>
