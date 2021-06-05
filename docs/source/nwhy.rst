@@ -9,8 +9,8 @@ Overview
 NWHy is a C++ based, scalable, high-performance hypergraph library. It has three dependencies.
 		
 	1. NWGraph library: provides graph data structures, a rich set of adaptors over the graph data structures, and various high-performance graph algorithms implementations.
-	2. Intel OneAPI Threading Building Blocks (oneTBB): to provide parallelism.
-	3. It uses Pybind11 to encapsulate NWHy as a python module.
+	2. Intel OneAPI Threading Building Blocks (oneTBB): provides parallelism.
+	3. Pybind11: encapsulate NWHy as a python module.
 	
 The goal of the NWHy python API is to share an ID space between NWHy and its user for hypergraph processing, instead of copying the sparse matrix of the hypergraph back and forth between NWHy and its user.
 NWHy was developed by Xu Tony Liu. The current version is preliminary and under active development.
