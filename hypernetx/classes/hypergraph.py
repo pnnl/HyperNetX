@@ -145,37 +145,37 @@ class Hypergraph:
             self.name = name
 
         if static == True or (
-            isinstance(setsystem, StaticEntitySet)
-            or isinstance(setsystem, StaticEntity)
-        ):
-            self._static = True
+            isinstance(setsystem, StaticEntitySet) or
+            isinstance(setsystem, StaticEntity) or
+            isinstance(setsystem, pd.DataFrame) ) :
+            self._static=True
             if setsystem is None:
-                self._edges = StaticEntitySet()
-                self._nodes = StaticEntitySet()
+                self._edges=StaticEntitySet()
+                self._nodes=StaticEntitySet()
             else:
-                E = StaticEntitySet(entity=setsystem)
-                self._edges = E
-                self._nodes = E.restrict_to_levels([1])
+                E=StaticEntitySet(entity = setsystem)
+                self._edges=E
+                self._nodes=E.restrict_to_levels([1])
         else:
-            self._static = False
+            self._static=False
             if setsystem is None:
-                setsystem = EntitySet("_", elements=[])
+                setsystem=EntitySet("_", elements = [])
             elif isinstance(setsystem, Entity):
-                setsystem = EntitySet("_", setsystem.incidence_dict)
+                setsystem=EntitySet("_", setsystem.incidence_dict)
             elif isinstance(setsystem, dict):
                 # Must be a dictionary with values equal to iterables of Entities and hashables.
                 # Keys will be uids for new edges and values of the dictionary will generate the nodes.
-                setsystem = EntitySet("_", setsystem)
+                setsystem=EntitySet("_", setsystem)
             elif not isinstance(setsystem, EntitySet):
                 # If no ids are given, return default ids indexed by position in iterator
                 # This should be an iterable of sets
-                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
-                setsystem = EntitySet("_", dict(zip(edge_labels, setsystem)))
+                edge_labels=[self.name + str(x) for x in range(len(setsystem))]
+                setsystem=EntitySet("_", dict(zip(edge_labels, setsystem)))
 
-            _reg = setsystem.registry
-            _nodes = {k: Entity(k, **_reg[k].properties) for k in _reg}
-            _elements = {j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
-            _edges = {
+            _reg=setsystem.registry
+            _nodes={k: Entity(k, **_reg[k].properties) for k in _reg}
+            _elements={j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
+            _edges={
                 j: Entity(j, elements=_elements[j].values(), **setsystem[j].properties)
                 for j in setsystem
             }
@@ -1321,10 +1321,9 @@ class Hypergraph:
 
         if edges:
             d = self.g.collapse_edges(return_equivalence_class=rec)
-            lev = "0"
         else:
             d = self.g.collapse_nodes(return_equivalence_class=rec)
-            lev = "1"
+
         if rec:
             en = {
                 self.get_name(
@@ -1346,9 +1345,9 @@ class Hypergraph:
                 for k, v in d.items()
             }
             ec = {}
-        lev = 1 - 1 * edges
-        E = self.edges.restrict_to_indices(sorted(d.keys()), level=lev)
-        E.labels[str(lev)] = np.array([en[k] for k in E.labels[str(lev)]])
+        lev = self.edges.keys[1-1*edges]
+        E = self.edges.restrict_to_indices(sorted(d.keys()), level=1-1*edges)
+        E.labels[str(lev)] = np.array([en[k] for k in E.labels[lev]])
         if rec:
             return E, ec
         else:
@@ -2470,7 +2469,11 @@ class Hypergraph:
     ):
         """
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
-        and Columns to label edges.
+        and Columns to label edges. The values of the dataframe are transformed into an 
+        incidence matrix.  
+        Note this is different than passing a dataframe directly
+        into the Hypergraph constructor. The latter automatically generates a static hypergraph
+        with edge and node labels given by the cell values.
 
         Parameters
         ----------
@@ -2517,7 +2520,7 @@ class Hypergraph:
 
         Notes
         -----
-        1. The constructor does not generate empty edges.
+        The `from_dataframe` constructor does not generate empty edges.
         All-zero columns in df are removed and the names corresponding to these
         edges are discarded.
         Restrictions and data processing will occur in this order:
@@ -2532,9 +2535,6 @@ class Hypergraph:
         matrix for a hypergraph. For more flexibility we recommend you use the Pandas
         library to format the values of your dataframe before submitting it to this
         constructor.
-
-        2. The dataframe constructor for a hypergraph transforms the values portion of the dataframe
-        into an incidence matrix. This is different from the use of dataframe in :ref:`StaticEntity<staticentity>`.
 
         """
 
