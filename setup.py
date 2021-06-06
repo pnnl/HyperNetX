@@ -30,14 +30,26 @@ setup(
     ],
     license="3-Clause BSD license",
     long_description="""
-    The HyperNetX library provides classes and methods for complex network data.
-    HyperNetX uses data structures designed to represent set systems containing
-    nested data and/or multi-way relationships. The library generalizes traditional
-    graph metrics to hypergraphs.
+    The HyperNetX library provides classes and methods for the analysis
+    and visualization of complex network data modeled as hypergraphs. The library generalizes traditional graph metrics.
 
-    The current version is preliminary. We are actively testing and would be grateful
-    for comments and suggestions. Expect changes in both class names and methods as
-    many of the requirements demanded of the library are worked out.
+    HypernetX was developed by the Pacific Northwest National Laboratory for the
+    Hypernets project as part of its High Performance Data Analytics (HPDA) program.
+    PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
+
+    * Principle Developer and Designer: Brenda Praggastis
+    * Visualization: Dustin Arendt, Ji Young Yun
+    * High Performance Computing: Tony Liu, Andrew Lumsdaine
+    * Principal Investigator: Cliff Joslyn
+    * Program Manager: Mark Raugas, Brian Kritzstein
+    * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
+
+    The code in this repository is intended to support researchers modeling data
+    as hypergraphs. We have a growing community of users and contributors.
+    Documentation is available at: <https://pnnl.github.io/HyperNetX/>
+
+    For questions and comments contact the developers directly at:
+        <hypernetx@pnnl.gov>
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
@@ -55,6 +67,3 @@ setup(
         ],
     },
 )
-
-# Since this package is still in development, please install in a virtualenv or conda environment.
-# See README for installations instructions

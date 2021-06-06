@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing HyperNetX &mdash; HyperNetX 0.3.7 documentation</title>
+  <title>Installing HyperNetX &mdash; HyperNetX 1.0.0 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.3
+                1.0
               </div>
             
           
@@ -100,8 +100,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing HyperNetX</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#to-install-in-a-virtualenv-environment">To install in a virtualenv environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-using-pip">Install using Pip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-using-pip-options">Install using Pip options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
@@ -110,6 +109,7 @@
 <li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nwhy.html">NWHy API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">HyperNetX-Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -185,17 +185,22 @@
 <h2>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this headline">¶</a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
 </div>
 <p>Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">matplotlib</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span> <span class="n">matplotlib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
 </div>
-<p>To use NWHy use python=3.9 and conda install tbb into your environment.
-<strong>Note</strong> that NWHy only works on linux and some OSX systems. See NWHy docs for more.:</p>
+<p>To use <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> use python=3.9 and the conda version of tbb in your environment.
+<strong>Note</strong> that <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> only works on Linux and some OSX systems. See NWHy docs for more.:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span> <span class="n">tbb</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
 </pre></div>
 </div>
 </div>
@@ -219,8 +224,8 @@ that comes with Anaconda3.</p>
 <p>Otherwise use &lt;file extension&gt;=NULL (no file extension).</p>
 <p>Once activated continue to follow the installation instructions below.</p>
 </div>
-<div class="section" id="install-using-pip">
-<h2>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-using-pip-options">
+<h2>Install using Pip options<a class="headerlink" href="#install-using-pip-options" title="Permalink to this headline">¶</a></h2>
 <p>For a minimal installation:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
@@ -236,9 +241,9 @@ that comes with Anaconda3.</p>
 <p>To install with the documentation:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chmod</span> <span class="mi">755</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">./</span><span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="go">## This will generate the documentation in /docs/build</span>
-<span class="go">## Open them in your browser with /docs/build/index.html</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sh</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
+<span class="go">## This will generate the documentation in /docs/build/</span>
+<span class="go">## Open them in your browser with /docs/index.html</span>
 </pre></div>
 </div>
 <p>To install and test using pytest:</p>
@@ -250,10 +255,6 @@ that comes with Anaconda3.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>Released under the 3-Clause BSD license (see <a class="reference internal" href="license.html#license"><span class="std std-ref">License</span></a>)</p>
 </div>
 </div>
 

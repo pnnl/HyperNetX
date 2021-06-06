@@ -1,7 +1,3 @@
-.. HyperNetX documentation master file, created by
-   sphinx-quickstart on Fri Jul 20 06:50:16 2018.
-
-
 ===============
 HyperNetX (HNX)
 ===============
@@ -9,9 +5,19 @@ HyperNetX (HNX)
 Description
 ===========
 
-The HyperNetX library provides classes and methods for modeling the entities and relationships found in complex network data. Entities and the relationships between them are dual to each other in HyperNetX. Both can be represented as either nodes or as (hyper)edges. HyperNetX uses data structures designed to represent set systems containing nested data and/or multi-way relationships. The library generalizes traditional graph metrics to hypergraphs. 
+The HNX library provides classes and methods for modeling the entities and relationships 
+found in complex network data as hypergraphs. Hypergraphs are natural models for multi-dimensional
+data structures. They distinguish cliques and simplices. They recognize both vertex adjacency and edge
+incidence as having a *width* because of the multiway connections. And, they permit singleton
+vertices and edges. Most graph metrics have natural generalizations to hypergraphs, but since
+hypergraphs are basically set systems, we can also use the powerful tools of algebraic topology
+to study their structure.
 
-The current version is preliminary. We are actively testing and would be grateful for comments and suggestions.  Expect changes in both class names and methods as many of the requirements demanded of the library are worked out. 
+This library serves as a repository of the methods and algorithms we find most useful
+as we explore what hypergraphs can tell us. We have a growing community of users and contributors. 
+To learn more about some of our research check out our paper `Hypernetwork science via high order hypergraph walks 
+<https://epjdatascience.springeropen.com/articles/10.1140/epjds/s13688-020-00231-0>`_
+
 
 For comments and questions you may contact the developers directly at: 
 	hypernetx@pnnl.gov
@@ -30,6 +36,7 @@ Contents
    Drawing <drawing/modules.rst>
    Reports <reports/modules.rst>
    NWHy API <nwhy>
+   HyperNetX-Widget <widget>
    license
 
 

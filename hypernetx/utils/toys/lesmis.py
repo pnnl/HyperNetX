@@ -23,7 +23,7 @@ class LesMis(object):
             self.names = names.replace(k, v)
 
         self.df_names = pd.DataFrame(
-            [parse_name_row(row) for row in names.split("\n")],
+            [parse_name_row(row) for row in self.names.split("\n")],
             columns=["Symbol", "FullName", "Description"],
         )
 
@@ -33,6 +33,10 @@ class LesMis(object):
         )
 
         self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(lesmis_hypergraph_from_df, by="Chapter")
+
+    @property
+    def dnames(self):
+        return self.df_names.set_index('Symbol')
 
 
 # def bipartite_from_df(df, by="Chapter", on="Characters"):

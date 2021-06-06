@@ -115,7 +115,7 @@ class Hypergraph:
     use_nwhy : boolean, optional, default = False
         If True hypergraph will be static and computations will be done using
         C++ backend offered by NWHypergraph. This requires installation of the
-        NWHypergraph C++ library. Please see documentation for more information.
+        NWHypergraph C++ library. Please see the :ref:`NWHy documentation <nwhy>` for more information.
 
 
     """
