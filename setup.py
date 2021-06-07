@@ -31,7 +31,8 @@ setup(
     license="3-Clause BSD license",
     long_description="""
     The HyperNetX library provides classes and methods for the analysis
-    and visualization of complex network data modeled as hypergraphs. The library generalizes traditional graph metrics.
+    and visualization of complex network data modeled as hypergraphs. 
+    The library generalizes traditional graph metrics.
 
     HypernetX was developed by the Pacific Northwest National Laboratory for the
     Hypernets project as part of its High Performance Data Analytics (HPDA) program.

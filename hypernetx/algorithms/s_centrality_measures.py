@@ -124,9 +124,19 @@ def s_betweenness_centrality(
     H, s=1, edges=True, normalized=True, return_singletons=True, use_nwhy=True
 ):
     """
-    A centrality measure for an s-edge subgraph of H based on shortest paths.
-    The betweenness centrality of an s-edge e is the sum of the fraction of all
-    shortest s-paths between s-edges that pass through e.
+    A centrality measure for an s-edge(node) subgraph of H based on shortest paths.
+    Equals the betweenness centrality of vertices in the edge(node) s-linegraph.
+
+    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$ 
+    is the ratio of the number of non-trivial shortest paths between any pair of 
+    vertices in the graph that pass through $v$ divided by the total number of 
+    non-trivial shortest paths in the graph.
+
+    The centrality of edge to all shortest s-edge paths
+    $V$ = the set of vertices in the linegraph.  
+    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.  
+    $\sigma(s, t|v)$ = the number of those paths that pass through vertex $v$
+    $$c_B(v) =\sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)}$$
 
     Parameters
     ----------
@@ -173,7 +183,39 @@ def s_betweenness_centrality(
 def s_closeness_centrality(
     H, s=1, edges=True, return_singletons=True, source=None, use_nwhy=True
 ):
+    """
+    In a connected component the reciprocal of the sum of the distance between an
+    edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
+    in the component minus 1.
 
+    $V$ = the set of vertices in the linegraph.  
+    $n = |V|$
+    $d$ = shortest path distance
+    $$C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}$$
+
+    
+    Parameters
+    ----------
+    H : hnx.Hypergraph
+        
+    s : int, optional
+        
+    edges : bool, optional
+        Indicates if method should compute edge linegraph (default) or node linegraph.
+    return_singletons : bool, optional
+        Indicates if method should return values for singleton components.
+    source : str, optional
+        Identifier of node or edge of interest for computing centrality
+    use_nwhy : bool, optional
+        If true will use the :ref:`NWHy library <nwhy>` if available.
+
+    Returns
+    -------
+     : dict or float
+        returns the s-closeness centrality value of the edges(nodes).
+        If source=None a dictionary of values for each s-edge in H is returned.
+        If source then a single value is returned.
+    """
     if use_nwhy and nwhy_available and H.nwhy:
         func = partial(nwhy.Slinegraph.s_closeness_centrality)
     else:
@@ -213,21 +255,36 @@ def s_harmonic_centrality(
     intersects every other s-edge in H. All values range between 0 and 1.
     Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.
 
+    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.  
+    $V$ = the set of vertices in the linegraph.
+    $d$ = shortest path distance
+    $$C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}$$
+
+    Normalized this becomes:
+    $$C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}\cdot\frac{2}{(n-1)(n-2)}$$
+    where $n$ is the number vertices.
+
     Parameters
     ----------
-    H : Hypergraph
-    edge : str or Entity, optional
-        an edge or uid of an edge in H
-        If None then a dictionary of values for all s-edges is returned.
-    s : int
-        minimum size of edges to be considered
+    H : hnx.Hypergraph
+        
+    s : int, optional
+        
+    edges : bool, optional
+        Indicates if method should compute edge linegraph (default) or node linegraph.
+    return_singletons : bool, optional
+        Indicates if method should return values for singleton components.
+    source : str, optional
+        Identifier of node or edge of interest for computing centrality
+    use_nwhy : bool, optional
+        If true will use the :ref:`NWHy library <nwhy>` if available.
 
     Returns
     -------
      : dict or float
         returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
-        If edge=None a dictionary of values for each s-edge in H is returned.
-        If edge then a single value is returned.
+        If source=None a dictionary of values for each s-edge in H is returned.
+        If source then a single value is returned.
 
     """
 
@@ -257,20 +314,32 @@ def s_eccentricity(
     H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True
 ):
     """
-    Max s_distance from edge f to every other edge to which it is connected
+    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.  
+    $V$ = set of vertices in the linegraph
+    $d$ = shortest path distance
+    $$ \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\} $$
 
     Parameters
     ----------
     H : hnx.Hypergraph
-    s : int
+        
+    s : int, optional
+        
     edges : bool, optional
-        Description
-    source : str
-        source object identifier
+        Indicates if method should compute edge linegraph (default) or node linegraph.
+    return_singletons : bool, optional
+        Indicates if method should return values for singleton components.
+    source : str, optional
+        Identifier of node or edge of interest for computing centrality
+    use_nwhy : bool, optional
+        If true will use the :ref:`NWHy library <nwhy>` if available.
 
     Returns
     -------
-     : float or dict
+     : dict or float
+        returns the s-eccentricity value of the edges(nodes).
+        If source=None a dictionary of values for each s-edge in H is returned.
+        If source then a single value is returned.
 
     """
     if use_nwhy and nwhy_available and H.nwhy:

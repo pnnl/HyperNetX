@@ -3,10 +3,20 @@
 HyperNetX
 =========
 
-The HyperNetX library provides classes and methods for the analysis
-and visualization of complex network data modeled as hypergraphs. The library generalizes traditional graph metrics.
+The HNX library provides classes and methods for modeling the entities and relationships 
+found in complex network data as hypergraphs. Hypergraphs are natural models for multi-dimensional
+data structures. They distinguish cliques and simplices, they recognize both vertex adjacency and edge
+incidence as having a *width* because of the multiway connections, and they permit singleton
+vertices and edges. Most graph metrics have natural generalizations to hypergraphs; but since
+hypergraphs are basically set systems, we can also use the powerful tools of algebraic topology
+to study their structure.
 
-HypernetX was developed by the Pacific Northwest National Laboratory for the
+This library serves as a repository of the methods and algorithms we find most useful
+as we explore what hypergraphs can tell us. We have a growing community of users and contributors. 
+To learn more about some of our research check out our paper [Hypernetwork science via high order hypergraph walks] 
+(https://epjdatascience.springeropen.com/articles/10.1140/epjds/s13688-020-00231-0)
+
+HNX was developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 

@@ -94,10 +94,16 @@ class Hypergraph:
         >>> H.nodes, H.edges
         # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
-    All of these constructions apply for both dynamic and static hypergraphs. In addition
-    any set system that generates a StaticEntity may also be used. See :ref:`staticentity`<StaticEntity> .
+    All of these constructions apply for both dynamic and static hypergraphs. To
+    create a static hypergraph set the parameter `static=True`. In addition a static
+    hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object
+    is passed to the Hypergraph constructor.
 
-
+    6. From a pandas.DataFrame the dataframe must have at least two columns with headers and there can be no nans.
+        By default the first column corresponds to the edge names and the second column to the node names.
+        You can specify the columns by restricting the dataframe to the columns of interest in the order
+        $$df[[edge_column_name,node_column_name]]$$
+        See `tutorials/Tutorial 6 - Statid Hypergraphs and Entities.ipynb` for additional information.
 
 
     Parameters

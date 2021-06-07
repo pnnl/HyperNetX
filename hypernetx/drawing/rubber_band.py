@@ -413,7 +413,7 @@ def draw(
     nodes_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for nodes
     edge_labels_kwargs: dict
-        keyword arguments passed to matplotlib.annotate for edge laberls
+        keyword arguments passed to matplotlib.annotate for edge labels
     node_labels_kwargs: dict
         keyword argumetns passed to matplotlib.annotate for node labels
     with_edge_labels: bool
