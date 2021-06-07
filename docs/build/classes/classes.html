@@ -876,25 +876,19 @@ different ids for nodes and edges. To create a static hypergraph set
 </pre></div>
 </div>
 </li>
-<li><dl>
-<dt>From a dictionary of iterables (elements of iterables must be of</dt><dd><p>type hypernetx.Entity or hashable):</p>
+<li><p>From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="s1">&#39;b&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
+<span class="go"># output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;a&#39;],{}))</span>
 </pre></div>
 </div>
-<p># output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,[‘b’, ‘a’],{}))</p>
-</dd>
-</dl>
 </li>
-<li><dl>
-<dt>From an iterable of iterables: (elements of iterables must be of</dt><dd><p>type hypernetx.Entity or hashable):</p>
+<li><p>From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">([{</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">},{</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">},{</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">}])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
+<span class="go"># output: (EntitySet(_:Nodes,[&#39;d&#39;, &#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}), EntitySet(_:Edges,[&#39;_1&#39;, &#39;_2&#39;, &#39;_0&#39;],{}))</span>
 </pre></div>
 </div>
-<p># output: (EntitySet(_:Nodes,[‘d’, ‘b’, ‘c’, ‘a’],{}), EntitySet(_:Edges,[‘_1’, ‘_2’, ‘_0’],{}))</p>
-</dd>
-</dl>
 </li>
 <li><p>From a hypernetx.EntitySet or StaticEntitySet:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">});</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,{</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">})</span>
@@ -905,26 +899,25 @@ different ids for nodes and edges. To create a static hypergraph set
 </pre></div>
 </div>
 </li>
-<li><p>From a networkx bipartite graph using <code class="code docutils literal notranslate"><span class="pre">from_bipartite()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
-<span class="go"># output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}))</span>
-</pre></div>
+</ol>
+<p>All of these constructions apply for both dynamic and static hypergraphs. To
+create a static hypergraph set the parameter <cite>static=True</cite>. In addition a static
+hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object
+is passed to the Hypergraph constructor.</p>
+<ol class="arabic" start="5">
+<li><div class="line-block">
+<div class="line">From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans.</div>
+<div class="line">By default the first column corresponds to the edge names and the second column to the node names.</div>
+<div class="line">You can specify the columns by restricting the dataframe to the columns of interest in the order:</div>
+<div class="line"><code class="code docutils literal notranslate"><span class="pre">hnx.Hypergraph(df[[edge_column_name,node_column_name]])</span></code></div>
+<div class="line">See <a class="reference internal" href="../overview/index.html#colab"><span class="std std-ref">Colab Tutorials</span></a>  Tutorial 6 - Static Hypergraphs and Entities for additional information.</div>
 </div>
 </li>
 </ol>
-<p>All of these constructions apply for both dynamic and static hypergraphs. In addition
-any set system that generates a StaticEntity may also be used. See :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>staticentity`&lt;StaticEntity&gt; .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>setsystem</strong> (<em>(</em><em>optional</em><em>) </em><em>hnx.EntitySet</em><em>, </em><em>dict</em><em>, or </em><em>iterable</em><em>, </em><em>default: None</em>) – If not an <a class="reference internal" href="#entityset"><span class="std std-ref">EntitySet</span></a> then setsystem must be acceptable
-as elements to an <a class="reference internal" href="#entityset"><span class="std std-ref">EntitySet</span></a>.</p></li>
+<li><p><strong>setsystem</strong> (<em>(</em><em>optional</em><em>) </em><a class="reference internal" href="#classes.entity.EntitySet" title="classes.entity.EntitySet"><em>EntitySet</em></a><em>, </em><a class="reference internal" href="#classes.staticentity.StaticEntitySet" title="classes.staticentity.StaticEntitySet"><em>StaticEntitySet</em></a><em>, </em><em>dict</em><em>, </em><em>iterable</em><em>, </em><em>pandas.dataframe</em><em>, </em><em>default: None</em>) – See notes above for setsystem requirements.</p></li>
 <li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If None then a placeholder ‘_’  will be inserted as name</p></li>
 <li><p><strong>static</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – If True the hypergraph will be immutable, edges and nodes may not be changed.</p></li>
 <li><p><strong>use_nwhy</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True hypergraph will be static and computations will be done using
@@ -1551,7 +1544,7 @@ generated by the s-edge_adjacency matrix.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>new hypergraph</strong></p>
+<dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
@@ -1559,6 +1552,16 @@ generated by the s-edge_adjacency matrix.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>A partition for the nodes in a bipartite graph generates a hypergraph.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="n">bipartite</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">from_bipartite</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span>
+<span class="go"># output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}))</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

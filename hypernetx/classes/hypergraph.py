@@ -61,15 +61,13 @@ class Hypergraph:
         >>> H.nodes, H.edges
         ({}, {})
 
-    2. From a dictionary of iterables (elements of iterables must be of
-        type hypernetx.Entity or hashable): ::
+    2. From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph({'a':[1,2,3],'b':[4,5,6]})
         >>> H.nodes, H.edges
         # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-    3. From an iterable of iterables: (elements of iterables must be of
-        type hypernetx.Entity or hashable): ::
+    3. From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph([{'a','b'},{'b','c'},{'a','c','d'}])
         >>> H.nodes, H.edges
@@ -83,34 +81,22 @@ class Hypergraph:
         >>> H.nodes, H.edges.
         # output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
 
-    5. From a networkx bipartite graph using :code:`from_bipartite()`: ::
-
-        >>> import networkx as nx
-        >>> B = nx.Graph()
-        >>> B.add_nodes_from([1, 2, 3, 4], bipartite=0)
-        >>> B.add_nodes_from(['a', 'b', 'c'], bipartite=1)
-        >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
-        >>> H = Hypergraph.from_bipartite(B)
-        >>> H.nodes, H.edges
-        # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
-
     All of these constructions apply for both dynamic and static hypergraphs. To
     create a static hypergraph set the parameter `static=True`. In addition a static
     hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object
     is passed to the Hypergraph constructor.
 
-    6. From a pandas.DataFrame the dataframe must have at least two columns with headers and there can be no nans.
-        By default the first column corresponds to the edge names and the second column to the node names.
-        You can specify the columns by restricting the dataframe to the columns of interest in the order
-        $$df[[edge_column_name,node_column_name]]$$
-        See `tutorials/Tutorial 6 - Statid Hypergraphs and Entities.ipynb` for additional information.
+    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans. 
+       | By default the first column corresponds to the edge names and the second column to the node names.
+       | You can specify the columns by restricting the dataframe to the columns of interest in the order:
+       | :code:`hnx.Hypergraph(df[[edge_column_name,node_column_name]])`
+       | See :ref:`Colab Tutorials <colab>`  Tutorial 6 - Static Hypergraphs and Entities for additional information.
 
 
     Parameters
     ----------
-    setsystem : (optional) hnx.EntitySet, dict, or iterable, default: None
-        If not an :ref:`EntitySet<entityset>` then setsystem must be acceptable
-        as elements to an :ref:`EntitySet<entityset>`.
+    setsystem : (optional) EntitySet, StaticEntitySet, dict, iterable, pandas.dataframe, default: None
+        See notes above for setsystem requirements.
 
     name : hashable, optional, default: None
         If None then a placeholder '_'  will be inserted as name
@@ -2312,11 +2298,20 @@ class Hypergraph:
 
         Returns
         -------
-        new hypergraph : Hypergraph
+         : Hypergraph
 
         Notes
         -----
         A partition for the nodes in a bipartite graph generates a hypergraph.
+
+            >>> import networkx as nx
+            >>> B = nx.Graph()
+            >>> B.add_nodes_from([1, 2, 3, 4], bipartite=0)
+            >>> B.add_nodes_from(['a', 'b', 'c'], bipartite=1)
+            >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
+            >>> H = Hypergraph.from_bipartite(B)
+            >>> H.nodes, H.edges
+            # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
         """
         # TODO: Add filepath keyword to signatures here and with dataframe and numpy array

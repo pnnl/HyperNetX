@@ -695,53 +695,109 @@ EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0</em
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.s_centrality_measures.s_betweenness_centrality">
 <span class="sig-prename descclassname"><span class="pre">algorithms.s_centrality_measures.</span></span><span class="sig-name descname"><span class="pre">s_betweenness_centrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_singletons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_betweenness_centrality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_betweenness_centrality" title="Permalink to this definition">¶</a></dt>
-<dd><p>A centrality measure for an s-edge subgraph of H based on shortest paths.
-The betweenness centrality of an s-edge e is the sum of the fraction of all
-shortest s-paths between s-edges that pass through e.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
-<li><p><strong>s</strong> (<em>int</em>) – s connectedness requirement</p></li>
-<li><p><strong>edges</strong> (<em>bool</em><em>, </em><em>optional</em>) – determines if edge or node linegraph</p></li>
-<li><p><strong>normalized</strong> – bool, default=False,
+<dd><blockquote>
+<div><p>A centrality measure for an s-edge(node) subgraph of H based on shortest paths.
+Equals the betweenness centrality of vertices in the edge(node) s-linegraph.</p>
+<p>In a graph (2-uniform hypergraph) the betweenness centrality of a vertex <span class="math notranslate nohighlight">\(v\)</span>
+is the ratio of the number of non-trivial shortest paths between any pair of
+vertices in the graph that pass through <span class="math notranslate nohighlight">\(v\)</span> divided by the total number of
+non-trivial shortest paths in the graph.</p>
+<p>The centrality of edge to all shortest s-edge paths
+<span class="math notranslate nohighlight">\(V\)</span> = the set of vertices in the linegraph.
+<span class="math notranslate nohighlight">\(\sigma(s,t)\)</span> = the number of shortest paths between vertices <span class="math notranslate nohighlight">\(s\)</span> and <span class="math notranslate nohighlight">\(t\)</span>.
+<span class="math notranslate nohighlight">\(\sigma(s, t|v)\)</span> = the number of those paths that pass through vertex <span class="math notranslate nohighlight">\(v\)</span>
+$$c_B(v) =sum_{s</p>
+</div></blockquote>
+<p>eq t in V}
+rac{sigma(s, t|v)}{sigma(s, t)}$$</p>
+<blockquote>
+<div><p>H : hnx.Hypergraph
+s : int</p>
+<blockquote>
+<div><p>s connectedness requirement</p>
+</div></blockquote>
+<dl class="simple">
+<dt>edges<span class="classifier">bool, optional</span></dt><dd><p>determines if edge or node linegraph</p>
+</dd>
+<dt>normalized</dt><dd><p>bool, default=False,
 If true the betweenness values are normalized by <cite>2/((n-1)(n-2))</cite>,
-where n is the number of edges in H</p></li>
-<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em>) – if False will ignore singleton components of linegraph</p></li>
-</ul>
+where n is the number of edges in H</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dictionary of s-betweenness centrality value of the edges.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+<dt>return_singletons<span class="classifier">bool, optional</span></dt><dd><p>if False will ignore singleton components of linegraph</p>
 </dd>
 </dl>
+<blockquote>
+<div><dl class="simple">
+<dt>: dict</dt><dd><p>A dictionary of s-betweenness centrality value of the edges.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.s_centrality_measures.s_closeness_centrality">
 <span class="sig-prename descclassname"><span class="pre">algorithms.s_centrality_measures.</span></span><span class="sig-name descname"><span class="pre">s_closeness_centrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_singletons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_closeness_centrality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_closeness_centrality" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><blockquote>
+<div><p>In a connected component the reciprocal of the sum of the distance between an
+edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
+in the component minus 1.</p>
+<p><span class="math notranslate nohighlight">\(V\)</span> = the set of vertices in the linegraph.
+<span class="math notranslate nohighlight">\(n = |V|\)</span>
+<span class="math notranslate nohighlight">\(d\)</span> = shortest path distance
+$$C(u) =</p>
+</div></blockquote>
+<p>rac{n - 1}{sum_{v
+eq u in V} d(v, u)}$$</p>
+<blockquote>
+<div><p>H : hnx.Hypergraph</p>
+<p>s : int, optional</p>
+<dl class="simple">
+<dt>edges<span class="classifier">bool, optional</span></dt><dd><p>Indicates if method should compute edge linegraph (default) or node linegraph.</p>
+</dd>
+<dt>return_singletons<span class="classifier">bool, optional</span></dt><dd><p>Indicates if method should return values for singleton components.</p>
+</dd>
+<dt>source<span class="classifier">str, optional</span></dt><dd><p>Identifier of node or edge of interest for computing centrality</p>
+</dd>
+<dt>use_nwhy<span class="classifier">bool, optional</span></dt><dd><p>If true will use the <a class="reference internal" href="../nwhy.html#nwhy"><span class="std std-ref">NWHy library</span></a> if available.</p>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt>: dict or float</dt><dd><p>returns the s-closeness centrality value of the edges(nodes).
+If source=None a dictionary of values for each s-edge in H is returned.
+If source then a single value is returned.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.s_centrality_measures.s_eccentricity">
 <span class="sig-prename descclassname"><span class="pre">algorithms.s_centrality_measures.</span></span><span class="sig-name descname"><span class="pre">s_eccentricity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_singletons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_eccentricity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_eccentricity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Max s_distance from edge f to every other edge to which it is connected</p>
+<dd><p>The length of the longest shortest path from a vertex <span class="math notranslate nohighlight">\(u\)</span> to every other vertex in the linegraph.
+<span class="math notranslate nohighlight">\(V\)</span> = set of vertices in the linegraph
+<span class="math notranslate nohighlight">\(d\)</span> = shortest path distance
+$$  ext{s-ecc}(u) =         ext{max}{d(u,v): v in V} $$</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
-<li><p><strong>s</strong> (<em>int</em>) – </p></li>
-<li><p><strong>edges</strong> (<em>bool</em><em>, </em><em>optional</em>) – Description</p></li>
-<li><p><strong>source</strong> (<em>str</em>) – source object identifier</p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if method should compute edge linegraph (default) or node linegraph.</p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if method should return values for singleton components.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – Identifier of node or edge of interest for computing centrality</p></li>
+<li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <a class="reference internal" href="../nwhy.html#nwhy"><span class="std std-ref">NWHy library</span></a> if available.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>returns the s-eccentricity value of the edges(nodes).
+If source=None a dictionary of values for each s-edge in H is returned.
+If source then a single value is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float or dict</p>
+<dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -749,27 +805,47 @@ where n is the number of edges in H</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.s_centrality_measures.s_harmonic_centrality">
 <span class="sig-prename descclassname"><span class="pre">algorithms.s_centrality_measures.</span></span><span class="sig-name descname"><span class="pre">s_harmonic_centrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_singletons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/s_centrality_measures.html#s_harmonic_centrality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.s_centrality_measures.s_harmonic_centrality" title="Permalink to this definition">¶</a></dt>
-<dd><p>A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
+<dd><blockquote>
+<div><p>A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
 intersects every other s-edge in H. All values range between 0 and 1.
 Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
-<li><p><strong>edge</strong> (<em>str</em><em> or </em><a class="reference internal" href="../classes/classes.html#classes.entity.Entity" title="classes.entity.Entity"><em>Entity</em></a><em>, </em><em>optional</em>) – an edge or uid of an edge in H
-If None then a dictionary of values for all s-edges is returned.</p></li>
-<li><p><strong>s</strong> (<em>int</em>) – minimum size of edges to be considered</p></li>
-</ul>
+<p>The denormalized reciprocal of the harmonic mean of all distances from <span class="math notranslate nohighlight">\(u\)</span> to all other vertices.
+<span class="math notranslate nohighlight">\(V\)</span> = the set of vertices in the linegraph.
+<span class="math notranslate nohighlight">\(d\)</span> = shortest path distance
+$$C(u) = sum_{v</p>
+</div></blockquote>
+<p>eq u in V}
+rac{1}{d(v, u)}$$</p>
+<blockquote>
+<div><p>Normalized this becomes:
+$$C(u) = sum_{v</p>
+</div></blockquote>
+<p>eq u in V}
+rac{1}{d(v, u)}cdot
+rac{2}{(n-1)(n-2)}$$</p>
+<blockquote>
+<div><p>where <span class="math notranslate nohighlight">\(n\)</span> is the number vertices.</p>
+<p>H : hnx.Hypergraph</p>
+<p>s : int, optional</p>
+<dl class="simple">
+<dt>edges<span class="classifier">bool, optional</span></dt><dd><p>Indicates if method should compute edge linegraph (default) or node linegraph.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
-If edge=None a dictionary of values for each s-edge in H is returned.
-If edge then a single value is returned.</p>
+<dt>return_singletons<span class="classifier">bool, optional</span></dt><dd><p>Indicates if method should return values for singleton components.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict or float</p>
+<dt>source<span class="classifier">str, optional</span></dt><dd><p>Identifier of node or edge of interest for computing centrality</p>
+</dd>
+<dt>use_nwhy<span class="classifier">bool, optional</span></dt><dd><p>If true will use the <a class="reference internal" href="../nwhy.html#nwhy"><span class="std std-ref">NWHy library</span></a> if available.</p>
 </dd>
 </dl>
+<blockquote>
+<div><dl class="simple">
+<dt>: dict or float</dt><dd><p>returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
+If source=None a dictionary of values for each s-edge in H is returned.
+If source then a single value is returned.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">

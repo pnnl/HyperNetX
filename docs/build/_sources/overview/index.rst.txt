@@ -33,10 +33,12 @@ New Features of Version 1.0:
 1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. 
 2. The C++ addon :ref:`nwhy` can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
 3. The JavaScript addon :ref:`widget` can be used to interactively inspect hypergraphs in a Jupyter Notebook.
-4. We've added three new tutorials. One highlights the s-centrality metrics. The other two introduce Static Hypergraphs and NWHy.
+4. We've added four new tutorials highlighting the s-centrality metrics, static Hypergraphs, :ref:`nwhy`, and :ref:`widget`.
+
+.. _colab:
 
 COLAB Tutorials
-^^^^^^^^^^^^^^^
+---------------
 The following tutorials may be run in your browser using Google Colab
 
 .. raw:: html
@@ -81,7 +83,7 @@ The following tutorials may be run in your browser using Google Colab
 
 
 Notice
-^^^^^^
+------
 This material was prepared as an account of work sponsored by an agency of the United States Government.  
 Neither the United States Government nor the United States Department of Energy, nor Battelle, 
 nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of 
@@ -109,7 +111,7 @@ those of the United States Government or any agency thereof.
    </div>
 
 License
-^^^^^^^
+-------
 HyperNetX is released under the 3-Clause BSD license (see :ref:`license`)
 
 .. toctree::

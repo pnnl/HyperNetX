@@ -233,15 +233,13 @@
 <span class="sd">        &gt;&gt;&gt; H.nodes, H.edges</span>
 <span class="sd">        ({}, {})</span>
 
-<span class="sd">    2. From a dictionary of iterables (elements of iterables must be of</span>
-<span class="sd">        type hypernetx.Entity or hashable): ::</span>
+<span class="sd">    2. From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable): ::</span>
 
 <span class="sd">        &gt;&gt;&gt; H = Hypergraph({&#39;a&#39;:[1,2,3],&#39;b&#39;:[4,5,6]})</span>
 <span class="sd">        &gt;&gt;&gt; H.nodes, H.edges</span>
 <span class="sd">        # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;a&#39;],{}))</span>
 
-<span class="sd">    3. From an iterable of iterables: (elements of iterables must be of</span>
-<span class="sd">        type hypernetx.Entity or hashable): ::</span>
+<span class="sd">    3. From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable): ::</span>
 
 <span class="sd">        &gt;&gt;&gt; H = Hypergraph([{&#39;a&#39;,&#39;b&#39;},{&#39;b&#39;,&#39;c&#39;},{&#39;a&#39;,&#39;c&#39;,&#39;d&#39;}])</span>
 <span class="sd">        &gt;&gt;&gt; H.nodes, H.edges</span>
@@ -255,28 +253,22 @@
 <span class="sd">        &gt;&gt;&gt; H.nodes, H.edges.</span>
 <span class="sd">        # output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;a&#39;],{}))</span>
 
-<span class="sd">    5. From a networkx bipartite graph using :code:`from_bipartite()`: ::</span>
+<span class="sd">    All of these constructions apply for both dynamic and static hypergraphs. To</span>
+<span class="sd">    create a static hypergraph set the parameter `static=True`. In addition a static</span>
+<span class="sd">    hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object</span>
+<span class="sd">    is passed to the Hypergraph constructor.</span>
 
-<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
-<span class="sd">        &gt;&gt;&gt; B = nx.Graph()</span>
-<span class="sd">        &gt;&gt;&gt; B.add_nodes_from([1, 2, 3, 4], bipartite=0)</span>
-<span class="sd">        &gt;&gt;&gt; B.add_nodes_from([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;], bipartite=1)</span>
-<span class="sd">        &gt;&gt;&gt; B.add_edges_from([(1, &#39;a&#39;), (1, &#39;b&#39;), (2, &#39;b&#39;), (2, &#39;c&#39;), (3, &#39;c&#39;), (4, &#39;a&#39;)])</span>
-<span class="sd">        &gt;&gt;&gt; H = Hypergraph.from_bipartite(B)</span>
-<span class="sd">        &gt;&gt;&gt; H.nodes, H.edges</span>
-<span class="sd">        # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}))</span>
-
-<span class="sd">    All of these constructions apply for both dynamic and static hypergraphs. In addition</span>
-<span class="sd">    any set system that generates a StaticEntity may also be used. See :ref:`staticentity`&lt;StaticEntity&gt; .</span>
-
-
+<span class="sd">    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans. </span>
+<span class="sd">       | By default the first column corresponds to the edge names and the second column to the node names.</span>
+<span class="sd">       | You can specify the columns by restricting the dataframe to the columns of interest in the order:</span>
+<span class="sd">       | :code:`hnx.Hypergraph(df[[edge_column_name,node_column_name]])`</span>
+<span class="sd">       | See :ref:`Colab Tutorials &lt;colab&gt;`  Tutorial 6 - Static Hypergraphs and Entities for additional information.</span>
 
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    setsystem : (optional) hnx.EntitySet, dict, or iterable, default: None</span>
-<span class="sd">        If not an :ref:`EntitySet&lt;entityset&gt;` then setsystem must be acceptable</span>
-<span class="sd">        as elements to an :ref:`EntitySet&lt;entityset&gt;`.</span>
+<span class="sd">    setsystem : (optional) EntitySet, StaticEntitySet, dict, iterable, pandas.dataframe, default: None</span>
+<span class="sd">        See notes above for setsystem requirements.</span>
 
 <span class="sd">    name : hashable, optional, default: None</span>
 <span class="sd">        If None then a placeholder &#39;_&#39;  will be inserted as name</span>
@@ -2478,11 +2470,20 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        new hypergraph : Hypergraph</span>
+<span class="sd">         : Hypergraph</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        A partition for the nodes in a bipartite graph generates a hypergraph.</span>
+
+<span class="sd">            &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">            &gt;&gt;&gt; B = nx.Graph()</span>
+<span class="sd">            &gt;&gt;&gt; B.add_nodes_from([1, 2, 3, 4], bipartite=0)</span>
+<span class="sd">            &gt;&gt;&gt; B.add_nodes_from([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;], bipartite=1)</span>
+<span class="sd">            &gt;&gt;&gt; B.add_edges_from([(1, &#39;a&#39;), (1, &#39;b&#39;), (2, &#39;b&#39;), (2, &#39;c&#39;), (3, &#39;c&#39;), (4, &#39;a&#39;)])</span>
+<span class="sd">            &gt;&gt;&gt; H = Hypergraph.from_bipartite(B)</span>
+<span class="sd">            &gt;&gt;&gt; H.nodes, H.edges</span>
+<span class="sd">            # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,[&#39;b&#39;, &#39;c&#39;, &#39;a&#39;],{}))</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: Add filepath keyword to signatures here and with dataframe and numpy array</span>
