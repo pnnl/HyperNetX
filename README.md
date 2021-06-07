@@ -71,16 +71,19 @@ Tutorials may be run in your browser using Google Colab
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span >Tutorial 5 - Homology mod2 for TriLoop Example</span>
 </a>
+</br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span >Tutorial 6 - Static Hypergraphs and Entities</span>
 </a>
+</br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%20%20-%20s-centrality.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 	<span >Tutorial 7 - s-Centrality</span>
 </a>
+</br>
 
 	
 Installing HyperNetX
