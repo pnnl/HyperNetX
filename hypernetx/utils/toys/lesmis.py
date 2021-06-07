@@ -39,24 +39,6 @@ class LesMis(object):
         return self.df_names.set_index('Symbol')
 
 
-# def bipartite_from_df(df, by="Chapter", on="Characters"):
-#     cols = df.columns.tolist()
-#     grouped = df.groupby(cols[: cols.index(by) + 1])[on].value_counts()
-
-#     U = [".".join(map(str, x[:-1])) for x in grouped.index.get_values()]
-#     V = grouped.index.get_level_values(-1)
-#     W = grouped.values
-
-#     G = nx.Graph()
-#     G.add_nodes_from(set(U), bipartite=by)
-#     G.add_nodes_from(set(V), bipartite=on)
-
-#     for u, v, w in zip(U, V, W):
-#         G.add_edge(u, v, weight=w)
-
-#     return G
-
-
 def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
     cols = df.columns.tolist()
 

@@ -1,7 +1,9 @@
 import pandas as pd
+import os
 
 
-csvfile = 'ChungLuTransmissionData_lg.csv'
+csvfile = 'ChungLuTransmissionData.csv'
+csvfile = os.path.join(os.path.dirname(__file__), csvfile)
 
 
 class TransmissionProblem(object):
