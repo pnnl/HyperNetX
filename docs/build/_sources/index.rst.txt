@@ -2,41 +2,46 @@
 HyperNetX (HNX)
 ===============
 
+.. image:: images/hnxbasics.png
+   :width: 300px
+   :align: right
+
 Description
-===========
+-----------
 
 The HNX library provides classes and methods for modeling the entities and relationships 
-found in complex network data as hypergraphs. Hypergraphs are natural models for multi-dimensional
-data structures. They distinguish cliques and simplices. They recognize both vertex adjacency and edge
-incidence as having a *width* because of the multiway connections. And, they permit singleton
-vertices and edges. Most graph metrics have natural generalizations to hypergraphs, but since
-hypergraphs are basically set systems, we can also use the powerful tools of algebraic topology
-to study their structure.
+found in complex networks as hypergraphs, the natural models for multi-dimensional network data.
+As strict generalizations of graphs, hyperedges can represent arbitrary multi-way relations 
+among entities, and in particular can distinguish cliques and simplices, and admit singleton edges.
+As both vertex adjacency and edge
+incidence are generalized to be quantities,
+hypergraph paths and walks thereby have both length and *width* because of these multiway connections. 
+Most graph metrics have natural generalizations to hypergraphs, but since
+hypergraphs are basically set systems, they also admit to the powerful tools of algebraic topology,
+including simplicial complexes and simplicial homology, to study their structure.
 
 This library serves as a repository of the methods and algorithms we find most useful
 as we explore what hypergraphs can tell us. We have a growing community of users and contributors. 
-To learn more about some of our research check out our paper `Hypernetwork science via high order hypergraph walks 
-<https://epjdatascience.springeropen.com/articles/10.1140/epjds/s13688-020-00231-0>`_
+To learn more about some of our research check out our :ref:`publications`. 
 
 
 For comments and questions you may contact the developers directly at: 
 	hypernetx@pnnl.gov
 
 Contents
-========
+--------
 
 .. toctree::
    :maxdepth: 2
 
+   Home <home>
    overview/index
    install
    Glossary <glossary>
-   Hypergraphs <classes/modules.rst>
-   Algorithms <algorithms/modules.rst>
-   Drawing <drawing/modules.rst>
-   Reports <reports/modules.rst>
-   NWHy API <nwhy>
-   HyperNetX-Widget <widget>
+   core
+   NWHypergraph C++ Optimization <nwhy>
+   HyperNetX Visualization Widget <widget>
+   Publications <publications>
    license
 
 

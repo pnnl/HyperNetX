@@ -97,15 +97,13 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms/modules.html">Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">NWHy API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NWHypergraph C++ Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-nwhy">Installing NWHy</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#then-activate-the-environment">Then activate the environment</a></li>
@@ -117,16 +115,17 @@
 <li class="toctree-l2"><a class="reference internal" href="#nwhy-apis">NWHy APIs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#nwhy-module">nwhy module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class">NWHypergraph class</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class-attribues">NWHypergraph class attribues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class-attributes">NWHypergraph class attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class-methods">NWHypergraph class methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#slinegraph-class">Slinegraph class</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#slinegraph-class-attribues">Slinegraph class attribues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slinegraph-class-attributes">Slinegraph class attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#slinegraph-class-methods">Slinegraph class methods</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="widget.html">HyperNetX-Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -197,9 +196,10 @@
             
   <div class="section" id="nwhy">
 <span id="id1"></span><h1>NWHy<a class="headerlink" href="#nwhy" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>NWHy is a C++ based, scalable, high-performance hypergraph library. It has three dependencies.</p>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>NWHy is an addon for HNX providing optimized C++ implementations of many of the hypergraph methods.
+NWHy is a scalable, high-performance hypergraph library. It has three dependencies.</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>NWGraph library: provides graph data structures, a rich set of adaptors over the graph data structures, and various high-performance graph algorithms implementations.</p></li>
@@ -282,8 +282,8 @@ The base class for hypergraph representation in nwhy. It accepts a directed edge
 </dl>
 </div></blockquote>
 </div>
-<div class="section" id="nwhypergraph-class-attribues">
-<h3>NWHypergraph class attribues<a class="headerlink" href="#nwhypergraph-class-attribues" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="nwhypergraph-class-attributes">
+<h3>NWHypergraph class attributes<a class="headerlink" href="#nwhypergraph-class-attributes" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>NWHypergraph.row</dt><dd><p>Attribute in class NWHypergraph.
@@ -369,8 +369,8 @@ The base class for s-line graph representation in nwhy. It store an undirected g
 </dl>
 </div></blockquote>
 </div>
-<div class="section" id="slinegraph-class-attribues">
-<h3>Slinegraph class attribues<a class="headerlink" href="#slinegraph-class-attribues" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="slinegraph-class-attributes">
+<h3>Slinegraph class attributes<a class="headerlink" href="#slinegraph-class-attributes" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>Slinegraph.row</dt><dd><p>Attribute in class Slinegraph.

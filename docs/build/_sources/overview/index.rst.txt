@@ -8,12 +8,11 @@ Overview
    :width: 300px
    :align: right
 
-The `HyperNetX`_ library provides classes and methods for the analysis
-and visualization of complex network data. HyperNetX uses data structures
-designed to represent set systems containing nested data and/or multi-way
-relationships. The library generalizes traditional graph metrics to hypergraphs.
+The `HyperNetX`_ library was developed to support researchers modeling data
+as hypergraphs. We have a growing community of users and contributors.
+For questions and comments you may contact the developers directly at: hypernetx@pnnl.gov
 
-`HypernetX`_ was developed by the `Pacific Northwest National Laboratory <https://www.pnnl.gov/>`_ for the
+`HyperNetX`_ was developed by the `Pacific Northwest National Laboratory <https://www.pnnl.gov/>`_ for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
@@ -24,11 +23,10 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 * Program Manager: Mark Raugas, Brian Kritzstein
 * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
 
-The code in this repository was developed to support researchers modeling data
-as hypergraphs. We have a growing community of users and contributors.
-For questions and comments you may contact the developers directly at: hypernetx@pnnl.gov
 
-New Features of Version 1.0:
+
+New Features in Version 1.0
+---------------------------
 
 1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. 
 2. The C++ addon :ref:`nwhy` can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.

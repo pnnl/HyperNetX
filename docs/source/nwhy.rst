@@ -4,9 +4,10 @@
 NWHy
 ====
 
-Overview
-========
-NWHy is a C++ based, scalable, high-performance hypergraph library. It has three dependencies.
+Description
+-----------
+NWHy is an addon for HNX providing optimized C++ implementations of many of the hypergraph methods.
+NWHy is a scalable, high-performance hypergraph library. It has three dependencies.
 		
 	1. NWGraph library: provides graph data structures, a rich set of adaptors over the graph data structures, and various high-performance graph algorithms implementations.
 	2. Intel OneAPI Threading Building Blocks (oneTBB): provides parallelism.
@@ -16,24 +17,24 @@ The goal of the NWHy python API is to share an ID space between NWHy and its use
 NWHy was developed by Xu Tony Liu. The current version is preliminary and under active development.
 
 Installing NWHy
-===============
+---------------
 
 The NWHy library provides Pybind11_ APIs for analysis of complex data sets interpreted as hypergraphs.
 
 .. _Pybind11: https://github.com/pybind/pybind11
 
 To install in an Anaconda environment
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	>>> conda create -n <env name> python=3.9
 
 Then activate the environment
------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	>>> conda activate <env name> 
 
 Install Intel Threading Building Blocks(TBB)
---------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To install TBB_:
 
@@ -46,7 +47,7 @@ If a local TBB has been installed, we can specify TBBROOT
     >>> export TBBROOT=/opt/tbb/
 	
 Install using Pip
------------------
+^^^^^^^^^^^^^^^^^
 
 For installation:
 
@@ -62,7 +63,7 @@ or
 
 
 Quick test with import
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 For quick test:
 
@@ -71,14 +72,14 @@ For quick test:
 If there is no import error, then installation is done.
 
 NWHy APIs
-=========
+---------
 
 .. _nwhy::
 	:sorted:
 
 
 nwhy module
------------
+^^^^^^^^^^^
 
 	_version
 		Attribute in nwhy module.
@@ -86,14 +87,14 @@ nwhy module
 
 
 NWHypergraph class
-------------------
+^^^^^^^^^^^^^^^^^^
 
 	NWHypergraph
 		Class in nwhy module.
 		The base class for hypergraph representation in nwhy. It accepts a directed edge list format of hypergraph, either weighted or unweighted, then construct the NWHypergraph object.
 
-NWHypergraph class attribues
-----------------------------
+NWHypergraph class attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	NWHypergraph.row
 		Attribute in class NWHypergraph. 
@@ -106,7 +107,7 @@ NWHypergraph class attribues
 		Return a Numpy array of IDs, weights of sparse matrix of the hypergraph.
 
 NWHypergraph class methods
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	NWHypergraph.NWHypergraph(x, y)
 		Constructor of class NWHypergraph.
@@ -182,14 +183,14 @@ NWHypergraph class methods
 
 
 Slinegraph class
-----------------
+^^^^^^^^^^^^^^^^
 
 	Slinegraph
 		Class in nwhy module.
 		The base class for s-line graph representation in nwhy. It store an undirected graph, called an s-line graph of a hypergraph given a positive integer s. Slinegraph can be an 'edge' line graph, where the vertices in Slinegraph are the hyperedges in the original hypergraph; Slinegraph can also be a 'vertex' line graph, where the vertices in Slinegraph are the vertices in the original hypergraph.
 
-Slinegraph class attribues
---------------------------
+Slinegraph class attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 		
 	Slinegraph.row
 		Attribute in class Slinegraph. 
@@ -205,7 +206,7 @@ Slinegraph class attribues
 		Return s value of the s-line graph.
 
 Slinegraph class methods
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 	Slinegraph.Slinegraph(g, s=1, edges=True)
 		Constructor of class Slinegraph.

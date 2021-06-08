@@ -1,3 +1,5 @@
+.. _home:
+
 ===============
 HyperNetX (HNX)
 ===============
@@ -28,27 +30,5 @@ To learn more about some of our research check out our :ref:`publications`.
 For comments and questions you may contact the developers directly at: 
 	hypernetx@pnnl.gov
 
-Contents
---------
 
-.. toctree::
-   :maxdepth: 2
-
-   Home <home>
-   overview/index
-   install
-   Glossary <glossary>
-   core
-   NWHypergraph C++ Optimization <nwhy>
-   HyperNetX Visualization Widget <widget>
-   Publications <publications>
-   license
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
