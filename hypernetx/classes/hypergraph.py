@@ -922,7 +922,7 @@ class Hypergraph:
         """
         for node in nodes:
             if node in self._edges:
-                raise HyperNetxError("Node already an edge.")
+                raise HyperNetXError("Node already an edge.")
             elif node in self._nodes and isinstance(node, Entity):
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
@@ -2324,7 +2324,7 @@ class Hypergraph:
                 edges.append(n)
 
         if not bipartite.is_bipartite_node_set(B, nodes):
-            raise HyperNetxError(
+            raise HyperNetXError(
                 "Error: Method requires a 2-coloring of a bipartite graph."
             )
 
