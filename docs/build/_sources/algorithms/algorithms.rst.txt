@@ -20,7 +20,6 @@ algorithms.s\_centrality\_measures module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

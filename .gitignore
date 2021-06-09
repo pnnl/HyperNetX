@@ -1,6 +1,6 @@
-.DS_Store
-gitmerge.sh
-dist
+.DS_Store 
+gitmerge.sh 
+dist 
 hypernetx.egg-info
 
 stashmerge.sh
@@ -20,5 +20,7 @@ untitled*
 Untitled*
 pypipush.sh
 experimental
+tutorials/h2d-hnx-why_v5.tar.gz
 vis_develop
-
+dist/
+*.egg-info*

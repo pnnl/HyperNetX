@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>NWHy &mdash; HyperNetX 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hypernetx-Widget" href="widget.html" />
+    <link rel="prev" title="reports package" href="reports/reports.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NWHypergraph C++ Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-nwhy">Installing NWHy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#then-activate-the-environment">Then activate the environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-intel-threading-building-blocks-tbb">Install Intel Threading Building Blocks(TBB)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-using-pip">Install using Pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quick-test-with-import">Quick test with import</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nwhy-apis">NWHy APIs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nwhy-module">nwhy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class">NWHypergraph class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class-attributes">NWHypergraph class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nwhypergraph-class-methods">NWHypergraph class methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slinegraph-class">Slinegraph class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slinegraph-class-attributes">Slinegraph class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slinegraph-class-methods">Slinegraph class methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>NWHy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/nwhy.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nwhy">
+<span id="id1"></span><h1>NWHy<a class="headerlink" href="#nwhy" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>NWHy is an addon for HNX providing optimized C++ implementations of many of the hypergraph methods.
+NWHy is a scalable, high-performance hypergraph library. It has three dependencies.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>NWGraph library: provides graph data structures, a rich set of adaptors over the graph data structures, and various high-performance graph algorithms implementations.</p></li>
+<li><p>Intel OneAPI Threading Building Blocks (oneTBB): provides parallelism.</p></li>
+<li><p>Pybind11: encapsulate NWHy as a python module.</p></li>
+</ol>
+</div></blockquote>
+<p>The goal of the NWHy python API is to share an ID space between NWHy and its user for hypergraph processing, instead of copying the sparse matrix of the hypergraph back and forth between NWHy and its user.
+NWHy was developed by Xu Tony Liu. The current version is preliminary and under active development.</p>
+</div>
+<div class="section" id="installing-nwhy">
+<h2>Installing NWHy<a class="headerlink" href="#installing-nwhy" title="Permalink to this headline">¶</a></h2>
+<p>The NWHy library provides <a class="reference external" href="https://github.com/pybind/pybind11">Pybind11</a> APIs for analysis of complex data sets interpreted as hypergraphs.</p>
+<div class="section" id="to-install-in-an-anaconda-environment">
+<h3>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="then-activate-the-environment">
+<h3>Then activate the environment<a class="headerlink" href="#then-activate-the-environment" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-intel-threading-building-blocks-tbb">
+<h3>Install Intel Threading Building Blocks(TBB)<a class="headerlink" href="#install-intel-threading-building-blocks-tbb" title="Permalink to this headline">¶</a></h3>
+<p>To install <a class="reference external" href="https://github.com/oneapi-src/oneTBB">TBB</a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">tbb</span>
+</pre></div>
+</div>
+<p>If a local TBB has been installed, we can specify TBBROOT</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span> <span class="n">TBBROOT</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">tbb</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-using-pip">
+<h3>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline">¶</a></h3>
+<p>For installation:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
+</pre></div>
+</div>
+<p>For upgrade:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span> <span class="o">--</span><span class="n">upgrade</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span> <span class="o">-</span><span class="n">U</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="quick-test-with-import">
+<h3>Quick test with import<a class="headerlink" href="#quick-test-with-import" title="Permalink to this headline">¶</a></h3>
+<p>For quick test:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;import nwhy&quot;</span>
+</pre></div>
+</div>
+<p>If there is no import error, then installation is done.</p>
+</div>
+</div>
+<div class="section" id="nwhy-apis">
+<h2>NWHy APIs<a class="headerlink" href="#nwhy-apis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nwhy-module">
+<span id="nwhy-sorted"></span><h3>nwhy module<a class="headerlink" href="#nwhy-module" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>_version</dt><dd><p>Attribute in nwhy module.
+Return the version number of nwhy module.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="nwhypergraph-class">
+<h3>NWHypergraph class<a class="headerlink" href="#nwhypergraph-class" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>NWHypergraph</dt><dd><p>Class in nwhy module.
+The base class for hypergraph representation in nwhy. It accepts a directed edge list format of hypergraph, either weighted or unweighted, then construct the NWHypergraph object.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="nwhypergraph-class-attributes">
+<h3>NWHypergraph class attributes<a class="headerlink" href="#nwhypergraph-class-attributes" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>NWHypergraph.row</dt><dd><p>Attribute in class NWHypergraph.
+Return a Numpy array of IDs, row of sparse matrix of the hypergraph. Note the number of entries in the Numpy lists, row, col and data must be equal. The row stores hyperedges.</p>
+</dd>
+<dt>NWHypergraph.col</dt><dd><p>Attribute in class NWHypergraph.
+Return a Numpy array of IDs, columns of sparse matrix of the hypergraph. The col stores vertices.</p>
+</dd>
+<dt>NWHypergraph.data</dt><dd><p>Attribute in class NWHypergraph.
+Return a Numpy array of IDs, weights of sparse matrix of the hypergraph.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="nwhypergraph-class-methods">
+<h3>NWHypergraph class methods<a class="headerlink" href="#nwhypergraph-class-methods" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>NWHypergraph.NWHypergraph(x, y)</dt><dd><p>Constructor of class NWHypergraph.
+Return a NWHypergraph object. Here the hypergraph is unweighted. X is a Numpy array of hyperedges, and y is a Numpy array of vertices.</p>
+</dd>
+<dt>NWHypergraph.NWHypergraph(x, y, data)</dt><dd><p>Constructor of class NWHypergraph.
+Return a NWHypergraph object. Here the hypergraph is weighted. X is a Numpy array of hyperedges, y is a Numpy array of vertices, data is a Numpy array of weights associated with the pairs from hyperedges to vertices.</p>
+</dd>
+<dt>NWHypergraph.collapse_edges(return_equal_class=False)</dt><dd><p>Method in class NWHypergraph.
+Return a dictionary, where the key is a new ID of a hyperedge after collapsing the hyperedges if the hyperedges have the same vertices, and the value is the number of such hyperedges when <cite>return_equal_class=False</cite>, otherwise, the set of such hyperedges when <cite>return_equal_class=True</cite>. Note the weights associated with the pairs from hyperedges to vertices are not collapsed or combined.</p>
+</dd>
+<dt>NWHypergraph.collapse_nodes(return_equal_class=False)</dt><dd><p>Method in class NWHypergraph.
+Return a dictionary, where the key is a new ID of a vertex after collapsing the vertices if the vertices share the same hyperedges, and the value is the number of such vertices when <cite>return_equal_class=False</cite>, otherwise, the set of such vertices when <cite>return_equal_class=True</cite>. Note the weights associated with the pairs from hyperedges to vertices are not collapsed or combined.</p>
+</dd>
+<dt>NWHypergraph.collapse_nodes_and_edges(return_equal_class=False)</dt><dd><p>Method in class NWHypergraph.
+Return a dictionary, where the key is a new ID of a hyperedge after collapsing the hyperedges if the hyperedges share the same vertices, and the value is the number of such hyperedges when <cite>return_equal_class=False</cite>, otherwise, the set of such hyperedges when <cite>return_equal_class=True</cite>. This method is not equivalent to call <cite>NWHypergraph.collapse_nodes()</cite> then <cite>NWHypergraph.collapse_edges()</cite>. Note the weights associated with the pairs from hyperedges to vertices are not collapsed or combined.</p>
+</dd>
+<dt>NWHypergraph.edge_size_dist()</dt><dd><p>Method in class NWHypergraph.
+Return a list of edge size distribution of the hypergraph.</p>
+</dd>
+<dt>NWHypergraph.node_size_dist()</dt><dd><p>Method in class NWHypergraph.
+Return a list of vertex size distribution of the hypergraph.</p>
+</dd>
+<dt>NWHypergraph.edge_incidence(edge)</dt><dd><p>Method in class NWHypergraph.
+Return a list of vertices that are incident to hyperedge <cite>edge</cite>.</p>
+</dd>
+<dt>NWHypergraph.node_incidence(node)</dt><dd><p>Method in class NWHypergraph.
+Return a list of hyperedges that are incident to vertex <cite>node</cite>.</p>
+</dd>
+<dt>NWHypergraph.degree(node, min_size=1, max_size=None)</dt><dd><p>Method in class NWHypergraph.
+Return the degree of the vertex <cite>node</cite> in the hypergraph. For the hyperedges <cite>node</cite> incident to, if <cite>min_size</cite> or/and <cite>max_size</cite> are specified, then either/both criteria are used to filter the hyperedges.</p>
+</dd>
+<dt>NWHypergraph.size(edge, min_degree=1, max_degree=None)</dt><dd><p>Method in class NWHypergraph.
+Return the size of the hyperedge <cite>edge</cite> in the hypergraph. For the vertices <cite>edge</cite> incident to, if <cite>min_degree</cite> or/and <cite>max_degree</cite> are specified, then either/both criteria are used to filter the vertices.</p>
+</dd>
+<dt>NWHypergraph.dim(edge)</dt><dd><p>Method in class NWHypergraph.
+Return the dimension of the hyperedge <cite>edge</cite> in the hypergraph.</p>
+</dd>
+<dt>NWHypergraph.number_of_nodes()</dt><dd><p>Method in class NWHypergraph.
+Return the number of vertices in the hypergraph.</p>
+</dd>
+<dt>NWHypergraph.number_of_edges()</dt><dd><p>Method in class NWHypergraph.
+Return the number of edges in the hypergraph.</p>
+</dd>
+<dt>NWHypergraph.singletons()</dt><dd><p>Method in class NWHypergraph.
+Return a list of singleton hyperedges in the hypergraph. A singleton hyperedge is incident to only one vertex.</p>
+</dd>
+<dt>NWHypergraph.toplexes()</dt><dd><p>Method in class NWHypergraph.
+Return a list of toplexes in the hypergraph. For a hypergraph (Edges, Nodes), a toplex is a hyperedge in Edges whose elements (i.e. nodes) do not all belong to any other hyperedge in Edge.</p>
+</dd>
+<dt>NWHypergraph.s_linegraph(s=1, edges=True)</dt><dd><p>Method in class NWHypergraph.
+Return a Slinegraph object. Construct a s-line graph from the hypergraph for a positive integer <cite>s</cite>. In this s-line graph, the vertices are the hyperedges in the original hypergraph if <cite>edges=True</cite>; otherwise, the vertices are the vertices in the original hypergraph. Note this method create s-line graph on the fly, therefore it requires less memory compared with <cite>NWHypergraph.s_linegraphs(l, edges=True)</cite>. It is slower to construct multiple s-line graphs for different <cite>s</cite> compared with <cite>NWHypergraph.s_linegraphs(l, edges=True)</cite>.</p>
+</dd>
+<dt>NWHypergraph.s_linegraphs(l, edges=True)</dt><dd><p>Method in class NWHypergraph.
+Return a list of Slinegraph objects. For each positive integer in list <cite>l</cite>, construct a Slinegraph object from the hypergraph. In each s-line graph, the vertices are the hyperedges in the original hypergraph if <cite>edges=True</cite>; otherwise, the vertices are the vertices in the original hypergraph. Note this method creates multiple s-line graphs for one run, therefore it is significantly faster compared with <cite>NWHypergraph.s_linegraph(s=1, edges=True)</cite>, but it requires much more memory.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="slinegraph-class">
+<h3>Slinegraph class<a class="headerlink" href="#slinegraph-class" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>Slinegraph</dt><dd><p>Class in nwhy module.
+The base class for s-line graph representation in nwhy. It store an undirected graph, called an s-line graph of a hypergraph given a positive integer s. Slinegraph can be an ‘edge’ line graph, where the vertices in Slinegraph are the hyperedges in the original hypergraph; Slinegraph can also be a ‘vertex’ line graph, where the vertices in Slinegraph are the vertices in the original hypergraph.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="slinegraph-class-attributes">
+<h3>Slinegraph class attributes<a class="headerlink" href="#slinegraph-class-attributes" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>Slinegraph.row</dt><dd><p>Attribute in class Slinegraph.
+Return a Numpy array of IDs, row of sparse matrix of the s-line graph. Note the number of entries in the Numpy lists, row, col and data must be equal.</p>
+</dd>
+<dt>Slinegraph.col</dt><dd><p>Attribute in class Slinegraph.
+Return a Numpy array of IDs, columns of sparse matrix of the s-line graph.</p>
+</dd>
+<dt>Slinegraph.data</dt><dd><p>Attribute in class Slinegraph.
+Return a Numpy array of IDs, weights of sparse matrix of the s-line graph. The weights are not the hyperedge-vertex pair weights. Currently, if Slinegraph is an edge line graph, the weights are the number of overlapping vertices between two hyperedges in the original hypergraph. If the Slinegraph is a vertex line graph, the weights are the number of overlapping hyperedges between two vertices in the original hypergraph.</p>
+</dd>
+<dt>Slinegraph.s</dt><dd><p>Attribute in class Slinegraph.
+Return s value of the s-line graph.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="slinegraph-class-methods">
+<h3>Slinegraph class methods<a class="headerlink" href="#slinegraph-class-methods" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl>
+<dt>Slinegraph.Slinegraph(g, s=1, edges=True)</dt><dd><p>Constructor of class Slinegraph.
+Return a new Slinegraph object. Given a positive integer <cite>s</cite>, construct a s-line graph from the hypergraph <cite>g</cite>. The vertices in the s-line graph are the hyperedges in <cite>g</cite> if <cite>edges=True</cite>, otherwise, the vertices in the s-line graph are the vertices in <cite>g</cite>.</p>
+</dd>
+<dt>Slinegraph.Slinegraph(x, y, data, s=1, edges=True)</dt><dd><p>Constructor of class Slinegraph.
+Return a new Slinegraph object. Given an edge list format of a s-line graph stored in three Numpy arrays, construct a s-line graph from the edge list. A positive integer <cite>s</cite> and a boolean <cite>edges</cite> are required to indicate the properties of the s-line graph.</p>
+</dd>
+<dt>Slinegraph.get_singletons()</dt><dd><p>Method in class Slinegraph.
+Return a list of singletons in the s-line graph.</p>
+</dd>
+<dt>Slinegraph.s_connected_components()</dt><dd><p>Method in class Slinegraph.
+Return a list of sets, where each set contains the vertices sharing the same component.</p>
+</dd>
+<dt>Slinegraph.is_s_connected()</dt><dd><p>Method in class Slinegraph.
+Return True or False. Check whether s-line graph is connected.</p>
+</dd>
+<dt>Slinegraph.s_distance(src, dest)</dt><dd><p>Method in class Slinegraph.
+Return the distance from <cite>src</cite> to <cite>dest</cite>. Return -1 if it is unreachable from <cite>src</cite> to <cite>dest</cite>.</p>
+</dd>
+<dt>Slinegraph.s_diameter(src, dest)</dt><dd><p>Method in class Slinegraph.
+Return the diameter of the s-line graph. Return 0 if every vertex is a singleton.</p>
+</dd>
+<dt>Slinegraph.s_path(src, dest)</dt><dd><p>Method in class Slinegraph.
+Return a list of vertices. The vertices are the vertices on the shortest path from <cite>src</cite> to <cite>dest</cite> in the s-line graph. The list will be empty if it is unreachable from <cite>src</cite> to <cite>dest</cite>.</p>
+</dd>
+<dt>Slinegraph.s_betweenness_centrality(normalized=True)</dt><dd><p>Method in class Slinegraph.
+Return a list of betweenness centrality score of every vertices in the s-line graph. The betweenness centrality score will be normalized by 2/((n-1)(n-2)) if <cite>normalized=True</cite> where n the number of vertices in s-line graph.  Betweenness centrality of a vertex <cite>v</cite> is the sum of the fraction of all-pairs shortest paths that pass through <cite>v</cite>:</p>
+<div class="math notranslate nohighlight">
+\[c_B(v) =\sum_{s,t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)}\]</div>
+</dd>
+<dt>Slinegraph.s_closeness_centrality(v=None)</dt><dd><p>Method in class Slinegraph.
+Return a list of closeness centrality scores of every vertices in the s-line graph. If <cite>v</cite> is specified, then the list returned contains only <cite>v</cite>’s score. Closeness centrality of a vertex <cite>v</cite> is the reciprocal of the average shortest path distance to <cite>v</cite> over all <cite>n-1</cite> reachable nodes:</p>
+</dd>
+</dl>
+<div class="math notranslate nohighlight">
+\[C(v) = \frac{n - 1}{\sum_{v=1}^{n-1} d(u, v)},\]</div>
+<dl>
+<dt>Slinegraph.s_harmonic_closeness_centrality(v=None)</dt><dd><p>Method in class Slinegraph.
+Return a list of harmonic closeness centrality scores of every vertices in the s-line graph. If <cite>v</cite> is specified, then the list returned contains only <cite>v</cite>’s score. Harmonic centrality of a vertex <cite>v</cite> is the sum of the reciprocal of the shortest path distances from all other nodes to <cite>v</cite>:</p>
+<div class="math notranslate nohighlight">
+\[C(v) = \sum_{v \neq u} \frac{1}{d(v, u)}\]</div>
+</dd>
+<dt>Slinegraph.s_eccentricity(v=None)</dt><dd><p>Method in class Slinegraph.
+Return a list of eccentricity of every vertices in the s-line graph. If <cite>v</cite> is specified, then the list returned contains only eccentricity of <cite>v</cite>.</p>
+</dd>
+<dt>Slinegraph.s_neighbors(v)</dt><dd><p>Method in class Slinegraph.
+Return a list of neighboring vertices of <cite>v</cite> in the s-line graph.</p>
+</dd>
+<dt>Slinegraph.s_degree(v)</dt><dd><p>Method in class Slinegraph.
+Return the degree of vertex <cite>v</cite> in the s-line graph.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="widget.html" class="btn btn-neutral float-right" title="Hypernetx-Widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="reports/reports.html" class="btn btn-neutral float-left" title="reports package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2018 Battelle Memorial Institute.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

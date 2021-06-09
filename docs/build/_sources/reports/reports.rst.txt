@@ -12,7 +12,6 @@ reports.descriptive\_stats module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

@@ -1,0 +1,37 @@
+Metadata-Version: 2.1
+Name: hypernetx
+Version: 1.0
+Summary: HyperNetX is a Python library for the creation and study of hypergraphs.
+Home-page: https://github.com/pnnl/HyperNetX
+Author: Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn
+Author-email: hypernetx@pnnl.gov
+License: 3-Clause BSD license
+Description: 
+            The HyperNetX library provides classes and methods for the analysis
+            and visualization of complex network data modeled as hypergraphs. 
+            The library generalizes traditional graph metrics.
+        
+            HypernetX was developed by the Pacific Northwest National Laboratory for the
+            Hypernets project as part of its High Performance Data Analytics (HPDA) program.
+            PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
+        
+            * Principle Developer and Designer: Brenda Praggastis
+            * Visualization: Dustin Arendt, Ji Young Yun
+            * High Performance Computing: Tony Liu, Andrew Lumsdaine
+            * Principal Investigator: Cliff Joslyn
+            * Program Manager: Mark Raugas, Brian Kritzstein
+            * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
+        
+            The code in this repository is intended to support researchers modeling data
+            as hypergraphs. We have a growing community of users and contributors.
+            Documentation is available at: <https://pnnl.github.io/HyperNetX/>
+        
+            For questions and comments contact the developers directly at:
+                <hypernetx@pnnl.gov>
+            
+Platform: UNKNOWN
+Provides-Extra: testing
+Provides-Extra: notebooks
+Provides-Extra: tutorials
+Provides-Extra: documentation
+Provides-Extra: all

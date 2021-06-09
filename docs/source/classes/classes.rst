@@ -20,6 +20,13 @@ classes.hypergraph module
    :undoc-members:
    :show-inheritance:
 
+classes.staticentity module
+---------------------------
+
+.. automodule:: classes.staticentity
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

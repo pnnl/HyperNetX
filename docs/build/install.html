@@ -1,40 +1,45 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing HyperNetX &mdash; HyperNetX 0.3.7 documentation</title>
+  <title>Installing HyperNetX &mdash; HyperNetX 1.0.0 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script type="text/javascript" src="_static/copybutton.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Glossary of HNX terms" href="glossary.html" />
@@ -65,7 +70,7 @@
             
             
               <div class="version">
-                0.3
+                1.0
               </div>
             
           
@@ -82,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -90,25 +96,26 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing HyperNetX</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#to-install-in-a-virtualenv-environment">To install in a virtualenv environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-using-pip">Install using Pip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-using-pip-options">Install using Pip options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="algorithms/modules.html">Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -143,18 +150,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Installing HyperNetX</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -173,19 +182,30 @@
 <p>HyperNetX may be cloned or forked from: <a class="reference external" href="https://github.com/pnnl/HyperNetX">https://github.com/pnnl/HyperNetX</a> .</p>
 <div class="section" id="to-install-in-an-anaconda-environment">
 <h2>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this headline">¶</a></h2>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
 </div>
 <p>Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">matplotlib</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span> <span class="n">matplotlib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
+</pre></div>
+</div>
+<p>To use <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> use python=3.9 and the conda version of tbb in your environment.
+<strong>Note</strong> that <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> only works on Linux and some OSX systems. See NWHy docs for more.:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span> <span class="n">tbb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="to-install-in-a-virtualenv-environment">
 <h2>To install in a virtualenv environment<a class="headerlink" href="#to-install-in-a-virtualenv-environment" title="Permalink to this headline">¶</a></h2>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">python</span> <span class="mf">3.6</span> <span class="n">executable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">python</span> <span class="mf">3.7</span> <span class="n">executable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>This will create a virtual environment in the specified location using
@@ -203,8 +223,8 @@ that comes with Anaconda3.</p>
 <p>Otherwise use &lt;file extension&gt;=NULL (no file extension).</p>
 <p>Once activated continue to follow the installation instructions below.</p>
 </div>
-<div class="section" id="install-using-pip">
-<h2>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-using-pip-options">
+<h2>Install using Pip options<a class="headerlink" href="#install-using-pip-options" title="Permalink to this headline">¶</a></h2>
 <p>For a minimal installation:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
@@ -220,9 +240,9 @@ that comes with Anaconda3.</p>
 <p>To install with the documentation:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chmod</span> <span class="mi">755</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">./</span><span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="go">## This will generate the documentation in /docs/build</span>
-<span class="go">## Open them in your browser with /docs/build/index.html</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sh</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
+<span class="go">## This will generate the documentation in /docs/build/</span>
+<span class="go">## Open them in your browser with /docs/index.html</span>
 </pre></div>
 </div>
 <p>To install and test using pytest:</p>
@@ -235,10 +255,6 @@ that comes with Anaconda3.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>Released under the 3-Clause BSD license (see <a class="reference internal" href="license.html#license"><span class="std std-ref">License</span></a>)</p>
-</div>
 </div>
 
 
@@ -246,29 +262,29 @@ that comes with Anaconda3.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary of HNX terms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="overview/index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary of HNX terms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="overview/index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018 Battelle Memorial Institute
+        &#169; Copyright 2018 Battelle Memorial Institute.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -276,7 +292,6 @@ that comes with Anaconda3.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
