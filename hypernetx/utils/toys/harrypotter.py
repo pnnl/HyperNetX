@@ -37,7 +37,7 @@ class HarryPotter(object):
             )
         self.dataframe = harry
 
-        ctr = [HNXCount() for c in range(len(columns))]
+        ctr = [hnx.HNXCount() for c in range(len(columns))]
         ldict = OrderedDict()
         rdict = OrderedDict()
         for idx, c in enumerate(columns):
