@@ -31,6 +31,8 @@ Joslyn, Cliff A; Aksoy, Sinan; Arendt, Dustin; Firoz, J; Jenkins, Louis ; Pragga
 
 Joslyn, Cliff A; Aksoy, Sinan; Arendt, Dustin; Jenkins, L; Praggastis, Brenda; Purvine, Emilie; Zalewski, Marcin: (2019) "High Performance Hypergraph Analytics of Domain Name System Relationships", in: Proc. HICSS Symp. on Cybersecurity Big Data Analytics, http://www.azsecure-hicss.org/
 
+Notes
+-----
 
 HNX was developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
@@ -49,7 +51,8 @@ Documentation is available at: <https://pnnl.github.io/HyperNetX/>
 For questions and comments contact the developers directly at:
 	<hypernetx@pnnl.gov>
 
-New Features of Version 1.0:
+New Features of Version 1.0
+---------------------------
 
 1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. The new hypergraphs are given an attribute `static=True`.
 2. A C++ addon called [NWHy](docs/build/nwhy.html) can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
