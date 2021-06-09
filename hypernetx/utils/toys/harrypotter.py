@@ -1,5 +1,5 @@
 import os
-from hypernetx import *
+import hypernetx as hnx
 from collections import OrderedDict, defaultdict
 import scipy
 from scipy.sparse import coo_matrix, issparse
@@ -63,7 +63,7 @@ class HarryPotter(object):
                 c = harry.columns[cid]
                 data[rid, cid] = ldict[c][harry.iloc[rid][c]]
 
-        self.data = remove_row_duplicates(data)
+        self.data = hnx.remove_row_duplicates(data)
         # Create incidence Tensor and labels
         imat = np.zeros(dims, dtype=int)
         for d in self.data:
