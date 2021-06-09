@@ -2,6 +2,8 @@ import pandas as pd
 import os
 
 
+__all__ = ['TransmissionProblem']
+
 csvfile = 'ChungLuTransmissionData.csv'
 csvfile = os.path.join(os.path.dirname(__file__), csvfile)
 

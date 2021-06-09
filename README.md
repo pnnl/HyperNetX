@@ -103,7 +103,7 @@ Tutorials may be run in your browser using Google Colab
 	<span >Tutorial 7 - s-Centrality</span>
 </a>
 </br>
-
+https://github.com/pnnl/HyperNetX/blob/master/tutorials/Tutorial%207%20-%20s-centrality.ipynb
 	
 Installing HyperNetX
 ====================
