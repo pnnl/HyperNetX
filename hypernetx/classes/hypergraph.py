@@ -152,8 +152,6 @@ class Hypergraph:
             self._static=False
             if setsystem is None:
                 setsystem=EntitySet("_", elements = [])
-            elif isinstance(setsystem, Entity):
-                setsystem=EntitySet("_", setsystem.incidence_dict)
             elif isinstance(setsystem, dict):
                 # Must be a dictionary with values equal to iterables of Entities and hashables.
                 # Keys will be uids for new edges and values of the dictionary will generate the nodes.
@@ -161,21 +159,14 @@ class Hypergraph:
             elif not isinstance(setsystem, EntitySet):
                 # If no ids are given, return default ids indexed by position in iterator
                 # This should be an iterable of sets
-                edge_labels=[self.name + str(x) for x in range(len(setsystem))]
-                setsystem=EntitySet("_", dict(zip(edge_labels, setsystem)))
+                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
+                # setsystem=dict(zip(edge_labels, setsystem))
+                setsystem = EntitySet(f"{self.name}:Edges", elements=dict(zip(edge_labels, setsystem)))
 
-            _reg=setsystem.registry
-            _nodes={k: Entity(k, **_reg[k].properties) for k in _reg}
-            _elements={j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
-            _edges={
-                j: Entity(j, elements=_elements[j].values(), **setsystem[j].properties)
-                for j in setsystem
-            }
-
-            self._edges = EntitySet(
-                f"{self.name}:Edges", elements=_edges.values(), **setsystem.properties
-            )
-            self._nodes = EntitySet(f"{self.name}:Nodes", elements=_nodes.values())
+            self._edges = setsystem # EntitySet(f"{self.name}:Edges", elements=setsystem)
+            _nodes = self._edges.get_dual()
+            self._nodes = EntitySet(f"{self.name}:Nodes", elements=_nodes)
+            
         if self._static:
             temprows, tempcols = self.edges.data.T
             tempdata = np.ones(len(temprows), dtype=int)
@@ -527,7 +518,8 @@ class Hypergraph:
                 self.set_state(edge_size_dist=dist)
                 return dist
         else:
-            return list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+            # return list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+            return [len(self.edges[id].memberships) for id in self.edges]#np.array(np.sum(self.incidence_matrix(), axis=0))[0])
 
     def convert_to_static(
         self,
@@ -817,17 +809,16 @@ class Hypergraph:
             return [self.translate(nb, edges=False) for nb in nbrs]
 
         else:
-            node = self.nodes[
-                node
-            ].uid  # this allows node to be an Entity instead of a string
-            memberships = set(self.nodes[node].memberships).intersection(
-                self.edges.uidset
-            )
+            node = self.nodes[node].uid  # this allows node to be an Entity instead of a string
+            # Get the edge IDs of which the node is a part. If we update the membership as we delete and add edges, the intersection might be unnecessary
+            memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
+            # get all the edges that have greater than size s.
             edgeset = {e for e in memberships if len(self.edges[e]) >= s}
+
 
             neighborlist = set()
             for e in edgeset:
-                neighborlist.update(self.edges[e].uidset)
+                neighborlist.update(self.edges[e].memberships)
             neighborlist.discard(node)
             return list(neighborlist)
 
@@ -911,7 +902,7 @@ class Hypergraph:
         return self
 
     @not_implemented_for("static")
-    def _add_nodes_from(self, nodes):
+    def _add_nodes_from(self, nodes, collision_check=True):
         """
         Private helper method instantiates new nodes when edges added to hypergraph.
 
@@ -1296,6 +1287,7 @@ class Hypergraph:
             for k, v in self.edges.incidence_dict.items():
                 for n in v:
                     E[n].append(k)
+                    
             return Hypergraph(E, name=name)
 
     def _collapse_nwhy(self, edges, rec):
