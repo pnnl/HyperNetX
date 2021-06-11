@@ -218,6 +218,7 @@ class EntitySet(Entity):
                     self.add_element(id, item)
                 else:
                     self.add_element(id, Entity(id, item))
+        self._children = self.children
 
     def __len__(self):
         """Return the number of entities."""
@@ -305,6 +306,13 @@ class EntitySet(Entity):
     @property
     def elements(self):
         return self._elements
+
+    @property
+    def children(self):
+        children = set()
+        for items in self._elements.values():
+            children.update(items.memberships)
+        return children
 
     def get_dual(self):
         memberships = defaultdict(list)
@@ -456,7 +464,7 @@ class EntitySet(Entity):
         clone : EntitySet
 
         """
-        return EntitySet(newuid, elements=self.elements.values(), **self.properties)
+        return EntitySet(newuid, elements=self.elements, **self.properties)
 
 
     def collapse_identical_elements(self, newuid, return_equivalence_classes=False):
@@ -568,7 +576,7 @@ class EntitySet(Entity):
                 cols = list()
                 data = list()
                 for e in self:
-                    for n in self[e].elements:
+                    for n in self.elements[e].memberships:
                         data.append(1)
                         rows.append(ndict[n])
                         cols.append(edict[e])
@@ -577,7 +585,7 @@ class EntitySet(Entity):
                 # Create an np.matrix
                 MP = np.zeros((nchildren, nuidset), dtype=int)
                 for e in self:
-                    for n in self[e].elements:
+                    for n in self.elements[e].memberships:
                         MP[ndict[n], edict[e]] = 1
             if index:
                 return MP, rowdict, coldict
@@ -589,28 +597,3 @@ class EntitySet(Entity):
             else:
                 return np.zeros(1)
 
-    def restrict_to(self, element_subset, name=None):
-        """
-        Shallow copy of entityset removing elements not in element_subset.
-
-        Parameters
-        ----------
-        element_subset : iterable
-            A subset of the entityset's elements
-
-        name: hashable, optional
-            If not given, a name is generated to reflect entity uid
-
-        Returns
-        -------
-        new entityset : EntitySet
-            Could be empty.
-
-        See also
-        --------
-        Entity.restrict_to
-
-        """
-        newelements = [self[e] for e in element_subset if e in self]
-        name = name or f"{self.uid}_r"
-        return EntitySet(name, newelements, **self.properties)
