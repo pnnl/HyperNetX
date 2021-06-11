@@ -58,21 +58,6 @@ class Entity():
         # this dictionary comprehension looks like it is not stored, but computed every time
         return self._memberships
 
-    @property
-    def is_empty(self):
-        """Boolean indicating if entity.elements is empty"""
-        return len(self) == 0
-
-    @property
-    def is_bipartite(self):
-        """
-        Returns boolean indicating if the entity satisfies the `Bipartite Condition`_
-        """
-        if self.uidset.isdisjoint(self.children):
-            return True
-        else:
-            return False
-
     # defines equality to be whether all the state variables match.
     def __eq__(self, other):
         """
@@ -161,17 +146,17 @@ class Entity():
         return self._memberships.get(item)
 
     def __iter__(self):
-        """Returns iterator on element ids."""
+        """Returns iterator on membership ids."""
         return iter(self._memberships)
 
     def __call__(self):
-        """Returns an iterator on elements"""
+        """Returns an iterator on memberships"""
         for e in self._memberships:
             yield e
 
     def size(self):
         """
-        Returns the number of elements in entity
+        Returns the number of elements in membership
         """
         return len(self)
 
@@ -191,21 +176,6 @@ class Entity():
 
         """
         return Entity(newuid, entity=self)
-
-    def intersection(self, other):
-        """
-        A dictionary of elements belonging to entity and other.
-
-        Parameters
-        ----------
-        other : Entity
-
-        Returns
-        -------
-        Dictionary of elements : dict
-
-        """
-        return {e: self[e] for e in self if e in other}
 
 
 class EntitySet(Entity):
@@ -284,6 +254,11 @@ class EntitySet(Entity):
             yield e
 
     @property
+    def is_empty(self):
+        """Boolean indicating if entity.elements is empty"""
+        return len(self) == 0
+
+    @property
     def uidset(self):
         """
         Set of uids of elements of entity.
@@ -313,6 +288,21 @@ class EntitySet(Entity):
         for items in self._elements.values():
             children.update(items.memberships)
         return children
+
+    def intersection(self, other):
+        """
+        A dictionary of elements belonging to entity and other.
+
+        Parameters
+        ----------
+        other : Entity
+
+        Returns
+        -------
+        Dictionary of elements : dict
+
+        """
+        return {e: self[e] for e in self if e in other}
 
     def get_dual(self):
         memberships = defaultdict(list)
