@@ -16,7 +16,7 @@ def test_static_hypergraph_constructor_setsystem(seven_by_six):
 
 def test_static_hypergraph_constructor_entity(seven_by_six):
     sbs = seven_by_six
-    E = Entity('sbs', sbs.edgedict)
+    E = EntitySet('sbs', sbs.edgedict)
     H = Hypergraph(E, static=True)
     assert H.isstatic
     assert 'A' in H.edges.incidence_dict['P']

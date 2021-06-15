@@ -199,9 +199,9 @@ def test_singletons():
     h = Hypergraph(E)
     assert h.shape == (9, 5)
     singles = h.singletons()
-    assert len(singles) == 2
+    assert len(singles) == 3
     h.remove_edges(singles)
-    assert h.shape == (7, 3)
+    assert h.shape == (8, 2)
 
 
 def test_remove_singletons():
@@ -209,7 +209,7 @@ def test_remove_singletons():
     h = Hypergraph(E)
     assert h.shape == (9, 5)
     h1 = h.remove_singletons()
-    assert h1.shape == (7, 3)
+    assert h1.shape == (8, 2)
     assert h.shape == (9, 5)
 
 def test_components():

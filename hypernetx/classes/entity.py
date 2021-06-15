@@ -12,7 +12,7 @@ __all__ = ["Entity", "EntitySet"]
 
 
 class Entity():
-    def __init__(self, uid, memberships=[], entity=None, **props):
+    def __init__(self, uid, elements=[], entity=None, **props):
 
         self._uid = uid
 
@@ -21,13 +21,13 @@ class Entity():
             if isinstance(entity, Entity):
                 if uid == entity.uid:
                     raise HyperNetXError(
-                        "The new entity will be indistinguishable from the original with the same uid. Use a differen uid."
+                        "The new entity will be indistinguishable from the original with the same uid. Use a different uid."
                     )
-                self._memberships = entity.memberships
+                self._elements = entity.elements
                 self.__dict__.update(entity.properties)
         else:
             # If no entity is provided, we must be building one up from scratch
-            self._memberships = memberships
+            self._elements = elements
 
         # add properties to the class dictionary and get the levelset(2) which is all the child entities which comprises the registry
         self.__dict__.update(props)
@@ -36,7 +36,7 @@ class Entity():
     def properties(self):
         """Dictionary of properties of entity"""
         temp = self.__dict__.copy()
-        del temp["_memberships"]
+        del temp["_elements"]
         del temp["_uid"]
         return temp
 
@@ -47,7 +47,7 @@ class Entity():
         return self._uid
 
     @property
-    def memberships(self):
+    def elements(self):
         """
         Dictionary of elements to which entity belongs.
 
@@ -56,7 +56,14 @@ class Entity():
         and :func:`Entity.remove_element()` methods.
         """
         # this dictionary comprehension looks like it is not stored, but computed every time
-        return self._memberships
+        return self._elements
+
+    @property
+    def size(self):
+        """
+        Returns the number of elements in membership
+        """
+        return len(self)
 
     # defines equality to be whether all the state variables match.
     def __eq__(self, other):
@@ -79,7 +86,7 @@ class Entity():
                 (a.__class__ != b.__class__)
                 or (a.uid != b.uid)
                 or (a.properties != b.properties)
-                or (a.memberships != b.memberships)
+                or (a.elements != b.elements)
             ):
                 return False
             # If all agree then look at the next level down since a and b share uidsets.
@@ -99,7 +106,7 @@ class Entity():
 
     def __len__(self):
         """Returns the number of elements in entity"""
-        return len(self._memberships)
+        return len(self._elements)
 
     def __str__(self):
         """Return the entity uid."""
@@ -108,7 +115,7 @@ class Entity():
     def __repr__(self):
         """Returns a string resembling the constructor for entity without any
         children"""
-        return f"Entity({self._uid}),{list(self.memberships)},{self.properties})"
+        return f"Entity({self._uid}),{list(self.elements)},{self.properties})"
 
     def __contains__(self, item):
         """
@@ -127,7 +134,7 @@ class Entity():
         not unique to their entities.
         Is not transitive.
         """
-        return item in self._memberships
+        return item in self._elements
 
     def __getitem__(self, item):
         """
@@ -143,22 +150,16 @@ class Entity():
 
         If item not in entity, returns None.
         """
-        return self._memberships.get(item)
+        return self._elements.get(item)
 
     def __iter__(self):
         """Returns iterator on membership ids."""
-        return iter(self._memberships)
+        return iter(self._elements)
 
     def __call__(self):
-        """Returns an iterator on memberships"""
-        for e in self._memberships:
+        """Returns an iterator on elements"""
+        for e in self._elements:
             yield e
-
-    def size(self):
-        """
-        Returns the number of elements in membership
-        """
-        return len(self)
 
     def clone(self, newuid):
         """
@@ -176,19 +177,41 @@ class Entity():
 
         """
         return Entity(newuid, entity=self)
+    
+    def remove(self, id):
+        self._elements.remove(id)
+
+    def add(self, id):
+        self._elements.append(id)
 
 
 class EntitySet(Entity):
-    def __init__(self, uid, elements=dict(), **props):
+    def __init__(self, uid, elements=dict(), entityset=None, **props):
         self._uid = uid
         self._elements = dict()
+        if entityset is None:
+            print("hi")
+            self._elements = dict()
+        else:
+            self._elements = entityset.elements
+            self.__dict__.update(props)
+
         if isinstance(elements, dict):
             for id, item in elements.items():
                 if isinstance(item, Entity):
                     self.add_element(id, item)
                 else:
                     self.add_element(id, Entity(id, item))
-        self._children = self.children
+        
+        if isinstance(elements, list):
+            uid = 0
+            for item in elements:
+                if isinstance(item, Entity):
+                    self.add_element(item.uid, item)
+                else:
+                    self.add_element(uid, Entity(uid, item))
+                    uid += 1
+        
 
     def __len__(self):
         """Return the number of entities."""
@@ -253,6 +276,18 @@ class EntitySet(Entity):
         for e in self.elements.values():
             yield e
 
+    def __eq__(self, other):
+        """
+        Defines equality for Entities based on equivalence of their __dict__ objects.
+        """
+        def _comp(a, b):
+            # Compare top level properties: same class? same ids? same children? same parents? same attributes?
+            if (a.__class__ != b.__class__) or (a.uid != b.uid) or (set(a.elements.keys()) != set(b.elements.keys())):
+                return False
+            return True
+
+        return _comp(self, other)
+
     @property
     def is_empty(self):
         """Boolean indicating if entity.elements is empty"""
@@ -275,7 +310,7 @@ class EntitySet(Entity):
         """
         temp = dict()
         for entity in self.elements.values():
-            temp[entity.uid] = {item for item in entity.memberships}
+            temp[entity.uid] = {item for item in entity.elements}
         return temp
 
     @property
@@ -286,7 +321,7 @@ class EntitySet(Entity):
     def children(self):
         children = set()
         for items in self._elements.values():
-            children.update(items.memberships)
+            children.update(items.elements)
         return children
 
     def intersection(self, other):
@@ -305,11 +340,11 @@ class EntitySet(Entity):
         return {e: self[e] for e in self if e in other}
 
     def get_dual(self):
-        memberships = defaultdict(list)
+        elements = defaultdict(list)
         for id in self.elements:
-            for member in self.elements[id].memberships:
-                memberships[member].append(id)
-        return memberships
+            for member in self.elements[id].elements:
+                elements[member].append(id)
+        return elements
 
     def add_element(self, id, item):
         """
@@ -378,7 +413,7 @@ class EntitySet(Entity):
     def remove_element(self, item):
         """
         Removes item from entity and reference to entity from
-        item.memberships
+        item.elements
 
         Parameters
         ----------
@@ -391,13 +426,11 @@ class EntitySet(Entity):
 
         """
         if isinstance(item, Entity):
-            memberships = item.memberships
+            elements = item.elements
             del self._elements[item.uid]
-            return {item.uid : memberships}
         else:
-            memberships = self._elements[item].memberships
+            elements = self._elements[item].elements
             del self._elements[item]
-            return {item : memberships}
     
 
     def remove_elements_from(self, arg_set):
@@ -413,11 +446,8 @@ class EntitySet(Entity):
         self : Entity
 
         """
-        memberships = dict()
         for item in arg_set:
-            Entity.remove_element(self, item)
-        return self
-    
+            self.remove_element(item)    
 
     def remove(self, *args):
         """
@@ -435,8 +465,7 @@ class EntitySet(Entity):
 
         """
         for item in args:
-            Entity.remove_element(self, item)
-        return self
+            self.remove_element(item)
 
     def clone(self, newuid):
         """
@@ -499,7 +528,7 @@ class EntitySet(Entity):
 
         shared_children = defaultdict(set)
         for e in self.__call__():
-            shared_children[frozenset(e.uidset)].add(e.uid)
+            shared_children[frozenset(e.elements)].add(e.uid)
         new_entity_dict = {
             f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()
         }
@@ -566,7 +595,7 @@ class EntitySet(Entity):
                 cols = list()
                 data = list()
                 for e in self:
-                    for n in self.elements[e].memberships:
+                    for n in self.elements[e].elements:
                         data.append(1)
                         rows.append(ndict[n])
                         cols.append(edict[e])
@@ -575,7 +604,7 @@ class EntitySet(Entity):
                 # Create an np.matrix
                 MP = np.zeros((nchildren, nuidset), dtype=int)
                 for e in self:
-                    for n in self.elements[e].memberships:
+                    for n in self.elements[e].elements:
                         MP[ndict[n], edict[e]] = 1
             if index:
                 return MP, rowdict, coldict

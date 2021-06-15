@@ -519,7 +519,7 @@ class Hypergraph:
                 return dist
         else:
             # return list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
-            return [len(self.edges[id].memberships) for id in self.edges]#np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+            return [len(self.edges[id].elements) for id in self.edges]#np.array(np.sum(self.incidence_matrix(), axis=0))[0])
 
     def convert_to_static(
         self,
@@ -674,17 +674,13 @@ class Hypergraph:
                 imat = self.incidence_matrix()
                 return np.sum(imat[ndx, ids])
         else:
-            memberships = set(self.nodes[node].memberships)
+            memberships = set(self._nodes[node].elements)
             if max_size is not None:
                 return len(
-                    set(
-                        e
-                        for e in memberships
-                        if len(self.edges[e]) in range(s, max_size + 1)
-                    )
+                    set(e for e in memberships if len(self.edges[e]) in range(s, max_size + 1))
                 )
             elif s > 1:
-                return len(set(e for e in memberships if len(self.edges[e]) >= s))
+                return len(set(e for e in memberships if len(self._edges[e]) >= s))
             else:
                 return len(memberships)
 
@@ -811,14 +807,14 @@ class Hypergraph:
         else:
             node = self.nodes[node].uid  # this allows node to be an Entity instead of a string
             # Get the edge IDs of which the node is a part. If we update the membership as we delete and add edges, the intersection might be unnecessary
-            memberships = set(self.nodes[node].memberships).intersection(self.edges.uidset)
+            # memberships = set(self.nodes[node].elements).intersection(self.edges.uidset)
             # get all the edges that have greater than size s.
-            edgeset = {e for e in memberships if len(self.edges[e]) >= s}
+            edgeset = {e for e in self.nodes[node].elements if len(self.edges[e]) >= s}
 
 
             neighborlist = set()
             for e in edgeset:
-                neighborlist.update(self.edges[e].memberships)
+                neighborlist.update(self.edges[e].elements)
             neighborlist.discard(node)
             return list(neighborlist)
 
@@ -877,7 +873,7 @@ class Hypergraph:
         else:
             if not isinstance(node, Entity):
                 node = self._nodes[node]
-            for edge in node.memberships:
+            for edge in node.elements:
                 self._edges[edge].remove(node)
             self._nodes.remove(node)
         return self
@@ -962,7 +958,7 @@ class Hypergraph:
                     )
                 )
                 for n in edge.elements:
-                    self._nodes[n].memberships[edge.uid] = self._edges[edge.uid]
+                    self._nodes[n].elementsency[edge.uid] = self._edges[edge.uid]
             else:
                 self._edges.add(Entity(edge.uid, **edge.properties))
         else:
@@ -1047,9 +1043,9 @@ class Hypergraph:
         if edge in self._edges:
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
-            for node in edge.uidset:
-                edge.remove(node)
-                if len(self._nodes[node]._memberships) == 1:
+            for node in edge.elements:
+                self._nodes[node].remove(edge.uid)
+                if len(self._nodes[node].elements) == 1:
                     self._nodes.remove(node)
             self._edges.remove(edge)
         return self
@@ -1283,12 +1279,7 @@ class Hypergraph:
             E = self.edges.restrict_to_levels((1, 0))
             return Hypergraph(E, name=name, use_nwhy=self.nwhy)
         else:
-            E = defaultdict(list)
-            for k, v in self.edges.incidence_dict.items():
-                for n in v:
-                    E[n].append(k)
-                    
-            return Hypergraph(E, name=name)
+            return Hypergraph(self._nodes, name=name)
 
     def _collapse_nwhy(self, edges, rec):
         """
@@ -1587,11 +1578,11 @@ class Hypergraph:
             for node in nodeset:
                 innernodes.add(node)
                 if node in self.nodes:
-                    memberships.update(set(self.nodes[node].memberships))
+                    memberships.update(set(self.nodes[node].elements))
             newedgeset = dict()
             for e in memberships:
                 if e in self.edges:
-                    temp = self.edges[e].uidset.intersection(innernodes)
+                    temp = self.edges.uidset.intersection(innernodes)
                     if temp:
                         newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
             return Hypergraph(newedgeset, name=name)
@@ -1643,14 +1634,14 @@ class Hypergraph:
         if self.nwhy:
             tops = self.g.toplexes()
             E = self.edges.restrict_to(tops)
-            return hnx.Hypergraph(E, use_nwhy=True)
+            return Hypergraph(E, use_nwhy=True)
         else:
             if self.isstatic:
                 for e in temp.edges:
                     thdict[e] = temp.edges[e]
             else:
                 for e in temp.edges:
-                    thdict[e] = temp.edges[e].uidset
+                    thdict[e] = temp.edges.uidset
             tops = list()
             for e in temp.edges:
                 flag = True
@@ -1723,7 +1714,7 @@ class Hypergraph:
         """
         if self.nwhy:
             return self.edges.translate(0, self.g.singletons())
-        else:
+        elif self.isstatic:
             M, rdict, cdict = self.incidence_matrix(index=True)
             idx = np.argmax(M.shape)  # which axis has fewest members? if 1 then columns
             cols = M.sum(idx)  # we add down the row index if there are fewer columns
@@ -1747,6 +1738,8 @@ class Hypergraph:
                         if s == 1:
                             singles.append(cdict[r])
             return singles
+        else:
+            return [id for id in self._edges if len(self._edges[id]) == 1]
 
     def remove_singletons(self, name=None):
         """XX
@@ -1761,6 +1754,7 @@ class Hypergraph:
         new hypergraph : Hypergraph
 
         """
+        # self.remove_edges(self.singletons())
         E = [e for e in self.edges if e not in self.singletons()]
         return self.restrict_to_edges(E)
 
@@ -2332,12 +2326,7 @@ class Hypergraph:
             name = name or "_"
             return Hypergraph(E, name=name, use_nwhy=use_nwhy)
         else:
-            node_entities = {
-                n: Entity(n, [], properties=B.nodes(data=True)[n]) for n in nodes
-            }
-            edge_dict = {
-                e: [node_entities[n] for n in list(B.neighbors(e))] for e in edges
-            }
+            edge_dict = {e: list(B.neighbors(e)) for e in edges}
             name = name or "_"
             return Hypergraph(setsystem=edge_dict, name=name)
 
