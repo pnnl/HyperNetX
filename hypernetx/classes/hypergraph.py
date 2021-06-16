@@ -898,7 +898,7 @@ class Hypergraph:
         return self
 
     @not_implemented_for("static")
-    def _add_nodes_from(self, nodes, collision_check=True):
+    def _add_nodes_from(self, nodes):
         """
         Private helper method instantiates new nodes when edges added to hypergraph.
 
@@ -914,9 +914,9 @@ class Hypergraph:
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
                 if isinstance(node, Entity):
-                    self._nodes.add(Entity(node.uid, **node.properties))
+                    self._nodes.add({node.uid: Entity(node.uid, **node.properties)})
                 else:
-                    self._nodes.add(Entity(node))
+                    self._nodes.add({node: Entity(node)})
 
     @not_implemented_for("static")
     def add_edge(self, edge):
@@ -946,23 +946,17 @@ class Hypergraph:
         if edge in self._edges:
             warnings.warn("Cannot add edge. Edge already in hypergraph")
         elif edge in self._nodes:
-            warnings.warn("Cannot add edge. Edge is already a Node")
+            warnings.warn("Cannot add edge. Edge is already a Node") # I don't think this matters
         elif isinstance(edge, Entity):
             if len(edge) > 0:
-                self._add_nodes_from(edge.elements.values())
-                self._edges.add(
-                    Entity(
-                        edge.uid,
-                        elements=[self._nodes[k] for k in edge],
-                        **edge.properties,
-                    )
-                )
+                self._add_nodes_from(edge.elements)
+                self._edges.add({edge.uid: Entity(edge.uid, elements=edge.elements, **edge.properties)})
                 for n in edge.elements:
-                    self._nodes[n].elementsency[edge.uid] = self._edges[edge.uid]
+                    self._nodes[n].add(edge.uid)
             else:
-                self._edges.add(Entity(edge.uid, **edge.properties))
+                self._edges.add({edge.uid: Entity(edge.uid, **edge.properties)})
         else:
-            self._edges.add(Entity(edge))  # this generates an empty edge
+            self._edges.add({edge: Entity(edge)})  # this generates an empty edge
         return self
 
     @not_implemented_for("static")
@@ -984,7 +978,7 @@ class Hypergraph:
             self.add_edge(edge)
         return self
 
-    @not_implemented_for("static")
+    # @not_implemented_for("static")
     def add_node_to_edge(self, node, edge):
         """
 
@@ -1008,15 +1002,17 @@ class Hypergraph:
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             if node in self._nodes:
-                self._edges[edge].add(self._nodes[node])
+                self._edges[edge].add(node)
+                self._nodes[node].add(edge)
             else:
+
                 if not isinstance(node, Entity):
                     node = Entity(node)
                 else:
-                    node = Entity(node.uid, **node.properties)
+                    node = Entity(node.uid, node.elements, **node.properties)
                 self._edges[edge].add(node)
-                self._nodes.add(node)
-
+                self._nodes.add({node.uid: node})
+                self._nodes[node].add(edge)
         return self
 
     @not_implemented_for("static")
@@ -1044,9 +1040,10 @@ class Hypergraph:
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
             for node in edge.elements:
-                self._nodes[node].remove(edge.uid)
                 if len(self._nodes[node].elements) == 1:
                     self._nodes.remove(node)
+                else:
+                    self._nodes[node].remove(edge.uid)
             self._edges.remove(edge)
         return self
 
@@ -1068,7 +1065,7 @@ class Hypergraph:
             self.remove_edge(edge)
         return self
 
-    def incidence_matrix(self, index=False):
+    def incidence_matrix(self, index=False, weighting_function = lambda node, edge : 1):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
@@ -1102,7 +1099,7 @@ class Hypergraph:
                 return mat
 
         else:
-            return self.edges.incidence_matrix(index=index)
+            return self.edges.incidence_matrix(index=index, weighting_function=weighting_function)
 
     @staticmethod
     def incidence_to_adjacency(M, s=1, weighted=True):
@@ -1582,7 +1579,8 @@ class Hypergraph:
             newedgeset = dict()
             for e in memberships:
                 if e in self.edges:
-                    temp = self.edges.uidset.intersection(innernodes)
+                    temp = set(self.edges[e]).intersection(innernodes)
+                    # temp = set(self.edges[e]).issubset(innernodes) # in the induced sub-hypergraph case.
                     if temp:
                         newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
             return Hypergraph(newedgeset, name=name)
@@ -1636,12 +1634,8 @@ class Hypergraph:
             E = self.edges.restrict_to(tops)
             return Hypergraph(E, use_nwhy=True)
         else:
-            if self.isstatic:
-                for e in temp.edges:
-                    thdict[e] = temp.edges[e]
-            else:
-                for e in temp.edges:
-                    thdict[e] = temp.edges.uidset
+            for e in temp.edges:
+                thdict[e] = temp.edges[e]
             tops = list()
             for e in temp.edges:
                 flag = True

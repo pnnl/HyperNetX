@@ -26,8 +26,14 @@ class Entity():
                 self._elements = entity.elements
                 self.__dict__.update(entity.properties)
         else:
-            # If no entity is provided, we must be building one up from scratch
-            self._elements = elements
+            if isinstance(elements, list):
+                self._elements = elements
+            else:
+                try:
+                    self._elements = list(elements)
+                except:
+                    raise HyperNetXError(f"Error: elements must be of type set, list, or tuple.")
+
 
         # add properties to the class dictionary and get the levelset(2) which is all the child entities which comprises the registry
         self.__dict__.update(props)
@@ -69,40 +75,10 @@ class Entity():
     def __eq__(self, other):
         """
         Defines equality for Entities based on equivalence of their __dict__ objects.
-
-        Checks all levels of self and other to verify they are
-        referencing the same uids and that they have the same set of properties.
-        If at any point we get duplicate addresses we stop checking that branch
-        because we are guaranteed equality from there on.
-
-        May cause a recursion error if depth is too great.
         """
-        seen = set()
-        # Define a compare method to call recursively on each level of self and other
-
-        def _comp(a, b, seen):
-            # Compare top level properties: same class? same ids? same children? same parents? same attributes?
-            if (
-                (a.__class__ != b.__class__)
-                or (a.uid != b.uid)
-                or (a.properties != b.properties)
-                or (a.elements != b.elements)
-            ):
-                return False
-            # If all agree then look at the next level down since a and b share uidsets.
-            for uid, elt in a.elements.items():
-                if isinstance(elt, Entity):
-                    if uid in seen:
-                        continue
-                    seen.add(uid)
-                    if not _comp(elt, b[uid], seen):
-                        return False
-                # if not an Entity then elt is hashable so we usual equality
-                elif elt != b[uid]:
-                    return False
-            return True
-
-        return _comp(self, other, seen)
+        if (self.__class__ != other.__class__) or (self.uid != other.uid) or (self.properties != other.properties) or (self.elements != other.elements):
+            return False
+        return True
 
     def __len__(self):
         """Returns the number of elements in entity"""
@@ -161,6 +137,9 @@ class Entity():
         for e in self._elements:
             yield e
 
+    def update_properties(self, **props):
+        self.__dict__.update(props)
+
     def clone(self, newuid):
         """
         Returns shallow copy of entity with newuid. Entity's elements will
@@ -178,24 +157,29 @@ class Entity():
         """
         return Entity(newuid, entity=self)
     
-    def remove(self, id):
-        self._elements.remove(id)
+    def remove(self, item):
+        if isinstance(item, Entity):
+            self._elements.remove(item.uid)
+        else:
+            self._elements.remove(item)
 
-    def add(self, id):
-        self._elements.append(id)
+    def add(self, item):
+        if isinstance(item, Entity):
+            self._elements.append(item.uid)
+        else:
+            self._elements.append(item)
 
 
-class EntitySet(Entity):
-    def __init__(self, uid, elements=dict(), entityset=None, **props):
+class EntitySet():
+    def __init__(self, uid, elements=dict(), entityset=None, return_dual=True, **props):
         self._uid = uid
         self._elements = dict()
         if entityset is None:
-            print("hi")
             self._elements = dict()
         else:
             self._elements = entityset.elements
             self.__dict__.update(props)
-
+  
         if isinstance(elements, dict):
             for id, item in elements.items():
                 if isinstance(item, Entity):
@@ -211,7 +195,6 @@ class EntitySet(Entity):
                 else:
                     self.add_element(uid, Entity(uid, item))
                     uid += 1
-        
 
     def __len__(self):
         """Return the number of entities."""
@@ -254,7 +237,7 @@ class EntitySet(Entity):
         If item not in entity, returns None.
         """
         if isinstance(item, Entity):
-            return self._elements.get(item.uid, "")
+            return self._elements.get(item.uid)
         else:
             return self._elements.get(item)
 
@@ -280,13 +263,13 @@ class EntitySet(Entity):
         """
         Defines equality for Entities based on equivalence of their __dict__ objects.
         """
-        def _comp(a, b):
-            # Compare top level properties: same class? same ids? same children? same parents? same attributes?
-            if (a.__class__ != b.__class__) or (a.uid != b.uid) or (set(a.elements.keys()) != set(b.elements.keys())):
+        # Compare top level properties: same class? same ids? same children? same parents? same attributes?
+        if (self.__class__ != other.__class__) or (self.uid != other.uid) or (set(self.elements.keys()) != set(other.elements.keys())):
                 return False
-            return True
-
-        return _comp(self, other)
+        return True
+    
+    def update_properties(self, **props):
+        self.__dict__.update(props)
 
     @property
     def is_empty(self):
@@ -540,7 +523,7 @@ class EntitySet(Entity):
         else:
             return EntitySet(newuid, new_entity_dict)
 
-    def incidence_matrix(self, sparse=True, index=False):
+    def incidence_matrix(self, sparse=True, index=False, weighting_function = lambda self, node, edge : 1):
         """
         An incidence matrix for the EntitySet indexed by children x uidset.
 
@@ -596,10 +579,10 @@ class EntitySet(Entity):
                 data = list()
                 for e in self:
                     for n in self.elements[e].elements:
-                        data.append(1)
+                        data.append(weighting_function(self, n, e))
                         rows.append(ndict[n])
                         cols.append(edict[e])
-                MP = csr_matrix((data, (rows, cols)))
+                MP = csr_matrix((data, (rows, cols)), dtype=float)
             else:
                 # Create an np.matrix
                 MP = np.zeros((nchildren, nuidset), dtype=int)
