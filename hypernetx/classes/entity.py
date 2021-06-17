@@ -277,6 +277,13 @@ class EntitySet():
         return len(self) == 0
 
     @property
+    def uid(self):
+        """
+        Set of uids of elements of entity.
+        """
+        return self._uid
+
+    @property
     def uidset(self):
         """
         Set of uids of elements of entity.

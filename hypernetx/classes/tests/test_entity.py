@@ -21,7 +21,11 @@ def test_entity_edge_constructor():
     assert ent.clone("edgecopy").uid == "edgecopy"
     assert ent.clone("edgecopy").elements == ["A", "C", "K"]
     assert ent.clone("edgecopy").properties["weight"] == 2.0
+    ent.update_properties(cellweights=(1,2,3), directions={"A":-1, "C":1, "K":-1})
+    assert ent.properties["cellweights"] == (1,2,3)
+    assert ent.properties["directions"] == {"A":-1, "C":1, "K":-1}
 
+# test updating property
 
 def test_entity_construct_from_entity():
     e1 = Entity("e1", elements=[1, 2, 3])
@@ -45,15 +49,18 @@ def test_entityset_construction():
     assert 2 in EntitySet("es1", edgeList)
     assert Entity(2, (2,3,5)) in EntitySet("es1", edgeList)
 
-# def test_entity_add():
-#     # add an element with property
-#     ent = Entity("e", {"A", "C", "K"})
-#     ent.add(Entity("D", [1, 2, 3], color="red"))
-#     assert ent.size() == 4
-#     assert len(ent.children) == 3
-#     assert 2 in ent["D"].elements
-#     assert ent["D"].color == "red"
-
+def test_entity_add():
+    # add an element with property
+    edgeDict = {0:(1, 2, 3), 1: (1,3,5), 2: (2,3,5,6)}
+    es = EntitySet("es", edgeDict)
+    ent = Entity("e", {"A", "C", "K"})
+    es.add({"D":Entity("D", [1, 2, 3], color="red")})
+    assert len(es) == 4
+    assert 2 in es["D"].elements
+    assert es["D"].color == "red"
+    es.add({ent.uid: ent})
+    assert "e" in es
+    assert es.children == {1,2,3,5,6,"A","C","K"}
 
 # def test_entity_no_self_reference():
 #     # confirm entity may not add itself.
@@ -77,45 +84,29 @@ def test_entityset_construction():
 #     assert e1["C"].w == 5
 
 
-# def test_add_no_overwrite():
-#     # adding and entity of the same name as an existing entity
-#     # only updates properties
-#     e1 = Entity("e1", {"A", "C", "K"})
-#     e2 = Entity("C", ["X"], w=5)
-#     assert "X" in e2.elements
-#     e1.add(e2)
-#     assert "X" not in e1["C"]
-#     assert e1["C"].w == 5
+def test_add_no_overwrite():
+    # adding and entity of the same name as an existing entity
+    # only updates properties
+    e1 = Entity("e1", {"A", "C", "K"})
+    e2 = Entity("D", ["X"], w=5)
+    assert "X" in e2.elements
+    e1.add(e2)
+    assert "D" in e1
+    assert e2.w == 5
 
-
-# def test_entity_remove():
-#     ent = Entity("e", {"A", "C", "K"})
-#     assert ent.size() == 3
-#     ent.remove("A")
-#     assert ent.size() == 2
-
-
-# def test_entity_depth():
-#     e1 = Entity("e1")
-#     e2 = Entity("e2", [e1])
-#     e3 = Entity("e3", [e2])
-#     e4 = Entity("e4", [e3, e1])
-#     assert e4.depth() == 3
-#     e3.remove(e2)
-#     assert e4.depth() == 1
-
+def test_entity_remove():
+    ent = Entity("e", {"A", "C", "K"})
+    assert ent.size == 3
+    ent.remove("A")
+    assert ent.size == 2
 
 # def test_entity_set():
 #     eset = EntitySet("eset1", {"A", "C", "K"})
 #     eset2 = eset.clone("eset2")
-#     assert eset.elements == eset2.elements
-#     assert len(eset) == 3
+#     assert eset.children == eset2.children
+#     assert len(eset) == 1
 #     assert eset.uid == "eset1"
-#     assert len(eset.children) == 0
-#     with pytest.raises(HyperNetXError) as excinfo:
-#         eset2.add(Entity("Z", ["A", "C", "B"]))
-#     assert "Fails the bipartite condition" in str(excinfo.value)
-
+#     assert len(eset) == 1
 
 # def test_entity_set_from_dict(seven_by_six):
 #     sbs = seven_by_six

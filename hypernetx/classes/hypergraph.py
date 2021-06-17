@@ -1065,7 +1065,7 @@ class Hypergraph:
             self.remove_edge(edge)
         return self
 
-    def incidence_matrix(self, index=False, weighting_function = lambda node, edge : 1):
+    def incidence_matrix(self, index=False, weighting_function = lambda self, node, edge : 1):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
