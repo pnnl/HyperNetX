@@ -643,15 +643,16 @@ class Hypergraph:
                 imat = self.incidence_matrix()
                 return np.sum(imat[ndx, ids])
         else:
-            memberships = set(self._nodes[node].elements)
             if max_size is not None:
+                memberships = set(self._nodes[node].elements)
                 return len(
                     set(e for e in memberships if len(self.edges[e]) in range(s, max_size + 1))
                 )
             elif s > 1:
+                memberships = set(self._nodes[node].elements)
                 return len(set(e for e in memberships if len(self._edges[e]) >= s))
             else:
-                return len(memberships)
+                return self._nodes[node].size
 
     def size(self, edge):
         """
@@ -877,9 +878,7 @@ class Hypergraph:
 
         """
         for node in nodes:
-            if node in self._edges:
-                raise HyperNetXError("Node already an edge.")
-            elif node in self._nodes and isinstance(node, Entity):
+            if node in self._nodes and isinstance(node, Entity):
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
                 if isinstance(node, Entity):
@@ -914,8 +913,6 @@ class Hypergraph:
         """
         if edge in self._edges:
             warnings.warn("Cannot add edge. Edge already in hypergraph")
-        elif edge in self._nodes:
-            warnings.warn("Cannot add edge. Edge is already a Node") # I don't think this matters
         elif isinstance(edge, Entity):
             if len(edge) > 0:
                 self._add_nodes_from(edge.elements)
@@ -925,7 +922,7 @@ class Hypergraph:
             else:
                 self._edges.add({edge.uid: Entity(edge.uid, **edge.properties)})
         else:
-            self._edges.add({edge: Entity(edge)})  # this generates an empty edge
+            self._edges.add({None: Entity(edge)})  # this generates an empty edge
         return self
 
     @not_implemented_for("static")
@@ -1414,9 +1411,14 @@ class Hypergraph:
             else:
                 return Hypergraph(temp, name, use_nwhy=self.nwhy)
         else:
-            temp = self.dual().edges.collapse_identical_elements(
-                "_", return_equivalence_classes=return_equivalence_classes
-            )
+            if self.isstatic:
+                temp = self.dual().edges.collapse_identical_elements(
+                    "_", return_equivalence_classes=return_equivalence_classes
+                )
+            else:
+                temp = self.nodes.collapse_identical_elements(
+                    "_", return_equivalence_classes=return_equivalence_classes
+                )
 
             if return_equivalence_classes:
                 return Hypergraph(temp[0], name, use_nwhy=self.nwhy).dual(), temp[1]
