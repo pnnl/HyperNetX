@@ -20,8 +20,9 @@ the conda version of matplotlib:
 To use :ref:`NWHy <nwhy>` use python=3.9 and the conda version of tbb in your environment. 
 **Note** that :ref:`NWHy <nwhy>` only works on Linux and some OSX systems. See NWHy docs for more.:
 
-	>>> conda create -n <env name> python=3.9 tbb
+	>>> conda create -n <env name> python=3.9 
 	>>> source activate <env name>
+	>>> conda install -c conda-forge/label/cf202003 
 	>>> pip install hypernetx
 	>>> pip install nwhy
 
