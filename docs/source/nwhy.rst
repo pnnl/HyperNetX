@@ -39,7 +39,7 @@ To install TBB_:
 
 .. _TBB: https://github.com/oneapi-src/oneTBB
 
-	>>> conda install tbb
+	>>> conda install -c conda-forge/label/cf202003 
 
 If a local TBB has been installed, we can specify TBBROOT
 
