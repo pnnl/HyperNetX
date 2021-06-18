@@ -7,6 +7,7 @@ from copy import copy
 import numpy as np
 import networkx as nx
 from hypernetx import HyperNetXError
+from hypernetx.utils.extras import HNXCount
 
 __all__ = ["Entity", "EntitySet"]
 
@@ -174,6 +175,7 @@ class EntitySet():
     def __init__(self, uid, elements=dict(), entityset=None, return_dual=True, **props):
         self._uid = uid
         self._elements = dict()
+        self.count = HNXCount(0)
         if entityset is None:
             self._elements = dict()
         else:
@@ -188,13 +190,12 @@ class EntitySet():
                     self.add_element(id, Entity(id, item))
         
         if isinstance(elements, list):
-            uid = 0
             for item in elements:
                 if isinstance(item, Entity):
                     self.add_element(item.uid, item)
                 else:
+                    uid = self.count()
                     self.add_element(uid, Entity(uid, item))
-                    uid += 1
 
     def __len__(self):
         """Return the number of entities."""
@@ -336,7 +337,7 @@ class EntitySet():
                 elements[member].append(id)
         return elements
 
-    def add_element(self, id, item):
+    def add_element(self, uid, item):
         """
         Adds args to entityset's elements, checking to make sure no self references are
         made to element ids.
@@ -352,17 +353,17 @@ class EntitySet():
 
         """
         if isinstance(item, Entity):
-            if id in self.elements:
+            if uid in self.elements:
                 raise HyperNetXError(
-                    f"Error: {id} references an existing Entity in the EntitySet."
+                    f"Error: {uid} references an existing Entity in the EntitySet."
                 )
             self.elements[item.uid] = item
         elif isinstance(item, list):
-            if id in self.elements:
+            if uid in self.elements:
                 raise HyperNetXError(
-                    f"Error: {id} references an existing Entity in the EntitySet."
+                    f"Error: {uid} references an existing Entity in the EntitySet."
                 )
-            self.elements[id] = Entity(id, item)
+            self.elements[uid] = Entity(uid, item)
 
     def add_elements_from(self, elements):
         """
@@ -379,8 +380,8 @@ class EntitySet():
         self : EntitySet
 
         """
-        for id, item in elements.items():
-            self.add_element(id, item)
+        for uid, item in elements.items():
+            self.add_element(uid, item)
 
     def add(self, elements):
         """
@@ -397,8 +398,8 @@ class EntitySet():
         self : EntitySet
 
         """
-        for id, item in elements.items():
-            self.add_element(id, item)
+        for uid, item in elements.items():
+            self.add_element(uid, item)
 
     def remove_element(self, item):
         """

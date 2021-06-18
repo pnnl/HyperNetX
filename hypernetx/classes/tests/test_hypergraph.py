@@ -65,14 +65,14 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     HB = Hypergraph.from_bipartite(H.bipartite())
     assert len(HB.edges) == 7
     assert len(HB.nodes) == 8
-    assert HB.s_degree("T1") == 1
+    assert HB.degree("T1") == 1
 
 def test_hypergraph_from_entity_set(seven_by_six):
     sbs = seven_by_six
     entityset = EntitySet("_", sbs.edgedict)
     H = Hypergraph(entityset)
     assert H.edges.incidence_dict == sbs.edgedict
-    assert H.s_degree("A") == 3 
+    assert H.degree("A") == 3 
     assert H.dim('O') == 1
     assert len(H.edge_size_dist()) == 6
     assert len(H.edge_neighbors("S")) == 4

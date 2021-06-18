@@ -608,37 +608,6 @@ class Hypergraph:
         else:
             return idx
 
-    def s_degree(self, node, s=1):  # deprecate this to degree
-        """
-        Same as `degree`
-
-        Parameters
-        ----------
-        node : Entity or hashable
-            If hashable, then must be uid of node in hypergraph
-
-        s : positive integer, optional, default: 1
-
-        Returns
-        -------
-        s_degree : int
-            The degree of a node in the subgraph induced by edges
-            of size s
-
-        Note
-        ----
-        The :term:`s-degree` of a node is the number of edges of size
-        at least s that contain the node.
-
-        """
-        msg = (
-            "s-degree is deprecated and will be removed in"
-            " release 1.0.0. Use degree(node,s=int) instead."
-        )
-
-        warnings.warn(msg, DeprecationWarning)
-        return self.degree(node, s)
-
     def degree(self, node, s=1, max_size=None):
         """
         The number of edges of size s that contain node.
