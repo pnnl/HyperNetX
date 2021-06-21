@@ -224,7 +224,7 @@ def test_connected_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
     assert len(list(h.connected_components())) == 1
-    assert list(h.connected_components(edges=True)) == [{'0', '1', '2', '3'}]
+    assert list(h.connected_components(edges=True)) == [{0, 1, 2, 3}]
     assert [len(g) for g in h.connected_component_subgraphs()] == [8]
 
 
@@ -241,8 +241,8 @@ def test_s_components():
 def test_s_connected_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
-    assert list(h.s_connected_components()) == [{'0', '1', '2', '3'}]
-    assert list(h.s_connected_components(s=2)) == [{'1', '2', '3'}]
+    assert list(h.s_connected_components()) == [{0, 1, 2, 3}]
+    assert list(h.s_connected_components(s=2)) == [{1, 2, 3}]
     assert list(h.s_connected_components(s=2, edges=False)) == [{5, 6}]
 
 

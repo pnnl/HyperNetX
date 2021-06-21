@@ -29,8 +29,9 @@ class Hypergraph:
     be known at creation. A hypergraph is dynamic by default.
 
     *Dynamic hypergraphs* require the user to keep track of its objects,
-    by using a unique names for each node and edge. This allows for multi-edge graphs and
-    inseperable nodes.
+    by using a unique name for each node in the list of nodes and each edge in the list of edges, though node names may overlap with edge names.
+    This allows for multi-edge graphs and inseparable nodes.
+    If the user does not specify the uids of each object, they will be created automatically.
 
     For example: Let V = {1,2,3} and E = {e1,e2,e3},
     where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
@@ -39,13 +40,11 @@ class Hypergraph:
 
     In a dynamic hypergraph each node and edge is
     instantiated as an Entity and given an identifier or uid. Entities
-    keep track of inclusion relationships and can be nested. Since
+    keep track of connections with other entities with their "elements" property. Since
     hypergraphs can be quite large, only the entity identifiers will be used
     for computation intensive methods, this means the user must take care
     to keep a one to one correspondence between their set of uids and
     the objects in their hypergraph. See `Honor System`_
-    Dynamic hypergraphs are most practical for small to modestly sized
-    hypergraphs (<1000 objects).
 
     *Static hypergraphs* store node and edge information in numpy arrays and
     are immutable. Each node and edge receives a class generated internal
@@ -131,8 +130,9 @@ class Hypergraph:
                 use_nwhy = False
         else:
             self.nwhy = False
+        
         if not name:
-            self.name = ""
+            self.name = "_"
         else:
             self.name = name
 
@@ -151,21 +151,14 @@ class Hypergraph:
         else:
             self._static=False
             if setsystem is None:
-                setsystem=EntitySet("_", elements = [])
-            elif isinstance(setsystem, dict):
-                # Must be a dictionary with values equal to iterables of Entities and hashables.
-                # Keys will be uids for new edges and values of the dictionary will generate the nodes.
-                setsystem=EntitySet("_", setsystem)
-            elif not isinstance(setsystem, EntitySet):
-                # If no ids are given, return default ids indexed by position in iterator
-                # This should be an iterable of sets
-                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
-                # setsystem=dict(zip(edge_labels, setsystem))
-                setsystem = EntitySet(f"{self.name}:Edges", elements=dict(zip(edge_labels, setsystem)))
+                setsystem=[]
+            # the constructor for EntitySet can accept both a list of iterables and a dictionary. Skip constructing an entityset if you already have one.
+            if not isinstance(setsystem, EntitySet):
+                # initialize an entityset object
+                setsystem = EntitySet(f"{self.name}:Edges", elements=setsystem)
 
-            self._edges = setsystem # EntitySet(f"{self.name}:Edges", elements=setsystem)
-            _nodes = self._edges.get_dual()
-            self._nodes = EntitySet(f"{self.name}:Nodes", elements=_nodes)
+            self._edges = setsystem
+            self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
             
         if self._static:
             temprows, tempcols = self.edges.data.T
@@ -679,7 +672,7 @@ class Hypergraph:
                 else:
                     return np.sum(self.edges.data.T[0] == edx)
         else:
-            return len(self.edges[edge])
+            return self.edges[edge].size
 
     def number_of_nodes(self, nodeset=None):
         """
@@ -1031,7 +1024,7 @@ class Hypergraph:
             self.remove_edge(edge)
         return self
 
-    def incidence_matrix(self, index=False, weighting_function = lambda self, node, edge : 1):
+    def incidence_matrix(self, index=False, weight = lambda self, node, edge : 1):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
@@ -1065,7 +1058,7 @@ class Hypergraph:
                 return mat
 
         else:
-            return self.edges.incidence_matrix(index=index, weighting_function=weighting_function)
+            return self.edges.incidence_matrix(index=index, weight=weight)
 
     @staticmethod
     def incidence_to_adjacency(M, s=1, weighted=True):

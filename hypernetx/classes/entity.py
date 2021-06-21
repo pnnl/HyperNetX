@@ -13,6 +13,10 @@ __all__ = ["Entity", "EntitySet"]
 
 
 class Entity():
+    '''
+    The Entity class simply stores an object with a uid, other elements to which it is connected, and associated properties.
+    In the hypergraph case, it is used to store nodes/edges and their edge/node neighbors and properties such as weights, categories etc. 
+    '''
     def __init__(self, uid, elements=[], entity=None, **props):
 
         self._uid = uid
@@ -20,10 +24,7 @@ class Entity():
         # Copies an entity if entity is passed into the constructor
         if entity is not None:
             if isinstance(entity, Entity):
-                if uid == entity.uid:
-                    raise HyperNetXError(
-                        "The new entity will be indistinguishable from the original with the same uid. Use a different uid."
-                    )
+                # copy the contents of the entity except for the ids
                 self._elements = entity.elements
                 self.__dict__.update(entity.properties)
         else:
@@ -33,10 +34,10 @@ class Entity():
                 try:
                     self._elements = list(elements)
                 except:
-                    raise HyperNetXError(f"Error: elements must be of type set, list, or tuple.")
+                    raise HyperNetXError(f"Error: elements must be able to be cast to a list.")
 
 
-        # add properties to the class dictionary and get the levelset(2) which is all the child entities which comprises the registry
+        # add properties to the class dictionary (arbitrary keyword/value pairs)
         self.__dict__.update(props)
 
     @property
@@ -56,19 +57,14 @@ class Entity():
     @property
     def elements(self):
         """
-        Dictionary of elements to which entity belongs.
-
-        This assignment is done on construction and controlled by
-        :func:`Entity.add_element()`
-        and :func:`Entity.remove_element()` methods.
+        Dictionary of elements to which entity is connected
         """
-        # this dictionary comprehension looks like it is not stored, but computed every time
         return self._elements
 
     @property
     def size(self):
         """
-        Returns the number of elements in membership
+        Returns the number of elements to which an entity is connecteds
         """
         return len(self)
 
@@ -82,7 +78,7 @@ class Entity():
         return True
 
     def __len__(self):
-        """Returns the number of elements in entity"""
+        """Returns the number of elements to which an entity is connected"""
         return len(self._elements)
 
     def __str__(self):
@@ -90,26 +86,20 @@ class Entity():
         return f"{self.uid}"
 
     def __repr__(self):
-        """Returns a string resembling the constructor for entity without any
-        children"""
+        """Returns a string resembling the constructor for the entity"""
         return f"Entity({self._uid}),{list(self.elements)},{self.properties})"
 
     def __contains__(self, item):
         """
-        Defines containment for Entities.
+        Return whether an entity is connected to another entitys.
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : hashable
 
         Returns
         -------
         Boolean
-
-        Depends on the `Honor System`_ . Allows for uids to be used as shorthand for their entity.
-        This is done for performance reasons, but will fail if uids are
-        not unique to their entities.
-        Is not transitive.
         """
         return item in self._elements
 
@@ -130,16 +120,8 @@ class Entity():
         return self._elements.get(item)
 
     def __iter__(self):
-        """Returns iterator on membership ids."""
+        """Returns iterator on element ids."""
         return iter(self._elements)
-
-    def __call__(self):
-        """Returns an iterator on elements"""
-        for e in self._elements:
-            yield e
-
-    def update_properties(self, **props):
-        self.__dict__.update(props)
 
     def clone(self, newuid):
         """
@@ -172,7 +154,12 @@ class Entity():
 
 
 class EntitySet():
-    def __init__(self, uid, elements=dict(), entityset=None, return_dual=True, **props):
+    '''
+    The EntitySet class is a class that manages and contains Entity class elements. It is used to represent a list of Entity objects.
+    A practical example are edge and node lists, which together form a bipartite representation of a hypergraph.
+    Each instance of an EntitySet contains a uid for the class and an element dictionary of uid/Entity pairs.
+    '''
+    def __init__(self, uid, elements=dict(), entityset=None):
         self._uid = uid
         self._elements = dict()
         self.count = HNXCount(0)
@@ -180,22 +167,19 @@ class EntitySet():
             self._elements = dict()
         else:
             self._elements = entityset.elements
-            self.__dict__.update(props)
-  
+
+        # If it's a dictionary with uid/data pairs, simply add to the elements dictionary
         if isinstance(elements, dict):
-            for id, item in elements.items():
+            for uid, item in elements.items():
                 if isinstance(item, Entity):
-                    self.add_element(id, item)
+                    self.add_element(item, uid)
                 else:
-                    self.add_element(id, Entity(id, item))
+                    self.add_element(Entity(uid, item), uid)
         
+        # If it's a list, a uid needs to be created. If the list item is an entity, it is already created, and if not, you can use a system-generated uid.
         if isinstance(elements, list):
             for item in elements:
-                if isinstance(item, Entity):
-                    self.add_element(item.uid, item)
-                else:
-                    uid = self.count()
-                    self.add_element(uid, Entity(uid, item))
+                self.add_element(item)
 
     def __len__(self):
         """Return the number of entities."""
@@ -262,42 +246,36 @@ class EntitySet():
 
     def __eq__(self, other):
         """
-        Defines equality for Entities based on equivalence of their __dict__ objects.
+        Defines equality for EntitySets based on equivalence of their elements.
         """
-        # Compare top level properties: same class? same ids? same children? same parents? same attributes?
+        # Compare top level properties: same class, same uids, same element names
         if (self.__class__ != other.__class__) or (self.uid != other.uid) or (set(self.elements.keys()) != set(other.elements.keys())):
                 return False
         return True
-    
-    def update_properties(self, **props):
-        self.__dict__.update(props)
 
     @property
     def is_empty(self):
-        """Boolean indicating if entity.elements is empty"""
+        """Boolean indicating if entityset.elements is empty"""
         return len(self) == 0
 
     @property
     def uid(self):
         """
-        Set of uids of elements of entity.
+        EntitySet uid.
         """
         return self._uid
 
     @property
     def uidset(self):
         """
-        Set of uids of elements of entity.
+        A set of the uids of the EntitySet's element.
         """
         return frozenset(self._elements.keys())
 
     @property
     def incidence_dict(self):
         """
-        Dictionary of element.uid:element.uidset for each element in entity
-
-        To return an incidence dictionary of all nested entities in entity
-        use nested_incidence_dict
+        Dictionary of element.uid:element.uidset for each element in entityset
         """
         temp = dict()
         for entity in self.elements.values():
@@ -306,10 +284,12 @@ class EntitySet():
 
     @property
     def elements(self):
+        ''' Dictionary of the uid/element pairs'''
         return self._elements
 
     @property
     def children(self):
+        ''' Set of all the uids of elements to which the nodes are connected'''
         children = set()
         for items in self._elements.values():
             children.update(items.elements)
@@ -317,11 +297,11 @@ class EntitySet():
 
     def intersection(self, other):
         """
-        A dictionary of elements belonging to entity and other.
+        A dictionary of elements belonging to the entityset and another entityset.
 
         Parameters
         ----------
-        other : Entity
+        other : EntitySet
 
         Returns
         -------
@@ -331,32 +311,40 @@ class EntitySet():
         return {e: self[e] for e in self if e in other}
 
     def get_dual(self):
+        """
+        Return an incidence dictionary with the roles of children and parents swapped.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        Incidence dictionary with the children uids as keys and the elements to which they belong as values.
+
+        """
         elements = defaultdict(list)
         for id in self.elements:
             for member in self.elements[id].elements:
                 elements[member].append(id)
         return elements
 
-    def add_element(self, uid, item):
+    def add_element(self, item, uid=None):
         """
-        Adds args to entityset's elements, checking to make sure no self references are
-        made to element ids.
-        Ensures Bipartite Condition of EntitySet.
+        Adds a single element to entityset's elements, checking to make sure no duplicate references are
+        made to element ids in the entityset.
 
         Parameters
         ----------
-        args : One or more entities or hashables
+        item : One Entity object or list/set/array
+        uid : Hashable which is the added Entity's uid. If you want this to be auto-assigned, only enter the item.
 
         Returns
         -------
-        self : EntitySet
 
         """
         if isinstance(item, Entity):
             if item.uid in self.elements:
-                raise HyperNetXError(
-                    f"Error: {uid} references an existing Entity in the EntitySet."
-                )
+                raise HyperNetXError(f"Error: {uid} references an existing Entity in the EntitySet.")
             self.elements[item.uid] = item
         else:
             if uid is None:
@@ -368,44 +356,47 @@ class EntitySet():
 
     def add_elements_from(self, elements):
         """
-        Adds items to entityset's elements, checking to make sure no self references are
+        Adds items to entityset's elements, checking to make sure no duplicate references are
         made to element ids.
-        Ensures Bipartite Condition of EntitySet.
 
         Parameters
         ----------
-        args : dictionary
+        elements : dictionary with uid:list/Entity pairs or a list of Entities/lists
 
         Returns
         -------
-        self : EntitySet
 
         """
-        for uid, item in elements.items():
-            self.add_element(uid, item)
+        if isinstance(elements, dict):
+            for uid, item in elements.items():
+                self.add_element(item, uid)
+        else:
+            for item in elements:
+                self.add_element(item)
 
     def add(self, elements):
         """
-        Adds items to entityset's elements, checking to make sure no self references are
+        Adds items to entityset's elements, checking to make sure no duplicate references are
         made to element ids.
-        Ensures Bipartite Condition of EntitySet.
 
         Parameters
         ----------
-        args : dictionary
+        elements : dictionary with uid:list/Entity pairs or a list of Entities/lists
 
         Returns
         -------
-        self : EntitySet
 
         """
-        for uid, item in elements.items():
-            self.add_element(uid, item)
+        if isinstance(elements, dict):
+            for uid, item in elements.items():
+                self.add_element(item, uid)
+        else:
+            for item in elements:
+                self.add_element(item)
 
     def remove_element(self, item):
         """
-        Removes item from entity and reference to entity from
-        item.elements
+        Removes item from entityset if it exists, otherwise raises a HyperNetXError.
 
         Parameters
         ----------
@@ -413,17 +404,14 @@ class EntitySet():
 
         Returns
         -------
-        self : Entity
-
 
         """
         if isinstance(item, Entity):
-            elements = item.elements
-            del self._elements[item.uid]
+            item = item.uid
+        if item not in self.elements:
+            raise HyperNetXError(f"Error: {item} is not an existing Entity in the EntitySet.")
         else:
-            elements = self._elements[item].elements
             del self._elements[item]
-    
 
     def remove_elements_from(self, arg_set):
         """
@@ -435,7 +423,6 @@ class EntitySet():
 
         Returns
         -------
-        self : Entity
 
         """
         for item in arg_set:
@@ -443,8 +430,7 @@ class EntitySet():
 
     def remove(self, *args):
         """
-        Removes args from entitie's elements if they belong.
-        Does nothing with args not in entity.
+        Removes args from entityset's elements
 
         Parameters
         ----------
@@ -452,8 +438,6 @@ class EntitySet():
 
         Returns
         -------
-        self : Entity
-
 
         """
         for item in args:
@@ -461,8 +445,7 @@ class EntitySet():
 
     def clone(self, newuid):
         """
-        Returns shallow copy of entityset with newuid. Entityset's
-        elements will belong to two distinct entitysets.
+        Returns shallow copy of entityset with newuid.
 
 
         Parameters
@@ -475,15 +458,13 @@ class EntitySet():
         clone : EntitySet
 
         """
-        return EntitySet(newuid, elements=self.elements, **self.properties)
+        return EntitySet(newuid, elements=self.elements)
 
 
     def collapse_identical_elements(self, newuid, return_equivalence_classes=False):
         """
-        Returns a deduped copy of the entityset, using representatives of equivalence classes as element keys.
+        Returns a copy of the entityset with duplicate elements combined, using representatives of equivalence classes as element keys.
         Two elements of an EntitySet are collapsed if they share the same children.
-
-        THIS SHOULD BE CHANGED TO IF THEY HAVE THE SAME MEMBERS
 
         Parameters
         ----------
@@ -495,8 +476,7 @@ class EntitySet():
         Returns
         -------
          : EntitySet
-        eq_classes : dict
-            if return_equivalence_classes = True
+        eq_classes : dict (if return_equivalence_classes = True)
 
         Notes
         -----
@@ -532,7 +512,8 @@ class EntitySet():
         else:
             return EntitySet(newuid, new_entity_dict)
 
-    def incidence_matrix(self, sparse=True, index=False, weighting_function = lambda self, node, edge : 1):
+
+    def incidence_matrix(self, sparse=True, index=False, weight = lambda self, node, edge : 1):
         """
         An incidence matrix for the EntitySet indexed by children x uidset.
 
@@ -544,6 +525,8 @@ class EntitySet():
             If True return will include a dictionary of children uid : row number
             and element uid : column number
 
+        weight : a lambda function returning a weight in the incidence matrix given the uid of the node and edge.
+        The default is to return 1 when a node/edge pair exist.
         Returns
         -------
         incidence_matrix : scipy.sparse.csr.csr_matrix or np.ndarray
@@ -572,12 +555,14 @@ class EntitySet():
         nchildren = len(self.children)
         nuidset = len(self.uidset)
 
+        # given a child's label, associates it with a numerical index.
         ndict = dict(zip(self.children, range(nchildren)))
         edict = dict(zip(self.uidset, range(nuidset)))
 
         if len(ndict) != 0:
 
             if index:
+                # reverses the order of the dictionary matching labels to indices.
                 rowdict = {v: k for k, v in ndict.items()}
                 coldict = {v: k for k, v in edict.items()}
 
@@ -588,7 +573,7 @@ class EntitySet():
                 data = list()
                 for e in self:
                     for n in self.elements[e].elements:
-                        data.append(weighting_function(self, n, e))
+                        data.append(weight(self, n, e))
                         rows.append(ndict[n])
                         cols.append(edict[e])
                 MP = csr_matrix((data, (rows, cols)), dtype=float)
@@ -607,4 +592,3 @@ class EntitySet():
                 return np.zeros(1), {}, {}
             else:
                 return np.zeros(1)
-

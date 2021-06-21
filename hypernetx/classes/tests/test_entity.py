@@ -21,7 +21,8 @@ def test_entity_edge_constructor():
     assert ent.clone("edgecopy").uid == "edgecopy"
     assert ent.clone("edgecopy").elements == ["A", "C", "K"]
     assert ent.clone("edgecopy").properties["weight"] == 2.0
-    ent.update_properties(cellweights=(1,2,3), directions={"A":-1, "C":1, "K":-1})
+    ent.cellweights=(1,2,3)
+    ent.directions={"A":-1, "C":1, "K":-1}
     assert ent.properties["cellweights"] == (1,2,3)
     assert ent.properties["directions"] == {"A":-1, "C":1, "K":-1}
 
@@ -35,8 +36,6 @@ def test_entity_construct_from_entity():
     assert e1.elements == e2.elements
     assert e1.elements == e3.elements
     assert e3.elements == [1, 2, 3]
-    with pytest.raises(HyperNetXError):
-        e4 = Entity("e1", entity=e1)
 
 def test_entityset_construction():
     edgeDict = {0:(1, 2, 3), 1: (1,3,5), 2: (2,3,5)}
