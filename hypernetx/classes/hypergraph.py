@@ -5,6 +5,7 @@ import warnings
 import pickle
 import networkx as nx
 from networkx.algorithms import bipartite
+from networkx.algorithms.assortativity import neighbor_degree
 import numpy as np
 import pandas as pd
 from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
@@ -148,19 +149,7 @@ class Hypergraph:
                 E=StaticEntitySet(entity = setsystem)
                 self._edges=E
                 self._nodes=E.restrict_to_levels([1])
-        else:
-            self._static=False
-            if setsystem is None:
-                setsystem=[]
-            # the constructor for EntitySet can accept both a list of iterables and a dictionary. Skip constructing an entityset if you already have one.
-            if not isinstance(setsystem, EntitySet):
-                # initialize an entityset object
-                setsystem = EntitySet(f"{self.name}:Edges", elements=setsystem)
 
-            self._edges = setsystem
-            self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
-            
-        if self._static:
             temprows, tempcols = self.edges.data.T
             tempdata = np.ones(len(temprows), dtype=int)
             self.state_dict = {
@@ -174,6 +163,17 @@ class Hypergraph:
             if self.filepath is not None:
                 self.save_state(fpath=self.filepath)
 
+        else:
+            self._static=False
+            if setsystem is None:
+                setsystem=[]
+            # the constructor for EntitySet can accept both a list of iterables and a dictionary. We skip constructing an entityset if there already is one.
+            if not isinstance(setsystem, EntitySet):
+                # initialize an entityset object
+                setsystem = EntitySet(f"{self.name}:Edges", elements=setsystem)
+
+            self._edges = setsystem
+            self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
     @property
     def edges(self):
         """
@@ -768,18 +768,15 @@ class Hypergraph:
             return [self.translate(nb, edges=False) for nb in nbrs]
 
         else:
-            node = self.nodes[node].uid  # this allows node to be an Entity instead of a string
-            # Get the edge IDs of which the node is a part. If we update the membership as we delete and add edges, the intersection might be unnecessary
-            # memberships = set(self.nodes[node].elements).intersection(self.edges.uidset)
-            # get all the edges that have greater than size s.
-            edgeset = {e for e in self.nodes[node].elements if len(self.edges[e]) >= s}
-
-
-            neighborlist = set()
-            for e in edgeset:
-                neighborlist.update(self.edges[e].elements)
-            neighborlist.discard(node)
-            return list(neighborlist)
+            neighbors = defaultdict(lambda : 0)
+            for e in self.nodes[node].elements:
+                for nbr in self.edges[e].elements:
+                    if nbr != node:
+                        neighbors[nbr] += 1
+            if s == 1:
+                return list(neighbors.keys())
+            else:
+                return [key for key, val in neighbors.items() if val >= s]
 
     def edge_neighbors(self, edge, s=1):
         """
