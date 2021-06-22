@@ -857,10 +857,44 @@ class Hypergraph:
             self.remove_node(node)
         return self
 
+    # @not_implemented_for("static")
+    # def add_node(self, node):
+    #     """
+
+    #     Adds a single node to hypergraph.
+
+    #     Parameters
+    #     ----------
+    #     node : hashable or Entity
+    #         If hashable the node's elements will be an empty list.
+
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
+
+    #     Notes
+    #     -----
+
+    #     """
+    #     if node in self._nodes:
+    #         warnings.warn("Cannot add edge. Edge already in hypergraph")
+    #     elif isinstance(node, Entity):
+    #         if len(node) > 0:
+    #             self._nodes.add_element(Entity(node.uid, elements=node.elements, **node.properties))
+    #             for e in node.elements:
+    #                 if e not in self._edges:
+    #                     raise HyperNetXError("Node references a non-existent edge.")
+    #                 self._edges[e].add(node.uid)
+    #         else:
+    #             self._nodes.add_element(Entity(node.uid, **node.properties))
+    #     else:
+    #         self._nodes.add_element(Entity(node))  # this generates an empty node with a user-defined uid.
+    #     return self
+
     @not_implemented_for("static")
     def _add_nodes_from(self, nodes):
         """
-        Private helper method instantiates new nodes when edges added to hypergraph.
+        Instantiates new nodes.
 
         Parameters
         ----------
@@ -872,9 +906,9 @@ class Hypergraph:
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
                 if isinstance(node, Entity):
-                    self._nodes.add({node.uid: Entity(node.uid, **node.properties)})
+                    self._nodes.add_element(Entity(node.uid, node.elements, **node.properties))
                 else:
-                    self._nodes.add({node: Entity(node)})
+                    self._nodes.add_element(Entity(node))
 
     @not_implemented_for("static")
     def add_edge(self, edge):
@@ -884,8 +918,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : hashable or Entity
-            If hashable the edge returned will be empty.
+        edge : hashable, iterable, or Entity
+            If hashable, we assume that it's the uid and the edge created will be empty.
+            If iterable, the uid is automatically assigned and the iterable is cast to a list of the membership
 
         Returns
         -------
@@ -893,12 +928,9 @@ class Hypergraph:
 
         Notes
         -----
-        When adding an edge to a hypergraph children must be removed
-        so that nodes do not have elements.
+        If a node contained in an edge is not present in the hypergraph, it is added and the hyperedge is added to the node's membership.
         Each node (element of edge) must be instantiated as a node,
         making sure its uid isn't already present in the self.
-        If an added edge contains nodes that cannot be added to hypergraph
-        then an error will be raised.
 
         """
         if edge in self._edges:
@@ -906,13 +938,22 @@ class Hypergraph:
         elif isinstance(edge, Entity):
             if len(edge) > 0:
                 self._add_nodes_from(edge.elements)
-                self._edges.add({edge.uid: Entity(edge.uid, elements=edge.elements, **edge.properties)})
+                self._edges.add_element(Entity(edge.uid, elements=edge.elements, **edge.properties))
                 for n in edge.elements:
                     self._nodes[n].add(edge.uid)
             else:
-                self._edges.add({edge.uid: Entity(edge.uid, **edge.properties)})
+                self._edges.add_element(Entity(edge.uid, **edge.properties))# this generates an edge without elements
         else:
-            self._edges.add({None: Entity(edge)})  # this generates an empty edge
+            try:
+                # try to cast to a list
+                edge = list(edge)
+                uid = self._edges.add_element(edge) # if edge is an iterable
+                self._add_nodes_from(edge)
+                for n in edge:
+                    self._nodes[n].add(uid)
+            except:
+                # if this fails, we assume that it's a uid
+                self._edges.add_element(Entity(edge)) # add an empty edge
         return self
 
     @not_implemented_for("static")
@@ -922,7 +963,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge_set : iterable of hashables or Entities
+        edge_set : iterable of hashables, iterables, or Entities
             For hashables the edges returned will be empty.
 
         Returns
@@ -955,19 +996,16 @@ class Hypergraph:
 
         """
         if edge in self._edges:
-            if not isinstance(edge, Entity):
-                edge = self._edges[edge]
             if node in self._nodes:
                 self._edges[edge].add(node)
                 self._nodes[node].add(edge)
             else:
-
                 if not isinstance(node, Entity):
                     node = Entity(node)
                 else:
                     node = Entity(node.uid, node.elements, **node.properties)
                 self._edges[edge].add(node)
-                self._nodes.add({node.uid: node})
+                self._nodes.add_element(node)
                 self._nodes[node].add(edge)
         return self
 
@@ -1030,6 +1068,9 @@ class Hypergraph:
         index : boolean, optional, default False
             If True return will include a dictionary of node uid : row number
             and edge uid : column number
+
+        weight : a lambda function with inputs self, node, and edge returns a weight in the incidence matrix given the uid of the node and edge.
+        The default is to return 1 when a node/edge pair exist.
 
         Returns
         -------
@@ -1188,8 +1229,7 @@ class Hypergraph:
 
         """
 
-        edges = [e for e in self.edges if len(self.edges[e]) >= s]
-        H = self.restrict_to_edges(edges)
+        H = Hypergraph([e for e in self.edges.__call__() if e.size >= s])
         return H.edge_adjacency_matrix(s=s, index=index, weighted=False)
 
     def bipartite(self):
@@ -1213,7 +1253,7 @@ class Hypergraph:
         V = self.nodes
         B.add_nodes_from(E, bipartite=1)
         B.add_nodes_from(V, bipartite=0)
-        B.add_edges_from([(v, e) for e in E for v in self.edges[e]])
+        B.add_edges_from([(v, e) for e in E for v in self.edges[e].elements])
         return B
 
     def dual(self, name=None):
@@ -1534,13 +1574,14 @@ class Hypergraph:
             memberships = set()
             innernodes = set()
             for node in nodeset:
-                innernodes.add(node)
+                # only use innernodes if they are part of the node set.
                 if node in self.nodes:
+                    innernodes.add(node)
                     memberships.update(set(self.nodes[node].elements))
             newedgeset = dict()
             for e in memberships:
-                if e in self.edges:
-                    temp = set(self.edges[e]).intersection(innernodes)
+                if e in self.edges: # don't think this if-statement is necessary
+                    temp = set(self.edges[e].elements).intersection(innernodes)
                     # temp = set(self.edges[e]).issubset(innernodes) # in the induced sub-hypergraph case.
                     if temp:
                         newedgeset[e] = Entity(e, temp, **self.edges[e].properties)
@@ -1595,21 +1636,20 @@ class Hypergraph:
             E = self.edges.restrict_to(tops)
             return Hypergraph(E, use_nwhy=True)
         else:
-            for e in temp.edges:
-                thdict[e] = temp.edges[e]
             tops = list()
             for e in temp.edges:
                 flag = True
                 old_tops = list(tops)
                 for top in old_tops:
-                    if set(thdict[e]).issubset(thdict[top]):
+                    print("hi")
+                    if set(temp.edges[e]).issubset(temp.edges[top]):
                         flag = False
                         break
-                    elif set(thdict[top]).issubset(thdict[e]):
+                    elif set(temp.edges[top]).issubset(temp.edges[e]):
                         tops.remove(top)
                 if flag:
                     tops += [e]
-            return self.restrict_to_edges(tops, name=name)
+            return Hypergraph([temp.edges[t] for t in tops], name=name)
 
     def is_connected(self, s=1, edges=False):
         """
@@ -1660,7 +1700,7 @@ class Hypergraph:
     def singletons(self):
         """
         Returns a list of singleton edges. A singleton edge is an edge of
-        size 1 with a node of degree 1.
+        size 1.
 
         Returns
         -------
@@ -1710,8 +1750,8 @@ class Hypergraph:
 
         """
         # self.remove_edges(self.singletons())
-        E = [e for e in self.edges if e not in self.singletons()]
-        return self.restrict_to_edges(E)
+        E = [self.edges[e] for e in self.edges if e not in self.singletons()]
+        return Hypergraph(E, name=name)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """

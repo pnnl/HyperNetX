@@ -141,12 +141,43 @@ class Entity():
         return Entity(newuid, entity=self)
     
     def remove(self, item):
+        """
+        Removes an item from the Entity's elements if it is in the list of elements, otherwise raises an error.
+
+        Parameters
+        ----------
+        item : hashable or Entity
+            entity to remove from the list of elements
+
+        Returns
+        -------
+
+        """
         if isinstance(item, Entity):
-            self._elements.remove(item.uid)
+            if item.uid in self:
+                self._elements.remove(item.uid)
+            else:
+                raise HyperNetXError("Item is not in the elements of the entity.")
         else:
-            self._elements.remove(item)
+            if item in self:
+                self._elements.remove(item)
+            else:
+                raise HyperNetXError("Item is not in the elements of the entity.")
 
     def add(self, item):
+        """
+        Adds an item to the Entity's elements. Warning: does not check if it is not already in the list of elements, otherwise raises an error.
+
+        Parameters
+        ----------
+        item : hashable or Entity
+            entity to add to the list of elements
+
+        Returns
+        -------
+
+        """
+
         if isinstance(item, Entity):
             self._elements.append(item.uid)
         else:
@@ -168,18 +199,7 @@ class EntitySet():
         else:
             self._elements = entityset.elements
 
-        # If it's a dictionary with uid/data pairs, simply add to the elements dictionary
-        if isinstance(elements, dict):
-            for uid, item in elements.items():
-                if isinstance(item, Entity):
-                    self.add_element(item, uid)
-                else:
-                    self.add_element(Entity(uid, item), uid)
-        
-        # If it's a list, a uid needs to be created. If the list item is an entity, it is already created, and if not, you can use a system-generated uid.
-        if isinstance(elements, list):
-            for item in elements:
-                self.add_element(item)
+        self.add_elements_from(elements)
 
     def __len__(self):
         """Return the number of entities."""
@@ -328,24 +348,26 @@ class EntitySet():
                 elements[member].append(id)
         return elements
 
-    def add_element(self, item, uid=None):
+    def add_element(self, item=[], uid=None):
         """
         Adds a single element to entityset's elements, checking to make sure no duplicate references are
         made to element ids in the entityset.
 
         Parameters
         ----------
-        item : One Entity object or list/set/array
+        item : One Entity object or list/set/array that is the item's element list.
         uid : Hashable which is the added Entity's uid. If you want this to be auto-assigned, only enter the item.
 
         Returns
         -------
-
+        uid : returns the uid of the added element in case it was auto-generated and you need it.
         """
+        
         if isinstance(item, Entity):
             if item.uid in self.elements:
                 raise HyperNetXError(f"Error: {uid} references an existing Entity in the EntitySet.")
-            self.elements[item.uid] = item
+            uid = item.uid
+            self.elements[uid] = item
         else:
             if uid is None:
                 uid = self.count()
@@ -353,6 +375,7 @@ class EntitySet():
             if uid in self.elements:
                 raise HyperNetXError(f"Error: {uid} references an existing Entity in the EntitySet.")
             self.elements[uid] = Entity(uid, item)
+        return uid
 
     def add_elements_from(self, elements):
         """
@@ -361,15 +384,17 @@ class EntitySet():
 
         Parameters
         ----------
-        elements : dictionary with uid:list/Entity pairs or a list of Entities/lists
+        elements : dictionary with uid:list/Entity pairs or an iterable of Entities/lists
 
         Returns
         -------
 
         """
+        # If it's a dictionary with uid/data pairs, simply add to the elements dictionary
         if isinstance(elements, dict):
             for uid, item in elements.items():
                 self.add_element(item, uid)
+        # If it's an iterable, a uid needs to be created. If the list item is an entity, it is already created, and if not, you can use a system-generated uid.
         else:
             for item in elements:
                 self.add_element(item)
@@ -377,7 +402,7 @@ class EntitySet():
     def add(self, elements):
         """
         Adds items to entityset's elements, checking to make sure no duplicate references are
-        made to element ids.
+        made to element ids. This is the same as add_elements_from()
 
         Parameters
         ----------
@@ -387,12 +412,7 @@ class EntitySet():
         -------
 
         """
-        if isinstance(elements, dict):
-            for uid, item in elements.items():
-                self.add_element(item, uid)
-        else:
-            for item in elements:
-                self.add_element(item)
+        self.add_elements_from(elements)
 
     def remove_element(self, item):
         """
