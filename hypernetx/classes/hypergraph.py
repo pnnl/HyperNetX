@@ -1,6 +1,5 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
-
 import warnings
 import pickle
 import networkx as nx
@@ -2295,7 +2294,8 @@ class Hypergraph:
             # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), EntitySet(_:Edges,['b', 'c', 'a'],{}))
 
         """
-        # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
+        msg = "from_bipartite() is now a method in the read_write module"
+        warnings.warn(msg, DeprecationWarning)
         edges = []
         nodes = []
         for n, d in B.nodes(data=True):
@@ -2305,10 +2305,8 @@ class Hypergraph:
                 edges.append(n)
 
         if not bipartite.is_bipartite_node_set(B, nodes):
-            raise HyperNetXError(
-                "Error: Method requires a 2-coloring of a bipartite graph."
-            )
-
+            raise HyperNetXError("Error: Method requires a 2-coloring of a bipartite graph.")
+        
         if static:
             elist = []
             for e in list(B.edges):
@@ -2318,12 +2316,11 @@ class Hypergraph:
                     elist.append([e[1], e[0]])
             df = pd.DataFrame(elist, columns=set_names)
             E = StaticEntitySet(entity=df)
-            name = name or "_"
             return Hypergraph(E, name=name, use_nwhy=use_nwhy)
         else:
             edge_dict = {e: list(B.neighbors(e)) for e in edges}
-            name = name or "_"
-            return Hypergraph(setsystem=edge_dict, name=name)
+            return Hypergraph(edge_dict, name=name)
+
 
     @classmethod
     def from_numpy_array(
@@ -2374,6 +2371,8 @@ class Hypergraph:
 
 
         """
+        msg = "from_bipartite() is now a method in the read_write module"
+        warnings.warn(msg, DeprecationWarning)
         # Create names for nodes and edges
         # Validate the size of the node and edge arrays
 
