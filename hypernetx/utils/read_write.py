@@ -53,11 +53,13 @@ def read_df(df, edge_col=0, node_col=1, name=None):
     filename : string
         The filepath to the csv that you want to read.
 
-    edge_index : int or string, optional, default: 0
+    edge_index : int or string or list of ints or strings, optional, default: 0
         The column label or column number for the edge labels. Assumes first that a column name has been given.
+        If a list is given, it combines those columns indexed as described above into a column of tuples.
 
-    node_index : int or string, optional, default: 1
+    node_index : int or string or list of ints or strings, optional, default: 1
         The column label or column number for the node labels. Assumes first that a column name has been given.
+        If a list is given, it combines those columns indexed as described above into a column of tuples.
 
     name : string, default : None
         The name of the constructed hypergraph
@@ -70,23 +72,40 @@ def read_df(df, edge_col=0, node_col=1, name=None):
     -----
     
     """
+    data = pd.DataFrame(columns=["edges", "nodes"])
     try:
         # assume that the column names were given
-        df = df[[edge_col, node_col]]
+        if isinstance(edge_col, list):
+            data["edges"] = [tuple(r) for r in df[edge_col].to_numpy()]
+        else:
+            data["edges"] = df[edge_col]
+        
+        if isinstance(node_col, list):
+            data["edges"] = [tuple(r) for r in df[node_col].to_numpy()]
+        else:
+            data["nodes"] = df[node_col]
     except:
         # they weren't given, try indexing the column names
         try:
-            labels = list(df.columns)
-            df = df[[labels[edge_col], labels[node_col]]]
+            edge_labels = df.columns[edge_col]
+            node_labels = df.columns[node_col]
+            if isinstance(edge_col, list):
+                data["edges"] = [tuple(r) for r in df[edge_labels].to_numpy()]
+            else:
+                data["edges"] = df[edge_labels]
+            
+            if isinstance(node_col, list):
+                data["edges"] = [tuple(r) for r in df[node_labels].to_numpy()]
+            else:
+                data["nodes"] = df[node_labels]
         except:
             HyperNetXError("Invalid columns specified")
     edges = defaultdict(list)
 
-    for row in df.itertuples():
+    for row in data.itertuples():
         edges[row[1]].append(row[2])
     return Hypergraph(edges, name)
 
-# can accept a numpy array or a dataframe
 def read_incidence_matrix(I, edges_cols=True, name=None):
     """
     Reads in an incidence matrix (numpy/sparse/dataframe/etc.) where columns/rows are the edges and rows/columns are the nodes.
@@ -123,7 +142,6 @@ def read_incidence_matrix(I, edges_cols=True, name=None):
         edict[edges[index]].append(nodes[index])
     return Hypergraph(edges, name=name)
 
-# accepts a list of iterables
 def read_edgelist(filename, delimiter = ",", isweighted=False, name=None, header=0):
     """
     Reads in a list of hyperedges where each line is a hyperedge and contains the labels of the nodes that are contained in it.
@@ -167,7 +185,7 @@ def read_edgelist(filename, delimiter = ",", isweighted=False, name=None, header
             edgelist.append(data)
     return Hypergraph(edgelist, name=name)
 
-def from_bipartite(B, set_names=("nodes", "edges"), name=None, static=False, use_nwhy=False):
+def from_bipartite(B, set_names=("nodes", "edges"), name=None):
         """
         Static method creates a Hypergraph from a bipartite NetworkX graph.
 
@@ -182,8 +200,6 @@ def from_bipartite(B, set_names=("nodes", "edges"), name=None, static=False, use
             Category names assigned to the graph nodes associated to each bipartite set
 
         name: hashable
-
-        static: bool
 
         Returns
         -------
@@ -216,21 +232,10 @@ def from_bipartite(B, set_names=("nodes", "edges"), name=None, static=False, use
         if not bipartite.is_bipartite_node_set(B, nodes):
             raise HyperNetXError("Error: Method requires a 2-coloring of a bipartite graph.")
         
-        if static:
-            elist = []
-            for e in list(B.edges):
-                if e[0] in nodes:
-                    elist.append([e[0], e[1]])
-                else:
-                    elist.append([e[1], e[0]])
-            df = pd.DataFrame(elist, columns=set_names)
-            E = StaticEntitySet(entity=df)
-            return Hypergraph(E, name=name, use_nwhy=use_nwhy)
-        else:
-            edge_dict = {e: list(B.neighbors(e)) for e in edges}
-            return Hypergraph(edge_dict, name=name)
+        edge_dict = {e: list(B.neighbors(e)) for e in edges}
+        return Hypergraph(edge_dict, name=name)
 
-def from_numpy_array(M, node_names=None, edge_names=None, node_label=None, edge_label=None, name=None, key=None, static=False, use_nwhy=False, edges_cols=True):
+def from_numpy_array(M, node_names=None, edge_names=None, name=None, edges_cols=True):
         """
         Create a hypergraph from a real valued incidence matrix represented as a 2 dimensional numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any non-zero cells are converted to 1's and
@@ -248,25 +253,9 @@ def from_numpy_array(M, node_names=None, edge_names=None, node_label=None, edge_
         edge_names : object, array-like, default=None
             List of edge names must have the same length as M.shape[1].
             If None then the edge names correspond to column indices with 'e' prepended.
-
-        node_label : string, default="nodes"
-            The overall label for nodes. Only for static hypergraphs.
-
-        edge_label : string, default="edges"
-            The overall label for edges. Only for static hypergraphs.
             
         name : hashable
             Name of the outputted hypergraph
-
-        key : (optional) function
-            boolean function to be evaluated on each cell of the array,
-            must be applicable to numpy.array. Only for static hypergraphs.
-
-        static : bool, default : False
-            boolean specifying whether the outputted hypergraph is static.
-
-        use_nwhy : bool, default : False
-            boolean specifying whether the outputted hypergraph uses Northwest Hypergraph.
 
         edges_cols : bool, default : True
             boolean specifying whether the edges correspond to columns. Currently only for dynamic hypergraphs.
@@ -289,9 +278,6 @@ def from_numpy_array(M, node_names=None, edge_names=None, node_label=None, edge_
         M = np.array(M)
         if len(M.shape) != (2):
             raise HyperNetXError("Input requires a 2 dimensional numpy array")
-        # apply boolean key if available
-        if key:
-            M = key(M)
 
         if node_names is not None:
             nodenames = np.array(node_names)
@@ -311,33 +297,23 @@ def from_numpy_array(M, node_names=None, edge_names=None, node_label=None, edge_
         else:
             edgenames = np.array([f"e{jdx}" for jdx in range(M.shape[1])])
 
-        if static or use_nwhy:
-            arr = np.array(M)
-            if key:
-                arr = key(arr) * 1
-            arr = arr.transpose()
-            labels = OrderedDict([(edge_label, edgenames), (node_label, nodenames)])
-            E = StaticEntitySet(arr=arr, labels=labels)
-            return Hypergraph(E, name=name, use_nwhy=use_nwhy)
-
+        # Remove empty column indices from M columns and edgenames
+        M = coo_matrix(M)
+        if edges_cols:
+            edges = M.col
+            nodes = M.row
         else:
-            # Remove empty column indices from M columns and edgenames
-            M = coo_matrix(M)
-            if edges_cols:
-                edges = M.col
-                nodes = M.row
-            else:
-                edges = M.row
-                nodes = M.col
+            edges = M.row
+            nodes = M.col
             
-            if len(edges) == 0:
-                return Hypergraph()
-            else:
-                edict = defaultdict(list)
-                # Create an EntitySet of edges from M
-                for index in range(len(edges)):
-                    edict[edgenames[edges[index]]].append(nodes[index])
-                return Hypergraph(edict, name=name)
+        if len(edges) == 0:
+            return Hypergraph()
+        else:
+            edict = defaultdict(list)
+            # Create an EntitySet of edges from M
+            for index in range(len(edges)):
+                edict[edgenames[edges[index]]].append(nodes[index])
+            return Hypergraph(edict, name=name)
 
 #     @classmethod
 #     def from_dataframe(
