@@ -13,6 +13,7 @@ setup(
         "hypernetx.algorithms",
         "hypernetx.classes",
         "hypernetx.drawing",
+        "hypernetx.reports",
         "hypernetx.utils",
     ],
     version=__version__,
