@@ -16,12 +16,12 @@ class HarryPotter(object):
     def __init__(self, cols=None):
 
         # Read dataset in using pandas. Fix index column or use default pandas index.
-#         try:
-#             fname = "HarryPotter_Characters.csv"
-#             harrydata = pd.read_csv(f'{current_dir}/{fname}', encoding="unicode_escape")
-#         except:
-        fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/HarryPotter_Characters.csv"
-        harrydata = pd.read_csv(fname, encoding="unicode_escape")
+        try:
+            fname = "HarryPotter_Characters.csv"
+            harrydata = pd.read_csv(f'{current_dir}/{fname}', encoding="unicode_escape")
+        except:
+            fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/HarryPotter_Characters.csv"
+            harrydata = pd.read_csv(fname, encoding="unicode_escape")
         self.harrydata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
