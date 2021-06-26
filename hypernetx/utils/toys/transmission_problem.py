@@ -4,15 +4,15 @@ import os
 
 __all__ = ['TransmissionProblem']
 
-csvfile = 'ChungLuTransmissionData.csv'
-csvfile = os.path.join(os.path.dirname(__file__), csvfile)
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class TransmissionProblem(object):
-    def __init__(self, csvfile=csvfile):
-        csvfile = csvfile
+    def __init__(self):
+
         try:
+            csvfile = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/ChungLuTransmissionData.csv"
             self.df = pd.read_csv(csvfile, header=None, names=['receivers', 'senders'])
         except:
-            fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/ChungLuTransmissionData.csv"
-            self.df = pd.read_csv(fname, header=None, names=['receivers', 'senders'])
+            csvfile = f'{current_dir}/ChungLuTransmissionData.csv'
+            self.df = pd.read_csv(csvfile, header=None, names=['receivers', 'senders'])
