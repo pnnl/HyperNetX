@@ -25,3 +25,7 @@ hypernetx/reports/descriptive_stats.py
 hypernetx/utils/__init__.py
 hypernetx/utils/decorators.py
 hypernetx/utils/extras.py
+hypernetx/utils/toys/__init__.py
+hypernetx/utils/toys/harrypotter.py
+hypernetx/utils/toys/lesmis.py
+hypernetx/utils/toys/transmission_problem.py
