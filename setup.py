@@ -15,6 +15,7 @@ setup(
         "hypernetx.drawing",
         "hypernetx.reports",
         "hypernetx.utils",
+        "hypernetx.utils.toys"
     ],
     version=__version__,
     author="Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn",
