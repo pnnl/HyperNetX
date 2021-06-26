@@ -1,4 +1,6 @@
 from .extras import HNXCount, DefaultOrderedDict, remove_row_duplicates, create_labels
 from .decorators import not_implemented_for
-from .toys import HarryPotter, LesMis, lesmis_hypergraph_from_df, book_tour, TransmissionProblem
+from .toys.harrypotter import HarryPotter
+from .toys.lesmis import  LesMis, lesmis_hypergraph_from_df, book_tour
+from .toys.transmission_problem import TransmissionProblem
 # from .toys import *
