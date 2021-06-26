@@ -1,3 +1,3 @@
 from .harrypotter import HarryPotter
-from .lesmis import *
+from .lesmis import LesMis, lesmis_hypergraph_from_df, book_tour
 from .transmission_problem import TransmissionProblem
