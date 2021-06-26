@@ -11,4 +11,8 @@ csvfile = os.path.join(os.path.dirname(__file__), csvfile)
 class TransmissionProblem(object):
     def __init__(self, csvfile=csvfile):
         csvfile = csvfile
-        self.df = pd.read_csv(csvfile, header=None, names=['receivers', 'senders'])
+        try:
+            self.df = pd.read_csv(csvfile, header=None, names=['receivers', 'senders'])
+        except:
+            fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/ChungLuTransmissionData.csv"
+            self.df = pd.read_csv(fname, header=None, names=['receivers', 'senders'])
