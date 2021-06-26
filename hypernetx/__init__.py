@@ -9,3 +9,4 @@ from hypernetx.reports import *
 from hypernetx.drawing import *
 from hypernetx.algorithms import *
 from hypernetx.utils import *
+from hypernetx.utils.toys import *
