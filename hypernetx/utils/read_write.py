@@ -81,7 +81,7 @@ def read_df(df, edge_col=0, node_col=1, name=None):
             data["edges"] = df[edge_col]
         
         if isinstance(node_col, list):
-            data["edges"] = [tuple(r) for r in df[node_col].to_numpy()]
+            data["nodes"] = [tuple(r) for r in df[node_col].to_numpy()]
         else:
             data["nodes"] = df[node_col]
     except:
@@ -95,7 +95,7 @@ def read_df(df, edge_col=0, node_col=1, name=None):
                 data["edges"] = df[edge_labels]
             
             if isinstance(node_col, list):
-                data["edges"] = [tuple(r) for r in df[node_labels].to_numpy()]
+                data["nodes"] = [tuple(r) for r in df[node_labels].to_numpy()]
             else:
                 data["nodes"] = df[node_labels]
         except:
