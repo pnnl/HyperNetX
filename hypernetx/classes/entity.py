@@ -14,8 +14,79 @@ __all__ = ["Entity", "EntitySet"]
 
 class Entity():
     '''
+    Class for objects used in building hypergraphs, such as edges and nodes.
+
     The Entity class simply stores an object with a uid, other elements to which it is connected, and associated properties.
     In the hypergraph case, it is used to store nodes/edges and their edge/node neighbors and properties such as weights, categories etc. 
+    
+
+    Parameters
+    ----------
+    uid : hashable
+        a unique identifier
+
+    elements : list or an iterable that can be cast to a list, optional, default: None
+        a list of entities to which the entity is connected. Nodes can only have edges as members and vice-versa.
+
+    entity : Entity
+        an Entity object to be cloned into a new Entity with uid. If the uid is the same as
+        Entity.uid then the entities will not be distinguishable and error will be raised.
+        The `elements` in the signature will be added to the cloned entity.
+
+    props : keyword arguments, optional, default: {}
+        properties belonging to the entity added as key=value pairs.
+        The key must be hashable.
+
+    Notes
+    -----
+
+    An Entity is a container-like object, which has a unique identifier and
+    may contain elements to which it is connected and have properties.
+    The Entity class was created as a generic object to represent
+    Hypergraph nodes and edges.
+
+    - An Entity is distinguished by its identifier (sortable,hashable) :func:`Entity.uid`
+    - An Entity is a container for other entities but may not contain itself, :func:`Entity.elements`
+    - An Entity has properties :func:`Entity.properties`
+    - An Entity has memberships to other entities, :func:`Entity.memberships`.
+    - An Entity has children, :func:`Entity.children`, which are the elements of its elements.
+    - :func:`Entity.children` are registered in the :func:`Entity.registry`.
+    - All descendents of Entity are registered in :func:`Entity.fullregistry()`.
+
+    **Honor System**
+
+    The Honor System where every element has a unique uid is no longer enforced. It is only enforced among nodes and edges,
+    where a node cannot have the same uid as other nodes, and an edge cannot have the same uid as other edges.
+    Two entities are equal if their __dict__ objects match.
+    For performance reasons many methods distinguish entities by their uids.
+    It is, therefore, up to the user to ensure entities with the same uids are indeed the same.
+    Not doing so will prevent these duplicate Entities from being added to an EntitySet.
+    In particular, the methods in the Hypergraph class assume distinct nodes have distinct uids from each other and edges
+    have distinct uids from each other.
+
+    Examples
+    --------
+
+        >>> x = Entity('x')
+        >>> y = Entity('y',[x])
+        >>> z = Entity('z',[x,y],weight=1)
+        >>> z
+        Entity(z,['y', 'x'],{'weight': 1})
+        >>> z.uid
+        'z'
+        >>> z.elements
+        ['x', 'y']
+        >>> z.properties
+        {'weight': 1}
+        >>> x.elements
+        []
+    
+    See Also
+    --------
+    EntitySet
+
+    """
+    
     '''
     def __init__(self, uid, elements=[], entity=None, **props):
 
@@ -183,16 +254,72 @@ class Entity():
         else:
             self._elements.append(item)
 
-
 class EntitySet():
     '''
     The EntitySet class is a class that manages and contains Entity class elements. It is used to represent a list of Entity objects.
     A practical example are edge and node lists, which together form a bipartite representation of a hypergraph.
     Each instance of an EntitySet contains a uid for the class and an element dictionary of uid/Entity pairs.
+
+    Parameters
+    ----------
+    uid : hashable
+        a unique identifier
+
+    elements : list or dict, optional, default: empty dictionary
+        a list/dict of Entities or iterables
+        If a dict of iterables or Entity objects is given, the keys become the uids and the values become Entities.
+        If a list of Entities is given, the uid of the Entity is used for the keys of the elements dict.
+        If list of iterables, the uids are autmatically assigned
+        If uids overlap, throws an HyperNetXError
+
+    entityset : EntitySet
+        an EntitySet object to be cloned into a new EntitySet with uid. If the uid is the same as
+        Entity.uid then the entities will not be distinguishable and error will be raised.
+
+    props : keyword arguments, optional, default: {}
+        properties belonging to the entityset added as key=value pairs.
+        Both key and value must be hashable.
+
+    Notes
+    -----
+
+    The EntitySet class was created to store Entities satifying the Bipartite Condition.
+
+    **Bipartite Condition**
+
+    *Entities that are elements of the same EntitySet, cannot contain each other as elements.*
+    The elements of an EntitySet generate a specific partition for a bipartite graph,
+    because the elements property of an Entity relate edges to nodes and vice-versa.
+    The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
+    the children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs
+    in HNX.
+
+    Examples
+    --------
+
+        >>> edges = [Entity(0, [1, 2, 3]), Entity(1 ,[0, 2]), Entity(2 ,[0, 1, 3])] 
+        >>> es = EntitySet('edges', edges)
+        >>> es.uid
+        'edges'
+        >>> es.elements
+        {0:Entity(0, [1, 2, 3]), 1:Entity(1 ,[0, 2]), 2:Entity(2 ,[0, 1, 3])] 
+        >>> es.properties
+        {}
+        >>> es.add(Entity(3, [0]))
+        >>> es.weight = 1
+        >>> es.properties
+        {'weight': 1}
+        >>> es.uidset
+        {0, 1, 2, 3}
+
+    See Also
+    --------
+    Entity
+
+    """
     '''
     def __init__(self, uid, elements=dict(), entityset=None):
         self._uid = uid
-        self._elements = dict()
         self.count = HNXCount(0)
         if entityset is None:
             self._elements = dict()
