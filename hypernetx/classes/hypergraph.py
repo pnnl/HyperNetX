@@ -13,7 +13,8 @@ from hypernetx.classes.entity import Entity, EntitySet
 from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import not_implemented_for
-
+from hypernetx.utils.extras import HNXCount, DefaultOrderedDict
+from collections import OrderedDict
 
 __all__ = ["Hypergraph"]
 
@@ -115,44 +116,59 @@ class Hypergraph:
 
     def __init__(
         self, setsystem=None, name=None, static=False, use_nwhy=False, filepath=None
-    ):
+    ):        
+        if not name:
+            self.name = "_"
+        else:
+            self.name = name
+
         self.filepath = filepath
         if use_nwhy:
             static = True
             try:
                 import nwhy
-
                 self.nwhy = True
-
             except:
                 self.nwhy = False
                 print("NWHypergraph is not available. Will continue with static=True.")
                 use_nwhy = False
         else:
             self.nwhy = False
-        
-        if not name:
-            self.name = "_"
-        else:
-            self.name = name
 
-        if static == True or (
-            isinstance(setsystem, StaticEntitySet) or
-            isinstance(setsystem, StaticEntity) or
-            isinstance(setsystem, pd.DataFrame) ) :
+        if static == True:
             self._static=True
-            if setsystem is None:
-                self._edges=StaticEntitySet()
-                self._nodes=StaticEntitySet()
-            else:
-                E=StaticEntitySet(entity = setsystem)
-                self._edges=E
-                self._nodes=E.restrict_to_levels([1])
 
-            temprows, tempcols = self.edges.data.T
-            tempdata = np.ones(len(temprows), dtype=int)
+            if setsystem is None:
+                setsystem=[]
+            # the constructor for EntitySet can accept both a list of iterables and a dictionary. We skip constructing an entityset if there already is one.
+            if not isinstance(setsystem, EntitySet):
+                # initialize an entityset object
+                setsystem = EntitySet(f"{self.name}:Edges", elements=setsystem)
+
+            self._edges = setsystem
+            self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
+
+            d = OrderedDict(self._edges)
+            level2ctr = HNXCount()
+            level1ctr = HNXCount()
+            level2 = DefaultOrderedDict(level2ctr)
+            level1 = DefaultOrderedDict(level1ctr)
+            rows = list()
+            cols = list()
+            for uid in d:
+                level1[uid]
+                for v in d[uid]:
+                    level2[v]
+                rows.append(level1[uid])
+                cols.append(level2[v])
+            
+            level1 = list(level1)
+            level2 = list(level2)
+            self.labels = OrderedDict({"0": level1, "1": level2})
+            
+            tempdata = np.ones(len(rows), dtype=int)
             self.state_dict = {
-                "data": (temprows, tempcols, tempdata)
+                "data": (rows, cols, tempdata)
             }  # how can we incorporate the counts into the nwhy hypergraph?
             if self.nwhy:
                 self.g = nwhy.NWHypergraph(*self.state_dict["data"])
@@ -428,7 +444,7 @@ class Hypergraph:
         """
         if fpath is None:
             fpath = self.filepath or "current_state.p"
-        pickle.dump([self.state_dict, self.edges.labels], open(fpath, "wb"))
+        pickle.dump([self.state_dict, self.labels], open(fpath, "wb"))
 
     @classmethod
     def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True):
