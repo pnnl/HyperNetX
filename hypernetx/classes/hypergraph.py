@@ -117,67 +117,37 @@ class Hypergraph:
     def __init__(
         self, setsystem=None, name=None, static=False, use_nwhy=False, filepath=None
     ):        
-        if not name:
-            self.name = "_"
-        else:
-            self.name = name
-
         self.filepath = filepath
         if use_nwhy:
             static = True
             try:
                 import nwhy
+
                 self.nwhy = True
+
             except:
                 self.nwhy = False
                 print("NWHypergraph is not available. Will continue with static=True.")
                 use_nwhy = False
         else:
             self.nwhy = False
+        if not name:
+            self.name = ""
+        else:
+            self.name = name
 
-        if static == True:
+        if static == True or (
+            isinstance(setsystem, StaticEntitySet) or
+            isinstance(setsystem, StaticEntity) or
+            isinstance(setsystem, pd.DataFrame) ) :
             self._static=True
-
             if setsystem is None:
-                setsystem=[]
-            # the constructor for EntitySet can accept both a list of iterables and a dictionary. We skip constructing an entityset if there already is one.
-            if not isinstance(setsystem, EntitySet):
-                # initialize an entityset object
-                setsystem = EntitySet(f"{self.name}:Edges", elements=setsystem)
-
-            self._edges = setsystem
-            self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
-
-            d = OrderedDict(self._edges)
-            level2ctr = HNXCount()
-            level1ctr = HNXCount()
-            level2 = DefaultOrderedDict(level2ctr)
-            level1 = DefaultOrderedDict(level1ctr)
-            rows = list()
-            cols = list()
-            for uid in d:
-                level1[uid]
-                for v in d[uid]:
-                    level2[v]
-                rows.append(level1[uid])
-                cols.append(level2[v])
-            
-            level1 = list(level1)
-            level2 = list(level2)
-            self.labels = OrderedDict({"0": level1, "1": level2})
-            
-            tempdata = np.ones(len(rows), dtype=int)
-            self.state_dict = {
-                "data": (rows, cols, tempdata)
-            }  # how can we incorporate the counts into the nwhy hypergraph?
-            if self.nwhy:
-                self.g = nwhy.NWHypergraph(*self.state_dict["data"])
-                self.nwhy_dict = {"snodelg": dict(), "sedgelg": dict()}
-            self.state_dict["snodelg"] = dict()
-            self.state_dict["sedgelg"] = dict()
-            if self.filepath is not None:
-                self.save_state(fpath=self.filepath)
-
+                self._edges=StaticEntitySet()
+                self._nodes=StaticEntitySet()
+            else:
+                E=StaticEntitySet(entity = setsystem)
+                self._edges=E
+                self._nodes=E.restrict_to_levels([1])
         else:
             self._static=False
             if setsystem is None:
@@ -189,6 +159,20 @@ class Hypergraph:
 
             self._edges = setsystem
             self._nodes = EntitySet(f"{self.name}:Nodes", elements=self._edges.get_dual())
+
+        if self._static:
+            temprows, tempcols = self.edges.data.T
+            tempdata = np.ones(len(temprows), dtype=int)
+            self.state_dict = {
+                "data": (temprows, tempcols, tempdata)
+            }  # how can we incorporate the counts into the nwhy hypergraph?
+            if self.nwhy:
+                self.g = nwhy.NWHypergraph(*self.state_dict["data"])
+                self.nwhy_dict = {"snodelg": dict(), "sedgelg": dict()}
+            self.state_dict["snodelg"] = dict()
+            self.state_dict["sedgelg"] = dict()
+            if self.filepath is not None:
+                self.save_state(fpath=self.filepath)
     @property
     def edges(self):
         """
@@ -527,7 +511,7 @@ class Hypergraph:
                 return dist
         else:
             # return list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
-            return [len(self.edges[id].elements) for id in self.edges]#np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+            return [len(self.edges[id]._elements) for id in self.edges]#np.array(np.sum(self.incidence_matrix(), axis=0))[0])
 
     def convert_to_static(
         self,
@@ -652,12 +636,12 @@ class Hypergraph:
                 return np.sum(imat[ndx, ids])
         else:
             if max_size is not None:
-                memberships = set(self._nodes[node].elements)
+                memberships = set(self._nodes[node]._elements)
                 return len(
                     set(e for e in memberships if len(self.edges[e]) in range(s, max_size + 1))
                 )
             elif s > 1:
-                memberships = set(self._nodes[node].elements)
+                memberships = set(self._nodes[node]._elements)
                 return len(set(e for e in memberships if len(self._edges[e]) >= s))
             else:
                 return self._nodes[node].size
@@ -784,8 +768,8 @@ class Hypergraph:
 
         else:
             neighbors = defaultdict(lambda : 0)
-            for e in self.nodes[node].elements:
-                for nbr in self.edges[e].elements:
+            for e in self.nodes[node]._elements:
+                for nbr in self.edges[e]._elements:
                     if nbr != node:
                         neighbors[nbr] += 1
             if s == 1:
@@ -848,9 +832,9 @@ class Hypergraph:
         else:
             if not isinstance(node, Entity):
                 node = self._nodes[node]
-            for edge in node.elements:
-                self._edges[edge].remove(node)
-            self._nodes.remove(node)
+            for edge in node._elements:
+                self._edges[edge]._remove(node)
+            self._nodes._remove(node)
         return self
 
     @not_implemented_for("static")
@@ -921,9 +905,9 @@ class Hypergraph:
                 self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
                 if isinstance(node, Entity):
-                    self._nodes.add_element(Entity(node.uid, node.elements, **node.properties))
+                    self._nodes._add_element(Entity(node.uid, node._elements, **node.properties))
                 else:
-                    self._nodes.add_element(Entity(node))
+                    self._nodes._add_element(Entity(node))
 
     @not_implemented_for("static")
     def add_edge(self, edge):
@@ -952,23 +936,23 @@ class Hypergraph:
             warnings.warn("Cannot add edge. Edge already in hypergraph")
         elif isinstance(edge, Entity):
             if len(edge) > 0:
-                self._add_nodes_from(edge.elements)
-                self._edges.add_element(Entity(edge.uid, elements=edge.elements, **edge.properties))
-                for n in edge.elements:
-                    self._nodes[n].add(edge.uid)
+                self._add_nodes_from(edge._elements)
+                self._edges._add_element(Entity(edge.uid, elements=edge._elements, **edge.properties))
+                for n in edge._elements:
+                    self._nodes[n]._add(edge.uid)
             else:
-                self._edges.add_element(Entity(edge.uid, **edge.properties))# this generates an edge without elements
+                self._edges._add_element(Entity(edge.uid, **edge.properties))# this generates an edge without elements
         else:
             try:
                 # try to cast to a list
                 edge = list(edge)
-                uid = self._edges.add_element(edge) # if edge is an iterable
+                uid = self._edges._add_element(edge) # if edge is an iterable
                 self._add_nodes_from(edge)
                 for n in edge:
-                    self._nodes[n].add(uid)
+                    self._nodes[n]._add(uid)
             except:
                 # if this fails, we assume that it's a uid
-                self._edges.add_element(Entity(edge)) # add an empty edge
+                self._edges._add_element(Entity(edge)) # add an empty edge
         return self
 
     @not_implemented_for("static")
@@ -1012,16 +996,16 @@ class Hypergraph:
         """
         if edge in self._edges:
             if node in self._nodes:
-                self._edges[edge].add(node)
-                self._nodes[node].add(edge)
+                self._edges[edge]._add(node)
+                self._nodes[node]._add(edge)
             else:
                 if not isinstance(node, Entity):
                     node = Entity(node)
                 else:
-                    node = Entity(node.uid, node.elements, **node.properties)
-                self._edges[edge].add(node)
-                self._nodes.add_element(node)
-                self._nodes[node].add(edge)
+                    node = Entity(node.uid, node._elements, **node.properties)
+                self._edges[edge]._add(node)
+                self._nodes._add_element(node)
+                self._nodes[node]._add(edge)
         return self
 
     @not_implemented_for("static")
@@ -1048,12 +1032,12 @@ class Hypergraph:
         if edge in self._edges:
             if not isinstance(edge, Entity):
                 edge = self._edges[edge]
-            for node in edge.elements:
-                if len(self._nodes[node].elements) == 1:
-                    self._nodes.remove(node)
+            for node in edge._elements:
+                if len(self._nodes[node]) == 1:
+                    self._nodes._remove(node)
                 else:
-                    self._nodes[node].remove(edge.uid)
-            self._edges.remove(edge)
+                    self._nodes[node]._remove(edge.uid)
+            self._edges._remove(edge)
         return self
 
     @not_implemented_for("static")
@@ -1268,7 +1252,7 @@ class Hypergraph:
         V = self.nodes
         B.add_nodes_from(E, bipartite=1)
         B.add_nodes_from(V, bipartite=0)
-        B.add_edges_from([(v, e) for e in E for v in self.edges[e].elements])
+        B.add_edges_from([(v, e) for e in E for v in self.edges[e]._elements])
         return B
 
     def dual(self, name=None):
@@ -1592,11 +1576,11 @@ class Hypergraph:
                 # only use innernodes if they are part of the node set.
                 if node in self.nodes:
                     innernodes.add(node)
-                    memberships.update(set(self.nodes[node].elements))
+                    memberships.update(set(self.nodes[node]._elements))
             newedgeset = dict()
             for e in memberships:
                 if e in self.edges: # don't think this if-statement is necessary
-                    temp = set(self.edges[e].elements).intersection(innernodes)
+                    temp = set(self.edges[e]._elements).intersection(innernodes)
                     # temp = set(self.edges[e]).issubset(innernodes) # in the induced sub-hypergraph case.
                     if temp:
                         newedgeset[e] = Entity(e, temp, **self.edges[e].properties)

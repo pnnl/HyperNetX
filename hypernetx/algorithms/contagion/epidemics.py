@@ -5,80 +5,173 @@ from collections import defaultdict
 from collections import Counter
 
 # Canned Contagion Functions
-def collective_contagion(status, neighbors):
+def collective_contagion(node, status, edge):
+    """
+    The collective contagion mechanism described in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034
+
+    Parameters
+    ----------
+    node : Hashable of the node uid to infect (If it doesn't have status "S", it will automatically return False)
+    status : dictionary with nodes as keys and values as statuses (The infected state denoted with "I")
+    edge : An iterable of node ids (node must be in the edge or it will automatically return False)
+
+    Returns
+    -------
+    bool which is False if there is no potential to infect and True if there is.
+
+    Notes
+    -----
+
+    Example:
+
+    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
+    >>> collective_contagion(0, status, (0, 1, 2))
+        True
+    >>> collective_contagion(1, status, (0, 1, 2))
+        False
+    >>> collective_contagion(3, status, (0, 1, 2))
+        False
+    """
+    if status[node] != 'S' or node not in edge:
+        return False
+
+    neighbors = edge.difference({node})
     for i in neighbors:
         if status[i] != 'I':
-            return 0
-    return 1
+            return False
+    return True
 
-def individual_contagion(status, neighbors):
+def individual_contagion(node, status, edge):
+    """
+    The individual contagion mechanism described in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034
+
+    Parameters
+    ----------
+    node : Hashable of the node uid to infect (If it doesn't have status "S", it will automatically return False)
+    status : dictionary with nodes as keys and values as statuses (The infected state denoted with "I")
+    edge : An iterable of node ids (node must be in the edge or it will automatically return False)
+
+    Returns
+    -------
+    bool which is False if there is no potential to infect and True if there is.
+
+    Notes
+    -----
+
+    Example:
+
+    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
+    >>> individual_contagion(0, status, (0, 1, 3))
+        True
+    >>> individual_contagion(1, status, (0, 1, 2))
+        False
+    >>> collective_contagion(3, status, (0, 3, 4))
+        False
+    """
+    if status[node] != 'S' or node not in edge:
+        return False
+
+    neighbors = edge.difference({node})
     for i in neighbors:
         if status[i] == 'I':
-            return 1
-    return 0
+            return True
+    return False
 
-def threshold(status, neighbors, threshold=0.1):
-    mean_contagion = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
-    return mean_contagion >= threshold
+def threshold(node, status, edge, tau=0.1):
+    """
+    The threshold contagion mechanism
 
-def majority_vote(status, neighbors):
-    mean_contagion = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
-    if mean_contagion < 0.5:
-        return 0
-    elif mean_contagion > 0.5:
-        return 1
+    Parameters
+    ----------
+    node : Hashable of the node uid to infect (If it doesn't have status "S", it will automatically return False)
+    status : dictionary with nodes as keys and values as statuses (The infected state denoted with "I")
+    edge : An iterable of node ids (node must be in the edge or it will automatically return False)
+    tau : float between 0 and 1, default: 0.1
+        The fraction of nodes in an edge that must be infected for the edge to be able to transmit to the node
+
+    Returns
+    -------
+    bool which is False if there is no potential to infect and True if there is.
+
+    Notes
+    -----
+
+    Example:
+
+    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
+    >>> threshold(0, status, (0, 2, 3, 4), tau=0.2)
+        True
+    >>> threshold(0, status, (0, 2, 3, 4), tau=0.5)
+        False
+    >>> threshold(3, status, (1, 2, 3), tau=1)
+        False
+    """
+    if status[node] != 'S' or node not in edge:
+        return False
+
+    neighbors = edge.difference({node})
+    if len(neighbors) > 0:
+        fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
+    # The isolated node case
     else:
-        return random.choice([0, 1])
+        fraction_infected = 0
+    return fraction_infected >= threshold
+
+def majority_vote(node, status, edge):
+    """
+    The majority vote contagion mechanism. Af a majority of neighbors are contagious,
+    it is possible for an individual to change their opinion. If opinions are divided equally,
+    choose randomly.
+
+
+    Parameters
+    ----------
+    node : Hashable of the node uid to infect (If it doesn't have status "S", it will automatically return False)
+    status : dictionary with nodes as keys and values as statuses (The infected state denoted with "I")
+    edge : An iterable of node ids (node must be in the edge or it will automatically return False)
+
+    Returns
+    -------
+    bool which is False if there is no potential to infect and True if there is.
+
+    Notes
+    -----
+
+    Example:
+
+    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
+    >>> majority_vote(0, status, (0, 1, 2))
+        True
+    >>> collective_contagion(1, status, (0, 1, 2))
+        False
+    >>> collective_contagion(3, status, (0, 1, 2))
+        False
+    """
+
+    if status[node] != 'S' or node not in edge:
+        return False
+
+    neighbors = edge.difference({node})
+    if len(neighbors) > 0:
+        fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
+    else:
+        fraction_infected = 0
+
+    if fraction_infected < 0.5:
+        return False
+    elif fraction_infected > 0.5:
+        return True
+    else:
+        return random.choice([False, True])
 
 
 # Auxiliary functions
-def _truncated_exponential_(rate, T):
-    r'''returns a number between 0 and T from an
-    exponential distribution conditional on the outcome being between 0 and T'''
-    t = random.expovariate(rate)
-    L = int(t/T)
-    return t - L*T
 
-# The myQueue and ListDict classes are from Joel Miller's repository Mathematics-of-Epidemics-on-Networks
-class myQueue(object):
-    r'''
-    This class is used to store and act on a priority queue of events for 
-    event-driven simulations.  It is based on heapq.
-    Each queue is given a tmax (default is infinity) so that any event at later 
-    time is ignored.
-    
-    This is a priority queue of 4-tuples of the form 
-                   ``(t, counter, function, function_arguments)``
-    The ``'counter'`` is present just to break ties, which generally only occur when 
-    multiple events are put in place for the initial condition, but could also 
-    occur in cases where events tend to happen at discrete times.
-    note that the function is understood to have its first argument be t, and 
-    the tuple ``function_arguments`` does not include this first t.
-    So function is called as 
-        ``function(t, *function_arguments)``
-    Previously I used a class of events, but sorting using the __lt__ function 
-    I wrote was significantly slower than simply using tuples.
-    '''
-    def __init__(self, tmax=float("Inf")):
-        self._Q_ = []
-        self.tmax=tmax
-        self.counter = 0 #tie-breaker for putting things in priority queue
-    def add(self, time, function, args = ()):
-        r'''time is the time of the event.  args are the arguments of the
-        function not including the first argument which must be time'''
-        if time<self.tmax:   
-            heapq.heappush(self._Q_, (time, self.counter, function, args))
-            self.counter += 1
-    def pop_and_run(self):
-        r'''Pops the next event off the queue and performs the function'''
-        t, counter, function, args = heapq.heappop(self._Q_)
-        function(t, *args)
-    def __len__(self): 
-        r'''this will allow us to use commands like ``while Q:`` '''
-        return len(self._Q_)
-
-
-
+# The ListDict class is copied from Joel Miller's repository Mathematics-of-Epidemics-on-Networks
 class _ListDict_(object):
     r'''
     The Gillespie algorithm will involve a step that samples a random element 
@@ -94,21 +187,6 @@ class _ListDict_(object):
     This will allow me to select a random element uniformly, and then use 
     rejection sampling to make sure it's been selected with the appropriate 
     weight.
-    
-    I believe a faster data structure can be created with a (binary) tree.
-    We add an object with a weight to the tree.  The nodes track their weights
-    and the sum of the weights below it.  So choosing a random object (by weight)
-    means that we choose a random number between 0 and weight_sum.  Then 
-    if it's less than the first node's weight, we choose that.  Otherwise,
-    we see if the remaining bit is less than the total under the first child.  
-    If so, go there, otherwise, it's the other child.  Then iterate.  Adding
-    a node would probably involve placing higher weight nodes higher in
-    the tree.  Currently I don't have a fast enough implementation of this
-    for my purposes.  So for now I'm sticking to the mixture of lists & 
-    dictionaries.
-    
-    I believe this structure I'm describing is similar to a "partial sum tree"
-    or a "Fenwick tree", but they seem subtly different from this.
     '''
     def __init__(self, weighted = False):
         self.item_to_position = {}
@@ -238,9 +316,52 @@ class _ListDict_(object):
 
 
 # Contagion Functions
-def discrete_SIR(H, tau, gamma, transmission_function=collective_contagion, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), dt=1.0, return_full_data = False, **args):
+def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), dt=1.0, return_full_data = False, **args):
+    """
+    A discrete SIR model for hypergraphs similar to the construction described in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034 and
+    "Simplicial models of social contagion" by Iacopini et al.
+    https://doi.org/10.1038/s41467-019-10431-6
 
-    # Initial infecteds and recovereds should be lists or None. Add a check here.
+    Parameters
+    ----------
+    H : A HyperNetX Hypergraph object
+    tau : dictionary with edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)
+    gamma : A float which prescribes the healing rate
+    transmission_function : a function has required arguments (node, status, edge) and optional arguments, Default value is the threshold function described above.
+    initial_infecteds : An iterable of initially infected node uids, Default: None
+    initial_recovereds : An iterable of initially recovered node uids, Default: None
+    rho : Float from 0 to 1
+        The fraction of initially infected individuals. Both rho and initially infected cannot be specified.
+    tmin : Float, Default: 0
+        Time at the start of the simulation
+    tmax : Float, Default: Infinity
+        Time at which the simulation should be terminated if it hasn't already.
+    dt : Float that is greater than 0, Default: 1.0
+        Step forward in time that the simulation takes at each step.
+    return_full_data : Bool, Default: False
+        This returns all the infection and recovery events at each time if True.
+    **args : Optional arguments to transmission function
+        This allows user-defined transmission functions with extra parameters.
+
+    Returns
+    -------
+    
+    
+    Notes
+    -----
+
+    Example:
+
+    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
+    >>> collective_contagion(0, status, (0, 1, 2))
+        True
+    >>> collective_contagion(1, status, (0, 1, 2))
+        False
+    >>> collective_contagion(3, status, (0, 1, 2))
+        False
+    """
     
     if rho is not None and initial_infecteds is not None:
         raise Exception("Cannot define both initial_infecteds and rho")
@@ -307,8 +428,7 @@ def discrete_SIR(H, tau, gamma, transmission_function=collective_contagion, init
             elif status[node] == 'S':
                 for edge_id in H.nodes[node]:
                     members = H.edges[edge_id]
-                    neighbors = list(set(members).difference({node}))
-                    if random.random() <= tau[len(members)]*transmission_function(status, neighbors, **args)*dt:
+                    if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
                         newStatus[node] = 'I'
                         S[-1] += -1
                         I[-1] += 1
@@ -327,7 +447,7 @@ def discrete_SIR(H, tau, gamma, transmission_function=collective_contagion, init
         return np.array(times), np.array(S), np.array(I), np.array(R)
 
 
-def discrete_SIS(H, tau, gamma, transmission_function=collective_contagion, initial_infecteds=None, rho=None, tmin=0, tmax=100, dt=1.0, return_full_data=False, **args):
+def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho=None, tmin=0, tmax=100, dt=1.0, return_full_data=False, **args):
     # Initial infecteds and recovereds should be lists or None. Add a check here.
     
     if rho is not None and initial_infecteds is not None:
@@ -400,7 +520,7 @@ def discrete_SIS(H, tau, gamma, transmission_function=collective_contagion, init
         return np.array(times), np.array(S), np.array(I)
 
 
-def Gillespie_SIR(H, tau, gamma, transmission_function=collective_contagion, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
+def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
 
     # Initial infecteds and recovereds should be lists or None. Add a check here.
     
@@ -545,7 +665,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=collective_contagion, ini
     return np.array(times), np.array(S), np.array(I), np.array(R)
 
 
-def Gillespie_SIS(H, tau, gamma, transmission_function=collective_contagion, initial_infecteds=None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
+def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
 
     # Initial infecteds and recovereds should be lists or None. Add a check here.
     

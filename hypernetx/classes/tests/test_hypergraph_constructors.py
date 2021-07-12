@@ -21,7 +21,7 @@ def test_from_numpy_array():
     M = np.array([[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
     h = Hypergraph.from_numpy_array(M)
     assert "v1" in h.edges["e0"]
-    assert "e1" not in h.nodes["v2"].elements
+    assert "e1" not in h.nodes["v2"]
     with pytest.raises(Exception) as excinfo:
         h = Hypergraph.from_numpy_array(M, node_names=["A"])
     assert "Number of node names does not match number of rows" in str(excinfo.value)
