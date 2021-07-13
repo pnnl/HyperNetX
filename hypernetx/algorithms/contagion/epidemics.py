@@ -37,7 +37,7 @@ def collective_contagion(node, status, edge):
     if status[node] != 'S' or node not in edge:
         return False
 
-    neighbors = edge.difference({node})
+    neighbors = set(edge).difference({node})
     for i in neighbors:
         if status[i] != 'I':
             return False
@@ -75,7 +75,7 @@ def individual_contagion(node, status, edge):
     if status[node] != 'S' or node not in edge:
         return False
 
-    neighbors = edge.difference({node})
+    neighbors = set(edge).difference({node})
     for i in neighbors:
         if status[i] == 'I':
             return True
@@ -113,13 +113,13 @@ def threshold(node, status, edge, tau=0.1):
     if status[node] != 'S' or node not in edge:
         return False
 
-    neighbors = edge.difference({node})
+    neighbors = set(edge).difference({node})
     if len(neighbors) > 0:
         fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
     # The isolated node case
     else:
         fraction_infected = 0
-    return fraction_infected >= threshold
+    return fraction_infected >= tau
 
 def majority_vote(node, status, edge):
     """
@@ -132,8 +132,7 @@ def majority_vote(node, status, edge):
     ----------
     node : Hashable of the node uid to infect (If it doesn't have status "S", it will automatically return False)
     status : dictionary with nodes as keys and values as statuses (The infected state denoted with "I")
-    edge : An iterable of node ids (node must be in the edge or it will automatically return False)
-
+    edge : An iterable of node ids (node must be in the edge or it will automatically return False
     Returns
     -------
     bool which is False if there is no potential to infect and True if there is.
@@ -155,7 +154,7 @@ def majority_vote(node, status, edge):
     if status[node] != 'S' or node not in edge:
         return False
 
-    neighbors = edge.difference({node})
+    neighbors = set(edge).difference({node})
     if len(neighbors) > 0:
         fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
     else:
@@ -318,7 +317,7 @@ class _ListDict_(object):
 # Contagion Functions
 def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), dt=1.0, return_full_data = False, **args):
     """
-    A discrete SIR model for hypergraphs similar to the construction described in
+    A discrete-time SIR model for hypergraphs similar to the construction described in
     "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
     https://doi.org/10.1063/5.0020034 and
     "Simplicial models of social contagion" by Iacopini et al.
@@ -347,20 +346,21 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
 
     Returns
     -------
-    
+    if return_full_data
+        returns a dictionary with time as the keys and events that happen as the values.
+    else
+        returns numpy arrays with the time (t), number of susceptible (S), infected (I), and recovered (R) at each time.
     
     Notes
     -----
 
     Example:
 
-    >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
-    >>> collective_contagion(0, status, (0, 1, 2))
-        True
-    >>> collective_contagion(1, status, (0, 1, 2))
-        False
-    >>> collective_contagion(3, status, (0, 1, 2))
-        False
+    >>> n = 1000
+    >>> m = 10000
+    >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> t, S, I, R = contagion.discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     """
     
     if rho is not None and initial_infecteds is not None:
@@ -448,8 +448,52 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
 
 
 def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho=None, tmin=0, tmax=100, dt=1.0, return_full_data=False, **args):
-    # Initial infecteds and recovereds should be lists or None. Add a check here.
+    """
+    A discrete-time SIS model for hypergraphs as implemented in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034 and
+    "Simplicial models of social contagion" by Iacopini et al.
+    https://doi.org/10.1038/s41467-019-10431-6
+
+    Parameters
+    ----------
+    H : A HyperNetX Hypergraph object
+    tau : dictionary with edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)
+    gamma : A float which prescribes the healing rate
+    transmission_function : a function has required arguments (node, status, edge) and optional arguments, Default value is the threshold function described above.
+    initial_infecteds : An iterable of initially infected node uids, Default: None
+    rho : Float from 0 to 1
+        The fraction of initially infected individuals. Both rho and initially infected cannot be specified.
+    tmin : Float, Default: 0
+        Time at the start of the simulation
+    tmax : Float, Default: 100
+        Time at which the simulation should be terminated if it hasn't already.
+    dt : Float that is greater than 0, Default: 1.0
+        Step forward in time that the simulation takes at each step.
+    return_full_data : Bool, Default: False
+        This returns all the infection and recovery events at each time if True.
+    **args : Optional arguments to transmission function
+        This allows user-defined transmission functions with extra parameters.
+
+    Returns
+    -------
+    if return_full_data
+        returns a dictionary with time as the keys and events that happen as the values.
+    else
+        returns numpy arrays with the time (t), number of susceptible (S) and infected (I) at each time.
     
+    Notes
+    -----
+
+    Example:
+
+    >>> n = 1000
+    >>> m = 10000
+    >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> t, S, I = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
+    """
+
     if rho is not None and initial_infecteds is not None:
         raise Exception("Cannot define both initial_infecteds and rho")
 
@@ -500,8 +544,8 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
             elif status[node] == 'S':
                 for edge_id in H.nodes[node]:
                     members = H.edges[edge_id]
-                    neighbors = list(set(members).difference({node}))
-                    if random.random() <= tau[len(members)]*transmission_function(status, neighbors, **args)*dt:
+                    
+                    if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
                         newStatus[node] = 'I'
                         S[-1] += -1
                         I[-1] += 1
@@ -520,8 +564,45 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
         return np.array(times), np.array(S), np.array(I)
 
 
-def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
+def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), **args):
+    """
+    A continuous-time SIR model for hypergraphs similar to the model in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034 and
+    implemented for networks in the EoN package by Joel C. Miller
+    https://epidemicsonnetworks.readthedocs.io/en/latest/
 
+    Parameters
+    ----------
+    H : A HyperNetX Hypergraph object
+    tau : dictionary with edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)
+    gamma : A float which prescribes the healing rate
+    transmission_function : a function has required arguments (node, status, edge) and optional arguments, Default value is the threshold function described above.
+    initial_infecteds : An iterable of initially infected node uids, Default: None
+    rho : Float from 0 to 1
+        The fraction of initially infected individuals. Both rho and initially infected cannot be specified.
+    tmin : Float, Default: 0
+        Time at the start of the simulation
+    tmax : Float, Default: Infinity
+        Time at which the simulation should be terminated if it hasn't already.
+    **args : Optional arguments to transmission function
+        This allows user-defined transmission functions with extra parameters.
+
+    Returns
+    -------
+    returns numpy arrays with the time (t), number of susceptible (S), infected (I), and recovered (R) at each time.
+    
+    Notes
+    -----
+
+    Example:
+
+    >>> n = 1000
+    >>> m = 10000
+    >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    """
     # Initial infecteds and recovereds should be lists or None. Add a check here.
     
     if rho is not None and initial_infecteds is not None:
@@ -573,10 +654,9 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             members = H.edges[edge_id]
             for node in members:
                 if status[node] == 'S':
-                    neighbors = tuple(set(members).difference({node}))
-                    contagion = transmission_function(status, neighbors, **args)
+                    contagion = transmission_function(node, status, members, **args)
                     if contagion != 0:
-                        infectious_edges[len(members)].update((neighbors, node))
+                        infectious_edges[len(members)].update((edge_id, node))
     
     total_rates = dict()
     total_rates[1] = gamma*infecteds.total_weight()
@@ -591,8 +671,6 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
 
     while t < tmax and I[-1] != 0:
         # choose type of event that happens
-        # this can be improved
-
         while True:
             choice = random.choice(list(total_rates.keys()))
             if random.random() <= total_rates[choice]/total_rate:
@@ -607,11 +685,10 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
                 members = H.edges[edge_id]
                 for node in members:
                     if status[node] == 'S':
-                        neighbors = tuple(set(members).difference({node}))
-                        contagion = transmission_function(status, neighbors, **args)
+                        contagion = transmission_function(node, status, members, **args)
                         if contagion == 0:
                             try:
-                                infectious_edges[len(members)].remove((neighbors, node))
+                                infectious_edges[len(members)].remove((edge_id, node))
                             except:
                                 pass
             times.append(t)
@@ -620,7 +697,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             R.append(R[-1] + 1)
 
         else:
-            transmitters, recipient = infectious_edges[choice].choose_random()
+            _, recipient = infectious_edges[choice].choose_random()
             status[recipient] = 'I'
 
             infecteds.update(recipient)
@@ -628,9 +705,8 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             # remove the infectious links, because they can't infect an infected node.
             for edge_id in H.nodes[recipient]:
                 members = H.edges[edge_id]
-                neighbors = tuple(set(members).difference({recipient}))
                 try:
-                    infectious_edges[len(members)].remove((neighbors, recipient))
+                    infectious_edges[len(members)].remove((edge_id, recipient))
                 except:
                     pass
 
@@ -639,11 +715,10 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
                 members = H.edges[edge_id]
                 for node in members:
                     if status[node] == 'S':
-                        neighbors = tuple(set(members).difference({node}))
-                        contagion = transmission_function(status, neighbors, **args)
+                        contagion = transmission_function(node, status, members, **args)
                         if contagion == 1:
                             try:
-                                infectious_edges[len(members)].update((neighbors, node))
+                                infectious_edges[len(members)].update((edge_id, node))
                             except:
                                 pass
             times.append(t)
@@ -666,7 +741,44 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
 
 
 def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
+    """
+    A continuous-time SIS model for hypergraphs similar to the model in
+    "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
+    https://doi.org/10.1063/5.0020034 and
+    implemented for networks in the EoN package by Joel C. Miller
+    https://epidemicsonnetworks.readthedocs.io/en/latest/
 
+    Parameters
+    ----------
+    H : A HyperNetX Hypergraph object
+    tau : dictionary with edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)
+    gamma : A float which prescribes the healing rate
+    transmission_function : a function has required arguments (node, status, edge) and optional arguments, Default value is the threshold function described above.
+    initial_infecteds : An iterable of initially infected node uids, Default: None
+    rho : Float from 0 to 1
+        The fraction of initially infected individuals. Both rho and initially infected cannot be specified.
+    tmin : Float, Default: 0
+        Time at the start of the simulation
+    tmax : Float, Default: Infinity
+        Time at which the simulation should be terminated if it hasn't already.
+    **args : Optional arguments to transmission function
+        This allows user-defined transmission functions with extra parameters.
+
+    Returns
+    -------
+    returns numpy arrays with the time (t), number of susceptible (S) and infected (I) at each time.
+    
+    Notes
+    -----
+
+    Example:
+
+    >>> n = 1000
+    >>> m = 10000
+    >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    """
     # Initial infecteds and recovereds should be lists or None. Add a check here.
     
     if rho is not None and initial_infecteds is not None:
@@ -708,10 +820,9 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             members = H.edges[edge_id]
             for node in members:
                 if status[node] == 'S':
-                    neighbors = tuple(set(members).difference({node}))
-                    contagion = transmission_function(status, neighbors, **args)
+                    contagion = transmission_function(node, status, members, **args)
                     if contagion != 0:
-                        infectious_edges[len(members)].update((neighbors, node))
+                        infectious_edges[len(members)].update((edge_id, node))
     
     total_rates = dict()
     total_rates[1] = gamma*infecteds.total_weight()
@@ -740,11 +851,10 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
                 members = H.edges[edge_id]
                 for node in members:
                     if status[node] == 'S':
-                        neighbors = tuple(set(members).difference({node}))
-                        contagion = transmission_function(status, neighbors, **args)
+                        contagion = transmission_function(node, status, members, **args)
                         if contagion == 0:
                             try:
-                                infectious_edges[len(members)].remove((neighbors, node))
+                                infectious_edges[len(members)].remove((edge_id, node))
                             except:
                                 pass
             times.append(t)
@@ -752,7 +862,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             I.append(I[-1] - 1)
 
         else:
-            transmitters, recipient = infectious_edges[choice].choose_random()
+            _, recipient = infectious_edges[choice].choose_random()
             status[recipient] = 'I'
 
             infecteds.update(recipient)
@@ -760,9 +870,8 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             # remove the infectious links, because they can't infect an infected node.
             for edge_id in H.nodes[recipient]:
                 members = H.edges[edge_id]
-                neighbors = tuple(set(members).difference({recipient}))
                 try:
-                    infectious_edges[len(members)].remove((neighbors, recipient))
+                    infectious_edges[len(members)].remove((edge_id, recipient))
                 except:
                     pass
 
@@ -771,11 +880,10 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
                 members = H.edges[edge_id]
                 for node in members:
                     if status[node] == 'S':
-                        neighbors = tuple(set(members).difference({node}))
-                        contagion = transmission_function(status, neighbors, **args)
+                        contagion = transmission_function(node, status, members, **args)
                         if contagion == 1:
                             try:
-                                infectious_edges[len(members)].update((neighbors, node))
+                                infectious_edges[len(members)].update((edge_id, node))
                             except:
                                 pass
             times.append(t)
