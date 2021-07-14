@@ -540,7 +540,7 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
                     I[-1] += -1
                     S[-1] += 1
                     if return_full_data:
-                        transition_events[t+dt].append(('R', node))
+                        transition_events[t+dt].append(('S', node))
             elif status[node] == 'S':
                 for edge_id in H.nodes[node]:
                     members = H.edges[edge_id]
@@ -653,10 +653,9 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
         for edge_id in H.nodes[node]:
             members = H.edges[edge_id]
             for node in members:
-                if status[node] == 'S':
-                    contagion = transmission_function(node, status, members, **args)
-                    if contagion != 0:
-                        infectious_edges[len(members)].update((edge_id, node))
+                is_infectious = transmission_function(node, status, members, **args)
+                if is_infectious:
+                    infectious_edges[len(members)].update((edge_id, node))
     
     total_rates = dict()
     total_rates[1] = gamma*infecteds.total_weight()
@@ -684,13 +683,12 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             for edge_id in H.nodes[recovering_node]:
                 members = H.edges[edge_id]
                 for node in members:
-                    if status[node] == 'S':
-                        contagion = transmission_function(node, status, members, **args)
-                        if contagion == 0:
-                            try:
-                                infectious_edges[len(members)].remove((edge_id, node))
-                            except:
-                                pass
+                    is_infectious = transmission_function(node, status, members, **args)
+                    if is_infectious:
+                        try:
+                            infectious_edges[len(members)].remove((edge_id, node))
+                        except:
+                            pass
             times.append(t)
             S.append(S[-1])
             I.append(I[-1] - 1)
@@ -714,13 +712,12 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             for edge_id in H.nodes[recipient]:
                 members = H.edges[edge_id]
                 for node in members:
-                    if status[node] == 'S':
-                        contagion = transmission_function(node, status, members, **args)
-                        if contagion == 1:
-                            try:
-                                infectious_edges[len(members)].update((edge_id, node))
-                            except:
-                                pass
+                    is_infectious = transmission_function(node, status, members, **args)
+                    if is_infectious:
+                        try:
+                            infectious_edges[len(members)].update((edge_id, node))
+                        except:
+                            pass
             times.append(t)
             S.append(S[-1] - 1)
             I.append(I[-1] + 1)
@@ -819,10 +816,9 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
         for edge_id in H.nodes[node]:
             members = H.edges[edge_id]
             for node in members:
-                if status[node] == 'S':
-                    contagion = transmission_function(node, status, members, **args)
-                    if contagion != 0:
-                        infectious_edges[len(members)].update((edge_id, node))
+                is_infectious = transmission_function(node, status, members, **args)
+                if is_infectious:
+                    infectious_edges[len(members)].update((edge_id, node))
     
     total_rates = dict()
     total_rates[1] = gamma*infecteds.total_weight()
@@ -850,13 +846,12 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             for edge_id in H.nodes[recovering_node]:
                 members = H.edges[edge_id]
                 for node in members:
-                    if status[node] == 'S':
-                        contagion = transmission_function(node, status, members, **args)
-                        if contagion == 0:
-                            try:
-                                infectious_edges[len(members)].remove((edge_id, node))
-                            except:
-                                pass
+                    is_infectious = transmission_function(node, status, members, **args)
+                    if is_infectious:
+                        try:
+                            infectious_edges[len(members)].remove((edge_id, node))
+                        except:
+                            pass
             times.append(t)
             S.append(S[-1] + 1)
             I.append(I[-1] - 1)
@@ -879,13 +874,12 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             for edge_id in H.nodes[recipient]:
                 members = H.edges[edge_id]
                 for node in members:
-                    if status[node] == 'S':
-                        contagion = transmission_function(node, status, members, **args)
-                        if contagion == 1:
-                            try:
-                                infectious_edges[len(members)].update((edge_id, node))
-                            except:
-                                pass
+                    is_infectious = transmission_function(node, status, members, **args)
+                    if is_infectious:
+                        try:
+                            infectious_edges[len(members)].update((edge_id, node))
+                        except:
+                            pass
             times.append(t)
             S.append(S[-1] - 1)
             I.append(I[-1] + 1)
