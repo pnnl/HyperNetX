@@ -12,11 +12,13 @@ hypernetx.egg-info/requires.txt
 hypernetx.egg-info/top_level.txt
 hypernetx/algorithms/__init__.py
 hypernetx/algorithms/homology_mod2.py
+hypernetx/algorithms/laplacians_clustering.py
 hypernetx/algorithms/s_centrality_measures.py
 hypernetx/classes/__init__.py
 hypernetx/classes/entity.py
 hypernetx/classes/hypergraph.py
 hypernetx/classes/staticentity.py
+hypernetx/classes/untitled_staticentity.py
 hypernetx/drawing/__init__.py
 hypernetx/drawing/rubber_band.py
 hypernetx/drawing/two_column.py

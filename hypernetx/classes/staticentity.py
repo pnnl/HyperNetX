@@ -23,15 +23,15 @@ class StaticEntity(object):
     Parameters
     ----------
     entity : StaticEntity, StaticEntitySet, Entity, EntitySet, pandas.DataFrame, dict, or list of lists
-        If a pandas.DataFrame, an error will be raised if there are nans. 
+        If a pandas.DataFrame, an error will be raised if there are nans.
     data : array or array-like
         Two dimensional array of integers. Provides sparse tensor indices for incidence
-        tensor. 
+        tensor.
     arr : numpy.ndarray or scip.sparse.matrix, optional, default=None
-        Incidence tensor of data. 
+        Incidence tensor of data.
     labels : OrderedDict of lists, optional, default=None
-        User defined labels corresponding to integers in data.  
-    uid : hashable, optional, default=None  
+        User defined labels corresponding to integers in data.
+    uid : hashable, optional, default=None
 
     props : user defined keyword arguments to be added to a properties dictionary, optional
 
@@ -239,9 +239,9 @@ class StaticEntity(object):
             self.__dict__.update(props)  # keyed by the method name and signature
 
         if len(self._labels) > 0:
-            self._labs = lambda kdx: self._labels.get(self._keys[kdx], {})
+            self._labs = {kdx: self._labels.get(self._keys[kdx], {}) for kdx in range(self._dimsize)}
         else:
-            self._labs = lambda kdx: {}
+            self._labs = {}
 
     @property
     def arr(self):
@@ -368,7 +368,7 @@ class StaticEntity(object):
     @property
     def elements(self):
         """
-        Keys and values in the order of insertion 
+        Keys and values in the order of insertion
 
         Returns
         -------
@@ -390,9 +390,9 @@ class StaticEntity(object):
         -------
         set
         """
-        return set(self._labs(1))
+        return set(self._labs[1])
 
-    @property
+    @ property
     def incidence_dict(self):
         """
         Dictionary using index 0 as nodes and index 1 as edges
@@ -403,7 +403,7 @@ class StaticEntity(object):
         """
         return self.elements_by_level(0, 1, translate=True)
 
-    @property
+    @ property
     def dataframe(self):
         """
         Returns the entity data in DataFrame format
@@ -485,7 +485,7 @@ class StaticEntity(object):
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        return iter(self._labs(label_index))
+        return iter(self._labs[label_index])
 
     def size(self):
         """
@@ -510,7 +510,7 @@ class StaticEntity(object):
         -------
         np.ndarray
         """
-        return self._labs(kdx)
+        return self._labs[kdx]
 
     def is_empty(self, level=0):
         """
@@ -524,7 +524,7 @@ class StaticEntity(object):
         -------
         bool
         """
-        return len(self._labs(level)) == 0
+        return len(self._labs[level]) == 0
 
     def uidset_by_level(self, level=0):
         """
@@ -538,7 +538,7 @@ class StaticEntity(object):
         -------
         frozenset
         """
-        return frozenset(self._labs(level))  # should be update this to tuples?
+        return frozenset(self._labs[level])  # should be update this to tuples?
 
     def elements_by_level(self, level1=0, level2=None, translate=False):
         """
@@ -568,10 +568,10 @@ class StaticEntity(object):
 
         if level2 > self.dimsize - 1 or level2 < 0:
             print(f"This StaticEntity has no level {level2}.")
-            elts = OrderedDict([[k, np.array([])] for k in self._labs(level1)])
+            elts = OrderedDict([[k, np.array([])] for k in self._labs[level1]])
         elif level1 == level2:
             print(f"level1 equals level2")
-            elts = OrderedDict([[k, np.array([])] for k in self._labs(level1)])
+            elts = OrderedDict([[k, np.array([])] for k in self._labs[level1]])
 
         temp = remove_row_duplicates(self.data[:, [level1, level2]])
         elts = defaultdict(list)
@@ -581,10 +581,10 @@ class StaticEntity(object):
         if translate:
             telts = OrderedDict()
             for kdx, vec in elts.items():
-                k = self._labs(level1)[kdx]
+                k = self._labs[level1][kdx]
                 telts[k] = list()
                 for vdx in vec:
-                    telts[k].append(self._labs(level2)[vdx])
+                    telts[k].append(self._labs[level2][vdx])
             return telts
         else:
             return elts
@@ -617,8 +617,8 @@ class StaticEntity(object):
         if index:  # give index of rows then columns
             return (
                 result,
-                {k: v for k, v in enumerate(self._labs(level2))},
-                {k: v for k, v in enumerate(self._labs(level1))},
+                {k: v for k, v in enumerate(self._labs[level2])},
+                {k: v for k, v in enumerate(self._labs[level1])},
             )
         else:
             return result
@@ -644,11 +644,11 @@ class StaticEntity(object):
                 return self.__class__()
             else:
                 newlabels = OrderedDict(
-                    [(self.keys[lev], self._labs(lev)) for lev in levels]
+                    [(self.keys[lev], self._labs[lev]) for lev in levels]
                 )
                 return self.__class__(labels=newlabels)
         temp = remove_row_duplicates(self.data[:, levels])
-        newlabels = OrderedDict([(self.keys[lev], self._labs(lev)) for lev in levels])
+        newlabels = OrderedDict([(self.keys[lev], self._labs[lev]) for lev in levels])
         return self.__class__(data=temp, labels=newlabels, uid=uid)
 
     def turn_entity_data_into_dataframe(
@@ -717,9 +717,9 @@ class StaticEntity(object):
          : numpy.array(str)
         """
         if isinstance(index, int):
-            return self._labs(level)[index]
+            return self._labs[level][index]
         else:
-            return [self._labs(level)[idx] for idx in index]
+            return [self._labs[level][idx] for idx in index]
 
     def translate_arr(self, coords):
         """
@@ -793,7 +793,7 @@ class StaticEntity(object):
         if max_level is not None:
             n = min([max_level + 1, n])
         for lev in range(min_level, n):
-            if item in self._labs(lev):
+            if item in self._labs[lev]:
                 if return_index:
                     return lev, self._index(self._keys[lev], item)
                 else:
@@ -880,8 +880,8 @@ class StaticEntitySet(StaticEntity):
         if index:
             return (
                 result,
-                {k: v for k, v in enumerate(self._labs(1))},
-                {k: v for k, v in enumerate(self._labs(0))},
+                {k: v for k, v in enumerate(self._labs[1])},
+                {k: v for k, v in enumerate(self._labs[0])},
             )
         else:
             return result
