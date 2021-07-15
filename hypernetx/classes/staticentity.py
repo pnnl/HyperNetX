@@ -254,11 +254,11 @@ class StaticEntity(object):
         else:
             self._labs = {}
 
-        # if len(self._keys) == 1:
-        #     self._elements = {k: {} for k in self._labels[self._keys[0]]}
-        # else:
-        #     self._elements = self.elements_by_level(0, translate=True)
-        #     self._dual = self.elements_by_level(1, translate=True)
+        if len(self._keys) == 1:
+            self._elements = {k: {} for k in self._labels[self._keys[0]]}
+        else:
+            self._elements = self.elements_by_level(0, translate=True)
+            # self._dual = self.elements_by_level(1, translate=True)
 
     @property
     def arr(self):
@@ -393,12 +393,12 @@ class StaticEntity(object):
 
         level1 = elements, level2 = children
         """
-        # return self._elements
-        if len(self._keys) == 1:
-            return {k: {} for k in self._labels[self._keys[0]]}
-        else:
-            return self.elements_by_level(0, translate=True)
-            #self._dual = self.elements_by_level(1, translate=True)
+        return self._elements
+        # if len(self._keys) == 1:
+        #     return {k: {} for k in self._labels[self._keys[0]]}
+        # else:
+        #     return self.elements_by_level(0, translate=True)
+        #     self._dual = self.elements_by_level(1, translate=True)
         
 
     @property
@@ -971,9 +971,13 @@ class StaticEntitySet(StaticEntity):
             shared_children[frozenset(v)].append(k)
         new_entity_dict = OrderedDict(
             [
+                # (
+                #     f"{next(iter(v))}:{len(v)}",
+                #     sorted(set(k), key=lambda x: list(self.labs(1)).index(x)),
+                # )
                 (
                     f"{next(iter(v))}:{len(v)}",
-                    sorted(set(k), key=lambda x: list(self.labs(1)).index(x)),
+                    sorted(set(k), key=lambda x : self.index(self._keys[1], x)),
                 )
                 for k, v in shared_children.items()
             ]
@@ -983,7 +987,7 @@ class StaticEntitySet(StaticEntity):
                 [
                     (
                         f"{next(iter(v))}:{len(v)}",
-                        sorted(v, key=lambda x: list(self.labs(0)).index(x)),
+                        sorted(v, key=lambda x : self.index(self._keys[0], x)),
                     )
                     for k, v in shared_children.items()
                 ]
