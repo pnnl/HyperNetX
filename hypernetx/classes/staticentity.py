@@ -840,9 +840,16 @@ class StaticEntitySet(StaticEntity):
                 labels = temp
             super().__init__(data=data, arr=arr, labels=labels, uid=uid, **props)
         else:
-            E = StaticEntity(entity=entity)
-            E = E.restrict_to_levels([level1, level2])
-            super().__init__(entity=E, uid=uid, **props)
+            if isinstance(entity, StaticEntity) or isinstance(entity, StaticEntitySet):
+                E = entity.restrict_to_levels([level1, level2])
+                super().__init__(entity=E, uid=uid, **props)
+            elif isinstance(entity, pd.DataFrame):
+                cols = entity.columns[[level1, level2]]
+                super().__init__(entity=entity[cols], uid=uid, **props)
+            else:
+                E = StaticEntity(entity=entity)
+                E = E.restrict_to_levels([level1, level2])
+                super().__init__(entity=E, uid=uid, **props)
 
     def __repr__(self):
         """
