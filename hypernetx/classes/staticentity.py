@@ -67,14 +67,14 @@ class StaticEntity(object):
                 # self._keyindex = lambda category: int(
                 #     np.where(np.array(list(self._labels.keys())) == category)[0]
                 # )
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
-                # self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys()}
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
 
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
@@ -91,13 +91,15 @@ class StaticEntity(object):
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+
             else:
                 if isinstance(entity, Entity) or isinstance(entity, EntitySet):
                     d = entity.incidence_dict
@@ -114,13 +116,14 @@ class StaticEntity(object):
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
                 self.properties.update(props)
                 self.__dict__.update(
                     self.properties
@@ -144,13 +147,14 @@ class StaticEntity(object):
                 )  # OrderedDict(category,np.array([categorical values ....])) is aligned to arr
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
                 self._keys = np.array(list(labels.keys()))
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
             else:
                 self._labels = OrderedDict(
                     [
@@ -160,12 +164,14 @@ class StaticEntity(object):
                 )
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.arange(self._dimsize)
-                self._index = (
-                    lambda category, value: value
-                    if value in self._labels[category]
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: value
+                #     if value in self._labels[category]
+                #     else None
+                # )
                 # self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+            
         elif arr is not None:
             self._arr = arr
             self.properties.update(props)
@@ -182,13 +188,15 @@ class StaticEntity(object):
                 )
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
                 self._keys = np.array(list(labels.keys()))
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+
             else:
                 self._labels = OrderedDict(
                     [
@@ -198,11 +206,12 @@ class StaticEntity(object):
                 )
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.arange(self._dimsize)
-                self._index = (
-                    lambda category, value: value
-                    if value in self._labels[category]
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: value
+                #     if value in self._labels[category]
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
         else:  # no entity, data or arr is given
 
             if labels is not None:
@@ -216,13 +225,14 @@ class StaticEntity(object):
                 self._dimsize = len(self._dimensions)
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
                 self._keys = np.array(list(labels.keys()))
-                self._index = (
-                    lambda category, value: int(
-                        np.where(self._labels[category] == value)[0]
-                    )
-                    if np.where(self._labels[category] == value)[0].size > 0
-                    else None
-                )
+                # self._index = (
+                #     lambda category, value: int(
+                #         np.where(self._labels[category] == value)[0]
+                #     )
+                #     if np.where(self._labels[category] == value)[0].size > 0
+                #     else None
+                # )
+                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
             else:
                 self._data = np.zeros((0, 0), dtype=int)
                 self._arr = np.array([], dtype=int)
@@ -231,7 +241,8 @@ class StaticEntity(object):
                 self._dimsize = 0
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.array([])
-                self._index = lambda category, value: None
+                # self._index = lambda category, value: None
+                self._index = {cat: dict(zip(self._labels[cat], [None for i in len(self._labels[cat])])) for cat in self._keys}
 
             # if labels is a list of categorical values, then change it into an
             # ordered dictionary?
@@ -242,6 +253,12 @@ class StaticEntity(object):
             self._labs = {kdx: self._labels.get(self._keys[kdx], {}) for kdx in range(self._dimsize)}
         else:
             self._labs = {}
+
+        # if len(self._keys) == 1:
+        #     self._elements = {k: {} for k in self._labels[self._keys[0]]}
+        # else:
+        #     self._elements = self.elements_by_level(0, translate=True)
+        #     self._dual = self.elements_by_level(1, translate=True)
 
     @property
     def arr(self):
@@ -376,10 +393,13 @@ class StaticEntity(object):
 
         level1 = elements, level2 = children
         """
+        # return self._elements
         if len(self._keys) == 1:
             return {k: {} for k in self._labels[self._keys[0]]}
         else:
             return self.elements_by_level(0, translate=True)
+            #self._dual = self.elements_by_level(1, translate=True)
+        
 
     @property
     def children(self):
@@ -753,7 +773,7 @@ class StaticEntity(object):
         int or tuple of ints
         """
         if value is not None:
-            return self._keyindex[category], self._index(category, value)
+            return self._keyindex[category], self._index[category][value]
         else:
             return self._keyindex[category]
 
@@ -770,7 +790,7 @@ class StaticEntity(object):
         -------
         list
         """
-        return [self._index(category, value) for value in values]
+        return [self._index[category][value] for value in values]
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
         """
@@ -795,7 +815,7 @@ class StaticEntity(object):
         for lev in range(min_level, n):
             if item in self._labs[lev]:
                 if return_index:
-                    return lev, self._index(self._keys[lev], item)
+                    return lev, self._index[self._keys[lev]][item]
                 else:
                     return lev
         else:
