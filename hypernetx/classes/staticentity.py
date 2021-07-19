@@ -45,7 +45,6 @@ class StaticEntity(object):
     def __init__(
         self, entity=None, data=None, arr=None, labels=None, uid=None, **props
     ):
-
         self._uid = uid
         self.properties = {}
         if entity is not None:
@@ -75,7 +74,6 @@ class StaticEntity(object):
                 #     else None
                 # )
                 self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
-
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
@@ -113,8 +111,8 @@ class StaticEntity(object):
                 else:  # returns only 2 levels
                     self._data, self._labels = _turn_iterable_to_staticentity(entity)
                 self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
-                self._dimsize = len(self._dimensions)  ## number of columns
-                self._keys = np.array(list(self._labels.keys()))  ## These are the column headers from the dataframe
+                self._dimsize = len(self._dimensions)  # number of columns
+                self._keys = np.array(list(self._labels.keys()))  # These are the column headers from the dataframe
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
                 # self._index = (
                 #     lambda category, value: int(
@@ -171,7 +169,7 @@ class StaticEntity(object):
                 # )
                 # self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size > 0 else None
                 self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
-            
+
         elif arr is not None:
             self._arr = arr
             self.properties.update(props)
@@ -397,7 +395,15 @@ class StaticEntity(object):
                 return self._elements
             else:
                 self._elements = self.elements_by_level(0, translate=True)
-                return self._elements        
+                return self._elements
+
+    @property
+    def def memberships(self):
+        try:
+            return self._memberships
+        except:
+            self._memberships = reverse_dictionary(self.elements)
+            return self._memberships
 
     @property
     def children(self):
@@ -975,7 +981,7 @@ class StaticEntitySet(StaticEntity):
                 # )
                 (
                     f"{next(iter(v))}:{len(v)}",
-                    sorted(set(k), key=lambda x : self.index(self._keys[1], x)),
+                    sorted(set(k), key=lambda x: self.index(self._keys[1], x)),
                 )
                 for k, v in shared_children.items()
             ]
@@ -985,7 +991,7 @@ class StaticEntitySet(StaticEntity):
                 [
                     (
                         f"{next(iter(v))}:{len(v)}",
-                        sorted(v, key=lambda x : self.index(self._keys[0], x)),
+                        sorted(v, key=lambda x: self.index(self._keys[0], x)),
                     )
                     for k, v in shared_children.items()
                 ]
