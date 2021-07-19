@@ -1,4 +1,4 @@
-from .extras import HNXCount, DefaultOrderedDict, remove_row_duplicates, create_labels
+from .extras import HNXCount, DefaultOrderedDict, remove_row_duplicates, create_labels, reverse_dictionary
 from .decorators import not_implemented_for
 from .toys import *
 
