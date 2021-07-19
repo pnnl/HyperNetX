@@ -113,8 +113,8 @@ class StaticEntity(object):
                 else:  # returns only 2 levels
                     self._data, self._labels = _turn_iterable_to_staticentity(entity)
                 self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
-                self._dimsize = len(self._dimensions)
-                self._keys = np.array(list(self._labels.keys()))
+                self._dimsize = len(self._dimensions)  ## number of columns
+                self._keys = np.array(list(self._labels.keys()))  ## These are the column headers from the dataframe
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
                 # self._index = (
                 #     lambda category, value: int(
