@@ -254,12 +254,6 @@ class StaticEntity(object):
         else:
             self._labs = {}
 
-        if len(self._keys) == 1:
-            self._elements = {k: {} for k in self._labels[self._keys[0]]}
-        else:
-            self._elements = self.elements_by_level(0, translate=True)
-            # self._dual = self.elements_by_level(1, translate=True)
-
     @property
     def arr(self):
         if self._arr is not None:
@@ -393,13 +387,17 @@ class StaticEntity(object):
 
         level1 = elements, level2 = children
         """
-        return self._elements
-        # if len(self._keys) == 1:
-        #     return {k: {} for k in self._labels[self._keys[0]]}
-        # else:
-        #     return self.elements_by_level(0, translate=True)
-        #     self._dual = self.elements_by_level(1, translate=True)
-        
+        # return self._elements
+
+        try:
+            return self._elements
+        except:
+            if len(self._keys) == 1:
+                self._elements = {k: {} for k in self._labels[self._keys[0]]}
+                return self._elements
+            else:
+                self._elements = self.elements_by_level(0, translate=True)
+                return self._elements        
 
     @property
     def children(self):

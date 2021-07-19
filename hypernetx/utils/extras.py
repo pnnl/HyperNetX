@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from collections.abc import Callable
 import numpy as np
 
@@ -7,6 +7,7 @@ __all__ = [
     "DefaultOrderedDict",
     "remove_row_duplicates",
     "create_labels",
+    "reverse_dictionary"
 ]
 
 
@@ -124,3 +125,12 @@ def create_labels(
     enames = np.array([f"{edgeprefix}{idx}" for idx in range(num_edges)])
     nnames = np.array([f"{nodeprefix}{jdx}" for jdx in range(num_nodes)])
     return OrderedDict([(edgelabel, enames), (nodelabel, nnames)])
+
+
+def reverse_dictionary(d):
+    new_d = defaultdict(list)
+    for key, values in d.items():
+        for val in values:
+            new_d[val].append(key)
+
+    return new_d
