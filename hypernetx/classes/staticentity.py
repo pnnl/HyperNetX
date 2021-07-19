@@ -7,7 +7,7 @@ import networkx as nx
 from hypernetx import *
 from hypernetx.exception import HyperNetXError
 from hypernetx.classes.entity import Entity, EntitySet
-from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates
+from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates, reverse_dictionary
 from scipy.sparse import coo_matrix, csr_matrix, issparse
 import itertools as it
 import pandas as pd

@@ -542,7 +542,7 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
                     if return_full_data:
                         transition_events[t+dt].append(('S', node))
             elif status[node] == 'S':
-                for edge_id in H.nodes[node]:
+                for edge_id in H.edges.memberships[node]:
                     members = H.edges[edge_id]
                     
                     if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
@@ -650,7 +650,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
 
     for node in initial_infecteds:
         infecteds.update(node)
-        for edge_id in H.nodes[node]:
+        for edge_id in H.edges.memberships[node]:
             members = H.edges[edge_id]
             for node in members:
                 is_infectious = transmission_function(node, status, members, **args)
@@ -680,7 +680,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             status[recovering_node] = 'R'
 
             # remove edges that are no longer infectious because of this node recovering
-            for edge_id in H.nodes[recovering_node]:
+            for edge_id in H.edges.memberships[recovering_node]:
                 members = H.edges[edge_id]
                 for node in members:
                     is_infectious = transmission_function(node, status, members, **args)
@@ -701,7 +701,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             infecteds.update(recipient)
 
             # remove the infectious links, because they can't infect an infected node.
-            for edge_id in H.nodes[recipient]:
+            for edge_id in H.edges.memberships[recipient]:
                 members = H.edges[edge_id]
                 try:
                     infectious_edges[len(members)].remove((edge_id, recipient))
@@ -709,7 +709,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
                     pass
 
             # add edges that are infectious because of this node being infected
-            for edge_id in H.nodes[recipient]:
+            for edge_id in H.edges.memberships[recipient]:
                 members = H.edges[edge_id]
                 for node in members:
                     is_infectious = transmission_function(node, status, members, **args)
@@ -813,7 +813,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
 
     for node in initial_infecteds:
         infecteds.update(node)
-        for edge_id in H.nodes[node]:
+        for edge_id in H.edges.memberships[node]:
             members = H.edges[edge_id]
             for node in members:
                 is_infectious = transmission_function(node, status, members, **args)
@@ -843,7 +843,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             status[recovering_node] = 'S'
 
             # remove edges that are no longer infectious because of this node recovering
-            for edge_id in H.nodes[recovering_node]:
+            for edge_id in H.edges.memberships[recovering_node]:
                 members = H.edges[edge_id]
                 for node in members:
                     is_infectious = transmission_function(node, status, members, **args)
@@ -863,7 +863,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             infecteds.update(recipient)
 
             # remove the infectious links, because they can't infect an infected node.
-            for edge_id in H.nodes[recipient]:
+            for edge_id in H.edges.memberships[recipient]:
                 members = H.edges[edge_id]
                 try:
                     infectious_edges[len(members)].remove((edge_id, recipient))
@@ -871,7 +871,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
                     pass
 
             # add edges that are infectious because of this node being infected
-            for edge_id in H.nodes[recipient]:
+            for edge_id in H.edges.memberships[recipient]:
                 members = H.edges[edge_id]
                 for node in members:
                     is_infectious = transmission_function(node, status, members, **args)
