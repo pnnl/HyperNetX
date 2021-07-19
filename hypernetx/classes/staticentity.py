@@ -398,7 +398,7 @@ class StaticEntity(object):
                 return self._elements
 
     @property
-    def def memberships(self):
+    def memberships(self):
         try:
             return self._memberships
         except:

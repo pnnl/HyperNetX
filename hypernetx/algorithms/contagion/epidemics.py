@@ -426,7 +426,7 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
                     if return_full_data:
                         transition_events[t+dt].append(('R', node))
             elif status[node] == 'S':
-                for edge_id in H.nodes[node]:
+                for edge_id in H.edges.memberships[node]:
                     members = H.edges[edge_id]
                     if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
                         newStatus[node] = 'I'

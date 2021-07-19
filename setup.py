@@ -18,7 +18,7 @@ setup(
         "hypernetx.utils.toys"
     ],
     version=__version__,
-    author="Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn",
+    author="Brenda Praggastis, Dustin Arendt, Sinan Aksoy, Emilie Purvine, Cliff Joslyn, Nicholas Landry",
     author_email="hypernetx@pnnl.gov",
     url="https://github.com/pnnl/HyperNetX",
     description="HyperNetX is a Python library for the creation and study of hypergraphs.",
@@ -29,6 +29,7 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
+        "celluloid>=0.2.0"
     ],
     license="3-Clause BSD license",
     long_description="""
