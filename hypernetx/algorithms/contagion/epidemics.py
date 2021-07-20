@@ -356,10 +356,17 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
 
     Example:
 
+    >>> import hypernetx.algorithms.contagion as contagion
+    >>> import random
+    >>> import hypernetx as hnx
     >>> n = 1000
     >>> m = 10000
     >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
     >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> tau = {2:0.1, 3:0.1}
+    >>> gamma = 0.1
+    >>> tmax = 100
+    >>> dt = 0.1
     >>> t, S, I, R = contagion.discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     """
     
@@ -487,10 +494,17 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
 
     Example:
 
+    >>> import hypernetx.algorithms.contagion as contagion
+    >>> import random
+    >>> import hypernetx as hnx
     >>> n = 1000
     >>> m = 10000
     >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
     >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> tau = {2:0.1, 3:0.1}
+    >>> gamma = 0.1
+    >>> tmax = 100
+    >>> dt = 0.1
     >>> t, S, I = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     """
 
@@ -597,10 +611,16 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
 
     Example:
 
+    >>> import hypernetx.algorithms.contagion as contagion
+    >>> import random
+    >>> import hypernetx as hnx
     >>> n = 1000
     >>> m = 10000
     >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
     >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> tau = {2:0.1, 3:0.1}
+    >>> gamma = 0.1
+    >>> tmax = 100
     >>> t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     """
     # Initial infecteds and recovereds should be lists or None. Add a check here.
@@ -770,10 +790,16 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
 
     Example:
 
+    >>> import hypernetx.algorithms.contagion as contagion
+    >>> import random
+    >>> import hypernetx as hnx
     >>> n = 1000
     >>> m = 10000
     >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
     >>> H = hnx.Hypergraph(hyperedgeList)
+    >>> tau = {2:0.1, 3:0.1}
+    >>> gamma = 0.1
+    >>> tmax = 100
     >>> t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     """
     # Initial infecteds and recovereds should be lists or None. Add a check here.

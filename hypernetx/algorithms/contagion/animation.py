@@ -29,11 +29,26 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
 
     Example:
 
+    >>> import hypernetx.algorithms.contagion as contagion
+    >>> import random
+    >>> import hypernetx as hnx
+    >>> import matplotlib.pyplot as plt
+    >>> from IPython.display import HTML
     >>> n = 1000
     >>> m = 10000
     >>> hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
     >>> H = hnx.Hypergraph(hyperedgeList)
-    >>> t, S, I = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
+    >>> tau = {2:0.1, 3:0.1}
+    >>> gamma = 0.1
+    >>> tmax = 100
+    >>> dt = 0.1
+    >>> transition_events = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt, return_full_data=True)
+    >>> node_state_color_dict = {"S":"green", "I":"red", "R":"blue"}
+    >>> edge_state_color_dict = {"S":(0, 1, 0, 0.3), "I":(1, 0, 0, 0.3), "R":(0, 0, 1, 0.3), "OFF": (1, 1, 1, 0)}
+    >>> fps = 1
+    >>> fig = plt.figure()
+    >>> animation = contagion.contagion_animation(fig, H, transition_events, node_state_color_dict, edge_state_color_dict, node_radius=1, fps=fps)
+    >>> HTML(animation.to_jshtml())
     """
 
     nodeState = defaultdict(lambda: "S")
