@@ -145,9 +145,11 @@ def majority_vote(node, status, edge):
     >>> status = {0:"S", 1:"I", 2:"I", 3:"S", 4:"R"}
     >>> majority_vote(0, status, (0, 1, 2))
         True
-    >>> collective_contagion(1, status, (0, 1, 2))
+    >>> majority_vote(0, status, (0, 1, 2, 3))
+        True
+    >>> majority_vote(1, status, (0, 1, 2))
         False
-    >>> collective_contagion(3, status, (0, 1, 2))
+    >>> majority_vote(3, status, (0, 1, 2))
         False
     """
 
@@ -170,7 +172,7 @@ def majority_vote(node, status, edge):
 
 # Auxiliary functions
 
-# The ListDict class is copied from Joel Miller's repository Mathematics-of-Epidemics-on-Networks
+# The ListDict class is copied from Joel Miller's Github repository Mathematics-of-Epidemics-on-Networks
 class _ListDict_(object):
     r'''
     The Gillespie algorithm will involve a step that samples a random element 
