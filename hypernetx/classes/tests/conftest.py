@@ -163,4 +163,4 @@ def dataframe():
 
 @ pytest.fixture
 def harry_potter():
-    return HarryPotter()
+    return hnx.HarryPotter()
