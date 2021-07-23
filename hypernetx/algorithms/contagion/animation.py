@@ -8,13 +8,16 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
 
     Parameters
     ----------
-    fig : a matplotlib figure object
-    H : A HyperNetX Hypergraph object
-    transition_events : dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True
-    node_state_color_dict : A dictionary which specifies the colors of each node state. All node states must be specified.
-    edge_state_color_dict : A dictionary with keys that are edge states and values 
-        which specify the colors of each edge state (can specify an alpha parameter). All edge-dependent
-        transition states must be specified (most common is "I") and there must be a a default "OFF" setting.
+    fig : matplotlib Figure object
+    H : HyperNetX Hypergraph object
+    transition_events : dictionary
+        The dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True
+    node_state_color_dict : dictionary
+        Dictionary which specifies the colors of each node state. All node states must be specified.
+    edge_state_color_dict : dictionary
+        Dictionary with keys that are edge states and values which specify the colors of each edge state
+        (can specify an alpha parameter). All edge-dependent transition states must be specified
+        (most common is "I") and there must be a a default "OFF" setting.
     node_radius : float, default: 1
         The radius of the nodes to draw
     fps : int > 0, default: 1
@@ -22,7 +25,7 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
     
     Returns
     -------
-    matplotlib animation object
+    matplotlib Animation object
 
     Notes
     -----
