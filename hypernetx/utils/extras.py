@@ -81,7 +81,7 @@ def remove_row_duplicates(data, weights=None, aggregateby=None):
     weights : array_like, optional, default : None
         1-dimensional array_like object, must be the same length as 0-axis of data
         If None then weights are all assigned 1.
-    aggregateby : str, optional, {None, 'count', 'sum', 'mean', 'median', max', 'min'}, default : None
+    aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : None
         Method to aggregate weights of duplicate rows in data. If None, then only 
         de-duped rows will be returned
 
@@ -118,7 +118,7 @@ def remove_row_duplicates(data, weights=None, aggregateby=None):
 
         dfc = pd.concat([df1, df2], axis=1)
 
-        # acceptable values: 'count', 'sum', 'mean', 'median', max', 'min'
+        # acceptable values: 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'
         if aggregateby == 'count':
             G = dfc.groupby(list(df1.columns)).count()
         elif aggregateby == 'sum':
@@ -131,10 +131,18 @@ def remove_row_duplicates(data, weights=None, aggregateby=None):
             G = dfc.groupby(list(df1.columns)).max()
         elif aggregateby == 'min':
             G = dfc.groupby(list(df1.columns)).min()
-        else:
-            raise HyperNetXError("Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min'")
+        elif aggregateby == 'first':
+            G = dfc.groupby(list(df1.columns)).first()
+        elif aggregateby == 'last':
+            G = dfc.groupby(list(df1.columns)).last()
 
-        return G.reset_index()[df1.columns].values, G.to_dict()[c]
+        else:
+            raise HyperNetXError("Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'")
+
+        if c == 1:
+            return G.reset_index()[df1.columns].values, {tuple([k]): v for k, v in G.to_dict()[c].items()}
+        else:
+            return G.reset_index()[df1.columns].values, G.to_dict()[c]
 
 
 def create_labels(

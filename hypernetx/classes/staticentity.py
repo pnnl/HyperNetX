@@ -32,10 +32,10 @@ class StaticEntity(object):
     labels : OrderedDict of lists, optional, default=None
         User defined labels corresponding to integers in data.
     uid : hashable, optional, default=None
-    weights : array-like, optional, default=None
+    weights : array-like, optional, default : None
         User specified weights corresponding to data, length must equal number
         of rows in data. If None, weight for all rows is assumed to be 1.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
+    aggregateby : str, optional, {'count', 'last', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
         Method to aggregate cell_weights of duplicate rows in data. 
         If None, then deduped rows will have weight = 1.
 
@@ -78,22 +78,12 @@ class StaticEntity(object):
                 self._keys = np.array(list(self._labels.keys()))
                 # returns the index of the category (column)
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                # self._keyindex = lambda category: int(
-                #     np.where(np.array(list(self._labels.keys())) == category)[0]
-                # )
-                # self._index = (
-                #     lambda category, value: int(
-                #         np.where(self._labels[category] == value)[0]
-                #     )
-                #     if np.where(self._labels[category] == value)[0].size > 0
-                #     else None
-                # )
                 self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
                 self._data, self._labels, self._cell_weights = _turn_dataframe_into_entity(
-                    entity, aggregateby=aggregateby
+                    entity, weights=weights, aggregateby=aggregateby
                 )
                 self.__dict__.update(self.properties)
                 self._arr = None
@@ -101,13 +91,6 @@ class StaticEntity(object):
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                # self._index = (
-                #     lambda category, value: int(
-                #         np.where(self._labels[category] == value)[0]
-                #     )
-                #     if np.where(self._labels[category] == value)[0].size > 0
-                #     else None
-                # )
                 self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
 
             else:
@@ -126,13 +109,6 @@ class StaticEntity(object):
                 self._dimsize = len(self._dimensions)  # number of columns
                 self._keys = np.array(list(self._labels.keys()))  # These are the column headers from the dataframe
                 self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                # self._index = (
-                #     lambda category, value: int(
-                #         np.where(self._labels[category] == value)[0]
-                #     )
-                #     if np.where(self._labels[category] == value)[0].size > 0
-                #     else None
-                # )
                 self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
                 self.properties.update(props)
                 self.__dict__.update(
@@ -572,7 +548,7 @@ class StaticEntity(object):
         else:
             return elts
 
-    def incidence_matrix(self, level1=0, level2=1, weighted=False, aggregateby='count', index=False):
+    def incidence_matrix(self, level1=0, level2=1, weights=False, aggregateby='count', index=False):
         """
         Convenience method to navigate large tensor
 
@@ -582,16 +558,16 @@ class StaticEntity(object):
             indexes columns
         level2 : int, optional
             indexes rows
-        weighted : bool, dict optional, default=False
-            If False all nonzero entries are 1. 
-            If True all nonzero entries are filled by self.cell_weight 
+        weights : bool, dict optional, default=False
+            If False all nonzero entries are 1.
+            If True all nonzero entries are filled by self.cell_weight
             dictionary values, use :code:`aggregateby` to specify how duplicate
             entries should have weights aggregated.
-            If dict, then nonzero entries will be filled by dict values. 
-            Dictionary must be keyed by tuples corresponding to rows in self.data, 
+            If dict, then nonzero entries will be filled by dict values.
+            Dictionary must be keyed by tuples corresponding to rows in self.data,
             missing entries will be filled by aggregated self.cell_weight.
         aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
-            Method to aggregate weights of duplicate rows in data. If None, then only 
+            Method to aggregate weights of duplicate rows in data. If None, then only
             de-duped rows will be returned
         index : bool, optional
 
@@ -603,20 +579,30 @@ class StaticEntity(object):
         ----
         In the context of hypergraphs think level1 = edges, level2 = nodes
         """
-        if not weighted:
-            temp = remove_row_duplicates(self.data[:, [level2, level1]])
+        if self.dimsize < 2:
+            warnings.warn('Incidence matrix requires two levels of data.')
+            return None
+        if not weights:  # transpose from the beginning
+            if self.dimsize > 2:
+                temp = remove_row_duplicates(self.data[:, [level2, level1]])
+            else:
+                temp = self.data[:, [level2, level1]]
             result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
-        else:
-            temp, temp_weights = remove_row_duplicates(self.data[:, [level2, level1]],
-                                                       weights=self._weights,
-                                                       aggregateby=aggregateby)
-            if isinstance(weighted, dict):
-                for k, v in weighted:
-                    if k in temp_weights:
-                        temp_weights[k] = weighted[k]
+        else:  # transpose after cell weights are added
+            if self.dimsize > 2:
+                temp, temp_weights = remove_row_duplicates(self.data[:, [level1, level2]],
+                                                           weights=self._weights,
+                                                           aggregateby=aggregateby)
+            else:
+                temp, temp_weights = self.data[:, [level1, level2]], self.cell_weights
+            if isinstance(weights, dict):
+                temp_weights.update(weights)
+                # for k, v in weighted:
+                #     if k in temp_weights:
+                #         temp_weights[k] = weights[k]
             temp_weights = [temp_weights[tuple(t)] for t in temp]
             dtype = int if aggregateby == 'count' else float
-            result = csr_matrix((temp_weights, temp.transpose()), dtype=dtype)
+            result = csr_matrix((temp_weights, temp.transpose()), dtype=dtype).transpose()
 
         if index:  # give index of rows then columns
             return (
@@ -627,7 +613,7 @@ class StaticEntity(object):
         else:
             return result
 
-    def restrict_to_levels(self, levels, uid=None):
+    def restrict_to_levels(self, levels, aggregateby='sum', uid=None):
         """
         Limit Static Entity data to specific labels
 
@@ -636,6 +622,9 @@ class StaticEntity(object):
         levels : array
             index of labels in data
         uid : None, optional
+        aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'sum'
+            Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame. 
+            Default is to add the weights of duplicate rows.
 
         Returns
         -------
@@ -651,9 +640,8 @@ class StaticEntity(object):
                     [(self.keys[lev], self._labs[lev]) for lev in levels]
                 )
                 return self.__class__(labels=newlabels)
-        temp = remove_row_duplicates(self.data[:, levels])
         newlabels = OrderedDict([(self.keys[lev], self._labs[lev]) for lev in levels])
-        return self.__class__(data=temp, labels=newlabels, uid=uid)
+        return self.__class__(data=self.data[:, levels], weights=self._weights, aggregateby=aggregateby, labels=newlabels, uid=uid)
 
     def turn_entity_data_into_dataframe(
         self, data_subset
@@ -868,13 +856,13 @@ class StaticEntitySet(StaticEntity):
         """
         return f"StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})"
 
-    def incidence_matrix(self, weighted=False, aggregateby='count', index=False):
+    def incidence_matrix(self, weights=False, index=False):
         """
-        Convenience method to navigate large tensor
+        Incidence matrix of StaticEntitySet
 
         Parameters
         ----------
-        weighted : bool, dict optional, default=False
+        weight: bool, dict optional, default=False
             If False all nonzero entries are 1. 
             If True all nonzero entries are filled by self.cell_weight 
             dictionary values, use :code:`aggregateby` to specify how duplicate
@@ -882,16 +870,13 @@ class StaticEntitySet(StaticEntity):
             If dict, then nonzero entries will be filled by dict values. 
             Dictionary must be keyed by tuples corresponding to rows in self.data, 
             missing entries will be filled by aggregated self.cell_weight.
-        aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
-            Method to aggregate weights of duplicate rows in data. If None, then only 
-            de-duped rows will be returned
         index : bool, optional
 
         Returns
         -------
         scipy.sparse.csr.csr_matrix
         """
-        return StaticEntity.incidence_matrix(self, weighted=weighted, aggregateby=aggregateby, index=index)
+        return StaticEntity.incidence_matrix(self, weights=weights, index=index)
 
     # def incidence_matrix(self, weighted=False, index=False):
     #     """
@@ -1054,7 +1039,7 @@ def _turn_iterable_to_staticentity(iter_object):
     return _turn_dict_to_staticentity(dict_object)
 
 
-def _turn_dataframe_into_entity(df, aggregateby=None, include_unknowns=False):
+def _turn_dataframe_into_entity(df, weights=None, aggregateby=None, include_unknowns=False):
     """
     Convenience method to reformat dataframe object into data,labels format
     for construction of a static entity
@@ -1063,16 +1048,19 @@ def _turn_dataframe_into_entity(df, aggregateby=None, include_unknowns=False):
     ----------
     df : pandas.DataFrame
         May not contain nans
-    return_counts : bool, optional, default : False
-        Used for keeping weights
+    weights : array-like, optional, default : None
+        User specified weights corresponding to data, length must equal number
+        of rows in data. If None, weight for all rows is assumed to be 1.
+    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
+        Method to aggregate cell_weights of duplicate rows in data. 
     include_unknowns : bool, optional, default : False
         If Unknown <column name> was used to fill in nans
 
     Returns
     -------
     outputdata : numpy.ndarray
-    counts : numpy.array of ints
     slabels : numpy.array of strings
+    cell_weights : dict
 
     """
     columns = df.columns
@@ -1101,7 +1089,7 @@ def _turn_dataframe_into_entity(df, aggregateby=None, include_unknowns=False):
             c = columns[cid]
             data[rid, cid] = ldict[c][df.iloc[rid][c]]
 
-    output_data = remove_row_duplicates(data, aggregateby=aggregateby)
+    output_data = remove_row_duplicates(data, weights=weights, aggregateby=aggregateby)
 
     slabels = OrderedDict()
     for cdx, c in enumerate(columns):

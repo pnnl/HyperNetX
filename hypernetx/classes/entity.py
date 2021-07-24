@@ -30,6 +30,7 @@ class Entity(object):
         Entity.uid then the entities will not be distinguishable and error will be raised.
         The `elements` in the signature will be added to the cloned entity.
 
+    weight : float, optional, default : 1
     props : keyword arguments, optional, default: {}
         properties belonging to the entity added as key=value pairs.
         Both key and value must be hashable.
@@ -90,10 +91,11 @@ class Entity(object):
 
     """
 
-    def __init__(self, uid, elements=[], entity=None, **props):
+    def __init__(self, uid, elements=[], entity=None, weight=1.0, **props):
         super().__init__()
 
         self._uid = uid
+        self.weight = weight
 
         if entity is not None:
             if isinstance(entity, Entity):
