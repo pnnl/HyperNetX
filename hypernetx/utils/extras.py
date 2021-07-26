@@ -182,7 +182,7 @@ def create_labels(
 
 
 def reverse_dictionary(d):
-    new_d = defaultdict(list)
+    new_d = DefaultOrderedDict(list)
     for key, values in d.items():
         for val in values:
             new_d[val].append(key)

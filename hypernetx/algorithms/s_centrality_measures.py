@@ -68,7 +68,8 @@ def _s_centrality(
         Centrality metric specific keyword arguments to be passed to func
 
     Returns
-    : dict
+    -------
+    dict
         dictionary of centrality scores keyed by names
     """
     comps = H.s_component_subgraphs(
@@ -123,7 +124,7 @@ def _s_centrality(
 def s_betweenness_centrality(
     H, s=1, edges=True, normalized=True, return_singletons=True, use_nwhy=True
 ):
-    """
+    r"""
     A centrality measure for an s-edge(node) subgraph of H based on shortest paths.
     Equals the betweenness centrality of vertices in the edge(node) s-linegraph.
 
@@ -134,9 +135,12 @@ def s_betweenness_centrality(
 
     The centrality of edge to all shortest s-edge paths
     $V$ = the set of vertices in the linegraph.  
-    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.  
-    $\sigma(s, t|v)$ = the number of those paths that pass through vertex $v$
-    $$c_B(v) =\sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)}$$
+    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.    
+    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$. 
+
+    .. math::
+
+        c_B(v) = \sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s,t)}
 
     Parameters
     ----------
@@ -152,10 +156,9 @@ def s_betweenness_centrality(
     return_singletons : bool, optional
         if False will ignore singleton components of linegraph
 
-
     Returns
     -------
-     : dict
+    dict
         A dictionary of s-betweenness centrality value of the edges.
 
     """
@@ -183,7 +186,7 @@ def s_betweenness_centrality(
 def s_closeness_centrality(
     H, s=1, edges=True, return_singletons=True, source=None, use_nwhy=True
 ):
-    """
+    r"""
     In a connected component the reciprocal of the sum of the distance between an
     edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
     in the component minus 1.
@@ -191,7 +194,10 @@ def s_closeness_centrality(
     $V$ = the set of vertices in the linegraph.  
     $n = |V|$
     $d$ = shortest path distance
-    $$C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}$$
+
+    .. math::
+    
+        C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}
 
     
     Parameters
@@ -211,7 +217,7 @@ def s_closeness_centrality(
 
     Returns
     -------
-     : dict or float
+    dict or float
         returns the s-closeness centrality value of the edges(nodes).
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.
@@ -250,7 +256,7 @@ def s_harmonic_centrality(
     return_singletons=True,
     use_nwhy=True,
 ):
-    """
+    r"""
     A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
     intersects every other s-edge in H. All values range between 0 and 1.
     Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.
@@ -258,7 +264,10 @@ def s_harmonic_centrality(
     The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.  
     $V$ = the set of vertices in the linegraph.
     $d$ = shortest path distance
-    $$C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}$$
+
+    .. math::
+        
+        C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}
 
     Normalized this becomes:
     $$C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}\cdot\frac{2}{(n-1)(n-2)}$$
@@ -281,7 +290,7 @@ def s_harmonic_centrality(
 
     Returns
     -------
-     : dict or float
+    dict or float
         returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.
@@ -313,11 +322,14 @@ def s_harmonic_centrality(
 def s_eccentricity(
     H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True
 ):
-    """
+    r"""
     The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.  
     $V$ = set of vertices in the linegraph
     $d$ = shortest path distance
-    $$ \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\} $$
+
+    .. math::
+    
+        \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}
 
     Parameters
     ----------
@@ -336,7 +348,7 @@ def s_eccentricity(
 
     Returns
     -------
-     : dict or float
+    dict or float
         returns the s-eccentricity value of the edges(nodes).
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.

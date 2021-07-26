@@ -209,6 +209,15 @@ class StaticEntity(object):
 
     @property
     def arr(self):
+        """
+        Tensor like representation of data indexed by labels with values given by incidence or cell weight.
+
+        Returns
+        -------
+        numpy.ndarray
+            A Numpy ndarray with dimensions equal dimensions of static entity. Entries are cell_weights.
+            self.data gives a list of nonzero coordinates aligned with cell_weights.
+        """
         if self._arr is not None:
             if type(self._arr) == int and self._arr == 0:
                 print("arr cannot be computed")
@@ -231,13 +240,24 @@ class StaticEntity(object):
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
+            Two dimensional array. Each row has system ids of objects in the static entity.
+            Each column corresponds to one level of the static entity.
+
         """
 
         return self._data
 
     @property
     def cell_weights(self):
+        """
+        User defined weights corresponding to unique rows in data. 
+
+        Returns
+        -------
+        numpy.array
+            One dimensional array of values aligned to data.
+        """
         return self._cell_weights
 
     @property
@@ -248,6 +268,8 @@ class StaticEntity(object):
         Returns
         -------
         collections.OrderedDict
+            User defined identifiers for objects in static entity. Ordered keys correspond
+            levels. Ordered values correspond to integer representation of values in data.
         """
         return self._labels
 
@@ -259,6 +281,7 @@ class StaticEntity(object):
         Returns
         -------
         tuple
+            Tuple of number of distinct labels in each level, ordered by level.
         """
         return self._dimensions
 
@@ -270,6 +293,7 @@ class StaticEntity(object):
         Returns
         -------
         int
+            Number of levels in static entity, equals length of self.dimensions
         """
         return self._dimsize
 
@@ -281,6 +305,7 @@ class StaticEntity(object):
         Returns
         -------
         np.ndarray
+            Array of label keys, ordered by level.
         """
         return self._keys
 
@@ -291,11 +316,21 @@ class StaticEntity(object):
         Returns
         -------
         int
+            Index osition of particular label in keys equal to the level of the
+            category.
         """
         return self._keyindex[category]
 
     @property
     def uid(self):
+        """
+        User defined identifier for each object in static entity.
+
+        Returns
+        -------
+        str, int
+            Identifiers, which distinguish  objects within each level.
+        """
         return self._uid
 
     @property
@@ -306,6 +341,7 @@ class StaticEntity(object):
         Returns
         -------
         frozenset
+            Hashable  set of keys.
         """
         return self.uidset_by_level(0)
 
@@ -317,11 +353,10 @@ class StaticEntity(object):
         Returns
         -------
         collections.OrderedDict
+            Same as elements_by_level with level1 = 0, level2 = 1.
+            Compare with EntitySet with level1 = elements, level2 = children.
 
-        level1 = elements, level2 = children
         """
-        # return self._elements
-
         try:
             return self._elements
         except:
@@ -334,11 +369,24 @@ class StaticEntity(object):
 
     @property
     def memberships(self):
+        """
+        Reverses the elements dictionary
+
+        Returns
+        -------
+        collections.OrderedDict
+            Same as elements_by_level with level1 = 1, level2 = 0.
+        """
         try:
             return self._memberships
         except:
-            self._memberships = reverse_dictionary(self.elements)
-            return self._memberships
+            # self._memberships = reverse_dictionary(self.elements)
+            # return self._memberships
+            if len(self._keys) == 1:
+                return None
+            else:
+                self._memberships = self.elements_by_level(1, 0, translate=True)
+                return self._memberships
 
     @property
     def children(self):
@@ -347,20 +395,24 @@ class StaticEntity(object):
 
         Returns
         -------
-        set
+        numpy.array
+            One dimensional array of labels in the second level.
+
         """
         return set(self._labs[1])
 
     @ property
     def incidence_dict(self):
         """
-        Dictionary using index 0 as nodes and index 1 as edges
+        Same as elements.
 
         Returns
         -------
         collections.OrderedDict
+            Same as elements_by_level with level1 = 0, level2 = 1.
+            Compare with EntitySet with level1 = elements, level2 = children.
         """
-        return self.elements_by_level(0, 1, translate=True)
+        return self.elements_by_level(0, translate=True)
 
     @ property
     def dataframe(self):
@@ -370,6 +422,7 @@ class StaticEntity(object):
         Returns
         -------
         pandas.core.frame.DataFrame
+            Dataframe of user defined labels and keys as columns.
         """
         return self.turn_entity_data_into_dataframe(self.data)
 
@@ -380,6 +433,7 @@ class StaticEntity(object):
         Returns
         -------
         int
+            Number of distinct labels in level 0.
         """
         return self._dimensions[0]
 
@@ -563,10 +617,8 @@ class StaticEntity(object):
             If True all nonzero entries are filled by self.cell_weight
             dictionary values, use :code:`aggregateby` to specify how duplicate
             entries should have weights aggregated.
-            If dict, then nonzero entries will be filled by dict values.
-            Dictionary must be keyed by tuples corresponding to rows in self.data,
-            missing entries will be filled by aggregated self.cell_weight.
-        aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
+            If dict, keys must be in self.cell_weight keys; nonzero cells 
+            will be updated by dictionary.        aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
             Method to aggregate weights of duplicate rows in data. If None, then only
             de-duped rows will be returned
         index : bool, optional
@@ -574,6 +626,7 @@ class StaticEntity(object):
         Returns
         -------
         scipy.sparse.csr.csr_matrix
+            Sparse matrix representation of incidence matrix for two levels of static entity.
 
         Note
         ----
@@ -865,49 +918,17 @@ class StaticEntitySet(StaticEntity):
         weight: bool, dict optional, default=False
             If False all nonzero entries are 1. 
             If True all nonzero entries are filled by self.cell_weight 
-            dictionary values, use :code:`aggregateby` to specify how duplicate
-            entries should have weights aggregated.
-            If dict, then nonzero entries will be filled by dict values. 
-            Dictionary must be keyed by tuples corresponding to rows in self.data, 
-            missing entries will be filled by aggregated self.cell_weight.
+            dictionary values.
+            If dict, keys must be in self.cell_weight keys; nonzero cells 
+            will be updated by dictionary.
         index : bool, optional
 
         Returns
         -------
         scipy.sparse.csr.csr_matrix
+            Sparse matrix representation of incidence matrix for static entity set.
         """
         return StaticEntity.incidence_matrix(self, weights=weights, index=index)
-
-    # def incidence_matrix(self, weighted=False, index=False):
-    #     """
-    #     Incidence matrix of StaticEntitySet indexed by uidset
-
-    #     Parameters
-    #     ----------
-    #     sparse : bool, optional
-    #     weighted : bool, optional
-    #     index : bool, optional
-    #         give index of rows then columns
-
-    #     Returns
-    #     -------
-    #     matrix
-    #         scipy.sparse.csr.csr_matrix
-    #     """
-        # if not weighted:
-        #     temp = remove_row_duplicates(self.data[:, [1, 0]])
-        # else:
-        #     temp = self.data[:, [1, 0]]
-        # result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
-
-        # if index:
-        #     return (
-        #         result,
-        #         {k: v for k, v in enumerate(self._labs[1])},
-        #         {k: v for k, v in enumerate(self._labs[0])},
-        #     )
-        # else:
-        #     return result
 
     def restrict_to(self, indices, uid=None):
         """
@@ -929,7 +950,7 @@ class StaticEntitySet(StaticEntity):
 
     def convert_to_entityset(self, uid):
         """
-        Convert given uid of Static EntitySet into EntitySet
+        Convert Static EntitySet into EntitySet with given uid.
 
         Parameters
         ----------
@@ -950,6 +971,7 @@ class StaticEntitySet(StaticEntity):
         """
         Returns StaticEntitySet after collapsing elements if they have same children
         If no elements share same children, a copy of the original StaticEntitySet is returned
+        
         Parameters
         ----------
         uid : None, optional
