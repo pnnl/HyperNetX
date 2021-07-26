@@ -57,9 +57,6 @@ setup(
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
-        "notebooks": [
-            "jupyter>=1.0",
-        ],
         "tutorials": ["jupyter>=1.0"],
         "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
         "all": [
