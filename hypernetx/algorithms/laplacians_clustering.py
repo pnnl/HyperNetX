@@ -82,7 +82,7 @@ def prob_trans(H, weights=False, index=True, check_connected=True):
     """
     # hypergraph must be connected
     if check_connected:
-        if not nx.is_connected(H.bipartite()):
+        if not H.is_connected():
             raise HyperNetXError("hypergraph must be connected")
 
     # if no weighting function, each step in the random walk is chosen uniformly at random.
