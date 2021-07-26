@@ -1733,15 +1733,14 @@ class Hypergraph:
             if self.nwhy:
                 return g.is_s_connected()
             else:
-                return g.is_connected()
-            return result
+                return nx.is_connected(g)
         else:
             if edges:
                 A = self.edge_adjacency_matrix(s=s)
             else:
                 A = self.adjacency_matrix(s=s)
-            G = nx.from_scipy_sparse_matrix(A)
-            return nx.is_connected(G)
+            g = nx.from_scipy_sparse_matrix(A)
+            return nx.is_connected(g)
 
     def singletons(self):
         """
