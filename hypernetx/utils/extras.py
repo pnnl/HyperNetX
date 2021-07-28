@@ -1,6 +1,7 @@
 from collections import OrderedDict, defaultdict
 from collections.abc import Callable
 import numpy as np
+import pandas as pd
 
 __all__ = [
     "HNXCount",
@@ -67,7 +68,7 @@ class DefaultOrderedDict(OrderedDict):
         )
 
 
-def remove_row_duplicates(arr, return_counts=False):
+def remove_row_duplicates(data, weights=None, aggregateby=None):
     """
     Wrapper for numpy's unique method.
     Removes duplicate rows in a 2d array and returns counts
@@ -75,20 +76,73 @@ def remove_row_duplicates(arr, return_counts=False):
 
     Parameters
     ----------
-    arr : array_like,
-        2-dimensional array_like object
-    return_counts : bool, optional.  #### Still to do
-        Returns vector of counts ordered by output order
+    data : array_like, pandas.DataFrame
+        2-dimensional array_like object or dataframe
+    weights : array_like, optional, default : None
+        1-dimensional array_like object, must be the same length as 0-axis of data
+        If None then weights are all assigned 1.
+    aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : None
+        Method to aggregate weights of duplicate rows in data. If None, then only 
+        de-duped rows will be returned
 
     Returns
     -------
     : numpy.ndarray
-    : numpy.array
-
+        data with duplicate rows removed
+    : dict
+        keyed by rows in data with aggregated weights
 
 
     """
-    return np.unique(arr, axis=0, return_counts=return_counts)
+    if aggregateby is None:
+        if isinstance(data, pd.DataFrame):
+            return np.unique(data.values, axis=0),
+        else:
+            return np.unique(data, axis=0)
+    else:
+        try:
+            r, c = data.shape
+        except:
+            r, c = np.array(data).shape
+
+        df1 = pd.DataFrame(data, columns=range(c))
+
+        if weights is None:
+            df2 = pd.DataFrame(np.ones((r, 1)), columns=[c])
+        else:
+            if len(weights) < r:
+                raise HyperNetXError(
+                    "length of weight array must match number of rows in data"
+                )
+            df2 = pd.DataFrame(np.array(weights).reshape(r, 1), columns=[c])
+
+        dfc = pd.concat([df1, df2], axis=1)
+
+        # acceptable values: 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'
+        if aggregateby == 'count':
+            G = dfc.groupby(list(df1.columns)).count()
+        elif aggregateby == 'sum':
+            G = dfc.groupby(list(df1.columns)).sum()
+        elif aggregateby == 'mean':
+            G = dfc.groupby(list(df1.columns)).mean()
+        elif aggregateby == 'median':
+            G = dfc.groupby(list(df1.columns)).median()
+        elif aggregateby == 'max':
+            G = dfc.groupby(list(df1.columns)).max()
+        elif aggregateby == 'min':
+            G = dfc.groupby(list(df1.columns)).min()
+        elif aggregateby == 'first':
+            G = dfc.groupby(list(df1.columns)).first()
+        elif aggregateby == 'last':
+            G = dfc.groupby(list(df1.columns)).last()
+
+        else:
+            raise HyperNetXError("Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'")
+
+        if c == 1:
+            return G.reset_index()[df1.columns].values, {tuple([k]): v for k, v in G.to_dict()[c].items()}
+        else:
+            return G.reset_index()[df1.columns].values, G.to_dict()[c]
 
 
 def create_labels(
@@ -128,7 +182,7 @@ def create_labels(
 
 
 def reverse_dictionary(d):
-    new_d = defaultdict(list)
+    new_d = DefaultOrderedDict(list)
     for key, values in d.items():
         for val in values:
             new_d[val].append(key)

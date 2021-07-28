@@ -129,7 +129,7 @@ def test_equality():
     assert e1[1] == e2[1]
     # Different properties only
     e1 = Entity("e1", elts)
-    e2 = Entity("e1", elts, weight=1)
+    e2 = Entity("e1", elts, weight=2)
     assert not e1 == e2
 
 
