@@ -1,4 +1,4 @@
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict, defaultdict, UserList
 from collections.abc import Iterable
 import warnings
 from copy import copy
@@ -584,10 +584,10 @@ class StaticEntity(object):
             elts = OrderedDict([[k, np.array([])] for k in self._labs[level1]])
         elif level1 == level2:
             print(f"level1 equals level2")
-            elts = OrderedDict([[k, np.array([])] for k in self._labs[level1]])
+            elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])
 
         temp = remove_row_duplicates(self.data[:, [level1, level2]])
-        elts = defaultdict(list)
+        elts = defaultdict(UserList)
         for row in temp:
             elts[row[0]].append(row[1])
 
@@ -595,7 +595,7 @@ class StaticEntity(object):
             telts = OrderedDict()
             for kdx, vec in elts.items():
                 k = self._labs[level1][kdx]
-                telts[k] = list()
+                telts[k] = UserList()
                 for vdx in vec:
                     telts[k].append(self._labs[level2][vdx])
             return telts
@@ -971,7 +971,7 @@ class StaticEntitySet(StaticEntity):
         """
         Returns StaticEntitySet after collapsing elements if they have same children
         If no elements share same children, a copy of the original StaticEntitySet is returned
-        
+
         Parameters
         ----------
         uid : None, optional

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from collections.abc import Iterable
+from collections import UserList
 from hypernetx import Entity, EntitySet
 from hypernetx import StaticEntity, StaticEntitySet
 from hypernetx import HyperNetXError
@@ -13,7 +14,7 @@ def test_staticentity_constructor(seven_by_six):
     assert ent.size() == 6
     assert len(ent.uidset) == 6
     assert len(ent.children) == 7
-    assert isinstance(ent.incidence_dict["I"], list)
+    assert isinstance(ent.incidence_dict["I"], UserList)
     assert "I" in ent
     assert "K" in ent
 
@@ -25,7 +26,7 @@ def test_staticentity_property(harry_potter):
     assert len(ent.keys) == 5
     assert len(ent.uidset) == 7
     assert len(ent.elements) == 7
-    assert isinstance(ent.elements['Hufflepuff'], list)
+    assert isinstance(ent.elements['Hufflepuff'], UserList)
     assert ent.is_empty(2) == False
     assert len(ent.incidence_dict['Gryffindor']) == 6
     assert ent.keyindex('House') == 0
