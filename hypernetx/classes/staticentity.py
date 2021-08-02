@@ -1119,7 +1119,7 @@ def _turn_dataframe_into_entity(df, weights=None, aggregateby=None, include_unkn
     if aggregateby is not None:
         return output_data[0], slabels, output_data[1]
     else:
-        return output_data, slabels, {tuple(t): 1 for t in outputdata}
+        return output_data, slabels, {tuple(t): 1 for t in output_data}
 
 
 # helpers

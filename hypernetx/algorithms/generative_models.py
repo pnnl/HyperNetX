@@ -25,7 +25,7 @@ def chung_lu_hypergraph(k1, k2):
 
     Notes
     -----
-    The sums of k1 and k2 should be roughly the same. If they are not the same, it returns a warning but still runs.
+    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
     The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
 
     Example::
@@ -35,14 +35,13 @@ def chung_lu_hypergraph(k1, k2):
         >>> n = 100
         >>> k1 = {i : random.randint(1, 100) for i in range(n)}
         >>> k2 = {i : random.randint(1, 100) for i in range(n)}
-        >>> H = gm.chung_lu_hypergraph(k1, k2, g1, g2, omega)
+        >>> H = gm.chung_lu_hypergraph(k1, k2)
     """
 
     # sort dictionary by degree in decreasing order
     Nlabels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
     Mlabels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
 
-    n = len(k1)
     m = len(k2)
 
     if sum(k1.values()) != sum(k2.values()):
@@ -66,13 +65,12 @@ def chung_lu_hypergraph(k1, k2):
                 r = random.random()
                 if r < q / p:
                     # no duplicates
-                    bipartite_edges.append((u, v))
+                    bipartite_edges.append((v, u))
                 
                 p = q
                 j = j + 1
     
     df = pd.DataFrame(bipartite_edges)
-
     return Hypergraph(df, static=True)
 
 def dcsbm_hypergraph(k1, k2, g1, g2, omega):
@@ -104,7 +102,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Notes
     -----
-    The sums of k1 and k2 should be roughly the same. If they are not the same, it returns a warning but still runs.
+    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
     The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
 
     Example::
@@ -115,7 +113,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
         >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
         >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
         >>> omega = np.array([[100, 10], [10, 100]])
-        >>> h = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+        >>> H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)
     """
 
     # sort dictionary by degree in decreasing order
@@ -135,8 +133,6 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     for label in Mlabels:
         group = g2[label]
         community2Indices[group].append(label)
-    
-    S = sum(k1.values())
 
     bipartite_edges = list()
     
@@ -150,7 +146,11 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     for group1 in community1Indices.keys():
         for group2 in community2Indices.keys():
             # for each constant probability patch
-            groupConstant = omega[group1, group2] / (kappa1[group1]*kappa2[group2])
+            try:
+                groupConstant = omega[group1, group2] / (kappa1[group1]*kappa2[group2])
+            except:
+                groupConstant = 0
+                
             for u in community1Indices[group1]:
                 j = 0
                 v = community2Indices[group2][j] # start from beginning every time
@@ -169,7 +169,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                         r = random.random()
                         if r < q / p:
                         # no duplicates
-                            bipartite_edges.append((u, v))
+                            bipartite_edges.append((v, u))
 
                             p = q
                             j = j + 1

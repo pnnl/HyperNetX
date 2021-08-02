@@ -1675,7 +1675,7 @@ class Hypergraph:
         if self.nwhy:
             tops = self.g.toplexes()
             E = self.edges.restrict_to(tops)
-            return hnx.Hypergraph(E, use_nwhy=True)
+            return Hypergraph(E, use_nwhy=True)
         else:
             if self.isstatic:
                 for e in temp.edges:
