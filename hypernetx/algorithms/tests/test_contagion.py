@@ -3,6 +3,8 @@ import pytest
 import warnings
 import hypernetx.algorithms.contagion as contagion
 import hypernetx as hnx
+import sys
+import random
 
 # Test the contagion functions
 def test_collective_contagion():
@@ -29,3 +31,65 @@ def test_majority_vote():
     assert contagion.majority_vote(0, status, (0, 1, 2, 3)) == True
     assert contagion.majority_vote(1, status, (0, 1, 2)) == False
     assert contagion.majority_vote(3, status, (0, 1, 2)) == False
+
+# Test the epidemic simulations
+def test_discrete_SIR():
+    random.seed(42)
+    n = 100
+    m = 1000
+    hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    H = hnx.Hypergraph(hyperedgeList)
+    tau = {2:0.1, 3:0.1}
+    gamma = 0.1
+    tmax = 100
+    dt = 0.1
+    t, S, I, R = contagion.discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
+    assert max(t) < tmax + dt
+    assert t[1] - t[0] == dt
+    # checks population conservation over all time
+    assert np.array_equal(S + I + R, n*np.ones(len(t))) == True
+
+
+def test_discrete_SIS():
+    random.seed(42)
+    n = 100
+    m = 1000
+    hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    H = hnx.Hypergraph(hyperedgeList)
+    tau = {2:0.1, 3:0.1}
+    gamma = 0.1
+    tmax = 100
+    dt = 0.1
+    t, S, I = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
+    assert max(t) < tmax + dt
+    assert t[1] - t[0] == dt
+    # checks population conservation over all time
+    assert np.array_equal(S + I, n*np.ones(len(t))) == True
+
+def test_Gillespie_SIR():
+    random.seed(42)
+    n = 100
+    m = 1000
+    hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    H = hnx.Hypergraph(hyperedgeList)
+    tau = {2:0.1, 3:0.1}
+    gamma = 0.1
+    tmax = 100
+    t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    assert max(t) < tmax
+    # checks population conservation over all time
+    assert np.array_equal(S + I + R, n*np.ones(len(t))) == True
+
+def test_Gillespie_SIS():
+    random.seed(42)
+    n = 100
+    m = 1000
+    hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]
+    H = hnx.Hypergraph(hyperedgeList)
+    tau = {2:0.1, 3:0.1}
+    gamma = 0.1
+    tmax = 100
+    t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    assert max(t) < tmax
+    # checks population conservation over all time
+    assert np.array_equal(S + I, n*np.ones(len(t))) == True
