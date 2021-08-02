@@ -361,7 +361,7 @@ class StaticEntity(object):
             return self._elements
         except:
             if len(self._keys) == 1:
-                self._elements = {k: {} for k in self._labels[self._keys[0]]}
+                self._elements = {k: UserList() for k in self._labels[self._keys[0]]}
                 return self._elements
             else:
                 self._elements = self.elements_by_level(0, translate=True)
@@ -581,21 +581,20 @@ class StaticEntity(object):
 
         if level2 > self.dimsize - 1 or level2 < 0:
             print(f"This StaticEntity has no level {level2}.")
-            elts = OrderedDict([[k, np.array([])] for k in self._labs[level1]])
+            elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])
         elif level1 == level2:
             print(f"level1 equals level2")
             elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])
 
         temp = remove_row_duplicates(self.data[:, [level1, level2]])
-        elts = defaultdict(UserList)
+        elts = DefaultOrderedDict(UserList)
         for row in temp:
             elts[row[0]].append(row[1])
 
         if translate:
-            telts = OrderedDict()
+            telts = DefaultOrderedDict(UserList)
             for kdx, vec in elts.items():
                 k = self._labs[level1][kdx]
-                telts[k] = UserList()
                 for vdx in vec:
                     telts[k].append(self._labs[level2][vdx])
             return telts
@@ -668,7 +667,7 @@ class StaticEntity(object):
 
     def restrict_to_levels(self, levels, aggregateby='sum', uid=None):
         """
-        Limit Static Entity data to specific labels
+        Limit Static Entity data to specific levels
 
         Parameters
         ----------
