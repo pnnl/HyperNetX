@@ -1,6 +1,8 @@
 from networkx import bipartite
 import os
 
+__all__ = ["GeneData"]
+
 class GeneData():
     def __init__(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))

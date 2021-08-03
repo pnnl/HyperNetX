@@ -173,8 +173,13 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     Nlabels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
     Mlabels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
 
-    if sum(k1.values()) != sum(k2.values()):
+    # these checks verify that the sum of node and edge degrees and the sum of node degrees
+    # and the sum of community connection matrix differ by less than a single edge.
+    if abs(sum(k1.values()) - sum(k2.values())) > 1:
         warnings.warn('The sum of the degree sequence does not match the sum of the size sequence')
+
+    if abs(sum(k1.values()) - np.sum(omega)) > 1:
+        warnings.warn('The sum of the degree sequence does not match the entries in the omega matrix')
 
     # get indices for each community
     community1Indices = defaultdict(list)
