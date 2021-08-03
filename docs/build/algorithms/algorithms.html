@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms package &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>algorithms package &mdash; HyperNetX 1.0.5 documentation</title>
   
 
   
@@ -107,6 +107,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">algorithms package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-algorithms.generative_models">algorithms.generative_models module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.homology_mod2">algorithms.homology_mod2 module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.laplacians_clustering">algorithms.laplacians_clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a></li>
@@ -212,6 +213,83 @@
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-algorithms.generative_models">
+<span id="algorithms-generative-models-module"></span><h2>algorithms.generative_models module<a class="headerlink" href="#module-algorithms.generative_models" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.generative_models.chung_lu_hypergraph">
+<span class="sig-prename descclassname"><span class="pre">algorithms.generative_models.</span></span><span class="sig-name descname"><span class="pre">chung_lu_hypergraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/generative_models.html#chung_lu_hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.generative_models.chung_lu_hypergraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for
+bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
+<li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>HyperNetX Hypergraph object</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
+The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.generative_models</span> <span class="k">as</span> <span class="nn">gm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k1</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k2</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">gm</span><span class="o">.</span><span class="n">chung_lu_hypergraph</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.generative_models.dcsbm_hypergraph">
+<span class="sig-prename descclassname"><span class="pre">algorithms.generative_models.</span></span><span class="sig-name descname"><span class="pre">dcsbm_hypergraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/generative_models.html#dcsbm_hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.generative_models.dcsbm_hypergraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for
+bipartite networks by Larremore et al. in <a class="reference external" href="https://doi.org/10.1103/PhysRevE.90.012805">https://doi.org/10.1103/PhysRevE.90.012805</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
+<li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
+<li><p><strong>g1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are the group ids to which the node belongs.
+The keys must match the keys of k1.</p></li>
+<li><p><strong>g2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are the group ids to which the edge belongs.
+The keys must match the keys of k2.</p></li>
+<li><p><strong>omega</strong> (<em>2D numpy array</em>) – This is a matrix with entries which specify the number of edges between a given node community and edge community.
+The number of rows must match the number of node communities and the number of columns
+must match the number of edge communities.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>HyperNetX Hypergraph object</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
+The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k1</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k2</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">gm</span><span class="o">.</span><span class="n">dcsbm_hypergraph</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-algorithms.homology_mod2">
 <span id="algorithms-homology-mod2-module"></span><h2>algorithms.homology_mod2 module<a class="headerlink" href="#module-algorithms.homology_mod2" title="Permalink to this headline">¶</a></h2>
@@ -1000,7 +1078,7 @@ If source then a single value is returned.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2018 Battelle Memorial Institute.
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>

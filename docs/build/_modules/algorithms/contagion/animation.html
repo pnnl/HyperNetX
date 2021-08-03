@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms.contagion.animation &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>algorithms.contagion.animation &mdash; HyperNetX 1.0.5 documentation</title>
   
 
   
@@ -179,13 +179,16 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    fig : a matplotlib figure object</span>
-<span class="sd">    H : A HyperNetX Hypergraph object</span>
-<span class="sd">    transition_events : dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True</span>
-<span class="sd">    node_state_color_dict : A dictionary which specifies the colors of each node state. All node states must be specified.</span>
-<span class="sd">    edge_state_color_dict : A dictionary with keys that are edge states and values </span>
-<span class="sd">        which specify the colors of each edge state (can specify an alpha parameter). All edge-dependent</span>
-<span class="sd">        transition states must be specified (most common is &quot;I&quot;) and there must be a a default &quot;OFF&quot; setting.</span>
+<span class="sd">    fig : matplotlib Figure object</span>
+<span class="sd">    H : HyperNetX Hypergraph object</span>
+<span class="sd">    transition_events : dictionary</span>
+<span class="sd">        The dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True</span>
+<span class="sd">    node_state_color_dict : dictionary</span>
+<span class="sd">        Dictionary which specifies the colors of each node state. All node states must be specified.</span>
+<span class="sd">    edge_state_color_dict : dictionary</span>
+<span class="sd">        Dictionary with keys that are edge states and values which specify the colors of each edge state</span>
+<span class="sd">        (can specify an alpha parameter). All edge-dependent transition states must be specified</span>
+<span class="sd">        (most common is &quot;I&quot;) and there must be a a default &quot;OFF&quot; setting.</span>
 <span class="sd">    node_radius : float, default: 1</span>
 <span class="sd">        The radius of the nodes to draw</span>
 <span class="sd">    fps : int &gt; 0, default: 1</span>
@@ -193,33 +196,33 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    matplotlib animation object</span>
+<span class="sd">    matplotlib Animation object</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
-<span class="sd">    Example:</span>
+<span class="sd">    Example::</span>
 
-<span class="sd">    &gt;&gt;&gt; import hypernetx.algorithms.contagion as contagion</span>
-<span class="sd">    &gt;&gt;&gt; import random</span>
-<span class="sd">    &gt;&gt;&gt; import hypernetx as hnx</span>
-<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
-<span class="sd">    &gt;&gt;&gt; from IPython.display import HTML</span>
-<span class="sd">    &gt;&gt;&gt; n = 1000</span>
-<span class="sd">    &gt;&gt;&gt; m = 10000</span>
-<span class="sd">    &gt;&gt;&gt; hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]</span>
-<span class="sd">    &gt;&gt;&gt; H = hnx.Hypergraph(hyperedgeList)</span>
-<span class="sd">    &gt;&gt;&gt; tau = {2:0.1, 3:0.1}</span>
-<span class="sd">    &gt;&gt;&gt; gamma = 0.1</span>
-<span class="sd">    &gt;&gt;&gt; tmax = 100</span>
-<span class="sd">    &gt;&gt;&gt; dt = 0.1</span>
-<span class="sd">    &gt;&gt;&gt; transition_events = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt, return_full_data=True)</span>
-<span class="sd">    &gt;&gt;&gt; node_state_color_dict = {&quot;S&quot;:&quot;green&quot;, &quot;I&quot;:&quot;red&quot;, &quot;R&quot;:&quot;blue&quot;}</span>
-<span class="sd">    &gt;&gt;&gt; edge_state_color_dict = {&quot;S&quot;:(0, 1, 0, 0.3), &quot;I&quot;:(1, 0, 0, 0.3), &quot;R&quot;:(0, 0, 1, 0.3), &quot;OFF&quot;: (1, 1, 1, 0)}</span>
-<span class="sd">    &gt;&gt;&gt; fps = 1</span>
-<span class="sd">    &gt;&gt;&gt; fig = plt.figure()</span>
-<span class="sd">    &gt;&gt;&gt; animation = contagion.contagion_animation(fig, H, transition_events, node_state_color_dict, edge_state_color_dict, node_radius=1, fps=fps)</span>
-<span class="sd">    &gt;&gt;&gt; HTML(animation.to_jshtml())</span>
+<span class="sd">        &gt;&gt;&gt; import hypernetx.algorithms.contagion as contagion</span>
+<span class="sd">        &gt;&gt;&gt; import random</span>
+<span class="sd">        &gt;&gt;&gt; import hypernetx as hnx</span>
+<span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">        &gt;&gt;&gt; from IPython.display import HTML</span>
+<span class="sd">        &gt;&gt;&gt; n = 1000</span>
+<span class="sd">        &gt;&gt;&gt; m = 10000</span>
+<span class="sd">        &gt;&gt;&gt; hyperedgeList = [random.sample(range(n), k=random.choice([2,3])) for i in range(m)]</span>
+<span class="sd">        &gt;&gt;&gt; H = hnx.Hypergraph(hyperedgeList)</span>
+<span class="sd">        &gt;&gt;&gt; tau = {2:0.1, 3:0.1}</span>
+<span class="sd">        &gt;&gt;&gt; gamma = 0.1</span>
+<span class="sd">        &gt;&gt;&gt; tmax = 100</span>
+<span class="sd">        &gt;&gt;&gt; dt = 0.1</span>
+<span class="sd">        &gt;&gt;&gt; transition_events = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt, return_full_data=True)</span>
+<span class="sd">        &gt;&gt;&gt; node_state_color_dict = {&quot;S&quot;:&quot;green&quot;, &quot;I&quot;:&quot;red&quot;, &quot;R&quot;:&quot;blue&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; edge_state_color_dict = {&quot;S&quot;:(0, 1, 0, 0.3), &quot;I&quot;:(1, 0, 0, 0.3), &quot;R&quot;:(0, 0, 1, 0.3), &quot;OFF&quot;: (1, 1, 1, 0)}</span>
+<span class="sd">        &gt;&gt;&gt; fps = 1</span>
+<span class="sd">        &gt;&gt;&gt; fig = plt.figure()</span>
+<span class="sd">        &gt;&gt;&gt; animation = contagion.contagion_animation(fig, H, transition_events, node_state_color_dict, edge_state_color_dict, node_radius=1, fps=fps)</span>
+<span class="sd">        &gt;&gt;&gt; HTML(animation.to_jshtml())</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nodeState</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">)</span>
@@ -266,7 +269,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2018 Battelle Memorial Institute.
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms.laplacians_clustering &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>algorithms.laplacians_clustering &mdash; HyperNetX 1.0.5 documentation</title>
   
 
   
@@ -175,7 +175,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">Hypergraph Probability Transition Matrices, Laplacians, and Clustering</span>
-<span class="sd">=====================</span>
+<span class="sd">======================================================================</span>
 <span class="sd">We contruct hypergraph random walks utilizing optional &quot;edge-dependent vertex weights&quot;, which are </span>
 <span class="sd">weights associated with each vertex-hyperedge pair (i.e. cell weights on the incidence matrix).</span>
 <span class="sd">The probability transition matrix of this random walk is used to construct a normalized Laplacian </span>
@@ -253,7 +253,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># hypergraph must be connected</span>
     <span class="k">if</span> <span class="n">check_connected</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_connected</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">bipartite</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;hypergraph must be connected&quot;</span><span class="p">)</span>
 
     <span class="c1"># if no weighting function, each step in the random walk is chosen uniformly at random.</span>
@@ -421,7 +421,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2018 Battelle Memorial Institute.
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>

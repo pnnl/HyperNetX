@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>classes package &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>classes package &mdash; HyperNetX 1.0.5 documentation</title>
   
 
   
@@ -2271,8 +2271,9 @@ size 1 with a node of degree 1.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.size">
-<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>The number of nodes that belong to edge.</p>
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodeset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes in nodeset that belong to edge.
+If nodeset is None then returns the size of edge</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>edge</strong> (<em>hashable</em>) – The uid of an edge in the hypergraph</p>
@@ -2737,7 +2738,7 @@ inclusive</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.restrict_to_levels">
 <span class="sig-name descname"><span class="pre">restrict_to_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.restrict_to_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.restrict_to_levels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Limit Static Entity data to specific labels</p>
+<dd><p>Limit Static Entity data to specific levels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2979,7 +2980,7 @@ will be updated by dictionary.</p></li>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2018 Battelle Memorial Institute.
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>

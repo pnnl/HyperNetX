@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms.contagion package &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>algorithms.contagion package &mdash; HyperNetX 1.0.5 documentation</title>
   
 
   
@@ -106,6 +106,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="algorithms.html">algorithms package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="algorithms.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="algorithms.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms.html#module-algorithms.generative_models">algorithms.generative_models module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="algorithms.html#module-algorithms.homology_mod2">algorithms.homology_mod2 module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="algorithms.html#module-algorithms.laplacians_clustering">algorithms.laplacians_clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="algorithms.html#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a></li>
@@ -209,12 +210,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<em>a matplotlib figure object</em>) – </p></li>
-<li><p><strong>H</strong> (<em>A HyperNetX Hypergraph object</em>) – </p></li>
-<li><p><strong>transition_events</strong> (<em>dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True</em>) – </p></li>
-<li><p><strong>node_state_color_dict</strong> (<em>A dictionary which specifies the colors of each node state. All node states must be specified.</em>) – </p></li>
-<li><p><strong>edge_state_color_dict</strong> (<em>A dictionary with keys that are edge states and values</em>) – which specify the colors of each edge state (can specify an alpha parameter). All edge-dependent
-transition states must be specified (most common is “I”) and there must be a a default “OFF” setting.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib Figure object</em>) – </p></li>
+<li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
+<li><p><strong>transition_events</strong> (<em>dictionary</em>) – The dictionary that is output from the discrete_SIS and discrete_SIR functions with return_full_data=True</p></li>
+<li><p><strong>node_state_color_dict</strong> (<em>dictionary</em>) – Dictionary which specifies the colors of each node state. All node states must be specified.</p></li>
+<li><p><strong>edge_state_color_dict</strong> (<em>dictionary</em>) – Dictionary with keys that are edge states and values which specify the colors of each edge state
+(can specify an alpha parameter). All edge-dependent transition states must be specified
+(most common is “I”) and there must be a a default “OFF” setting.</p></li>
 <li><p><strong>node_radius</strong> (<em>float</em><em>, </em><em>default: 1</em>) – The radius of the nodes to draw</p></li>
 <li><p><strong>fps</strong> (<em>int &gt; 0</em><em>, </em><em>default: 1</em>) – Frames per second of the animation</p></li>
 </ul>
@@ -223,12 +225,12 @@ transition states must be specified (most common is “I”) and there must be a
 <dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib animation object</p>
+<dd class="field-odd"><p>matplotlib Animation object</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -266,27 +268,29 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<em>A HyperNetX Hypergraph object</em>) – </p></li>
-<li><p><strong>tau</strong> (<em>dictionary with edge sizes as keys</em><em> (</em><em>must account for all edge sizes present</em><em>) </em><em>and rates of infection for each size</em><em> (</em><em>float</em><em>)</em>) – </p></li>
-<li><p><strong>gamma</strong> (<em>A float which prescribes the healing rate</em>) – </p></li>
-<li><p><strong>transmission_function</strong> (<em>a function has required arguments</em><em> (</em><em>node</em><em>, </em><em>status</em><em>, </em><em>edge</em><em>) </em><em>and optional arguments</em><em>, </em><em>Default value is the threshold function described above.</em>) – </p></li>
-<li><p><strong>initial_infecteds</strong> (<em>An iterable of initially infected node uids</em><em>, </em><em>Default: None</em>) – </p></li>
-<li><p><strong>rho</strong> (<em>Float from 0 to 1</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
-<li><p><strong>tmin</strong> (<em>Float</em><em>, </em><em>Default: 0</em>) – Time at the start of the simulation</p></li>
-<li><p><strong>tmax</strong> (<em>Float</em><em>, </em><em>Default: Infinity</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
+<li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – The healing rate</p></li>
+<li><p><strong>transmission_function</strong> (<em>lambda function</em><em>, </em><em>default: threshold</em>) – A lambda function that has required arguments (node, status, edge) and optional arguments</p></li>
+<li><p><strong>initial_infecteds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – Iterable of initially infected node uids</p></li>
+<li><p><strong>initial_recovereds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – An iterable of initially recovered node uids</p></li>
+<li><p><strong>rho</strong> (<em>float from 0 to 1</em><em>, </em><em>default: None</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
+<li><p><strong>tmin</strong> (<em>float</em><em>, </em><em>default: 0</em>) – Time at the start of the simulation</p></li>
+<li><p><strong>tmax</strong> (<em>float</em><em>, </em><em>default: float</em><em>(</em><em>'Inf'</em><em>)</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>return_full_data</strong> (<em>bool</em><em>, </em><em>default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p><strong>t, S, I, R</strong> – time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>returns numpy arrays with the time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p>
+<dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -312,27 +316,28 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<em>A HyperNetX Hypergraph object</em>) – </p></li>
-<li><p><strong>tau</strong> (<em>dictionary with edge sizes as keys</em><em> (</em><em>must account for all edge sizes present</em><em>) </em><em>and rates of infection for each size</em><em> (</em><em>float</em><em>)</em>) – </p></li>
-<li><p><strong>gamma</strong> (<em>A float which prescribes the healing rate</em>) – </p></li>
-<li><p><strong>transmission_function</strong> (<em>a function has required arguments</em><em> (</em><em>node</em><em>, </em><em>status</em><em>, </em><em>edge</em><em>) </em><em>and optional arguments</em><em>, </em><em>Default value is the threshold function described above.</em>) – </p></li>
-<li><p><strong>initial_infecteds</strong> (<em>An iterable of initially infected node uids</em><em>, </em><em>Default: None</em>) – </p></li>
-<li><p><strong>rho</strong> (<em>Float from 0 to 1</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
-<li><p><strong>tmin</strong> (<em>Float</em><em>, </em><em>Default: 0</em>) – Time at the start of the simulation</p></li>
-<li><p><strong>tmax</strong> (<em>Float</em><em>, </em><em>Default: Infinity</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
+<li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – The healing rate</p></li>
+<li><p><strong>transmission_function</strong> (<em>lambda function</em><em>, </em><em>default: threshold</em>) – A lambda function that has required arguments (node, status, edge) and optional arguments</p></li>
+<li><p><strong>initial_infecteds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – Iterable of initially infected node uids</p></li>
+<li><p><strong>rho</strong> (<em>float from 0 to 1</em><em>, </em><em>default: None</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
+<li><p><strong>tmin</strong> (<em>float</em><em>, </em><em>default: 0</em>) – Time at the start of the simulation</p></li>
+<li><p><strong>tmax</strong> (<em>float</em><em>, </em><em>default: 100</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>return_full_data</strong> (<em>bool</em><em>, </em><em>default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p><strong>t, S, I</strong> – time (t), number of susceptible (S), and infected (I) at each time.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>returns numpy arrays with the time (t), number of susceptible (S) and infected (I) at each time.</p>
+<dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -356,21 +361,21 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<em>Hashable of the node uid to infect</em><em> (</em><em>If it doesn't have status &quot;S&quot;</em><em>, </em><em>it will automatically return False</em><em>)</em>) – </p></li>
-<li><p><strong>status</strong> (<em>dictionary with nodes as keys and values as statuses</em><em> (</em><em>The infected state denoted with &quot;I&quot;</em><em>)</em>) – </p></li>
-<li><p><strong>edge</strong> (<em>An iterable of node ids</em><em> (</em><em>node must be in the edge</em><em> or </em><em>it will automatically return False</em><em>)</em>) – </p></li>
+<li><p><strong>node</strong> (<em>hashable</em>) – the node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
+<li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
+<li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool which is False if there is no potential to infect and True if there is.</p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">collective_contagion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="go">    True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">collective_contagion</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -392,31 +397,41 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<em>A HyperNetX Hypergraph object</em>) – </p></li>
-<li><p><strong>tau</strong> (<em>dictionary with edge sizes as keys</em><em> (</em><em>must account for all edge sizes present</em><em>) </em><em>and rates of infection for each size</em><em> (</em><em>float</em><em>)</em>) – </p></li>
-<li><p><strong>gamma</strong> (<em>A float which prescribes the healing rate</em>) – </p></li>
-<li><p><strong>transmission_function</strong> (<em>a function has required arguments</em><em> (</em><em>node</em><em>, </em><em>status</em><em>, </em><em>edge</em><em>) </em><em>and optional arguments</em><em>, </em><em>Default value is the threshold function described above.</em>) – </p></li>
-<li><p><strong>initial_infecteds</strong> (<em>An iterable of initially infected node uids</em><em>, </em><em>Default: None</em>) – </p></li>
-<li><p><strong>initial_recovereds</strong> (<em>An iterable of initially recovered node uids</em><em>, </em><em>Default: None</em>) – </p></li>
-<li><p><strong>rho</strong> (<em>Float from 0 to 1</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
-<li><p><strong>tmin</strong> (<em>Float</em><em>, </em><em>Default: 0</em>) – Time at the start of the simulation</p></li>
-<li><p><strong>tmax</strong> (<em>Float</em><em>, </em><em>Default: Infinity</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
-<li><p><strong>dt</strong> (<em>Float that is greater than 0</em><em>, </em><em>Default: 1.0</em>) – Step forward in time that the simulation takes at each step.</p></li>
-<li><p><strong>return_full_data</strong> (<em>Bool</em><em>, </em><em>Default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
+<li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
+<li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – The healing rate</p></li>
+<li><p><strong>transmission_function</strong> (<em>lambda function</em><em>, </em><em>default: threshold</em>) – A lambda function that has required arguments (node, status, edge) and optional arguments</p></li>
+<li><p><strong>initial_infecteds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – Iterable of initially infected node uids</p></li>
+<li><p><strong>initial_recovereds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – An iterable of initially recovered node uids</p></li>
+<li><p><strong>rho</strong> (<em>float from 0 to 1</em><em>, </em><em>default: None</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
+<li><p><strong>tmin</strong> (<em>float</em><em>, </em><em>default: 0</em>) – Time at the start of the simulation</p></li>
+<li><p><strong>tmax</strong> (<em>float</em><em>, </em><em>default: float</em><em>(</em><em>'Inf'</em><em>)</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>dt</strong> (<em>float &gt; 0</em><em>, </em><em>default: 1.0</em>) – Step forward in time that the simulation takes at each step.</p></li>
+<li><p><strong>return_full_data</strong> (<em>bool</em><em>, </em><em>default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>if return_full_data</em> – returns a dictionary with time as the keys and events that happen as the values.</p></li>
-<li><p><em>else</em> – returns numpy arrays with the time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p></li>
+<dd class="field-even"><p><ul>
+<li><p><em>if return_full_data</em> –</p>
+<dl class="simple">
+<dt>dictionary</dt><dd><p>Time as the keys and events that happen as the values.</p>
+</dd>
+</dl>
+</li>
+<li><p><em>else</em> –</p>
+<dl class="simple">
+<dt>t, S, I, R<span class="classifier">numpy arrays</span></dt><dd><p>time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -443,30 +458,40 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<em>A HyperNetX Hypergraph object</em>) – </p></li>
-<li><p><strong>tau</strong> (<em>dictionary with edge sizes as keys</em><em> (</em><em>must account for all edge sizes present</em><em>) </em><em>and rates of infection for each size</em><em> (</em><em>float</em><em>)</em>) – </p></li>
-<li><p><strong>gamma</strong> (<em>A float which prescribes the healing rate</em>) – </p></li>
-<li><p><strong>transmission_function</strong> (<em>a function has required arguments</em><em> (</em><em>node</em><em>, </em><em>status</em><em>, </em><em>edge</em><em>) </em><em>and optional arguments</em><em>, </em><em>Default value is the threshold function described above.</em>) – </p></li>
-<li><p><strong>initial_infecteds</strong> (<em>An iterable of initially infected node uids</em><em>, </em><em>Default: None</em>) – </p></li>
-<li><p><strong>rho</strong> (<em>Float from 0 to 1</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
-<li><p><strong>tmin</strong> (<em>Float</em><em>, </em><em>Default: 0</em>) – Time at the start of the simulation</p></li>
-<li><p><strong>tmax</strong> (<em>Float</em><em>, </em><em>Default: 100</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
-<li><p><strong>dt</strong> (<em>Float that is greater than 0</em><em>, </em><em>Default: 1.0</em>) – Step forward in time that the simulation takes at each step.</p></li>
-<li><p><strong>return_full_data</strong> (<em>Bool</em><em>, </em><em>Default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
+<li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
+<li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – The healing rate</p></li>
+<li><p><strong>transmission_function</strong> (<em>lambda function</em><em>, </em><em>default: threshold</em>) – A lambda function that has required arguments (node, status, edge) and optional arguments</p></li>
+<li><p><strong>initial_infecteds</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>default: None</em>) – Iterable of initially infected node uids</p></li>
+<li><p><strong>rho</strong> (<em>float from 0 to 1</em><em>, </em><em>default: None</em>) – The fraction of initially infected individuals. Both rho and initially infected cannot be specified.</p></li>
+<li><p><strong>tmin</strong> (<em>float</em><em>, </em><em>default: 0</em>) – Time at the start of the simulation</p></li>
+<li><p><strong>tmax</strong> (<em>float</em><em>, </em><em>default: 100</em>) – Time at which the simulation should be terminated if it hasn’t already.</p></li>
+<li><p><strong>dt</strong> (<em>float &gt; 0</em><em>, </em><em>default: 1.0</em>) – Step forward in time that the simulation takes at each step.</p></li>
+<li><p><strong>return_full_data</strong> (<em>bool</em><em>, </em><em>default: False</em>) – This returns all the infection and recovery events at each time if True.</p></li>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>if return_full_data</em> – returns a dictionary with time as the keys and events that happen as the values.</p></li>
-<li><p><em>else</em> – returns numpy arrays with the time (t), number of susceptible (S) and infected (I) at each time.</p></li>
+<dd class="field-even"><p><ul>
+<li><p><em>if return_full_data</em> –</p>
+<dl class="simple">
+<dt>dictionary</dt><dd><p>Time as the keys and events that happen as the values.</p>
+</dd>
+</dl>
+</li>
+<li><p><em>else</em> –</p>
+<dl class="simple">
+<dt>t, S, I<span class="classifier">numpy arrays</span></dt><dd><p>time (t), number of susceptible (S), and infected (I) at each time.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.contagion</span> <span class="k">as</span> <span class="nn">contagion</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -491,21 +516,21 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<em>Hashable of the node uid to infect</em><em> (</em><em>If it doesn't have status &quot;S&quot;</em><em>, </em><em>it will automatically return False</em><em>)</em>) – </p></li>
-<li><p><strong>status</strong> (<em>dictionary with nodes as keys and values as statuses</em><em> (</em><em>The infected state denoted with &quot;I&quot;</em><em>)</em>) – </p></li>
-<li><p><strong>edge</strong> (<em>An iterable of node ids</em><em> (</em><em>node must be in the edge</em><em> or </em><em>it will automatically return False</em><em>)</em>) – </p></li>
+<li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
+<li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
+<li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool which is False if there is no potential to infect and True if there is.</p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">individual_contagion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="go">    True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">individual_contagion</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -519,27 +544,27 @@ implemented for networks in the EoN package by Joel C. Miller
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.epidemics.majority_vote">
 <span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">majority_vote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#majority_vote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.majority_vote" title="Permalink to this definition">¶</a></dt>
-<dd><p>The majority vote contagion mechanism. Af a majority of neighbors are contagious,
+<dd><p>The majority vote contagion mechanism. If a majority of neighbors are contagious,
 it is possible for an individual to change their opinion. If opinions are divided equally,
 choose randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<em>Hashable of the node uid to infect</em><em> (</em><em>If it doesn't have status &quot;S&quot;</em><em>, </em><em>it will automatically return False</em><em>)</em>) – </p></li>
-<li><p><strong>status</strong> (<em>dictionary with nodes as keys and values as statuses</em><em> (</em><em>The infected state denoted with &quot;I&quot;</em><em>)</em>) – </p></li>
-<li><p><strong>edge</strong> (<em>An iterable of node ids</em><em> (</em><em>node must be in the edge</em><em> or </em><em>it will automatically return False</em>) – </p></li>
+<li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
+<li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
+<li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool which is False if there is no potential to infect and True if there is.</p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">majority_vote</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="go">    True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">majority_vote</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
@@ -559,22 +584,22 @@ choose randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<em>Hashable of the node uid to infect</em><em> (</em><em>If it doesn't have status &quot;S&quot;</em><em>, </em><em>it will automatically return False</em><em>)</em>) – </p></li>
-<li><p><strong>status</strong> (<em>dictionary with nodes as keys and values as statuses</em><em> (</em><em>The infected state denoted with &quot;I&quot;</em><em>)</em>) – </p></li>
-<li><p><strong>edge</strong> (<em>An iterable of node ids</em><em> (</em><em>node must be in the edge</em><em> or </em><em>it will automatically return False</em><em>)</em>) – </p></li>
+<li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
+<li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
+<li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 <li><p><strong>tau</strong> (<em>float between 0 and 1</em><em>, </em><em>default: 0.1</em>) – The fraction of nodes in an edge that must be infected for the edge to be able to transmit to the node</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool which is False if there is no potential to infect and True if there is.</p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;R&quot;</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="go">    True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -605,7 +630,7 @@ choose randomly.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2018 Battelle Memorial Institute.
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>
