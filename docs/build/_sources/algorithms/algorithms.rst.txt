@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+algorithms.generative\_models module
+------------------------------------
+
+.. automodule:: algorithms.generative_models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 algorithms.homology\_mod2 module
 --------------------------------
 

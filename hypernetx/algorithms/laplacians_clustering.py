@@ -4,7 +4,7 @@
 """
 
 Hypergraph Probability Transition Matrices, Laplacians, and Clustering
-=====================
+======================================================================
 We contruct hypergraph random walks utilizing optional "edge-dependent vertex weights", which are 
 weights associated with each vertex-hyperedge pair (i.e. cell weights on the incidence matrix).
 The probability transition matrix of this random walk is used to construct a normalized Laplacian 

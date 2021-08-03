@@ -160,7 +160,8 @@ class Hypergraph:
                 else:
                     E=StaticEntitySet(entity = setsystem)
                 self._edges=E
-                self._nodes=E.restrict_to_levels([1])  
+                self._nodes=E.restrict_to_levels([1])
+                self._nodes._memberships = E.memberships
         else:
             self._static=False
             if setsystem is None:
@@ -709,9 +710,10 @@ class Hypergraph:
             else:
                 return len(memberships)
 
-    def size(self, edge):
+    def size(self, edge, nodeset=None):
         """
-        The number of nodes that belong to edge.
+        The number of nodes in nodeset that belong to edge.
+        If nodeset is None then returns the size of edge
 
         Parameters
         ----------
@@ -723,18 +725,13 @@ class Hypergraph:
         size : int
 
         """
-        if self.isstatic:
-            edx = self.get_id(edge, edges=True)
-            esd = self.state_dict.get("edge_size_dist", None)
-            if esd is not None:
-                return esd[edx]
-            else:
-                if self.nwhy:
-                    return self.g.size(edx)
-                else:
-                    return np.sum(self.edges.data.T[0] == edx)
+        if nodeset:
+            return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
-            return len(self.edges[edge])
+            if self.nwhy:
+                return self.g.size(edx)
+            else:
+                return len(self.edges[edge])
 
     def number_of_nodes(self, nodeset=None):
         """

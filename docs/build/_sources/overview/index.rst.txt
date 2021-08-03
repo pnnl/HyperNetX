@@ -21,23 +21,35 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 * High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Principal Investigator: Cliff Joslyn
 * Program Manager: Mark Raugas, Brian Kritzstein
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
+* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine
 
 
 
 New Features in Version 1.0
 ---------------------------
 
-1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. 
-2. The C++ addon :ref:`nwhy` can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
-3. The JavaScript addon :ref:`widget` can be used to interactively inspect hypergraphs in a Jupyter Notebook.
-4. We've added four new tutorials highlighting the s-centrality metrics, static Hypergraphs, :ref:`nwhy`, and :ref:`widget`.
+#. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. 
+#. The C++ addon :ref:`nwhy` can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
+#. The JavaScript addon :ref:`widget` can be used to interactively inspect hypergraphs in a Jupyter Notebook.
+#. We've added four new tutorials highlighting the s-centrality metrics, static Hypergraphs, :ref:`nwhy`, and :ref:`widget`.
+
+New Features in Version 1.1
+---------------------------
+
+#. Cell weights for incidence matrices.
+#. Three new algorithms modules and their corresponding tutorials
+
+   #. Contagion module for studying SIS and SIR contagion networks using hypergraphs.
+   #. Clustering module for clustering vertices based on hyperedge incidence and weighting.
+   #. Generator module for synthetic generation of ChungLu and DCSBM hypergraphs.
+   
 
 .. _colab:
 
 COLAB Tutorials
 ---------------
-The following tutorials may be run in your browser using Google Colab
+The following tutorials may be run in your browser using Google Colab. Additional tutorials are
+available on `GitHub <https://github.com/pnnl/HyperNetX>`_.
 
 .. raw:: html
 

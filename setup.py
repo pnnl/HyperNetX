@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -46,7 +46,7 @@ setup(
     * High Performance Computing: Tony Liu, Andrew Lumsdaine
     * Principal Investigator: Cliff Joslyn
     * Program Manager: Mark Raugas, Brian Kritzstein
-    * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
+    * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine
 
     The code in this repository is intended to support researchers modeling data
     as hypergraphs. We have a growing community of users and contributors.

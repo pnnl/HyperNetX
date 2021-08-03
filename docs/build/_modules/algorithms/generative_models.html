@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>algorithms.generative_models &mdash; HyperNetX 1.0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>algorithms.generative_models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for algorithms.generative_models</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">Hypergraph</span>
+
+
+
+<div class="viewcode-block" id="chung_lu_hypergraph"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.generative_models.chung_lu_hypergraph">[docs]</a><span class="k">def</span> <span class="nf">chung_lu_hypergraph</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for</span>
+<span class="sd">    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k1 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are node ids and the values are node degrees.</span>
+<span class="sd">    k2 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HyperNetX Hypergraph object</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.</span>
+<span class="sd">    The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm</span>
+<span class="sd">        &gt;&gt;&gt; import random</span>
+<span class="sd">        &gt;&gt;&gt; n = 100</span>
+<span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; k2 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; H = gm.chung_lu_hypergraph(k1, k2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># sort dictionary by degree in decreasing order</span>
+    <span class="n">Nlabels</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+    <span class="n">Mlabels</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">k2</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">k2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k2</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The sum of the degree sequence does not match the sum of the size sequence&#39;</span><span class="p">)</span>
+
+    <span class="n">S</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="n">bipartite_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">Nlabels</span><span class="p">:</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Mlabels</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="c1"># start from beginning every time</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">k1</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">k2</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="o">/</span> <span class="n">S</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">Mlabels</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">k1</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">k2</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="o">/</span> <span class="n">S</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">q</span> <span class="o">/</span> <span class="n">p</span><span class="p">:</span>
+                    <span class="c1"># no duplicates</span>
+                    <span class="n">bipartite_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span>
+                
+                <span class="n">p</span> <span class="o">=</span> <span class="n">q</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+    
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bipartite_edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="dcsbm_hypergraph"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.generative_models.dcsbm_hypergraph">[docs]</a><span class="k">def</span> <span class="nf">dcsbm_hypergraph</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for</span>
+<span class="sd">    bipartite networks by Larremore et al. in https://doi.org/10.1103/PhysRevE.90.012805</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k1 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are node ids and the values are node degrees.</span>
+<span class="sd">    k2 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</span>
+<span class="sd">    g1 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are node ids and the values are the group ids to which the node belongs.</span>
+<span class="sd">        The keys must match the keys of k1.</span>
+<span class="sd">    g2 : dictionary</span>
+<span class="sd">        This a dictionary where the keys are edge ids and the values are the group ids to which the edge belongs.</span>
+<span class="sd">        The keys must match the keys of k2.</span>
+<span class="sd">    omega : 2D numpy array</span>
+<span class="sd">        This is a matrix with entries which specify the number of edges between a given node community and edge community.</span>
+<span class="sd">        The number of rows must match the number of node communities and the number of columns</span>
+<span class="sd">        must match the number of edge communities.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HyperNetX Hypergraph object</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.</span>
+<span class="sd">    The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; n = 100</span>
+<span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; k2 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; g1 = {i : random.choice([0, 1]) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; g2 = {i : random.choice([0, 1]) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; omega = np.array([[100, 10], [10, 100]])</span>
+<span class="sd">        &gt;&gt;&gt; H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># sort dictionary by degree in decreasing order</span>
+    <span class="n">Nlabels</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+    <span class="n">Mlabels</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">k2</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k2</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The sum of the degree sequence does not match the sum of the size sequence&#39;</span><span class="p">)</span>
+
+    <span class="c1"># get indices for each community</span>
+    <span class="n">community1Indices</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">Nlabels</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">g1</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="n">community1Indices</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        
+    <span class="n">community2Indices</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">Mlabels</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">g2</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="n">community2Indices</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="n">bipartite_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    
+    <span class="n">kappa1</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">kappa2</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">kappa1</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k1</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">kappa2</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">+=</span> <span class="n">k2</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">group1</span> <span class="ow">in</span> <span class="n">community1Indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">group2</span> <span class="ow">in</span> <span class="n">community2Indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># for each constant probability patch</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">groupConstant</span> <span class="o">=</span> <span class="n">omega</span><span class="p">[</span><span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">kappa1</span><span class="p">[</span><span class="n">group1</span><span class="p">]</span><span class="o">*</span><span class="n">kappa2</span><span class="p">[</span><span class="n">group2</span><span class="p">])</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">groupConstant</span> <span class="o">=</span> <span class="mi">0</span>
+                
+            <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">community1Indices</span><span class="p">[</span><span class="n">group1</span><span class="p">]:</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">community2Indices</span><span class="p">[</span><span class="n">group2</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="c1"># start from beginning every time</span>
+                <span class="c1"># max probability</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">k1</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">k2</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">*</span> <span class="n">groupConstant</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">community2Indices</span><span class="p">[</span><span class="n">group2</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">))</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">community2Indices</span><span class="p">[</span><span class="n">group2</span><span class="p">]):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="n">community2Indices</span><span class="p">[</span><span class="n">group2</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                        <span class="n">q</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">k1</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">k2</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="o">*</span> <span class="n">groupConstant</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">q</span> <span class="o">/</span> <span class="n">p</span><span class="p">:</span>
+                        <span class="c1"># no duplicates</span>
+                            <span class="n">bipartite_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span>
+
+                            <span class="n">p</span> <span class="o">=</span> <span class="n">q</span>
+                            <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bipartite_edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021 Battelle Memorial Institute.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
