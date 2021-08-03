@@ -484,7 +484,7 @@ class StaticEntity(object):
         -------
         list
         """
-        # return self.elements_by_level(0, 1)[item]
+        # return self.elements_by_level(0, 1, translate=True)[item]
         return self.elements[item]
 
     def __iter__(self):
