@@ -6,6 +6,59 @@ import numpy as np
 import pandas as pd
 from hypernetx import Hypergraph
 
+def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
+    '''
+    A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
+    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+
+    Parameters
+    ----------
+    n: int
+        Number of nodes
+    m: int
+        Number of edges
+    p: float
+        The probability that a bipartite edge is created
+    node_labels: list, default=None
+        Vertex labels
+    edge_labels: list, default=None
+        Hyperedge labels
+
+    Returns
+    -------
+    HyperNetX Hypergraph object
+
+    Example::
+
+        >>> import hypernetx.algorithms.generative_models as gm
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = gm.erdos_renyi_hypergraph(n, m, p)
+    '''
+
+    if node_labels is not None and edge_labels is not None:
+        get_node_label = lambda index : node_labels[index]
+        get_edge_label = lambda index : edge_labels[index]
+    else:
+        get_node_label = lambda index : index
+        get_edge_label = lambda index : index
+
+    bipartite_edges = []
+    for u in range(n):
+        v = 0
+        while v < m:
+            # identify next pair
+            r = random.random()
+            v = v + math.floor(math.log(r) / math.log(1-p))
+            if v < m:
+                # add vertex hyperedge pair
+                bipartite_edges.append((get_edge_label(v), get_node_label(u)))
+                v = v + 1
+    
+    df = pd.DataFrame(bipartite_edges)
+    return Hypergraph(df, static=True)
+
 
 
 def chung_lu_hypergraph(k1, k2):
