@@ -37,6 +37,7 @@ New Features in Version 1.1
 ---------------------------
 
 #. Cell weights for incidence matrices.
+#. Support for edge and node properties in static hypergraphs.
 #. Three new algorithms modules and their corresponding tutorials
 
    #. Contagion module for studying SIS and SIR contagion networks using hypergraphs.
