@@ -290,6 +290,35 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.generative_models.erdos_renyi_hypergraph">
+<span class="sig-prename descclassname"><span class="pre">algorithms.generative_models.</span></span><span class="sig-name descname"><span class="pre">erdos_renyi_hypergraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/generative_models.html#erdos_renyi_hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.generative_models.erdos_renyi_hypergraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
+bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of nodes</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Number of edges</p></li>
+<li><p><strong>p</strong> (<em>float</em>) – The probability that a bipartite edge is created</p></li>
+<li><p><strong>node_labels</strong> (<em>list</em><em>, </em><em>default=None</em>) – Vertex labels</p></li>
+<li><p><strong>edge_labels</strong> (<em>list</em><em>, </em><em>default=None</em>) – Hyperedge labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>HyperNetX Hypergraph object</em></p></li>
+<li><p><em>Example::</em> – &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm
+&gt;&gt;&gt; n = 1000
+&gt;&gt;&gt; m = n
+&gt;&gt;&gt; p = 0.01
+&gt;&gt;&gt; H = gm.erdos_renyi_hypergraph(n, m, p)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-algorithms.homology_mod2">
 <span id="algorithms-homology-mod2-module"></span><h2>algorithms.homology_mod2 module<a class="headerlink" href="#module-algorithms.homology_mod2" title="Permalink to this headline">¶</a></h2>
