@@ -87,7 +87,7 @@ def chung_lu_hypergraph(k1, k2):
         >>> import random
         >>> n = 100
         >>> k1 = {i : random.randint(1, 100) for i in range(n)}
-        >>> k2 = {i : random.randint(1, 100) for i in range(n)}
+        >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
         >>> H = gm.chung_lu_hypergraph(k1, k2)
     """
 
@@ -155,14 +155,17 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Notes
     -----
-    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
+    The sums of k1 and k2 should be the same. If they are not the same, this function returns a warning but still runs.
+    The sum of k1 (and k2) and omega should be the same. If they are not the same, this function returns a warning
+    but still runs and the number of entries in the incidence matrix is determined by the omega matrix.
+
     The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
 
     Example::
 
         >>> n = 100
         >>> k1 = {i : random.randint(1, 100) for i in range(n)}
-        >>> k2 = {i : random.randint(1, 100) for i in range(n)}
+        >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
         >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
         >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
         >>> omega = np.array([[100, 10], [10, 100]])
