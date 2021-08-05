@@ -30,6 +30,7 @@ from scipy.sparse.linalg import eigs
 from sklearn.cluster import SpectralClustering, KMeans
 from sklearn import preprocessing
 from functools import partial
+from hypernetx import HyperNetXError
 
 try:
     import nwhy

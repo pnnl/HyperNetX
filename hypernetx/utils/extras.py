@@ -2,6 +2,7 @@ from collections import OrderedDict, defaultdict
 from collections.abc import Callable
 import numpy as np
 import pandas as pd
+from hypernetx import HyperNetXError
 
 __all__ = [
     "HNXCount",
