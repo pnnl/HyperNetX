@@ -43,13 +43,13 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 * High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Principal Investigator: Cliff Joslyn
 * Program Manager: Mark Raugas, Brian Kritzstein
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, and Emilie Purvine
+* Contributors: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, Emilie Purvine, Mirah Shi, Francois Theberge
 
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
 Documentation is available at: <https://pnnl.github.io/HyperNetX/>
 For questions and comments contact the developers directly at:
-	<hypernetx@pnnl.gov>
+    <hypernetx@pnnl.gov>
 
 New Features of Version 1.0
 ---------------------------
@@ -57,53 +57,60 @@ New Features of Version 1.0
 1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. The new hypergraphs are given an attribute `static=True`.
 2. A C++ addon called [NWHy](docs/build/nwhy.html) can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
 3. A JavaScript addon called [Hypernetx-Widget](docs/build/widget.html) can be used to interactively inspect hypergraphs in a Jupyter Notebook.
-4. We've added four new tutorials highlighting the s-centrality metrics, static Hypergraphs, [NWHy](docs/build/nwhy.html), and [Hypernetx-Widget](docs/build/widget.html).
+4. Four new tutorials highlighting the s-centrality metrics, static Hypergraphs, [NWHy](docs/build/nwhy.html), and [Hypernetx-Widget](docs/build/widget.html).
+
+New Features of Version 1.1
+---------------------------
+
+1. Static Hypergraph refactored to improve performance across all methods.
+2. Added modules and tutorials for Contagion Modeling, Community Detection, Clustering, and Hypergraph Generation.
+3. Cell weights for incidence matrices may be added to static hypergraphs on construction.
 
 Tutorials may be run in your browser using Google Colab
 -------------------------------------------------------
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 1 - HNX Basics</span>
+    <span >Tutorial 1 - HNX Basics</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 2 - Visualization Methods</span>
+    <span >Tutorial 2 - Visualization Methods</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 3 - LesMis Case Study</span>
+    <span >Tutorial 3 - LesMis Case Study</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 4 - LesMis Visualizations-Book Tour</span>
+    <span >Tutorial 4 - LesMis Visualizations-Book Tour</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 5 - Homology mod2 for TriLoop Example</span>
+    <span >Tutorial 5 - Homology mod2 for TriLoop Example</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 6 - Static Hypergraphs and Entities</span>
+    <span >Tutorial 6 - Static Hypergraphs and Entities</span>
 </a>
 </br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%207%20-%20s-centrality.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-	<span >Tutorial 7 - s-Centrality</span>
+    <span >Tutorial 7 - s-Centrality</span>
 </a>
 </br>
-	
+    
 Installing HyperNetX
 ====================
 HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX> 
@@ -111,39 +118,39 @@ HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX>
 To install in an Anaconda environment
 -------------------------------------
 
-	>>> conda create -n <env name> python=3.7
-	>>> source activate <env name>
-	>>> pip install hypernetx
+    >>> conda create -n <env name> python=3.7
+    >>> source activate <env name>
+    >>> pip install hypernetx
 
 Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:
 
-	>>> conda create -n <env name> python=3.7 matplotlib
-	>>> source activate <env name>
-	>>> pip install hypernetx	
+    >>> conda create -n <env name> python=3.7 matplotlib
+    >>> source activate <env name>
+    >>> pip install hypernetx   
 
 To use [NWHy](docs/build/nwhy.html) use python=3.9 and the conda version of tbb in your environment. 
 **Note** that [NWHy](docs/build/nwhy.html) only works on Linux and some OSX systems. See [NWHy documentation](docs/build/nwhy.html) for more.:
 
-	>>> conda create -n <env name> python=3.9 tbb
-	>>> source activate <env name>
-	>>> pip install hypernetx
-	>>> pip install nwhy
+    >>> conda create -n <env name> python=3.9 tbb
+    >>> source activate <env name>
+    >>> pip install hypernetx
+    >>> pip install nwhy
 
 To install in a virtualenv environment
 --------------------------------------
 
-	>>> virtualenv --python=<path to python 3.7 executable> <path to env name>
+    >>> virtualenv --python=<path to python 3.7 executable> <path to env name>
 
 This will create a virtual environment in the specified location using
 the specified python executable. For example:
 
-	>>> virtualenv --python=C:\Anaconda3\python.exe hnx
+    >>> virtualenv --python=C:\Anaconda3\python.exe hnx
 
 This will create a virtual environment in .\hnx using the python
 that comes with Anaconda3.
 
-	>>> <path to env name>\Scripts\activate<file extension>
+    >>> <path to env name>\Scripts\activate<file extension>
 
 If you are running in Windows PowerShell use <file extension>=.ps1
 
@@ -158,7 +165,7 @@ Install using Pip options
 -------------------------
 For a minimal installation:
 
-	>>> pip install hypernetx
+    >>> pip install hypernetx
 
 For an editable installation with access to jupyter notebooks:
 
@@ -166,24 +173,24 @@ For an editable installation with access to jupyter notebooks:
 
 To install with the tutorials:
 
-	>>> pip install -e .['tutorials']
+    >>> pip install -e .['tutorials']
 
 To install with the documentation:
 
-	>>> pip install -e .['documentation']
-	>>> chmod 755 build_docs.sh
-	>>> sh build_docs.sh
-	## This will generate the documentation in /docs/build/
-	## Open them in your browser with /docs/index.html
+    >>> pip install -e .['documentation']
+    >>> chmod 755 build_docs.sh
+    >>> sh build_docs.sh
+    ## This will generate the documentation in /docs/build/
+    ## Open them in your browser with /docs/index.html
 
 To install and test using pytest:
 
-	>>> pip install -e .['testing']
-	>>> pytest
+    >>> pip install -e .['testing']
+    >>> pytest
 
 To install the whole shabang:
 
-	>>> pip install -e .['all']
+    >>> pip install -e .['all']
 
 Notice
 ------
