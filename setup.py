@@ -11,6 +11,7 @@ setup(
     packages=[
         "hypernetx",
         "hypernetx.algorithms",
+        "hypernetx.algorithms.contagion",
         "hypernetx.classes",
         "hypernetx.drawing",
         "hypernetx.reports",
@@ -46,7 +47,7 @@ setup(
     * High Performance Computing: Tony Liu, Andrew Lumsdaine
     * Principal Investigator: Cliff Joslyn
     * Program Manager: Mark Raugas, Brian Kritzstein
-    * Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine
+    * Contributors: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, Emilie Purvine, Mirah Shi, Francois Theberge
 
     The code in this repository is intended to support researchers modeling data
     as hypergraphs. We have a growing community of users and contributors.
@@ -54,6 +55,21 @@ setup(
 
     For questions and comments contact the developers directly at:
         <hypernetx@pnnl.gov>
+
+    New Features of Version 1.0
+    ---------------------------
+
+    1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. The new hypergraphs are given an attribute `static=True`.
+    2. A C++ addon called [NWHy](docs/build/nwhy.html) can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
+    3. A JavaScript addon called [Hypernetx-Widget](docs/build/widget.html) can be used to interactively inspect hypergraphs in a Jupyter Notebook.
+    4. Four new tutorials highlighting the s-centrality metrics, static Hypergraphs, [NWHy](docs/build/nwhy.html), and [Hypernetx-Widget](docs/build/widget.html).
+
+    New Features of Version 1.1
+    ---------------------------
+
+    1. Static Hypergraph refactored to improve performance across all methods.
+    2. Added modules and tutorials for Contagion Modeling, Community Detection, Clustering, and Hypergraph Generation.
+    3. Cell weights for incidence matrices may be added to static hypergraphs on construction.
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
