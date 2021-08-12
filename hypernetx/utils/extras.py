@@ -69,11 +69,10 @@ class DefaultOrderedDict(OrderedDict):
         )
 
 
-def remove_row_duplicates(data, weights=None, aggregateby=None):
+def remove_row_duplicates(data, weights=None, aggregateby='sum'):
     """
-    Wrapper for numpy's unique method.
-    Removes duplicate rows in a 2d array and returns counts
-    if requested
+    Wrapper for pandas groupby method.
+    Removes duplicate rows in a 2d array and aggregates weighta
 
     Parameters
     ----------
@@ -82,7 +81,7 @@ def remove_row_duplicates(data, weights=None, aggregateby=None):
     weights : array_like, optional, default : None
         1-dimensional array_like object, must be the same length as 0-axis of data
         If None then weights are all assigned 1.
-    aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : None
+    aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : 'sum'
         Method to aggregate weights of duplicate rows in data. If None, then only 
         de-duped rows will be returned
 
@@ -96,54 +95,60 @@ def remove_row_duplicates(data, weights=None, aggregateby=None):
 
     """
     if aggregateby is None:
-        if isinstance(data, pd.DataFrame):
-            return np.unique(data.values, axis=0),
-        else:
-            return np.unique(data, axis=0)
+        G = pd.DataFrame(data).drop_duplicates()
+        c = G.shape[1]
+        G[c] = np.ones(len(G), dtype=int)
+        G = OrderedDict(G.set_index(list(G.columns[:c])).to_dict()[c])
+        if c == 1:
+            G = OrderedDict([((k,), v) for k, v in G.items()])
+        # raise
+        # return G.values, G.set_index(list(range(c))).to_dict()
     else:
-        try:
-            r, c = data.shape
-        except:
-            r, c = np.array(data).shape
-
-        df1 = pd.DataFrame(data, columns=range(c))
+        df1 = pd.DataFrame(data)
+        r, c = df1.shape
 
         if weights is None:
-            df2 = pd.DataFrame(np.ones((r, 1)), columns=[c])
+            df2 = pd.DataFrame(np.ones(r), columns=[c], dtype=int)
         else:
             if len(weights) < r:
                 raise HyperNetXError(
                     "length of weight array must match number of rows in data"
                 )
-            df2 = pd.DataFrame(np.array(weights).reshape(r, 1), columns=[c])
+            df2 = pd.DataFrame(np.array(weights), columns=[c])
 
         dfc = pd.concat([df1, df2], axis=1)
 
         # acceptable values: 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'
         if aggregateby == 'count':
-            G = dfc.groupby(list(df1.columns)).count()
+            G = dfc.groupby(list(df1.columns), sort=False).count()
         elif aggregateby == 'sum':
-            G = dfc.groupby(list(df1.columns)).sum()
+            G = dfc.groupby(list(df1.columns), sort=False).sum()
         elif aggregateby == 'mean':
-            G = dfc.groupby(list(df1.columns)).mean()
+            G = dfc.groupby(list(df1.columns), sort=False).mean()
         elif aggregateby == 'median':
-            G = dfc.groupby(list(df1.columns)).median()
+            G = dfc.groupby(list(df1.columns), sort=False).median()
         elif aggregateby == 'max':
-            G = dfc.groupby(list(df1.columns)).max()
+            G = dfc.groupby(list(df1.columns), sort=False).max()
         elif aggregateby == 'min':
-            G = dfc.groupby(list(df1.columns)).min()
+            G = dfc.groupby(list(df1.columns), sort=False).min()
         elif aggregateby == 'first':
-            G = dfc.groupby(list(df1.columns)).first()
+            G = dfc.groupby(list(df1.columns), sort=False).first()
         elif aggregateby == 'last':
-            G = dfc.groupby(list(df1.columns)).last()
+            G = dfc.groupby(list(df1.columns), sort=False).last()
 
         else:
             raise HyperNetXError("Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'")
-
+        G = OrderedDict(G.to_dict()[c])
         if c == 1:
-            return G.reset_index()[df1.columns].values, {tuple([k]): v for k, v in G.to_dict()[c].items()}
-        else:
-            return G.reset_index()[df1.columns].values, G.to_dict()[c]
+            G = OrderedDict([((k,), v) for k, v in G.items()])
+
+    data = np.array(list(G.keys()))
+    if c == 1:
+        data = np.reshape(data, (len(data), 1))
+    else:
+        data = np.array(list(G.keys()))
+
+    return data, G
 
 
 def create_labels(

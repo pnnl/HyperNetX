@@ -105,8 +105,11 @@ class Hypergraph:
         User specified weights corresponding to setsytem of type pandas.DataFrame, 
         length must equal number of rows in dataframe. 
         If None, weight for all rows is assumed to be 1.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min'}, default : 'count'
-        Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame. 
+    keep_weights : bool, optional, default : True
+        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
+    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'None'}, default : 'count'
+        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+        StaticEntity. If None all cell weights will be set to 1.
     use_nwhy : boolean, optional, default : False
         If True hypergraph will be static and computations will be done using
         C++ backend offered by NWHypergraph. This requires installation of the
@@ -160,7 +163,7 @@ class Hypergraph:
                 else:
                     E=StaticEntitySet(entity = setsystem)
                 self._edges=E
-                self._nodes=E.restrict_to_levels([1])
+                self._nodes=E.restrict_to_levels([1], weights=False, aggregateby=None)
                 self._nodes._memberships = E.memberships
         else:
             self._static=False
@@ -363,6 +366,7 @@ class Hypergraph:
             internal id assigned at construction
         """
         kdx = (edges + 1) % 2
+        # return list(self.edges.labs(kdx)).index(uid)
         return int(np.argwhere(self.edges.labs(kdx) == uid)[0])
 
     @not_implemented_for("dynamic")
@@ -546,44 +550,39 @@ class Hypergraph:
     def convert_to_static(
         self,
         name=None,
-        nodes_name="nodes",
-        edges_name="edges",
         use_nwhy=False,
         filepath=None,
     ):
         """
         Returns new static hypergraph with the same dictionary as original hypergraph
-
+        
         Parameters
         ----------
         name : None, optional
             Name
-        nodes_name : str, optional
-            name for list of node labels
-        edges_name : str, optional
-            name for list of edge labels
-
-        Returns
-        -------
-        hnx.Hypergraph
-            Will have attribute static = True
-
+        use_nwhy : bool, optional, default : False
+            Description
+        filepath : None, optional, default : False
+            Description
+        
         Note
         ----
         Static hypergraphs store the user defined node and edge names in
         a dictionary of labeled lists. The order of the lists provides an
         index, which the hypergraph uses in place of the node and edge names
         for fast processing.
+        
+        No Longer Returned
+        ------------------
+        hnx.Hypergraph
+            Will have attribute static = True
         """
-        arr, cdict, rdict = self.edges.incidence_matrix(index=True)
-        labels = OrderedDict(
-            [
-                (edges_name, [cdict[k] for k in range(len(cdict))]),
-                (nodes_name, [rdict[k] for k in range(len(rdict))]),
-            ]
-        )
-        E = StaticEntity(arr=arr.T, labels=labels)
-        return Hypergraph(setsystem=E, name=name)
+        if self.isstatic:
+            return self
+        else:
+            edict = self.incidence_dict
+            E = StaticEntitySet(edict)
+            return Hypergraph(E, use_nwhy=use_nwhy, filepath=filepath, name=name)
 
     def remove_static(self, name=None):
         """
@@ -2271,7 +2270,7 @@ class Hypergraph:
                 warnings.warn(f"No {s}-path between {source} and {target}")
                 return np.inf
 
-    def dataframe(self, sort_rows=False, sort_columns=False):
+    def dataframe(self, sort_rows=False, sort_columns=False, cell_weights=True):
         """
         Returns a pandas dataframe for hypergraph indexed by the nodes and
         with column headers given by the edge names.
@@ -2282,10 +2281,14 @@ class Hypergraph:
             sort rows based on hashable node names
         sort_columns : bool, optional, default=True
             sort columns based on hashable edge names
+        cell_weights : bool, optional, default=True
+            if self.isstatic then include cell weights 
 
         """
-
-        mat, rdx, cdx = self.edges.incidence_matrix(index=True)
+        if self.isstatic:
+            mat, rdx, cdx = self.edges.incidence_matrix(index=True, weights=True)
+        else:
+            mat, rdx, cdx = self.edges.incidence_matrix(index=True)
         index = [rdx[i] for i in rdx]
         columns = [cdx[j] for j in cdx]
         df = pd.DataFrame(mat.todense(), index=index, columns=columns)

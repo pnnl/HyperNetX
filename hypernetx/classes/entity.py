@@ -941,7 +941,7 @@ class EntitySet(Entity):
         else:
             return EntitySet(newuid, new_entity_dict)
 
-    def incidence_matrix(self, sparse=True, index=False):
+    def incidence_matrix(self, sparse=True, index=False, weights=None):
         """
         An incidence matrix for the EntitySet indexed by children x uidset.
 
@@ -949,9 +949,12 @@ class EntitySet(Entity):
         ----------
         sparse : boolean, optional, default: True
 
-        index : boolean, optional, default False
+        index : boolean, optional, default : False
             If True return will include a dictionary of children uid : row number
             and element uid : column number
+
+        weights : bdict, optional, default : None
+            cell weight dictionary keyed by (edge.uid, node.uid)
 
         Returns
         -------
@@ -997,7 +1000,13 @@ class EntitySet(Entity):
                 data = list()
                 for e in self:
                     for n in self[e].elements:
-                        data.append(1)
+                        if weights is not None:
+                            try:
+                                data.append(weights[(e, n)])
+                            except:
+                                data.append(1)
+                        else:
+                            data.append(1)
                         rows.append(ndict[n])
                         cols.append(edict[e])
                 MP = csr_matrix((data, (rows, cols)))
