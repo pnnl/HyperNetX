@@ -48,8 +48,7 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
 Documentation is available at: <https://pnnl.github.io/HyperNetX/>
-For questions and comments contact the developers directly at:
-    <hypernetx@pnnl.gov>
+For questions and comments contact the developers directly at: <hypernetx@pnnl.gov>
 
 New Features of Version 1.0
 ---------------------------
