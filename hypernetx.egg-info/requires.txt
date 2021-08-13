@@ -4,6 +4,7 @@ scipy<2.0,>=1.1.0
 matplotlib>3.0
 scikit-learn>=0.20.0
 pandas>=0.23
+celluloid>=0.2.0
 
 [all]
 sphinx>=1.8.2
@@ -16,9 +17,6 @@ jupyter>=1.0
 sphinx>=1.8.2
 nb2plots>=0.6
 sphinx-rtd-theme>=0.4.2
-
-[notebooks]
-jupyter>=1.0
 
 [testing]
 pytest>=4.0
