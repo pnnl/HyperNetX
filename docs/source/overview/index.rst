@@ -8,7 +8,7 @@ Overview
    :width: 300px
    :align: right
 
-The `HyperNetX`_ library was developed to support researchers modeling data
+The `HyperNetX`_ (`HNX`_) library was developed to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
 For questions and comments you may contact the developers directly at: hypernetx@pnnl.gov
 
@@ -130,4 +130,4 @@ HyperNetX is released under the 3-Clause BSD license (see :ref:`license`)
 
 
 .. _HyperNetX: https://github.com/pnnl/HyperNetX
-
+.. _HNX: https://github.com/pnnl/HyperNetX

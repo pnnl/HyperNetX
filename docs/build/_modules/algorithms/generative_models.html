@@ -258,7 +258,7 @@
 <span class="sd">        &gt;&gt;&gt; import random</span>
 <span class="sd">        &gt;&gt;&gt; n = 100</span>
 <span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; k2 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
 <span class="sd">        &gt;&gt;&gt; H = gm.chung_lu_hypergraph(k1, k2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -326,14 +326,17 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.</span>
+<span class="sd">    The sums of k1 and k2 should be the same. If they are not the same, this function returns a warning but still runs.</span>
+<span class="sd">    The sum of k1 (and k2) and omega should be the same. If they are not the same, this function returns a warning</span>
+<span class="sd">    but still runs and the number of entries in the incidence matrix is determined by the omega matrix.</span>
+
 <span class="sd">    The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.</span>
 
 <span class="sd">    Example::</span>
 
 <span class="sd">        &gt;&gt;&gt; n = 100</span>
 <span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; k2 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">        &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
 <span class="sd">        &gt;&gt;&gt; g1 = {i : random.choice([0, 1]) for i in range(n)}</span>
 <span class="sd">        &gt;&gt;&gt; g2 = {i : random.choice([0, 1]) for i in range(n)}</span>
 <span class="sd">        &gt;&gt;&gt; omega = np.array([[100, 10], [10, 100]])</span>

@@ -784,14 +784,15 @@ used as identifier instead of the frozenset.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.entity.EntitySet.incidence_matrix">
-<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#EntitySet.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.EntitySet.incidence_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#EntitySet.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.EntitySet.incidence_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>An incidence matrix for the EntitySet indexed by children x uidset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – </p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default False</em>) – If True return will include a dictionary of children uid : row number
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – If True return will include a dictionary of children uid : row number
 and element uid : column number</p></li>
+<li><p><strong>weights</strong> (<em>bdict</em><em>, </em><em>optional</em><em>, </em><em>default : None</em>) – cell weight dictionary keyed by (edge.uid, node.uid)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -931,7 +932,9 @@ is passed to the Hypergraph constructor.</p>
 <li><p><strong>weights</strong> (<em>array-like</em><em>, </em><em>optional</em><em>, </em><em>default : None</em>) – User specified weights corresponding to setsytem of type pandas.DataFrame,
 length must equal number of rows in dataframe.
 If None, weight for all rows is assumed to be 1.</p></li>
-<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame.</p></li>
+<li><p><strong>keep_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : True</em>) – Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</p></li>
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'None'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+StaticEntity. If None all cell weights will be set to 1.</p></li>
 <li><p><strong>use_nwhy</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – If True hypergraph will be static and computations will be done using
 C++ backend offered by NWHypergraph. This requires installation of the
 NWHypergraph C++ library. Please see the <a class="reference internal" href="../nwhy.html#nwhy"><span class="std std-ref">NWHy documentation</span></a> for more information.</p></li>
@@ -1237,21 +1240,15 @@ by default. Return iterator.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.convert_to_static">
-<span class="sig-name descname"><span class="pre">convert_to_static</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.convert_to_static"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.convert_to_static" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">convert_to_static</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.convert_to_static"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.convert_to_static" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns new static hypergraph with the same dictionary as original hypergraph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>None</em><em>, </em><em>optional</em>) – Name</p></li>
-<li><p><strong>nodes_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name for list of node labels</p></li>
-<li><p><strong>edges_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name for list of edge labels</p></li>
+<li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – Description</p></li>
+<li><p><strong>filepath</strong> (<em>None</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – Description</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Will have attribute static = True</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>hnx.Hypergraph</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1260,12 +1257,16 @@ by default. Return iterator.</p>
 a dictionary of labeled lists. The order of the lists provides an
 index, which the hypergraph uses in place of the node and edge names
 for fast processing.</p>
+<dl class="simple">
+<dt>hnx.Hypergraph</dt><dd><p>Will have attribute static = True</p>
+</dd>
+</dl>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.dataframe">
-<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.dataframe" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
 with column headers given by the edge names.</p>
 <dl class="field-list simple">
@@ -1273,6 +1274,7 @@ with column headers given by the edge names.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort rows based on hashable node names</p></li>
 <li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort columns based on hashable edge names</p></li>
+<li><p><strong>cell_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – if self.isstatic then include cell weights</p></li>
 </ul>
 </dd>
 </dl>
@@ -2344,7 +2346,7 @@ node index, default=False</p></li>
 <span id="classes-staticentity-module"></span><h2>classes.staticentity module<a class="headerlink" href="#module-classes.staticentity" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="field-list simple" id="staticentity">
 <dt class="field-odd">Parameters</dt>
@@ -2357,8 +2359,9 @@ tensor.</p></li>
 <li><p><strong>uid</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – </p></li>
 <li><p><strong>weights</strong> (<em>array-like</em><em>, </em><em>optional</em><em>, </em><em>default : None</em>) – User specified weights corresponding to data, length must equal number
 of rows in data. If None, weight for all rows is assumed to be 1.</p></li>
-<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'last'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows in data.
-If None, then deduped rows will have weight = 1.</p></li>
+<li><p><strong>keep_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : True</em>) – Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</p></li>
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'None'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+StaticEntity. If None all cell weights will be set to 1.</p></li>
 <li><p><strong>props</strong> (<em>user defined keyword arguments to be added to a properties dictionary</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
@@ -2528,7 +2531,7 @@ Compare with EntitySet with level1 = elements, level2 = children.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.incidence_matrix">
-<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience method to navigate large tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2539,10 +2542,10 @@ Compare with EntitySet with level1 = elements, level2 = children.</p>
 If True all nonzero entries are filled by self.cell_weight
 dictionary values, use <code class="code docutils literal notranslate"><span class="pre">aggregateby</span></code> to specify how duplicate
 entries should have weights aggregated.
-If dict, keys must be in self.cell_weight keys; nonzero cells
-will be updated by dictionary.        aggregateby : str, optional, {‘count’, ‘sum’, ‘mean’, ‘median’, max’, ‘min’}, default : ‘count’
-Method to aggregate weights of duplicate rows in data. If None, then only
-de-duped rows will be returned</p></li>
+If dict, keys must be in (edge.uid, node.uid) form; only nonzero cells
+in the incidence matrix will be updated by dictionary.</p></li>
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{None</em><em>, </em><em>'last'</em><em>, </em><em>count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'first'</em><em>, </em><em>'last'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate weights of duplicate rows in data. If None, then all cell weights
+will be set to 1.</p></li>
 <li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
@@ -2737,15 +2740,17 @@ inclusive</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.restrict_to_levels">
-<span class="sig-name descname"><span class="pre">restrict_to_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.restrict_to_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.restrict_to_levels" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">restrict_to_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.restrict_to_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.restrict_to_levels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Limit Static Entity data to specific levels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>levels</strong> (<em>array</em>) – index of labels in data</p></li>
+<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – Whether or not to aggregate existing weights in self when restricting to levels.
+If False then weights will be assigned 1.</p></li>
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{None</em><em>, </em><em>'last'</em><em>, </em><em>count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'first'</em><em>, </em><em>'last'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame.
+If None then all cell_weights will be set to 1.</p></li>
 <li><p><strong>uid</strong> (<em>None</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'}</em><em>, </em><em>default : 'sum'</em>) – Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame.
-Default is to add the weights of duplicate rows.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2874,7 +2879,7 @@ Default is to add the weights of duplicate rows.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntitySet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#classes.staticentity.StaticEntity" title="classes.staticentity.StaticEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">classes.staticentity.StaticEntity</span></code></a></p>
 <span class="target" id="staticentityset"></span><dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntitySet.collapse_identical_elements">
@@ -2916,17 +2921,17 @@ If no elements share same children, a copy of the original StaticEntitySet is re
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntitySet.incidence_matrix">
-<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet.incidence_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">incidence_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet.incidence_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet.incidence_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Incidence matrix of StaticEntitySet</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>weight</strong> (<em>bool</em><em>, </em><em>dict optional</em><em>, </em><em>default=False</em>) – If False all nonzero entries are 1.
 If True all nonzero entries are filled by self.cell_weight
 dictionary values.
 If dict, keys must be in self.cell_weight keys; nonzero cells
 will be updated by dictionary.</p></li>
-<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

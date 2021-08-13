@@ -1112,7 +1112,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">newuid</span><span class="p">,</span> <span class="n">new_entity_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="EntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.EntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An incidence matrix for the EntitySet indexed by children x uidset.</span>
 
@@ -1120,9 +1120,12 @@
 <span class="sd">        ----------</span>
 <span class="sd">        sparse : boolean, optional, default: True</span>
 
-<span class="sd">        index : boolean, optional, default False</span>
+<span class="sd">        index : boolean, optional, default : False</span>
 <span class="sd">            If True return will include a dictionary of children uid : row number</span>
 <span class="sd">            and element uid : column number</span>
+
+<span class="sd">        weights : bdict, optional, default : None</span>
+<span class="sd">            cell weight dictionary keyed by (edge.uid, node.uid)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1168,7 +1171,13 @@
                 <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
-                        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">[(</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)])</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndict</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
                         <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edict</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
                 <span class="n">MP</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)))</span>

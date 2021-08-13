@@ -276,8 +276,11 @@
 <span class="sd">        User specified weights corresponding to setsytem of type pandas.DataFrame, </span>
 <span class="sd">        length must equal number of rows in dataframe. </span>
 <span class="sd">        If None, weight for all rows is assumed to be 1.</span>
-<span class="sd">    aggregateby : str, optional, {&#39;count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;}, default : &#39;count&#39;</span>
-<span class="sd">        Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame. </span>
+<span class="sd">    keep_weights : bool, optional, default : True</span>
+<span class="sd">        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</span>
+<span class="sd">    aggregateby : str, optional, {&#39;count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;None&#39;}, default : &#39;count&#39;</span>
+<span class="sd">        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of</span>
+<span class="sd">        StaticEntity. If None all cell weights will be set to 1.</span>
 <span class="sd">    use_nwhy : boolean, optional, default : False</span>
 <span class="sd">        If True hypergraph will be static and computations will be done using</span>
 <span class="sd">        C++ backend offered by NWHypergraph. This requires installation of the</span>
@@ -331,7 +334,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">E</span><span class="o">=</span><span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">entity</span> <span class="o">=</span> <span class="n">setsystem</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">=</span><span class="n">E</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">memberships</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="o">=</span><span class="kc">False</span>
@@ -534,6 +537,7 @@
 <span class="sd">            internal id assigned at construction</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kdx</span> <span class="o">=</span> <span class="p">(</span><span class="n">edges</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+        <span class="c1"># return list(self.edges.labs(kdx)).index(uid)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="n">kdx</span><span class="p">)</span> <span class="o">==</span> <span class="n">uid</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Hypergraph.get_name"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.get_name">[docs]</a>    <span class="nd">@not_implemented_for</span><span class="p">(</span><span class="s2">&quot;dynamic&quot;</span><span class="p">)</span>
@@ -717,44 +721,39 @@
 <div class="viewcode-block" id="Hypergraph.convert_to_static"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.convert_to_static">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_static</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">nodes_name</span><span class="o">=</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span>
-        <span class="n">edges_name</span><span class="o">=</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span>
         <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns new static hypergraph with the same dictionary as original hypergraph</span>
-
+<span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name : None, optional</span>
 <span class="sd">            Name</span>
-<span class="sd">        nodes_name : str, optional</span>
-<span class="sd">            name for list of node labels</span>
-<span class="sd">        edges_name : str, optional</span>
-<span class="sd">            name for list of edge labels</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        hnx.Hypergraph</span>
-<span class="sd">            Will have attribute static = True</span>
-
+<span class="sd">        use_nwhy : bool, optional, default : False</span>
+<span class="sd">            Description</span>
+<span class="sd">        filepath : None, optional, default : False</span>
+<span class="sd">            Description</span>
+<span class="sd">        </span>
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
 <span class="sd">        Static hypergraphs store the user defined node and edge names in</span>
 <span class="sd">        a dictionary of labeled lists. The order of the lists provides an</span>
 <span class="sd">        index, which the hypergraph uses in place of the node and edge names</span>
 <span class="sd">        for fast processing.</span>
+<span class="sd">        </span>
+<span class="sd">        No Longer Returned</span>
+<span class="sd">        ------------------</span>
+<span class="sd">        hnx.Hypergraph</span>
+<span class="sd">            Will have attribute static = True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">arr</span><span class="p">,</span> <span class="n">cdict</span><span class="p">,</span> <span class="n">rdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="n">edges_name</span><span class="p">,</span> <span class="p">[</span><span class="n">cdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cdict</span><span class="p">))]),</span>
-                <span class="p">(</span><span class="n">nodes_name</span><span class="p">,</span> <span class="p">[</span><span class="n">rdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rdict</span><span class="p">))]),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">StaticEntity</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">arr</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">setsystem</span><span class="o">=</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incidence_dict</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">edict</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">use_nwhy</span><span class="o">=</span><span class="n">use_nwhy</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.remove_static"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.remove_static">[docs]</a>    <span class="k">def</span> <span class="nf">remove_static</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2442,7 +2441,7 @@
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">-path between </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
-<div class="viewcode-block" id="Hypergraph.dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_rows</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_rows</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cell_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a pandas dataframe for hypergraph indexed by the nodes and</span>
 <span class="sd">        with column headers given by the edge names.</span>
@@ -2453,10 +2452,14 @@
 <span class="sd">            sort rows based on hashable node names</span>
 <span class="sd">        sort_columns : bool, optional, default=True</span>
 <span class="sd">            sort columns based on hashable edge names</span>
+<span class="sd">        cell_weights : bool, optional, default=True</span>
+<span class="sd">            if self.isstatic then include cell weights </span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">mat</span><span class="p">,</span> <span class="n">rdx</span><span class="p">,</span> <span class="n">cdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
+            <span class="n">mat</span><span class="p">,</span> <span class="n">rdx</span><span class="p">,</span> <span class="n">cdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span><span class="p">,</span> <span class="n">rdx</span><span class="p">,</span> <span class="n">cdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">rdx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rdx</span><span class="p">]</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">cdx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cdx</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
