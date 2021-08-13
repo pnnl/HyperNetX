@@ -37,7 +37,7 @@ class StaticEntity(object):
         of rows in data. If None, weight for all rows is assumed to be 1.
     keep_weights : bool, optional, default : True
         Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'None'}, default : 'count'
+    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last', None}, default : 'count'
         Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
         StaticEntity. If None all cell weights will be set to 1.
 

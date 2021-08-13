@@ -32,7 +32,6 @@ Contents
 --------
 
 .. toctree::
-   .. :maxdepth: 3
 
    Home <home>
    overview/index

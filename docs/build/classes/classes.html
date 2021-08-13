@@ -933,7 +933,7 @@ is passed to the Hypergraph constructor.</p>
 length must equal number of rows in dataframe.
 If None, weight for all rows is assumed to be 1.</p></li>
 <li><p><strong>keep_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : True</em>) – Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</p></li>
-<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'None'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'first'</em><em>,</em><em>'last'</em><em>, </em><em>None}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame or
 StaticEntity. If None all cell weights will be set to 1.</p></li>
 <li><p><strong>use_nwhy</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – If True hypergraph will be static and computations will be done using
 C++ backend offered by NWHypergraph. This requires installation of the
@@ -2034,8 +2034,7 @@ the node is dropped from self.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.remove_singletons">
 <span class="sig-name descname"><span class="pre">remove_singletons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.remove_singletons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.remove_singletons" title="Permalink to this definition">¶</a></dt>
-<dd><p>XX
-Constructs clone of hypergraph with singleton edges removed.</p>
+<dd><p>Constructs clone of hypergraph with singleton edges removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p>
@@ -2360,7 +2359,7 @@ tensor.</p></li>
 <li><p><strong>weights</strong> (<em>array-like</em><em>, </em><em>optional</em><em>, </em><em>default : None</em>) – User specified weights corresponding to data, length must equal number
 of rows in data. If None, weight for all rows is assumed to be 1.</p></li>
 <li><p><strong>keep_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : True</em>) – Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</p></li>
-<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'None'}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+<li><p><strong>aggregateby</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>{'count'</em><em>, </em><em>'sum'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>, </em><em>max'</em><em>, </em><em>'min'</em><em>, </em><em>'first'</em><em>, </em><em>'last'</em><em>, </em><em>None}</em><em>, </em><em>default : 'count'</em>) – Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
 StaticEntity. If None all cell weights will be set to 1.</p></li>
 <li><p><strong>props</strong> (<em>user defined keyword arguments to be added to a properties dictionary</em><em>, </em><em>optional</em>) – </p></li>
 </ul>

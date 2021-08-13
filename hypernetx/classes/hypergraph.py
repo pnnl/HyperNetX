@@ -107,8 +107,8 @@ class Hypergraph:
         If None, weight for all rows is assumed to be 1.
     keep_weights : bool, optional, default : True
         Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'None'}, default : 'count'
-        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
+    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first','last', None}, default : 'count'
+        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame or
         StaticEntity. If None all cell weights will be set to 1.
     use_nwhy : boolean, optional, default : False
         If True hypergraph will be static and computations will be done using
@@ -1776,7 +1776,7 @@ class Hypergraph:
             return singles
 
     def remove_singletons(self, name=None):
-        """XX
+        """
         Constructs clone of hypergraph with singleton edges removed.
 
         Parameters
