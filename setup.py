@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.1"
+__version__ = "1.1.1"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -33,15 +33,6 @@ setup(
         "celluloid>=0.2.0",
     ],
     license="3-Clause BSD license",
-    long_description="""
-    The HyperNetX library provides classes and methods for the analysis
-    and visualization of complex network data modeled as hypergraphs. 
-    The library generalizes traditional graph metrics.
-
-    HypernetX was developed by the Pacific Northwest National Laboratory for the
-    Hypernets project as part of its High Performance Data Analytics (HPDA) program.
-    PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
-    """,
     extras_require={
         "testing": ["pytest>=4.0"],
         "tutorials": ["jupyter>=1.0"],
