@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.1"
+__version__ = "1.1.1"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -53,19 +53,16 @@ setup(
     as hypergraphs. We have a growing community of users and contributors.
     Documentation is available at: <https://pnnl.github.io/HyperNetX/>
 
-    For questions and comments contact the developers directly at:
-        <hypernetx@pnnl.gov>
+    For questions and comments contact the developers directly at: <hypernetx@pnnl.gov>
 
-    New Features of Version 1.0
-    ---------------------------
+    **New Features of Version 1.0:**
 
     1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. The new hypergraphs are given an attribute `static=True`.
     2. A C++ addon called [NWHy](docs/build/nwhy.html) can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
     3. A JavaScript addon called [Hypernetx-Widget](docs/build/widget.html) can be used to interactively inspect hypergraphs in a Jupyter Notebook.
     4. Four new tutorials highlighting the s-centrality metrics, static Hypergraphs, [NWHy](docs/build/nwhy.html), and [Hypernetx-Widget](docs/build/widget.html).
 
-    New Features of Version 1.1
-    ---------------------------
+    **New Features of Version 1.1**
 
     1. Static Hypergraph refactored to improve performance across all methods.
     2. Added modules and tutorials for Contagion Modeling, Community Detection, Clustering, and Hypergraph Generation.
