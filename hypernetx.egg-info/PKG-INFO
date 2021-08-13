@@ -7,7 +7,6 @@ Author: Brenda Praggastis, Dustin Arendt, Sinan Aksoy, Emilie Purvine, Cliff Jos
 Author-email: hypernetx@pnnl.gov
 License: 3-Clause BSD license
 Platform: UNKNOWN
-Description-Content-Type: 'text/markdown'
 Provides-Extra: testing
 Provides-Extra: tutorials
 Provides-Extra: documentation
