@@ -1,7 +1,7 @@
 .DS_Store 
 gitmerge.sh 
 dist 
-hypernetx.egg-info
+hypernetx.egg-info*
 
 stashmerge.sh
 homology_log.log

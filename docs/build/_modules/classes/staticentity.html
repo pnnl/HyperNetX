@@ -3,20 +3,25 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>classes.staticentity &mdash; HyperNetX 1.0.4 documentation</title>
+  <title>classes.staticentity &mdash; HyperNetX 1.1 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -26,12 +31,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -51,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> HyperNetX
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
           
 
           
@@ -64,7 +68,7 @@
             
             
               <div class="version">
-                1.0
+                1.1
               </div>
             
           
@@ -139,6 +143,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -163,7 +169,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for classes.staticentity</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">UserList</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
@@ -172,7 +178,12 @@
 <span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="kn">import</span> <span class="n">HyperNetXError</span>
 <span class="kn">from</span> <span class="nn">hypernetx.classes.entity</span> <span class="kn">import</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">EntitySet</span>
-<span class="kn">from</span> <span class="nn">hypernetx.utils</span> <span class="kn">import</span> <span class="n">HNXCount</span><span class="p">,</span> <span class="n">DefaultOrderedDict</span><span class="p">,</span> <span class="n">remove_row_duplicates</span>
+<span class="kn">from</span> <span class="nn">hypernetx.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HNXCount</span><span class="p">,</span>
+    <span class="n">DefaultOrderedDict</span><span class="p">,</span>
+    <span class="n">remove_row_duplicates</span><span class="p">,</span>
+    <span class="n">reverse_dictionary</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">issparse</span>
 <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -188,15 +199,23 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    entity : StaticEntity, StaticEntitySet, Entity, EntitySet, pandas.DataFrame, dict, or list of lists</span>
-<span class="sd">        If a pandas.DataFrame, an error will be raised if there are nans. </span>
+<span class="sd">        If a pandas.DataFrame, an error will be raised if there are nans.</span>
 <span class="sd">    data : array or array-like</span>
 <span class="sd">        Two dimensional array of integers. Provides sparse tensor indices for incidence</span>
-<span class="sd">        tensor. </span>
+<span class="sd">        tensor.</span>
 <span class="sd">    arr : numpy.ndarray or scip.sparse.matrix, optional, default=None</span>
-<span class="sd">        Incidence tensor of data. </span>
+<span class="sd">        Incidence tensor of data.</span>
 <span class="sd">    labels : OrderedDict of lists, optional, default=None</span>
-<span class="sd">        User defined labels corresponding to integers in data.  </span>
-<span class="sd">    uid : hashable, optional, default=None  </span>
+<span class="sd">        User defined labels corresponding to integers in data.</span>
+<span class="sd">    uid : hashable, optional, default=None</span>
+<span class="sd">    weights : array-like, optional, default : None</span>
+<span class="sd">        User specified weights corresponding to data, length must equal number</span>
+<span class="sd">        of rows in data. If None, weight for all rows is assumed to be 1.</span>
+<span class="sd">    keep_weights : bool, optional, default : True</span>
+<span class="sd">        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</span>
+<span class="sd">    aggregateby : str, optional, {&#39;count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;, &#39;last&#39;, None}, default : &#39;count&#39;</span>
+<span class="sd">        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of</span>
+<span class="sd">        StaticEntity. If None all cell weights will be set to 1.</span>
 
 <span class="sd">    props : user defined keyword arguments to be added to a properties dictionary, optional</span>
 
@@ -208,9 +227,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">props</span><span class="p">,</span>
     <span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span> <span class="o">=</span> <span class="n">uid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">entity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -219,73 +246,88 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">dimensions</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">dimsize</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">keep_weights</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_weights</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span>
+                        <span class="n">entity</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_dimensions</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_dimsize</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
                     <span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
-                    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># returns the index of the category (column)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
-                <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">_turn_dataframe_into_entity</span><span class="p">(</span>
-                    <span class="n">entity</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="n">_turn_dataframe_into_entity</span><span class="p">(</span>
+                    <span class="n">entity</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="n">counts</span><span class="p">})</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">()])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># For these cases we cannot yet add cell_weights directly, cell_weights default to duplicate counts</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">Entity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">EntitySet</span><span class="p">):</span>
                     <span class="n">d</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">incidence_dict</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="o">=</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span>
                         <span class="n">d</span>
                     <span class="p">)</span>  <span class="c1"># For now duplicate entries will be removed.</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># returns only 2 levels</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="o">=</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span>
                         <span class="n">entity</span>
                     <span class="p">)</span>  <span class="c1"># For now duplicate entries will be removed.</span>
                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># returns only 2 levels</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">_turn_iterable_to_staticentity</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="o">=</span> <span class="n">_turn_iterable_to_staticentity</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">)</span>  <span class="c1"># number of columns</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="p">)</span>  <span class="c1"># These are the column headers from the dataframe</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">properties</span>
@@ -293,31 +335,25 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">elif</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>  <span class="c1"># TODO Incorporate counts into data for distance</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">()])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="p">):</span>  <span class="c1"># determine if hashmaps might be better than lambda expressions to recover indices</span>
+            <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
                     <span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">))</span> <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">)</span>  <span class="c1"># OrderedDict(category,np.array([categorical values ....])) is aligned to arr</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
                     <span class="p">[</span>
@@ -325,14 +361,13 @@
                         <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span>
                     <span class="p">]</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">_fd</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">value</span>
-                    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
-                <span class="c1"># self._index = lambda category, value: int(np.where(self._labels[category] == value)[0]) if np.where(self._labels[category] == value)[0].size &gt; 0 else None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
+
         <span class="k">elif</span> <span class="n">arr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="n">arr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
@@ -340,24 +375,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_state_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arr&quot;</span><span class="p">:</span> <span class="n">arr</span> <span class="o">*</span> <span class="mi">1</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="p">):</span>  <span class="c1"># determine if hashmaps might be better than lambda expressions to recover indices</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="n">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
                     <span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">))</span> <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
                     <span class="p">[</span>
@@ -365,13 +396,12 @@
                         <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span>
                     <span class="p">]</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">_fd</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">value</span>
-                    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># no entity, data or arr is given</span>
 
             <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -380,29 +410,34 @@
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_state_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arr&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)}</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                    <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">]))))</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">:</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">_fd</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="kc">None</span>
+                <span class="c1"># self._index = lambda category, value: None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">cat</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
+                        <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">cat</span><span class="p">])])</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
+                <span class="p">}</span>
 
             <span class="c1"># if labels is a list of categorical values, then change it into an</span>
             <span class="c1"># ordered dictionary?</span>
@@ -410,12 +445,27 @@
             <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>  <span class="c1"># keyed by the method name and signature</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">kdx</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">kdx</span><span class="p">],</span> <span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">kdx</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">kdx</span><span class="p">],</span> <span class="p">{})</span>
+                <span class="k">for</span> <span class="n">kdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span><span class="p">)</span>
+            <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">kdx</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tensor like representation of data indexed by labels with values given by incidence or cell weight.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            A Numpy ndarray with dimensions equal dimensions of static entity. Entries are cell_weights.</span>
+<span class="sd">            self.data gives a list of nonzero coordinates aligned with cell_weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;arr cannot be computed&quot;</span><span class="p">)</span>
@@ -423,37 +473,13 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">imat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
-                    <span class="n">imat</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">imat</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="n">imat</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;arr cannot be computed&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span>  <span class="c1"># Do we need to return anything here</span>
-
-    <span class="c1"># @property</span>
-    <span class="c1"># def array_with_counts(self):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     This method will be included in future release.</span>
-    <span class="c1">#     It allows duplicate rows in the data table</span>
-    <span class="c1">#     Returns</span>
-    <span class="c1">#     -------</span>
-    <span class="c1">#     np.ndarray</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     if self._arr is not None:</span>
-    <span class="c1">#         if type(self._arr) == int and self._arr == 0:</span>
-    <span class="c1">#             print(&quot;arr cannot be computed&quot;)</span>
-    <span class="c1">#         else:</span>
-    <span class="c1">#             try:</span>
-    <span class="c1">#                 imat = np.zeros(self.dimensions, dtype=int)</span>
-    <span class="c1">#                 for d in self._data:</span>
-    <span class="c1">#                     imat[tuple(d)] += 1</span>
-    <span class="c1">#                 self._arr = imat</span>
-    <span class="c1">#             except Exception as ex:</span>
-    <span class="c1">#                 print(ex)</span>
-    <span class="c1">#                 print(&quot;arr cannot be computed&quot;)</span>
-    <span class="c1">#                 self._arr = 0</span>
-    <span class="c1">#     return self._arr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -462,10 +488,25 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Two dimensional array. Each row has system ids of objects in the static entity.</span>
+<span class="sd">            Each column corresponds to one level of the static entity.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cell_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        User defined weights corresponding to unique rows in data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.array</span>
+<span class="sd">            One dimensional array of values aligned to data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_weights</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -475,8 +516,10 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        collections.OrderedDict</span>
+<span class="sd">            User defined identifiers for objects in static entity. Ordered keys correspond</span>
+<span class="sd">            levels. Ordered values correspond to integer representation of values in data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -486,6 +529,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tuple</span>
+<span class="sd">            Tuple of number of distinct labels in each level, ordered by level.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span>
 
@@ -497,6 +541,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
+<span class="sd">            Number of levels in static entity, equals length of self.dimensions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span>
 
@@ -508,22 +553,32 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
+<span class="sd">            Array of label keys, ordered by level.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">keyindex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticEntity.keyindex"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.keyindex">[docs]</a>    <span class="k">def</span> <span class="nf">keyindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the index of a category in keys array</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
+<span class="sd">            Index osition of particular label in keys equal to the level of the</span>
+<span class="sd">            category.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span><span class="p">[</span><span class="n">category</span><span class="p">]</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        User defined identifier for each object in static entity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str, int</span>
+<span class="sd">            Identifiers, which distinguish  objects within each level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uid</span>
 
     <span class="nd">@property</span>
@@ -534,24 +589,52 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        frozenset</span>
+<span class="sd">            Hashable  set of keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uidset_by_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Keys and values in the order of insertion </span>
+<span class="sd">        Keys and values in the order of insertion</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        collections.OrderedDict</span>
+<span class="sd">            Same as elements_by_level with level1 = 0, level2 = 1.</span>
+<span class="sd">            Compare with EntitySet with level1 = elements, level2 = children.</span>
 
-<span class="sd">        level1 = elements, level2 = children</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">UserList</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]}</span>
+                <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">memberships</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverses the elements dictionary</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        collections.OrderedDict</span>
+<span class="sd">            Same as elements_by_level with level1 = 1, level2 = 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># self._memberships = reverse_dictionary(self.elements)</span>
+            <span class="c1"># return self._memberships</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memberships</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -560,20 +643,27 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        set</span>
+<span class="sd">        numpy.array</span>
+<span class="sd">            One dimensional array of labels in the second level.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">incidence_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Dictionary using index 0 as nodes and index 1 as edges</span>
+<span class="sd">        Same as elements.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        collections.OrderedDict</span>
+<span class="sd">            Same as elements_by_level with level1 = 0, level2 = 1.</span>
+<span class="sd">            Compare with EntitySet with level1 = elements, level2 = children.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -583,6 +673,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        pandas.core.frame.DataFrame</span>
+<span class="sd">            Dataframe of user defined labels and keys as columns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">turn_entity_data_into_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
@@ -593,6 +684,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
+<span class="sd">            Number of distinct labels in level 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -643,7 +735,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># return self.elements_by_level(0, 1)[item]</span>
+        <span class="c1"># return self.elements_by_level(0, 1, translate=True)[item]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -657,7 +749,7 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">label_index</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">label_index</span><span class="p">])</span>
 
 <div class="viewcode-block" id="StaticEntity.size"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -682,7 +774,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        np.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">kdx</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">kdx</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StaticEntity.is_empty"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -696,7 +788,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="StaticEntity.uidset_by_level"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.uidset_by_level">[docs]</a>    <span class="k">def</span> <span class="nf">uidset_by_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -710,7 +802,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        frozenset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level</span><span class="p">))</span>  <span class="c1"># should be update this to tuples?</span></div>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level</span><span class="p">])</span>  <span class="c1"># should be update this to tuples?</span></div>
 
 <div class="viewcode-block" id="StaticEntity.elements_by_level"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.elements_by_level">[docs]</a>    <span class="k">def</span> <span class="nf">elements_by_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -740,28 +832,31 @@
 
         <span class="k">if</span> <span class="n">level2</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">level2</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This StaticEntity has no level </span><span class="si">{</span><span class="n">level2</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-            <span class="n">elts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([[</span><span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level1</span><span class="p">)])</span>
+            <span class="k">return</span>
+            <span class="c1"># elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])</span>
         <span class="k">elif</span> <span class="n">level1</span> <span class="o">==</span> <span class="n">level2</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;level1 equals level2&quot;</span><span class="p">)</span>
-            <span class="n">elts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([[</span><span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level1</span><span class="p">)])</span>
+            <span class="k">return</span>
+            <span class="c1"># elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])</span>
 
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]])</span>
-        <span class="n">elts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">temp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]])</span>
+        <span class="n">elts</span> <span class="o">=</span> <span class="n">DefaultOrderedDict</span><span class="p">(</span><span class="n">UserList</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">:</span>
             <span class="n">elts</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">translate</span><span class="p">:</span>
-            <span class="n">telts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">telts</span> <span class="o">=</span> <span class="n">DefaultOrderedDict</span><span class="p">(</span><span class="n">UserList</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">kdx</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="n">elts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level1</span><span class="p">)[</span><span class="n">kdx</span><span class="p">]</span>
-                <span class="n">telts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level1</span><span class="p">][</span><span class="n">kdx</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">vdx</span> <span class="ow">in</span> <span class="n">vec</span><span class="p">:</span>
-                    <span class="n">telts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level2</span><span class="p">)[</span><span class="n">vdx</span><span class="p">])</span>
+                    <span class="n">telts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level2</span><span class="p">][</span><span class="n">vdx</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">telts</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">elts</span></div>
 
-<div class="viewcode-block" id="StaticEntity.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">level2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticEntity.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">level1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">level2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convenience method to navigate large tensor</span>
 
@@ -771,38 +866,91 @@
 <span class="sd">            indexes columns</span>
 <span class="sd">        level2 : int, optional</span>
 <span class="sd">            indexes rows</span>
-<span class="sd">        weighted : bool, optional</span>
+<span class="sd">        weights : bool, dict optional, default=False</span>
+<span class="sd">            If False all nonzero entries are 1.</span>
+<span class="sd">            If True all nonzero entries are filled by self.cell_weight</span>
+<span class="sd">            dictionary values, use :code:`aggregateby` to specify how duplicate</span>
+<span class="sd">            entries should have weights aggregated.</span>
+<span class="sd">            If dict, keys must be in (edge.uid, node.uid) form; only nonzero cells</span>
+<span class="sd">            in the incidence matrix will be updated by dictionary.</span>
+<span class="sd">        aggregateby : str, optional, {None, &#39;last&#39;, count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;, &#39;last&#39;}, default : &#39;count&#39;</span>
+<span class="sd">            Method to aggregate weights of duplicate rows in data. If None, then all cell weights</span>
+<span class="sd">            will be set to 1.</span>
 <span class="sd">        index : bool, optional</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        scipy.sparse.csr.csr_matrix</span>
+<span class="sd">            Sparse matrix representation of incidence matrix for two levels of static entity.</span>
 
-<span class="sd">        think level1 = edges, level2 = nodes</span>
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        In the context of hypergraphs think level1 = edges, level2 = nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">weighted</span><span class="p">:</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level2</span><span class="p">,</span> <span class="n">level1</span><span class="p">]])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level2</span><span class="p">,</span> <span class="n">level1</span><span class="p">]]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Incidence matrix requires two levels of data.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">weights</span><span class="p">:</span>  <span class="c1"># transpose from the beginning</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">temp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level2</span><span class="p">,</span> <span class="n">level1</span><span class="p">]])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level2</span><span class="p">,</span> <span class="n">level1</span><span class="p">]]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># transpose after cell weights are added</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">temp</span><span class="p">,</span> <span class="n">temp_weights</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]],</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp</span><span class="p">,</span> <span class="n">temp_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_weights</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">cat1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">level1</span><span class="p">]</span>
+                <span class="n">cat2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">level2</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">tdx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cat1</span><span class="p">,</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cat2</span><span class="p">,</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">HyperNetXError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not recognized as belonging to this system.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">temp_weights</span><span class="p">[</span><span class="n">tdx</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">temp_weights</span><span class="p">[</span><span class="n">tdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="c1"># weights = {(self.index(cat1, k[0]), self.index(cat2, k[1])): v for k, v in weights.items()}</span>
+                <span class="c1"># for k in weights:</span>
+                <span class="c1">#     if temp_weights[k] != 0::</span>
+                <span class="c1">#         temp_weights[k]=weights[k]</span>
+            <span class="n">temp_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">temp_weights</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">]</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span> <span class="k">if</span> <span class="n">aggregateby</span> <span class="o">==</span> <span class="s2">&quot;count&quot;</span> <span class="k">else</span> <span class="nb">float</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">temp_weights</span><span class="p">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">index</span><span class="p">:</span>  <span class="c1"># give index of rows then columns</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">result</span><span class="p">,</span>
-                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level2</span><span class="p">))},</span>
-                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level1</span><span class="p">))},</span>
+                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level2</span><span class="p">])},</span>
+                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level1</span><span class="p">])},</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="StaticEntity.restrict_to_levels"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.restrict_to_levels">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticEntity.restrict_to_levels"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.restrict_to_levels">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Limit Static Entity data to specific labels</span>
+<span class="sd">        Limit Static Entity data to specific levels</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        levels : array</span>
 <span class="sd">            index of labels in data</span>
+<span class="sd">        weights : bool, optional, default : False</span>
+<span class="sd">            Whether or not to aggregate existing weights in self when restricting to levels.</span>
+<span class="sd">            If False then weights will be assigned 1.</span>
+<span class="sd">        aggregateby : str, optional, {None, &#39;last&#39;, count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;, &#39;last&#39;}, default : &#39;count&#39;</span>
+<span class="sd">            Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame.</span>
+<span class="sd">            If None then all cell_weights will be set to 1.</span>
 <span class="sd">        uid : None, optional</span>
 
 <span class="sd">        Returns</span>
@@ -810,18 +958,45 @@
 <span class="sd">        Static Entity class</span>
 <span class="sd">            hnx.classes.staticentity.StaticEntity</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+        <span class="c1"># if len(levels) == 1:</span>
+        <span class="c1">#     if levels[0] &gt;= self.dimsize:</span>
+        <span class="c1">#         return self.__class__()</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         newlabels = OrderedDict(</span>
+        <span class="c1">#             [(self.keys[lev], self._labs[lev]) for lev in levels]</span>
+        <span class="c1">#         )</span>
+        <span class="c1"># return self.__class__(labels=newlabels)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">weights</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">newlabels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-                    <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">lev</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">lev</span><span class="p">))</span> <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">]</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">lev</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">newlabels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">lev</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">lev</span><span class="p">])])</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">lev</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">StaticEntity</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="o">=</span><span class="n">newlabels</span><span class="p">,</span>
+                    <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">newlabels</span><span class="p">)</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">levels</span><span class="p">])</span>
-        <span class="n">newlabels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">lev</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">lev</span><span class="p">))</span> <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">newlabels</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span></div>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">levels</span><span class="p">]</span>
+                <span class="n">newlabels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                    <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">lev</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">lev</span><span class="p">])</span> <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="o">=</span><span class="n">newlabels</span><span class="p">,</span>
+                    <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                <span class="p">)</span></div>
 
 <div class="viewcode-block" id="StaticEntity.turn_entity_data_into_dataframe"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.turn_entity_data_into_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">turn_entity_data_into_dataframe</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data_subset</span>
@@ -889,9 +1064,9 @@
 <span class="sd">         : numpy.array(str)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">level</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">level</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StaticEntity.translate_arr"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.translate_arr">[docs]</a>    <span class="k">def</span> <span class="nf">translate_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -925,9 +1100,9 @@
 <span class="sd">        int or tuple of ints</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span><span class="p">(</span><span class="n">category</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span><span class="p">[</span><span class="n">category</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">[</span><span class="n">category</span><span class="p">][</span><span class="n">value</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span><span class="p">(</span><span class="n">category</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyindex</span><span class="p">[</span><span class="n">category</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StaticEntity.indices"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.indices">[docs]</a>    <span class="k">def</span> <span class="nf">indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -942,7 +1117,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">[</span><span class="n">category</span><span class="p">][</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StaticEntity.level"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntity.level">[docs]</a>    <span class="k">def</span> <span class="nf">level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">min_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -965,9 +1140,9 @@
         <span class="k">if</span> <span class="n">max_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">max_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_level</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="n">lev</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">lev</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">return_index</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">lev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">lev</span><span class="p">],</span> <span class="n">item</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">lev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">lev</span><span class="p">]][</span><span class="n">item</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">lev</span>
         <span class="k">else</span><span class="p">:</span>
@@ -992,6 +1167,9 @@
         <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">level1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">level2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">props</span><span class="p">,</span>
     <span class="p">):</span>
 
@@ -1000,9 +1178,9 @@
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]]</span>
                 <span class="n">arr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">elif</span> <span class="n">arr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">cell_weights</span> <span class="o">=</span> <span class="n">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_weights</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]]</span>
-                <span class="n">arr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="n">temp</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -1010,11 +1188,48 @@
                     <span class="k">if</span> <span class="n">lev</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
                         <span class="n">temp</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="n">lev</span><span class="p">]]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="n">lev</span><span class="p">]]</span>
                 <span class="n">labels</span> <span class="o">=</span> <span class="n">temp</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">E</span> <span class="o">=</span> <span class="n">StaticEntity</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">)</span>
-            <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">])</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">E</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">StaticEntity</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">keep_weights</span><span class="p">:</span>
+                    <span class="n">weights</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_weights</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+                    <span class="p">[(</span><span class="n">entity</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">entity</span><span class="o">.</span><span class="n">_labs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]]</span>
+                <span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                    <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">props</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">StaticEntitySet</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">keep_weights</span><span class="p">:</span>
+                    <span class="n">aggregateby</span> <span class="o">=</span> <span class="s2">&quot;last&quot;</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                    <span class="n">entity</span><span class="p">,</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                    <span class="n">keep_weights</span><span class="o">=</span><span class="n">keep_weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">props</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">columns</span><span class="p">[[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]]</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                    <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="n">cols</span><span class="p">],</span>
+                    <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                    <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">props</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># this presumes entity is an iterable of iterables or a dictionary</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1027,36 +1242,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;StaticEntitySet(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-<div class="viewcode-block" id="StaticEntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticEntitySet.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Incidence matrix of StaticEntitySet indexed by uidset</span>
+<span class="sd">        Incidence matrix of StaticEntitySet</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sparse : bool, optional</span>
-<span class="sd">        weighted : bool, optional</span>
 <span class="sd">        index : bool, optional</span>
-<span class="sd">            give index of rows then columns</span>
+
+<span class="sd">        weight: bool, dict optional, default=False</span>
+<span class="sd">            If False all nonzero entries are 1.</span>
+<span class="sd">            If True all nonzero entries are filled by self.cell_weight</span>
+<span class="sd">            dictionary values.</span>
+<span class="sd">            If dict, keys must be in self.cell_weight keys; nonzero cells</span>
+<span class="sd">            will be updated by dictionary.</span>
+
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        matrix</span>
-<span class="sd">            scipy.sparse.csr.csr_matrix</span>
+<span class="sd">        scipy.sparse.csr.csr_matrix</span>
+<span class="sd">            Sparse matrix representation of incidence matrix for static entity set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">weighted</span><span class="p">:</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)),</span> <span class="n">temp</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">result</span><span class="p">,</span>
-                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="mi">1</span><span class="p">))},</span>
-                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labs</span><span class="p">(</span><span class="mi">0</span><span class="p">))},</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">StaticEntity</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StaticEntitySet.restrict_to"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.restrict_to">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1078,7 +1285,7 @@
 
 <div class="viewcode-block" id="StaticEntitySet.convert_to_entityset"><a class="viewcode-back" href="../../classes/classes.html#classes.staticentity.StaticEntitySet.convert_to_entityset">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_entityset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert given uid of Static EntitySet into EntitySet</span>
+<span class="sd">        Convert Static EntitySet into EntitySet with given uid.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1099,6 +1306,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns StaticEntitySet after collapsing elements if they have same children</span>
 <span class="sd">        If no elements share same children, a copy of the original StaticEntitySet is returned</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        uid : None, optional</span>
@@ -1116,9 +1324,13 @@
             <span class="n">shared_children</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
             <span class="p">[</span>
+                <span class="c1"># (</span>
+                <span class="c1">#     f&quot;{next(iter(v))}:{len(v)}&quot;,</span>
+                <span class="c1">#     sorted(set(k), key=lambda x: list(self.labs(1)).index(x)),</span>
+                <span class="c1"># )</span>
                 <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+                    <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)),</span>
                 <span class="p">)</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shared_children</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">]</span>
@@ -1128,7 +1340,8 @@
                 <span class="p">[</span>
                     <span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+                        <span class="n">v</span>
+                        <span class="c1"># sorted(v, key=lambda x: self.index(self._keys[0], x)),  ## not sure why sorting is important here</span>
                     <span class="p">)</span>
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">shared_children</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">]</span>
@@ -1138,7 +1351,7 @@
             <span class="k">return</span> <span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">entity</span><span class="o">=</span><span class="n">new_entity_dict</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_turn_tensor_to_data</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return list of nonzero coordinates in arr.</span>
 
@@ -1147,10 +1360,11 @@
 <span class="sd">    arr : numpy.ndarray</span>
 <span class="sd">        Tensor corresponding to incidence of co-occurring labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">temp</span><span class="p">,</span> <span class="p">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="p">):</span> <span class="n">arr</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_turn_dict_to_staticentity</span><span class="p">(</span><span class="n">dict_object</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_turn_dict_to_staticentity</span><span class="p">(</span><span class="n">dict_object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a static entity directly from a dictionary of hashables&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">dict_object</span><span class="p">)</span>
     <span class="n">level2ctr</span> <span class="o">=</span> <span class="n">HNXCount</span><span class="p">()</span>
@@ -1163,28 +1377,29 @@
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
             <span class="n">level2</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
             <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">level1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">level2</span><span class="p">[</span><span class="n">v</span><span class="p">]))</span>
-    <span class="k">if</span> <span class="n">remove_duplicates</span><span class="p">:</span>
-        <span class="n">coords</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
-    <span class="n">level1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">level1</span><span class="p">)</span>
-    <span class="n">level2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">level2</span><span class="p">)</span>
+    <span class="n">coords</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+    <span class="n">level1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">level1</span><span class="p">))</span>
+    <span class="n">level2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">level2</span><span class="p">))</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="n">level1</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="n">level2</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">counts</span>
 
 
-<span class="k">def</span> <span class="nf">_turn_iterable_to_staticentity</span><span class="p">(</span><span class="n">iter_object</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_turn_iterable_to_staticentity</span><span class="p">(</span><span class="n">iter_object</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iter_object</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span>
-                <span class="s2">&quot;StaticEntity constructor requires an iterable of iterables.&quot;</span>
+                <span class="s2">&quot;The entity data type not recognized. Iterables must be iterable of iterables.&quot;</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;e</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">iter_object</span><span class="p">))]</span>
         <span class="n">dict_object</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">iter_object</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span><span class="n">dict_object</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="n">remove_duplicates</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_turn_dict_to_staticentity</span><span class="p">(</span><span class="n">dict_object</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_turn_dataframe_into_entity</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unknowns</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_turn_dataframe_into_entity</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_unknowns</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convenience method to reformat dataframe object into data,labels format</span>
 <span class="sd">    for construction of a static entity</span>
@@ -1193,16 +1408,19 @@
 <span class="sd">    ----------</span>
 <span class="sd">    df : pandas.DataFrame</span>
 <span class="sd">        May not contain nans</span>
-<span class="sd">    return_counts : bool, optional, default : False</span>
-<span class="sd">        Used for keeping weights</span>
+<span class="sd">    weights : array-like, optional, default : None</span>
+<span class="sd">        User specified weights corresponding to data, length must equal number</span>
+<span class="sd">        of rows in data. If None, weight for all rows is assumed to be 1.</span>
+<span class="sd">    aggregateby : str, optional, {None, &#39;last&#39;, count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;, &#39;last&#39;}, default : &#39;count&#39;</span>
+<span class="sd">        Method to aggregate cell_weights of duplicate rows in data.</span>
 <span class="sd">    include_unknowns : bool, optional, default : False</span>
 <span class="sd">        If Unknown &lt;column name&gt; was used to fill in nans</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outputdata : numpy.ndarray</span>
-<span class="sd">    counts : numpy.array of ints</span>
 <span class="sd">    slabels : numpy.array of strings</span>
+<span class="sd">    cell_weights : dict</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
@@ -1213,9 +1431,8 @@
         <span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">ctr</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>  <span class="c1"># TODO make this an Ordered default dict</span>
         <span class="n">rdict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">include_unknowns</span><span class="p">:</span>
-            <span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">][</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">]</span>  <span class="c1"># TODO: update this to take a dict assign for each column</span>
+            <span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;Unknown </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="c1"># TODO: update this to take a dict assign for each column</span>
             <span class="n">rdict</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
             <span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
@@ -1231,43 +1448,42 @@
             <span class="n">c</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="n">cid</span><span class="p">]</span>
             <span class="n">data</span><span class="p">[</span><span class="n">rid</span><span class="p">,</span> <span class="n">cid</span><span class="p">]</span> <span class="o">=</span> <span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">rid</span><span class="p">][</span><span class="n">c</span><span class="p">]]</span>
 
-    <span class="n">output_data</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="n">return_counts</span><span class="p">)</span>
+    <span class="n">output_data</span> <span class="o">=</span> <span class="n">remove_row_duplicates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">)</span>
 
     <span class="n">slabels</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">cdx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
         <span class="n">slabels</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ldict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))})</span>
-    <span class="k">if</span> <span class="n">return_counts</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">output_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">slabels</span><span class="p">,</span> <span class="n">output_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">output_data</span><span class="p">,</span> <span class="n">slabels</span>
+    <span class="k">return</span> <span class="n">output_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">slabels</span><span class="p">,</span> <span class="n">output_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="c1"># helpers</span>
+<span class="k">def</span> <span class="nf">_fd</span><span class="p">():</span>
+    <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2018 Battelle Memorial Institute
+        &#169; Copyright 2021 Battelle Memorial Institute.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

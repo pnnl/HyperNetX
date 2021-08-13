@@ -9,7 +9,7 @@ HyperNetX (HNX)
 Description
 -----------
 
-The HNX library provides classes and methods for modeling the entities and relationships 
+The `HNX`_ library provides classes and methods for modeling the entities and relationships 
 found in complex networks as hypergraphs, the natural models for multi-dimensional network data.
 As strict generalizations of graphs, hyperedges can represent arbitrary multi-way relations 
 among entities, and in particular can distinguish cliques and simplices, and admit singleton edges.
@@ -32,7 +32,6 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
 
    Home <home>
    overview/index
@@ -52,3 +51,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _HNX: https://github.com/pnnl/HyperNetX

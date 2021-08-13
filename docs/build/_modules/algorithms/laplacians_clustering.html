@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>algorithms.laplacians_clustering &mdash; HyperNetX 1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>algorithms.laplacians_clustering</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for algorithms.laplacians_clustering</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright © 2021 Battelle Memorial Institute</span>
+<span class="c1"># All rights reserved.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Hypergraph Probability Transition Matrices, Laplacians, and Clustering</span>
+<span class="sd">======================================================================</span>
+<span class="sd">We contruct hypergraph random walks utilizing optional &quot;edge-dependent vertex weights&quot;, which are </span>
+<span class="sd">weights associated with each vertex-hyperedge pair (i.e. cell weights on the incidence matrix).</span>
+<span class="sd">The probability transition matrix of this random walk is used to construct a normalized Laplacian </span>
+<span class="sd">matrix for the hypergraph. That normalized Laplacian then serves as the input for a spectral clustering</span>
+<span class="sd">algorithm. This spectral clustering algorithm, as well as the normalized Laplacian and other details of</span>
+<span class="sd">this methodology are described in </span>
+
+<span class="sd">K. Hayashi, S. Aksoy, C. Park, H. Park, &quot;Hypergraph random walks, Laplacians, and clustering&quot;, </span>
+<span class="sd">Proceedings of the 29th ACM International Conference on Information &amp; Knowledge Management. 2020.</span>
+<span class="sd">https://doi.org/10.1145/3340531.3412034</span>
+
+<span class="sd">Please direct any inquiries concerning the clustering module to Sinan Aksoy, sinan.aksoy@pnnl.gov</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">diags</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">identity</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">eigs</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">SpectralClustering</span><span class="p">,</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">HyperNetXError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">nwhy</span>
+
+    <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">setrecursionlimit</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;prob_trans&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_pi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;norm_lap&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;spec_clus&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="prob_trans"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.laplacians_clustering.prob_trans">[docs]</a><span class="k">def</span> <span class="nf">prob_trans</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_connected</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The probability transition matrix of a random walk on the vertices of a hypergraph.</span>
+<span class="sd">    At each step in the walk, the next vertex is chosen by:</span>
+
+<span class="sd">    1. Selecting a hyperedge e containing the vertex with probability proportional to w(e)</span>
+<span class="sd">    2. Selecting a vertex v within e with probability proportional to a \gamma(v,e)</span>
+
+<span class="sd">    If weights are not specified, then all weights are uniform and the walk is equivalent</span>
+<span class="sd">    to a simple random walk.</span>
+<span class="sd">    If weights are specified, the hyperedge weights w(e) are determined from the weights</span>
+<span class="sd">    \gamma(v,e).</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+<span class="sd">        The hypergraph must be connected, meaning there is a path linking any two</span>
+<span class="sd">        vertices</span>
+<span class="sd">    weights : bool, optional, default : False</span>
+<span class="sd">         Use the cell_weights associated with the hypergraph</span>
+<span class="sd">         If False, uniform weights are utilized.</span>
+<span class="sd">    index : bool, optional</span>
+<span class="sd">        Whether to return matrix index to vertex label mapping</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     P : scipy.sparse.csr.csr_matrix</span>
+<span class="sd">         Probability transition matrix of the random walk on the hypergraph</span>
+<span class="sd">     index: dict</span>
+<span class="sd">         mapping from row and column indices to corresponding vertex label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># hypergraph must be connected</span>
+    <span class="k">if</span> <span class="n">check_connected</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">HyperNetXError</span><span class="p">(</span><span class="s2">&quot;hypergraph must be connected&quot;</span><span class="p">)</span>
+
+    <span class="c1"># if no weighting function, each step in the random walk is chosen uniformly at random.</span>
+    <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">R</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">R</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># transpose incidence matrix for notational convenience</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="c1"># generates hyperedge weight matrix, has same nonzero pattern as incidence matrix,</span>
+    <span class="c1"># with values determined by the edge-dependent vertex weight standard deviation</span>
+    <span class="n">edgeScore</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">getrow</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">}</span>  <span class="c1"># hyperedge weights</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">edgeScore</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">R</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">R</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="c1"># generate diagonal degree matrices used to normalize probability transition matrix</span>
+    <span class="p">[</span><span class="n">rowSums</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">D_E</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="mi">1</span> <span class="o">/</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rowSums</span><span class="p">])</span>
+
+    <span class="p">[</span><span class="n">rowSums</span><span class="p">]</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">D_V</span> <span class="o">=</span> <span class="n">diags</span><span class="p">([</span><span class="mi">1</span> <span class="o">/</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rowSums</span><span class="p">])</span>
+
+    <span class="c1"># probability transition matrix P</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">D_V</span> <span class="o">*</span> <span class="n">W</span> <span class="o">*</span> <span class="n">D_E</span> <span class="o">*</span> <span class="n">R</span>
+
+    <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">P</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">P</span><span class="p">,</span> <span class="n">index</span></div>
+
+
+<div class="viewcode-block" id="get_pi"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.laplacians_clustering.get_pi">[docs]</a><span class="k">def</span> <span class="nf">get_pi</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the eigenvector corresponding to the largest eigenvalue (in magnitude),</span>
+<span class="sd">    normalized so its entries sum to 1. Intended for the probability transition matrix</span>
+<span class="sd">    of a random walk on a (connected) hypergraph, in which case the output can</span>
+<span class="sd">    be interpreted as the stationary distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P : csr matrix</span>
+<span class="sd">        Probability transition matrix</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     pi : numpy.ndarray</span>
+<span class="sd">         Stationary distribution of random walk defined by P</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rho</span><span class="p">,</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">eigs</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_eigenvectors</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># dominant eigenvector</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># normalize as prob distribution</span>
+    <span class="k">return</span> <span class="n">pi</span></div>
+
+
+<div class="viewcode-block" id="norm_lap"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.laplacians_clustering.norm_lap">[docs]</a><span class="k">def</span> <span class="nf">norm_lap</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalized Laplacian matrix of the hypergraph. Symmetrizes the probability transition</span>
+<span class="sd">    matrix of a hypergraph random walk using the stationary distribution, using the digraph</span>
+<span class="sd">    Laplacian defined in:</span>
+
+<span class="sd">    Chung, Fan. &quot;Laplacians and the Cheeger inequality for directed graphs.&quot;</span>
+<span class="sd">    Annals of Combinatorics 9.1 (2005): 1-19.</span>
+
+<span class="sd">    and studied in the context of hypergraphs in:</span>
+
+<span class="sd">    Hayashi, K., Aksoy, S. G., Park, C. H., &amp; Park, H.</span>
+<span class="sd">    Hypergraph random walks, laplacians, and clustering.</span>
+<span class="sd">    In Proceedings of CIKM 2020, (2020): 495-504.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+<span class="sd">        The hypergraph must be connected, meaning there is a path linking any two</span>
+<span class="sd">        vertices</span>
+<span class="sd">    weight : bool, optional, default : False</span>
+<span class="sd">         Uses cell_weights, if False, uniform weights are utilized.</span>
+<span class="sd">    index : bool, optional</span>
+<span class="sd">        Whether to return matrix-index to vertex-label mapping</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     P : scipy.sparse.csr.csr_matrix</span>
+<span class="sd">         Probability transition matrix of the random walk on the hypergraph</span>
+<span class="sd">     index: dict</span>
+<span class="sd">         mapping from row and column indices to corresponding vertex label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">P</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">prob_trans</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">P</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">prob_trans</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="n">get_pi</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">P</span> <span class="o">*</span> <span class="n">diags</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">identity</span><span class="p">(</span><span class="n">gamma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">L</span><span class="p">,</span> <span class="n">index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">L</span></div>
+
+
+<div class="viewcode-block" id="spec_clus"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.laplacians_clustering.spec_clus">[docs]</a><span class="k">def</span> <span class="nf">spec_clus</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">existing_lap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hypergraph spectral clustering of the vertex set into k disjoint clusters</span>
+<span class="sd">    using the normalized hypergraph Laplacian. Equivalent to the &quot;RDC-Spec&quot;</span>
+<span class="sd">    Algorithm 1 in:</span>
+
+<span class="sd">    Hayashi, K., Aksoy, S. G., Park, C. H., &amp; Park, H.</span>
+<span class="sd">    Hypergraph random walks, laplacians, and clustering.</span>
+<span class="sd">    In Proceedings of CIKM 2020, (2020): 495-504.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+<span class="sd">        The hypergraph must be connected, meaning there is a path linking any two</span>
+<span class="sd">        vertices</span>
+<span class="sd">    k : int</span>
+<span class="sd">        Number of clusters</span>
+<span class="sd">    existing_lap: csr matrix, optional</span>
+<span class="sd">        Whether to use an existing Laplacian; otherwise, normalized hypergraph Laplacian</span>
+<span class="sd">        will be utilized</span>
+<span class="sd">    weights : bool, optional</span>
+<span class="sd">         Use the cell_weights of the hypergraph. If False uniform weights are used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     clusters : dict</span>
+<span class="sd">         Vertex cluster dictionary, keyed by integers 0,...,k-1, with lists of</span>
+<span class="sd">         vertices as values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">existing_lap</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">L</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">norm_lap</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">L</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">norm_lap</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">existing_lap</span>
+
+    <span class="c1"># compute top eigenvectors</span>
+    <span class="n">e</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">eigs</span><span class="p">(</span><span class="n">identity</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">L</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;LM&quot;</span><span class="p">,</span> <span class="n">return_eigenvectors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># ignore zero complex parts</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;l2&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># normalize</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">km</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="s2">&quot;k-means++&quot;</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># k-means</span>
+    <span class="n">km</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">km</span><span class="o">.</span><span class="n">labels_</span>
+
+    <span class="c1"># organize cluster assingments in dictionary of form cluster #: ips</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)):</span>
+        <span class="n">clusters</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">clusters</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021 Battelle Memorial Institute.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
