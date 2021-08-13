@@ -30,6 +30,7 @@ class Entity(object):
         Entity.uid then the entities will not be distinguishable and error will be raised.
         The `elements` in the signature will be added to the cloned entity.
 
+    weight : float, optional, default : 1
     props : keyword arguments, optional, default: {}
         properties belonging to the entity added as key=value pairs.
         Both key and value must be hashable.
@@ -90,10 +91,11 @@ class Entity(object):
 
     """
 
-    def __init__(self, uid, elements=[], entity=None, **props):
+    def __init__(self, uid, elements=[], entity=None, weight=1.0, **props):
         super().__init__()
 
         self._uid = uid
+        self.weight = weight
 
         if entity is not None:
             if isinstance(entity, Entity):
@@ -939,7 +941,7 @@ class EntitySet(Entity):
         else:
             return EntitySet(newuid, new_entity_dict)
 
-    def incidence_matrix(self, sparse=True, index=False):
+    def incidence_matrix(self, sparse=True, index=False, weights=None):
         """
         An incidence matrix for the EntitySet indexed by children x uidset.
 
@@ -947,9 +949,12 @@ class EntitySet(Entity):
         ----------
         sparse : boolean, optional, default: True
 
-        index : boolean, optional, default False
+        index : boolean, optional, default : False
             If True return will include a dictionary of children uid : row number
             and element uid : column number
+
+        weights : bdict, optional, default : None
+            cell weight dictionary keyed by (edge.uid, node.uid)
 
         Returns
         -------
@@ -995,7 +1000,13 @@ class EntitySet(Entity):
                 data = list()
                 for e in self:
                     for n in self[e].elements:
-                        data.append(1)
+                        if weights is not None:
+                            try:
+                                data.append(weights[(e, n)])
+                            except:
+                                data.append(1)
+                        else:
+                            data.append(1)
                         rows.append(ndict[n])
                         cols.append(edict[e])
                 MP = csr_matrix((data, (rows, cols)))

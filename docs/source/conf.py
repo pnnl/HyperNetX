@@ -19,7 +19,7 @@ import sys
 import os
 import shlex
 
-__version__ = "1.0.4"
+__version__ = "1.1"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -31,8 +31,8 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "hypernetx"))
 # -- Project information -----------------------------------------------------
 
 project = "HyperNetX"
-copyright = "2018 Battelle Memorial Institute"
-author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy, Kyle Monson"
+copyright = "2021 Battelle Memorial Institute"
+author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy, Tony Liu, Andrew Lumsdaine, Nicholas Landry"
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])

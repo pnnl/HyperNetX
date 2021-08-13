@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from collections.abc import Iterable
+from collections import UserList
 from hypernetx import Entity, EntitySet
 from hypernetx import StaticEntity, StaticEntitySet
 from hypernetx import HyperNetXError
@@ -13,7 +14,7 @@ def test_staticentity_constructor(seven_by_six):
     assert ent.size() == 6
     assert len(ent.uidset) == 6
     assert len(ent.children) == 7
-    assert isinstance(ent.incidence_dict["I"], list)
+    assert isinstance(ent.incidence_dict["I"], UserList)
     assert "I" in ent
     assert "K" in ent
 
@@ -25,10 +26,10 @@ def test_staticentity_property(harry_potter):
     assert len(ent.keys) == 5
     assert len(ent.uidset) == 7
     assert len(ent.elements) == 7
-    assert isinstance(ent.elements['Hufflepuff'], list)
+    assert isinstance(ent.elements["Hufflepuff"], UserList)
     assert ent.is_empty(2) == False
-    assert len(ent.incidence_dict['Gryffindor']) == 6
-    assert ent.keyindex('House') == 0
+    assert len(ent.incidence_dict["Gryffindor"]) == 6
+    assert ent.keyindex("House") == 0
 
 
 def test_staticentity_attributes(harry_potter):
@@ -43,9 +44,15 @@ def test_staticentity_attributes(harry_potter):
     assert ent.dimsize == 5
     assert len(ent.labs(0)) == 7
     df = ent.dataframe
-    assert list(df.columns) == ['House', 'Blood status', 'Species', 'Hair colour', 'Eye colour']
+    assert list(df.columns) == [
+        "House",
+        "Blood status",
+        "Species",
+        "Hair colour",
+        "Eye colour",
+    ]
     assert ent.dimensions == tuple(df.nunique())
-    assert list(ent.labels['House']) == list(df['House'].unique())
+    assert list(ent.labels["House"]) == list(df["House"].unique())
 
 
 def test_staticentity_custom_attributes(harry_potter):
@@ -55,12 +62,16 @@ def test_staticentity_custom_attributes(harry_potter):
     assert ent.__len__() == 7
     assert isinstance(ent.__str__(), str)
     assert isinstance(ent.__repr__(), str)
-    assert isinstance(ent.__contains__('Muggle'), bool)
-    assert ent.__contains__('Muggle') == True
-    assert ent.__getitem__('Slytherin') == ['Half-blood', 'Pure-blood', 'Pure-blood or half-blood']
+    assert isinstance(ent.__contains__("Muggle"), bool)
+    assert ent.__contains__("Muggle") == True
+    assert ent.__getitem__("Slytherin") == [
+        "Half-blood",
+        "Pure-blood",
+        "Pure-blood or half-blood",
+    ]
     assert isinstance(ent.__iter__(), Iterable)
     assert isinstance(ent.__call__(), Iterable)
-    assert ent.__call__().__next__() == 'Unknown House'
+    assert ent.__call__().__next__() == "Unknown House"
 
 
 def test_staticentity_level(seven_by_six):
@@ -74,8 +85,8 @@ def test_staticentity_level(seven_by_six):
 def test_staticentity_uidset_by_level(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(arr=sbs.arr, labels=sbs.labels)
-    ent.uidset_by_level(0) == {'I', 'L', 'O', 'P', 'R', 'S'}
-    ent.uidset_by_level(1) == {'A', 'C', 'E', 'K', 'T1', 'T2', 'V'}
+    ent.uidset_by_level(0) == {"I", "L", "O", "P", "R", "S"}
+    ent.uidset_by_level(1) == {"A", "C", "E", "K", "T1", "T2", "V"}
 
 
 def test_staticentity_elements_by_level(seven_by_six):
@@ -135,7 +146,7 @@ def test_restrict_to_indices(harry_potter):
     arr = harry_potter.arr
     labels = harry_potter.labels
     ent = StaticEntity(arr=arr, labels=labels)
-    assert ent.restrict_to_indices([1, 2]).uidset == {'Gryffindor', 'Ravenclaw'}
+    assert ent.restrict_to_indices([1, 2]).uidset == {"Gryffindor", "Ravenclaw"}
 
 
 def test_staticentityset(harry_potter):
@@ -147,8 +158,8 @@ def test_staticentityset(harry_potter):
     assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
     assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
     assert ent.incidence_matrix().shape == (36, 11)
-    assert len(ent.convert_to_entityset('Hair colour')) == 11
-    assert len(ent.collapse_identical_elements('House')) == 11
+    assert len(ent.convert_to_entityset("Hair colour")) == 11
+    assert len(ent.collapse_identical_elements("House")) == 11
 
 
 def test_staticentity_construct_from_entity(seven_by_six):

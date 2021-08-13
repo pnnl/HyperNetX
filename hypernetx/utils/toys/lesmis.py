@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 import hypernetx as hnx
 
-__all__ = ['LesMis', 'lesmis_hypergraph_from_df', 'book_tour']
+__all__ = ["LesMis", "lesmis_hypergraph_from_df", "book_tour"]
 
 
 class LesMis(object):
@@ -32,11 +32,13 @@ class LesMis(object):
             columns=["Volume", "Book", "Chapter", "Scene", "Step", "Characters"],
         )
 
-        self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(lesmis_hypergraph_from_df, by="Chapter")
+        self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(
+            lesmis_hypergraph_from_df, by="Chapter"
+        )
 
     @property
     def dnames(self):
-        return self.df_names.set_index('Symbol')
+        return self.df_names.set_index("Symbol")
 
 
 def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
@@ -53,7 +55,7 @@ def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
 def book_tour(df, xlabel="Book", ylabel="Volume", s=3.5):
     """
     Constructs a visualization of hypergraphs stored in an indexed
-    dict like object. See `Tutorial 4 - LesMis Visualizations-BookTour 
+    dict like object. See `Tutorial 4 - LesMis Visualizations-BookTour
     <https://github.com/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb>`_
 
     Parameters
@@ -81,9 +83,9 @@ def book_tour(df, xlabel="Book", ylabel="Volume", s=3.5):
     for (v, b), G in df_book_tour.items():
         ax = plt.subplot(nrows, ncols, (v - 1) * ncols + b, label=f"{v}.{b}")
 
-        ax.set_xlabel(f'{xlabel} {b}')
+        ax.set_xlabel(f"{xlabel} {b}")
         if b == 1:
-            ax.set_ylabel(f'{ylabel} {v}')
+            ax.set_ylabel(f"{ylabel} {v}")
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
 
@@ -198,7 +200,7 @@ volume_names = {
     2: {"title": "Cosette"},
     3: {"title": "Marius"},
     4: {"title": "St. Denis"},
-    5: {"title": "Jean Valjean"}
+    5: {"title": "Jean Valjean"},
 }
 
 interactions = """1.1.1:MY,NP;MY,MB

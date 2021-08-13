@@ -30,7 +30,7 @@ class Fish:
             AG: {A, G},
         }
         self.hypergraph = hnx.Hypergraph(self.edgedict, name="Fish")
-        state_dict = {
+        thisstate = {
             "chains": {
                 0: [("A",), ("B",), ("C",), ("D",), ("E",), ("F",), ("G",), ("H",)],
                 1: [
@@ -78,7 +78,7 @@ class Fish:
                 3: np.array([[], []], dtype=np.int64),
             },
         }
-        self.state = state_dict
+        self.state = thisstate
 
 
 class BigFish:
