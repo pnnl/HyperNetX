@@ -299,15 +299,15 @@
 <span class="sd">    A centrality measure for an s-edge(node) subgraph of H based on shortest paths.</span>
 <span class="sd">    Equals the betweenness centrality of vertices in the edge(node) s-linegraph.</span>
 
-<span class="sd">    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$ </span>
-<span class="sd">    is the ratio of the number of non-trivial shortest paths between any pair of </span>
-<span class="sd">    vertices in the graph that pass through $v$ divided by the total number of </span>
+<span class="sd">    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$</span>
+<span class="sd">    is the ratio of the number of non-trivial shortest paths between any pair of</span>
+<span class="sd">    vertices in the graph that pass through $v$ divided by the total number of</span>
 <span class="sd">    non-trivial shortest paths in the graph.</span>
 
 <span class="sd">    The centrality of edge to all shortest s-edge paths</span>
-<span class="sd">    $V$ = the set of vertices in the linegraph.  </span>
-<span class="sd">    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.    </span>
-<span class="sd">    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$. </span>
+<span class="sd">    $V$ = the set of vertices in the linegraph.</span>
+<span class="sd">    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.</span>
+<span class="sd">    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$.</span>
 
 <span class="sd">    .. math::</span>
 
@@ -362,21 +362,21 @@
 <span class="sd">    edge(node) and all other edges(nodes) in the component times the number of edges(nodes)</span>
 <span class="sd">    in the component minus 1.</span>
 
-<span class="sd">    $V$ = the set of vertices in the linegraph.  </span>
+<span class="sd">    $V$ = the set of vertices in the linegraph.</span>
 <span class="sd">    $n = |V|$</span>
 <span class="sd">    $d$ = shortest path distance</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">    </span>
+
 <span class="sd">        C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}</span>
 
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : hnx.Hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">    s : int, optional</span>
-<span class="sd">        </span>
+
 <span class="sd">    edges : bool, optional</span>
 <span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
 <span class="sd">    return_singletons : bool, optional</span>
@@ -432,12 +432,12 @@
 <span class="sd">    intersects every other s-edge in H. All values range between 0 and 1.</span>
 <span class="sd">    Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.</span>
 
-<span class="sd">    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.  </span>
+<span class="sd">    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.</span>
 <span class="sd">    $V$ = the set of vertices in the linegraph.</span>
 <span class="sd">    $d$ = shortest path distance</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        </span>
+
 <span class="sd">        C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}</span>
 
 <span class="sd">    Normalized this becomes:</span>
@@ -447,9 +447,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : hnx.Hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">    s : int, optional</span>
-<span class="sd">        </span>
+
 <span class="sd">    edges : bool, optional</span>
 <span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
 <span class="sd">    return_singletons : bool, optional</span>
@@ -494,20 +494,20 @@
     <span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.  </span>
+<span class="sd">    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.</span>
 <span class="sd">    $V$ = set of vertices in the linegraph</span>
 <span class="sd">    $d$ = shortest path distance</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">    </span>
+
 <span class="sd">        \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : hnx.Hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">    s : int, optional</span>
-<span class="sd">        </span>
+
 <span class="sd">    edges : bool, optional</span>
 <span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
 <span class="sd">    return_singletons : bool, optional</span>

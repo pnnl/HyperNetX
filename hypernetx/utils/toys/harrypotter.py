@@ -21,7 +21,7 @@ class HarryPotter(object):
             fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/HarryPotter_Characters.csv"
             harrydata = pd.read_csv(fname, encoding="unicode_escape")
         except:
-            fname = f'{current_dir}/HarryPotter_Characters.csv'
+            fname = f"{current_dir}/HarryPotter_Characters.csv"
             harrydata = pd.read_csv(fname, encoding="unicode_escape")
 
         self.harrydata = pd.DataFrame(harrydata)
@@ -69,7 +69,7 @@ class HarryPotter(object):
                 c = harry.columns[cid]
                 data[rid, cid] = ldict[c][harry.iloc[rid][c]]
 
-        self.data, self.counts = hnx.remove_row_duplicates(data, aggregateby='count')
+        self.data, self.counts = hnx.remove_row_duplicates(data, aggregateby="count")
         # Create incidence Tensor and labels
         imat = np.zeros(dims, dtype=int)
         for d in self.data:

@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from collections import OrderedDict
 from hypernetx.utils.toys import HarryPotter
+
 # from harrypotter import HarryPotter
 
 
@@ -18,14 +19,16 @@ class SevenBySix:
         i, l, o, p, r, s = ("I", "L", "O", "P", "R", "S")
         self.edges = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
         self.nodes = set(nd)
-        self.edgedict = OrderedDict([
-            (p, {a, c, k}),
-            (r, {a, e}),
-            (s, {a, k, t2, v}),
-            (l, {c, e}),
-            (o, {t1, t2}),
-            (i, {k, t2}),
-        ])
+        self.edgedict = OrderedDict(
+            [
+                (p, {a, c, k}),
+                (r, {a, e}),
+                (s, {a, k, t2, v}),
+                (l, {c, e}),
+                (o, {t1, t2}),
+                (i, {k, t2}),
+            ]
+        )
 
         self.arr = np.array(
             [
@@ -44,8 +47,23 @@ class SevenBySix:
             ]
         )
 
-        self.data = [[0, 0], [0, 1], [0, 2], [1, 2], [1, 3], [2, 0], [2, 2],
-                     [2, 4], [2, 5], [3, 1], [3, 3], [4, 5], [4, 6], [5, 0], [5, 5]]
+        self.data = [
+            [0, 0],
+            [0, 1],
+            [0, 2],
+            [1, 2],
+            [1, 3],
+            [2, 0],
+            [2, 2],
+            [2, 4],
+            [2, 5],
+            [3, 1],
+            [3, 3],
+            [4, 5],
+            [4, 6],
+            [5, 0],
+            [5, 5],
+        ]
 
 
 class TriLoop:
@@ -60,37 +78,49 @@ class TriLoop:
 
 class SBSDupes:
     def __init__(self):
-        self.edgedict = OrderedDict([('I', {'K', 'T2'}),
-                                     ('L', {'C', 'E', 'F'}),
-                                     ('M', {'C', 'E', 'F'}),
-                                     ('O', {'T1', 'T2'}),
-                                     ('P', {'A', 'C', 'K'}),
-                                     ('R', {'A', 'E', 'F'}),
-                                     ('S', {'A', 'K', 'T2', 'V'})])
+        self.edgedict = OrderedDict(
+            [
+                ("I", {"K", "T2"}),
+                ("L", {"C", "E", "F"}),
+                ("M", {"C", "E", "F"}),
+                ("O", {"T1", "T2"}),
+                ("P", {"A", "C", "K"}),
+                ("R", {"A", "E", "F"}),
+                ("S", {"A", "K", "T2", "V"}),
+            ]
+        )
 
 
 class LesMis:
     def __init__(self):
-        self.edgedict = OrderedDict([(1, {'CL', 'CV', 'GE', 'GG', 'MB', 'MC', 'ME', 'MY', 'NP', 'SN'}),
-                                     (2, {'IS', 'JL', 'JV', 'MB', 'ME', 'MR', 'MT', 'MY', 'PG'}),
-                                     (3, {'BL', 'DA', 'FA', 'FN', 'FT', 'FV', 'LI', 'ZE'}),
-                                     (4, {'CO', 'FN', 'TH', 'TM'}),
-                                     (5, {'BM', 'FF', 'FN', 'JA', 'JV', 'MT', 'MY', 'VI'}),
-                                     (6, {'FN', 'JA', 'JV'}),
-                                     (7,
-                                      {'BM',
-                                       'BR',
-                                       'CC',
-                                       'CH',
-                                       'CN',
-                                       'FN',
-                                       'JU',
-                                       'JV',
-                                       'PO',
-                                       'SC',
-                                       'SP',
-                                       'SS'}),
-                                     (8, {'FN', 'JA', 'JV', 'PO', 'SP', 'SS'})])
+        self.edgedict = OrderedDict(
+            [
+                (1, {"CL", "CV", "GE", "GG", "MB", "MC", "ME", "MY", "NP", "SN"}),
+                (2, {"IS", "JL", "JV", "MB", "ME", "MR", "MT", "MY", "PG"}),
+                (3, {"BL", "DA", "FA", "FN", "FT", "FV", "LI", "ZE"}),
+                (4, {"CO", "FN", "TH", "TM"}),
+                (5, {"BM", "FF", "FN", "JA", "JV", "MT", "MY", "VI"}),
+                (6, {"FN", "JA", "JV"}),
+                (
+                    7,
+                    {
+                        "BM",
+                        "BR",
+                        "CC",
+                        "CH",
+                        "CN",
+                        "FN",
+                        "JU",
+                        "JV",
+                        "PO",
+                        "SC",
+                        "SP",
+                        "SS",
+                    },
+                ),
+                (8, {"FN", "JA", "JV", "PO", "SP", "SS"}),
+            ]
+        )
         self.hypergraph = hnx.Hypergraph(self.edgedict)
 
 
@@ -100,23 +130,23 @@ class Dataframe:
         self.df = pd.read_csv(fname, index_col=0)
 
 
-@ pytest.fixture
+@pytest.fixture
 def seven_by_six():
     return SevenBySix()
 
 
-@ pytest.fixture
+@pytest.fixture
 def triloop():
     return TriLoop()
 
 
-@ pytest.fixture
+@pytest.fixture
 def sbs_hypergraph():
     sbs = SevenBySix()
     return hnx.Hypergraph(sbs.edgedict, name="sbsh")
 
 
-@ pytest.fixture
+@pytest.fixture
 def sbs_graph():
     sbs = SevenBySix()
     edges = set()
@@ -127,40 +157,40 @@ def sbs_graph():
     return G
 
 
-@ pytest.fixture
+@pytest.fixture
 def sbsd_hypergraph():
     sbsd = SBSDupes()
     return hnx.Hypergraph(sbsd.edgedict)
 
 
-@ pytest.fixture
+@pytest.fixture
 def lesmis():
     return LesMis()
 
 
-@ pytest.fixture
+@pytest.fixture
 def G():
     return nx.karate_club_graph()
 
 
-@ pytest.fixture
+@pytest.fixture
 def H():
     G = nx.karate_club_graph()
     return hnx.Hypergraph({f"e{i}": e for i, e in enumerate(G.edges())})
 
 
-@ pytest.fixture
+@pytest.fixture
 def bipartite_example():
     from networkx.algorithms import bipartite
 
     return bipartite.random_graph(10, 5, 0.4, 0)
 
 
-@ pytest.fixture
+@pytest.fixture
 def dataframe():
     return Dataframe()
 
 
-@ pytest.fixture
+@pytest.fixture
 def harry_potter():
     return hnx.HarryPotter()

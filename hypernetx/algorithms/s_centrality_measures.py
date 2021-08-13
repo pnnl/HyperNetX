@@ -128,15 +128,15 @@ def s_betweenness_centrality(
     A centrality measure for an s-edge(node) subgraph of H based on shortest paths.
     Equals the betweenness centrality of vertices in the edge(node) s-linegraph.
 
-    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$ 
-    is the ratio of the number of non-trivial shortest paths between any pair of 
-    vertices in the graph that pass through $v$ divided by the total number of 
+    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$
+    is the ratio of the number of non-trivial shortest paths between any pair of
+    vertices in the graph that pass through $v$ divided by the total number of
     non-trivial shortest paths in the graph.
 
     The centrality of edge to all shortest s-edge paths
-    $V$ = the set of vertices in the linegraph.  
-    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.    
-    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$. 
+    $V$ = the set of vertices in the linegraph.
+    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.
+    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$.
 
     .. math::
 
@@ -191,21 +191,21 @@ def s_closeness_centrality(
     edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
     in the component minus 1.
 
-    $V$ = the set of vertices in the linegraph.  
+    $V$ = the set of vertices in the linegraph.
     $n = |V|$
     $d$ = shortest path distance
 
     .. math::
-    
+
         C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}
 
-    
+
     Parameters
     ----------
     H : hnx.Hypergraph
-        
+
     s : int, optional
-        
+
     edges : bool, optional
         Indicates if method should compute edge linegraph (default) or node linegraph.
     return_singletons : bool, optional
@@ -261,12 +261,12 @@ def s_harmonic_centrality(
     intersects every other s-edge in H. All values range between 0 and 1.
     Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.
 
-    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.  
+    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.
     $V$ = the set of vertices in the linegraph.
     $d$ = shortest path distance
 
     .. math::
-        
+
         C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}
 
     Normalized this becomes:
@@ -276,9 +276,9 @@ def s_harmonic_centrality(
     Parameters
     ----------
     H : hnx.Hypergraph
-        
+
     s : int, optional
-        
+
     edges : bool, optional
         Indicates if method should compute edge linegraph (default) or node linegraph.
     return_singletons : bool, optional
@@ -323,20 +323,20 @@ def s_eccentricity(
     H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True
 ):
     r"""
-    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.  
+    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.
     $V$ = set of vertices in the linegraph
     $d$ = shortest path distance
 
     .. math::
-    
+
         \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}
 
     Parameters
     ----------
     H : hnx.Hypergraph
-        
+
     s : int, optional
-        
+
     edges : bool, optional
         Indicates if method should compute edge linegraph (default) or node linegraph.
     return_singletons : bool, optional

@@ -38,14 +38,15 @@ def collective_contagion(node, status, edge):
         >>> collective_contagion(3, status, (0, 1, 2))
             False
     """
-    if status[node] != 'S' or node not in edge:
+    if status[node] != "S" or node not in edge:
         return False
 
     neighbors = set(edge).difference({node})
     for i in neighbors:
-        if status[i] != 'I':
+        if status[i] != "I":
             return False
     return True
+
 
 def individual_contagion(node, status, edge):
     """
@@ -80,14 +81,15 @@ def individual_contagion(node, status, edge):
         >>> collective_contagion(3, status, (0, 3, 4))
             False
     """
-    if status[node] != 'S' or node not in edge:
+    if status[node] != "S" or node not in edge:
         return False
 
     neighbors = set(edge).difference({node})
     for i in neighbors:
-        if status[i] == 'I':
+        if status[i] == "I":
             return True
     return False
+
 
 def threshold(node, status, edge, tau=0.1):
     """
@@ -122,16 +124,17 @@ def threshold(node, status, edge, tau=0.1):
         >>> threshold(3, status, (1, 2, 3), tau=1)
             False
     """
-    if status[node] != 'S' or node not in edge:
+    if status[node] != "S" or node not in edge:
         return False
 
     neighbors = set(edge).difference({node})
     if len(neighbors) > 0:
-        fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
+        fraction_infected = sum([status[i] == "I" for i in neighbors]) / len(neighbors)
     # The isolated node case
     else:
         fraction_infected = 0
     return fraction_infected >= tau
+
 
 def majority_vote(node, status, edge):
     """
@@ -169,12 +172,12 @@ def majority_vote(node, status, edge):
             False
     """
 
-    if status[node] != 'S' or node not in edge:
+    if status[node] != "S" or node not in edge:
         return False
 
     neighbors = set(edge).difference({node})
     if len(neighbors) > 0:
-        fraction_infected = sum([status[i] == 'I' for i in neighbors])/len(neighbors)
+        fraction_infected = sum([status[i] == "I" for i in neighbors]) / len(neighbors)
     else:
         fraction_infected = 0
 
@@ -190,32 +193,32 @@ def majority_vote(node, status, edge):
 
 # The ListDict class is copied from Joel Miller's Github repository Mathematics-of-Epidemics-on-Networks
 class _ListDict_(object):
-    r'''
-    The Gillespie algorithm will involve a step that samples a random element 
+    r"""
+    The Gillespie algorithm will involve a step that samples a random element
     from a set based on its weight.  This is awkward in Python.
-    
+
     So I'm introducing a new class based on a stack overflow answer by
-    Amber (http://stackoverflow.com/users/148870/amber) 
+    Amber (http://stackoverflow.com/users/148870/amber)
     for a question by
-    tba (http://stackoverflow.com/users/46521/tba) 
+    tba (http://stackoverflow.com/users/46521/tba)
     found at
     http://stackoverflow.com/a/15993515/2966723
-    
-    This will allow me to select a random element uniformly, and then use 
-    rejection sampling to make sure it's been selected with the appropriate 
+
+    This will allow me to select a random element uniformly, and then use
+    rejection sampling to make sure it's been selected with the appropriate
     weight.
-    '''
-    def __init__(self, weighted = False):
+    """
+
+    def __init__(self, weighted=False):
         self.item_to_position = {}
         self.items = []
 
         self.weighted = weighted
         if self.weighted:
-            self.weight = defaultdict(int) #presume all weights positive
+            self.weight = defaultdict(int)  # presume all weights positive
             self.max_weight = 0
             self._total_weight = 0
             self.max_weight_count = 0
-            
 
     def __len__(self):
         return len(self.items)
@@ -224,39 +227,41 @@ class _ListDict_(object):
         return item in self.item_to_position
 
     def _update_max_weight(self):
-        C = Counter(self.weight.values())  #may be a faster way to do this, we only need to count the max.
+        C = Counter(
+            self.weight.values()
+        )  # may be a faster way to do this, we only need to count the max.
         self.max_weight = max(C.keys())
         self.max_weight_count = C[self.max_weight]
 
-        
-    def insert(self, item, weight = None):
-        r'''
+    def insert(self, item, weight=None):
+        r"""
         If not present, then inserts the thing (with weight if appropriate)
         if already there, replaces the weight unless weight is 0
-        
+
         If weight is 0, then it removes the item and doesn't replace.
-        
+
         WARNING:
             replaces weight if already present, does not increment weight.
-            
-        
-        '''
+
+
+        """
         if self.__contains__(item):
             self.remove(item)
         if weight != 0:
             self.update(item, weight_increment=weight)
-        
 
-    def update(self, item, weight_increment = None):
-        r'''
+    def update(self, item, weight_increment=None):
+        r"""
         If not present, then inserts the thing (with weight if appropriate)
         if already there, increments weight
-        
+
         WARNING:
             increments weight if already present, cannot overwrite weight.
-        '''
-        if weight_increment is not None: #will break if passing a weight to unweighted case
-            if weight_increment >0 or self.weight[item] != self.max_weight:
+        """
+        if (
+            weight_increment is not None
+        ):  # will break if passing a weight to unweighted case
+            if weight_increment > 0 or self.weight[item] != self.max_weight:
                 self.weight[item] = self.weight[item] + weight_increment
                 self._total_weight += weight_increment
                 if self.weight[item] > self.max_weight:
@@ -264,20 +269,20 @@ class _ListDict_(object):
                     self.max_weight = self.weight[item]
                 elif self.weight[item] == self.max_weight:
                     self.max_weight_count += 1
-            else: #it's a negative increment and was at max
+            else:  # it's a negative increment and was at max
                 self.max_weight_count -= 1
                 self.weight[item] = self.weight[item] + weight_increment
                 self._total_weight += weight_increment
-                self.max_weight_count -= 1 
+                self.max_weight_count -= 1
                 if self.max_weight_count == 0:
-                    self._update_max_weight               
+                    self._update_max_weight
         elif self.weighted:
-            raise Exception('if weighted, must assign weight_increment')
+            raise Exception("if weighted, must assign weight_increment")
 
-        if item in self: #we've already got it, do nothing else
+        if item in self:  # we've already got it, do nothing else
             return
         self.items.append(item)
-        self.item_to_position[item] = len(self.items)-1
+        self.item_to_position[item] = len(self.items) - 1
 
     def remove(self, choice):
         position = self.item_to_position.pop(choice)
@@ -285,17 +290,17 @@ class _ListDict_(object):
         if position != len(self.items):
             self.items[position] = last_item
             self.item_to_position[last_item] = position
-            
+
         if self.weighted:
             weight = self.weight.pop(choice)
             self._total_weight -= weight
-            if weight == self.max_weight:  
-                #if we find ourselves in this case often
-                #it may be better just to let max_weight be the
-                #largest weight *ever* encountered, even if all remaining weights are less
+            if weight == self.max_weight:
+                # if we find ourselves in this case often
+                # it may be better just to let max_weight be the
+                # largest weight *ever* encountered, even if all remaining weights are less
                 #
                 self.max_weight_count -= 1
-                if self.max_weight_count == 0 and len(self)>0:
+                if self.max_weight_count == 0 and len(self) > 0:
                     self._update_max_weight()
 
     def choose_random(self):
@@ -304,7 +309,7 @@ class _ListDict_(object):
         if self.weighted:
             while True:
                 choice = random.choice(self.items)
-                if random.random() < self.weight[choice]/self.max_weight:
+                if random.random() < self.weight[choice] / self.max_weight:
                     break
             # r = random.random()*self.total_weight
             # for item in self.items:
@@ -315,10 +320,9 @@ class _ListDict_(object):
 
         else:
             return random.choice(self.items)
-        
 
     def random_removal(self):
-        r'''uses other class methods to choose and then remove a random node'''
+        r"""uses other class methods to choose and then remove a random node"""
         choice = self.choose_random()
         self.remove(choice)
         return choice
@@ -328,12 +332,26 @@ class _ListDict_(object):
             return self._total_weight
         else:
             return len(self)
+
     def update_total_weight(self):
         self._total_weight = sum(self.weight[item] for item in self.items)
 
 
 # Contagion Functions
-def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), dt=1.0, return_full_data = False, **args):
+def discrete_SIR(
+    H,
+    tau,
+    gamma,
+    transmission_function=threshold,
+    initial_infecteds=None,
+    initial_recovereds=None,
+    rho=None,
+    tmin=0,
+    tmax=float("Inf"),
+    dt=1.0,
+    return_full_data=False,
+    **args
+):
     """
     A discrete-time SIR model for hypergraphs similar to the construction described in
     "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
@@ -375,7 +393,7 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
     else
         t, S, I, R : numpy arrays
             time (t), number of susceptible (S), infected (I), and recovered (R) at each time.
-    
+
     Notes
     -----
 
@@ -394,16 +412,15 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
         >>> dt = 0.1
         >>> t, S, I, R = contagion.discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     """
-    
+
     if rho is not None and initial_infecteds is not None:
         raise Exception("Cannot define both initial_infecteds and rho")
-
 
     if initial_infecteds is None:
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes()*rho))
+            initial_number = int(round(H.number_of_nodes() * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -415,19 +432,19 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
         # check to make sure that the initially recovered nodes are in the hypergraph
         initial_recovereds = list(set(H.nodes).intersection(set(initial_recovereds)))
 
-    status = defaultdict(lambda : 'S')
+    status = defaultdict(lambda: "S")
 
     if return_full_data:
         transition_events = dict()
         transition_events[tmin] = list()
 
     for node in initial_infecteds:
-        status[node] = 'I'
+        status[node] = "I"
         if return_full_data:
             transition_events[tmin].append(("I", node, None))
-    
+
     for node in initial_recovereds:
-        status[node] = 'R'
+        status[node] = "R"
         if return_full_data:
             transition_events[tmin].append(("R", node))
 
@@ -440,9 +457,9 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
     newStatus = status.copy()
 
     if H.isstatic:
-        edge_neighbors = lambda node : H.edges.memberships[node]
+        edge_neighbors = lambda node: H.edges.memberships[node]
     else:
-        edge_neighbors = lambda node : H.nodes[node].memberships
+        edge_neighbors = lambda node: H.nodes[node].memberships
 
     while t < tmax and I[-1] != 0:
         # Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes
@@ -451,30 +468,35 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
         R.append(R[-1])
 
         if return_full_data:
-            transition_events[t+dt] = list()
+            transition_events[t + dt] = list()
 
         for node in H.nodes:
-            if status[node] == 'I':
+            if status[node] == "I":
                 # recover the node. If it is not healed, it stays infected.
-                if random.random() <= gamma*dt:
-                    newStatus[node] = 'R'
+                if random.random() <= gamma * dt:
+                    newStatus[node] = "R"
                     I[-1] += -1
                     R[-1] += 1
                     if return_full_data:
-                        transition_events[t+dt].append(('R', node))
-            elif status[node] == 'S':
+                        transition_events[t + dt].append(("R", node))
+            elif status[node] == "S":
                 for edge_id in edge_neighbors(node):
                     members = H.edges[edge_id]
-                    if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
-                        newStatus[node] = 'I'
+                    if (
+                        random.random()
+                        <= tau[len(members)]
+                        * transmission_function(node, status, members, **args)
+                        * dt
+                    ):
+                        newStatus[node] = "I"
                         S[-1] += -1
                         I[-1] += 1
                         if return_full_data:
-                            transition_events[t+dt].append(('I', node, edge_id))
+                            transition_events[t + dt].append(("I", node, edge_id))
                         break
                 # This executes after the loop has executed normally without hitting the break statement which indicates infection
                 else:
-                    newStatus[node] = 'S'
+                    newStatus[node] = "S"
         status = newStatus.copy()
         t += dt
         times.append(t)
@@ -484,7 +506,19 @@ def discrete_SIR(H, tau, gamma, transmission_function=threshold, initial_infecte
         return np.array(times), np.array(S), np.array(I), np.array(R)
 
 
-def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho=None, tmin=0, tmax=100, dt=1.0, return_full_data=False, **args):
+def discrete_SIS(
+    H,
+    tau,
+    gamma,
+    transmission_function=threshold,
+    initial_infecteds=None,
+    rho=None,
+    tmin=0,
+    tmax=100,
+    dt=1.0,
+    return_full_data=False,
+    **args
+):
     """
     A discrete-time SIS model for hypergraphs as implemented in
     "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
@@ -551,20 +585,20 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes()*rho))
+            initial_number = int(round(H.number_of_nodes() * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
         initial_infecteds = list(set(H.nodes).intersection(set(initial_infecteds)))
- 
-    status = defaultdict(lambda : 'S')
+
+    status = defaultdict(lambda: "S")
 
     if return_full_data:
         transition_events = dict()
         transition_events[tmin] = list()
 
     for node in initial_infecteds:
-        status[node] = 'I'
+        status[node] = "I"
         if return_full_data:
             transition_events[tmin].append(("I", node, None))
 
@@ -576,40 +610,45 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
     newStatus = status.copy()
 
     if H.isstatic:
-        edge_neighbors = lambda node : H.edges.memberships[node]
+        edge_neighbors = lambda node: H.edges.memberships[node]
     else:
-        edge_neighbors = lambda node : H.nodes[node].memberships
+        edge_neighbors = lambda node: H.nodes[node].memberships
 
     while t < tmax and I[-1] != 0:
         # Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes
         S.append(S[-1])
         I.append(I[-1])
         if return_full_data:
-            transition_events[t+dt] = list()
+            transition_events[t + dt] = list()
 
         for node in H.nodes:
-            if status[node] == 'I':
+            if status[node] == "I":
                 # recover the node. If it is not healed, it stays infected.
-                if random.random() <= gamma*dt:
-                    newStatus[node] = 'S'
+                if random.random() <= gamma * dt:
+                    newStatus[node] = "S"
                     I[-1] += -1
                     S[-1] += 1
                     if return_full_data:
-                        transition_events[t+dt].append(('S', node))
-            elif status[node] == 'S':
+                        transition_events[t + dt].append(("S", node))
+            elif status[node] == "S":
                 for edge_id in edge_neighbors(node):
                     members = H.edges[edge_id]
-                    
-                    if random.random() <= tau[len(members)]*transmission_function(node, status, members, **args)*dt:
-                        newStatus[node] = 'I'
+
+                    if (
+                        random.random()
+                        <= tau[len(members)]
+                        * transmission_function(node, status, members, **args)
+                        * dt
+                    ):
+                        newStatus[node] = "I"
                         S[-1] += -1
                         I[-1] += 1
                         if return_full_data:
-                            transition_events[t+dt].append(('I', node, edge_id))
+                            transition_events[t + dt].append(("I", node, edge_id))
                         break
                 # This executes after the loop has executed normally without hitting the break statement which indicates infection, though I'm not sure we even need it
                 else:
-                    newStatus[node] = 'S'
+                    newStatus[node] = "S"
         status = newStatus.copy()
         t += dt
         times.append(t)
@@ -619,7 +658,18 @@ def discrete_SIS(H, tau, gamma, transmission_function=threshold, initial_infecte
         return np.array(times), np.array(S), np.array(I)
 
 
-def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, initial_recovereds = None, rho = None, tmin = 0, tmax = float('Inf'), **args):
+def Gillespie_SIR(
+    H,
+    tau,
+    gamma,
+    transmission_function=threshold,
+    initial_infecteds=None,
+    initial_recovereds=None,
+    rho=None,
+    tmin=0,
+    tmax=float("Inf"),
+    **args
+):
     """
     A continuous-time SIR model for hypergraphs similar to the model in
     "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
@@ -655,7 +705,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
     -------
     t, S, I, R : numpy arrays
         time (t), number of susceptible (S), infected (I), and recovered (R) at each time.
-    
+
     Notes
     -----
 
@@ -674,16 +724,15 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
         >>> t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     """
     # Initial infecteds and recovereds should be lists or None. Add a check here.
-    
+
     if rho is not None and initial_infecteds is not None:
         raise Exception("Cannot define both initial_infecteds and rho")
-
 
     if initial_infecteds is None:
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes()*rho))
+            initial_number = int(round(H.number_of_nodes() * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -695,28 +744,28 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
         # check to make sure that the initially recovered nodes are in the hypergraph
         initial_recovereds = list(set(H.nodes).intersection(set(initial_recovereds)))
 
-    status = defaultdict(lambda : 'S')
+    status = defaultdict(lambda: "S")
 
     size_dist = np.unique(H.edge_size_dist())
 
     for node in initial_infecteds:
-        status[node] = 'I'
-    
+        status[node] = "I"
+
     for node in initial_recovereds:
-        status[node] = 'R'
+        status[node] = "R"
 
     I = [len(initial_infecteds)]
     R = [len(initial_recovereds)]
     S = [H.number_of_nodes() - I[-1] - R[-1]]
 
     if H.isstatic:
-        edge_neighbors = lambda node : H.edges.memberships[node]
+        edge_neighbors = lambda node: H.edges.memberships[node]
     else:
-        edge_neighbors = lambda node : H.nodes[node].memberships
+        edge_neighbors = lambda node: H.nodes[node].memberships
 
     t = tmin
     times = [t]
-    
+
     infecteds = _ListDict_()
 
     infectious_edges = dict()
@@ -731,13 +780,13 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
                 is_infectious = transmission_function(node, status, members, **args)
                 if is_infectious:
                     infectious_edges[len(members)].update((edge_id, node))
-    
+
     total_rates = dict()
-    total_rates[1] = gamma*infecteds.total_weight()
+    total_rates[1] = gamma * infecteds.total_weight()
 
     for size in size_dist:
-        total_rates[size] = tau[size]*infectious_edges[size].total_weight()
-    
+        total_rates[size] = tau[size] * infectious_edges[size].total_weight()
+
     total_rate = sum(total_rates.values())
 
     dt = random.expovariate(total_rate)
@@ -747,12 +796,12 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
         # choose type of event that happens
         while True:
             choice = random.choice(list(total_rates.keys()))
-            if random.random() <= total_rates[choice]/total_rate:
+            if random.random() <= total_rates[choice] / total_rate:
                 break
-        
-        if choice == 1: # recover
+
+        if choice == 1:  # recover
             recovering_node = infecteds.random_removal()
-            status[recovering_node] = 'R'
+            status[recovering_node] = "R"
 
             # remove edges that are no longer infectious because of this node recovering
             for edge_id in edge_neighbors(recovering_node):
@@ -771,7 +820,7 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
 
         else:
             _, recipient = infectious_edges[choice].choose_random()
-            status[recipient] = 'I'
+            status[recipient] = "I"
 
             infecteds.update(recipient)
 
@@ -798,21 +847,33 @@ def Gillespie_SIR(H, tau, gamma, transmission_function=threshold, initial_infect
             I.append(I[-1] + 1)
             R.append(R[-1])
 
-        total_rates[1] = gamma*infecteds.total_weight()
+        total_rates[1] = gamma * infecteds.total_weight()
         for size in size_dist:
-            total_rates[size] = tau[size]*infectious_edges[size].total_weight()
-    
+            total_rates[size] = tau[size] * infectious_edges[size].total_weight()
+
         total_rate = sum(total_rates.values())
 
         if total_rate > 0:
             dt = random.expovariate(total_rate)
         else:
-            dt = float('Inf')
+            dt = float("Inf")
         t += dt
     return np.array(times), np.array(S), np.array(I), np.array(R)
 
 
-def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infecteds=None, rho = None, tmin = 0, tmax = float('Inf'), return_full_data = False, sim_kwargs = None, **args):
+def Gillespie_SIS(
+    H,
+    tau,
+    gamma,
+    transmission_function=threshold,
+    initial_infecteds=None,
+    rho=None,
+    tmin=0,
+    tmax=float("Inf"),
+    return_full_data=False,
+    sim_kwargs=None,
+    **args
+):
     """
     A continuous-time SIS model for hypergraphs similar to the model in
     "The effect of heterogeneity on hypergraph contagion models" by Landry and Restrepo
@@ -846,7 +907,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
     -------
     t, S, I : numpy arrays
         time (t), number of susceptible (S), and infected (I) at each time.
-    
+
     Notes
     -----
 
@@ -865,39 +926,38 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
         >>> t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     """
     # Initial infecteds and recovereds should be lists or None. Add a check here.
-    
+
     if rho is not None and initial_infecteds is not None:
         raise Exception("Cannot define both initial_infecteds and rho")
-
 
     if initial_infecteds is None:
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes()*rho))
+            initial_number = int(round(H.number_of_nodes() * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
         initial_infecteds = list(set(H.nodes).intersection(set(initial_infecteds)))
 
-    status = defaultdict(lambda : 'S')
+    status = defaultdict(lambda: "S")
 
     size_dist = np.unique(H.edge_size_dist())
 
     for node in initial_infecteds:
-        status[node] = 'I'
+        status[node] = "I"
 
     I = [len(initial_infecteds)]
     S = [H.number_of_nodes() - I[-1]]
 
     if H.isstatic:
-        edge_neighbors = lambda node : H.edges.memberships[node]
+        edge_neighbors = lambda node: H.edges.memberships[node]
     else:
-        edge_neighbors = lambda node : H.nodes[node].memberships
+        edge_neighbors = lambda node: H.nodes[node].memberships
 
     t = tmin
     times = [t]
-    
+
     infecteds = _ListDict_()
 
     infectious_edges = dict()
@@ -912,12 +972,12 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
                 is_infectious = transmission_function(node, status, members, **args)
                 if is_infectious:
                     infectious_edges[len(members)].update((edge_id, node))
-    
+
     total_rates = dict()
-    total_rates[1] = gamma*infecteds.total_weight()
+    total_rates[1] = gamma * infecteds.total_weight()
     for size in size_dist:
-        total_rates[size] = tau[size]*infectious_edges[size].total_weight()
-    
+        total_rates[size] = tau[size] * infectious_edges[size].total_weight()
+
     total_rate = sum(total_rates.values())
 
     dt = random.expovariate(total_rate)
@@ -928,12 +988,12 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
         # this can be improved
         while True:
             choice = random.choice(list(total_rates.keys()))
-            if random.random() <= total_rates[choice]/total_rate:
+            if random.random() <= total_rates[choice] / total_rate:
                 break
-        
-        if choice == 1: # recover
+
+        if choice == 1:  # recover
             recovering_node = infecteds.random_removal()
-            status[recovering_node] = 'S'
+            status[recovering_node] = "S"
 
             # remove edges that are no longer infectious because of this node recovering
             for edge_id in edge_neighbors(recovering_node):
@@ -951,7 +1011,7 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
 
         else:
             _, recipient = infectious_edges[choice].choose_random()
-            status[recipient] = 'I'
+            status[recipient] = "I"
 
             infecteds.update(recipient)
 
@@ -977,16 +1037,16 @@ def Gillespie_SIS(H, tau, gamma, transmission_function=threshold, initial_infect
             S.append(S[-1] - 1)
             I.append(I[-1] + 1)
 
-        total_rates[1] = gamma*infecteds.total_weight()
+        total_rates[1] = gamma * infecteds.total_weight()
         for size in size_dist:
-            total_rates[size] = tau[size]*infectious_edges[size].total_weight()
-    
+            total_rates[size] = tau[size] * infectious_edges[size].total_weight()
+
         total_rate = sum(total_rates.values())
 
         if total_rate > 0:
             dt = random.expovariate(total_rate)
         else:
-            dt = float('Inf')
+            dt = float("Inf")
         t += dt
 
     return np.array(times), np.array(S), np.array(I)

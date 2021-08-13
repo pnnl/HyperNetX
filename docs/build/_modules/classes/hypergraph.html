@@ -257,7 +257,7 @@
 <span class="sd">    hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object</span>
 <span class="sd">    is passed to the Hypergraph constructor.</span>
 
-<span class="sd">    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans. </span>
+<span class="sd">    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans.</span>
 <span class="sd">       | By default the first column corresponds to the edge names and the second column to the node names.</span>
 <span class="sd">       | You can specify the columns by restricting the dataframe to the columns of interest in the order:</span>
 <span class="sd">       | :code:`hnx.Hypergraph(df[[edge_column_name,node_column_name]])`</span>
@@ -273,8 +273,8 @@
 <span class="sd">    static : boolean, optional, default: False</span>
 <span class="sd">        If True the hypergraph will be immutable, edges and nodes may not be changed.</span>
 <span class="sd">    weights : array-like, optional, default : None</span>
-<span class="sd">        User specified weights corresponding to setsytem of type pandas.DataFrame, </span>
-<span class="sd">        length must equal number of rows in dataframe. </span>
+<span class="sd">        User specified weights corresponding to setsytem of type pandas.DataFrame,</span>
+<span class="sd">        length must equal number of rows in dataframe.</span>
 <span class="sd">        If None, weight for all rows is assumed to be 1.</span>
 <span class="sd">    keep_weights : bool, optional, default : True</span>
 <span class="sd">        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</span>
@@ -292,14 +292,14 @@
     <span class="c1"># TODO: remove lambda functions from constructor in H and E.</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> 
-        <span class="n">setsystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">setsystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">aggregateby</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span>
-        <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-        <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
+        <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
         <span class="k">if</span> <span class="n">use_nwhy</span><span class="p">:</span>
@@ -321,41 +321,44 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="k">if</span> <span class="n">static</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">StaticEntitySet</span><span class="p">)</span> <span class="ow">or</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">StaticEntity</span><span class="p">)</span> <span class="ow">or</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="p">)</span> <span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="o">=</span><span class="kc">True</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">StaticEntitySet</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">StaticEntity</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_static</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">setsystem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">=</span><span class="n">StaticEntitySet</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">=</span><span class="n">StaticEntitySet</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">StaticEntitySet</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">StaticEntitySet</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">E</span><span class="o">=</span><span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">entity</span> <span class="o">=</span> <span class="n">setsystem</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">)</span>
+                    <span class="n">E</span> <span class="o">=</span> <span class="n">StaticEntitySet</span><span class="p">(</span>
+                        <span class="n">entity</span><span class="o">=</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span>
+                    <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">E</span><span class="o">=</span><span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">entity</span> <span class="o">=</span> <span class="n">setsystem</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">=</span><span class="n">E</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="n">E</span> <span class="o">=</span> <span class="n">StaticEntitySet</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">setsystem</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">E</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">memberships</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_static</span><span class="o">=</span><span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_static</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">setsystem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">setsystem</span><span class="o">=</span><span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">elements</span> <span class="o">=</span> <span class="p">[])</span>
+                <span class="n">setsystem</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[])</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
-                <span class="n">setsystem</span><span class="o">=</span><span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">setsystem</span><span class="o">.</span><span class="n">incidence_dict</span><span class="p">)</span>
+                <span class="n">setsystem</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">setsystem</span><span class="o">.</span><span class="n">incidence_dict</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="c1"># Must be a dictionary with values equal to iterables of Entities and hashables.</span>
                 <span class="c1"># Keys will be uids for new edges and values of the dictionary will generate the nodes.</span>
-                <span class="n">setsystem</span><span class="o">=</span><span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">setsystem</span><span class="p">)</span>
+                <span class="n">setsystem</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">setsystem</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">EntitySet</span><span class="p">):</span>
                 <span class="c1"># If no ids are given, return default ids indexed by position in iterator</span>
                 <span class="c1"># This should be an iterable of sets</span>
-                <span class="n">edge_labels</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">setsystem</span><span class="p">))]</span>
-                <span class="n">setsystem</span><span class="o">=</span><span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">edge_labels</span><span class="p">,</span> <span class="n">setsystem</span><span class="p">)))</span>
+                <span class="n">edge_labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">setsystem</span><span class="p">))]</span>
+                <span class="n">setsystem</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">edge_labels</span><span class="p">,</span> <span class="n">setsystem</span><span class="p">)))</span>
 
-            <span class="n">_reg</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">registry</span>
-            <span class="n">_nodes</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Entity</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="n">_reg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_reg</span><span class="p">}</span>
-            <span class="n">_elements</span><span class="o">=</span><span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">setsystem</span><span class="p">[</span><span class="n">j</span><span class="p">]}</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">setsystem</span><span class="p">}</span>
-            <span class="n">_edges</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">_reg</span> <span class="o">=</span> <span class="n">setsystem</span><span class="o">.</span><span class="n">registry</span>
+            <span class="n">_nodes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Entity</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="n">_reg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_reg</span><span class="p">}</span>
+            <span class="n">_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">setsystem</span><span class="p">[</span><span class="n">j</span><span class="p">]}</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">setsystem</span><span class="p">}</span>
+            <span class="n">_edges</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">j</span><span class="p">:</span> <span class="n">Entity</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">_elements</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">**</span><span class="n">setsystem</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">setsystem</span>
             <span class="p">}</span>
@@ -382,7 +385,7 @@
     <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Object associated with self._edges.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        StaticEntitySet or EntitySet</span>
@@ -394,7 +397,7 @@
     <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Object associated with self._nodes.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        StaticEntitySet or EntitySet</span>
@@ -407,11 +410,11 @@
     <span class="k">def</span> <span class="nf">isstatic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks whether nodes and edges are immutable</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Boolean</span>
-<span class="sd">    </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span>
 
@@ -419,11 +422,11 @@
     <span class="k">def</span> <span class="nf">incidence_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dictionary keyed by edge uids with values the uids of nodes in each edge</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">incidence_dict</span>
 
@@ -431,11 +434,11 @@
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        (number of nodes, number of edges)</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tuple</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwhy</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
@@ -445,33 +448,33 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        String representation of hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hypergraph(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">elements</span><span class="si">}</span><span class="s2">,name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        String representation of hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hypergraph(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">elements</span><span class="si">}</span><span class="s2">,name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of nodes</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwhy</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
@@ -481,11 +484,11 @@
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterate over the nodes of the hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict_keyiterator</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
 
@@ -530,7 +533,7 @@
 <span class="sd">            User provided name/id/label for hypergraph object</span>
 <span class="sd">        edges : bool, optional</span>
 <span class="sd">            Determines if uid is an edge or node name</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        : int</span>
@@ -552,7 +555,7 @@
 <span class="sd">            Internally assigned id</span>
 <span class="sd">        edges : bool, optional</span>
 <span class="sd">            Determines if id references an edge or node</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
@@ -697,11 +700,11 @@
 <div class="viewcode-block" id="Hypergraph.edge_size_dist"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.edge_size_dist">[docs]</a>    <span class="k">def</span> <span class="nf">edge_size_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the size for each edge</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.array</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edge_size_dist&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -726,7 +729,7 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns new static hypergraph with the same dictionary as original hypergraph</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name : None, optional</span>
@@ -735,14 +738,14 @@
 <span class="sd">            Description</span>
 <span class="sd">        filepath : None, optional, default : False</span>
 <span class="sd">            Description</span>
-<span class="sd">        </span>
+
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
 <span class="sd">        Static hypergraphs store the user defined node and edge names in</span>
 <span class="sd">        a dictionary of labeled lists. The order of the lists provides an</span>
 <span class="sd">        index, which the hypergraph uses in place of the node and edge names</span>
 <span class="sd">        for fast processing.</span>
-<span class="sd">        </span>
+
 <span class="sd">        No Longer Returned</span>
 <span class="sd">        ------------------</span>
 <span class="sd">        hnx.Hypergraph</span>
@@ -1269,7 +1272,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        weights : bool, default=False</span>
 <span class="sd">            If False all nonzero entries are 1.</span>
-<span class="sd">            If True and self.static all nonzero entries are filled by </span>
+<span class="sd">            If True and self.static all nonzero entries are filled by</span>
 <span class="sd">            self.edges.cell_weights dictionary values.</span>
 
 <span class="sd">        index : boolean, optional, default False</span>
@@ -1288,7 +1291,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="n">mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;incidence_matrix&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">mat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">()</span>
@@ -1359,8 +1362,8 @@
 <span class="sd">            if True, will return a rowdict of row to node uid</span>
 
 <span class="sd">        weights: bool, default=True</span>
-<span class="sd">            If False all nonzero entries are 1. </span>
-<span class="sd">            If True adjacency matrix will depend on weighted incidence matrix, </span>
+<span class="sd">            If False all nonzero entries are 1.</span>
+<span class="sd">            If True adjacency matrix will depend on weighted incidence matrix,</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1528,8 +1531,8 @@
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
             <span class="n">ec</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">lev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">edges</span><span class="p">]</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">restrict_to_indices</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">edges</span><span class="p">)</span>
+        <span class="n">lev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">edges</span><span class="p">]</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">restrict_to_indices</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">edges</span><span class="p">)</span>
         <span class="n">E</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">lev</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">en</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">E</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">lev</span><span class="p">]])</span>
         <span class="k">if</span> <span class="n">rec</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">E</span><span class="p">,</span> <span class="n">ec</span>
@@ -2453,7 +2456,7 @@
 <span class="sd">        sort_columns : bool, optional, default=True</span>
 <span class="sd">            sort columns based on hashable edge names</span>
 <span class="sd">        cell_weights : bool, optional, default=True</span>
-<span class="sd">            if self.isstatic then include cell weights </span>
+<span class="sd">            if self.isstatic then include cell weights</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
@@ -2664,8 +2667,8 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a hypergraph from a Pandas Dataframe object using index to label vertices</span>
-<span class="sd">        and Columns to label edges. The values of the dataframe are transformed into an </span>
-<span class="sd">        incidence matrix.  </span>
+<span class="sd">        and Columns to label edges. The values of the dataframe are transformed into an</span>
+<span class="sd">        incidence matrix.</span>
 <span class="sd">        Note this is different than passing a dataframe directly</span>
 <span class="sd">        into the Hypergraph constructor. The latter automatically generates a static hypergraph</span>
 <span class="sd">        with edge and node labels given by the cell values.</span>

@@ -7,7 +7,12 @@ import networkx as nx
 from hypernetx import *
 from hypernetx.exception import HyperNetXError
 from hypernetx.classes.entity import Entity, EntitySet
-from hypernetx.utils import HNXCount, DefaultOrderedDict, remove_row_duplicates, reverse_dictionary
+from hypernetx.utils import (
+    HNXCount,
+    DefaultOrderedDict,
+    remove_row_duplicates,
+    reverse_dictionary,
+)
 from scipy.sparse import coo_matrix, csr_matrix, issparse
 import itertools as it
 import pandas as pd
@@ -59,8 +64,8 @@ class StaticEntity(object):
         uid=None,
         weights=None,
         keep_weights=True,
-        aggregateby='count',
-        **props
+        aggregateby="count",
+        **props,
     ):
         self._uid = uid
         self.properties = {}
@@ -86,12 +91,21 @@ class StaticEntity(object):
                 )
                 self._keys = np.array(list(self._labels.keys()))
                 # returns the index of the category (column)
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
                 self._arr = None
             elif isinstance(entity, pd.DataFrame):
                 self.properties.update(props)
-                self._data, self._labels, self._cell_weights = _turn_dataframe_into_entity(
+                (
+                    self._data,
+                    self._labels,
+                    self._cell_weights,
+                ) = _turn_dataframe_into_entity(
                     entity, weights=weights, aggregateby=aggregateby
                 )
                 self.__dict__.update(self.properties)
@@ -99,26 +113,50 @@ class StaticEntity(object):
                 self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
                 self._dimsize = len(self._dimensions)
                 self._keys = np.array(list(self._labels.keys()))
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
 
             else:  # For these cases we cannot yet add cell_weights directly, cell_weights default to duplicate counts
                 if isinstance(entity, Entity) or isinstance(entity, EntitySet):
                     d = entity.incidence_dict
-                    self._data, self._labels, self._cell_weights = _turn_dict_to_staticentity(
+                    (
+                        self._data,
+                        self._labels,
+                        self._cell_weights,
+                    ) = _turn_dict_to_staticentity(
                         d
                     )  # For now duplicate entries will be removed.
                 elif isinstance(entity, dict):  # returns only 2 levels
-                    self._data, self._labels, self._cell_weights = _turn_dict_to_staticentity(
+                    (
+                        self._data,
+                        self._labels,
+                        self._cell_weights,
+                    ) = _turn_dict_to_staticentity(
                         entity
                     )  # For now duplicate entries will be removed.
                 else:  # returns only 2 levels
-                    self._data, self._labels, self._cell_weights = _turn_iterable_to_staticentity(entity)
+                    (
+                        self._data,
+                        self._labels,
+                        self._cell_weights,
+                    ) = _turn_iterable_to_staticentity(entity)
                 self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
                 self._dimsize = len(self._dimensions)  # number of columns
-                self._keys = np.array(list(self._labels.keys()))  # These are the column headers from the dataframe
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._keys = np.array(
+                    list(self._labels.keys())
+                )  # These are the column headers from the dataframe
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
                 self.properties.update(props)
                 self.__dict__.update(
                     self.properties
@@ -137,9 +175,14 @@ class StaticEntity(object):
                 self._labels = OrderedDict(
                     (category, np.array(values)) for category, values in labels.items()
                 )  # OrderedDict(category,np.array([categorical values ....])) is aligned to arr
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
                 self._keys = np.array(list(labels.keys()))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
             else:
                 self._labels = OrderedDict(
                     [
@@ -149,7 +192,10 @@ class StaticEntity(object):
                 )
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.arange(self._dimsize)
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
 
         elif arr is not None:
             self._arr = arr
@@ -163,9 +209,14 @@ class StaticEntity(object):
                 self._labels = OrderedDict(
                     (category, np.array(values)) for category, values in labels.items()
                 )
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
                 self._keys = np.array(list(labels.keys()))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
 
             else:
                 self._labels = OrderedDict(
@@ -176,7 +227,10 @@ class StaticEntity(object):
                 )
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.arange(self._dimsize)
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
         else:  # no entity, data or arr is given
 
             if labels is not None:
@@ -189,9 +243,14 @@ class StaticEntity(object):
                 self._arr = np.empty(self._dimensions, dtype=int)
                 self._state_dict = {"arr": np.empty(self.dimensions, dtype=int)}
                 self._dimsize = len(self._dimensions)
-                self._keyindex = dict(zip(self._labels.keys(), np.arange(self._dimsize)))
+                self._keyindex = dict(
+                    zip(self._labels.keys(), np.arange(self._dimsize))
+                )
                 self._keys = np.array(list(labels.keys()))
-                self._index = {cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat])))) for cat in self._keys}
+                self._index = {
+                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
+                    for cat in self._keys
+                }
             else:
                 self._data = np.zeros((0, 0), dtype=int)
                 self._cell_weights = {}
@@ -202,7 +261,12 @@ class StaticEntity(object):
                 self._keyindex = defaultdict(_fd)
                 self._keys = np.array([])
                 # self._index = lambda category, value: None
-                self._index = {cat: dict(zip(self._labels[cat], [None for i in len(self._labels[cat])])) for cat in self._keys}
+                self._index = {
+                    cat: dict(
+                        zip(self._labels[cat], [None for i in len(self._labels[cat])])
+                    )
+                    for cat in self._keys
+                }
 
             # if labels is a list of categorical values, then change it into an
             # ordered dictionary?
@@ -210,7 +274,10 @@ class StaticEntity(object):
             self.__dict__.update(props)  # keyed by the method name and signature
 
         if len(self._labels) > 0:
-            self._labs = {kdx: self._labels.get(self._keys[kdx], {}) for kdx in range(self._dimsize)}
+            self._labs = {
+                kdx: self._labels.get(self._keys[kdx], {})
+                for kdx in range(self._dimsize)
+            }
         else:
             self._labs = {}
 
@@ -414,7 +481,7 @@ class StaticEntity(object):
         except:
             return
 
-    @ property
+    @property
     def incidence_dict(self):
         """
         Same as elements.
@@ -427,7 +494,7 @@ class StaticEntity(object):
         """
         return self.elements_by_level(0, translate=True)
 
-    @ property
+    @property
     def dataframe(self):
         """
         Returns the entity data in DataFrame format
@@ -616,7 +683,9 @@ class StaticEntity(object):
         else:
             return elts
 
-    def incidence_matrix(self, level1=0, level2=1, weights=False, aggregateby=None, index=False):
+    def incidence_matrix(
+        self, level1=0, level2=1, weights=False, aggregateby=None, index=False
+    ):
         """
         Convenience method to navigate large tensor
 
@@ -648,7 +717,7 @@ class StaticEntity(object):
         In the context of hypergraphs think level1 = edges, level2 = nodes
         """
         if self.dimsize < 2:
-            warnings.warn('Incidence matrix requires two levels of data.')
+            warnings.warn("Incidence matrix requires two levels of data.")
             return None
         if not weights:  # transpose from the beginning
             if self.dimsize > 2:
@@ -658,9 +727,11 @@ class StaticEntity(object):
             result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
         else:  # transpose after cell weights are added
             if self.dimsize > 2:
-                temp, temp_weights = remove_row_duplicates(self.data[:, [level1, level2]],
-                                                           weights=self._weights,
-                                                           aggregateby=aggregateby)
+                temp, temp_weights = remove_row_duplicates(
+                    self.data[:, [level1, level2]],
+                    weights=self._weights,
+                    aggregateby=aggregateby,
+                )
             else:
                 temp, temp_weights = self.data[:, [level1, level2]], self.cell_weights
 
@@ -671,7 +742,9 @@ class StaticEntity(object):
                     try:
                         tdx = (self.index(cat1, k[0]), self.index(cat2, k[1]))
                     except:
-                        HyperNetXError(f'{k} is not recognized as belonging to this system.')
+                        HyperNetXError(
+                            f"{k} is not recognized as belonging to this system."
+                        )
                     if temp_weights[tdx] != 0:
                         temp_weights[tdx] = v
                 # weights = {(self.index(cat1, k[0]), self.index(cat2, k[1])): v for k, v in weights.items()}
@@ -679,8 +752,10 @@ class StaticEntity(object):
                 #     if temp_weights[k] != 0::
                 #         temp_weights[k]=weights[k]
             temp_weights = [temp_weights[tuple(t)] for t in temp]
-            dtype = int if aggregateby == 'count' else float
-            result = csr_matrix((temp_weights, temp.transpose()), dtype=dtype).transpose()
+            dtype = int if aggregateby == "count" else float
+            result = csr_matrix(
+                (temp_weights, temp.transpose()), dtype=dtype
+            ).transpose()
 
         if index:  # give index of rows then columns
             return (
@@ -691,7 +766,7 @@ class StaticEntity(object):
         else:
             return result
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby='count', uid=None):
+    def restrict_to_levels(self, levels, weights=False, aggregateby="count", uid=None):
         """
         Limit Static Entity data to specific levels
 
@@ -721,7 +796,7 @@ class StaticEntity(object):
         #         newlabels = OrderedDict(
         #             [(self.keys[lev], self._labs[lev]) for lev in levels]
         #         )
-            # return self.__class__(labels=newlabels)
+        # return self.__class__(labels=newlabels)
         else:
             if weights:
                 weights = self._weights
@@ -732,11 +807,25 @@ class StaticEntity(object):
                 newlabels = OrderedDict([(self._keys[lev], self._labs[lev])])
                 data = self.data[:, lev]
                 data = np.reshape(data, (len(data), 1))
-                return StaticEntity(data=data, weights=weights, aggregateby=aggregateby, labels=newlabels, uid=uid)
+                return StaticEntity(
+                    data=data,
+                    weights=weights,
+                    aggregateby=aggregateby,
+                    labels=newlabels,
+                    uid=uid,
+                )
             else:
                 data = self.data[:, levels]
-                newlabels = OrderedDict([(self.keys[lev], self._labs[lev]) for lev in levels])
-                return self.__class__(data=data, weights=weights, aggregateby=aggregateby, labels=newlabels, uid=uid)
+                newlabels = OrderedDict(
+                    [(self.keys[lev], self._labs[lev]) for lev in levels]
+                )
+                return self.__class__(
+                    data=data,
+                    weights=weights,
+                    aggregateby=aggregateby,
+                    labels=newlabels,
+                    uid=uid,
+                )
 
     def turn_entity_data_into_dataframe(
         self, data_subset
@@ -928,22 +1017,45 @@ class StaticEntitySet(StaticEntity):
                     if lev < len(keys):
                         temp[keys[lev]] = labels[keys[lev]]
                 labels = temp
-            super().__init__(data=data, weights=weights, labels=labels, uid=uid, **props)
+            super().__init__(
+                data=data, weights=weights, labels=labels, uid=uid, **props
+            )
         else:
             if isinstance(entity, StaticEntity):
                 data = entity.data[:, [level1, level2]]
                 if keep_weights:
                     weights = entity._weights
-                labels = OrderedDict([(entity._keys[k], entity._labs[k]) for k in [level1, level2]])
-                super().__init__(data=data, labels=labels, uid=uid, weights=weights, aggregateby=aggregateby, **props)
+                labels = OrderedDict(
+                    [(entity._keys[k], entity._labs[k]) for k in [level1, level2]]
+                )
+                super().__init__(
+                    data=data,
+                    labels=labels,
+                    uid=uid,
+                    weights=weights,
+                    aggregateby=aggregateby,
+                    **props,
+                )
             elif isinstance(entity, StaticEntitySet):
                 if keep_weights:
-                    aggregateby = 'last'
-                super().__init__(entity, weights=weights, keep_weights=keep_weights, aggregateby=aggregateby, **props)
+                    aggregateby = "last"
+                super().__init__(
+                    entity,
+                    weights=weights,
+                    keep_weights=keep_weights,
+                    aggregateby=aggregateby,
+                    **props,
+                )
 
             elif isinstance(entity, pd.DataFrame):
                 cols = entity.columns[[level1, level2]]
-                super().__init__(entity=entity[cols], uid=uid, weights=weights, aggregateby=aggregateby, **props)
+                super().__init__(
+                    entity=entity[cols],
+                    uid=uid,
+                    weights=weights,
+                    aggregateby=aggregateby,
+                    **props,
+                )
             else:
                 # this presumes entity is an iterable of iterables or a dictionary
                 super().__init__(entity=entity, uid=uid, **props)
@@ -1056,7 +1168,8 @@ class StaticEntitySet(StaticEntity):
             eq_classes = OrderedDict(
                 [
                     (
-                        f"{next(iter(v))}:{len(v)}", v
+                        f"{next(iter(v))}:{len(v)}",
+                        v
                         # sorted(v, key=lambda x: self.index(self._keys[0], x)),  ## not sure why sorting is important here
                     )
                     for k, v in shared_children.items()
@@ -1093,7 +1206,7 @@ def _turn_dict_to_staticentity(dict_object):
         for v in val:
             level2[v]
             coords.append((level1[k], level2[v]))
-    coords, counts = remove_row_duplicates(coords, aggregateby='count')
+    coords, counts = remove_row_duplicates(coords, aggregateby="count")
     level1 = np.array(list(level1))
     level2 = np.array(list(level2))
     data = np.array(coords, dtype=int)
@@ -1113,7 +1226,9 @@ def _turn_iterable_to_staticentity(iter_object):
     return _turn_dict_to_staticentity(dict_object)
 
 
-def _turn_dataframe_into_entity(df, weights=None, aggregateby=None, include_unknowns=False):
+def _turn_dataframe_into_entity(
+    df, weights=None, aggregateby=None, include_unknowns=False
+):
     """
     Convenience method to reformat dataframe object into data,labels format
     for construction of a static entity
@@ -1145,9 +1260,7 @@ def _turn_dataframe_into_entity(df, weights=None, aggregateby=None, include_unkn
         ldict[c] = defaultdict(ctr[idx])  # TODO make this an Ordered default dict
         rdict[c] = OrderedDict()
         if include_unknowns:
-            ldict[c][
-                f"Unknown {c}"
-            ]
+            ldict[c][f"Unknown {c}"]
             # TODO: update this to take a dict assign for each column
             rdict[c][0] = f"Unknown {c}"
         for k in df[c]:

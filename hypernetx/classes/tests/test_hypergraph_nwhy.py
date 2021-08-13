@@ -6,6 +6,7 @@ from hypernetx import HyperNetXError
 
 try:
     import nwhy
+
     nwhy_available = True
 except:
     nwhy_available = False

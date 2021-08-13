@@ -209,14 +209,15 @@
 <span class="sd">        &gt;&gt;&gt; collective_contagion(3, status, (0, 1, 2))</span>
 <span class="sd">            False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;S&#39;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;S&quot;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="n">node</span><span class="p">})</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span></div>
+
 
 <div class="viewcode-block" id="individual_contagion"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.individual_contagion">[docs]</a><span class="k">def</span> <span class="nf">individual_contagion</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -251,14 +252,15 @@
 <span class="sd">        &gt;&gt;&gt; collective_contagion(3, status, (0, 3, 4))</span>
 <span class="sd">            False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;S&#39;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;S&quot;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="n">node</span><span class="p">})</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span></div>
+
 
 <div class="viewcode-block" id="threshold"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.threshold">[docs]</a><span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -293,16 +295,17 @@
 <span class="sd">        &gt;&gt;&gt; threshold(3, status, (1, 2, 3), tau=1)</span>
 <span class="sd">            False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;S&#39;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;S&quot;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="n">node</span><span class="p">})</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">fraction_infected</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
+        <span class="n">fraction_infected</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
     <span class="c1"># The isolated node case</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fraction_infected</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">fraction_infected</span> <span class="o">&gt;=</span> <span class="n">tau</span></div>
+
 
 <div class="viewcode-block" id="majority_vote"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.majority_vote">[docs]</a><span class="k">def</span> <span class="nf">majority_vote</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -340,12 +343,12 @@
 <span class="sd">            False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;S&#39;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;S&quot;</span> <span class="ow">or</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="n">node</span><span class="p">})</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">fraction_infected</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
+        <span class="n">fraction_infected</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">status</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fraction_infected</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -361,32 +364,32 @@
 
 <span class="c1"># The ListDict class is copied from Joel Miller&#39;s Github repository Mathematics-of-Epidemics-on-Networks</span>
 <span class="k">class</span> <span class="nc">_ListDict_</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    The Gillespie algorithm will involve a step that samples a random element </span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Gillespie algorithm will involve a step that samples a random element</span>
 <span class="sd">    from a set based on its weight.  This is awkward in Python.</span>
-<span class="sd">    </span>
+
 <span class="sd">    So I&#39;m introducing a new class based on a stack overflow answer by</span>
-<span class="sd">    Amber (http://stackoverflow.com/users/148870/amber) </span>
+<span class="sd">    Amber (http://stackoverflow.com/users/148870/amber)</span>
 <span class="sd">    for a question by</span>
-<span class="sd">    tba (http://stackoverflow.com/users/46521/tba) </span>
+<span class="sd">    tba (http://stackoverflow.com/users/46521/tba)</span>
 <span class="sd">    found at</span>
 <span class="sd">    http://stackoverflow.com/a/15993515/2966723</span>
-<span class="sd">    </span>
-<span class="sd">    This will allow me to select a random element uniformly, and then use </span>
-<span class="sd">    rejection sampling to make sure it&#39;s been selected with the appropriate </span>
+
+<span class="sd">    This will allow me to select a random element uniformly, and then use</span>
+<span class="sd">    rejection sampling to make sure it&#39;s been selected with the appropriate</span>
 <span class="sd">    weight.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">weighted</span> <span class="o">=</span> <span class="n">weighted</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="c1">#presume all weights positive</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># presume all weights positive</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">=</span> <span class="mi">0</span>
-            
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
@@ -395,39 +398,41 @@
         <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span>
 
     <span class="k">def</span> <span class="nf">_update_max_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">C</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1">#may be a faster way to do this, we only need to count the max.</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># may be a faster way to do this, we only need to count the max.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">]</span>
 
-        
-    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If not present, then inserts the thing (with weight if appropriate)</span>
 <span class="sd">        if already there, replaces the weight unless weight is 0</span>
-<span class="sd">        </span>
+
 <span class="sd">        If weight is 0, then it removes the item and doesn&#39;t replace.</span>
-<span class="sd">        </span>
+
 <span class="sd">        WARNING:</span>
 <span class="sd">            replaces weight if already present, does not increment weight.</span>
-<span class="sd">            </span>
-<span class="sd">        </span>
-<span class="sd">        &#39;&#39;&#39;</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">weight</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">weight_increment</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
-        
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight_increment</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight_increment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If not present, then inserts the thing (with weight if appropriate)</span>
 <span class="sd">        if already there, increments weight</span>
-<span class="sd">        </span>
+
 <span class="sd">        WARNING:</span>
 <span class="sd">            increments weight if already present, cannot overwrite weight.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="n">weight_increment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#will break if passing a weight to unweighted case</span>
-            <span class="k">if</span> <span class="n">weight_increment</span> <span class="o">&gt;</span><span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">weight_increment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>  <span class="c1"># will break if passing a weight to unweighted case</span>
+            <span class="k">if</span> <span class="n">weight_increment</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight_increment</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">+=</span> <span class="n">weight_increment</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
@@ -435,20 +440,20 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c1">#it&#39;s a negative increment and was at max</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># it&#39;s a negative increment and was at max</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">-=</span> <span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight_increment</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">+=</span> <span class="n">weight_increment</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">-=</span> <span class="mi">1</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">-=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_update_max_weight</span>               
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_update_max_weight</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;if weighted, must assign weight_increment&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;if weighted, must assign weight_increment&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span> <span class="c1">#we&#39;ve already got it, do nothing else</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>  <span class="c1"># we&#39;ve already got it, do nothing else</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">):</span>
         <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
@@ -456,17 +461,17 @@
         <span class="k">if</span> <span class="n">position</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_item</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_to_position</span><span class="p">[</span><span class="n">last_item</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span>
-            
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted</span><span class="p">:</span>
             <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">-=</span> <span class="n">weight</span>
-            <span class="k">if</span> <span class="n">weight</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>  
-                <span class="c1">#if we find ourselves in this case often</span>
-                <span class="c1">#it may be better just to let max_weight be the</span>
-                <span class="c1">#largest weight *ever* encountered, even if all remaining weights are less</span>
+            <span class="k">if</span> <span class="n">weight</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
+                <span class="c1"># if we find ourselves in this case often</span>
+                <span class="c1"># it may be better just to let max_weight be the</span>
+                <span class="c1"># largest weight *ever* encountered, even if all remaining weights are less</span>
                 <span class="c1">#</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_update_max_weight</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">choose_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -475,7 +480,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighted</span><span class="p">:</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="c1"># r = random.random()*self.total_weight</span>
             <span class="c1"># for item in self.items:</span>
@@ -486,10 +491,9 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
-        
 
     <span class="k">def</span> <span class="nf">random_removal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;uses other class methods to choose and then remove a random node&#39;&#39;&#39;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;uses other class methods to choose and then remove a random node&quot;&quot;&quot;</span>
         <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">choose_random</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">choice</span>
@@ -499,12 +503,26 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">update_total_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
 
 <span class="c1"># Contagion Functions</span>
-<div class="viewcode-block" id="discrete_SIR"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.discrete_SIR">[docs]</a><span class="k">def</span> <span class="nf">discrete_SIR</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initial_recovereds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rho</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tmin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">return_full_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="discrete_SIR"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.discrete_SIR">[docs]</a><span class="k">def</span> <span class="nf">discrete_SIR</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">tau</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="p">,</span>
+    <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">initial_recovereds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">tmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">),</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">args</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A discrete-time SIR model for hypergraphs similar to the construction described in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
@@ -546,7 +564,7 @@
 <span class="sd">    else</span>
 <span class="sd">        t, S, I, R : numpy arrays</span>
 <span class="sd">            time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
@@ -565,16 +583,15 @@
 <span class="sd">        &gt;&gt;&gt; dt = 0.1</span>
 <span class="sd">        &gt;&gt;&gt; t, S, I, R = contagion.discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot define both initial_infecteds and rho&quot;</span><span class="p">)</span>
-
 
     <span class="k">if</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">initial_number</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">*</span><span class="n">rho</span><span class="p">))</span>
+            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">*</span> <span class="n">rho</span><span class="p">))</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span> <span class="n">initial_number</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># check to make sure that the initially infected nodes are in the hypergraph</span>
@@ -586,19 +603,19 @@
         <span class="c1"># check to make sure that the initially recovered nodes are in the hypergraph</span>
         <span class="n">initial_recovereds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">initial_recovereds</span><span class="p">)))</span>
 
-    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
         <span class="n">transition_events</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">transition_events</span><span class="p">[</span><span class="n">tmin</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_infecteds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
             <span class="n">transition_events</span><span class="p">[</span><span class="n">tmin</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-    
+
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_recovereds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
             <span class="n">transition_events</span><span class="p">[</span><span class="n">tmin</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
 
@@ -611,9 +628,9 @@
     <span class="n">newStatus</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
 
     <span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">tmax</span> <span class="ow">and</span> <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes</span>
@@ -622,30 +639,35 @@
         <span class="n">R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
                 <span class="c1"># recover the node. If it is not healed, it stays infected.</span>
-                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">dt</span><span class="p">:</span>
-                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">dt</span><span class="p">:</span>
+                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
                     <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-                        <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
+                        <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;S&quot;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">edge_id</span> <span class="ow">in</span> <span class="n">edge_neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
                     <span class="n">members</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">tau</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span><span class="o">*</span><span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">*</span><span class="n">dt</span><span class="p">:</span>
-                        <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                        <span class="o">&lt;=</span> <span class="n">tau</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span>
+                        <span class="o">*</span> <span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">dt</span>
+                    <span class="p">):</span>
+                        <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
                         <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span>
                         <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-                            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">edge_id</span><span class="p">))</span>
+                            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">edge_id</span><span class="p">))</span>
                         <span class="k">break</span>
                 <span class="c1"># This executes after the loop has executed normally without hitting the break statement which indicates infection</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">newStatus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
         <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -655,7 +677,19 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">I</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="discrete_SIS"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.discrete_SIS">[docs]</a><span class="k">def</span> <span class="nf">discrete_SIS</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="discrete_SIS"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.discrete_SIS">[docs]</a><span class="k">def</span> <span class="nf">discrete_SIS</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">tau</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="p">,</span>
+    <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">tmax</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">args</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A discrete-time SIS model for hypergraphs as implemented in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
@@ -722,20 +756,20 @@
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">initial_number</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">*</span><span class="n">rho</span><span class="p">))</span>
+            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">*</span> <span class="n">rho</span><span class="p">))</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span> <span class="n">initial_number</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># check to make sure that the initially infected nodes are in the hypergraph</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">initial_infecteds</span><span class="p">)))</span>
- 
-    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">)</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
         <span class="n">transition_events</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">transition_events</span><span class="p">[</span><span class="n">tmin</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_infecteds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
             <span class="n">transition_events</span><span class="p">[</span><span class="n">tmin</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
@@ -747,40 +781,45 @@
     <span class="n">newStatus</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
 
     <span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">tmax</span> <span class="ow">and</span> <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes</span>
         <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">I</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
                 <span class="c1"># recover the node. If it is not healed, it stays infected.</span>
-                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">dt</span><span class="p">:</span>
-                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+                <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">dt</span><span class="p">:</span>
+                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
                     <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-                        <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
+                        <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;S&quot;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">edge_id</span> <span class="ow">in</span> <span class="n">edge_neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
                     <span class="n">members</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span>
-                    
-                    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">tau</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span><span class="o">*</span><span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">*</span><span class="n">dt</span><span class="p">:</span>
-                        <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                        <span class="o">&lt;=</span> <span class="n">tau</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span>
+                        <span class="o">*</span> <span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">dt</span>
+                    <span class="p">):</span>
+                        <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
                         <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span>
                         <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="k">if</span> <span class="n">return_full_data</span><span class="p">:</span>
-                            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">edge_id</span><span class="p">))</span>
+                            <span class="n">transition_events</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">edge_id</span><span class="p">))</span>
                         <span class="k">break</span>
                 <span class="c1"># This executes after the loop has executed normally without hitting the break statement which indicates infection, though I&#39;m not sure we even need it</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+                    <span class="n">newStatus</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">newStatus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
         <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -790,7 +829,18 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">I</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Gillespie_SIR"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.Gillespie_SIR">[docs]</a><span class="k">def</span> <span class="nf">Gillespie_SIR</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initial_recovereds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rho</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tmin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Gillespie_SIR"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.Gillespie_SIR">[docs]</a><span class="k">def</span> <span class="nf">Gillespie_SIR</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">tau</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="p">,</span>
+    <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">initial_recovereds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">tmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">),</span>
+    <span class="o">**</span><span class="n">args</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A continuous-time SIR model for hypergraphs similar to the model in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
@@ -826,7 +876,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    t, S, I, R : numpy arrays</span>
 <span class="sd">        time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
@@ -845,16 +895,15 @@
 <span class="sd">        &gt;&gt;&gt; t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Initial infecteds and recovereds should be lists or None. Add a check here.</span>
-    
+
     <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot define both initial_infecteds and rho&quot;</span><span class="p">)</span>
-
 
     <span class="k">if</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">initial_number</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">*</span><span class="n">rho</span><span class="p">))</span>
+            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">*</span> <span class="n">rho</span><span class="p">))</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span> <span class="n">initial_number</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># check to make sure that the initially infected nodes are in the hypergraph</span>
@@ -866,28 +915,28 @@
         <span class="c1"># check to make sure that the initially recovered nodes are in the hypergraph</span>
         <span class="n">initial_recovereds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">initial_recovereds</span><span class="p">)))</span>
 
-    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">)</span>
 
     <span class="n">size_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_infecteds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
-    
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
+
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_recovereds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
 
     <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">initial_infecteds</span><span class="p">)]</span>
     <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">initial_recovereds</span><span class="p">)]</span>
     <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
 
     <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
 
     <span class="n">t</span> <span class="o">=</span> <span class="n">tmin</span>
     <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span>
-    
+
     <span class="n">infecteds</span> <span class="o">=</span> <span class="n">_ListDict_</span><span class="p">()</span>
 
     <span class="n">infectious_edges</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -902,13 +951,13 @@
                 <span class="n">is_infectious</span> <span class="o">=</span> <span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">is_infectious</span><span class="p">:</span>
                     <span class="n">infectious_edges</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">edge_id</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
-    
+
     <span class="n">total_rates</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+    <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">size_dist</span><span class="p">:</span>
-        <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">*</span><span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
-    
+        <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">*</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+
     <span class="n">total_rate</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="n">dt</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">expovariate</span><span class="p">(</span><span class="n">total_rate</span><span class="p">)</span>
@@ -918,12 +967,12 @@
         <span class="c1"># choose type of event that happens</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">total_rates</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">/</span><span class="n">total_rate</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">total_rates</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_rate</span><span class="p">:</span>
                 <span class="k">break</span>
-        
-        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># recover</span>
+
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># recover</span>
             <span class="n">recovering_node</span> <span class="o">=</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">random_removal</span><span class="p">()</span>
-            <span class="n">status</span><span class="p">[</span><span class="n">recovering_node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">recovering_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
 
             <span class="c1"># remove edges that are no longer infectious because of this node recovering</span>
             <span class="k">for</span> <span class="n">edge_id</span> <span class="ow">in</span> <span class="n">edge_neighbors</span><span class="p">(</span><span class="n">recovering_node</span><span class="p">):</span>
@@ -942,7 +991,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">recipient</span> <span class="o">=</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">.</span><span class="n">choose_random</span><span class="p">()</span>
-            <span class="n">status</span><span class="p">[</span><span class="n">recipient</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">recipient</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
 
             <span class="n">infecteds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">recipient</span><span class="p">)</span>
 
@@ -969,21 +1018,33 @@
             <span class="n">I</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+        <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">size_dist</span><span class="p">:</span>
-            <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">*</span><span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
-    
+            <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">*</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+
         <span class="n">total_rate</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">total_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">expovariate</span><span class="p">(</span><span class="n">total_rate</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">)</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">I</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Gillespie_SIS"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.Gillespie_SIS">[docs]</a><span class="k">def</span> <span class="nf">Gillespie_SIS</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tmin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">return_full_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sim_kwargs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Gillespie_SIS"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.epidemics.Gillespie_SIS">[docs]</a><span class="k">def</span> <span class="nf">Gillespie_SIS</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">tau</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="p">,</span>
+    <span class="n">transmission_function</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="n">initial_infecteds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">tmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">),</span>
+    <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">sim_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">args</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A continuous-time SIS model for hypergraphs similar to the model in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
@@ -1017,7 +1078,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    t, S, I : numpy arrays</span>
 <span class="sd">        time (t), number of susceptible (S), and infected (I) at each time.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
@@ -1036,39 +1097,38 @@
 <span class="sd">        &gt;&gt;&gt; t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Initial infecteds and recovereds should be lists or None. Add a check here.</span>
-    
+
     <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot define both initial_infecteds and rho&quot;</span><span class="p">)</span>
-
 
     <span class="k">if</span> <span class="n">initial_infecteds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">initial_number</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">*</span><span class="n">rho</span><span class="p">))</span>
+            <span class="n">initial_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">*</span> <span class="n">rho</span><span class="p">))</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span> <span class="n">initial_number</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># check to make sure that the initially infected nodes are in the hypergraph</span>
         <span class="n">initial_infecteds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">initial_infecteds</span><span class="p">)))</span>
 
-    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">)</span>
 
     <span class="n">size_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">initial_infecteds</span><span class="p">:</span>
-        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
 
     <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">initial_infecteds</span><span class="p">)]</span>
     <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="n">H</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
 
     <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">memberships</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span> <span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
+        <span class="n">edge_neighbors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span>
 
     <span class="n">t</span> <span class="o">=</span> <span class="n">tmin</span>
     <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span>
-    
+
     <span class="n">infecteds</span> <span class="o">=</span> <span class="n">_ListDict_</span><span class="p">()</span>
 
     <span class="n">infectious_edges</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -1083,12 +1143,12 @@
                 <span class="n">is_infectious</span> <span class="o">=</span> <span class="n">transmission_function</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">is_infectious</span><span class="p">:</span>
                     <span class="n">infectious_edges</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)]</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">edge_id</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
-    
+
     <span class="n">total_rates</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+    <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">size_dist</span><span class="p">:</span>
-        <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">*</span><span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
-    
+        <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">*</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+
     <span class="n">total_rate</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="n">dt</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">expovariate</span><span class="p">(</span><span class="n">total_rate</span><span class="p">)</span>
@@ -1099,12 +1159,12 @@
         <span class="c1"># this can be improved</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">total_rates</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">/</span><span class="n">total_rate</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">total_rates</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_rate</span><span class="p">:</span>
                 <span class="k">break</span>
-        
-        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># recover</span>
+
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># recover</span>
             <span class="n">recovering_node</span> <span class="o">=</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">random_removal</span><span class="p">()</span>
-            <span class="n">status</span><span class="p">[</span><span class="n">recovering_node</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">recovering_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
 
             <span class="c1"># remove edges that are no longer infectious because of this node recovering</span>
             <span class="k">for</span> <span class="n">edge_id</span> <span class="ow">in</span> <span class="n">edge_neighbors</span><span class="p">(</span><span class="n">recovering_node</span><span class="p">):</span>
@@ -1122,7 +1182,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">recipient</span> <span class="o">=</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">.</span><span class="n">choose_random</span><span class="p">()</span>
-            <span class="n">status</span><span class="p">[</span><span class="n">recipient</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">recipient</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
 
             <span class="n">infecteds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">recipient</span><span class="p">)</span>
 
@@ -1148,16 +1208,16 @@
             <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">I</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+        <span class="n">total_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">infecteds</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">size_dist</span><span class="p">:</span>
-            <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">*</span><span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
-    
+            <span class="n">total_rates</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">*</span> <span class="n">infectious_edges</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">total_weight</span><span class="p">()</span>
+
         <span class="n">total_rate</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">total_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">expovariate</span><span class="p">(</span><span class="n">total_rate</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Inf&#39;</span><span class="p">)</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">I</span><span class="p">)</span></div>

@@ -9,7 +9,7 @@ __all__ = [
     "DefaultOrderedDict",
     "remove_row_duplicates",
     "create_labels",
-    "reverse_dictionary"
+    "reverse_dictionary",
 ]
 
 
@@ -69,7 +69,7 @@ class DefaultOrderedDict(OrderedDict):
         )
 
 
-def remove_row_duplicates(data, weights=None, aggregateby='sum'):
+def remove_row_duplicates(data, weights=None, aggregateby="sum"):
     """
     Wrapper for pandas groupby method.
     Removes duplicate rows in a 2d array and aggregates weighta
@@ -82,7 +82,7 @@ def remove_row_duplicates(data, weights=None, aggregateby='sum'):
         1-dimensional array_like object, must be the same length as 0-axis of data
         If None then weights are all assigned 1.
     aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : 'sum'
-        Method to aggregate weights of duplicate rows in data. If None, then only 
+        Method to aggregate weights of duplicate rows in data. If None, then only
         de-duped rows will be returned
 
     Returns
@@ -119,25 +119,27 @@ def remove_row_duplicates(data, weights=None, aggregateby='sum'):
         dfc = pd.concat([df1, df2], axis=1)
 
         # acceptable values: 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'
-        if aggregateby == 'count':
+        if aggregateby == "count":
             G = dfc.groupby(list(df1.columns), sort=False).count()
-        elif aggregateby == 'sum':
+        elif aggregateby == "sum":
             G = dfc.groupby(list(df1.columns), sort=False).sum()
-        elif aggregateby == 'mean':
+        elif aggregateby == "mean":
             G = dfc.groupby(list(df1.columns), sort=False).mean()
-        elif aggregateby == 'median':
+        elif aggregateby == "median":
             G = dfc.groupby(list(df1.columns), sort=False).median()
-        elif aggregateby == 'max':
+        elif aggregateby == "max":
             G = dfc.groupby(list(df1.columns), sort=False).max()
-        elif aggregateby == 'min':
+        elif aggregateby == "min":
             G = dfc.groupby(list(df1.columns), sort=False).min()
-        elif aggregateby == 'first':
+        elif aggregateby == "first":
             G = dfc.groupby(list(df1.columns), sort=False).first()
-        elif aggregateby == 'last':
+        elif aggregateby == "last":
             G = dfc.groupby(list(df1.columns), sort=False).last()
 
         else:
-            raise HyperNetXError("Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'")
+            raise HyperNetXError(
+                "Acceptable values for aggregateby are: None, 'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'"
+            )
         G = OrderedDict(G.to_dict()[c])
         if c == 1:
             G = OrderedDict([((k,), v) for k, v in G.items()])

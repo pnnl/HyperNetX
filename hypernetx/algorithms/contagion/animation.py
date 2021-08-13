@@ -2,7 +2,16 @@ from collections import defaultdict
 import hypernetx as hnx
 from celluloid import Camera
 
-def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_state_color_dict, node_radius=1, fps=1):
+
+def contagion_animation(
+    fig,
+    H,
+    transition_events,
+    node_state_color_dict,
+    edge_state_color_dict,
+    node_radius=1,
+    fps=1,
+):
     """
     A function to animate discrete-time contagion models for hypergraphs. Currently only supports a circular layout.
 
@@ -22,7 +31,7 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
         The radius of the nodes to draw
     fps : int > 0, default: 1
         Frames per second of the animation
-    
+
     Returns
     -------
     matplotlib Animation object
@@ -68,7 +77,7 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
 
             # update node states
             nodeState[node] = status
-        
+
             try:
                 # update the edge transmitters list if they are neighbor-dependent transitions
                 edgeID = event[2]
@@ -77,13 +86,26 @@ def contagion_animation(fig, H, transition_events, node_state_color_dict, edge_s
             except:
                 pass
 
-        kwargs = {'layout_kwargs': {'seed': 39}}
+        kwargs = {"layout_kwargs": {"seed": 39}}
 
-        nodeStyle = {'facecolors': [node_state_color_dict[nodeState[node]] for node in H.nodes]}
-        edgeStyle = {'facecolors': [edge_state_color_dict[edgeState[edge]] for edge in H.edges], 'edgecolors':'black'}
-        
+        nodeStyle = {
+            "facecolors": [node_state_color_dict[nodeState[node]] for node in H.nodes]
+        }
+        edgeStyle = {
+            "facecolors": [edge_state_color_dict[edgeState[edge]] for edge in H.edges],
+            "edgecolors": "black",
+        }
+
         # draw hypergraph
-        hnx.drawing.draw(H, node_radius=node_radius, nodes_kwargs=nodeStyle, edges_kwargs=edgeStyle, with_edge_labels=False, with_node_labels=False, **kwargs)
+        hnx.drawing.draw(
+            H,
+            node_radius=node_radius,
+            nodes_kwargs=nodeStyle,
+            edges_kwargs=edgeStyle,
+            with_edge_labels=False,
+            with_node_labels=False,
+            **kwargs
+        )
         camera.snap()
 
-    return camera.animate(interval=1000/fps)
+    return camera.animate(interval=1000 / fps)

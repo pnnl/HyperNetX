@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 from hypernetx import Hypergraph
 
+
 def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
-    '''
+    """
     A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
     bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
 
@@ -35,14 +36,14 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
         >>> m = n
         >>> p = 0.01
         >>> H = gm.erdos_renyi_hypergraph(n, m, p)
-    '''
+    """
 
     if node_labels is not None and edge_labels is not None:
-        get_node_label = lambda index : node_labels[index]
-        get_edge_label = lambda index : edge_labels[index]
+        get_node_label = lambda index: node_labels[index]
+        get_edge_label = lambda index: edge_labels[index]
     else:
-        get_node_label = lambda index : index
-        get_edge_label = lambda index : index
+        get_node_label = lambda index: index
+        get_edge_label = lambda index: index
 
     bipartite_edges = []
     for u in range(n):
@@ -50,15 +51,14 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
         while v < m:
             # identify next pair
             r = random.random()
-            v = v + math.floor(math.log(r) / math.log(1-p))
+            v = v + math.floor(math.log(r) / math.log(1 - p))
             if v < m:
                 # add vertex hyperedge pair
                 bipartite_edges.append((get_edge_label(v), get_node_label(u)))
                 v = v + 1
-    
+
     df = pd.DataFrame(bipartite_edges)
     return Hypergraph(df, static=True)
-
 
 
 def chung_lu_hypergraph(k1, k2):
@@ -98,20 +98,22 @@ def chung_lu_hypergraph(k1, k2):
     m = len(k2)
 
     if sum(k1.values()) != sum(k2.values()):
-        warnings.warn('The sum of the degree sequence does not match the sum of the size sequence')
+        warnings.warn(
+            "The sum of the degree sequence does not match the sum of the size sequence"
+        )
 
     S = sum(k1.values())
 
     bipartite_edges = []
     for u in Nlabels:
         j = 0
-        v = Mlabels[j] # start from beginning every time
+        v = Mlabels[j]  # start from beginning every time
         p = min((k1[u] * k2[v]) / S, 1)
 
         while j < m:
             if p != 1:
                 r = random.random()
-                j = j + math.floor(math.log(r) / math.log(1-p))
+                j = j + math.floor(math.log(r) / math.log(1 - p))
             if j < m:
                 v = Mlabels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
@@ -119,12 +121,13 @@ def chung_lu_hypergraph(k1, k2):
                 if r < q / p:
                     # no duplicates
                     bipartite_edges.append((v, u))
-                
+
                 p = q
                 j = j + 1
-    
+
     df = pd.DataFrame(bipartite_edges)
     return Hypergraph(df, static=True)
+
 
 def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     """
@@ -179,26 +182,30 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     # these checks verify that the sum of node and edge degrees and the sum of node degrees
     # and the sum of community connection matrix differ by less than a single edge.
     if abs(sum(k1.values()) - sum(k2.values())) > 1:
-        warnings.warn('The sum of the degree sequence does not match the sum of the size sequence')
+        warnings.warn(
+            "The sum of the degree sequence does not match the sum of the size sequence"
+        )
 
     if abs(sum(k1.values()) - np.sum(omega)) > 1:
-        warnings.warn('The sum of the degree sequence does not match the entries in the omega matrix')
+        warnings.warn(
+            "The sum of the degree sequence does not match the entries in the omega matrix"
+        )
 
     # get indices for each community
     community1Indices = defaultdict(list)
     for label in Nlabels:
         group = g1[label]
         community1Indices[group].append(label)
-        
+
     community2Indices = defaultdict(list)
     for label in Mlabels:
         group = g2[label]
         community2Indices[group].append(label)
 
     bipartite_edges = list()
-    
-    kappa1 = defaultdict(lambda : 0)
-    kappa2 = defaultdict(lambda : 0)
+
+    kappa1 = defaultdict(lambda: 0)
+    kappa2 = defaultdict(lambda: 0)
     for id, g in g1.items():
         kappa1[g] += k1[id]
     for id, g in g2.items():
@@ -208,20 +215,22 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
         for group2 in community2Indices.keys():
             # for each constant probability patch
             try:
-                groupConstant = omega[group1, group2] / (kappa1[group1]*kappa2[group2])
+                groupConstant = omega[group1, group2] / (
+                    kappa1[group1] * kappa2[group2]
+                )
             except:
                 groupConstant = 0
-                
+
             for u in community1Indices[group1]:
                 j = 0
-                v = community2Indices[group2][j] # start from beginning every time
+                v = community2Indices[group2][j]  # start from beginning every time
                 # max probability
                 p = min(k1[u] * k2[v] * groupConstant, 1)
                 while j < len(community2Indices[group2]):
                     if p != 1:
                         r = random.random()
                         try:
-                            j = j + math.floor(math.log(r) / math.log(1-p))
+                            j = j + math.floor(math.log(r) / math.log(1 - p))
                         except:
                             j = np.inf
                     if j < len(community2Indices[group2]):
@@ -229,7 +238,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                         q = min((k1[u] * k2[v]) * groupConstant, 1)
                         r = random.random()
                         if r < q / p:
-                        # no duplicates
+                            # no duplicates
                             bipartite_edges.append((v, u))
 
                             p = q

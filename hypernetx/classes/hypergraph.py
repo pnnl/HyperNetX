@@ -86,7 +86,7 @@ class Hypergraph:
     hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object
     is passed to the Hypergraph constructor.
 
-    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans. 
+    5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans.
        | By default the first column corresponds to the edge names and the second column to the node names.
        | You can specify the columns by restricting the dataframe to the columns of interest in the order:
        | :code:`hnx.Hypergraph(df[[edge_column_name,node_column_name]])`
@@ -102,8 +102,8 @@ class Hypergraph:
     static : boolean, optional, default: False
         If True the hypergraph will be immutable, edges and nodes may not be changed.
     weights : array-like, optional, default : None
-        User specified weights corresponding to setsytem of type pandas.DataFrame, 
-        length must equal number of rows in dataframe. 
+        User specified weights corresponding to setsytem of type pandas.DataFrame,
+        length must equal number of rows in dataframe.
         If None, weight for all rows is assumed to be 1.
     keep_weights : bool, optional, default : True
         Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
@@ -121,14 +121,14 @@ class Hypergraph:
     # TODO: remove lambda functions from constructor in H and E.
 
     def __init__(
-        self, 
-        setsystem=None, 
-        name=None, 
-        static=False, 
+        self,
+        setsystem=None,
+        name=None,
+        static=False,
         weights=None,
-        aggregateby='count',
-        use_nwhy=False, 
-        filepath=None
+        aggregateby="count",
+        use_nwhy=False,
+        filepath=None,
     ):
         self.filepath = filepath
         if use_nwhy:
@@ -150,41 +150,44 @@ class Hypergraph:
             self.name = name
 
         if static == True or (
-            isinstance(setsystem, StaticEntitySet) or
-            isinstance(setsystem, StaticEntity) or
-            isinstance(setsystem, pd.DataFrame) ) :
-            self._static=True
+            isinstance(setsystem, StaticEntitySet)
+            or isinstance(setsystem, StaticEntity)
+            or isinstance(setsystem, pd.DataFrame)
+        ):
+            self._static = True
             if setsystem is None:
-                self._edges=StaticEntitySet()
-                self._nodes=StaticEntitySet()
+                self._edges = StaticEntitySet()
+                self._nodes = StaticEntitySet()
             else:
                 if weights is not None:
-                    E=StaticEntitySet(entity = setsystem, weights=weights, aggregateby=aggregateby)
+                    E = StaticEntitySet(
+                        entity=setsystem, weights=weights, aggregateby=aggregateby
+                    )
                 else:
-                    E=StaticEntitySet(entity = setsystem)
-                self._edges=E
-                self._nodes=E.restrict_to_levels([1], weights=False, aggregateby=None)
+                    E = StaticEntitySet(entity=setsystem)
+                self._edges = E
+                self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
                 self._nodes._memberships = E.memberships
         else:
-            self._static=False
+            self._static = False
             if setsystem is None:
-                setsystem=EntitySet("_", elements = [])
+                setsystem = EntitySet("_", elements=[])
             elif isinstance(setsystem, Entity):
-                setsystem=EntitySet("_", setsystem.incidence_dict)
+                setsystem = EntitySet("_", setsystem.incidence_dict)
             elif isinstance(setsystem, dict):
                 # Must be a dictionary with values equal to iterables of Entities and hashables.
                 # Keys will be uids for new edges and values of the dictionary will generate the nodes.
-                setsystem=EntitySet("_", setsystem)
+                setsystem = EntitySet("_", setsystem)
             elif not isinstance(setsystem, EntitySet):
                 # If no ids are given, return default ids indexed by position in iterator
                 # This should be an iterable of sets
-                edge_labels=[self.name + str(x) for x in range(len(setsystem))]
-                setsystem=EntitySet("_", dict(zip(edge_labels, setsystem)))
+                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
+                setsystem = EntitySet("_", dict(zip(edge_labels, setsystem)))
 
-            _reg=setsystem.registry
-            _nodes={k: Entity(k, **_reg[k].properties) for k in _reg}
-            _elements={j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
-            _edges={
+            _reg = setsystem.registry
+            _nodes = {k: Entity(k, **_reg[k].properties) for k in _reg}
+            _elements = {j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
+            _edges = {
                 j: Entity(j, elements=_elements[j].values(), **setsystem[j].properties)
                 for j in setsystem
             }
@@ -211,7 +214,7 @@ class Hypergraph:
     def edges(self):
         """
         Object associated with self._edges.
-        
+
         Returns
         -------
         StaticEntitySet or EntitySet
@@ -223,7 +226,7 @@ class Hypergraph:
     def nodes(self):
         """
         Object associated with self._nodes.
-        
+
         Returns
         -------
         StaticEntitySet or EntitySet
@@ -236,11 +239,11 @@ class Hypergraph:
     def isstatic(self):
         """
         Checks whether nodes and edges are immutable
-        
+
         Returns
         -------
         Boolean
-    
+
         """
         return self._static
 
@@ -248,11 +251,11 @@ class Hypergraph:
     def incidence_dict(self):
         """
         Dictionary keyed by edge uids with values the uids of nodes in each edge
-        
+
         Returns
         -------
         dict
-        
+
         """
         return self._edges.incidence_dict
 
@@ -260,11 +263,11 @@ class Hypergraph:
     def shape(self):
         """
         (number of nodes, number of edges)
-        
+
         Returns
         -------
         tuple
-            
+
         """
         if self.nwhy:
             return (self.g.number_of_nodes(), self.g.number_of_edges())
@@ -274,33 +277,33 @@ class Hypergraph:
     def __str__(self):
         """
         String representation of hypergraph
-        
+
         Returns
         -------
         str
-            
+
         """
         return f"Hypergraph({self.edges.elements},name={self.name})"
 
     def __repr__(self):
         """
         String representation of hypergraph
-        
+
         Returns
         -------
         str
-            
+
         """
         return f"Hypergraph({self.edges.elements},name={self.name})"
 
     def __len__(self):
         """
         Number of nodes
-        
+
         Returns
         -------
         int
-            
+
         """
         if self.nwhy:
             return self.g.number_of_nodes()
@@ -310,11 +313,11 @@ class Hypergraph:
     def __iter__(self):
         """
         Iterate over the nodes of the hypergraph
-        
+
         Returns
         -------
         dict_keyiterator
-            
+
         """
         return iter(self.nodes)
 
@@ -359,7 +362,7 @@ class Hypergraph:
             User provided name/id/label for hypergraph object
         edges : bool, optional
             Determines if uid is an edge or node name
-        
+
         Returns
         -------
         : int
@@ -381,7 +384,7 @@ class Hypergraph:
             Internally assigned id
         edges : bool, optional
             Determines if id references an edge or node
-        
+
         Returns
         -------
         str
@@ -526,11 +529,11 @@ class Hypergraph:
     def edge_size_dist(self):
         """
         Returns the size for each edge
-        
+
         Returns
         -------
         np.array
-            
+
         """
         if self.isstatic:
             dist = self.state_dict.get("edge_size_dist", None)
@@ -555,7 +558,7 @@ class Hypergraph:
     ):
         """
         Returns new static hypergraph with the same dictionary as original hypergraph
-        
+
         Parameters
         ----------
         name : None, optional
@@ -564,14 +567,14 @@ class Hypergraph:
             Description
         filepath : None, optional, default : False
             Description
-        
+
         Note
         ----
         Static hypergraphs store the user defined node and edge names in
         a dictionary of labeled lists. The order of the lists provides an
         index, which the hypergraph uses in place of the node and edge names
         for fast processing.
-        
+
         No Longer Returned
         ------------------
         hnx.Hypergraph
@@ -1098,7 +1101,7 @@ class Hypergraph:
         ----------
         weights : bool, default=False
             If False all nonzero entries are 1.
-            If True and self.static all nonzero entries are filled by 
+            If True and self.static all nonzero entries are filled by
             self.edges.cell_weights dictionary values.
 
         index : boolean, optional, default False
@@ -1117,7 +1120,7 @@ class Hypergraph:
 
         """
         if self.isstatic:
-            if weights == False: 
+            if weights == False:
                 mat = self.state_dict.get("incidence_matrix", None)
                 if mat is None:
                     mat = self.edges.incidence_matrix()
@@ -1188,8 +1191,8 @@ class Hypergraph:
             if True, will return a rowdict of row to node uid
 
         weights: bool, default=True
-            If False all nonzero entries are 1. 
-            If True adjacency matrix will depend on weighted incidence matrix, 
+            If False all nonzero entries are 1.
+            If True adjacency matrix will depend on weighted incidence matrix,
 
         Returns
         -------
@@ -1357,8 +1360,8 @@ class Hypergraph:
                 for k, v in d.items()
             }
             ec = {}
-        lev = self.edges.keys[1-1*edges]
-        E = self.edges.restrict_to_indices(sorted(d.keys()), level=1-1*edges)
+        lev = self.edges.keys[1 - 1 * edges]
+        E = self.edges.restrict_to_indices(sorted(d.keys()), level=1 - 1 * edges)
         E.labels[str(lev)] = np.array([en[k] for k in E.labels[lev]])
         if rec:
             return E, ec
@@ -2282,7 +2285,7 @@ class Hypergraph:
         sort_columns : bool, optional, default=True
             sort columns based on hashable edge names
         cell_weights : bool, optional, default=True
-            if self.isstatic then include cell weights 
+            if self.isstatic then include cell weights
 
         """
         if self.isstatic:
@@ -2493,8 +2496,8 @@ class Hypergraph:
     ):
         """
         Create a hypergraph from a Pandas Dataframe object using index to label vertices
-        and Columns to label edges. The values of the dataframe are transformed into an 
-        incidence matrix.  
+        and Columns to label edges. The values of the dataframe are transformed into an
+        incidence matrix.
         Note this is different than passing a dataframe directly
         into the Hypergraph constructor. The latter automatically generates a static hypergraph
         with edge and node labels given by the cell values.

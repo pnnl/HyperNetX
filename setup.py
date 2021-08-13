@@ -16,7 +16,7 @@ setup(
         "hypernetx.drawing",
         "hypernetx.reports",
         "hypernetx.utils",
-        "hypernetx.utils.toys"
+        "hypernetx.utils.toys",
     ],
     version=__version__,
     author="Brenda Praggastis, Dustin Arendt, Sinan Aksoy, Emilie Purvine, Cliff Joslyn, Nicholas Landry",
@@ -30,7 +30,7 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
-        "celluloid>=0.2.0"
+        "celluloid>=0.2.0",
     ],
     license="3-Clause BSD license",
     long_description="""

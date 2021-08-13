@@ -51,26 +51,26 @@ __all__ = [
 
 def prob_trans(H, weights=False, index=True, check_connected=True):
     """
-    The probability transition matrix of a random walk on the vertices of a hypergraph. 
+    The probability transition matrix of a random walk on the vertices of a hypergraph.
     At each step in the walk, the next vertex is chosen by:
 
     1. Selecting a hyperedge e containing the vertex with probability proportional to w(e)
     2. Selecting a vertex v within e with probability proportional to a \gamma(v,e)
 
     If weights are not specified, then all weights are uniform and the walk is equivalent
-    to a simple random walk. 
+    to a simple random walk.
     If weights are specified, the hyperedge weights w(e) are determined from the weights
-    \gamma(v,e). 
+    \gamma(v,e).
 
 
     Parameters
     ----------
     H : hnx.Hypergraph
-        The hypergraph must be connected, meaning there is a path linking any two 
+        The hypergraph must be connected, meaning there is a path linking any two
         vertices
     weights : bool, optional, default : False
-         Use the cell_weights associated with the hypergraph 
-         If False, uniform weights are utilized. 
+         Use the cell_weights associated with the hypergraph
+         If False, uniform weights are utilized.
     index : bool, optional
         Whether to return matrix index to vertex label mapping
 
@@ -97,11 +97,13 @@ def prob_trans(H, weights=False, index=True, check_connected=True):
 
     # generates hyperedge weight matrix, has same nonzero pattern as incidence matrix,
     # with values determined by the edge-dependent vertex weight standard deviation
-    edgeScore = {i: np.std(R.getrow(i).data) + 1 for i in range(R.shape[0])}  # hyperedge weights
+    edgeScore = {
+        i: np.std(R.getrow(i).data) + 1 for i in range(R.shape[0])
+    }  # hyperedge weights
     vals = [edgeScore[i] for i in R.nonzero()[0]]
-    W = csr_matrix((vals,
-                    (R.nonzero()[1], R.nonzero()[0])),
-                   shape=(R.shape[1], R.shape[0]))
+    W = csr_matrix(
+        (vals, (R.nonzero()[1], R.nonzero()[0])), shape=(R.shape[1], R.shape[0])
+    )
 
     # generate diagonal degree matrices used to normalize probability transition matrix
     [rowSums] = R.sum(axis=1).flatten().tolist()
@@ -124,7 +126,7 @@ def get_pi(P):
     Returns the eigenvector corresponding to the largest eigenvalue (in magnitude),
     normalized so its entries sum to 1. Intended for the probability transition matrix
     of a random walk on a (connected) hypergraph, in which case the output can
-    be interpreted as the stationary distribution. 
+    be interpreted as the stationary distribution.
 
     Parameters
     ----------
@@ -136,7 +138,9 @@ def get_pi(P):
      pi : numpy.ndarray
          Stationary distribution of random walk defined by P
     """
-    rho, pi = (eigs(np.transpose(P), k=1, return_eigenvectors=True))  # dominant eigenvector
+    rho, pi = eigs(
+        np.transpose(P), k=1, return_eigenvectors=True
+    )  # dominant eigenvector
     pi = np.real(pi / np.sum(pi)).flatten()  # normalize as prob distribution
     return pi
 
@@ -147,22 +151,22 @@ def norm_lap(H, weights=False, index=True):
     matrix of a hypergraph random walk using the stationary distribution, using the digraph
     Laplacian defined in:
 
-    Chung, Fan. "Laplacians and the Cheeger inequality for directed graphs." 
+    Chung, Fan. "Laplacians and the Cheeger inequality for directed graphs."
     Annals of Combinatorics 9.1 (2005): 1-19.
 
     and studied in the context of hypergraphs in:
 
-    Hayashi, K., Aksoy, S. G., Park, C. H., & Park, H. 
-    Hypergraph random walks, laplacians, and clustering. 
+    Hayashi, K., Aksoy, S. G., Park, C. H., & Park, H.
+    Hypergraph random walks, laplacians, and clustering.
     In Proceedings of CIKM 2020, (2020): 495-504.
 
     Parameters
     ----------
     H : hnx.Hypergraph
-        The hypergraph must be connected, meaning there is a path linking any two 
+        The hypergraph must be connected, meaning there is a path linking any two
         vertices
     weight : bool, optional, default : False
-         Uses cell_weights, if False, uniform weights are utilized. 
+         Uses cell_weights, if False, uniform weights are utilized.
     index : bool, optional
         Whether to return matrix-index to vertex-label mapping
 
@@ -189,19 +193,19 @@ def norm_lap(H, weights=False, index=True):
 
 def spec_clus(H, k, existing_lap=None, weights=False):
     """
-    Hypergraph spectral clustering of the vertex set into k disjoint clusters 
-    using the normalized hypergraph Laplacian. Equivalent to the "RDC-Spec" 
+    Hypergraph spectral clustering of the vertex set into k disjoint clusters
+    using the normalized hypergraph Laplacian. Equivalent to the "RDC-Spec"
     Algorithm 1 in:
 
-    Hayashi, K., Aksoy, S. G., Park, C. H., & Park, H. 
-    Hypergraph random walks, laplacians, and clustering. 
+    Hayashi, K., Aksoy, S. G., Park, C. H., & Park, H.
+    Hypergraph random walks, laplacians, and clustering.
     In Proceedings of CIKM 2020, (2020): 495-504.
 
 
     Parameters
     ----------
     H : hnx.Hypergraph
-        The hypergraph must be connected, meaning there is a path linking any two 
+        The hypergraph must be connected, meaning there is a path linking any two
         vertices
     k : int
         Number of clusters
@@ -209,13 +213,13 @@ def spec_clus(H, k, existing_lap=None, weights=False):
         Whether to use an existing Laplacian; otherwise, normalized hypergraph Laplacian
         will be utilized
     weights : bool, optional
-         Use the cell_weights of the hypergraph. If False uniform weights are used. 
+         Use the cell_weights of the hypergraph. If False uniform weights are used.
 
     Returns
     -------
      clusters : dict
-         Vertex cluster dictionary, keyed by integers 0,...,k-1, with lists of 
-         vertices as values.      
+         Vertex cluster dictionary, keyed by integers 0,...,k-1, with lists of
+         vertices as values.
     """
     if existing_lap == None:
         if weights == None:
@@ -226,11 +230,11 @@ def spec_clus(H, k, existing_lap=None, weights=False):
         L = existing_lap
 
     # compute top eigenvectors
-    e, v = eigs(identity(L.shape[0]) - L, k=k, which='LM', return_eigenvectors=True)
+    e, v = eigs(identity(L.shape[0]) - L, k=k, which="LM", return_eigenvectors=True)
     v = np.real(v)  # ignore zero complex parts
-    v = preprocessing.normalize(v, norm='l2', axis=1)  # normalize
+    v = preprocessing.normalize(v, norm="l2", axis=1)  # normalize
     U = np.array(v)
-    km = KMeans(init='k-means++', n_clusters=k, random_state=0)  # k-means
+    km = KMeans(init="k-means++", n_clusters=k, random_state=0)  # k-means
     km.fit(U)
     d = km.labels_
 

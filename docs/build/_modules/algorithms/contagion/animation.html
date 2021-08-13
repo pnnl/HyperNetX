@@ -173,7 +173,16 @@
 <span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
 <span class="kn">from</span> <span class="nn">celluloid</span> <span class="kn">import</span> <span class="n">Camera</span>
 
-<div class="viewcode-block" id="contagion_animation"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.animation.contagion_animation">[docs]</a><span class="k">def</span> <span class="nf">contagion_animation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">transition_events</span><span class="p">,</span> <span class="n">node_state_color_dict</span><span class="p">,</span> <span class="n">edge_state_color_dict</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="contagion_animation"><a class="viewcode-back" href="../../../algorithms/algorithms.contagion.html#algorithms.contagion.animation.contagion_animation">[docs]</a><span class="k">def</span> <span class="nf">contagion_animation</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">,</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">transition_events</span><span class="p">,</span>
+    <span class="n">node_state_color_dict</span><span class="p">,</span>
+    <span class="n">edge_state_color_dict</span><span class="p">,</span>
+    <span class="n">node_radius</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">fps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to animate discrete-time contagion models for hypergraphs. Currently only supports a circular layout.</span>
 
@@ -193,7 +202,7 @@
 <span class="sd">        The radius of the nodes to draw</span>
 <span class="sd">    fps : int &gt; 0, default: 1</span>
 <span class="sd">        Frames per second of the animation</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    matplotlib Animation object</span>
@@ -239,7 +248,7 @@
 
             <span class="c1"># update node states</span>
             <span class="n">nodeState</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">status</span>
-        
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># update the edge transmitters list if they are neighbor-dependent transitions</span>
                 <span class="n">edgeID</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -248,16 +257,29 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;layout_kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="mi">39</span><span class="p">}}</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;layout_kwargs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">39</span><span class="p">}}</span>
 
-        <span class="n">nodeStyle</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;facecolors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">node_state_color_dict</span><span class="p">[</span><span class="n">nodeState</span><span class="p">[</span><span class="n">node</span><span class="p">]]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">]}</span>
-        <span class="n">edgeStyle</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;facecolors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">edge_state_color_dict</span><span class="p">[</span><span class="n">edgeState</span><span class="p">[</span><span class="n">edge</span><span class="p">]]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">],</span> <span class="s1">&#39;edgecolors&#39;</span><span class="p">:</span><span class="s1">&#39;black&#39;</span><span class="p">}</span>
-        
+        <span class="n">nodeStyle</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;facecolors&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">node_state_color_dict</span><span class="p">[</span><span class="n">nodeState</span><span class="p">[</span><span class="n">node</span><span class="p">]]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">edgeStyle</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;facecolors&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">edge_state_color_dict</span><span class="p">[</span><span class="n">edgeState</span><span class="p">[</span><span class="n">edge</span><span class="p">]]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">],</span>
+            <span class="s2">&quot;edgecolors&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
         <span class="c1"># draw hypergraph</span>
-        <span class="n">hnx</span><span class="o">.</span><span class="n">drawing</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span> <span class="n">nodes_kwargs</span><span class="o">=</span><span class="n">nodeStyle</span><span class="p">,</span> <span class="n">edges_kwargs</span><span class="o">=</span><span class="n">edgeStyle</span><span class="p">,</span> <span class="n">with_edge_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_node_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">hnx</span><span class="o">.</span><span class="n">drawing</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span>
+            <span class="n">H</span><span class="p">,</span>
+            <span class="n">node_radius</span><span class="o">=</span><span class="n">node_radius</span><span class="p">,</span>
+            <span class="n">nodes_kwargs</span><span class="o">=</span><span class="n">nodeStyle</span><span class="p">,</span>
+            <span class="n">edges_kwargs</span><span class="o">=</span><span class="n">edgeStyle</span><span class="p">,</span>
+            <span class="n">with_edge_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">with_node_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="n">camera</span><span class="o">.</span><span class="n">snap</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">camera</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1000</span><span class="o">/</span><span class="n">fps</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">camera</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">fps</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
