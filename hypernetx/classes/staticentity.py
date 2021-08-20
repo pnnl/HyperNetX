@@ -77,8 +77,8 @@ class StaticEntity(object):
                 self.__dict__.update(props)
                 self._data = entity._data.copy()
                 if keep_weights:
-                    self._weights = entity._weights
-                    self._cell_weights = dict(entity._cell_weights)
+                    self._weights = entity._weights  # list of weights ordered on data
+                    self._cell_weights = dict(entity._cell_weights)  # dict keyed by data tuple
                 else:
                     self._data, self._cell_weights = remove_row_duplicates(
                         entity.data, weights=weights, aggregateby=aggregateby
@@ -425,7 +425,7 @@ class StaticEntity(object):
     @property
     def elements(self):
         """
-        Keys and values in the order of insertion
+        Keys and values in the order of insertion. Once computed persists for self.
 
         Returns
         -------
@@ -457,8 +457,6 @@ class StaticEntity(object):
         try:
             return dict(self._memberships)
         except:
-            # self._memberships = reverse_dictionary(self.elements)
-            # return self._memberships
             if len(self._keys) == 1:
                 return None
             else:

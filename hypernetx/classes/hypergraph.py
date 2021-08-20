@@ -102,9 +102,9 @@ class Hypergraph:
     static : boolean, optional, default: False
         If True the hypergraph will be immutable, edges and nodes may not be changed.
     weights : array-like, optional, default : None
-        User specified weights corresponding to setsytem of type pandas.DataFrame,
+        User specified cell weights corresponding to setsytem of type pandas.DataFrame,
         length must equal number of rows in dataframe.
-        If None, weight for all rows is assumed to be 1.
+        If None, cell weights are assumed to be 1.
     keep_weights : bool, optional, default : True
         Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
     aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first','last', None}, default : 'count'
@@ -117,8 +117,6 @@ class Hypergraph:
     filepath : str, optional, default : None
 
     """
-
-    # TODO: remove lambda functions from constructor in H and E.
 
     def __init__(
         self,
