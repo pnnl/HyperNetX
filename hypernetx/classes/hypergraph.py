@@ -102,12 +102,12 @@ class Hypergraph:
     static : boolean, optional, default: False
         If True the hypergraph will be immutable, edges and nodes may not be changed.
     weights : array-like, optional, default : None
-        User specified cell weights corresponding to setsytem of type pandas.DataFrame,
+        User specified weights corresponding to setsytem of type pandas.DataFrame,
         length must equal number of rows in dataframe.
-        If None, cell weights are assumed to be 1.
+        If None, weight for all rows is assumed to be 1.
     keep_weights : bool, optional, default : True
         Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first','last', None}, default : 'count'
+    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first','last', None}, default : 'sum'
         Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame or
         StaticEntity. If None all cell weights will be set to 1.
     use_nwhy : boolean, optional, default : False
@@ -118,13 +118,15 @@ class Hypergraph:
 
     """
 
+    # TODO: remove lambda functions from constructor in H and E.
+
     def __init__(
         self,
         setsystem=None,
         name=None,
         static=False,
         weights=None,
-        aggregateby="count",
+        aggregateby="sum",
         use_nwhy=False,
         filepath=None,
     ):
@@ -1144,40 +1146,40 @@ class Hypergraph:
             return self.edges.incidence_matrix(index=index)
 
     @staticmethod
-    def incidence_to_adjacency(M, s=1, weights=True):
+    def _incidence_to_adjacency(M, s=1, weights=False):
         """
-        Helper method to obtain adjacency matrix from incidence matrix.
+        Helper method to obtain adjacency matrix from 
+        boolean incidence matrix for s-metrics.
+        Self loops are note supported.
+        The adjacency matrix will define an s-linegraph.
 
         Parameters
         ----------
-        M : scipy.sparse.csr.csr_matrix
+        M : scipy.sparse.csr.csr_matrix 
+            incidence matrix of 0's and 1's
 
         s : int, optional, default: 1
 
-        weights : bool, dict optional, default=True
-            If False all nonzero entries are 1.
-            Otherwise, weights will be as in product.
+        # weights : bool, dict optional, default=True
+        #     If False all nonzero entries are 1.
+        #     Otherwise, weights will be as in product.
 
         Returns
         -------
         a matrix : scipy.sparse.csr.csr_matrix
 
         """
-        A = M.dot(M.transpose())
-        if issparse(A):
-            A.setdiag(0)
-            B = (A >= s) * 1
-            A = A.multiply(B)
-        else:
-            np.fill_diagonal(A, 0)
-            B = (A >= s) * 1
-            A = np.multiply(A, B)
+        M = csr_matrix(M)
+        weights = False ## currently weighting is not supported
 
         if weights == False:
-            A = (A > 0) * 1
-        return csr_matrix(A)
+            A = M.dot(M.transpose())
+            A.setdiag(0)
+            A = (A >= s) * 1
+        return A
 
-    def adjacency_matrix(self, index=False, s=1, weights=True):
+
+    def adjacency_matrix(self, index=False, s=1):## , weights=False):
         """
         The sparse weighted :term:`s-adjacency matrix`
 
@@ -1199,13 +1201,14 @@ class Hypergraph:
         row dictionary : dict
 
         """
+        weights = False ## Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
-            return Hypergraph.incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
+            return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
         else:
-            return Hypergraph.incidence_to_adjacency(M, s=s, weights=weights)
+            return Hypergraph._incidence_to_adjacency(M, s=s, weights=weights)
 
-    def edge_adjacency_matrix(self, index=False, s=1, weights=True):
+    def edge_adjacency_matrix(self, index=False, s=1, weights=False):
         """
         The weighted :term:`s-adjacency matrix` for the dual hypergraph.
 
@@ -1233,16 +1236,18 @@ class Hypergraph:
         If index=True, returns a dictionary column_index:edge_uid
 
         """
+        weights=False  ## Currently default weights are not supported
+
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
             return (
-                Hypergraph.incidence_to_adjacency(
+                Hypergraph._incidence_to_adjacency(
                     M[0].transpose(), s=s, weights=weights
                 ),
                 M[2],
             )
         else:
-            return Hypergraph.incidence_to_adjacency(
+            return Hypergraph._incidence_to_adjacency(
                 M.transpose(), s=s, weights=weights
             )
 
