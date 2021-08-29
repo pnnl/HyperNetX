@@ -64,7 +64,7 @@ class StaticEntity(object):
         uid=None,
         weights=None,
         keep_weights=True,
-        aggregateby="count",
+        aggregateby="sum",
         **props,
     ):
         self._uid = uid
