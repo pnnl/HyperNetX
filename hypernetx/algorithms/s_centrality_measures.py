@@ -112,7 +112,6 @@ def _s_centrality(
                 A, Adict = h.edge_adjacency_matrix(s=s, index=True)
             else:
                 A, Adict = h.adjacency_matrix(s=s, index=True)
-            # A = (A >= s) * 1
             g = nx.from_scipy_sparse_matrix(A)
             stats.update({Adict[k]: v for k, v in func(g, **kwargs).items()})
             if f:
