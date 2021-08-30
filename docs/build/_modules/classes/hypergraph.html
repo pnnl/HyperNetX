@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>classes.hypergraph &mdash; HyperNetX 1.1 documentation</title>
+  <title>classes.hypergraph &mdash; HyperNetX 1.1.2 documentation</title>
   
 
   
@@ -278,7 +278,7 @@
 <span class="sd">        If None, weight for all rows is assumed to be 1.</span>
 <span class="sd">    keep_weights : bool, optional, default : True</span>
 <span class="sd">        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.</span>
-<span class="sd">    aggregateby : str, optional, {&#39;count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;,&#39;last&#39;, None}, default : &#39;count&#39;</span>
+<span class="sd">    aggregateby : str, optional, {&#39;count&#39;, &#39;sum&#39;, &#39;mean&#39;, &#39;median&#39;, max&#39;, &#39;min&#39;, &#39;first&#39;,&#39;last&#39;, None}, default : &#39;sum&#39;</span>
 <span class="sd">        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame or</span>
 <span class="sd">        StaticEntity. If None all cell weights will be set to 1.</span>
 <span class="sd">    use_nwhy : boolean, optional, default : False</span>
@@ -297,7 +297,7 @@
         <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
+        <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
         <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -1316,41 +1316,41 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Hypergraph.incidence_to_adjacency"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.incidence_to_adjacency">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Helper method to obtain adjacency matrix from incidence matrix.</span>
+<span class="sd">        Helper method to obtain adjacency matrix from </span>
+<span class="sd">        boolean incidence matrix for s-metrics.</span>
+<span class="sd">        Self loops are note supported.</span>
+<span class="sd">        The adjacency matrix will define an s-linegraph.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        M : scipy.sparse.csr.csr_matrix</span>
+<span class="sd">        M : scipy.sparse.csr.csr_matrix </span>
+<span class="sd">            incidence matrix of 0&#39;s and 1&#39;s</span>
 
 <span class="sd">        s : int, optional, default: 1</span>
 
-<span class="sd">        weights : bool, dict optional, default=True</span>
-<span class="sd">            If False all nonzero entries are 1.</span>
-<span class="sd">            Otherwise, weights will be as in product.</span>
+<span class="sd">        # weights : bool, dict optional, default=True</span>
+<span class="sd">        #     If False all nonzero entries are 1.</span>
+<span class="sd">        #     Otherwise, weights will be as in product.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        a matrix : scipy.sparse.csr.csr_matrix</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">issparse</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-            <span class="n">A</span><span class="o">.</span><span class="n">setdiag</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">## currently weighting is not supported</span>
 
         <span class="k">if</span> <span class="n">weights</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">csr_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span></div>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+            <span class="n">A</span><span class="o">.</span><span class="n">setdiag</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">A</span>
 
-<div class="viewcode-block" id="Hypergraph.adjacency_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.adjacency_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">adjacency_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Hypergraph.adjacency_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.adjacency_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">adjacency_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span><span class="c1">## , weights=False):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The sparse weighted :term:`s-adjacency matrix`</span>
 
@@ -1372,13 +1372,14 @@
 <span class="sd">        row dictionary : dict</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">## Currently default weights are not supported.</span>
         <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">),</span> <span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">_incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">),</span> <span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">_incidence_to_adjacency</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Hypergraph.edge_adjacency_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.edge_adjacency_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">edge_adjacency_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Hypergraph.edge_adjacency_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.edge_adjacency_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">edge_adjacency_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The weighted :term:`s-adjacency matrix` for the dual hypergraph.</span>
 
@@ -1406,16 +1407,18 @@
 <span class="sd">        If index=True, returns a dictionary column_index:edge_uid</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">False</span>  <span class="c1">## Currently default weights are not supported</span>
+
         <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="n">Hypergraph</span><span class="o">.</span><span class="n">incidence_to_adjacency</span><span class="p">(</span>
+                <span class="n">Hypergraph</span><span class="o">.</span><span class="n">_incidence_to_adjacency</span><span class="p">(</span>
                     <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span>
                 <span class="p">),</span>
                 <span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">incidence_to_adjacency</span><span class="p">(</span>
+            <span class="k">return</span> <span class="n">Hypergraph</span><span class="o">.</span><span class="n">_incidence_to_adjacency</span><span class="p">(</span>
                 <span class="n">M</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span>
             <span class="p">)</span></div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>reports.descriptive_stats &mdash; HyperNetX 1.1 documentation</title>
+  <title>reports.descriptive_stats &mdash; HyperNetX 1.1.2 documentation</title>
   
 
   
@@ -525,10 +525,7 @@
 <span class="sd">     dist_stats : dict</span>
 <span class="sd">        Dictionary which keeps track of each of the above items (e.g., basic[&#39;nrows&#39;] = the number of nodes in H)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-        <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">stats</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
