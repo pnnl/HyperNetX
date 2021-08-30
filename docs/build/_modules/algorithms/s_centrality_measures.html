@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms.s_centrality_measures &mdash; HyperNetX 1.1 documentation</title>
+  <title>algorithms.s_centrality_measures &mdash; HyperNetX 1.1.2 documentation</title>
   
 
   
@@ -283,7 +283,6 @@
                 <span class="n">A</span><span class="p">,</span> <span class="n">Adict</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">edge_adjacency_matrix</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">A</span><span class="p">,</span> <span class="n">Adict</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_scipy_sparse_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
             <span class="n">stats</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">Adict</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">func</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
             <span class="k">if</span> <span class="n">f</span><span class="p">:</span>

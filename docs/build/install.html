@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing HyperNetX &mdash; HyperNetX 1.1 documentation</title>
+  <title>Installing HyperNetX &mdash; HyperNetX 1.1.2 documentation</title>
   
 
   
@@ -196,9 +196,8 @@ the conda version of matplotlib:</p>
 </div>
 <p>To use <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> use python=3.9 and the conda version of tbb in your environment.
 <strong>Note</strong> that <a class="reference internal" href="nwhy.html#nwhy"><span class="std std-ref">NWHy</span></a> only works on Linux and some OSX systems. See NWHy docs for more.:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span> <span class="n">tbb</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span><span class="o">/</span><span class="n">label</span><span class="o">/</span><span class="n">cf202003</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
 </pre></div>
