@@ -683,34 +683,25 @@ class Hypergraph:
         """
         if self.isstatic:
             ndx = self.get_id(node)
-            #             if s == 1:
-            #                 return np.sum(self.edges.data.T[1] == ndx)
-            if self.nwhy:
+            if self.nwhy:                
                 return self.g.degree(ndx, min_size=s, max_size=None)
-
             else:
-                if max_size is not None:
-                    ids = np.where(
-                        np.array(self.edge_size_dist()) in range(s, max_size + 1)
-                    )[0]
-                else:
-                    ids = np.where(np.array(self.edge_size_dist()) >= s)[0]
-                imat = self.incidence_matrix()
-                return np.sum(imat[ndx, ids])
+                memberships = set(self.nodes.memberships[node])
         else:
             memberships = set(self.nodes[node].memberships)
-            if max_size is not None:
-                return len(
-                    set(
-                        e
-                        for e in memberships
-                        if len(self.edges[e]) in range(s, max_size + 1)
-                    )
+                                  
+        if max_size is not None:
+            return len(
+                set(
+                    e
+                    for e in memberships
+                    if len(self.edges[e]) in range(s, max_size + 1)
                 )
-            elif s > 1:
-                return len(set(e for e in memberships if len(self.edges[e]) >= s))
-            else:
-                return len(memberships)
+            )
+        elif s > 1:
+            return len(set(e for e in memberships if len(self.edges[e]) >= s))
+        else:
+            return len(memberships)
 
     def size(self, edge, nodeset=None):
         """
@@ -731,6 +722,7 @@ class Hypergraph:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
+                edx = self.get_id(edge,edges=True)
                 return self.g.size(edx)
             else:
                 return len(self.edges[edge])
