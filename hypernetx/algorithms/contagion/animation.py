@@ -97,7 +97,7 @@ def contagion_animation(
         }
 
         # draw hypergraph
-        hnx.drawing.draw(
+        hnx.draw(
             H,
             node_radius=node_radius,
             nodes_kwargs=nodeStyle,
