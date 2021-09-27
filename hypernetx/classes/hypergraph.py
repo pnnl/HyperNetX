@@ -1142,7 +1142,7 @@ class Hypergraph:
         """
         Helper method to obtain adjacency matrix from 
         boolean incidence matrix for s-metrics.
-        Self loops are note supported.
+        Self loops are not supported.
         The adjacency matrix will define an s-linegraph.
 
         Parameters
