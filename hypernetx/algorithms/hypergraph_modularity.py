@@ -1,8 +1,25 @@
+"""
+Hypergraph_Modularity
+---------------------
+Modularity and clustering for hypergraphs using HyperNetX.
+Adapted from F. Théberge's GitHub repository: `Hypergraph Clustering <https://github.com/ftheberge/Hypergraph_Clustering>`_ 
+See Tutorial 13 in the tutorials folder for library usage.
+
+References
+---------- 
+.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S., Ravindran B. (2020) A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
+.. [2] B. Kaminski, P. Pralat and F. Théberge, Community Detection Algorithm Using Hypergraph Modularity, to appear in the proceedings of Complex Networks 2020, Springer.
+.. [3] Clustering via hypergraph modularity, Bogumił Kamiński, Valérie Poulin, Paweł Prałat , Przemysław Szufel, François Théberge, 2019, https://doi.org/10.1371/journal.pone.0224307
+
+"""
+
+
 from collections import Counter
 import numpy as np
 from functools import reduce
 import igraph as ig
 import itertools
+from scipy.special import factorial as scipyfact
 
 ################################################################################
 
@@ -11,6 +28,20 @@ import itertools
 
 
 def dict2part(D):
+    """
+    Returns dictionary to partition, inverse function to part2dict
+
+    Parameters
+    ----------
+    D : dict
+        Dictionary keyed by vertices with values equal to integer
+        index of the partition the vertex belongs to
+
+    Returns
+    -------
+    : list
+        List of sets in the partition
+    """
     P = []
     k = list(D.keys())
     v = list(D.values())
@@ -20,6 +51,19 @@ def dict2part(D):
 
 
 def part2dict(A):
+    """
+    Returns dictionary {vertex: partition index}, inverse function
+    to dict2part
+
+    Parameters
+    ----------
+    A : list of lists
+        partition of vertices
+
+    Returns
+    -------
+    : dict
+    """
     x = []
     for i in range(len(A)):
         x.extend([(a, i) for a in A[i]])
@@ -29,14 +73,36 @@ def part2dict(A):
 
 
 def factorial(n):
+    """
+    Computes exact integer factorial on integer
+
+    Parameters
+    ----------
+    n : int, or array-like object
+
+    Returns
+    -------
+    int or int64 or object
+
+    """
     if n < 2:
         return 1
-    return reduce(lambda x, y: x * y, range(2, int(n) + 1))
+    return scipyfact(n, exact=True)
+    # return reduce(lambda x, y: x * y, range(2, int(n) + 1))
 
 # Precompute soe values on HNX hypergraph for computing qH faster
 
 
-def HNX_precompute(HG):
+def precompute_attributes(HG):
+    """
+    Adds weight, strength and binary coefficient attributes to
+    the hypergraph for computing qH faster.
+
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    """
     # 1. compute node strenghts (weighted degrees)
     for v in HG.nodes:
         HG.nodes[v].strength = 0
@@ -66,32 +132,83 @@ def HNX_precompute(HG):
 
 ################################################################################
 
-# some weight function 'wdc' for d-edges with c-majority
-
-# default: linear w.r.t. c
-
 
 def linear(d, c):
+    """
+    Weight function for hyperedge. Gives the actual ratio as long
+    as it is greater than 0.5.
+
+    Parameters
+    ----------
+    d : int
+        Number of nodes in an edge
+    c : int
+        Number of nodes in the majority class
+
+    Returns
+    -------
+    float
+    """
     return c / d if c > d / 2 else 0
 
 # majority
 
 
 def majority(d, c):
+    """    
+    Weight function for hyperedge. Requires
+    c be the majority of d. Returns bool
+
+    Parameters
+    ----------
+    d : int
+        Number of nodes in an edge
+    c : int
+        Number of nodes in the majority class
+
+    Returns
+    -------
+    bool
+    """
     return 1 if c > d / 2 else 0
 
 # strict
 
 
 def strict(d, c):
+    """
+    Weight function for hyperedge. Requires c == d.
+
+    Parameters
+    ----------
+    d : int
+        Number of nodes in an edge
+    c : int
+        Number of nodes in the majority class
+
+    Returns
+    -------
+    bool
+    """
     return 1 if c == d else 0
 
 #########################################
 
-# compute vol(A_i)/vol(V) for each part A_i in A (list of sets)
-
 
 def compute_partition_probas(HG, A):
+    """
+    Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)
+
+    Parameters
+    ----------
+    HG : Hypergraph
+     A : list of sets
+
+    Returns
+    -------
+    : list
+        normalized distribution of strengths in partition elements
+    """
     p = []
     for part in A:
         vol = 0
@@ -101,10 +218,26 @@ def compute_partition_probas(HG, A):
     s = sum(p)
     return [i / s for i in p]
 
-# degree tax
 
+def degree_tax(HG, Pr, wdc):
+    """
+    Computes the expected fraction of edges falling in 
+    the partition in a random graph as per [2]_
 
-def DegreeTax(HG, Pr, wdc):
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    Pr : list
+        Probability distribution
+    wdc : func
+        weight function (ex: strict, majority, linear)
+
+    Returns
+    -------
+    float
+
+    """
     DT = 0
     for d in HG.d_weights.keys():
         tax = 0
@@ -117,8 +250,25 @@ def DegreeTax(HG, Pr, wdc):
     return DT
 
 
-# edge contribution, A is list of sets
-def EdgeContribution(HG, A, wdc):
+def edge_contribution(HG, A, wdc):
+    """
+    Edge contribution from hypergraph with respect
+    to partion A.
+
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    A : list of sets
+
+    wdc : func
+        weight function (ex: strict, majority, linear)
+
+    Returns
+    -------
+    : float
+
+    """
     EC = 0
     for e in HG.edges:
         d = HG.size(e)
@@ -133,16 +283,43 @@ def EdgeContribution(HG, A, wdc):
 # wcd: weight function (ex: strict, majority, linear)
 
 
-def HNX_modularity(HG, A, wdc=linear):
+def hypergraph_modularity(HG, A, wdc=linear):
+    """
+    Computes modularity of a hypergraph with respect to partition A.
+
+    Parameters
+    ----------
+    HG : Hypergraph
+        Description
+    A : list of lists
+        Partition of the nodes in HG
+    wdc : func, optional
+        weight function (ex: strict, majority, linear) 
+
+    Returns
+    -------
+    : float
+
+    """
     Pr = compute_partition_probas(HG, A)
-    return EdgeContribution(HG, A, wdc) - DegreeTax(HG, Pr, wdc)
+    return edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
 
 ################################################################################
 
-# 2-section igraph from HG
 
+def two_section(HG):
+    """
+    Creates a random walk 2-section igraph with transition weights defined by the
+    weights of the hyperedges.
 
-def HNX_2section(HG):
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    Returns
+    -------
+    G : igraph.Graph
+    """
     s = []
     for e in HG.edges:
         E = HG.edges[e]
@@ -157,12 +334,28 @@ def HNX_2section(HG):
 
 ################################################################################
 
-def HNX_Kumar(HG, delta=.01):
 
+def kumar(HG, delta=.01):
+    """
+    Compute a partition of the vertices as per Kumar's algorithm [1]_
+
+
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    delta : float, optional
+        convergence stopping criterion
+
+    Returns
+    -------
+    dict
+
+    """
     # weights will be modified -- store initial weights
     W = [e.weight for e in HG.edges()]
     # build graph
-    G = HNX_2section(HG)
+    G = two_section(HG)
     # apply clustering
     CG = G.community_multilevel(weights='weight')
     CH = []
@@ -182,7 +375,7 @@ def HNX_Kumar(HG, delta=.01):
             e.weight = 0.5 * e.weight + 0.5 * reweight
         # re-run louvain
         # build graph
-        G = HNX_2section(HG)
+        G = two_section(HG)
         # apply clustering
         CG = G.community_multilevel(weights='weight')
         CH = []
@@ -198,11 +391,32 @@ def HNX_Kumar(HG, delta=.01):
 
 ################################################################################
 
-# compute change in edge contribution --
-# partition P, node v going from P[a] to P[b]
 
+def delta_ec(HG, P, v, a, b, wdc):
+    """
+    Computes change in edge contribution --
+    partition P, node v going from P[a] to P[b]
 
-def DeltaEC(HG, P, v, a, b, wdc):
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    P : list of sets
+
+    v : int or str
+        node identifier
+    a : int
+
+    b : int
+
+    wdc : func
+        weight function (ex: strict, majority, linear)
+
+    Returns
+    -------
+    TYPE
+        Description
+    """
     Pm = P[a] - {v}
     Pn = P[b].union({v})
     ec = 0
@@ -213,16 +427,53 @@ def DeltaEC(HG, P, v, a, b, wdc):
                    - wdc(d, HG.size(e, P[a])) - wdc(d, HG.size(e, P[b])))
     return ec / HG.total_weight
 
-# exp. part of binomial pmf
-
 
 def bin_ppmf(d, c, p):
+    """
+    exp. part of binomial pmf
+
+    Parameters
+    ----------
+    d : int
+
+    c : int
+
+    p : float
+
+
+    Returns
+    -------
+    float
+
+    """
     return p**c * (1 - p)**(d - c)
 
-# compute change in degree tax --
-# partition P (list), node v going from P[a] to P[b]
-def DeltaDT(HG, P, v, a, b, wdc):
 
+def delta_dt(HG, P, v, a, b, wdc):
+    """
+    Compute change in degree tax --
+    partition P (list), node v going from P[a] to P[b]
+
+    Parameters
+    ----------
+    HG : Hypergraph
+
+    P : list of sets
+
+    v : int or str
+         node identifier
+    a : int
+
+    b : int
+
+    wdc : func
+        weight function (ex: strict, majority, linear)
+
+    Returns
+    -------
+    : float
+
+    """
     s = HG.nodes[v].strength
     vol = sum([HG.nodes[v].strength for v in HG.nodes])
     vola = sum([HG.nodes[v].strength for v in P[a]])
@@ -241,12 +492,31 @@ def DeltaDT(HG, P, v, a, b, wdc):
         DT += x * HG.d_weights[d]
     return DT / HG.total_weight
 
-# simple H-based algorithm --
-# try moving nodes between communities to optimize qH
-# requires L: initial non-trivial partition
+
+def last_step(HG, L, wdc=linear, delta=.01):
+    """
+    Compute a partition of the vertices as per Last-Step algorithm.[2]_
+
+    Simple H-based algorithm --
+    try moving nodes between communities to optimize qH
+    requires L: initial non-trivial partition
+
+    Parameters
+    ----------
+    HG : Hypergraph
+
+     L : list of sets
+
+    wdc : func, optional
+        weight function (ex: strict, majority, linear)
+    delta : float, optional
 
 
-def HNX_LastStep(HG, L, wdc=linear, delta=.01):
+    Returns
+    -------
+    : list of sets
+
+    """
     A = L[:]  # we will modify this, copy
     D = part2dict(A)
     qH = 0
@@ -260,14 +530,14 @@ def HNX_LastStep(HG, L, wdc=linear, delta=.01):
                     if c == i:
                         M.append(0)
                     else:
-                        M.append(DeltaEC(HG, A, v, c, i, wdc) - DeltaDT(HG, A, v, c, i, wdc))
+                        M.append(delta_ec(HG, A, v, c, i, wdc) - delta_dt(HG, A, v, c, i, wdc))
                 i = s[np.argmax(M)]
                 if c != i:
                     A[c] = A[c] - {v}
                     A[i] = A[i].union({v})
                     D[v] = i
         Pr = compute_partition_probas(HG, A)
-        q2 = EdgeContribution(HG, A, wdc) - DegreeTax(HG, Pr, wdc)
+        q2 = edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
         if (q2 - qH) < delta:
             break
         qH = q2

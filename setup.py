@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.1.3"
+__version__ = "1.1.4"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -70,7 +70,7 @@ setup(
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
-        "tutorials": ["jupyter>=1.0"],
+        "tutorials": ["jupyter>=1.0", "python-igraph>=0.9.6"],
         "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
         "all": [
             "sphinx>=1.8.2",
@@ -78,6 +78,7 @@ setup(
             "sphinx-rtd-theme>=0.4.2",
             "pytest>=4.0",
             "jupyter>=1.0",
+            "python-igraph>=0.9.6",
         ],
     },
 )

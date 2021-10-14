@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms package &mdash; HyperNetX 1.1.3 documentation</title>
+  <title>algorithms package &mdash; HyperNetX 1.1.4dev documentation</title>
   
 
   
@@ -109,8 +109,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.generative_models">algorithms.generative_models module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.homology_mod2">algorithms.homology_mod2 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-algorithms.hypergraph_modularity">algorithms.hypergraph_modularity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.laplacians_clustering">algorithms.laplacians_clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-algorithms.untitiled_modularity_and_clustering_original">algorithms.untitiled_modularity_and_clustering_original module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-algorithms.untitled_modularity_and_clustering">algorithms.untitled_modularity_and_clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-algorithms">Module contents</a></li>
 </ul>
 </li>
@@ -806,6 +809,371 @@ Returns a list of new matrices</p>
 </div>
 </div>
 </div>
+<div class="section" id="module-algorithms.hypergraph_modularity">
+<span id="algorithms-hypergraph-modularity-module"></span><h2>algorithms.hypergraph_modularity module<a class="headerlink" href="#module-algorithms.hypergraph_modularity" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hypergraph-modularity">
+<h3>Hypergraph_Modularity<a class="headerlink" href="#hypergraph-modularity" title="Permalink to this headline">¶</a></h3>
+<p>Modularity and clustering for hypergraphs using HyperNetX.
+Adapted from F. Théberge’s GitHub repository: <a class="reference external" href="https://github.com/ftheberge/Hypergraph_Clustering">Hypergraph Clustering</a>
+See Tutorial 13 in the tutorials folder for library usage.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id5">1</a></span></dt>
+<dd><p>Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S., Ravindran B. (2020) A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-36687-2_24">https://doi.org/10.1007/978-3-030-36687-2_24</a></p>
+</dd>
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><ol class="upperalpha simple" start="2">
+<li><p>Kaminski, P. Pralat and F. Théberge, Community Detection Algorithm Using Hypergraph Modularity, to appear in the proceedings of Complex Networks 2020, Springer.</p></li>
+</ol>
+</dd>
+<dt class="label" id="id3"><span class="brackets">3</span></dt>
+<dd><p>Clustering via hypergraph modularity, Bogumił Kamiński, Valérie Poulin, Paweł Prałat , Przemysław Szufel, François Théberge, 2019, <a class="reference external" href="https://doi.org/10.1371/journal.pone.0224307">https://doi.org/10.1371/journal.pone.0224307</a></p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.bin_ppmf">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">bin_ppmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#bin_ppmf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.bin_ppmf" title="Permalink to this definition">¶</a></dt>
+<dd><p>exp. part of binomial pmf</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>int</em>) – </p></li>
+<li><p><strong>c</strong> (<em>int</em>) – </p></li>
+<li><p><strong>p</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.compute_partition_probas">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">compute_partition_probas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#compute_partition_probas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.compute_partition_probas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – A : list of sets</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>normalized distribution of strengths in partition elements</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.degree_tax">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">degree_tax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#degree_tax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.degree_tax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the expected fraction of edges falling in
+the partition in a random graph as per <a class="footnote-reference brackets" href="#id2" id="id4">2</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>Pr</strong> (<em>list</em>) – Probability distribution</p></li>
+<li><p><strong>wdc</strong> (<em>func</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.delta_dt">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">delta_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#delta_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.delta_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute change in degree tax –
+partition P (list), node v going from P[a] to P[b]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>P</strong> (<em>list of sets</em>) – </p></li>
+<li><p><strong>v</strong> (<em>int</em><em> or </em><em>str</em>) – node identifier</p></li>
+<li><p><strong>a</strong> (<em>int</em>) – </p></li>
+<li><p><strong>b</strong> (<em>int</em>) – </p></li>
+<li><p><strong>wdc</strong> (<em>func</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.delta_ec">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">delta_ec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#delta_ec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.delta_ec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes change in edge contribution –
+partition P, node v going from P[a] to P[b]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>P</strong> (<em>list of sets</em>) – </p></li>
+<li><p><strong>v</strong> (<em>int</em><em> or </em><em>str</em>) – node identifier</p></li>
+<li><p><strong>a</strong> (<em>int</em>) – </p></li>
+<li><p><strong>b</strong> (<em>int</em>) – </p></li>
+<li><p><strong>wdc</strong> (<em>func</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Description</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.dict2part">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">dict2part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#dict2part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.dict2part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary to partition, inverse function to part2dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>D</strong> (<em>dict</em>) – Dictionary keyed by vertices with values equal to integer
+index of the partition the vertex belongs to</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of sets in the partition</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.edge_contribution">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">edge_contribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#edge_contribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.edge_contribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edge contribution from hypergraph with respect
+to partion A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>A</strong> (<em>list of sets</em>) – </p></li>
+<li><p><strong>wdc</strong> (<em>func</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.factorial">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">factorial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#factorial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.factorial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes exact integer factorial on integer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em><em>, or </em><em>array-like object</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int or int64 or object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.hypergraph_modularity">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">hypergraph_modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">A</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#hypergraph_modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.hypergraph_modularity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes modularity of a hypergraph with respect to partition A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – Description</p></li>
+<li><p><strong>A</strong> (<em>list of lists</em>) – Partition of the nodes in HG</p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.kumar">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.kumar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a partition of the vertices as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id5">1</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – convergence stopping criterion</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.last_step">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">last_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">L</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em>, <em class="sig-param"><span class="pre">delta=0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#last_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.last_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a partition of the vertices as per Last-Step algorithm.[2]_</p>
+<p>Simple H-based algorithm –
+try moving nodes between communities to optimize qH
+requires L: initial non-trivial partition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – L : list of sets</p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – weight function (ex: strict, majority, linear)</p></li>
+<li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of sets</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.linear">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weight function for hyperedge. Gives the actual ratio as long
+as it is greater than 0.5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>int</em>) – Number of nodes in an edge</p></li>
+<li><p><strong>c</strong> (<em>int</em>) – Number of nodes in the majority class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.majority">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.majority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weight function for hyperedge. Requires
+c be the majority of d. Returns bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>int</em>) – Number of nodes in an edge</p></li>
+<li><p><strong>c</strong> (<em>int</em>) – Number of nodes in the majority class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.part2dict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">part2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#part2dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.part2dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dictionary {vertex: partition index}, inverse function
+to dict2part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>list of lists</em>) – partition of vertices</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.precompute_attributes">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">precompute_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#precompute_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.precompute_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds weight, strength and binary coefficient attributes to
+the hypergraph for computing qH faster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.strict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">strict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#strict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.strict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weight function for hyperedge. Requires c == d.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>int</em>) – Number of nodes in an edge</p></li>
+<li><p><strong>c</strong> (<em>int</em>) – Number of nodes in the majority class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.two_section">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">two_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#two_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.two_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a random walk 2-section igraph with transition weights defined by the
+weights of the hyperedges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>G</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>igraph.Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-algorithms.laplacians_clustering">
 <span id="algorithms-laplacians-clustering-module"></span><h2>algorithms.laplacians_clustering module<a class="headerlink" href="#module-algorithms.laplacians_clustering" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="hypergraph-probability-transition-matrices-laplacians-and-clustering">
@@ -1089,6 +1457,182 @@ If source then a single value is returned.</p>
 <dd></dd></dl>
 
 </div>
+</div>
+<div class="section" id="module-algorithms.untitiled_modularity_and_clustering_original">
+<span id="algorithms-untitiled-modularity-and-clustering-original-module"></span><h2>algorithms.untitiled_modularity_and_clustering_original module<a class="headerlink" href="#module-algorithms.untitiled_modularity_and_clustering_original" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.DegreeTax">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">DegreeTax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#DegreeTax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.DegreeTax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.DeltaDT">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">DeltaDT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#DeltaDT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.DeltaDT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.DeltaEC">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">DeltaEC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#DeltaEC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.DeltaEC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.EdgeContribution">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">EdgeContribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#EdgeContribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.EdgeContribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.HNX_2section">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">HNX_2section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#HNX_2section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.HNX_2section" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.HNX_Kumar">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">HNX_Kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#HNX_Kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.HNX_Kumar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.HNX_LastStep">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">HNX_LastStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">L</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em>, <em class="sig-param"><span class="pre">delta=0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#HNX_LastStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.HNX_LastStep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.HNX_modularity">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">HNX_modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#HNX_modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.HNX_modularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.bin_ppmf">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">bin_ppmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#bin_ppmf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.bin_ppmf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.compute_partition_probas">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">compute_partition_probas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#compute_partition_probas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.compute_partition_probas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.dict2part">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">dict2part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#dict2part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.dict2part" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.factorial">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">factorial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#factorial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.factorial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.linear">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.linear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.majority">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.majority" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.part2dict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">part2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#part2dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.part2dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.precompute_modularity_parameters">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">precompute_modularity_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#precompute_modularity_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.precompute_modularity_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitiled_modularity_and_clustering_original.strict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitiled_modularity_and_clustering_original.</span></span><span class="sig-name descname"><span class="pre">strict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitiled_modularity_and_clustering_original.html#strict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitiled_modularity_and_clustering_original.strict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-algorithms.untitled_modularity_and_clustering">
+<span id="algorithms-untitled-modularity-and-clustering-module"></span><h2>algorithms.untitled_modularity_and_clustering module<a class="headerlink" href="#module-algorithms.untitled_modularity_and_clustering" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.DegreeTax">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">DegreeTax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Pr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#DegreeTax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.DegreeTax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.DeltaDT">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">DeltaDT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#DeltaDT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.DeltaDT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.DeltaEC">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">DeltaEC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#DeltaEC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.DeltaEC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.EdgeContribution">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">EdgeContribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#EdgeContribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.EdgeContribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.HNX_2section">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">HNX_2section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#HNX_2section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.HNX_2section" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.HNX_Kumar">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">HNX_Kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#HNX_Kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.HNX_Kumar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.HNX_LastStep">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">HNX_LastStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">L</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em>, <em class="sig-param"><span class="pre">delta=0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#HNX_LastStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.HNX_LastStep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.HNX_modularity">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">HNX_modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">A</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#HNX_modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.HNX_modularity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.HNX_precompute">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">HNX_precompute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#HNX_precompute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.HNX_precompute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.bin_ppmf">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">bin_ppmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#bin_ppmf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.bin_ppmf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.compute_partition_probas">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">compute_partition_probas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#compute_partition_probas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.compute_partition_probas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.dict2part">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">dict2part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#dict2part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.dict2part" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.factorial">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">factorial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#factorial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.factorial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.linear">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.linear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.majority">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.majority" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.part2dict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">part2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#part2dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.part2dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="algorithms.untitled_modularity_and_clustering.strict">
+<span class="sig-prename descclassname"><span class="pre">algorithms.untitled_modularity_and_clustering.</span></span><span class="sig-name descname"><span class="pre">strict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/untitled_modularity_and_clustering.html#strict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.untitled_modularity_and_clustering.strict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-algorithms">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-algorithms" title="Permalink to this headline">¶</a></h2>
