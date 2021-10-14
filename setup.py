@@ -30,7 +30,6 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
-        "celluloid>=0.2.0",
     ],
     license="3-Clause BSD license",
     long_description="""
@@ -70,7 +69,7 @@ setup(
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
-        "tutorials": ["jupyter>=1.0", "python-igraph>=0.9.6"],
+        "tutorials": ["jupyter>=1.0", "python-igraph>=0.9.6", "celluloid>=0.2.0", ],
         "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
         "all": [
             "sphinx>=1.8.2",
@@ -79,6 +78,7 @@ setup(
             "pytest>=4.0",
             "jupyter>=1.0",
             "python-igraph>=0.9.6",
+            "celluloid>=0.2.0",
         ],
     },
 )
