@@ -168,6 +168,9 @@ class Hypergraph:
                 self._edges = E
                 self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
                 self._nodes._memberships = E.memberships
+                for n in self._nodes:
+                    self._nodes[n].memberships = self._nodes._memberships[n]  ### a bit of a hack to get same functionality from static as dynamic
+                                                                            ### we will have to see if it slows things down too much
         else:
             self._static = False
             if setsystem is None:
