@@ -19,7 +19,7 @@ import numpy as np
 from functools import reduce
 import igraph as ig
 import itertools
-from scipy.special import factorial as scipyfact
+from scipy.special import comb
 
 ################################################################################
 
@@ -72,29 +72,9 @@ def part2dict(A):
 ################################################################################
 
 
-def factorial(n):
-    """
-    Computes exact integer factorial on integer
-
-    Parameters
-    ----------
-    n : int, or array-like object
-
-    Returns
-    -------
-    int or int64 or object
-
-    """
-    if n < 2:
-        return 1
-    return scipyfact(n, exact=True)
-    # return reduce(lambda x, y: x * y, range(2, int(n) + 1))
-
-# Precompute soe values on HNX hypergraph for computing qH faster
-
-
 def precompute_attributes(HG):
     """
+    Precompute some values on HNX hypergraph for computing qH faster
     Adds weight, strength and binary coefficient attributes to
     the hypergraph for computing qH faster.
 
@@ -127,7 +107,7 @@ def precompute_attributes(HG):
     bin_coef = {}
     for n in HG.d_weights.keys():
         for k in np.arange(n // 2 + 1, n + 1):
-            bin_coef[(n, k)] = factorial(n) / (factorial(k) * factorial(n - k))
+            bin_coef[(n, k)] = comb(n, k, exact=True)
     HG.bin_coef = bin_coef
 
 ################################################################################
@@ -283,7 +263,7 @@ def edge_contribution(HG, A, wdc):
 # wcd: weight function (ex: strict, majority, linear)
 
 
-def hypergraph_modularity(HG, A, wdc=linear):
+def modularity(HG, A, wdc=linear):
     """
     Computes modularity of a hypergraph with respect to partition A.
 
@@ -353,7 +333,7 @@ def kumar(HG, delta=.01):
 
     """
     # weights will be modified -- store initial weights
-    W = [e.weight for e in HG.edges()]
+    W = {e: HG.edges[e].weight for e in HG.edges}  # uses edge id for reference instead of int
     # build graph
     G = two_section(HG)
     # apply clustering
@@ -368,11 +348,11 @@ def kumar(HG, delta=.01):
     while diff > delta:
         # re-weight
         diff = 0
-        for i in HG.edges:
-            e = HG.edges[i]
+        for e in HG.edges:
+            edge = HG.edges[e]
             reweight = sum([1 / (1 + HG.size(e, c)) for c in CH]) * (HG.size(e) + len(CH)) / HG.number_of_edges()
-            diff = max(diff, 0.5 * abs(e.weight - reweight))
-            e.weight = 0.5 * e.weight + 0.5 * reweight
+            diff = max(diff, 0.5 * abs(edge.weight - reweight))
+            edge.weight = 0.5 * edge.weight + 0.5 * reweight
         # re-run louvain
         # build graph
         G = two_section(HG)
