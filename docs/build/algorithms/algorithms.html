@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms package &mdash; HyperNetX 1.1.4dev documentation</title>
+  <title>algorithms package &mdash; HyperNetX 1.1.4 documentation</title>
   
 
   
@@ -981,44 +981,6 @@ to partion A.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.factorial">
-<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">factorial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#factorial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.factorial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes exact integer factorial on integer</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em><em>, or </em><em>array-like object</em>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int or int64 or object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.hypergraph_modularity">
-<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">hypergraph_modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">A</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#hypergraph_modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.hypergraph_modularity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes modularity of a hypergraph with respect to partition A.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – Description</p></li>
-<li><p><strong>A</strong> (<em>list of lists</em>) – Partition of the nodes in HG</p></li>
-<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – weight function (ex: strict, majority, linear)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.kumar">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.kumar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a partition of the vertices as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id5">1</a></p>
@@ -1105,6 +1067,27 @@ c be the majority of d. Returns bool</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="algorithms.hypergraph_modularity.modularity">
+<span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">HG</span></em>, <em class="sig-param"><span class="pre">A</span></em>, <em class="sig-param"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.modularity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes modularity of a hypergraph with respect to partition A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – Description</p></li>
+<li><p><strong>A</strong> (<em>list of lists</em>) – Partition of the nodes in HG</p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – weight function (ex: strict, majority, linear)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.part2dict">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">part2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#part2dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.part2dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns dictionary {vertex: partition index}, inverse function
@@ -1125,7 +1108,8 @@ to dict2part</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.precompute_attributes">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">precompute_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#precompute_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.precompute_attributes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds weight, strength and binary coefficient attributes to
+<dd><p>Precompute some values on HNX hypergraph for computing qH faster
+Adds weight, strength and binary coefficient attributes to
 the hypergraph for computing qH faster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

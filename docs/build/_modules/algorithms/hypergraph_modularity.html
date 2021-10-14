@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>algorithms.hypergraph_modularity &mdash; HyperNetX 1.1.4dev documentation</title>
+  <title>algorithms.hypergraph_modularity &mdash; HyperNetX 1.1.4 documentation</title>
   
 
   
@@ -190,7 +190,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">igraph</span> <span class="k">as</span> <span class="nn">ig</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">factorial</span> <span class="k">as</span> <span class="n">scipyfact</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">comb</span>
 
 <span class="c1">################################################################################</span>
 
@@ -243,29 +243,9 @@
 <span class="c1">################################################################################</span>
 
 
-<div class="viewcode-block" id="factorial"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.factorial">[docs]</a><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes exact integer factorial on integer</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    n : int, or array-like object</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int or int64 or object</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">scipyfact</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-    <span class="c1"># return reduce(lambda x, y: x * y, range(2, int(n) + 1))</span>
-
-<span class="c1"># Precompute soe values on HNX hypergraph for computing qH faster</span>
-
-
 <div class="viewcode-block" id="precompute_attributes"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.precompute_attributes">[docs]</a><span class="k">def</span> <span class="nf">precompute_attributes</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precompute some values on HNX hypergraph for computing qH faster</span>
 <span class="sd">    Adds weight, strength and binary coefficient attributes to</span>
 <span class="sd">    the hypergraph for computing qH faster.</span>
 
@@ -298,7 +278,7 @@
     <span class="n">bin_coef</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">d_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">bin_coef</span><span class="p">[(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+            <span class="n">bin_coef</span><span class="p">[(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">HG</span><span class="o">.</span><span class="n">bin_coef</span> <span class="o">=</span> <span class="n">bin_coef</span></div>
 
 <span class="c1">################################################################################</span>
@@ -454,7 +434,7 @@
 <span class="c1"># wcd: weight function (ex: strict, majority, linear)</span>
 
 
-<div class="viewcode-block" id="hypergraph_modularity"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.hypergraph_modularity">[docs]</a><span class="k">def</span> <span class="nf">hypergraph_modularity</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">):</span>
+<div class="viewcode-block" id="modularity"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.modularity">[docs]</a><span class="k">def</span> <span class="nf">modularity</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes modularity of a hypergraph with respect to partition A.</span>
 
@@ -524,7 +504,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># weights will be modified -- store initial weights</span>
-    <span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">weight</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">()]</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">}</span>  <span class="c1"># uses edge id for reference instead of int</span>
     <span class="c1"># build graph</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
     <span class="c1"># apply clustering</span>
@@ -539,11 +519,11 @@
     <span class="k">while</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">delta</span><span class="p">:</span>
         <span class="c1"># re-weight</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
             <span class="n">reweight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">CH</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">CH</span><span class="p">))</span> <span class="o">/</span> <span class="n">HG</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
-            <span class="n">diff</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">weight</span> <span class="o">-</span> <span class="n">reweight</span><span class="p">))</span>
-            <span class="n">e</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">weight</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">reweight</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">-</span> <span class="n">reweight</span><span class="p">))</span>
+            <span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">reweight</span>
         <span class="c1"># re-run louvain</span>
         <span class="c1"># build graph</span>
         <span class="n">G</span> <span class="o">=</span> <span class="n">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
