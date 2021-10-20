@@ -7,12 +7,11 @@ See Tutorial 13 in the tutorials folder for library usage.
 
 References
 ---------- 
-.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S., Ravindran B. (2020) A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
-.. [2] B. Kaminski, P. Pralat and F. Théberge, Community Detection Algorithm Using Hypergraph Modularity, to appear in the proceedings of Complex Networks 2020, Springer.
-.. [3] Clustering via hypergraph modularity, Bogumił Kamiński, Valérie Poulin, Paweł Prałat , Przemysław Szufel, François Théberge, 2019, https://doi.org/10.1371/journal.pone.0224307
+.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. "A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering". In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
+.. [2] Kamiński  B., Prałat  P. and Théberge  F. "Community Detection Algorithm Using Hypergraph Modularity". In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks & Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13
+.. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. "Clustering via hypergraph modularity", Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307
 
 """
-
 
 from collections import Counter
 import numpy as np
@@ -40,7 +39,7 @@ def dict2part(D):
     Returns
     -------
     : list
-        List of sets in the partition
+        List of sets; one set for each part in the partition
     """
     P = []
     k = list(D.keys())
@@ -57,8 +56,8 @@ def part2dict(A):
 
     Parameters
     ----------
-    A : list of lists
-        partition of vertices
+    A : list of sets
+        a partition of the vertices
 
     Returns
     -------
@@ -71,12 +70,16 @@ def part2dict(A):
 
 ################################################################################
 
-
 def precompute_attributes(HG):
     """
-    Precompute some values on HNX hypergraph for computing qH faster
-    Adds weight, strength and binary coefficient attributes to
-    the hypergraph for computing qH faster.
+    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. The following attributes will be set for HG:
+
+    v.weight: if HG is unweighted, this is set to 1 for each v in HG.nodes
+    v.strength: the weighted degree for each v in HG.nodes
+    HG.d_weights: total edge weigths for each edge cardinality d
+    HG.bin_coef: to speed-up modularity computation
+
+    This needs to be called before calling either hypernetx.algorithms.hypergraph_modularity.modularity() or hypernetx.algorithms.hypergraph_modularity.last_step()
 
     Parameters
     ----------
