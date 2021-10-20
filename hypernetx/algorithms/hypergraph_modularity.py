@@ -374,7 +374,7 @@ def kumar(HG, delta=.01):
     G.vs['part'] = CG.membership
     for e in HG.edges:
         HG.edges[e].weight = W[e]
-    return {v['name']: v['part'] for v in G.vs}
+    return dict2part({v['name']: v['part'] for v in G.vs})
 
 ################################################################################
 
