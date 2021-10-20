@@ -10,7 +10,6 @@ References
 .. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. "A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering". In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
 .. [2] Kamiński  B., Prałat  P. and Théberge  F. "Community Detection Algorithm Using Hypergraph Modularity". In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks & Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13
 .. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. "Clustering via hypergraph modularity", Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307
-
 """
 
 from collections import Counter
@@ -72,12 +71,16 @@ def part2dict(A):
 
 def precompute_attributes(HG):
     """
-    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. The following attributes will be set for HG:
+    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
+    The following attributes will be set for HG:
 
-    v.weight: if HG is unweighted, this is set to 1 for each v in HG.nodes
-    v.strength: the weighted degree for each v in HG.nodes
-    HG.d_weights: total edge weigths for each edge cardinality d
-    HG.bin_coef: to speed-up modularity computation
+    if HG is unweighted, v.weight is set to 1 for each v in HG.nodes
+    
+    v.strength, the weighted degree for each v in HG.nodes
+    
+    HG.d_weights, the total edge weigths for each edge cardinality d
+
+    HG.bin_coef, binomial coefficients to speed-up modularity computation
 
     This needs to be called before calling either hypernetx.algorithms.hypergraph_modularity.modularity() or hypernetx.algorithms.hypergraph_modularity.last_step()
 
@@ -307,11 +310,12 @@ def two_section(HG):
     for e in HG.edges:
         E = HG.edges[e]
         # random-walk 2-section (preserve nodes' weighted degrees)
-        try:
-            w = HG.edges[e].weight / (len(E) - 1)
-        except:
-            w = 1 / (len(E) - 1)
-        s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
+        if len(E)>1:
+            try:
+                w = HG.edges[e].weight / (len(E) - 1)
+            except:
+                w = 1 / (len(E) - 1)
+            s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
     G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges='sum')
     return G
 
