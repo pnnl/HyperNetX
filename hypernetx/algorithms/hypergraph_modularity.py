@@ -77,12 +77,18 @@ def precompute_attributes(HG):
     The weighted degree for each vertex v is stored in v.strength.
     The total edge weigths for each edge cardinality is stored in HG.d_weights.
     Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.
+    Isolated vertices found only in edge(s) of size 1 are dropped.
 
     This needs to be run before calling either modularity() or last_step().
 
     Parameters
     ----------
     HG : Hypergraph
+
+    Returns
+    -------
+    : Hypergraph
+      Same hypergraph with added attributes 
 
     """
     H = HG.remove_singletons()
