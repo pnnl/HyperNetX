@@ -511,7 +511,7 @@ def last_step(HG, L, wdc=linear, delta=.01):
     Returns
     -------
     : list of sets
-    A new partition for the vertices in HG
+      A new partition for the vertices in HG
     """
     A = L[:]  # we will modify this, copy
     D = part2dict(A)
