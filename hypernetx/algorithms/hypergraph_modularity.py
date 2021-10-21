@@ -117,15 +117,16 @@ def precompute_attributes(HG):
 
 def linear(d, c):
     """
-    Weight function for hyperedge. Gives the actual ratio as long
-    as it is greater than 0.5.
+    Edge contribution [3]_ for $d$-edge with $c$ vertices in the majority class.
+    If $c > d/2$, return $c/d$ else return 0.
+    This is the default choice for modularity() and last_step() functions.
 
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
@@ -138,8 +139,8 @@ def linear(d, c):
 
 def majority(d, c):
     """    
-    Weight function for hyperedge. Requires
-    c be the majority of d. Returns bool
+    Edge contribution[3]_ for $d$-edge with $c$ vertices in the majority class.
+    If $c>d/2$, return 1 else return 0.
 
     Parameters
     ----------
@@ -159,7 +160,8 @@ def majority(d, c):
 
 def strict(d, c):
     """
-    Weight function for hyperedge. Requires c == d.
+    Edge contribution [3]_ for $d$-edge with $c$ vertices in the majority class.
+    If $c==d$, return 1 else return 0.
 
     Parameters
     ----------
