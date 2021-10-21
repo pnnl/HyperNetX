@@ -5,10 +5,7 @@
 Modularity and Clustering
 =========================
 
-Francois - I left the code from widget here so that you could replace it with content you want.
-I think an image would be great if you have one.
-
-.. image:: images/WidgetScreenShot.png
+.. image:: images/ModularityScreenShot.png
    :width: 300px
    :align: right
 
