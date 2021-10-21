@@ -117,8 +117,7 @@ def precompute_attributes(HG):
 
 def linear(d, c):
     """
-    Edge contribution [3]_ for $d$-edge with $c$ vertices in the majority class.
-    If $c > d/2$, return $c/d$ else return 0.
+    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
     This is the default choice for modularity() and last_step() functions.
 
     Parameters
@@ -131,6 +130,7 @@ def linear(d, c):
     Returns
     -------
     float
+    $c/d$ if $c>d/2$ else 0
     """
     return c / d if c > d / 2 else 0
 
@@ -139,8 +139,8 @@ def linear(d, c):
 
 def majority(d, c):
     """    
-    Edge contribution[3]_ for $d$-edge with $c$ vertices in the majority class.
-    If $c>d/2$, return 1 else return 0.
+    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
+    This corresponds to the majority rule [3]_
 
     Parameters
     ----------
@@ -152,6 +152,8 @@ def majority(d, c):
     Returns
     -------
     bool
+    1 if $c>d/2$ else 0
+
     """
     return 1 if c > d / 2 else 0
 
@@ -160,8 +162,8 @@ def majority(d, c):
 
 def strict(d, c):
     """
-    Edge contribution [3]_ for $d$-edge with $c$ vertices in the majority class.
-    If $c==d$, return 1 else return 0.
+    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
+    This corresponds to the strict rule [3]_
 
     Parameters
     ----------
@@ -173,6 +175,7 @@ def strict(d, c):
     Returns
     -------
     bool
+    1 if $c==d$ else 0
     """
     return 1 if c == d else 0
 
@@ -206,7 +209,7 @@ def _compute_partition_probas(HG, A):
 def _degree_tax(HG, Pr, wdc):
     """
     Computes the expected fraction of edges falling in 
-    the partition in a random graph as per [2]_
+    the partition as per [2]_
 
     Parameters
     ----------
@@ -215,7 +218,7 @@ def _degree_tax(HG, Pr, wdc):
     Pr : list
         Probability distribution
     wdc : func
-        weight function (ex: strict, majority, linear)
+        weight function for edge contribution (ex: strict, majority, linear)
 
     Returns
     -------
