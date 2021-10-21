@@ -117,7 +117,7 @@ def precompute_attributes(HG):
 
 def linear(d, c):
     """
-    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
     This is the default choice for modularity() and last_step() functions.
 
     Parameters
@@ -130,7 +130,7 @@ def linear(d, c):
     Returns
     -------
     float
-    $c/d$ if $c>d/2$ else 0
+    c/d if c>d/2 else 0
     """
     return c / d if c > d / 2 else 0
 
@@ -139,7 +139,7 @@ def linear(d, c):
 
 def majority(d, c):
     """    
-    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
     This corresponds to the majority rule [3]_
 
     Parameters
@@ -152,7 +152,7 @@ def majority(d, c):
     Returns
     -------
     bool
-    1 if $c>d/2$ else 0
+    1 if c>d/2 else 0
 
     """
     return 1 if c > d / 2 else 0
@@ -162,7 +162,7 @@ def majority(d, c):
 
 def strict(d, c):
     """
-    Hyperparameter for hypergraph modularity [2]_ for $d$-edge with $c$ vertices in the majority class.
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
     This corresponds to the strict rule [3]_
 
     Parameters
@@ -175,7 +175,7 @@ def strict(d, c):
     Returns
     -------
     bool
-    1 if $c==d$ else 0
+    1 if c==d else 0
     """
     return 1 if c == d else 0
 
@@ -272,21 +272,24 @@ def _edge_contribution(HG, A, wdc):
 
 def modularity(HG, A, wdc=linear):
     """
-    Computes modularity of a hypergraph with respect to partition A.
+    Computes modularity of hypergraph HG with respect to partition A.
 
     Parameters
     ----------
     HG : Hypergraph
-        Description
-    A : list of lists
-        Partition of the nodes in HG
+        The hypergraph with some precomputed attributes via: precompute_attributes(HG)
+    A : list of sets
+        Partition of the vertices in HG
     wdc : func, optional
-        weight function (ex: strict, majority, linear) 
+        Hyperparameter for hypergraph modularity [2]_ 
+
+    For 'wdc', any function of the format fn(d,c) that returns 0 when c <= d/2 and value in [0,1] otherwise can be used.
+    Default is 'linear'; other supplied choices are 'majority' and 'strict'.
 
     Returns
     -------
     : float
-
+    The modularity function qH for partition A on HG
     """
     Pr = _compute_partition_probas(HG, A)
     return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
