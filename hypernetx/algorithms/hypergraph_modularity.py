@@ -181,7 +181,7 @@ def strict(d, c):
 #########################################
 
 
-def compute_partition_probas(HG, A):
+def _compute_partition_probas(HG, A):
     """
     Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)
 
@@ -205,7 +205,7 @@ def compute_partition_probas(HG, A):
     return [i / s for i in p]
 
 
-def degree_tax(HG, Pr, wdc):
+def _degree_tax(HG, Pr, wdc):
     """
     Computes the expected fraction of edges falling in 
     the partition in a random graph as per [2]_
@@ -236,7 +236,7 @@ def degree_tax(HG, Pr, wdc):
     return DT
 
 
-def edge_contribution(HG, A, wdc):
+def _edge_contribution(HG, A, wdc):
     """
     Edge contribution from hypergraph with respect
     to partion A.
@@ -287,8 +287,8 @@ def modularity(HG, A, wdc=linear):
     : float
 
     """
-    Pr = compute_partition_probas(HG, A)
-    return edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
+    Pr = _compute_partition_probas(HG, A)
+    return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
 
 ################################################################################
 
@@ -415,7 +415,7 @@ def _delta_ec(HG, P, v, a, b, wdc):
     return ec / HG.total_weight
 
 
-def bin_ppmf(d, c, p):
+def _bin_ppmf(d, c, p):
     """
     exp. part of binomial pmf
 
@@ -436,7 +436,7 @@ def bin_ppmf(d, c, p):
     return p**c * (1 - p)**(d - c)
 
 
-def delta_dt(HG, P, v, a, b, wdc):
+def _delta_dt(HG, P, v, a, b, wdc):
     """
     Compute change in degree tax --
     partition P (list), node v going from P[a] to P[b]
@@ -474,8 +474,8 @@ def delta_dt(HG, P, v, a, b, wdc):
     for d in HG.d_weights.keys():
         x = 0
         for c in np.arange(int(np.floor(d / 2)) + 1, d + 1):
-            x += HG.bin_coef[(d, c)] * wdc(d, c) * (bin_ppmf(d, c, voln) + bin_ppmf(d, c, volm)
-                                                    - bin_ppmf(d, c, vola) - bin_ppmf(d, c, volb))
+            x += HG.bin_coef[(d, c)] * wdc(d, c) * (_bin_ppmf(d, c, voln) + _bin_ppmf(d, c, volm)
+                                                    - _bin_ppmf(d, c, vola) - _bin_ppmf(d, c, volb))
         DT += x * HG.d_weights[d]
     return DT / HG.total_weight
 
@@ -517,14 +517,14 @@ def last_step(HG, L, wdc=linear, delta=.01):
                     if c == i:
                         M.append(0)
                     else:
-                        M.append(_delta_ec(HG, A, v, c, i, wdc) - delta_dt(HG, A, v, c, i, wdc))
+                        M.append(_delta_ec(HG, A, v, c, i, wdc) - _delta_dt(HG, A, v, c, i, wdc))
                 i = s[np.argmax(M)]
                 if c != i:
                     A[c] = A[c] - {v}
                     A[i] = A[i].union({v})
                     D[v] = i
-        Pr = compute_partition_probas(HG, A)
-        q2 = edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
+        Pr = _compute_partition_probas(HG, A)
+        q2 = _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
         if (q2 - qH) < delta:
             break
         qH = q2
