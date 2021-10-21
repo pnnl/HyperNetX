@@ -283,6 +283,8 @@ def modularity(HG, A, wdc=linear):
     wdc : func, optional
         Hyperparameter for hypergraph modularity [2]_ 
 
+    Note
+    ----
     For 'wdc', any function of the format fn(d,c) that returns 0 when c <= d/2 and value in [0,1] otherwise can be used.
     Default is 'linear'; other supplied choices are 'majority' and 'strict'.
 
