@@ -85,33 +85,34 @@ def precompute_attributes(HG):
     HG : Hypergraph
 
     """
-    HG = HG.remove_singletons()
+    H = HG.remove_singletons()
     # 1. compute node strenghts (weighted degrees)
-    for v in HG.nodes:
-        HG.nodes[v].strength = 0
-    for e in HG.edges:
+    for v in H.nodes:
+        H.nodes[v].strength = 0
+    for e in H.edges:
         try:
-            w = HG.edges[e].weight
+            w = H.edges[e].weight
         except:
             w = 1
             # add unit weight if none to simplify other functions
-            HG.edges[e].weight = 1
-        for v in list(HG.edges[e]):
-            HG.nodes[v].strength += w
+            H.edges[e].weight = 1
+        for v in list(H.edges[e]):
+            H.nodes[v].strength += w
     # 2. compute d-weights
-    ctr = Counter([len(HG.edges[e]) for e in HG.edges])
+    ctr = Counter([len(H.edges[e]) for e in H.edges])
     for k in ctr.keys():
         ctr[k] = 0
-    for e in HG.edges:
-        ctr[len(HG.edges[e])] += HG.edges[e].weight
-    HG.d_weights = ctr
-    HG.total_weight = sum(ctr.values())
+    for e in H.edges:
+        ctr[len(H.edges[e])] += H.edges[e].weight
+    H.d_weights = ctr
+    H.total_weight = sum(ctr.values())
     # 3. compute binomial coeffcients (modularity speed-up)
     bin_coef = {}
-    for n in HG.d_weights.keys():
+    for n in H.d_weights.keys():
         for k in np.arange(n // 2 + 1, n + 1):
             bin_coef[(n, k)] = comb(n, k, exact=True)
-    HG.bin_coef = bin_coef
+    H.bin_coef = bin_coef
+    return H
 
 ################################################################################
 
