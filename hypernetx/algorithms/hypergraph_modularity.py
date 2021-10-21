@@ -129,8 +129,8 @@ def linear(d, c):
 
     Returns
     -------
-    float
-    c/d if c>d/2 else 0
+    : float
+      c/d if c>d/2 else 0
     """
     return c / d if c > d / 2 else 0
 
@@ -151,8 +151,8 @@ def majority(d, c):
 
     Returns
     -------
-    bool
-    1 if c>d/2 else 0
+    : bool
+      1 if c>d/2 else 0
 
     """
     return 1 if c > d / 2 else 0
@@ -174,8 +174,8 @@ def strict(d, c):
 
     Returns
     -------
-    bool
-    1 if c==d else 0
+    : bool
+      1 if c==d else 0
     """
     return 1 if c == d else 0
 
@@ -291,7 +291,7 @@ def modularity(HG, A, wdc=linear):
     Returns
     -------
     : float
-    The modularity function qH for partition A on HG
+      The modularity function qH for partition A on HG
     """
     Pr = _compute_partition_probas(HG, A)
     return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
@@ -301,7 +301,7 @@ def modularity(HG, A, wdc=linear):
 
 def two_section(HG):
     """
-    Creates a random walk 2-section igraph with transition weights defined by the
+    Creates a random walk based [1]_ 2-section igraph Graph with transition weights defined by the
     weights of the hyperedges.
 
     Parameters
@@ -310,7 +310,7 @@ def two_section(HG):
 
     Returns
     -------
-    G : igraph.Graph
+     : igraph.Graph
     """
     s = []
     for e in HG.edges:
@@ -330,8 +330,7 @@ def two_section(HG):
 
 def kumar(HG, delta=.01):
     """
-    Compute a partition of the vertices as per Kumar's algorithm [1]_
-
+    Compute a partition of the vertices in hypergraph HG as per Kumar's algorithm [1]_
 
     Parameters
     ----------
@@ -342,7 +341,8 @@ def kumar(HG, delta=.01):
 
     Returns
     -------
-    dict
+    : list of sets
+       A partition of the vertices in HG
 
     """
     # weights will be modified -- store initial weights
