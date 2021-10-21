@@ -379,7 +379,7 @@ def kumar(HG, delta=.01):
 ################################################################################
 
 
-def delta_ec(HG, P, v, a, b, wdc):
+def _delta_ec(HG, P, v, a, b, wdc):
     """
     Computes change in edge contribution --
     partition P, node v going from P[a] to P[b]
@@ -517,7 +517,7 @@ def last_step(HG, L, wdc=linear, delta=.01):
                     if c == i:
                         M.append(0)
                     else:
-                        M.append(delta_ec(HG, A, v, c, i, wdc) - delta_dt(HG, A, v, c, i, wdc))
+                        M.append(_delta_ec(HG, A, v, c, i, wdc) - delta_dt(HG, A, v, c, i, wdc))
                 i = s[np.argmax(M)]
                 if c != i:
                     A[c] = A[c] - {v}
