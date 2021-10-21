@@ -85,6 +85,7 @@ def precompute_attributes(HG):
     HG : Hypergraph
 
     """
+    HG = HG.remove_singletons()
     # 1. compute node strenghts (weighted degrees)
     for v in HG.nodes:
         HG.nodes[v].strength = 0
