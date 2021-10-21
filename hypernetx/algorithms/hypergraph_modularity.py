@@ -27,7 +27,7 @@ from scipy.special import comb
 
 def dict2part(D):
     """
-    Returns dictionary to partition, inverse function to part2dict
+    Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict
 
     Parameters
     ----------
@@ -50,7 +50,7 @@ def dict2part(D):
 
 def part2dict(A):
     """
-    Returns dictionary {vertex: partition index}, inverse function
+    Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function
     to dict2part
 
     Parameters
@@ -61,6 +61,7 @@ def part2dict(A):
     Returns
     -------
     : dict
+      a dictionary with {vertex: partition index}
     """
     x = []
     for i in range(len(A)):
@@ -72,17 +73,12 @@ def part2dict(A):
 def precompute_attributes(HG):
     """
     Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
-    The following attributes will be set for HG:
+    If HG is unweighted, v.weight is set to 1 for each vertex v in HG. 
+    The weighted degree for each vertex v is stored in v.strength.
+    The total edge weigths for each edge cardinality is stored in HG.d_weights.
+    Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.
 
-    if HG is unweighted, v.weight is set to 1 for each v in HG.nodes
-    
-    v.strength, the weighted degree for each v in HG.nodes
-    
-    HG.d_weights, the total edge weigths for each edge cardinality d
-
-    HG.bin_coef, binomial coefficients to speed-up modularity computation
-
-    This needs to be called before calling either hypernetx.algorithms.hypergraph_modularity.modularity() or hypernetx.algorithms.hypergraph_modularity.last_step()
+    This needs to be run before calling either modularity() or last_step().
 
     Parameters
     ----------
