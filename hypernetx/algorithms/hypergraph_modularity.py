@@ -285,7 +285,7 @@ def modularity(HG, A, wdc=linear):
 
     Note
     ----
-    For 'wdc', any function of the format fn(d,c) that returns 0 when c <= d/2 and value in [0,1] otherwise can be used.
+    For 'wdc', any function of the format w(d,c) that returns 0 when c <= d/2 and value in [0,1] otherwise can be used.
     Default is 'linear'; other supplied choices are 'majority' and 'strict'.
 
     Returns
@@ -311,6 +311,7 @@ def two_section(HG):
     Returns
     -------
      : igraph.Graph
+       The 2-section graph built from HG
     """
     s = []
     for e in HG.edges:
@@ -407,8 +408,7 @@ def _delta_ec(HG, P, v, a, b, wdc):
 
     Returns
     -------
-    TYPE
-        Description
+    : float
     """
     Pm = P[a] - {v}
     Pn = P[b].union({v})
@@ -423,7 +423,7 @@ def _delta_ec(HG, P, v, a, b, wdc):
 
 def _bin_ppmf(d, c, p):
     """
-    exp. part of binomial pmf
+    exponential part of the binomial pmf
 
     Parameters
     ----------
@@ -436,7 +436,7 @@ def _bin_ppmf(d, c, p):
 
     Returns
     -------
-    float
+    : float
 
     """
     return p**c * (1 - p)**(d - c)
@@ -488,27 +488,30 @@ def _delta_dt(HG, P, v, a, b, wdc):
 
 def last_step(HG, L, wdc=linear, delta=.01):
     """
-    Compute a partition of the vertices as per Last-Step algorithm.[2]_
+    Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm [2]_
 
-    Simple H-based algorithm --
-    try moving nodes between communities to optimize qH
-    requires L: initial non-trivial partition
+    Note
+    ----
+    This is a very simple algorithm that tries moving nodes between communities to optimize hypergraph modularity qH.
+    It requires an initial non-trivial partition which can be obtained for example via graph clustering on the 2-section of HG.
 
     Parameters
     ----------
     HG : Hypergraph
-
-     L : list of sets
+       
+    L : list of sets
+      some initial partition of the vertices in HG
 
     wdc : func, optional
-        weight function (ex: strict, majority, linear)
-    delta : float, optional
+        Hyperparameter for hypergraph modularity [2]_ 
 
+    delta : float, optional
+            convergence stopping criterion    
 
     Returns
     -------
     : list of sets
-
+    A new partition for the vertices in HG
     """
     A = L[:]  # we will modify this, copy
     D = part2dict(A)
