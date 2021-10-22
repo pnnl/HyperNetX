@@ -42,6 +42,15 @@ def transpose_inflated_kwargs(inflated):
     return [dict(zip(inflated, v)) for v in zip(*inflated.values())]
 
 
+def get_collapsed_size(v):
+    try:
+        if type(v) == str and ':' in v:
+            return int(v.split(':')[-1])
+    except:
+        pass
+    
+    return 1
+
 def get_frozenset_label(S, count=False, override={}):
     """
     Helper function for rendering the labels of possibly collapsed nodes and edges
@@ -60,13 +69,12 @@ def get_frozenset_label(S, count=False, override={}):
     """
 
     def helper(v):
-        if type(v) == frozenset:
-            if count and len(v) > 1:
-                return f"x {len(v)}"
+        if type(v) == str:
+            n = get_collapsed_size(v)
+            if count and n > 1:
+                return f"x {n}"
             elif count:
                 return ""
-            else:
-                return ", ".join([str(override.get(s, s)) for s in v])
         return str(v)
 
     return {v: override.get(v, helper(v)) for v in S}

@@ -4,6 +4,7 @@
 from hypernetx import Hypergraph
 from .util import (
     get_frozenset_label,
+    get_collapsed_size,
     get_set_layering,
     inflate_kwargs,
     transpose_inflated_kwargs,
@@ -325,7 +326,6 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
             }
         )
 
-
 def draw(
     H,
     pos=None,
@@ -397,7 +397,7 @@ def draw(
     with_color: bool
         set to False to disable color cycling of edges
     with_node_counts: bool
-        set to True to label collapsed nodes with number of elements
+        set to True to replace the label for collapsed nodes with the number of elements
     with_edge_counts: bool
         set to True to label collapsed edges with number of elements
     layout: function
@@ -432,9 +432,11 @@ def draw(
     r0 = get_default_radius(H, pos)
     a0 = np.pi * r0 ** 2
 
+
+
     def get_node_radius(v):
         if node_radius is None:
-            return np.sqrt(a0 * (len(v) if type(v) == frozenset else 1) / np.pi)
+            return np.sqrt(a0 * get_collapsed_size(v) / np.pi)
         elif hasattr(node_radius, "get"):
             return node_radius.get(v, 1) * r0
         return node_radius * r0
