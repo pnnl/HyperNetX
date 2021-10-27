@@ -11,20 +11,20 @@ Modularity and Clustering
 
 Overview
 --------
-The hypergraph_modularity submodule in HNX provided functions to compute **hypergraph modularity** for a
+The hypergraph_modularity submodule in HNX provides functions to compute **hypergraph modularity** for a
 given partition of the vertices in a hypergraph. In general, higher modularity indicates a better
 partitioning of the vertices into dense communities.
 
-The submodule also provides a function to generate the **two-section graph** for a given hypergraph which can then be used to find
-vertex partition via graph-based algorithms.
+Two functions to generate such hypergraph
+partitions are provided: **Kumar's** algorithm, and the simple **Last-Step** refinement algorithm.
 
-Two functions to generate such
-partitions running either **Kumar's** algorithm, or a simple **Last-Step** refinement algorithm. Finally, 
+The submodule also provides a function to generate the **two-section graph** for a given hypergraph which can then be used to find
+vertex partitions via graph-based algorithms.
 
 
 Installation
 ------------
-As it is part of HNX, no extra installation is required.
+Since it is part of HNX, no extra installation is required.
 The submodule can be imported as follows::
 
    import hypernetx.algorithms.hypergraph_modularity as hmod
@@ -53,20 +53,20 @@ weight given to different edges. Modularity is computed via::
 
    q = hmod.modularity(HG, A, wdc=linear)
 
-In a graph, an edge only links 2 nodes, so given partition A, an edge is either within a community (which increase the modularity)
-or between communities (so called noise edges).
+In a graph, an edge only links 2 nodes, so given partition A, an edge is either within a community (which increases the modularity)
+or between communities.
 
-With hypergraphs, we consider edges of size *d=2* or more. For some *d*-edge *e*, let *c* be the number of nodes
-that belong to the most represented part in edge *e*; if *c > d/2*, we consider this edge to be within the part.
+With hypergraphs, we consider edges of size *d=2* or more. Given some vertex partition A and some *d*-edge *e*, let *c* be the number of nodes
+that belong to the most represented part in *e*; if *c > d/2*, we consider this edge to be within the part.
 Hyper-parameters *0 <= w(d,c) <= 1* control the weight
 given to such edges. Three functions are supplied in this submodule, namely:
 
 **linear**
-  *w(d,c) = c/d* for *c > d/2*, else *0*.
+  *w(d,c) = c/d* if *c > d/2*, else *0*.
 **majority**
-  *w(d,c) = 1* for *c > d/2*, else *0*.
+  *w(d,c) = 1* if *c > d/2*, else *0*.
 **strict**
-  *w(d,c) = 1* for *c == d*, else *0*.
+  *w(d,c) = 1* if *c == d*, else *0*.
 
 The 'linear' function is used by default. More details in [2].
 
@@ -103,7 +103,7 @@ where the 'wdc' parameter is the same as in the modularity function.
 Other Features
 ^^^^^^^^^^^^^^
 
-We represent a vertex partition as a list of sets, but another conveninent representation is via a dictionary.
+We represent a vertex partition A  as a list of sets, but another conveninent representation is via a dictionary.
 We provide two utility functions to switch representation, namely *A = dict2part(D)* and *D = part2dict(A)*.
 
 References

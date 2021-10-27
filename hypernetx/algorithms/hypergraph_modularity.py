@@ -73,13 +73,16 @@ def part2dict(A):
 def precompute_attributes(HG):
     """
     Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
+    This needs to be run before calling either modularity() or last_step().
+
+    Note
+    ----
+
     If HG is unweighted, v.weight is set to 1 for each vertex v in HG. 
     The weighted degree for each vertex v is stored in v.strength.
     The total edge weigths for each edge cardinality is stored in HG.d_weights.
     Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.
     Isolated vertices found only in edge(s) of size 1 are dropped.
-
-    This needs to be run before calling either modularity() or last_step().
 
     Parameters
     ----------
@@ -153,9 +156,9 @@ def majority(d, c):
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
@@ -176,9 +179,9 @@ def strict(d, c):
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
@@ -299,7 +302,7 @@ def modularity(HG, A, wdc=linear):
     Returns
     -------
     : float
-      The modularity function qH for partition A on HG
+      The modularity function for partition A on HG
     """
     Pr = _compute_partition_probas(HG, A)
     return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
@@ -500,8 +503,9 @@ def last_step(HG, L, wdc=linear, delta=.01):
 
     Note
     ----
-    This is a very simple algorithm that tries moving nodes between communities to optimize hypergraph modularity qH.
-    It requires an initial non-trivial partition which can be obtained for example via graph clustering on the 2-section of HG.
+    This is a very simple algorithm that tries moving nodes between communities to improve hypergraph modularity.
+    It requires an initial non-trivial partition which can be obtained for example via graph clustering on the 2-section of HG,
+    or via Kumar's algorithm.
 
     Parameters
     ----------
