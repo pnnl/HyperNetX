@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.1.4"
+__version__ = "1.2"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -19,7 +19,7 @@ setup(
         "hypernetx.utils.toys",
     ],
     version=__version__,
-    author="Brenda Praggastis, Dustin Arendt, Sinan Aksoy, Emilie Purvine, Cliff Joslyn, Nicholas Landry",
+    author="Brenda Praggastis, Dustin Arendt, Sinan Aksoy, Emilie Purvine, Cliff Joslyn",
     author_email="hypernetx@pnnl.gov",
     url="https://github.com/pnnl/HyperNetX",
     description="HyperNetX is a Python library for the creation and study of hypergraphs.",
@@ -45,8 +45,8 @@ setup(
     * Visualization: Dustin Arendt, Ji Young Yun
     * High Performance Computing: Tony Liu, Andrew Lumsdaine
     * Principal Investigator: Cliff Joslyn
-    * Program Manager: Mark Raugas, Brian Kritzstein
-    * Contributors: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, Emilie Purvine, Mirah Shi, Francois Theberge
+    * Program Manager: Brian Kritzstein
+    * Contributors: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, Emilie Purvine, Mirah Shi, François Théberge
 
     The code in this repository is intended to support researchers modeling data
     as hypergraphs. We have a growing community of users and contributors.
@@ -66,6 +66,9 @@ setup(
     1. Static Hypergraph refactored to improve performance across all methods.
     2. Added modules and tutorials for Contagion Modeling, Community Detection, Clustering, and Hypergraph Generation.
     3. Cell weights for incidence matrices may be added to static hypergraphs on construction.
+
+    **New Features of Version 1.2**
+    1. Added module and tutorial for Modularity and Clustering
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
