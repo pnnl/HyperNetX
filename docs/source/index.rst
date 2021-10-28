@@ -40,6 +40,7 @@ Contents
    core
    NWHypergraph C++ Optimization <nwhy>
    HyperNetX Visualization Widget <widget>
+   Algorithms: Modularity and Clustering <modularity>
    Publications <publications>
    license
 
