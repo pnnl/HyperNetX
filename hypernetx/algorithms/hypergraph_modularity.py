@@ -7,12 +7,10 @@ See Tutorial 13 in the tutorials folder for library usage.
 
 References
 ---------- 
-.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S., Ravindran B. (2020) A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
-.. [2] B. Kaminski, P. Pralat and F. Théberge, Community Detection Algorithm Using Hypergraph Modularity, to appear in the proceedings of Complex Networks 2020, Springer.
-.. [3] Clustering via hypergraph modularity, Bogumił Kamiński, Valérie Poulin, Paweł Prałat , Przemysław Szufel, François Théberge, 2019, https://doi.org/10.1371/journal.pone.0224307
-
+.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. "A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering". In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
+.. [2] Kamiński  B., Prałat  P. and Théberge  F. "Community Detection Algorithm Using Hypergraph Modularity". In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks & Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13
+.. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. "Clustering via hypergraph modularity", Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307
 """
-
 
 from collections import Counter
 import numpy as np
@@ -29,7 +27,7 @@ from scipy.special import comb
 
 def dict2part(D):
     """
-    Returns dictionary to partition, inverse function to part2dict
+    Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict
 
     Parameters
     ----------
@@ -40,7 +38,7 @@ def dict2part(D):
     Returns
     -------
     : list
-        List of sets in the partition
+        List of sets; one set for each part in the partition
     """
     P = []
     k = list(D.keys())
@@ -52,17 +50,18 @@ def dict2part(D):
 
 def part2dict(A):
     """
-    Returns dictionary {vertex: partition index}, inverse function
+    Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function
     to dict2part
 
     Parameters
     ----------
-    A : list of lists
-        partition of vertices
+    A : list of sets
+        a partition of the vertices
 
     Returns
     -------
     : dict
+      a dictionary with {vertex: partition index}
     """
     x = []
     for i in range(len(A)):
@@ -71,63 +70,78 @@ def part2dict(A):
 
 ################################################################################
 
-
 def precompute_attributes(HG):
     """
-    Precompute some values on HNX hypergraph for computing qH faster
-    Adds weight, strength and binary coefficient attributes to
-    the hypergraph for computing qH faster.
+    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
+    This needs to be run before calling either modularity() or last_step().
+
+    Note
+    ----
+
+    If HG is unweighted, v.weight is set to 1 for each vertex v in HG. 
+    The weighted degree for each vertex v is stored in v.strength.
+    The total edge weigths for each edge cardinality is stored in HG.d_weights.
+    Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.
+    Isolated vertices found only in edge(s) of size 1 are dropped.
 
     Parameters
     ----------
     HG : Hypergraph
 
+    Returns
+    -------
+    : Hypergraph
+      Same hypergraph with added attributes 
+
     """
+    H = HG.remove_singletons()
     # 1. compute node strenghts (weighted degrees)
-    for v in HG.nodes:
-        HG.nodes[v].strength = 0
-    for e in HG.edges:
+    for v in H.nodes:
+        H.nodes[v].strength = 0
+    for e in H.edges:
         try:
-            w = HG.edges[e].weight
+            w = H.edges[e].weight
         except:
             w = 1
             # add unit weight if none to simplify other functions
-            HG.edges[e].weight = 1
-        for v in list(HG.edges[e]):
-            HG.nodes[v].strength += w
+            H.edges[e].weight = 1
+        for v in list(H.edges[e]):
+            H.nodes[v].strength += w
     # 2. compute d-weights
-    ctr = Counter([len(HG.edges[e]) for e in HG.edges])
+    ctr = Counter([len(H.edges[e]) for e in H.edges])
     for k in ctr.keys():
         ctr[k] = 0
-    for e in HG.edges:
-        ctr[len(HG.edges[e])] += HG.edges[e].weight
-    HG.d_weights = ctr
-    HG.total_weight = sum(ctr.values())
+    for e in H.edges:
+        ctr[len(H.edges[e])] += H.edges[e].weight
+    H.d_weights = ctr
+    H.total_weight = sum(ctr.values())
     # 3. compute binomial coeffcients (modularity speed-up)
     bin_coef = {}
-    for n in HG.d_weights.keys():
+    for n in H.d_weights.keys():
         for k in np.arange(n // 2 + 1, n + 1):
             bin_coef[(n, k)] = comb(n, k, exact=True)
-    HG.bin_coef = bin_coef
+    H.bin_coef = bin_coef
+    return H
 
 ################################################################################
 
 
 def linear(d, c):
     """
-    Weight function for hyperedge. Gives the actual ratio as long
-    as it is greater than 0.5.
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
+    This is the default choice for modularity() and last_step() functions.
 
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
-    float
+    : float
+      c/d if c>d/2 else 0
     """
     return c / d if c > d / 2 else 0
 
@@ -136,19 +150,21 @@ def linear(d, c):
 
 def majority(d, c):
     """    
-    Weight function for hyperedge. Requires
-    c be the majority of d. Returns bool
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
+    This corresponds to the majority rule [3]_
 
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
-    bool
+    : bool
+      1 if c>d/2 else 0
+
     """
     return 1 if c > d / 2 else 0
 
@@ -157,25 +173,27 @@ def majority(d, c):
 
 def strict(d, c):
     """
-    Weight function for hyperedge. Requires c == d.
+    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
+    This corresponds to the strict rule [3]_
 
     Parameters
     ----------
     d : int
-        Number of nodes in an edge
+        Number of vertices in an edge
     c : int
-        Number of nodes in the majority class
+        Number of vertices in the majority class
 
     Returns
     -------
-    bool
+    : bool
+      1 if c==d else 0
     """
     return 1 if c == d else 0
 
 #########################################
 
 
-def compute_partition_probas(HG, A):
+def _compute_partition_probas(HG, A):
     """
     Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)
 
@@ -199,10 +217,10 @@ def compute_partition_probas(HG, A):
     return [i / s for i in p]
 
 
-def degree_tax(HG, Pr, wdc):
+def _degree_tax(HG, Pr, wdc):
     """
     Computes the expected fraction of edges falling in 
-    the partition in a random graph as per [2]_
+    the partition as per [2]_
 
     Parameters
     ----------
@@ -211,7 +229,7 @@ def degree_tax(HG, Pr, wdc):
     Pr : list
         Probability distribution
     wdc : func
-        weight function (ex: strict, majority, linear)
+        weight function for edge contribution (ex: strict, majority, linear)
 
     Returns
     -------
@@ -230,7 +248,7 @@ def degree_tax(HG, Pr, wdc):
     return DT
 
 
-def edge_contribution(HG, A, wdc):
+def _edge_contribution(HG, A, wdc):
     """
     Edge contribution from hypergraph with respect
     to partion A.
@@ -265,31 +283,36 @@ def edge_contribution(HG, A, wdc):
 
 def modularity(HG, A, wdc=linear):
     """
-    Computes modularity of a hypergraph with respect to partition A.
+    Computes modularity of hypergraph HG with respect to partition A.
 
     Parameters
     ----------
     HG : Hypergraph
-        Description
-    A : list of lists
-        Partition of the nodes in HG
+        The hypergraph with some precomputed attributes via: precompute_attributes(HG)
+    A : list of sets
+        Partition of the vertices in HG
     wdc : func, optional
-        weight function (ex: strict, majority, linear) 
+        Hyperparameter for hypergraph modularity [2]_ 
+
+    Note
+    ----
+    For 'wdc', any function of the format w(d,c) that returns 0 when c <= d/2 and value in [0,1] otherwise can be used.
+    Default is 'linear'; other supplied choices are 'majority' and 'strict'.
 
     Returns
     -------
     : float
-
+      The modularity function for partition A on HG
     """
-    Pr = compute_partition_probas(HG, A)
-    return edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
+    Pr = _compute_partition_probas(HG, A)
+    return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
 
 ################################################################################
 
 
 def two_section(HG):
     """
-    Creates a random walk 2-section igraph with transition weights defined by the
+    Creates a random walk based [1]_ 2-section igraph Graph with transition weights defined by the
     weights of the hyperedges.
 
     Parameters
@@ -298,17 +321,19 @@ def two_section(HG):
 
     Returns
     -------
-    G : igraph.Graph
+     : igraph.Graph
+       The 2-section graph built from HG
     """
     s = []
     for e in HG.edges:
         E = HG.edges[e]
         # random-walk 2-section (preserve nodes' weighted degrees)
-        try:
-            w = HG.edges[e].weight / (len(E) - 1)
-        except:
-            w = 1 / (len(E) - 1)
-        s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
+        if len(E)>1:
+            try:
+                w = HG.edges[e].weight / (len(E) - 1)
+            except:
+                w = 1 / (len(E) - 1)
+            s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
     G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges='sum')
     return G
 
@@ -317,8 +342,7 @@ def two_section(HG):
 
 def kumar(HG, delta=.01):
     """
-    Compute a partition of the vertices as per Kumar's algorithm [1]_
-
+    Compute a partition of the vertices in hypergraph HG as per Kumar's algorithm [1]_
 
     Parameters
     ----------
@@ -329,7 +353,8 @@ def kumar(HG, delta=.01):
 
     Returns
     -------
-    dict
+    : list of sets
+       A partition of the vertices in HG
 
     """
     # weights will be modified -- store initial weights
@@ -367,12 +392,12 @@ def kumar(HG, delta=.01):
     G.vs['part'] = CG.membership
     for e in HG.edges:
         HG.edges[e].weight = W[e]
-    return {v['name']: v['part'] for v in G.vs}
+    return dict2part({v['name']: v['part'] for v in G.vs})
 
 ################################################################################
 
 
-def delta_ec(HG, P, v, a, b, wdc):
+def _delta_ec(HG, P, v, a, b, wdc):
     """
     Computes change in edge contribution --
     partition P, node v going from P[a] to P[b]
@@ -394,8 +419,7 @@ def delta_ec(HG, P, v, a, b, wdc):
 
     Returns
     -------
-    TYPE
-        Description
+    : float
     """
     Pm = P[a] - {v}
     Pn = P[b].union({v})
@@ -408,9 +432,9 @@ def delta_ec(HG, P, v, a, b, wdc):
     return ec / HG.total_weight
 
 
-def bin_ppmf(d, c, p):
+def _bin_ppmf(d, c, p):
     """
-    exp. part of binomial pmf
+    exponential part of the binomial pmf
 
     Parameters
     ----------
@@ -423,13 +447,13 @@ def bin_ppmf(d, c, p):
 
     Returns
     -------
-    float
+    : float
 
     """
     return p**c * (1 - p)**(d - c)
 
 
-def delta_dt(HG, P, v, a, b, wdc):
+def _delta_dt(HG, P, v, a, b, wdc):
     """
     Compute change in degree tax --
     partition P (list), node v going from P[a] to P[b]
@@ -467,35 +491,39 @@ def delta_dt(HG, P, v, a, b, wdc):
     for d in HG.d_weights.keys():
         x = 0
         for c in np.arange(int(np.floor(d / 2)) + 1, d + 1):
-            x += HG.bin_coef[(d, c)] * wdc(d, c) * (bin_ppmf(d, c, voln) + bin_ppmf(d, c, volm)
-                                                    - bin_ppmf(d, c, vola) - bin_ppmf(d, c, volb))
+            x += HG.bin_coef[(d, c)] * wdc(d, c) * (_bin_ppmf(d, c, voln) + _bin_ppmf(d, c, volm)
+                                                    - _bin_ppmf(d, c, vola) - _bin_ppmf(d, c, volb))
         DT += x * HG.d_weights[d]
     return DT / HG.total_weight
 
 
 def last_step(HG, L, wdc=linear, delta=.01):
     """
-    Compute a partition of the vertices as per Last-Step algorithm.[2]_
+    Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm [2]_
 
-    Simple H-based algorithm --
-    try moving nodes between communities to optimize qH
-    requires L: initial non-trivial partition
+    Note
+    ----
+    This is a very simple algorithm that tries moving nodes between communities to improve hypergraph modularity.
+    It requires an initial non-trivial partition which can be obtained for example via graph clustering on the 2-section of HG,
+    or via Kumar's algorithm.
 
     Parameters
     ----------
     HG : Hypergraph
-
-     L : list of sets
+       
+    L : list of sets
+      some initial partition of the vertices in HG
 
     wdc : func, optional
-        weight function (ex: strict, majority, linear)
-    delta : float, optional
+        Hyperparameter for hypergraph modularity [2]_ 
 
+    delta : float, optional
+            convergence stopping criterion    
 
     Returns
     -------
     : list of sets
-
+      A new partition for the vertices in HG
     """
     A = L[:]  # we will modify this, copy
     D = part2dict(A)
@@ -510,14 +538,14 @@ def last_step(HG, L, wdc=linear, delta=.01):
                     if c == i:
                         M.append(0)
                     else:
-                        M.append(delta_ec(HG, A, v, c, i, wdc) - delta_dt(HG, A, v, c, i, wdc))
+                        M.append(_delta_ec(HG, A, v, c, i, wdc) - _delta_dt(HG, A, v, c, i, wdc))
                 i = s[np.argmax(M)]
                 if c != i:
                     A[c] = A[c] - {v}
                     A[i] = A[i].union({v})
                     D[v] = i
-        Pr = compute_partition_probas(HG, A)
-        q2 = edge_contribution(HG, A, wdc) - degree_tax(HG, Pr, wdc)
+        Pr = _compute_partition_probas(HG, A)
+        q2 = _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
         if (q2 - qH) < delta:
             break
         qH = q2
