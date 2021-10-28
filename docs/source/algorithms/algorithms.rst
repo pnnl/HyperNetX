@@ -52,6 +52,22 @@ algorithms.s\_centrality\_measures module
    :undoc-members:
    :show-inheritance:
 
+algorithms.untitiled\_modularity\_and\_clustering\_original module
+------------------------------------------------------------------
+
+.. automodule:: algorithms.untitiled_modularity_and_clustering_original
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+algorithms.untitled\_modularity\_and\_clustering module
+-------------------------------------------------------
+
+.. automodule:: algorithms.untitled_modularity_and_clustering
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

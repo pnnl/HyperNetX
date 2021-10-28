@@ -62,11 +62,11 @@ Hyper-parameters *0 <= w(d,c) <= 1* control the weight
 given to such edges. Three functions are supplied in this submodule, namely:
 
 **linear**
-  *w(d,c) = c/d* if *c > d/2*, else *0*.
+  $w(d,c) = c/d$ if $c > d/2$, else $0$.
 **majority**
-  *w(d,c) = 1* if *c > d/2*, else *0*.
+  $w(d,c) = 1$ if $c > d/2$, else $0$.
 **strict**
-  *w(d,c) = 1* if *c == d*, else *0*.
+  $w(d,c) = 1$ if $c == d$, else $0$.
 
 The 'linear' function is used by default. More details in [2].
 
@@ -104,7 +104,7 @@ Other Features
 ^^^^^^^^^^^^^^
 
 We represent a vertex partition A  as a list of sets, but another conveninent representation is via a dictionary.
-We provide two utility functions to switch representation, namely *A = dict2part(D)* and *D = part2dict(A)*.
+We provide two utility functions to switch representation, namely `A = dict2part(D)` and `D = part2dict(A)`.
 
 References
 ^^^^^^^^^^

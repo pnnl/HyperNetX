@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Modularity and Clustering &mdash; HyperNetX 1.1.4 documentation</title>
+  <title>Modularity and Clustering &mdash; HyperNetX 1.2 documentation</title>
   
 
   
@@ -36,6 +36,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -70,7 +71,7 @@
             
             
               <div class="version">
-                1.1
+                1.2
               </div>
             
           
@@ -107,10 +108,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-the-tool">Using the Tool</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#layout">Layout</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#selection">Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#side-panel">Side Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#precomputation">Precomputation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Modularity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#two-section-graph">Two-section graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clustering-algorithms">Clustering Algorithms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#other-features">Other Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
@@ -186,62 +189,96 @@
             
   <div class="section" id="modularity-and-clustering">
 <span id="modularity"></span><h1>Modularity and Clustering<a class="headerlink" href="#modularity-and-clustering" title="Permalink to this headline">¶</a></h1>
-<p>Francois - I left the code from widget here so that you could replace it with content you want.
-I think an image would be great if you have one.</p>
-<a class="reference internal image-reference" href="_images/WidgetScreenShot.png"><img alt="_images/WidgetScreenShot.png" class="align-right" src="_images/WidgetScreenShot.png" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="_images/ModularityScreenShot.png"><img alt="_images/ModularityScreenShot.png" class="align-right" src="_images/ModularityScreenShot.png" style="width: 300px;" /></a>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://github.com/pnnl/hypernetx-widget">HyperNetXWidget</a> is an addon for HNX, which extends the built in visualization
-capabilities of HNX to a JavaScript based interactive visualization. The tool has two main interfaces,
-the hypergraph visualization and the nodes &amp; edges panel.
-You may <a class="reference external" href="https://pnnl.github.io/hypernetx-widget/">demo the widget here</a></p>
+<p>The hypergraph_modularity submodule in HNX provides functions to compute <strong>hypergraph modularity</strong> for a
+given partition of the vertices in a hypergraph. In general, higher modularity indicates a better
+partitioning of the vertices into dense communities.</p>
+<p>Two functions to generate such hypergraph
+partitions are provided: <strong>Kumar’s</strong> algorithm, and the simple <strong>Last-Step</strong> refinement algorithm.</p>
+<p>The submodule also provides a function to generate the <strong>two-section graph</strong> for a given hypergraph which can then be used to find
+vertex partitions via graph-based algorithms.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://github.com/pnnl/hypernetx-widget">HypernetxWidget</a> is available on <a class="reference external" href="https://github.com">GitHub</a> and may be
-installed using pip:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hnxwidget</span>
+<p>Since it is part of HNX, no extra installation is required.
+The submodule can be imported as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">hypernetx.algorithms.hypergraph_modularity</span> <span class="k">as</span> <span class="nn">hmod</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="using-the-tool">
 <h2>Using the Tool<a class="headerlink" href="#using-the-tool" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="layout">
-<h3>Layout<a class="headerlink" href="#layout" title="Permalink to this headline">¶</a></h3>
-<p>The hypergraph visualization is an Euler diagram that shows nodes as circles and hyper edges as outlines
-containing the nodes/circles they contain. The visualization uses a force directed optimization to perform
-the layout. This algorithm is not perfect and sometimes gives results that the user might want to improve upon.
-The visualization allows the user to drag nodes and position them directly at any time. The algorithm will
-re-position any nodes that are not specified by the user. Ctrl (Windows) or Command (Mac) clicking a node
-will release a pinned node it to be re-positioned by the algorithm.</p>
+<div class="section" id="precomputation">
+<h3>Precomputation<a class="headerlink" href="#precomputation" title="Permalink to this headline">¶</a></h3>
+<p>In order to make the computation of hypergraph modularity more efficient, some quantities need to be pre-computed.
+Given hypergraph H, calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HG</span> <span class="o">=</span> <span class="n">hmod</span><span class="o">.</span><span class="n">precompute_attributes</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="selection">
-<h3>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h3>
-<p>Nodes and edges can be selected by clicking them. Nodes and edges can be selected independently of each other,
-i.e., it is possible to select an edge without selecting the nodes it contains. Multiple nodes and edges can
-be selected, by holding down Shift while clicking. Shift clicking an already selected node will de-select it.
-Clicking the background will de-select all nodes and edges. Dragging a selected node will drag all selected
-nodes, keeping their relative placement.
-Selected nodes can be hidden (having their appearance minimized) or removed completely from the visualization.
-Hiding a node or edge will not cause a change in the layout, wheras removing a node or edge will.
-The selection can also be expanded. Buttons in the toolbar allow for selecting all nodes contained within selected edges,
-and selecting all edges containing any selected nodes.
-The toolbar also contains buttons to select all nodes (or edges), un-select all nodes (or edges),
-or reverse the selected nodes (or edges). An advanced user might:</p>
-<ul class="simple">
-<li><p><strong>Select all nodes not in an edge</strong> by: select an edge, select all nodes in that edge, then reverse the selected nodes to select every node not in that edge.</p></li>
-<li><p><strong>Traverse the graph</strong> by: selecting a start node, then alternating select all edges containing selected nodes and selecting all nodes within selected edges</p></li>
-<li><p><strong>Pin Everything</strong> by: hitting the button to select all nodes, then drag any node slightly to activate the pinning for all nodes.</p></li>
-</ul>
+<p>will pre-compute quantities such as node strength (weighted degree), d-weights (total weight for each edge cardinality) and binomial coefficients.</p>
 </div>
-<div class="section" id="side-panel">
-<h3>Side Panel<a class="headerlink" href="#side-panel" title="Permalink to this headline">¶</a></h3>
-<p>Details on nodes and edges are visible in the side panel. For both nodes and edges, a table shows the node name, degree (or size for edges), its selection state, removed state, and color. These properties can also be controlled directly from this panel. The color of nodes and edges can be set in bulk here as well, for example, coloring by degree.</p>
+<div class="section" id="id1">
+<h3>Modularity<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Given hypergraph HG and a partition A of its vertices, hypergraph modularity is a measure of the quality of this partition.
+Random partitions typically yield modularity near zero (it can be negative) while positive modularity is indicative of the presence
+of dense communities, or modules. There are several variations for the definition of hypergraph modularity, and the main difference lies in the
+weight given to different edges. Modularity is computed via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">hmod</span><span class="o">.</span><span class="n">modularity</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In a graph, an edge only links 2 nodes, so given partition A, an edge is either within a community (which increases the modularity)
+or between communities.</p>
+<p>With hypergraphs, we consider edges of size <em>d=2</em> or more. Given some vertex partition A and some <em>d</em>-edge <em>e</em>, let <em>c</em> be the number of nodes
+that belong to the most represented part in <em>e</em>; if <em>c &gt; d/2</em>, we consider this edge to be within the part.
+Hyper-parameters <em>0 &lt;= w(d,c) &lt;= 1</em> control the weight
+given to such edges. Three functions are supplied in this submodule, namely:</p>
+<dl class="simple">
+<dt><strong>linear</strong></dt><dd><p><span class="math notranslate nohighlight">\(w(d,c) = c/d\)</span> if <span class="math notranslate nohighlight">\(c &gt; d/2\)</span>, else <span class="math notranslate nohighlight">\(0\)</span>.</p>
+</dd>
+<dt><strong>majority</strong></dt><dd><p><span class="math notranslate nohighlight">\(w(d,c) = 1\)</span> if <span class="math notranslate nohighlight">\(c &gt; d/2\)</span>, else <span class="math notranslate nohighlight">\(0\)</span>.</p>
+</dd>
+<dt><strong>strict</strong></dt><dd><p><span class="math notranslate nohighlight">\(w(d,c) = 1\)</span> if <span class="math notranslate nohighlight">\(c == d\)</span>, else <span class="math notranslate nohighlight">\(0\)</span>.</p>
+</dd>
+</dl>
+<p>The ‘linear’ function is used by default. More details in [2].</p>
+</div>
+<div class="section" id="two-section-graph">
+<h3>Two-section graph<a class="headerlink" href="#two-section-graph" title="Permalink to this headline">¶</a></h3>
+<p>There are several good partitioning algorithms for graphs such as the Louvain algorithm and ECG, a consensus clustering algorithm.
+One way to obtain a partition for hypergraph HG is to build its corresponding two-section graph G and run a graph clustering algorithm.
+Code is provided to build such graph via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">hmod</span><span class="o">.</span><span class="n">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which returns an igraph.Graph object.</p>
+</div>
+<div class="section" id="clustering-algorithms">
+<h3>Clustering Algorithms<a class="headerlink" href="#clustering-algorithms" title="Permalink to this headline">¶</a></h3>
+<p>Two clustering (vertex partitioning) algorithms are supplied. The first one is a hybrid method proposed by Kumar et al. (see [1])
+that uses the Louvain algorithm on the two-section graph, but re-weights the edges according to the distibution of vertices
+from each part inside each edge. Given hypergraph HG, this is called as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="n">hmod</span><span class="o">.</span><span class="n">kumar</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The other supplied algorithm is a simple method to improve hypergraph modularity directely. Given some
+initial partition of the vertices (for example via Louvain on the two-section graph), move vertices between parts in order
+to improve hypergraph modularity. Given hypergraph HG and initial partition A, this is called as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="n">hmod</span><span class="o">.</span><span class="n">last_step</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the ‘wdc’ parameter is the same as in the modularity function.</p>
 </div>
 <div class="section" id="other-features">
 <h3>Other Features<a class="headerlink" href="#other-features" title="Permalink to this headline">¶</a></h3>
-<p>Nodes with identical edge membership can be collapsed into a super node, which can be helpful for larger hypergraphs. Dragging any node in a super node will drag the entire super node. This feature is available as a toggle in the nodes panel.</p>
-<p>The hypergraph can also be visualized as a bipartite graph (similar to a traditional node-link diagram). Toggling this feature will preserve the locations of the nodes between the bipartite and the Euler diagrams.</p>
+<p>We represent a vertex partition A  as a list of sets, but another conveninent representation is via a dictionary.
+We provide two utility functions to switch representation, namely <cite>A = dict2part(D)</cite> and <cite>D = part2dict(A)</cite>.</p>
+</div>
+<div class="section" id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<p>[1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. “A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering”. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-36687-2_24">https://doi.org/10.1007/978-3-030-36687-2_24</a></p>
+<p>[2] Kamiński B., Prałat P. and Théberge F. “Community Detection Algorithm Using Hypergraph Modularity”. In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks &amp; Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-65347-7_13">https://doi.org/10.1007/978-3-030-65347-7_13</a></p>
 </div>
 </div>
 </div>
