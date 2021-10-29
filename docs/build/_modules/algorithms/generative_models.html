@@ -201,13 +201,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    HyperNetX Hypergraph object</span>
 
-<span class="sd">    Example::</span>
 
-<span class="sd">        &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm</span>
-<span class="sd">        &gt;&gt;&gt; n = 1000</span>
-<span class="sd">        &gt;&gt;&gt; m = n</span>
-<span class="sd">        &gt;&gt;&gt; p = 0.01</span>
-<span class="sd">        &gt;&gt;&gt; H = gm.erdos_renyi_hypergraph(n, m, p)</span>
+<span class="sd">    Example::</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm</span>
+<span class="sd">    &gt;&gt;&gt; n = 1000</span>
+<span class="sd">    &gt;&gt;&gt; m = n</span>
+<span class="sd">    &gt;&gt;&gt; p = 0.01</span>
+<span class="sd">    &gt;&gt;&gt; H = gm.erdos_renyi_hypergraph(n, m, p)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">node_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">edge_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -255,12 +257,12 @@
 
 <span class="sd">    Example::</span>
 
-<span class="sd">        &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm</span>
-<span class="sd">        &gt;&gt;&gt; import random</span>
-<span class="sd">        &gt;&gt;&gt; n = 100</span>
-<span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; H = gm.chung_lu_hypergraph(k1, k2)</span>
+<span class="sd">    &gt;&gt;&gt; import hypernetx.algorithms.generative_models as gm</span>
+<span class="sd">    &gt;&gt;&gt; import random</span>
+<span class="sd">    &gt;&gt;&gt; n = 100</span>
+<span class="sd">    &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; H = gm.chung_lu_hypergraph(k1, k2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># sort dictionary by degree in decreasing order</span>
@@ -338,13 +340,13 @@
 
 <span class="sd">    Example::</span>
 
-<span class="sd">        &gt;&gt;&gt; n = 100</span>
-<span class="sd">        &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; g1 = {i : random.choice([0, 1]) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; g2 = {i : random.choice([0, 1]) for i in range(n)}</span>
-<span class="sd">        &gt;&gt;&gt; omega = np.array([[100, 10], [10, 100]])</span>
-<span class="sd">        &gt;&gt;&gt; H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)</span>
+<span class="sd">    &gt;&gt;&gt; n = 100</span>
+<span class="sd">    &gt;&gt;&gt; k1 = {i : random.randint(1, 100) for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; k2 = {i : sorted(k1.values())[i] for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; g1 = {i : random.choice([0, 1]) for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; g2 = {i : random.choice([0, 1]) for i in range(n)}</span>
+<span class="sd">    &gt;&gt;&gt; omega = np.array([[100, 10], [10, 100]])</span>
+<span class="sd">    &gt;&gt;&gt; H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># sort dictionary by degree in decreasing order</span>
