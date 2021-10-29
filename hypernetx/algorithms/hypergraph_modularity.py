@@ -70,6 +70,7 @@ def part2dict(A):
 
 ################################################################################
 
+
 def precompute_attributes(HG):
     """
     Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
@@ -90,8 +91,8 @@ def precompute_attributes(HG):
 
     Returns
     -------
-    : Hypergraph
-      Same hypergraph with added attributes 
+    H : Hypergraph
+      New hypergraph with added attributes 
 
     """
     H = HG.remove_singletons()
@@ -328,7 +329,7 @@ def two_section(HG):
     for e in HG.edges:
         E = HG.edges[e]
         # random-walk 2-section (preserve nodes' weighted degrees)
-        if len(E)>1:
+        if len(E) > 1:
             try:
                 w = HG.edges[e].weight / (len(E) - 1)
             except:
@@ -510,7 +511,7 @@ def last_step(HG, L, wdc=linear, delta=.01):
     Parameters
     ----------
     HG : Hypergraph
-       
+
     L : list of sets
       some initial partition of the vertices in HG
 
