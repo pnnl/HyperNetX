@@ -4,7 +4,6 @@ scipy<2.0,>=1.1.0
 matplotlib>3.0
 scikit-learn>=0.20.0
 pandas>=0.23
-celluloid>=0.2.0
 
 [all]
 sphinx>=1.8.2
@@ -12,6 +11,8 @@ nb2plots>=0.6
 sphinx-rtd-theme>=0.4.2
 pytest>=4.0
 jupyter>=1.0
+python-igraph>=0.9.6
+celluloid>=0.2.0
 
 [documentation]
 sphinx>=1.8.2
@@ -23,3 +24,5 @@ pytest>=4.0
 
 [tutorials]
 jupyter>=1.0
+python-igraph>=0.9.6
+celluloid>=0.2.0
