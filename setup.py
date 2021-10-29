@@ -68,6 +68,7 @@ setup(
     3. Cell weights for incidence matrices may be added to static hypergraphs on construction.
 
     **New Features of Version 1.2**
+    
     1. Added module and tutorial for Modularity and Clustering
     """,
     extras_require={
