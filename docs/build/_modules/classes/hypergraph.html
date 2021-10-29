@@ -743,17 +743,18 @@
 <span class="sd">        filepath : None, optional, default : False</span>
 <span class="sd">            Description</span>
 
+<span class="sd">        Returned</span>
+<span class="sd">        ------------------</span>
+<span class="sd">        hnx.Hypergraph</span>
+<span class="sd">            Will have attribute static = True</span>
+
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
 <span class="sd">        Static hypergraphs store the user defined node and edge names in</span>
 <span class="sd">        a dictionary of labeled lists. The order of the lists provides an</span>
 <span class="sd">        index, which the hypergraph uses in place of the node and edge names</span>
-<span class="sd">        for fast processing.</span>
+<span class="sd">        for faster processing.</span>
 
-<span class="sd">        No Longer Returned</span>
-<span class="sd">        ------------------</span>
-<span class="sd">        hnx.Hypergraph</span>
-<span class="sd">            Will have attribute static = True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>

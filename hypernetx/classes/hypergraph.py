@@ -571,17 +571,18 @@ class Hypergraph:
         filepath : None, optional, default : False
             Description
 
+        Returned
+        ------------------
+        hnx.Hypergraph
+            Will have attribute static = True
+
         Note
         ----
         Static hypergraphs store the user defined node and edge names in
         a dictionary of labeled lists. The order of the lists provides an
         index, which the hypergraph uses in place of the node and edge names
-        for fast processing.
+        for faster processing.
 
-        No Longer Returned
-        ------------------
-        hnx.Hypergraph
-            Will have attribute static = True
         """
         if self.isstatic:
             return self

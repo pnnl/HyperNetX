@@ -242,6 +242,7 @@
 
 <span class="c1">################################################################################</span>
 
+
 <div class="viewcode-block" id="precompute_attributes"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.precompute_attributes">[docs]</a><span class="k">def</span> <span class="nf">precompute_attributes</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. </span>
@@ -262,8 +263,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    : Hypergraph</span>
-<span class="sd">      Same hypergraph with added attributes </span>
+<span class="sd">    H : Hypergraph</span>
+<span class="sd">      New hypergraph with added attributes </span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">H</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">remove_singletons</span><span class="p">()</span>
@@ -500,7 +501,7 @@
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
         <span class="c1"># random-walk 2-section (preserve nodes&#39; weighted degrees)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">w</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
@@ -682,7 +683,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    HG : Hypergraph</span>
-<span class="sd">       </span>
+
 <span class="sd">    L : list of sets</span>
 <span class="sd">      some initial partition of the vertices in HG</span>
 
