@@ -33,7 +33,7 @@ Contents
 
 .. toctree::
 
-   Home <home>
+   Home <self>
    overview/index
    install
    Glossary <glossary>
