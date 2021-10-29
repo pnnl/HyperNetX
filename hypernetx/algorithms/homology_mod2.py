@@ -759,7 +759,7 @@ def betti_numbers(h, k=None):
 def homology_basis(bd, k=None, boundary=False, **kwargs):
     """
     Compute a basis for the kth-simplicial homology group, $H_k$, defined by a
-    chain complex $C$ with boundary maps given by bd $= \{k:\partial_k$\}$
+    chain complex $C$ with boundary maps given by bd $= \{k:\partial_k \}$
 
     Parameters
     ----------

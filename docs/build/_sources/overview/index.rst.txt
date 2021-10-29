@@ -20,8 +20,8 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 * Visualization: Dustin Arendt, Ji Young Yun
 * High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Principal Investigator: Cliff Joslyn
-* Program Manager: Mark Raugas, Brian Kritzstein
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine
+* Program Manager: Brian Kritzstein
+* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine, François Théberge
 
 
 
@@ -44,6 +44,10 @@ New Features in Version 1.1
    #. Clustering module for clustering vertices based on hyperedge incidence and weighting.
    #. Generator module for synthetic generation of ChungLu and DCSBM hypergraphs.
    
+New Features in Version 1.2
+---------------------------
+#. Added algorithm module and tutorial for Modularity and Clustering
+
 
 .. _colab:
 

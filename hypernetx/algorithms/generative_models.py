@@ -29,13 +29,15 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     -------
     HyperNetX Hypergraph object
 
-    Example::
 
-        >>> import hypernetx.algorithms.generative_models as gm
-        >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = gm.erdos_renyi_hypergraph(n, m, p)
+    Example::
+    
+    >>> import hypernetx.algorithms.generative_models as gm
+    >>> n = 1000
+    >>> m = n
+    >>> p = 0.01
+    >>> H = gm.erdos_renyi_hypergraph(n, m, p)
+
     """
 
     if node_labels is not None and edge_labels is not None:
@@ -83,12 +85,12 @@ def chung_lu_hypergraph(k1, k2):
 
     Example::
 
-        >>> import hypernetx.algorithms.generative_models as gm
-        >>> import random
-        >>> n = 100
-        >>> k1 = {i : random.randint(1, 100) for i in range(n)}
-        >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
-        >>> H = gm.chung_lu_hypergraph(k1, k2)
+    >>> import hypernetx.algorithms.generative_models as gm
+    >>> import random
+    >>> n = 100
+    >>> k1 = {i : random.randint(1, 100) for i in range(n)}
+    >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
+    >>> H = gm.chung_lu_hypergraph(k1, k2)
     """
 
     # sort dictionary by degree in decreasing order
@@ -166,13 +168,13 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Example::
 
-        >>> n = 100
-        >>> k1 = {i : random.randint(1, 100) for i in range(n)}
-        >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
-        >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
-        >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
-        >>> omega = np.array([[100, 10], [10, 100]])
-        >>> H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+    >>> n = 100
+    >>> k1 = {i : random.randint(1, 100) for i in range(n)}
+    >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
+    >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
+    >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
+    >>> omega = np.array([[100, 10], [10, 100]])
+    >>> H = gm.dcsbm_hypergraph(k1, k2, g1, g2, omega)
     """
 
     # sort dictionary by degree in decreasing order

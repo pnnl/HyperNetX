@@ -168,6 +168,9 @@ class Hypergraph:
                 self._edges = E
                 self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
                 self._nodes._memberships = E.memberships
+                for n in self._nodes:
+                    self._nodes[n].memberships = self._nodes._memberships[n]  ### a bit of a hack to get same functionality from static as dynamic
+                                                                            ### we will have to see if it slows things down too much
         else:
             self._static = False
             if setsystem is None:
@@ -568,17 +571,18 @@ class Hypergraph:
         filepath : None, optional, default : False
             Description
 
+        Returned
+        ------------------
+        hnx.Hypergraph
+            Will have attribute static = True
+
         Note
         ----
         Static hypergraphs store the user defined node and edge names in
         a dictionary of labeled lists. The order of the lists provides an
         index, which the hypergraph uses in place of the node and edge names
-        for fast processing.
+        for faster processing.
 
-        No Longer Returned
-        ------------------
-        hnx.Hypergraph
-            Will have attribute static = True
         """
         if self.isstatic:
             return self
@@ -1142,7 +1146,7 @@ class Hypergraph:
         """
         Helper method to obtain adjacency matrix from 
         boolean incidence matrix for s-metrics.
-        Self loops are note supported.
+        Self loops are not supported.
         The adjacency matrix will define an s-linegraph.
 
         Parameters

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>classes.hypergraph &mdash; HyperNetX 1.1.3 documentation</title>
+  <title>classes.hypergraph &mdash; HyperNetX 1.2 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                1.1
+                1.2
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
@@ -339,6 +340,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">E</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">_memberships</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">memberships</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">_memberships</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>  <span class="c1">### a bit of a hack to get same functionality from static as dynamic</span>
+                                                                            <span class="c1">### we will have to see if it slows things down too much</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_static</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">setsystem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -739,17 +743,18 @@
 <span class="sd">        filepath : None, optional, default : False</span>
 <span class="sd">            Description</span>
 
+<span class="sd">        Returned</span>
+<span class="sd">        ------------------</span>
+<span class="sd">        hnx.Hypergraph</span>
+<span class="sd">            Will have attribute static = True</span>
+
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
 <span class="sd">        Static hypergraphs store the user defined node and edge names in</span>
 <span class="sd">        a dictionary of labeled lists. The order of the lists provides an</span>
 <span class="sd">        index, which the hypergraph uses in place of the node and edge names</span>
-<span class="sd">        for fast processing.</span>
+<span class="sd">        for faster processing.</span>
 
-<span class="sd">        No Longer Returned</span>
-<span class="sd">        ------------------</span>
-<span class="sd">        hnx.Hypergraph</span>
-<span class="sd">            Will have attribute static = True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
@@ -1313,7 +1318,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper method to obtain adjacency matrix from </span>
 <span class="sd">        boolean incidence matrix for s-metrics.</span>
-<span class="sd">        Self loops are note supported.</span>
+<span class="sd">        Self loops are not supported.</span>
 <span class="sd">        The adjacency matrix will define an s-linegraph.</span>
 
 <span class="sd">        Parameters</span>

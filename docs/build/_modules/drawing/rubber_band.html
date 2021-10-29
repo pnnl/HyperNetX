@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>drawing.rubber_band &mdash; HyperNetX 1.1.3 documentation</title>
+  <title>drawing.rubber_band &mdash; HyperNetX 1.2 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                1.1
+                1.2
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
@@ -175,6 +176,7 @@
 <span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">Hypergraph</span>
 <span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_frozenset_label</span><span class="p">,</span>
+    <span class="n">get_collapsed_size</span><span class="p">,</span>
     <span class="n">get_set_layering</span><span class="p">,</span>
     <span class="n">inflate_kwargs</span><span class="p">,</span>
     <span class="n">transpose_inflated_kwargs</span><span class="p">,</span>
@@ -496,7 +498,6 @@
             <span class="p">}</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="draw"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw">[docs]</a><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span>
     <span class="n">H</span><span class="p">,</span>
     <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -568,7 +569,7 @@
 <span class="sd">    with_color: bool</span>
 <span class="sd">        set to False to disable color cycling of edges</span>
 <span class="sd">    with_node_counts: bool</span>
-<span class="sd">        set to True to label collapsed nodes with number of elements</span>
+<span class="sd">        set to True to replace the label for collapsed nodes with the number of elements</span>
 <span class="sd">    with_edge_counts: bool</span>
 <span class="sd">        set to True to label collapsed edges with number of elements</span>
 <span class="sd">    layout: function</span>
@@ -603,9 +604,11 @@
     <span class="n">r0</span> <span class="o">=</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
     <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r0</span> <span class="o">**</span> <span class="mi">2</span>
 
+
+
     <span class="k">def</span> <span class="nf">get_node_radius</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">node_radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a0</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">frozenset</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a0</span> <span class="o">*</span> <span class="n">get_collapsed_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">node_radius</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">node_radius</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">r0</span>
         <span class="k">return</span> <span class="n">node_radius</span> <span class="o">*</span> <span class="n">r0</span>

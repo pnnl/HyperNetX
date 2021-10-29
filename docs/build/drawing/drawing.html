@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>drawing package &mdash; HyperNetX 1.1.3 documentation</title>
+  <title>drawing package &mdash; HyperNetX 1.2 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                1.1
+                1.2
               </div>
             
           
@@ -119,6 +119,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../nwhy.html">NWHypergraph C++ Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
@@ -242,7 +243,7 @@ have planar drawings.</p>
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
 <li><p><strong>with_color</strong> (<em>bool</em>) – set to False to disable color cycling of edges</p></li>
-<li><p><strong>with_node_counts</strong> (<em>bool</em>) – set to True to label collapsed nodes with number of elements</p></li>
+<li><p><strong>with_node_counts</strong> (<em>bool</em>) – set to True to replace the label for collapsed nodes with the number of elements</p></li>
 <li><p><strong>with_edge_counts</strong> (<em>bool</em>) – set to True to label collapsed edges with number of elements</p></li>
 <li><p><strong>layout</strong> (<em>function</em>) – layout algorithm to compute</p></li>
 <li><p><strong>layout_kwargs</strong> (<em>dict</em>) – keyword arguments passed to layout function</p></li>
@@ -529,6 +530,11 @@ diagram.</p>
 </div>
 <div class="section" id="module-drawing.util">
 <span id="drawing-util-module"></span><h2>drawing.util module<a class="headerlink" href="#module-drawing.util" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="drawing.util.get_collapsed_size">
+<span class="sig-prename descclassname"><span class="pre">drawing.util.</span></span><span class="sig-name descname"><span class="pre">get_collapsed_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_collapsed_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.util.get_collapsed_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="drawing.util.get_frozenset_label">
 <span class="sig-prename descclassname"><span class="pre">drawing.util.</span></span><span class="sig-name descname"><span class="pre">get_frozenset_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_frozenset_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.util.get_frozenset_label" title="Permalink to this definition">¶</a></dt>

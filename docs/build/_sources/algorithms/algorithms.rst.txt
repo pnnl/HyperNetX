@@ -28,6 +28,14 @@ algorithms.homology\_mod2 module
    :undoc-members:
    :show-inheritance:
 
+algorithms.hypergraph\_modularity module
+----------------------------------------
+
+.. automodule:: algorithms.hypergraph_modularity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 algorithms.laplacians\_clustering module
 ----------------------------------------
 

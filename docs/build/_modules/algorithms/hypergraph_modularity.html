@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>algorithms.hypergraph_modularity &mdash; HyperNetX 1.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+          
+
+          
+            
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>algorithms.hypergraph_modularity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for algorithms.hypergraph_modularity</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Hypergraph_Modularity</span>
+<span class="sd">---------------------</span>
+<span class="sd">Modularity and clustering for hypergraphs using HyperNetX.</span>
+<span class="sd">Adapted from F. Théberge&#39;s GitHub repository: `Hypergraph Clustering &lt;https://github.com/ftheberge/Hypergraph_Clustering&gt;`_ </span>
+<span class="sd">See Tutorial 13 in the tutorials folder for library usage.</span>
+
+<span class="sd">References</span>
+<span class="sd">---------- </span>
+<span class="sd">.. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. &quot;A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering&quot;. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24</span>
+<span class="sd">.. [2] Kamiński  B., Prałat  P. and Théberge  F. &quot;Community Detection Algorithm Using Hypergraph Modularity&quot;. In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks &amp; Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13</span>
+<span class="sd">.. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. &quot;Clustering via hypergraph modularity&quot;, Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">import</span> <span class="nn">igraph</span> <span class="k">as</span> <span class="nn">ig</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">comb</span>
+
+<span class="c1">################################################################################</span>
+
+<span class="c1"># we use 2 representations for partitions (0-based part ids):</span>
+<span class="c1"># (1) dictionary or (2) list of sets</span>
+
+
+<div class="viewcode-block" id="dict2part"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.dict2part">[docs]</a><span class="k">def</span> <span class="nf">dict2part</span><span class="p">(</span><span class="n">D</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    D : dict</span>
+<span class="sd">        Dictionary keyed by vertices with values equal to integer</span>
+<span class="sd">        index of the partition the vertex belongs to</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : list</span>
+<span class="sd">        List of sets; one set for each part in the partition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">P</span></div>
+
+
+<div class="viewcode-block" id="part2dict"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.part2dict">[docs]</a><span class="k">def</span> <span class="nf">part2dict</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function</span>
+<span class="sd">    to dict2part</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    A : list of sets</span>
+<span class="sd">        a partition of the vertices</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : dict</span>
+<span class="sd">      a dictionary with {vertex: partition index}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="p">}</span></div>
+
+<span class="c1">################################################################################</span>
+
+
+<div class="viewcode-block" id="precompute_attributes"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.precompute_attributes">[docs]</a><span class="k">def</span> <span class="nf">precompute_attributes</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. </span>
+<span class="sd">    This needs to be run before calling either modularity() or last_step().</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+
+<span class="sd">    If HG is unweighted, v.weight is set to 1 for each vertex v in HG. </span>
+<span class="sd">    The weighted degree for each vertex v is stored in v.strength.</span>
+<span class="sd">    The total edge weigths for each edge cardinality is stored in HG.d_weights.</span>
+<span class="sd">    Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.</span>
+<span class="sd">    Isolated vertices found only in edge(s) of size 1 are dropped.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    H : Hypergraph</span>
+<span class="sd">      New hypergraph with added attributes </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">remove_singletons</span><span class="p">()</span>
+    <span class="c1"># 1. compute node strenghts (weighted degrees)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># add unit weight if none to simplify other functions</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]):</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span> <span class="o">+=</span> <span class="n">w</span>
+    <span class="c1"># 2. compute d-weights</span>
+    <span class="n">ctr</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ctr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">ctr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">ctr</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+    <span class="n">H</span><span class="o">.</span><span class="n">d_weights</span> <span class="o">=</span> <span class="n">ctr</span>
+    <span class="n">H</span><span class="o">.</span><span class="n">total_weight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ctr</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="c1"># 3. compute binomial coeffcients (modularity speed-up)</span>
+    <span class="n">bin_coef</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">d_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">bin_coef</span><span class="p">[(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">H</span><span class="o">.</span><span class="n">bin_coef</span> <span class="o">=</span> <span class="n">bin_coef</span>
+    <span class="k">return</span> <span class="n">H</span></div>
+
+<span class="c1">################################################################################</span>
+
+
+<div class="viewcode-block" id="linear"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.linear">[docs]</a><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
+<span class="sd">    This is the default choice for modularity() and last_step() functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int</span>
+<span class="sd">        Number of vertices in an edge</span>
+<span class="sd">    c : int</span>
+<span class="sd">        Number of vertices in the majority class</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+<span class="sd">      c/d if c&gt;d/2 else 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="n">d</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+<span class="c1"># majority</span>
+
+
+<div class="viewcode-block" id="majority"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.majority">[docs]</a><span class="k">def</span> <span class="nf">majority</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;    </span>
+<span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
+<span class="sd">    This corresponds to the majority rule [3]_</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int</span>
+<span class="sd">        Number of vertices in an edge</span>
+<span class="sd">    c : int</span>
+<span class="sd">        Number of vertices in the majority class</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : bool</span>
+<span class="sd">      1 if c&gt;d/2 else 0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="n">d</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+<span class="c1"># strict</span>
+
+
+<div class="viewcode-block" id="strict"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.strict">[docs]</a><span class="k">def</span> <span class="nf">strict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
+<span class="sd">    This corresponds to the strict rule [3]_</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int</span>
+<span class="sd">        Number of vertices in an edge</span>
+<span class="sd">    c : int</span>
+<span class="sd">        Number of vertices in the majority class</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : bool</span>
+<span class="sd">      1 if c==d else 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">d</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+<span class="c1">#########################################</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_partition_probas</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+<span class="sd">     A : list of sets</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : list</span>
+<span class="sd">        normalized distribution of strengths in partition elements</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">A</span><span class="p">:</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+            <span class="n">vol</span> <span class="o">+=</span> <span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="n">s</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_degree_tax</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">Pr</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the expected fraction of edges falling in </span>
+<span class="sd">    the partition as per [2]_</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    Pr : list</span>
+<span class="sd">        Probability distribution</span>
+<span class="sd">    wdc : func</span>
+<span class="sd">        weight function for edge contribution (ex: strict, majority, linear)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">d_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">tax</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">d</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Pr</span><span class="p">:</span>
+                <span class="n">tax</span> <span class="o">+=</span> <span class="n">p</span><span class="o">**</span><span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">HG</span><span class="o">.</span><span class="n">bin_coef</span><span class="p">[(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span> <span class="o">*</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="n">tax</span> <span class="o">*=</span> <span class="n">HG</span><span class="o">.</span><span class="n">d_weights</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+        <span class="n">DT</span> <span class="o">+=</span> <span class="n">tax</span>
+    <span class="n">DT</span> <span class="o">/=</span> <span class="n">HG</span><span class="o">.</span><span class="n">total_weight</span>
+    <span class="k">return</span> <span class="n">DT</span>
+
+
+<span class="k">def</span> <span class="nf">_edge_contribution</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Edge contribution from hypergraph with respect</span>
+<span class="sd">    to partion A.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    A : list of sets</span>
+
+<span class="sd">    wdc : func</span>
+<span class="sd">        weight function (ex: strict, majority, linear)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EC</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">A</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">d</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">EC</span> <span class="o">+=</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">part</span><span class="p">))</span> <span class="o">*</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+    <span class="n">EC</span> <span class="o">/=</span> <span class="n">HG</span><span class="o">.</span><span class="n">total_weight</span>
+    <span class="k">return</span> <span class="n">EC</span>
+
+<span class="c1"># HG: HNX hypergraph</span>
+<span class="c1"># A: partition (list of sets)</span>
+<span class="c1"># wcd: weight function (ex: strict, majority, linear)</span>
+
+
+<div class="viewcode-block" id="modularity"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.modularity">[docs]</a><span class="k">def</span> <span class="nf">modularity</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes modularity of hypergraph HG with respect to partition A.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+<span class="sd">        The hypergraph with some precomputed attributes via: precompute_attributes(HG)</span>
+<span class="sd">    A : list of sets</span>
+<span class="sd">        Partition of the vertices in HG</span>
+<span class="sd">    wdc : func, optional</span>
+<span class="sd">        Hyperparameter for hypergraph modularity [2]_ </span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    For &#39;wdc&#39;, any function of the format w(d,c) that returns 0 when c &lt;= d/2 and value in [0,1] otherwise can be used.</span>
+<span class="sd">    Default is &#39;linear&#39;; other supplied choices are &#39;majority&#39; and &#39;strict&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+<span class="sd">      The modularity function for partition A on HG</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Pr</span> <span class="o">=</span> <span class="n">_compute_partition_probas</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_edge_contribution</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="p">)</span> <span class="o">-</span> <span class="n">_degree_tax</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">Pr</span><span class="p">,</span> <span class="n">wdc</span><span class="p">)</span></div>
+
+<span class="c1">################################################################################</span>
+
+
+<div class="viewcode-block" id="two_section"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.two_section">[docs]</a><span class="k">def</span> <span class="nf">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a random walk based [1]_ 2-section igraph Graph with transition weights defined by the</span>
+<span class="sd">    weights of the hyperedges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     : igraph.Graph</span>
+<span class="sd">       The 2-section graph built from HG</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
+        <span class="c1"># random-walk 2-section (preserve nodes&#39; weighted degrees)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">ig</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">TupleList</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">combine_edges</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">G</span></div>
+
+<span class="c1">################################################################################</span>
+
+
+<div class="viewcode-block" id="kumar"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.kumar">[docs]</a><span class="k">def</span> <span class="nf">kumar</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">.01</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a partition of the vertices in hypergraph HG as per Kumar&#39;s algorithm [1]_</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    delta : float, optional</span>
+<span class="sd">        convergence stopping criterion</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : list of sets</span>
+<span class="sd">       A partition of the vertices in HG</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># weights will be modified -- store initial weights</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">}</span>  <span class="c1"># uses edge id for reference instead of int</span>
+    <span class="c1"># build graph</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
+    <span class="c1"># apply clustering</span>
+    <span class="n">CG</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">community_multilevel</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+    <span class="n">CH</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">comm</span> <span class="ow">in</span> <span class="n">CG</span><span class="o">.</span><span class="n">as_cover</span><span class="p">():</span>
+        <span class="n">CH</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">G</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">comm</span><span class="p">]))</span>
+
+    <span class="c1"># LOOP</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ctr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="c1"># re-weight</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
+            <span class="n">reweight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">CH</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">CH</span><span class="p">))</span> <span class="o">/</span> <span class="n">HG</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">-</span> <span class="n">reweight</span><span class="p">))</span>
+            <span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">edge</span><span class="o">.</span><span class="n">weight</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">reweight</span>
+        <span class="c1"># re-run louvain</span>
+        <span class="c1"># build graph</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">)</span>
+        <span class="c1"># apply clustering</span>
+        <span class="n">CG</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">community_multilevel</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+        <span class="n">CH</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">comm</span> <span class="ow">in</span> <span class="n">CG</span><span class="o">.</span><span class="n">as_cover</span><span class="p">():</span>
+            <span class="n">CH</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">G</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">comm</span><span class="p">]))</span>
+        <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">ctr</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">:</span>  <span class="c1"># this process sometimes gets stuck -- set limit</span>
+            <span class="k">break</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s1">&#39;part&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CG</span><span class="o">.</span><span class="n">membership</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">W</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">dict2part</span><span class="p">({</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;part&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">vs</span><span class="p">})</span></div>
+
+<span class="c1">################################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_delta_ec</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes change in edge contribution --</span>
+<span class="sd">    partition P, node v going from P[a] to P[b]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    P : list of sets</span>
+
+<span class="sd">    v : int or str</span>
+<span class="sd">        node identifier</span>
+<span class="sd">    a : int</span>
+
+<span class="sd">    b : int</span>
+
+<span class="sd">    wdc : func</span>
+<span class="sd">        weight function (ex: strict, majority, linear)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Pm</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="p">{</span><span class="n">v</span><span class="p">}</span>
+    <span class="n">Pn</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">union</span><span class="p">({</span><span class="n">v</span><span class="p">})</span>
+    <span class="n">ec</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">memberships</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+        <span class="n">ec</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="p">(</span><span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Pm</span><span class="p">))</span> <span class="o">+</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Pn</span><span class="p">))</span>
+                   <span class="o">-</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">P</span><span class="p">[</span><span class="n">a</span><span class="p">]))</span> <span class="o">-</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">HG</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">P</span><span class="p">[</span><span class="n">b</span><span class="p">])))</span>
+    <span class="k">return</span> <span class="n">ec</span> <span class="o">/</span> <span class="n">HG</span><span class="o">.</span><span class="n">total_weight</span>
+
+
+<span class="k">def</span> <span class="nf">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    exponential part of the binomial pmf</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int</span>
+
+<span class="sd">    c : int</span>
+
+<span class="sd">    p : float</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">p</span><span class="o">**</span><span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_delta_dt</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute change in degree tax --</span>
+<span class="sd">    partition P (list), node v going from P[a] to P[b]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    P : list of sets</span>
+
+<span class="sd">    v : int or str</span>
+<span class="sd">         node identifier</span>
+<span class="sd">    a : int</span>
+
+<span class="sd">    b : int</span>
+
+<span class="sd">    wdc : func</span>
+<span class="sd">        weight function (ex: strict, majority, linear)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : float</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span>
+    <span class="n">vol</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">])</span>
+    <span class="n">vola</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">a</span><span class="p">]])</span>
+    <span class="n">volb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">strength</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">b</span><span class="p">]])</span>
+    <span class="n">volm</span> <span class="o">=</span> <span class="p">(</span><span class="n">vola</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">vol</span>
+    <span class="n">voln</span> <span class="o">=</span> <span class="p">(</span><span class="n">volb</span> <span class="o">+</span> <span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">vol</span>
+    <span class="n">vola</span> <span class="o">/=</span> <span class="n">vol</span>
+    <span class="n">volb</span> <span class="o">/=</span> <span class="n">vol</span>
+    <span class="n">DT</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">d_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">d</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">HG</span><span class="o">.</span><span class="n">bin_coef</span><span class="p">[(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span> <span class="o">*</span> <span class="n">wdc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">voln</span><span class="p">)</span> <span class="o">+</span> <span class="n">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">volm</span><span class="p">)</span>
+                                                    <span class="o">-</span> <span class="n">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">vola</span><span class="p">)</span> <span class="o">-</span> <span class="n">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">volb</span><span class="p">))</span>
+        <span class="n">DT</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">HG</span><span class="o">.</span><span class="n">d_weights</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">DT</span> <span class="o">/</span> <span class="n">HG</span><span class="o">.</span><span class="n">total_weight</span>
+
+
+<div class="viewcode-block" id="last_step"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.hypergraph_modularity.last_step">[docs]</a><span class="k">def</span> <span class="nf">last_step</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">.01</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm [2]_</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    This is a very simple algorithm that tries moving nodes between communities to improve hypergraph modularity.</span>
+<span class="sd">    It requires an initial non-trivial partition which can be obtained for example via graph clustering on the 2-section of HG,</span>
+<span class="sd">    or via Kumar&#39;s algorithm.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HG : Hypergraph</span>
+
+<span class="sd">    L : list of sets</span>
+<span class="sd">      some initial partition of the vertices in HG</span>
+
+<span class="sd">    wdc : func, optional</span>
+<span class="sd">        Hyperparameter for hypergraph modularity [2]_ </span>
+
+<span class="sd">    delta : float, optional</span>
+<span class="sd">            convergence stopping criterion    </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : list of sets</span>
+<span class="sd">      A new partition for the vertices in HG</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">L</span><span class="p">[:]</span>  <span class="c1"># we will modify this, copy</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">part2dict</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">qH</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">HG</span><span class="o">.</span><span class="n">nodes</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">HG</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">v</span><span class="p">)]))</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                        <span class="n">M</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">M</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_delta_ec</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">wdc</span><span class="p">)</span> <span class="o">-</span> <span class="n">_delta_dt</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">wdc</span><span class="p">))</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">A</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">-</span> <span class="p">{</span><span class="n">v</span><span class="p">}</span>
+                    <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">union</span><span class="p">({</span><span class="n">v</span><span class="p">})</span>
+                    <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">Pr</span> <span class="o">=</span> <span class="n">_compute_partition_probas</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+        <span class="n">q2</span> <span class="o">=</span> <span class="n">_edge_contribution</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="p">)</span> <span class="o">-</span> <span class="n">_degree_tax</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">Pr</span><span class="p">,</span> <span class="n">wdc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">q2</span> <span class="o">-</span> <span class="n">qH</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">qH</span> <span class="o">=</span> <span class="n">q2</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">A</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span></div>
+
+<span class="c1">################################################################################</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021 Battelle Memorial Institute.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
