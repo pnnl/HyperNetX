@@ -983,16 +983,16 @@ class StaticEntity(object):
 ##### ----- IN PROGRESS ADD/REMOVE CODE BELOW ----- #####
 
     def add_element(self, item):
-    """
-    WIP, for now just adds a new (unique) row to data
-    """
+        """
+        WIP, for now just adds a new (unique) row to data
+        """
         
-    # check item does not already exist in data
-    if not np.any(np.equal(self._data,item).all(1)):
-        # concatenate item to data
-        # note: expand_dims(item,0) is used b/c we cannot concatenate a 1D array
-        #       to a 2D ndarray (need shapes (R,C) and (1,C))
-        self._data = np.concatenate((self._data, np.expand_dims(item,0)))
+        # check item does not already exist in data
+        if not np.any(np.equal(self._data,item).all(1)):
+            # concatenate item to data
+            # note: expand_dims(item,0) is used b/c we cannot concatenate a 1D array
+            #       to a 2D ndarray (need shapes (R,C) and (1,C))
+            self._data = np.concatenate((self._data, np.expand_dims(item,0)))
 
 
 class StaticEntitySet(StaticEntity):
