@@ -13,6 +13,7 @@ hypernetx.egg-info/top_level.txt
 hypernetx/algorithms/__init__.py
 hypernetx/algorithms/generative_models.py
 hypernetx/algorithms/homology_mod2.py
+hypernetx/algorithms/hypergraph_modularity.py
 hypernetx/algorithms/laplacians_clustering.py
 hypernetx/algorithms/s_centrality_measures.py
 hypernetx/algorithms/contagion/__init__.py
