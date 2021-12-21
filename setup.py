@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -30,6 +30,8 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
+        "python-igraph>=0.9.6",
+        "celluloid>=0.2.0",
     ],
     license="3-Clause BSD license",
     long_description="""
@@ -73,7 +75,7 @@ setup(
     """,
     extras_require={
         "testing": ["pytest>=4.0"],
-        "tutorials": ["jupyter>=1.0", "python-igraph>=0.9.6", "celluloid>=0.2.0", ],
+        "tutorials": ["jupyter>=1.0", ],
         "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
         "all": [
             "sphinx>=1.8.2",
@@ -81,8 +83,6 @@ setup(
             "sphinx-rtd-theme>=0.4.2",
             "pytest>=4.0",
             "jupyter>=1.0",
-            "python-igraph>=0.9.6",
-            "celluloid>=0.2.0",
         ],
     },
 )
