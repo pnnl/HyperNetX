@@ -30,6 +30,8 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
+        "python-igraph>=0.9.6",
+        "celluloid>=0.2.0",
     ],
     license="3-Clause BSD license",
     long_description="""
@@ -81,8 +83,6 @@ setup(
             "sphinx-rtd-theme>=0.4.2",
             "pytest>=4.0",
             "jupyter>=1.0",
-            "python-igraph>=0.9.6",
-            "celluloid>=0.2.0",
         ],
     },
 )
