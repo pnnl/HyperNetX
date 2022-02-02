@@ -56,7 +56,7 @@ class StaticEntity(object):
 
     @property
     def cell_weights(self):
-        return self._data[self._cell_weight_cols]
+        return self._data.set_index(self._data_cols)[self._cell_weight_cols]
 
     @property
     def dimensions(self):
