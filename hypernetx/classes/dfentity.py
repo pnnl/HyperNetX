@@ -26,3 +26,87 @@ class StaticEntity(object):
 		elif isinstance(data, np.ndarray) and data.ndim == 2:
 			self._data = pd.DataFrame(data)
 
+		self._data_cols = self._data.columns
+
+		if isinstance(weights, (list, np.ndarray)) and len(weights) == len(self._data):
+			self._data['cell_weights'] = weights
+			self._cell_weights = self._data.cell_weights
+			self._cell_weights_cols = ['cell_weights']
+		elif isinstance(weights, str) and weights in self._data:
+			self._cell_weights = self._data[weights]
+			self._cell_weights_cols = [weights]
+		else:
+			self._cell_weights = None
+			self._cell_weight_cols = []
+
+		self._data_cols = list(self._data.columns.drop(self._cell_weight_cols))
+		self._dimensions = tuple(self._data[self._data_cols].nunique())
+		self._dimsize = len(self._data_cols)
+
+	@property
+	def data(self):
+		return self._data[self._data_cols]
+	
+	@property
+	def cell_weights(self):
+		return self._data[self._cell_weight_cols]
+
+	@property
+	def dimensions(self):
+		return self._dimensions
+
+	@property
+	def dimsize(self):
+		return self._dimsize
+
+	@property
+	def uidset(self):
+		return self.uidset_by_level(0)
+
+	@property
+    def children(self):
+    	return self.uidset_by_level(1)
+	
+	def uidset_by_level(self,level):
+		data = self._data[self._data_cols]
+        col = data.columns[level]
+        return self.uidset_by_column(col)
+
+    def uidset_by_column(self, column):
+    	return set(self._data[column].dropna().unique())
+
+    @property
+    def elements(self):
+    	return self.elements_by_level(0,1)
+
+    @property
+    def incidence_dict(self):
+    	return self.elements
+
+    @property
+    def memberships(self):
+        return self.elements_by_level(1,0)
+
+    def elements_by_level(self, level1, level2):
+    	data = self._data[self._data_cols]
+        col1, col2 = data.columns[[level1,level2]]
+        return self.elements_by_column(col1,col2)
+
+    def elements_by_column(self, column1, column2):
+    	elements = self._data.groupby(col1)[col2].apply(list)
+        return elements.to_dict()
+
+    @property
+    def dataframe(self):
+    	return self._data
+
+    def size(self, level=0):
+    	return self._dimensions[level]
+
+    def is_empty(self, level=0):
+    	return self.size(level) == 0
+
+
+
+
+
