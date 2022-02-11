@@ -112,3 +112,20 @@ class StaticEntity(object):
 
     def is_empty(self, level=0):
         return self.size(level) == 0
+
+    def __len__(self):
+        return self._dimensions[0]
+    
+    def __contains__(self):
+        # Need to define labels
+        return item in np.concatenate(list(self._labels.values()))
+    
+    def __getitem__(self, item):
+        return self.elements[item]
+
+    def __iter__(self):
+        return iter(self.elements)
+    
+    def __call__(self, label_index=0):
+        # Need to define labels
+        return iter(self._labs[label_index])
