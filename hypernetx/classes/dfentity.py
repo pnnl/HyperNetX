@@ -1,7 +1,7 @@
 from hypernetx import *
 import pandas as pd
 import numpy as np
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 
 class StaticEntity(object):
@@ -47,8 +47,10 @@ class StaticEntity(object):
                 self._data_cols, as_index=False, sort=False
             ).agg({w: aggregateby for w in self._cell_weight_cols})
 
-        self._dimensions = tuple(self._data[self._data_cols].nunique())
+        # self._dimensions = tuple(self._data[self._data_cols].nunique())
         self._dimsize = len(self._data_cols)
+
+        self._state_dict = {}
 
     @property
     def data(self):
@@ -56,11 +58,19 @@ class StaticEntity(object):
 
     @property
     def cell_weights(self):
-        return self._data.set_index(self._data_cols)[self._cell_weight_cols]
+        if "cell_weights" not in self._state_dict:
+            self._state_dict["cell_weights"] = self._data.set_index(self._data_cols)[
+                self._cell_weight_cols
+            ].to_dict()
+
+        return self._state_dict["cell_weights"]
 
     @property
     def dimensions(self):
-        return self._dimensions
+        if 'dimensions' not in self._state_dict:
+            self._state_dict['dimensions'] = tuple(self._data[self._data_cols].nunique())
+        
+        return self._state_dict['dimensions']
 
     @property
     def dimsize(self):
@@ -80,7 +90,12 @@ class StaticEntity(object):
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column):
-        return set(self._data[column].dropna().unique())
+        if 'uidset' not in self._state_dict:
+            self._state_dict['uidset'] = {}
+        if column not in self._state_dict['uidset']:
+            self._state_dict['uidset'][column] = set(self._data[column].dropna().unique())
+        
+        return self._state_dict['uidset'][column]
 
     @property
     def elements(self):
@@ -100,8 +115,12 @@ class StaticEntity(object):
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
-        elements = self._data.groupby(col1)[col2].apply(list)
-        return elements.to_dict()
+        if 'elements' not in self._state_dict:
+            self._state_dict['elements'] = defaultdict(dict)
+        if col1 not in self._state_dict['elements'] or col2 not in self._state_dict['elements'][col1]:
+            self._state_dict['elements'][col1][col2] = self._data.groupby(col1)[col2].apply(list).to_dict()
+
+        return self._state_dict['elements'][col1][col2]
 
     @property
     def dataframe(self):
@@ -115,17 +134,17 @@ class StaticEntity(object):
 
     def __len__(self):
         return self._dimensions[0]
-    
+
     def __contains__(self):
         # Need to define labels
         return item in np.concatenate(list(self._labels.values()))
-    
+
     def __getitem__(self, item):
         return self.elements[item]
 
     def __iter__(self):
         return iter(self.elements)
-    
+
     def __call__(self, label_index=0):
         # Need to define labels
         return iter(self._labs[label_index])
