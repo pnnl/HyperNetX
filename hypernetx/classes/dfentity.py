@@ -1,7 +1,7 @@
 from hypernetx import *
 import pandas as pd
 import numpy as np
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 
 
 class StaticEntity(object):
@@ -54,8 +54,6 @@ class StaticEntity(object):
         )
         # self._dimensions = tuple(self._data[self._data_cols].nunique())
         self._dimsize = len(self._data_cols)
-
-        self._state_dict = {}
 
     @property
     def data(self):
@@ -163,13 +161,13 @@ class StaticEntity(object):
     def __contains__(self):
         # Need to define labels
         return item in np.concatenate(list(self._labels.values()))
-
+    
     def __getitem__(self, item):
         return self.elements[item]
 
     def __iter__(self):
         return iter(self.elements)
-
+    
     def __call__(self, label_index=0):
         # Need to define labels
         return iter(self._labs[label_index])
