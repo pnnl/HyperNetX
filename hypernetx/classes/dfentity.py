@@ -8,6 +8,7 @@ class StaticEntity(object):
     def __init__(
         self,
         data,  # DataFrame, Dict of Lists, List of Lists, or np array
+        labels=None,
         weights=None,  # array-like of values corresponding to rows of data
         aggregateby="sum",
     ):
@@ -54,6 +55,11 @@ class StaticEntity(object):
         )
         # self._dimensions = tuple(self._data[self._data_cols].nunique())
         self._dimsize = len(self._data_cols)
+
+        self._state_dict = {}
+
+        if isinstance(labels, dict):
+            self._state_dict['labels'] = labels
 
     @property
     def data(self):
