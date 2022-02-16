@@ -50,7 +50,7 @@ class StaticEntity(object):
         The state_dict holds all attributes that must be recomputed when the data is
         updated. The values for these attributes will be computed as needed if they do
         not already exist in the state_dict.
-        
+
         data : numpy.ndarray
             sparse tensor indices for incidence tensor
         labels: dict of lists
@@ -69,6 +69,7 @@ class StaticEntity(object):
             row of data with the col1 value key)
 
     """
+
     def __init__(
         self,
         data,  # DataFrame, Dict of Lists, List of Lists, or np array
@@ -140,17 +141,24 @@ class StaticEntity(object):
     @property
     def data(self):
         if "data" not in self._state_dict:
-            # assumes dtype of data cols is categorical (dataframe not altered since init)
+            # assumes dtype of data cols is categorical and dataframe not altered
             self._state_dict["data"] = (
                 self._dataframe[self._data_cols].apply(lambda x: x.cat.codes).to_numpy()
             )
+
+        return self._state_dict["data"]
+
+    @property
+    def labels(self):
+        if "labels" not in self._state_dict:
+            # assumes dtype of data cols is categorical and dataframe not altered
             self._state_dict["labels"] = (
                 self._dataframe[self._data_cols]
                 .apply(lambda x: x.cat.categories.to_list())
                 .to_dict()
             )
 
-        return self._state_dict["data"]
+        return self._state_dict["labels"]
 
     @property
     def cell_weights(self):
@@ -245,8 +253,7 @@ class StaticEntity(object):
         return self.dimensions[0]
 
     def __contains__(self):
-        # Need to define labels
-        return item in np.concatenate(list(self._labels.values()))
+        return item in np.concatenate(list(self.labels.values()))
 
     def __getitem__(self, item):
         return self.elements[item]
@@ -255,8 +262,7 @@ class StaticEntity(object):
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        # Need to define labels
-        return iter(self._labs[label_index])
+        return iter(self.labels[self._data_cols[label_index]])
 
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
