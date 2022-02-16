@@ -1,7 +1,8 @@
 from hypernetx import *
 import pandas as pd
 import numpy as np
-from collections import defaultdict, Hashable
+from collections import defaultdict, OrderedDict
+from collections.abc import Hashable
 
 
 class StaticEntity(object):
