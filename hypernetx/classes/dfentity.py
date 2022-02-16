@@ -251,7 +251,7 @@ class StaticEntity(object):
     def __len__(self):
         return self.dimensions[0]
 
-    def __contains__(self):
+    def __contains__(self, item):
         return item in np.concatenate(list(self.labels.values()))
 
     def __getitem__(self, item):
