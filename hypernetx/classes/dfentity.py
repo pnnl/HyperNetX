@@ -229,9 +229,8 @@ class StaticEntity(object):
             col1 not in self._state_dict["elements"]
             or col2 not in self._state_dict["elements"][col1]
         ):
-            self._state_dict["elements"][col1][col2] = (
-                self._dataframe.groupby(col1)[col2].apply(list).to_dict()
-            )
+            elements = self._dataframe.groupby(col1)[col2].unique()
+            self._state_dict["elements"][col1][col2] = elements.apply(list).to_dict()
 
         return self._state_dict["elements"][col1][col2]
 
