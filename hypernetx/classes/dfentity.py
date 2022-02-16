@@ -289,7 +289,7 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
     if isinstance(weights, (list, np.ndarray)) and len(weights) == len(df):
         df[weight_col] = weights
-    elif isinstance(weights, Hashable) and weights in self._dataframe:
+    elif isinstance(weights, Hashable) and weights in df:
         weight_col = weights
     else:
         df[weight_col] = np.ones(len(df), dtype=int)
