@@ -6,6 +6,69 @@ from collections.abc import Hashable
 
 
 class StaticEntity(object):
+    """
+    A new Entity object using pandas.DataFrame as the base data structure
+
+    TODO: split data parameter into mulitple parameters - one for raw data and one for
+          sparse tensor indices
+    TODO: allow addition/removal of rows of data
+
+    Parameters
+    ----------
+    data : pandas.DataFrame, dict of lists, list of lists, or 2d numpy.ndarray
+        If a pandas.DataFrame, representation of entity data with 2 or more dimensions,
+        If a dict of lists or list of lists, representation of entity data with exactly
+        2 dimensions,
+        If a 2d numpy.ndarray of ints, representation of entity data with 2 or more
+        dimensions (as sparse tensor indices for incidence tensor)
+    static : bool, default=True
+        If True, data may not be altered, and the state dict will never be cleared
+        If False, rows may be added to and removed from data, and updates will clear the
+        state dict
+    labels : OrderedDict of lists, optional
+        User defined labels corresponding to integers in data, only used when data is
+        given as a numpy.ndarray of sparse tensor indices
+    uid : Hashable, optional
+    weights : array-like or Hashable, optional
+        User specified cell weights corresponding to data,
+        If array-like, length must equal number of rows in data.
+        If Hashable, must be the name of a column in data.
+        Otherwise, weight for all rows is assumed to be 1.
+    aggregateby : str, optional, default='sum'
+        Method to aggregate cell weights of duplicate rows of data.
+        If None, duplicate rows will be dropped without aggregating cell weights
+
+    Attributes
+    ----------
+    uid: Hashable
+    static: bool
+    dataframe: pandas.DataFrame
+    data_cols: list of Hashables
+    cell_weight_col: Hashable
+    dimsize: int
+    state_dict: dict
+        The state_dict holds all attributes that must be recomputed when the data is
+        updated. The values for these attributes will be computed as needed if they do
+        not already exist in the state_dict.
+        
+        data : numpy.ndarray
+            sparse tensor indices for incidence tensor
+        labels: dict of lists
+            labels corresponding to integers in sparse tensor indices given by data
+        cell_weights: dict
+            keys are rows of labeled data as tuples, values are cell weight of the row
+        dimensions: tuple of ints
+            tuple of number of unique labels in each column/dimension of the data
+        uidset: dict of sets
+            keys are columns of the dataframe, values are the set of unique labeled
+            values in the column
+        elements: defaultdict of nested dicts
+            top level keys are column names, elements[col1][col2] holds the elements
+            by level dict with col1 as level 1 and col2 as level 2 (keys are unique
+            values of col1, values are list of unique values of col2 that appear in a
+            row of data with the col1 value key)
+
+    """
     def __init__(
         self,
         data,  # DataFrame, Dict of Lists, List of Lists, or np array
@@ -23,9 +86,6 @@ class StaticEntity(object):
         # data is altered - the dict will be cleared when data is added or removed
         self._static = static
         self._state_dict = {}
-
-        # dataframe and data (2d numpy ndarray) are separate attributes now, but
-        # TODO: separate init args? (previously "entity" and "data" - rename for clarity?)
 
         # raw entity data is stored in a DataFrame for basic access without the need for
         # any label encoding lookups
@@ -201,12 +261,12 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
     ----------
     df : pandas.DataFrame
         A DataFrame to assign a weight column to
-    weights : numpy.ndarray or Hashable, optional
+    weights : array-like or Hashable, optional
         If numpy.ndarray with the same length as df, create a new weight column with
         these values.
         If Hashable, must be the name of a column of df to assign as the weight column
         Otherwise, create a new weight column assigning a weight of 1 to every row
-    weight_col : str
+    weight_col : Hashable
         Name for new column if one is created (not used if the name of an existing
         column is passed as weights)
 
@@ -237,7 +297,7 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
         A DataFrame to remove or aggregate duplicate rows from
     data_cols : list
         A list of column names in df to perform the groupby on / remove duplicates from
-    weights : numpy.ndarray or Hashable, optional
+    weights : array-like or Hashable, optional
         Argument passed to assign_weights
     aggregateby : str, optional, default='sum'
         A valid aggregation method for pandas groupby
@@ -247,7 +307,7 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
     -------
     df : pandas.DataFrame
         The DataFrame with duplicate rows removed or aggregated
-    weight_col : str or None
+    weight_col : Hashable
         The name of the column holding aggregated weights, or None if aggregateby=None
     """
     if aggregateby is None:
