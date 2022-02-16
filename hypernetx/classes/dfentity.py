@@ -1,5 +1,6 @@
 from hypernetx import *
 import pandas as pd
+from pandas.api.types import CategoricalDtype
 import numpy as np
 from collections import defaultdict, OrderedDict
 from collections.abc import Hashable
@@ -265,6 +266,10 @@ class StaticEntity(object):
 
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
+        if self.isstatic:
+            raise HyperNetXError(
+                "Cannot add data to a static Entity"
+            )
         if isinstance(data, pd.DataFrame) and all(
             col in data for col in self._data_cols
         ):
@@ -339,14 +344,22 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
         The name of the column holding aggregated weights, or None if aggregateby=None
     """
     df = df.copy()
+    categories = {}
+    for col in data_cols:
+        if df[col].dtype == 'category':
+            categories[col] = df[col].cat.categories
+            df[col] = df[col].astype(categories[col].dtype)
+
     if aggregateby is None:
         weight_col = None
         df = df.drop_duplicates(subset=data_cols)
     else:
         df, weight_col = assign_weights(df, weights=weights)
-
         df = df.groupby(data_cols, as_index=False, sort=False).agg(
             {weight_col: aggregateby}
         )
+
+    for col in categories:
+        df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
 
     return df, weight_col
