@@ -263,6 +263,25 @@ class StaticEntity(object):
     def __call__(self, label_index=0):
         return iter(self.labels[self._data_cols[label_index]])
 
+    def add(self, data, aggregateby="sum"):
+        # TODO: add from other data types
+        if isinstance(data, pd.DataFrame) and all(
+            col in data for col in self._data_cols
+        ):
+            new_data = pd.concat((self._dataframe, data), ignore_index=True)
+            new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
+
+            self._dataframe, _ = remove_row_duplicates(
+                new_data,
+                self._data_cols,
+                weights=self._cell_weight_col,
+                aggregateby=aggregateby,
+            )
+
+            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype('category')
+            # TODO: check to see if we really need to clear everything
+            self._state_dict.clear()
+
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
