@@ -11,9 +11,13 @@ class StaticEntity(object):
         data,  # DataFrame, Dict of Lists, List of Lists, or np array
         static=True,
         labels=None,
+        uid=None,
         weights=None,  # array-like of values corresponding to rows of data
         aggregateby="sum",
     ):
+        # set unique identifier
+        self._uid = uid
+
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
         # data is altered - the dict will be cleared when data is added or removed
