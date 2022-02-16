@@ -231,6 +231,10 @@ class StaticEntity(object):
     def dataframe(self):
         return self._dataframe
 
+    @property
+    def isstatic(self):
+        return self._static
+
     def size(self, level=0):
         return self.dimensions[level]
 
