@@ -91,7 +91,7 @@ class StaticEntity(object):
         # raw entity data is stored in a DataFrame for basic access without the need for
         # any label encoding lookups
         if isinstance(data, pd.DataFrame):
-            self._dataframe = data
+            self._dataframe = data.copy()
 
         # if the raw data is passed as a dict of lists or a list of lists, we convert it
         # to a 2-column dataframe by exploding each list to cover one row per element
@@ -320,6 +320,7 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
     weight_col : Hashable
         The name of the column holding aggregated weights, or None if aggregateby=None
     """
+    df = df.copy()
     if aggregateby is None:
         weight_col = None
         df = df.drop_duplicates(subset=data_cols)
