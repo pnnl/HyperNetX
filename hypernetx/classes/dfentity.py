@@ -2,7 +2,7 @@ from hypernetx import *
 import pandas as pd
 from pandas.api.types import CategoricalDtype
 import numpy as np
-from collections import defaultdict, OrderedDict
+from collections import defaultdict, OrderedDict, UserList
 from collections.abc import Hashable
 
 
@@ -235,7 +235,9 @@ class StaticEntity(object):
             or col2 not in self._state_dict["elements"][col1]
         ):
             elements = self._dataframe.groupby(col1)[col2].unique()
-            self._state_dict["elements"][col1][col2] = elements.apply(list).to_dict()
+            self._state_dict["elements"][col1][col2] = elements.apply(
+                UserList
+            ).to_dict()
 
         return self._state_dict["elements"][col1][col2]
 
