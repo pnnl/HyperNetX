@@ -109,11 +109,15 @@ class StaticEntity(object):
             self._state_dict["data"] = data
             self._dataframe = pd.DataFrame(data)
             # if a dict of labels was passed, use keys as column names in the DataFrame,
-            # and store the dict of labels in the state dict
-            # TODO: use labels to translate DataFrame(?)
+            # translate the dataframe, and store the dict of labels in the state dict
             if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
                 self._dataframe.columns = labels.keys()
                 self._state_dict["labels"] = labels
+
+                for col in self._dataframe:
+                    self._dataframe[col] = pd.Categorical.from_codes(
+                        self._dataframe[col], categories=labels[col]
+                    )
 
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
@@ -267,9 +271,7 @@ class StaticEntity(object):
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
         if self.isstatic:
-            raise HyperNetXError(
-                "Cannot add data to a static Entity"
-            )
+            raise HyperNetXError("Cannot add data to a static Entity")
         if isinstance(data, pd.DataFrame) and all(
             col in data for col in self._data_cols
         ):
@@ -283,7 +285,9 @@ class StaticEntity(object):
                 aggregateby=aggregateby,
             )
 
-            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype('category')
+            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                "category"
+            )
             # TODO: check to see if we really need to clear everything
             self._state_dict.clear()
 
@@ -346,7 +350,7 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
     df = df.copy()
     categories = {}
     for col in data_cols:
-        if df[col].dtype.name == 'category':
+        if df[col].dtype.name == "category":
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
 
