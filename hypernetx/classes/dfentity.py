@@ -346,7 +346,7 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
     df = df.copy()
     categories = {}
     for col in data_cols:
-        if df[col].dtype == 'category':
+        if df[col].dtype.name == 'category':
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
 
