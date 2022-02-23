@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from collections.abc import Iterable
 from collections import UserList
-from hypernetx.classes.dfentity import StaticEntity
+from hypernetx.classes.dfentity import StaticEntity, StaticEntitySet
 from hypernetx import HyperNetXError
 
 
@@ -148,17 +148,17 @@ def test_staticentity_index(seven_by_six):
 #     assert ent.restrict_to_indices([1, 2]).uidset == {"Gryffindor", "Ravenclaw"}
 
 
-# def test_staticentityset(harry_potter):
-#     arr = harry_potter.arr
-#     labels = harry_potter.labels
-#     ent = StaticEntitySet(arr=arr, labels=labels, level1=1, level2=3)
-#     assert ent.keys[0] == "Blood status"
-#     assert len(ent.keys) == 2
-#     assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
-#     assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
-#     assert ent.incidence_matrix().shape == (36, 11)
-#     assert len(ent.convert_to_entityset("Hair colour")) == 11
-#     assert len(ent.collapse_identical_elements("House")) == 11
+def test_staticentityset(harry_potter):
+    data = np.asarray(harry_potter.data)
+    labels = harry_potter.labels
+    ent = StaticEntitySet(data=data, labels=labels, level1=1, level2=3)
+    # assert ent.keys[0] == "Blood status"
+    # assert len(ent.keys) == 2
+    assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
+    # assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
+    # assert ent.incidence_matrix().shape == (36, 11)
+    # assert len(ent.convert_to_entityset("Hair colour")) == 11
+    # assert len(ent.collapse_identical_elements("House")) == 11
 
 
 def test_staticentity_construct_from_entity(seven_by_six):

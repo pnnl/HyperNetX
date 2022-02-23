@@ -328,6 +328,53 @@ class StaticEntity(object):
             self._state_dict.clear()
 
 
+class StaticEntitySet(StaticEntity):
+    def __init__(
+        self,
+        entity=None,
+        data=None,
+        static=True,
+        labels=None,
+        uid=None,
+        level1=0,
+        level2=1,
+        weights=None,
+        keep_weights=True,
+        aggregateby="sum",
+    ):
+
+        if isinstance(entity, StaticEntity):
+            if keep_weights:
+                weights = entity._cell_weight_col
+            data = entity.dataframe
+
+        if isinstance(data, pd.DataFrame):
+            if isinstance(weights, Hashable) and weights in data:
+                columns = data.columns.drop(weights)[[level1, level2]]
+                columns = columns.append(pd.Index([weights]))
+            else:
+                columns = data.columns[[level1, level2]]
+
+            data = data[columns]
+
+        elif isinstance(data, np.ndarray) and data.ndim == 2:
+            data = data[:, (level1, level2)]
+
+        if isinstance(labels, dict):
+            label_keys = list(labels)
+            columns = (label_keys[level1], label_keys[level2])
+            labels = {col: labels[col] for col in columns}
+
+        super().__init__(
+            data=data,
+            static=static,
+            labels=labels,
+            uid=uid,
+            weights=weights,
+            aggregateby=aggregateby,
+        )
+
+
 def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
     Parameters
