@@ -230,10 +230,7 @@ class StaticEntity(object):
     def elements_by_column(self, col1, col2):
         if "elements" not in self._state_dict:
             self._state_dict["elements"] = defaultdict(dict)
-        if (
-            col1 not in self._state_dict["elements"]
-            or col2 not in self._state_dict["elements"][col1]
-        ):
+        if col2 not in self._state_dict["elements"][col1]:
             elements = self._dataframe.groupby(col1)[col2].unique()
             self._state_dict["elements"][col1][col2] = elements.apply(
                 UserList
@@ -269,6 +266,43 @@ class StaticEntity(object):
 
     def __call__(self, label_index=0):
         return iter(self.labels[self._data_cols[label_index]])
+
+    def index(self, column, value=None):
+        if "keyindex" not in self._state_dict:
+            self._state_dict["keyindex"] = {}
+        if column not in self._state_dict["keyindex"]:
+            self._state_dict["keyindex"][column] = self._dataframe[
+                self._data_cols
+            ].columns.get_loc(column)
+
+        if value is None:
+            return self._state_dict["keyindex"][column]
+
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        if value not in self._state_dict["index"][column]:
+            self._state_dict["index"][column][value] = self._dataframe[
+                column
+            ].cat.categories.get_loc(value)
+
+        return (
+            self._state_dict["keyindex"][column],
+            self._state_dict["index"][column][value],
+        )
+
+    def indices(self, column, values):
+        if isinstance(values, Hashable):
+            values = [values]
+
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        for v in values:
+            if v not in self._state_dict["index"][column]:
+                self._state_dict["index"][column][v] = self._dataframe[
+                    column
+                ].cat.categories.get_loc(v)
+
+        return [self._state_dict["index"][column][v] for v in values]
 
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
