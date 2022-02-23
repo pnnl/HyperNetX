@@ -196,8 +196,7 @@ class StaticEntity(object):
         return self.uidset_by_level(1)
 
     def uidset_by_level(self, level):
-        data = self._dataframe[self._data_cols]
-        col = data.columns[level]
+        col = self._data_cols[level]
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column):
@@ -223,8 +222,8 @@ class StaticEntity(object):
         return self.elements_by_level(1, 0)
 
     def elements_by_level(self, level1, level2):
-        data = self._dataframe[self._data_cols]
-        col1, col2 = data.columns[[level1, level2]]
+        col1 = self._data_cols[level1]
+        col2 = self._data_cols[level2]
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
