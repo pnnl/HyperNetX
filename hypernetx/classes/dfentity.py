@@ -320,6 +320,24 @@ class StaticEntity(object):
 
         return translation
 
+    def level(self, item, min_level=0, max_level=None, return_index=True):
+        if max_level is None or max_level >= self._dimsize:
+            max_level = self._dimsize - 1
+
+        columns = self._data_cols[min_level:max_level+1]
+        levels = range(min_level, max_level+1)
+
+        for col, lev in zip(columns, levels):
+            if item in self.labels[col]:
+                if return_index:
+                    return self.index(col, item)
+                
+                return lev
+
+        print(f'"{item}" not found.')
+        return None
+
+
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
         if self.isstatic:

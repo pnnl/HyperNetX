@@ -73,12 +73,12 @@ def test_staticentity_custom_attributes(harry_potter):
     assert ent.__call__().__next__() == "Unknown House"
 
 
-# def test_staticentity_level(seven_by_six):
-#     sbs = seven_by_six
-#     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
-#     assert ent.level("I") == (0, 5)
-#     assert ent.level("K") == (1, 3)
-#     assert ent.level("K", max_level=0) == None
+def test_staticentity_level(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
+    assert ent.level("I") == (0, 5)
+    assert ent.level("K") == (1, 3)
+    assert ent.level("K", max_level=0) == None
 
 
 def test_staticentity_uidset_by_level(seven_by_six):
