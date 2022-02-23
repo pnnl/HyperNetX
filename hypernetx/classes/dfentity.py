@@ -303,6 +303,23 @@ class StaticEntity(object):
 
         return [self._state_dict["index"][column][v] for v in values]
 
+    def translate(self, level, index):
+        column = self._data_cols[level]
+
+        if isinstance(index, int):
+            return self.labels[column][index]
+        
+        return [self.labels[column][i] for i in index]
+
+    def translate_arr(self, coords):
+        assert len(coords) == self._dimsize
+
+        translation = []
+        for level, index in enumerate(coords):
+            translation.append(self.translate(level, index))
+
+        return translation
+
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
         if self.isstatic:

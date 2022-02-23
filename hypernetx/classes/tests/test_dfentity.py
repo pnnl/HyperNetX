@@ -107,17 +107,17 @@ def test_staticentity_indices(seven_by_six):
     assert ent.indices("nodes", ["K", "T1"]) == [3, 4]
 
 
-# def test_staticentity_translate(seven_by_six):
-#     sbs = seven_by_six
-#     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
-#     assert ent.translate(0, 0) == "P"
-#     assert ent.translate(1, [3, 4]) == ["K", "T1"]
+def test_staticentity_translate(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
+    assert ent.translate(0, 0) == "P"
+    assert ent.translate(1, [3, 4]) == ["K", "T1"]
 
 
-# def test_staticentity_translate_arr(seven_by_six):
-#     sbs = seven_by_six
-#     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
-#     assert ent.translate_arr((0, 0)) == ["P", "A"]
+def test_staticentity_translate_arr(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
+    assert ent.translate_arr((0, 0)) == ["P", "A"]
 
 
 def test_staticentity_index(seven_by_six):
