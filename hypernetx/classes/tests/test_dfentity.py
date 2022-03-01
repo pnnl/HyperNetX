@@ -94,10 +94,10 @@ def test_staticentity_elements_by_level(seven_by_six):
     assert ent.elements_by_level(0,1)
 
 
-# def test_staticentity_incidence_matrix(seven_by_six):
-#     sbs = seven_by_six
-#     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
-#     assert ent.incidence_matrix(1, 0).todense().shape == (6, 7)
+def test_staticentity_incidence_matrix(seven_by_six):
+    sbs = seven_by_six
+    ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
+    assert ent.incidence_matrix(1, 0).todense().shape == (6, 7)
 
 
 def test_staticentity_indices(seven_by_six):
@@ -134,11 +134,11 @@ def test_staticentity_index(seven_by_six):
 #     assert ent.turn_entity_data_into_dataframe(subset).shape == (5, 2)
 
 
-# def test_restrict_to_levels(harry_potter):
-#     data = np.asarray(harry_potter.data)
-#     labels = harry_potter.labels
-#     ent = StaticEntity(data=data, labels=labels)
-#     assert len(ent.restrict_to_levels([0]).uidset) == 7
+def test_restrict_to_levels(harry_potter):
+    data = np.asarray(harry_potter.data)
+    labels = harry_potter.labels
+    ent = StaticEntity(data=data, labels=labels)
+    assert len(ent.restrict_to_levels([0]).uidset) == 7
 
 
 # def test_restrict_to_indices(harry_potter):

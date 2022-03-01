@@ -4,7 +4,7 @@ from pandas.api.types import CategoricalDtype
 import numpy as np
 from collections import defaultdict, OrderedDict, UserList
 from collections.abc import Hashable
-
+from scipy.sparse import csr_matrix
 
 class StaticEntity(object):
     """
@@ -360,6 +360,69 @@ class StaticEntity(object):
             )
             # TODO: check to see if we really need to clear everything
             self._state_dict.clear()
+    def encode(self, data):
+        encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
+        return encoded_array
+
+    def incidence_matrix(self, level1=0, level2=1, weights=False, aggregateby=None, index=False):
+        if self.dimsize < 2:
+            warnings.warn("Incidence matrix requires two levels of data.")
+            return None
+
+        data_cols = [self._data_cols[level1], self._data_cols[level2]]
+        result = ''
+        if weights:
+            if self.dimsize > 2:
+                temp, temp_weights = remove_row_duplicates(self.dataframe, data_cols, weights=self._cell_weight_col, aggregateby=aggregateby)
+            else:
+                temp, temp_weights = self.data[[data_cols]], self.cell_weights
+            print(temp_weights)
+
+            # if isinstance(weights, dict):
+            #     cat1 = self.keys[level1]
+            #     cat2 = self.keys[level2]
+            #     for k, v in weights:
+            #         try:
+            #             tdx = (self.index(cat1, k[0]), self.index(cat2, k[1]))
+            #         except:
+            #             HyperNetXError(
+            #                 f"{k} is not recognized as belonging to this system."
+            #             )
+            #         if temp_weights[tdx] != 0:
+            #             temp_weights[tdx] = v
+            temp_weights = [temp_weights[tuple(t)] for t in temp]
+            dtype = int if aggregateby == "count" else float
+            result = csr_matrix(
+                (temp_weights, temp.transpose()), dtype=dtype
+            ).transpose()
+        else:
+            if self.dimsize > 2:
+                temp, _ = remove_row_duplicates(self.dataframe, data_cols)
+            else:
+                temp = self.dataframe[data_cols] 
+
+            temp = temp[data_cols]
+            temp = temp.astype("category")
+            temp = self.encode(temp)
+            result = csr_matrix((np.ones(len(temp)), (temp[:,1], temp[:,0])), dtype=int)
+
+        return result
+
+    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", uid=None):
+        if levels[0] >= self.dimsize:
+            return self.__class__()
+        else:
+            if weights:
+                weights = self._cell_weight_col
+            else: 
+                weights = None
+            cols = [self._data_cols[level] for level in levels]
+            newDataframe = self._dataframe[cols]
+            return StaticEntity(
+                    data=newDataframe,
+                    weights=weights,
+                    aggregateby=aggregateby,
+                )
 
 
 class StaticEntitySet(StaticEntity):
