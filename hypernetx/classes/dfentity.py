@@ -214,6 +214,14 @@ class StaticEntity(object):
         return self._dimsize
 
     @property
+    def properties(self):
+        return self._properties
+
+    @property
+    def uid(self):
+        return self._uid
+
+    @property
     def uidset(self):
         return self.uidset_by_level(0)
 
@@ -295,6 +303,12 @@ class StaticEntity(object):
 
     def __call__(self, label_index=0):
         return iter(self.labels[self._data_cols[label_index]])
+
+    def __repr__(self):
+        return (
+            self.__class__.__name__
+            + f"({self._uid},{list(self.uidset)},{self.properties})"
+        )
 
     def index(self, column, value=None):
         if "keyindex" not in self._state_dict:
