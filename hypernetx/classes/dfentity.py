@@ -352,7 +352,7 @@ class StaticEntity(object):
 
         if isinstance(index, int):
             return self.labels[column][index]
-        
+
         return [self.labels[column][i] for i in index]
 
     def translate_arr(self, coords):
@@ -429,22 +429,24 @@ class StaticEntity(object):
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
+    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
+        levels = [lev for lev in levels if lev < self._dimsize]
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", uid=None):
-        if levels[0] >= self.dimsize:
-            return self.__class__()
-        else:
+        if levels:
+            cols = [self._data_cols[lev] for lev in levels]
+
+            weights = self._cell_weight_col if weights else None
+
             if weights:
-                weights = self._cell_weight_col
-            else: 
-                weights = None
-            cols = [self._data_cols[level] for level in levels]
-            newDataframe = self._dataframe[cols]
+                cols.append(weights)
+
+            data = self._dataframe[cols]
+
             return StaticEntity(
-                    data=newDataframe,
-                    weights=weights,
-                    aggregateby=aggregateby,
-                )
+                data=data, weights=weights, aggregateby=aggregateby, **kwargs
+            )
+
+        return self.__class__()
 
 
 class StaticEntitySet(StaticEntity):
