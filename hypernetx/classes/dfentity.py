@@ -6,13 +6,15 @@ from collections import defaultdict, OrderedDict, UserList
 from collections.abc import Hashable
 from scipy.sparse import csr_matrix
 
+
 class StaticEntity(object):
     """
     A new Entity object using pandas.DataFrame as the base data structure
 
     TODO: split data parameter into mulitple parameters - one for raw data and one for
           sparse tensor indices
-    TODO: allow addition/removal of rows of data
+    TODO: allow addition of rows of data from dict of lists or lists of lists
+    TODO: allow removal of rows of data
 
     Parameters
     ----------
@@ -324,19 +326,18 @@ class StaticEntity(object):
         if max_level is None or max_level >= self._dimsize:
             max_level = self._dimsize - 1
 
-        columns = self._data_cols[min_level:max_level+1]
-        levels = range(min_level, max_level+1)
+        columns = self._data_cols[min_level : max_level + 1]
+        levels = range(min_level, max_level + 1)
 
         for col, lev in zip(columns, levels):
             if item in self.labels[col]:
                 if return_index:
                     return self.index(col, item)
-                
+
                 return lev
 
         print(f'"{item}" not found.')
         return None
-
 
     def add(self, data, aggregateby="sum"):
         # TODO: add from other data types
