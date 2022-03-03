@@ -156,7 +156,7 @@ def test_staticentityset(harry_potter):
     # assert len(ent.keys) == 2
     assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
     # assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
-    # assert ent.incidence_matrix().shape == (36, 11)
+    assert ent.incidence_matrix().shape == (36, 11)
     # assert len(ent.convert_to_entityset("Hair colour")) == 11
     # assert len(ent.collapse_identical_elements("House")) == 11
 
