@@ -535,11 +535,12 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
 
-    if aggregateby is None:
-        weight_col = None
+    if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
-    else:
-        df, weight_col = assign_weights(df, weights=weights)
+
+    df, weight_col = assign_weights(df, weights=weights)
+
+    if aggregateby:
         df = df.groupby(data_cols, as_index=False, sort=False).agg(
             {weight_col: aggregateby}
         )
