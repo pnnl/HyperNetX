@@ -75,15 +75,16 @@ class StaticEntity(object):
 
     def __init__(
         self,
-        data,  # DataFrame, Dict of Lists, List of Lists, or np array
+        data=None,
         static=True,
         labels=None,
         uid=None,
-        weights=None,  # array-like of values corresponding to rows of data
+        weights=None,
         aggregateby="sum",
     ):
         # set unique identifier
         self._uid = uid
+        self._properties = {}
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
@@ -121,6 +122,15 @@ class StaticEntity(object):
                         self._dataframe[col], categories=labels[col]
                     )
 
+        # create an empty Entity
+        # TODO: clean this up to be less hacky?
+        else:
+            self._dataframe = pd.DataFrame()
+            self._data_cols = []
+            self._cell_weight_col = None
+            self._dimsize = 0
+            return
+
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
             self._dataframe, weights=weights
@@ -148,40 +158,54 @@ class StaticEntity(object):
     @property
     def data(self):
         if "data" not in self._state_dict:
-            # assumes dtype of data cols is categorical and dataframe not altered
-            self._state_dict["data"] = (
-                self._dataframe[self._data_cols].apply(lambda x: x.cat.codes).to_numpy()
-            )
+            if self.empty:
+                self._state_dict["data"] = np.zeros((0, 0), dtype=int)
+            else:
+                # assumes dtype of data cols is categorical and dataframe not altered
+                self._state_dict["data"] = (
+                    self._dataframe[self._data_cols]
+                    .apply(lambda x: x.cat.codes)
+                    .to_numpy()
+                )
 
         return self._state_dict["data"]
 
     @property
     def labels(self):
         if "labels" not in self._state_dict:
-            # assumes dtype of data cols is categorical and dataframe not altered
-            self._state_dict["labels"] = (
-                self._dataframe[self._data_cols]
-                .apply(lambda x: x.cat.categories.to_list())
-                .to_dict()
-            )
+            if self.empty:
+                self._state_dict["labels"] = {}
+            else:
+                # assumes dtype of data cols is categorical and dataframe not altered
+                self._state_dict["labels"] = (
+                    self._dataframe[self._data_cols]
+                    .apply(lambda x: x.cat.categories.to_list())
+                    .to_dict()
+                )
 
         return self._state_dict["labels"]
 
     @property
     def cell_weights(self):
         if "cell_weights" not in self._state_dict:
-            self._state_dict["cell_weights"] = self._dataframe.set_index(
-                self._data_cols
-            )[self._cell_weight_col].to_dict()
+            if self.empty:
+                self._state_dict["cell_weights"] = {}
+            else:
+                self._state_dict["cell_weights"] = self._dataframe.set_index(
+                    self._data_cols
+                )[self._cell_weight_col].to_dict()
 
         return self._state_dict["cell_weights"]
 
     @property
     def dimensions(self):
         if "dimensions" not in self._state_dict:
-            self._state_dict["dimensions"] = tuple(
-                self._dataframe[self._data_cols].nunique()
-            )
+            if self.empty:
+                self._state_dict["dimensions"] = tuple()
+            else:
+                self._state_dict["dimensions"] = tuple(
+                    self._dataframe[self._data_cols].nunique()
+                )
 
         return self._state_dict["dimensions"]
 
@@ -250,8 +274,12 @@ class StaticEntity(object):
     def size(self, level=0):
         return self.dimensions[level]
 
+    @property
+    def empty(self):
+        return self._dimsize == 0
+
     def is_empty(self, level=0):
-        return self.size(level) == 0
+        return self.empty or self.size(level) == 0
 
     def __len__(self):
         return self.dimensions[0]
