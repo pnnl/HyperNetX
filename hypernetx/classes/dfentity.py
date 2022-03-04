@@ -443,11 +443,9 @@ class StaticEntity(object):
 
             entity = self._dataframe[cols]
 
-            return StaticEntity(
-                entity=entity, weights=weights, aggregateby=aggregateby, **kwargs
-            )
+            kwargs.update(entity=entity, weights=weights, aggregateby=aggregateby)
 
-        return self.__class__()
+        return self.__class__(**kwargs)
 
 
 class StaticEntitySet(StaticEntity):
