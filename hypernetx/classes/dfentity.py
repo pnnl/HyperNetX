@@ -245,6 +245,9 @@ class StaticEntity(object):
 
     @property
     def elements(self):
+        if (self._dimsize == 1):
+            return {k: UserList() for k in self.uidset}
+
         return self.elements_by_level(0, 1)
 
     @property
