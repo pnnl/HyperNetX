@@ -11,26 +11,23 @@ class StaticEntity(object):
     """
     A new Entity object using pandas.DataFrame as the base data structure
 
-    TODO: split data parameter into mulitple parameters - one for raw data and one for
-          sparse tensor indices
     TODO: allow addition of rows of data from dict of lists or lists of lists
     TODO: allow removal of rows of data
 
     Parameters
     ----------
-    data : pandas.DataFrame, dict of lists, list of lists, or 2d numpy.ndarray
-        If a pandas.DataFrame, representation of entity data with 2 or more dimensions,
-        If a dict of lists or list of lists, representation of entity data with exactly
-        2 dimensions,
-        If a 2d numpy.ndarray of ints, representation of entity data with 2 or more
-        dimensions (as sparse tensor indices for incidence tensor)
+    entity: pandas.DataFrame, dict of lists or sets, list of lists or sets
+        If a pandas.DataFrame with N columns, represents N-dimensonal entity data,
+        Otherwise, a dict or list represents 2-dimensional entity data
+    data : 2d numpy.ndarray
+        A sparse representation of an N-dimensional incidence tensor with M nonzero
+        cells as an M x N matrix of tensor indices.
     static : bool, default=True
         If True, data may not be altered, and the state dict will never be cleared
         If False, rows may be added to and removed from data, and updates will clear the
         state dict
     labels : OrderedDict of lists, optional
-        User defined labels corresponding to integers in data, only used when data is
-        given as a numpy.ndarray of sparse tensor indices
+        User defined labels corresponding to integers in data, ignored if data=None
     uid : Hashable, optional
     weights : array-like or Hashable, optional
         User specified cell weights corresponding to data,
@@ -75,6 +72,7 @@ class StaticEntity(object):
 
     def __init__(
         self,
+        entity=None,
         data=None,
         static=True,
         labels=None,
@@ -92,19 +90,19 @@ class StaticEntity(object):
         self._static = static
         self._state_dict = {}
 
-        # raw entity data is stored in a DataFrame for basic access without the need for
+        # entity data is stored in a DataFrame for basic access without the need for
         # any label encoding lookups
-        if isinstance(data, pd.DataFrame):
-            self._dataframe = data.copy()
+        if isinstance(entity, pd.DataFrame):
+            self._dataframe = entity.copy()
 
-        # if the raw data is passed as a dict of lists or a list of lists, we convert it
-        # to a 2-column dataframe by exploding each list to cover one row per element
+        # if the entity data is passed as a dict of lists or a list of lists, we convert
+        # it to a 2-column dataframe by exploding each list to cover one row per element
         # for a dict of lists, the first level/column will be filled in with dict keys
         # for a list of N lists, 0,1,...,N will be used to fill the first level/column
-        elif isinstance(data, (dict, list)):
+        elif isinstance(entity, (dict, list)):
             # convert dict of lists to 2-column dataframe
-            data = pd.Series(data).explode()
-            self._dataframe = pd.DataFrame({0: data.index, 1: data.values})
+            entity = pd.Series(entity).explode()
+            self._dataframe = pd.DataFrame({0: entity.index, 1: entity.values})
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an ndarray
         # in the state dict
@@ -443,10 +441,10 @@ class StaticEntity(object):
             if weights:
                 cols.append(weights)
 
-            data = self._dataframe[cols]
+            entity = self._dataframe[cols]
 
             return StaticEntity(
-                data=data, weights=weights, aggregateby=aggregateby, **kwargs
+                entity=entity, weights=weights, aggregateby=aggregateby, **kwargs
             )
 
         return self.__class__()
@@ -470,17 +468,16 @@ class StaticEntitySet(StaticEntity):
         if isinstance(entity, StaticEntity):
             if keep_weights:
                 weights = entity._cell_weight_col
-            data = entity.dataframe
-        if isinstance(entity, list):
-            data = entity
-        if isinstance(data, pd.DataFrame):
-            if isinstance(weights, Hashable) and weights in data:
-                columns = data.columns.drop(weights)[[level1, level2]]
+            entity = entity.dataframe
+
+        if isinstance(entity, pd.DataFrame):
+            if isinstance(weights, Hashable) and weights in entity:
+                columns = entity.columns.drop(weights)[[level1, level2]]
                 columns = columns.append(pd.Index([weights]))
             else:
-                columns = data.columns[[level1, level2]]
+                columns = entity.columns[[level1, level2]]
 
-            data = data[columns]
+            entity = entity[columns]
 
         elif isinstance(data, np.ndarray) and data.ndim == 2:
             data = data[:, (level1, level2)]
@@ -491,6 +488,7 @@ class StaticEntitySet(StaticEntity):
             labels = {col: labels[col] for col in columns}
 
         super().__init__(
+            entity=entity,
             data=data,
             static=static,
             labels=labels,

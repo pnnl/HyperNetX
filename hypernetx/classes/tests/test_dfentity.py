@@ -163,5 +163,5 @@ def test_staticentityset(harry_potter):
 
 def test_staticentity_construct_from_entity(seven_by_six):
     sbs = seven_by_six
-    ent = StaticEntity(data=sbs.edgedict)
+    ent = StaticEntity(entity=sbs.edgedict)
     assert len(ent.elements) == 6
