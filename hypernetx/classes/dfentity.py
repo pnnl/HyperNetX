@@ -471,7 +471,8 @@ class StaticEntitySet(StaticEntity):
             if keep_weights:
                 weights = entity._cell_weight_col
             data = entity.dataframe
-
+        if isinstance(entity, list):
+            data = entity
         if isinstance(data, pd.DataFrame):
             if isinstance(weights, Hashable) and weights in data:
                 columns = data.columns.drop(weights)[[level1, level2]]
