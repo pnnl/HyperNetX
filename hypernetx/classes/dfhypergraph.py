@@ -373,8 +373,8 @@ class Hypergraph:
         : int
             internal id assigned at construction
         """
-        kdx = int(not edges)
-        return self.edges.labels[self.edges._data_cols[kdx]].index(uid)
+        column = self.edges._data_cols[int(not edges)]
+        return self.edges.index(column, uid)[1]
 
     @not_implemented_for("dynamic")
     def get_name(self, id, edges=False):
@@ -394,8 +394,8 @@ class Hypergraph:
         str
             User provided name/id/label for hypergraph object
         """
-        kdx = (edges + 1) % 2
-        return self.edges.labs(kdx)[id]
+        level = int(not edges)
+        return self.edges.translate(level, id)
 
     @not_implemented_for("dynamic")
     def get_linegraph(self, s, edges=True, use_nwhy=True):
