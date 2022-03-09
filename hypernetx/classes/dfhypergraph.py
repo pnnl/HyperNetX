@@ -1117,28 +1117,22 @@ class Hypergraph:
 
         """
         if self.isstatic:
-            if weights == False:
-                mat = self.state_dict.get("incidence_matrix", None)
-                if mat is None:
-                    mat = self.edges.incidence_matrix()
-                    self.state_dict["incidence_matrix"] = mat
-                if index:
-                    rdict = dict(enumerate(self.edges.labs(1)))
-                    cdict = dict(enumerate(self.edges.labs(0)))
-                    return mat, rdict, cdict
-                else:
-                    return mat
-            if weights == True:
-                mat = self.state_dict.get("weighted_incidence_matrix", None)
-                if mat is None:
-                    mat = self.edges.incidence_matrix(weights=True)
-                    self.state_dict["weighted_incidence_matrix"] = mat
-                if index:
-                    rdict = dict(enumerate(self.edges.labs(1)))
-                    cdict = dict(enumerate(self.edges.labs(0)))
-                    return mat, rdict, cdict
-                else:
-                    return mat
+            sdkey = "incidence_matrix"
+            if weights:
+                sdkey = "weighted_" + sdkey
+
+            if sdkey not in self.state_dict:
+                self.state_dict[sdkey] = self.edges.incidence_matrix(weights=weights)
+
+            if index:
+                edgecol, nodecol = self.edges._data_cols
+                rdict = dict(enumerate(self.edges.labels[nodecol]))
+                cdict = dict(enumerate(self.edges.labels[edgecol]))
+
+                return self.state_dict[sdkey], rdict, cdict
+
+            return self.state_dict[sdkey]
+            
         else:
             return self.edges.incidence_matrix(index=index)
 
