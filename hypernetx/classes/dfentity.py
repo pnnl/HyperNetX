@@ -347,7 +347,7 @@ class StaticEntity(object):
     def translate(self, level, index):
         column = self._data_cols[level]
 
-        if isinstance(index, int):
+        if isinstance(index, (int, np.integer)):
             return self.labels[column][index]
 
         return [self.labels[column][i] for i in index]
