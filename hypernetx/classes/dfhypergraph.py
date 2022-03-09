@@ -144,27 +144,18 @@ class Hypergraph:
                 use_nwhy = False
         else:
             self.nwhy = False
-        if not name:
-            self.name = ""
-        else:
-            self.name = name
 
-        # if static == True or (
-        #     isinstance(setsystem, StaticEntitySet)
-        #     or isinstance(setsystem, StaticEntity)
-        #     or isinstance(setsystem, pd.DataFrame)
-        # ):
+        name = name or ""
+
+        # for testing purposes, set static True for all hypergraphs for now
         self._static = True
         if setsystem is None:
             self._edges = StaticEntitySet()
             self._nodes = StaticEntitySet()
         else:
-            if weights is not None:
-                E = StaticEntitySet(
-                    entity=setsystem, weights=weights, aggregateby=aggregateby
-                )
-            else:
-                E = StaticEntitySet(entity=setsystem)
+            E = StaticEntitySet(
+                entity=setsystem, weights=weights, aggregateby=aggregateby
+            )
             self._edges = E
             self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
             self._nodes._memberships = E.memberships
@@ -1132,7 +1123,7 @@ class Hypergraph:
                 return self.state_dict[sdkey], rdict, cdict
 
             return self.state_dict[sdkey]
-            
+
         else:
             return self.edges.incidence_matrix(index=index)
 
