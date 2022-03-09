@@ -171,15 +171,11 @@ class StaticEntity(object):
     @property
     def labels(self):
         if "labels" not in self._state_dict:
-            if self.empty:
-                self._state_dict["labels"] = {}
-            else:
-                # assumes dtype of data cols is categorical and dataframe not altered
-                self._state_dict["labels"] = (
-                    self._dataframe[self._data_cols]
-                    .apply(lambda x: x.cat.categories.to_list())
-                    .to_dict()
-                )
+            # assumes dtype of data cols is categorical and dataframe not altered
+            self._state_dict["labels"] = {
+                col: self._dataframe[col].cat.categories.to_list()
+                for col in self._data_cols
+            }
 
         return self._state_dict["labels"]
 
@@ -243,7 +239,7 @@ class StaticEntity(object):
 
     @property
     def elements(self):
-        if (self._dimsize == 1):
+        if self._dimsize == 1:
             return {k: UserList() for k in self.uidset}
 
         return self.elements_by_level(0, 1)
@@ -468,7 +464,7 @@ class StaticEntitySet(StaticEntity):
                 weights = entity._cell_weight_col
             entity = entity.dataframe
 
-        if isinstance(entity, pd.DataFrame):
+        if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
             if isinstance(weights, Hashable) and weights in entity:
                 columns = entity.columns.drop(weights)[[level1, level2]]
                 columns = columns.append(pd.Index([weights]))
@@ -477,10 +473,10 @@ class StaticEntitySet(StaticEntity):
 
             entity = entity[columns]
 
-        elif isinstance(data, np.ndarray) and data.ndim == 2:
+        elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
             data = data[:, (level1, level2)]
 
-        if isinstance(labels, dict):
+        if isinstance(labels, dict) and len(labels) > 2:
             label_keys = list(labels)
             columns = (label_keys[level1], label_keys[level2])
             labels = {col: labels[col] for col in columns}
