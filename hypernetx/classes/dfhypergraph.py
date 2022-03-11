@@ -145,7 +145,7 @@ class Hypergraph:
         else:
             self.nwhy = False
 
-        name = name or ""
+        self.name = name or ""
 
         # for testing purposes, set static True for all hypergraphs for now
         self._static = True
