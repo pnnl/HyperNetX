@@ -1558,7 +1558,7 @@ class Hypergraph:
         """
         if self._static:
             E = self._edges
-            setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(edgeset))))
+            setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(edgeset))))
             return Hypergraph(setsystem, name=name, use_nwhy=self.nwhy)
         else:
             inneredges = set()
