@@ -443,6 +443,12 @@ class StaticEntity(object):
 
         return self.__class__(**kwargs)
 
+    def restrict_to_indices(self, indices, level=0, **kwargs):
+        column = self._dataframe[self._data_cols[level]]
+        values = column.cat.categories[list(indices)]
+        entity = self._dataframe.loc[column.isin(values)]
+        return self.__class__(entity=entity, **kwargs)
+
 
 class StaticEntitySet(StaticEntity):
     def __init__(
@@ -507,6 +513,9 @@ class StaticEntitySet(StaticEntity):
             restricted._state_dict["memberships"] = self.memberships
 
         return restricted
+
+    def restrict_to(self, indices, **kwargs):
+        return self.restrict_to_indices(indices,**kwargs)
 
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
