@@ -447,6 +447,8 @@ class StaticEntity(object):
         column = self._dataframe[self._data_cols[level]]
         values = column.cat.categories[list(indices)]
         entity = self._dataframe.loc[column.isin(values)]
+        for col in self._data_cols:
+            entity[col] = entity[col].cat.remove_unused_categories()
         return self.__class__(entity=entity, **kwargs)
 
 
