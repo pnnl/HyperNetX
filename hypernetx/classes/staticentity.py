@@ -1,57 +1,72 @@
-from collections import OrderedDict, defaultdict, UserList
-from collections.abc import Iterable
-import warnings
-from copy import copy
-import numpy as np
-import networkx as nx
 from hypernetx import *
-from hypernetx.exception import HyperNetXError
-from hypernetx.classes.entity import Entity, EntitySet
-from hypernetx.utils import (
-    HNXCount,
-    DefaultOrderedDict,
-    remove_row_duplicates,
-    reverse_dictionary,
-)
-from scipy.sparse import coo_matrix, csr_matrix, issparse
-import itertools as it
 import pandas as pd
-
-__all__ = ["StaticEntity", "StaticEntitySet"]
+from pandas.api.types import CategoricalDtype
+import numpy as np
+from collections import defaultdict, OrderedDict, UserList
+from collections.abc import Hashable
+from scipy.sparse import csr_matrix
 
 
 class StaticEntity(object):
-
     """
-    .. _staticentity:
+    A new Entity object using pandas.DataFrame as the base data structure
+
+    TODO: allow addition of rows of data from dict of lists or lists of lists
+    TODO: allow removal of rows of data
 
     Parameters
     ----------
-    entity : StaticEntity, StaticEntitySet, Entity, EntitySet, pandas.DataFrame, dict, or list of lists
-        If a pandas.DataFrame, an error will be raised if there are nans.
-    data : array or array-like
-        Two dimensional array of integers. Provides sparse tensor indices for incidence
-        tensor.
-    arr : numpy.ndarray or scip.sparse.matrix, optional, default=None
-        Incidence tensor of data.
-    labels : OrderedDict of lists, optional, default=None
-        User defined labels corresponding to integers in data.
-    uid : hashable, optional, default=None
-    weights : array-like, optional, default : None
-        User specified weights corresponding to data, length must equal number
-        of rows in data. If None, weight for all rows is assumed to be 1.
-    keep_weights : bool, optional, default : True
-        Whether or not to use existing weights when input is StaticEntity, or StaticEntitySet.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max', 'min', 'first', 'last', None}, default : 'count'
-        Method to aggregate cell_weights of duplicate rows if setsystem  is of type pandas.DataFrame of
-        StaticEntity. If None all cell weights will be set to 1.
-
-    props : user defined keyword arguments to be added to a properties dictionary, optional
+    entity: pandas.DataFrame, dict of lists or sets, list of lists or sets
+        If a pandas.DataFrame with N columns, represents N-dimensonal entity data,
+        Otherwise, a dict or list represents 2-dimensional entity data
+    data : 2d numpy.ndarray
+        A sparse representation of an N-dimensional incidence tensor with M nonzero
+        cells as an M x N matrix of tensor indices.
+    static : bool, default=True
+        If True, data may not be altered, and the state dict will never be cleared
+        If False, rows may be added to and removed from data, and updates will clear the
+        state dict
+    labels : OrderedDict of lists, optional
+        User defined labels corresponding to integers in data, ignored if data=None
+    uid : Hashable, optional
+    weights : array-like or Hashable, optional
+        User specified cell weights corresponding to data,
+        If array-like, length must equal number of rows in data.
+        If Hashable, must be the name of a column in data.
+        Otherwise, weight for all rows is assumed to be 1.
+    aggregateby : str, optional, default='sum'
+        Method to aggregate cell weights of duplicate rows of data.
+        If None, duplicate rows will be dropped without aggregating cell weights
 
     Attributes
     ----------
-    properties : dict
-        Description
+    uid: Hashable
+    static: bool
+    dataframe: pandas.DataFrame
+    data_cols: list of Hashables
+    cell_weight_col: Hashable
+    dimsize: int
+    state_dict: dict
+        The state_dict holds all attributes that must be recomputed when the data is
+        updated. The values for these attributes will be computed as needed if they do
+        not already exist in the state_dict.
+
+        data : numpy.ndarray
+            sparse tensor indices for incidence tensor
+        labels: dict of lists
+            labels corresponding to integers in sparse tensor indices given by data
+        cell_weights: dict
+            keys are rows of labeled data as tuples, values are cell weight of the row
+        dimensions: tuple of ints
+            tuple of number of unique labels in each column/dimension of the data
+        uidset: dict of sets
+            keys are columns of the dataframe, values are the set of unique labeled
+            values in the column
+        elements: defaultdict of nested dicts
+            top level keys are column names, elements[col1][col2] holds the elements
+            by level dict with col1 as level 1 and col2 as level 2 (keys are unique
+            values of col1, values are list of unique values of col2 that appear in a
+            row of data with the col1 value key)
 
     """
 
@@ -59,1246 +74,524 @@ class StaticEntity(object):
         self,
         entity=None,
         data=None,
-        arr=None,
+        static=True,
         labels=None,
         uid=None,
-        weights=None, ### in this context weights is just a column of values corresponding to the rows in data.
-        keep_weights=True,
+        weights=None,
         aggregateby="sum",
-        **props,
     ):
+        # set unique identifier
         self._uid = uid
-        self.properties = {}
-        if entity is not None:
-            if isinstance(entity, StaticEntity) or isinstance(entity, StaticEntitySet):
-                self.properties.update(entity.properties)
-                self.properties.update(props)
-                self.__dict__.update(self.properties)
-                self.__dict__.update(props)
-                self._data = entity._data.copy()
-                if keep_weights:
-                    self._weights = entity._weights
-                    self._cell_weights = dict(entity._cell_weights)
-                else:
-                    self._data, self._cell_weights = remove_row_duplicates(
-                        entity.data, weights=weights, aggregateby=aggregateby
+        self._properties = {}
+
+        # if static, the original data cannot be altered
+        # the state dict stores all computed values that may need to be updated if the
+        # data is altered - the dict will be cleared when data is added or removed
+        self._static = static
+        self._state_dict = {}
+
+        # entity data is stored in a DataFrame for basic access without the need for
+        # any label encoding lookups
+        if isinstance(entity, pd.DataFrame):
+            self._dataframe = entity.copy()
+
+        # if the entity data is passed as a dict of lists or a list of lists, we convert
+        # it to a 2-column dataframe by exploding each list to cover one row per element
+        # for a dict of lists, the first level/column will be filled in with dict keys
+        # for a list of N lists, 0,1,...,N will be used to fill the first level/column
+        elif isinstance(entity, (dict, list)):
+            # convert dict of lists to 2-column dataframe
+            entity = pd.Series(entity).explode()
+            self._dataframe = pd.DataFrame({0: entity.index, 1: entity.values})
+
+        # if a 2d numpy ndarray is passed, store it as both a DataFrame and an ndarray
+        # in the state dict
+        elif isinstance(data, np.ndarray) and data.ndim == 2:
+            self._state_dict["data"] = data
+            self._dataframe = pd.DataFrame(data)
+            # if a dict of labels was passed, use keys as column names in the DataFrame,
+            # translate the dataframe, and store the dict of labels in the state dict
+            if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
+                self._dataframe.columns = labels.keys()
+                self._state_dict["labels"] = labels
+
+                for col in self._dataframe:
+                    self._dataframe[col] = pd.Categorical.from_codes(
+                        self._dataframe[col], categories=labels[col]
                     )
-                self._dimensions = entity._dimensions
-                self._dimsize = entity._dimsize
-                self._labels = OrderedDict(
-                    (category, np.array(values))
-                    for category, values in entity._labels.items()
-                )
-                self._keys = np.array(list(self._labels.keys()))
-                # returns the index of the category (column)
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-                self._arr = None
-            elif isinstance(entity, pd.DataFrame):
-                self.properties.update(props)
-                (
-                    self._data,
-                    self._labels,
-                    self._cell_weights,
-                ) = _turn_dataframe_into_entity(
-                    entity, weights=weights, aggregateby=aggregateby
-                )
-                self.__dict__.update(self.properties)
-                self._arr = None
-                self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
-                self._dimsize = len(self._dimensions)
-                self._keys = np.array(list(self._labels.keys()))
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
 
-            else:  # For these cases we cannot yet add cell_weights directly, cell_weights default to duplicate counts
-                if isinstance(entity, Entity) or isinstance(entity, EntitySet):
-                    d = entity.incidence_dict
-                    (
-                        self._data,
-                        self._labels,
-                        self._cell_weights,
-                    ) = _turn_dict_to_staticentity(
-                        d
-                    )  # For now duplicate entries will be removed.
-                elif isinstance(entity, dict):  # returns only 2 levels
-                    (
-                        self._data,
-                        self._labels,
-                        self._cell_weights,
-                    ) = _turn_dict_to_staticentity(
-                        entity
-                    )  # For now duplicate entries will be removed.
-                else:  # returns only 2 levels
-                    (
-                        self._data,
-                        self._labels,
-                        self._cell_weights,
-                    ) = _turn_iterable_to_staticentity(entity)
-                self._dimensions = tuple([len(self._labels[k]) for k in self._labels])
-                self._dimsize = len(self._dimensions)  # number of columns
-                self._keys = np.array(
-                    list(self._labels.keys())
-                )  # These are the column headers from the dataframe
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-                self.properties.update(props)
-                self.__dict__.update(
-                    self.properties
-                )  # Add function to set attributes ###########!!!!!!!!!!!!!
-                self._arr = None
-        elif data is not None:
-            self._arr = None
-            self._data, self._cell_weights = remove_row_duplicates(
-                data, weights=weights, aggregateby=aggregateby
-            )
-            self._dimensions = tuple([max(x) + 1 for x in self._data.transpose()])
-            self._dimsize = len(self._dimensions)
-            self.properties.update(props)
-            self.__dict__.update(props)
-            if labels is not None:
-                self._labels = OrderedDict(
-                    (category, np.array(values)) for category, values in labels.items()
-                )  # OrderedDict(category,np.array([categorical values ....])) is aligned to arr
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._keys = np.array(list(labels.keys()))
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-            else:
-                self._labels = OrderedDict(
-                    [
-                        (int(dim), np.arange(ct))
-                        for dim, ct in enumerate(self.dimensions)
-                    ]
-                )
-                self._keyindex = defaultdict(_fd)
-                self._keys = np.arange(self._dimsize)
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-
-        elif arr is not None:
-            self._arr = arr
-            self.properties.update(props)
-            self.__dict__.update(props)
-            self._state_dict = {"arr": arr * 1}
-            self._dimensions = arr.shape
-            self._dimsize = len(arr.shape)
-            self._data, self._cell_weights = _turn_tensor_to_data(arr * 1)
-            if labels is not None:
-                self._labels = OrderedDict(
-                    (category, np.array(values)) for category, values in labels.items()
-                )
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._keys = np.array(list(labels.keys()))
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-
-            else:
-                self._labels = OrderedDict(
-                    [
-                        (int(dim), np.arange(ct))
-                        for dim, ct in enumerate(self.dimensions)
-                    ]
-                )
-                self._keyindex = defaultdict(_fd)
-                self._keys = np.arange(self._dimsize)
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-        else:  # no entity, data or arr is given
-
-            if labels is not None:
-                self._labels = OrderedDict(
-                    (category, np.array(values)) for category, values in labels.items()
-                )
-                self._dimensions = tuple([len(labels[k]) for k in labels])
-                self._data = np.zeros((0, len(labels)), dtype=int)
-                self._cell_weights = {}
-                self._arr = np.empty(self._dimensions, dtype=int)
-                self._state_dict = {"arr": np.empty(self.dimensions, dtype=int)}
-                self._dimsize = len(self._dimensions)
-                self._keyindex = dict(
-                    zip(self._labels.keys(), np.arange(self._dimsize))
-                )
-                self._keys = np.array(list(labels.keys()))
-                self._index = {
-                    cat: dict(zip(self._labels[cat], np.arange(len(self._labels[cat]))))
-                    for cat in self._keys
-                }
-            else:
-                self._data = np.zeros((0, 0), dtype=int)
-                self._cell_weights = {}
-                self._arr = np.array([], dtype=int)
-                self._labels = OrderedDict([])
-                self._dimensions = tuple([])
-                self._dimsize = 0
-                self._keyindex = defaultdict(_fd)
-                self._keys = np.array([])
-                # self._index = lambda category, value: None
-                self._index = {
-                    cat: dict(
-                        zip(self._labels[cat], [None for i in len(self._labels[cat])])
-                    )
-                    for cat in self._keys
-                }
-
-            # if labels is a list of categorical values, then change it into an
-            # ordered dictionary?
-            self.properties = props
-            self.__dict__.update(props)  # keyed by the method name and signature
-
-        if len(self._labels) > 0:
-            self._labs = {
-                kdx: self._labels.get(self._keys[kdx], {})
-                for kdx in range(self._dimsize)
-            }
+        # create an empty Entity
+        # TODO: clean this up to be less hacky?
         else:
-            self._labs = {}
+            self._dataframe = pd.DataFrame()
+            self._data_cols = []
+            self._cell_weight_col = None
+            self._dimsize = 0
+            return
 
-        self._weights = [self._cell_weights[tuple(t)] for t in self._data]
-        self._memberships = None
+        # assign a new or existing column of the dataframe to hold cell weights
+        self._dataframe, self._cell_weight_col = assign_weights(
+            self._dataframe, weights=weights
+        )
+        # store a list of columns that hold entity data (not properties or weights)
+        self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
 
-    @property
-    def arr(self):
-        """
-        Tensor like representation of data indexed by labels with values given by incidence or cell weight.
+        # each entity data column represents one dimension of the data
+        # (data updates can only add or remove rows, so this isn't stored in state dict)
+        self._dimsize = len(self._data_cols)
 
-        Returns
-        -------
-        numpy.ndarray
-            A Numpy ndarray with dimensions equal dimensions of static entity. Entries are cell_weights.
-            self.data gives a list of nonzero coordinates aligned with cell_weights.
-        """
-        if self._arr is not None:
-            if type(self._arr) == int and self._arr == 0:
-                print("arr cannot be computed")
-        else:
-            try:
-                imat = np.zeros(self.dimensions, dtype=int)
-                for d in self._data:
-                    imat[tuple(d)] = self._cell_weights[tuple(d)]
-                self._arr = imat
-            except Exception as ex:
-                print(ex)
-                print("arr cannot be computed")
-                self._arr = 0
-        return self._arr  # Do we need to return anything here
+        # remove duplicate rows and aggregate cell weights as needed
+        self._dataframe, _ = remove_row_duplicates(
+            self._dataframe,
+            self._data_cols,
+            weights=self._cell_weight_col,
+            aggregateby=aggregateby,
+        )
+
+        # set the dtype of entity data columns to categorical (simplifies encoding, etc.)
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+            "category"
+        )
 
     @property
     def data(self):
-        """
-        Data array or tensor array of Static Entity
+        if "data" not in self._state_dict:
+            if self.empty:
+                self._state_dict["data"] = np.zeros((0, 0), dtype=int)
+            else:
+                # assumes dtype of data cols is categorical and dataframe not altered
+                self._state_dict["data"] = (
+                    self._dataframe[self._data_cols]
+                    .apply(lambda x: x.cat.codes)
+                    .to_numpy()
+                )
 
-        Returns
-        -------
-        numpy.ndarray
-            Two dimensional array. Each row has system ids of objects in the static entity.
-            Each column corresponds to one level of the static entity.
-
-        """
-
-        return np.array(self._data)
-
-    @property
-    def cell_weights(self):
-        """
-        User defined weights corresponding to unique rows in data.
-
-        Returns
-        -------
-        numpy.array
-            One dimensional array of values aligned to data.
-        """
-        return dict(self._cell_weights)
+        return self._state_dict["data"]
 
     @property
     def labels(self):
-        """
-        Ordered dictionary of labels
+        if "labels" not in self._state_dict:
+            # assumes dtype of data cols is categorical and dataframe not altered
+            self._state_dict["labels"] = {
+                col: self._dataframe[col].cat.categories.to_list()
+                for col in self._data_cols
+            }
 
-        Returns
-        -------
-        collections.OrderedDict
-            User defined identifiers for objects in static entity. Ordered keys correspond
-            levels. Ordered values correspond to integer representation of values in data.
-        """
-        return dict(self._labels)
+        return self._state_dict["labels"]
+
+    @property
+    def cell_weights(self):
+        if "cell_weights" not in self._state_dict:
+            if self.empty:
+                self._state_dict["cell_weights"] = {}
+            else:
+                self._state_dict["cell_weights"] = self._dataframe.set_index(
+                    self._data_cols
+                )[self._cell_weight_col].to_dict()
+
+        return self._state_dict["cell_weights"]
 
     @property
     def dimensions(self):
-        """
-        Dimension of Static Entity data
+        if "dimensions" not in self._state_dict:
+            if self.empty:
+                self._state_dict["dimensions"] = tuple()
+            else:
+                self._state_dict["dimensions"] = tuple(
+                    self._dataframe[self._data_cols].nunique()
+                )
 
-        Returns
-        -------
-        tuple
-            Tuple of number of distinct labels in each level, ordered by level.
-        """
-        return self._dimensions
+        return self._state_dict["dimensions"]
 
     @property
     def dimsize(self):
-        """
-        Number of categories in the data
-
-        Returns
-        -------
-        int
-            Number of levels in static entity, equals length of self.dimensions
-        """
         return self._dimsize
 
     @property
-    def keys(self):
-        """
-        Array of keys of labels
-
-        Returns
-        -------
-        np.ndarray
-            Array of label keys, ordered by level.
-        """
-        return self._keys
-
-    def keyindex(self, category):
-        """
-        Returns the index of a category in keys array
-
-        Returns
-        -------
-        int
-            Index osition of particular label in keys equal to the level of the
-            category.
-        """
-        return self._keyindex[category]
+    def properties(self):
+        return self._properties
 
     @property
     def uid(self):
-        """
-        User defined identifier for each object in static entity.
-
-        Returns
-        -------
-        str, int
-            Identifiers, which distinguish  objects within each level.
-        """
         return self._uid
 
     @property
     def uidset(self):
-        """
-        Returns a set of the string identifiers for Static Entity
-
-        Returns
-        -------
-        frozenset
-            Hashable  set of keys.
-        """
         return self.uidset_by_level(0)
 
     @property
-    def elements(self):
-        """
-        Keys and values in the order of insertion
-
-        Returns
-        -------
-        collections.OrderedDict
-            Same as elements_by_level with level1 = 0, level2 = 1.
-            Compare with EntitySet with level1 = elements, level2 = children.
-
-        """
-        try:
-            return dict(self._elements)
-        except:
-            if len(self._keys) == 1:
-                self._elements = {k: UserList() for k in self._labels[self._keys[0]]}
-                return dict(self._elements)
-            else:
-                self._elements = self.elements_by_level(0, translate=True)
-                return dict(self._elements)
-
-    @property
-    def memberships(self):
-        """
-        Reverses the elements dictionary
-
-        Returns
-        -------
-        collections.OrderedDict
-            Same as elements_by_level with level1 = 1, level2 = 0.
-        """
-        try:
-            return dict(self._memberships)
-        except:
-            # self._memberships = reverse_dictionary(self.elements)
-            # return self._memberships
-            if len(self._keys) == 1:
-                return None
-            else:
-                self._memberships = self.elements_by_level(1, 0, translate=True)
-                return dict(self._memberships)
-
-    @property
     def children(self):
-        """
-        Labels of keys of first index
+        return self.uidset_by_level(1)
 
-        Returns
-        -------
-        numpy.array
-            One dimensional array of labels in the second level.
+    def uidset_by_level(self, level):
+        col = self._data_cols[level]
+        return self.uidset_by_column(col)
 
-        """
-        try:
-            return set(self._labs[1])
-        except:
-            return
+    def uidset_by_column(self, column):
+        if "uidset" not in self._state_dict:
+            self._state_dict["uidset"] = {}
+        if column not in self._state_dict["uidset"]:
+            self._state_dict["uidset"][column] = set(
+                self._dataframe[column].dropna().unique()
+            )
+
+        return self._state_dict["uidset"][column]
+
+    @property
+    def elements(self):
+        if self._dimsize == 1:
+            return {k: UserList() for k in self.uidset}
+
+        return self.elements_by_level(0, 1)
 
     @property
     def incidence_dict(self):
-        """
-        Same as elements.
+        return self.elements
 
-        Returns
-        -------
-        collections.OrderedDict
-            Same as elements_by_level with level1 = 0, level2 = 1.
-            Compare with EntitySet with level1 = elements, level2 = children.
-        """
-        return self.elements_by_level(0, translate=True)
+    @property
+    def memberships(self):
+        return self.elements_by_level(1, 0)
+
+    def elements_by_level(self, level1, level2):
+        col1 = self._data_cols[level1]
+        col2 = self._data_cols[level2]
+        return self.elements_by_column(col1, col2)
+
+    def elements_by_column(self, col1, col2):
+        if "elements" not in self._state_dict:
+            self._state_dict["elements"] = defaultdict(dict)
+        if col2 not in self._state_dict["elements"][col1]:
+            elements = self._dataframe.groupby(col1)[col2].unique()
+            self._state_dict["elements"][col1][col2] = elements.apply(
+                UserList
+            ).to_dict()
+
+        return self._state_dict["elements"][col1][col2]
 
     @property
     def dataframe(self):
-        """
-        Returns the entity data in DataFrame format
+        return self._dataframe
 
-        Returns
-        -------
-        pandas.core.frame.DataFrame
-            Dataframe of user defined labels and keys as columns.
-        """
-        return self.turn_entity_data_into_dataframe(self.data)
+    @property
+    def isstatic(self):
+        return self._static
+
+    def size(self, level=0):
+        return self.dimensions[level]
+
+    @property
+    def empty(self):
+        return self._dimsize == 0
+
+    def is_empty(self, level=0):
+        return self.empty or self.size(level) == 0
 
     def __len__(self):
-        """
-        Returns the number of elements in Static Entity
-
-        Returns
-        -------
-        int
-            Number of distinct labels in level 0.
-        """
-        return self._dimensions[0]
-
-    def __str__(self):
-        """
-        Return the Static Entity uid
-
-        Returns
-        -------
-        string
-        """
-        return f"{self.uid}"
-
-    def __repr__(self):
-        """
-        Returns a string resembling the constructor for staticentity without any
-        children
-
-        Returns
-        -------
-        string
-        """
-        return f"StaticEntity({self._uid},{list(self.uidset)},{self.properties})"
+        return self.dimensions[0]
 
     def __contains__(self, item):
-        """
-        Defines containment for StaticEntity based on labels/categories.
-
-        Parameters
-        ----------
-        item : string
-
-        Returns
-        -------
-        bool
-        """
-        return item in np.concatenate(list(self._labels.values()))
+        return item in np.concatenate(list(self.labels.values()))
 
     def __getitem__(self, item):
-        """
-        Get value of key in E.elements
-
-        Parameters
-        ----------
-        item : string
-
-        Returns
-        -------
-        list
-        """
-        # return self.elements_by_level(0, 1, translate=True)[item]
         return self.elements[item]
 
     def __iter__(self):
-        """
-        Create iterator from E.elements
-
-        Returns
-        -------
-        odict_iterator
-        """
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        return iter(self._labs[label_index])
+        return iter(self.labels[self._data_cols[label_index]])
 
-    def size(self):
-        """
-        The number of elements in E, the size of dimension 0 in the E.arr
+    def __repr__(self):
+        return (
+            self.__class__.__name__
+            + f"({self._uid},{list(self.uidset)},{self.properties})"
+        )
 
-        Returns
-        -------
-        int
-        """
-        return len(self)
+    def index(self, column, value=None):
+        if "keyindex" not in self._state_dict:
+            self._state_dict["keyindex"] = {}
+        if column not in self._state_dict["keyindex"]:
+            self._state_dict["keyindex"][column] = self._dataframe[
+                self._data_cols
+            ].columns.get_loc(column)
 
-    def labs(self, kdx):
-        """
-        Retrieve labels by index in keys
+        if value is None:
+            return self._state_dict["keyindex"][column]
 
-        Parameters
-        ----------
-        kdx : int
-            index of key in E.keys
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        if value not in self._state_dict["index"][column]:
+            self._state_dict["index"][column][value] = self._dataframe[
+                column
+            ].cat.categories.get_loc(value)
 
-        Returns
-        -------
-        np.ndarray
-        """
-        return self._labs[kdx]
+        return (
+            self._state_dict["keyindex"][column],
+            self._state_dict["index"][column][value],
+        )
 
-    def is_empty(self, level=0):
-        """
-        Boolean indicating if entity.elements is empty
+    def indices(self, column, values):
+        if isinstance(values, Hashable):
+            values = [values]
 
-        Parameters
-        ----------
-        level : int, optional
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        for v in values:
+            if v not in self._state_dict["index"][column]:
+                self._state_dict["index"][column][v] = self._dataframe[
+                    column
+                ].cat.categories.get_loc(v)
 
-        Returns
-        -------
-        bool
-        """
-        return len(self._labs[level]) == 0
+        return [self._state_dict["index"][column][v] for v in values]
 
-    def uidset_by_level(self, level=0):
-        """
-        The labels found in columns = level
+    def translate(self, level, index):
+        column = self._data_cols[level]
 
-        Parameters
-        ----------
-        level : int, optional
+        if isinstance(index, (int, np.integer)):
+            return self.labels[column][index]
 
-        Returns
-        -------
-        frozenset
-        """
-        return frozenset(self._labs[level])  # should be update this to tuples?
+        return [self.labels[column][i] for i in index]
 
-    def elements_by_level(self, level1=0, level2=None, translate=False):
-        """
-        Elements of staticentity by specified column
+    def translate_arr(self, coords):
+        assert len(coords) == self._dimsize
 
-        Parameters
-        ----------
-        level1 : int, optional
-            edges
-        level2 : int, optional
-            nodes
-        translate : bool, optional
-            whether to replace indices with labels
+        translation = []
+        for level, index in enumerate(coords):
+            translation.append(self.translate(level, index))
 
-        Returns
-        -------
-        collections.defaultdict
+        return translation
 
-        think: level1 = edges, level2 = nodes
-        """
-        # Is there a better way to view a slice of self._arr?
-        if level1 > self.dimsize - 1 or level1 < 0:
-            print(f"This StaticEntity has no level {level1}.")
-            return
-        if level2 is None:
-            level2 = level1 + 1
+    def level(self, item, min_level=0, max_level=None, return_index=True):
+        if max_level is None or max_level >= self._dimsize:
+            max_level = self._dimsize - 1
 
-        if level2 > self.dimsize - 1 or level2 < 0:
-            print(f"This StaticEntity has no level {level2}.")
-            return
-            # elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])
-        elif level1 == level2:
-            print(f"level1 equals level2")
-            return
-            # elts = OrderedDict([[k, UserList()] for k in self._labs[level1]])
+        columns = self._data_cols[min_level : max_level + 1]
+        levels = range(min_level, max_level + 1)
 
-        temp, _ = remove_row_duplicates(self.data[:, [level1, level2]])
-        elts = DefaultOrderedDict(UserList)
-        for row in temp:
-            elts[row[0]].append(row[1])
+        for col, lev in zip(columns, levels):
+            if item in self.labels[col]:
+                if return_index:
+                    return self.index(col, item)
 
-        if translate:
-            telts = DefaultOrderedDict(UserList)
-            for kdx, vec in elts.items():
-                k = self._labs[level1][kdx]
-                for vdx in vec:
-                    telts[k].append(self._labs[level2][vdx])
-            return telts
-        else:
-            return elts
+                return lev
+
+        print(f'"{item}" not found.')
+        return None
+
+    def add(self, data, aggregateby="sum"):
+        # TODO: add from other data types
+        if self.isstatic:
+            raise HyperNetXError("Cannot add data to a static Entity")
+        if isinstance(data, pd.DataFrame) and all(
+            col in data for col in self._data_cols
+        ):
+            new_data = pd.concat((self._dataframe, data), ignore_index=True)
+            new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
+
+            self._dataframe, _ = remove_row_duplicates(
+                new_data,
+                self._data_cols,
+                weights=self._cell_weight_col,
+                aggregateby=aggregateby,
+            )
+
+            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                "category"
+            )
+            # TODO: check to see if we really need to clear everything
+            self._state_dict.clear()
+
+    def encode(self, data):
+        encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
+        return encoded_array
 
     def incidence_matrix(
         self, level1=0, level2=1, weights=False, aggregateby=None, index=False
     ):
-        """
-        Convenience method to navigate large tensor
-
-        Parameters
-        ----------
-        level1 : int, optional
-            indexes columns
-        level2 : int, optional
-            indexes rows
-        weights : bool, dict optional, default=False
-            If False all nonzero entries are 1.
-            If True all nonzero entries are filled by self.cell_weight
-            dictionary values, use :code:`aggregateby` to specify how duplicate
-            entries should have weights aggregated.
-            If dict, keys must be in (edge.uid, node.uid) form; only nonzero cells
-            in the incidence matrix will be updated by dictionary.
-        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : 'count'
-            Method to aggregate weights of duplicate rows in data. If None, then all cell weights
-            will be set to 1.
-        index : bool, optional
-
-        Returns
-        -------
-        scipy.sparse.csr.csr_matrix
-            Sparse matrix representation of incidence matrix for two levels of static entity.
-
-        Note
-        ----
-        In the context of hypergraphs think level1 = edges, level2 = nodes
-        """
         if self.dimsize < 2:
             warnings.warn("Incidence matrix requires two levels of data.")
             return None
-        if not weights:  # transpose from the beginning
-            if self.dimsize > 2:
-                temp, _ = remove_row_duplicates(self.data[:, [level2, level1]])
-            else:
-                temp = self.data[:, [level2, level1]]
-            result = csr_matrix((np.ones(len(temp)), temp.transpose()), dtype=int)
-        else:  # transpose after cell weights are added
-            if self.dimsize > 2:
-                temp, temp_weights = remove_row_duplicates(
-                    self.data[:, [level1, level2]],
-                    weights=self._weights,
-                    aggregateby=aggregateby,
-                )
-            else:
-                temp, temp_weights = self.data[:, [level1, level2]], self.cell_weights
 
-            if isinstance(weights, dict):
-                cat1 = self.keys[level1]
-                cat2 = self.keys[level2]
-                for k, v in weights:
-                    try:
-                        tdx = (self.index(cat1, k[0]), self.index(cat2, k[1]))
-                    except:
-                        HyperNetXError(
-                            f"{k} is not recognized as belonging to this system."
-                        )
-                    if temp_weights[tdx] != 0:
-                        temp_weights[tdx] = v
-                # weights = {(self.index(cat1, k[0]), self.index(cat2, k[1])): v for k, v in weights.items()}
-                # for k in weights:
-                #     if temp_weights[k] != 0::
-                #         temp_weights[k]=weights[k]
-            temp_weights = [temp_weights[tuple(t)] for t in temp]
-            dtype = int if aggregateby == "count" else float
-            result = csr_matrix(
-                (temp_weights, temp.transpose()), dtype=dtype
-            ).transpose()
+        data_cols = [self._data_cols[level2], self._data_cols[level1]]
+        weights = self._cell_weight_col if weights else None
 
-        if index:  # give index of rows then columns
-            return (
-                result,
-                {k: v for k, v in enumerate(self._labs[level2])},
-                {k: v for k, v in enumerate(self._labs[level1])},
-            )
-        else:
-            return result
+        df, weight_col = remove_row_duplicates(
+            self._dataframe,
+            data_cols,
+            weights=weights,
+            aggregateby=aggregateby,
+        )
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="count", uid=None):
-        """
-        Limit Static Entity data to specific levels
+        return csr_matrix(
+            (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
+        )
 
-        Parameters
-        ----------
-        levels : array
-            index of labels in data
-        weights : bool, optional, default : False
-            Whether or not to aggregate existing weights in self when restricting to levels.
-            If False then weights will be assigned 1.
-        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : 'count'
-            Method to aggregate cell_weights of duplicate rows in setsystem of type pandas.DataFrame.
-            If None then all cell_weights will be set to 1.
-        uid : None, optional
+    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
+        levels = [lev for lev in levels if lev < self._dimsize]
 
-        Returns
-        -------
-        Static Entity class
-            hnx.classes.staticentity.StaticEntity
-        """
-        if levels[0] >= self.dimsize:
-            return self.__class__()
-        # if len(levels) == 1:
-        #     if levels[0] >= self.dimsize:
-        #         return self.__class__()
-        #     else:
-        #         newlabels = OrderedDict(
-        #             [(self.keys[lev], self._labs[lev]) for lev in levels]
-        #         )
-        # return self.__class__(labels=newlabels)
-        else:
+        if levels:
+            cols = [self._data_cols[lev] for lev in levels]
+
+            weights = self._cell_weight_col if weights else None
+
             if weights:
-                weights = self._weights
-            else:
-                weights = None
-            if len(levels) == 1:
-                lev = levels[0]
-                newlabels = OrderedDict([(self._keys[lev], self._labs[lev])])
-                data = self.data[:, lev]
-                data = np.reshape(data, (len(data), 1))
-                return StaticEntity(
-                    data=data,
-                    weights=weights,
-                    aggregateby=aggregateby,
-                    labels=newlabels,
-                    uid=uid,
-                )
-            else:
-                data = self.data[:, levels]
-                newlabels = OrderedDict(
-                    [(self.keys[lev], self._labs[lev]) for lev in levels]
-                )
-                return self.__class__(
-                    data=data,
-                    weights=weights,
-                    aggregateby=aggregateby,
-                    labels=newlabels,
-                    uid=uid,
-                )
+                cols.append(weights)
 
-    def turn_entity_data_into_dataframe(
-        self, data_subset
-    ):  # add option to include multiplicities stored in properties
-        """
-        Convert rows of original data in StaticEntity to dataframe
+            entity = self._dataframe[cols]
 
-        Parameters
-        ----------
-        data : numpy.ndarray
-            Subset of the rows in the original data held in the StaticEntity
+            kwargs.update(entity=entity, weights=weights, aggregateby=aggregateby)
 
-        Returns
-        -------
-        pandas.core.frame.DataFrame
-            Columns and cell entries are derived from data and self.labels
-        """
-        df = pd.DataFrame(data=data_subset, columns=self.keys)
-        width = data_subset.shape[1]
-        for ddx, row in enumerate(data_subset):
-            nrow = [self.labs(idx)[row[idx]] for idx in range(width)]
-            df.iloc[ddx] = nrow
-        return df
+        return self.__class__(**kwargs)
 
-    def restrict_to_indices(
-        self, indices, level=0, uid=None
-    ):  # restricting to indices requires renumbering the labels.
-        """
-        Limit Static Entity data to specific indices of keys
-
-        Parameters
-        ----------
-        indices : array
-            array of category indices
-        level : int, optional
-            index of label
-        uid : None, optional
-
-        Returns
-        -------
-        Static Entity class
-            hnx.classes.staticentity.StaticEntity
-        """
-        indices = list(indices)
-        idx = np.concatenate(
-            [np.argwhere(self.data[:, level] == k) for k in indices], axis=0
-        ).transpose()[0]
-        temp = self.data[idx]
-        df = self.turn_entity_data_into_dataframe(temp)
-        return self.__class__(entity=df, uid=uid)
-
-    def translate(self, level, index):
-        """
-        Replaces a category index and value index with label
-
-        Parameters
-        ----------
-        level : int
-            category index of label
-        index : int
-            value index of label
-
-        Returns
-        -------
-         : numpy.array(str)
-        """
-        if isinstance(index, int):
-            return self._labs[level][index]
-        else:
-            return [self._labs[level][idx] for idx in index]
-
-    def translate_arr(self, coords):
-        """
-        Translates a single cell in the entity array
-
-        Parameters
-        ----------
-        coords : tuple of ints
-
-        Returns
-        -------
-        list
-        """
-        assert len(coords) == self.dimsize
-        translation = list()
-        for idx in range(self.dimsize):
-            translation.append(self.translate(idx, coords[idx]))
-        return translation
-
-    def index(self, category, value=None):
-        """
-        Returns dimension of category and index of value
-
-        Parameters
-        ----------
-        category : string
-        value : string, optional
-
-        Returns
-        -------
-        int or tuple of ints
-        """
-        if value is not None:
-            return self._keyindex[category], self._index[category][value]
-        else:
-            return self._keyindex[category]
-
-    def indices(self, category, values):
-        """
-        Returns dimension of category and index of values (array)
-
-        Parameters
-        ----------
-        category : string
-        values : single string or array of strings
-
-        Returns
-        -------
-        list
-        """
-        return [self._index[category][value] for value in values]
-
-    def level(self, item, min_level=0, max_level=None, return_index=True):
-        """
-        Returns first level item appears by order of keys from minlevel to maxlevel
-        inclusive
-
-        Parameters
-        ----------
-        item : string
-        min_level : int, optional
-        max_level : int, optional
-
-        return_index : bool, optional
-
-        Returns
-        -------
-        tuple
-        """
-        n = len(self.dimensions)
-        if max_level is not None:
-            n = min([max_level + 1, n])
-        for lev in range(min_level, n):
-            if item in self._labs[lev]:
-                if return_index:
-                    return lev, self._index[self._keys[lev]][item]
-                else:
-                    return lev
-        else:
-            print(f'"{item}" not found')
-            return None
-
-    # note the depth and registry methods may or may not be useful. We can add these later.
-
-##### ----- IN PROGRESS ADD/REMOVE CODE BELOW ----- #####
-
-    def add_element(self, item):
-        """
-        WIP, for now just adds a new (unique) row to data
-        """
-        
-        # check item does not already exist in data
-        if not np.any(np.equal(self._data,item).all(1)):
-            # concatenate item to data
-            # note: expand_dims(item,0) is used b/c we cannot concatenate a 1D array
-            #       to a 2D ndarray (need shapes (R,C) and (1,C))
-            self._data = np.concatenate((self._data, np.expand_dims(item,0)))
+    def restrict_to_indices(self, indices, level=0, **kwargs):
+        column = self._dataframe[self._data_cols[level]]
+        values = column.cat.categories[list(indices)]
+        entity = self._dataframe.loc[column.isin(values)]
+        for col in self._data_cols:
+            entity[col] = entity[col].cat.remove_unused_categories()
+        return self.__class__(entity=entity, **kwargs)
 
 
 class StaticEntitySet(StaticEntity):
-
-    """
-    .. _staticentityset:
-    """
-
     def __init__(
         self,
         entity=None,
         data=None,
-        arr=None,
+        static=True,
         labels=None,
         uid=None,
         level1=0,
         level2=1,
         weights=None,
         keep_weights=True,
-        aggregateby=None,
-        **props,
+        aggregateby="sum",
     ):
 
-        if entity is None:
-            if data is not None:
-                data = data[:, [level1, level2]]
-                arr = None
-            elif arr is not None:
-                data, cell_weights = _turn_tensor_to_data(arr)
-                weights = [cell_weights[tuple(t)] for t in data]
-                data = data[:, [level1, level2]]
-            if labels is not None:
-                keys = np.array(list(labels.keys()))
-                temp = OrderedDict()
-                for lev in [level1, level2]:
-                    if lev < len(keys):
-                        temp[keys[lev]] = labels[keys[lev]]
-                labels = temp
-            super().__init__(
-                data=data, weights=weights, labels=labels, uid=uid, **props
-            )
-        else:
-            if isinstance(entity, StaticEntity):
-                data = entity.data[:, [level1, level2]]
-                if keep_weights:
-                    weights = entity._weights
-                labels = OrderedDict(
-                    [(entity._keys[k], entity._labs[k]) for k in [level1, level2]]
-                )
-                super().__init__(
-                    data=data,
-                    labels=labels,
-                    uid=uid,
-                    weights=weights,
-                    aggregateby=aggregateby,
-                    **props,
-                )
-            elif isinstance(entity, StaticEntitySet):
-                if keep_weights:
-                    aggregateby = "last"
-                super().__init__(
-                    entity,
-                    weights=weights,
-                    keep_weights=keep_weights,
-                    aggregateby=aggregateby,
-                    **props,
-                )
+        if isinstance(entity, StaticEntity):
+            if keep_weights:
+                weights = entity._cell_weight_col
+            entity = entity.dataframe
 
-            elif isinstance(entity, pd.DataFrame):
-                cols = entity.columns[[level1, level2]]
-                super().__init__(
-                    entity=entity[cols],
-                    uid=uid,
-                    weights=weights,
-                    aggregateby=aggregateby,
-                    **props,
-                )
+        if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
+            if isinstance(weights, Hashable) and weights in entity:
+                columns = entity.columns.drop(weights)[[level1, level2]]
+                columns = columns.append(pd.Index([weights]))
             else:
-                # this presumes entity is an iterable of iterables or a dictionary
-                super().__init__(entity=entity, uid=uid, **props)
+                columns = entity.columns[[level1, level2]]
+            entity = entity[columns]
 
-    def __repr__(self):
-        """
-        Returns a string resembling the constructor for entityset without any
-        children
+        elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
+            data = data[:, (level1, level2)]
 
-        Returns
-        -------
-        string
-        """
-        return f"StaticEntitySet({self._uid},{list(self.uidset)},{self.properties})"
+        if isinstance(labels, dict) and len(labels) > 2:
+            label_keys = list(labels)
+            columns = (label_keys[level1], label_keys[level2])
+            labels = {col: labels[col] for col in columns}
 
-    def incidence_matrix(self, index=False, weights=False):
-        """
-        Incidence matrix of StaticEntitySet
-
-        Parameters
-        ----------
-        index : bool, optional
-
-        weight: bool, dict optional, default=False
-            If False all nonzero entries are 1.
-            If True all nonzero entries are filled by self.cell_weight
-            dictionary values.
-            If dict, keys must be in self.cell_weight keys; nonzero cells
-            will be updated by dictionary.
-
-
-        Returns
-        -------
-        scipy.sparse.csr.csr_matrix
-            Sparse matrix representation of incidence matrix for static entity set.
-        """
-        return StaticEntity.incidence_matrix(self, weights=weights, index=index)
-
-    def restrict_to(self, indices, uid=None):
-        """
-        Limit Static Entityset data to specific indices of keys
-
-        Parameters
-        ----------
-        indices : array
-            array of indices in keys
-        uid : None, optional
-
-        Returns
-        -------
-        StaticEntitySet
-            hnx.classes.staticentity.StaticEntitySet
-
-        """
-        return self.restrict_to_indices(indices, level=0, uid=uid)
-
-    def convert_to_entityset(self, uid):
-        """
-        Convert Static EntitySet into EntitySet with given uid.
-
-        Parameters
-        ----------
-        uid : string
-
-        Returns
-        -------
-        EntitySet
-            hnx.classes.entity.EntitySet
-        """
-        return EntitySet(uid, self.incidence_dict)
-
-    def collapse_identical_elements(
-        self,
-        uid=None,
-        return_equivalence_classes=False,
-    ):
-        """
-        Returns StaticEntitySet after collapsing elements if they have same children
-        If no elements share same children, a copy of the original StaticEntitySet is returned
-
-        Parameters
-        ----------
-        uid : None, optional
-        return_equivalence_classes : bool, optional
-            If True, return a dictionary of equivalence classes keyed by new edge names
-
-
-        Returns
-        -------
-        StaticEntitySet
-            hnx.classes.staticentity.StaticEntitySet
-        """
-        shared_children = DefaultOrderedDict(list)
-        for k, v in self.elements.items():
-            shared_children[frozenset(v)].append(k)
-        new_entity_dict = OrderedDict(
-            [
-                # (
-                #     f"{next(iter(v))}:{len(v)}",
-                #     sorted(set(k), key=lambda x: list(self.labs(1)).index(x)),
-                # )
-                (
-                    f"{next(iter(v))}:{len(v)}",
-                    sorted(set(k), key=lambda x: self.index(self._keys[1], x)),
-                )
-                for k, v in shared_children.items()
-            ]
+        super().__init__(
+            entity=entity,
+            data=data,
+            static=static,
+            labels=labels,
+            uid=uid,
+            weights=weights,
+            aggregateby=aggregateby,
         )
-        if return_equivalence_classes:
-            eq_classes = OrderedDict(
-                [
-                    (
-                        f"{next(iter(v))}:{len(v)}",
-                        v
-                        # sorted(v, key=lambda x: self.index(self._keys[0], x)),  ## not sure why sorting is important here
-                    )
-                    for k, v in shared_children.items()
-                ]
-            )
-            return StaticEntitySet(uid=uid, entity=new_entity_dict), eq_classes
-        else:
-            return StaticEntitySet(uid=uid, entity=new_entity_dict)
+
+    @property
+    def memberships(self):
+        if self._dimsize == 1:
+            return self._state_dict.get("memberships")
+
+        return super().memberships
+
+    def restrict_to_levels(
+        self, levels, weights=False, aggregateby="sum", keep_memberships=True, **kwargs
+    ):
+        restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
+
+        if keep_memberships:
+            restricted._state_dict["memberships"] = self.memberships
+
+        return restricted
+
+    def restrict_to(self, indices, **kwargs):
+        return self.restrict_to_indices(indices,**kwargs)
 
 
-def _turn_tensor_to_data(arr):
+def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
-    Return list of nonzero coordinates in arr.
-
     Parameters
     ----------
-    arr : numpy.ndarray
-        Tensor corresponding to incidence of co-occurring labels.
+    df : pandas.DataFrame
+        A DataFrame to assign a weight column to
+    weights : array-like or Hashable, optional
+        If numpy.ndarray with the same length as df, create a new weight column with
+        these values.
+        If Hashable, must be the name of a column of df to assign as the weight column
+        Otherwise, create a new weight column assigning a weight of 1 to every row
+    weight_col : Hashable
+        Name for new column if one is created (not used if the name of an existing
+        column is passed as weights)
+
+    Returns
+    -------
+    df : pandas.DataFrame
+        The original DataFrame with a new column added if needed
+    weight_col : str
+        Name of the column assigned to hold weights
     """
-    temp = np.array(arr.nonzero()).T
-    return temp, {tuple(t): arr[tuple(t)] for t in temp}
-
-
-def _turn_dict_to_staticentity(dict_object):
-    """Create a static entity directly from a dictionary of hashables"""
-    d = OrderedDict(dict_object)
-    level2ctr = HNXCount()
-    level1ctr = HNXCount()
-    level2 = DefaultOrderedDict(level2ctr)
-    level1 = DefaultOrderedDict(level1ctr)
-    coords = list()
-    for k, val in d.items():
-        level1[k]
-        for v in val:
-            level2[v]
-            coords.append((level1[k], level2[v]))
-    coords, counts = remove_row_duplicates(coords, aggregateby="count")
-    level1 = np.array(list(level1))
-    level2 = np.array(list(level2))
-    data = np.array(coords, dtype=int)
-    labels = OrderedDict({"0": level1, "1": level2})
-    return data, labels, counts
-
-
-def _turn_iterable_to_staticentity(iter_object):
-    for s in iter_object:
-        if not isinstance(s, Iterable):
-            raise HyperNetXError(
-                "The entity data type not recognized. Iterables must be iterable of iterables."
-            )
+    if isinstance(weights, (list, np.ndarray)) and len(weights) == len(df):
+        df[weight_col] = weights
+    elif isinstance(weights, Hashable) and weights in df:
+        weight_col = weights
     else:
-        labels = [f"e{str(x)}" for x in range(len(iter_object))]
-        dict_object = dict(zip(labels, iter_object))
-    return _turn_dict_to_staticentity(dict_object)
+        df[weight_col] = np.ones(len(df), dtype=int)
+
+    return df, weight_col
 
 
-def _turn_dataframe_into_entity(
-    df, weights=None, aggregateby=None, include_unknowns=False
-):
+def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
     """
-    Convenience method to reformat dataframe object into data,labels format
-    for construction of a static entity
+    Removes and aggregates duplicate rows of a DataFrame using groupby
 
     Parameters
     ----------
     df : pandas.DataFrame
-        May not contain nans
-    weights : array-like, optional, default : None
-        User specified weights corresponding to data, length must equal number
-        of rows in data. If None, weight for all rows is assumed to be 1.
-    aggregateby : str, optional, {None, 'last', count', 'sum', 'mean', 'median', max', 'min', 'first', 'last'}, default : 'count'
-        Method to aggregate cell_weights of duplicate rows in data.
-    include_unknowns : bool, optional, default : False
-        If Unknown <column name> was used to fill in nans
+        A DataFrame to remove or aggregate duplicate rows from
+    data_cols : list
+        A list of column names in df to perform the groupby on / remove duplicates from
+    weights : array-like or Hashable, optional
+        Argument passed to assign_weights
+    aggregateby : str, optional, default='sum'
+        A valid aggregation method for pandas groupby
+        If None, drop duplicates without aggregating weights
 
     Returns
     -------
-    outputdata : numpy.ndarray
-    slabels : numpy.array of strings
-    cell_weights : dict
-
+    df : pandas.DataFrame
+        The DataFrame with duplicate rows removed or aggregated
+    weight_col : Hashable
+        The name of the column holding aggregated weights, or None if aggregateby=None
     """
-    columns = df.columns
-    ctr = [HNXCount() for c in range(len(columns))]
-    ldict = OrderedDict()
-    rdict = OrderedDict()
-    for idx, c in enumerate(columns):
-        ldict[c] = defaultdict(ctr[idx])  # TODO make this an Ordered default dict
-        rdict[c] = OrderedDict()
-        if include_unknowns:
-            ldict[c][f"Unknown {c}"]
-            # TODO: update this to take a dict assign for each column
-            rdict[c][0] = f"Unknown {c}"
-        for k in df[c]:
-            ldict[c][k]
-            rdict[c][ldict[c][k]] = k
-        ldict[c] = dict(ldict[c])
-    dims = tuple([len(ldict[c]) for c in columns])
+    df = df.copy()
+    categories = {}
+    for col in data_cols:
+        if df[col].dtype.name == "category":
+            categories[col] = df[col].cat.categories
+            df[col] = df[col].astype(categories[col].dtype)
 
-    m = len(df)
-    n = len(columns)
-    data = np.zeros((m, n), dtype=int)
-    for rid in range(m):
-        for cid in range(n):
-            c = columns[cid]
-            data[rid, cid] = ldict[c][df.iloc[rid][c]]
+    if not aggregateby:
+        df = df.drop_duplicates(subset=data_cols)
 
-    output_data = remove_row_duplicates(data, weights=weights, aggregateby=aggregateby)
+    df, weight_col = assign_weights(df, weights=weights)
 
-    slabels = OrderedDict()
-    for cdx, c in enumerate(columns):
-        slabels.update({c: np.array(list(ldict[c].keys()))})
-    return output_data[0], slabels, output_data[1]
+    if aggregateby:
+        df = df.groupby(data_cols, as_index=False, sort=False).agg(
+            {weight_col: aggregateby}
+        )
 
+    for col in categories:
+        df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
 
-# helpers
-def _fd():
-    return None
+    return df, weight_col

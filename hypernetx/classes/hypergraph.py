@@ -10,7 +10,7 @@ import pandas as pd
 from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
 from collections import OrderedDict, defaultdict
 from hypernetx.classes.entity import Entity, EntitySet
-from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
+from hypernetx.classes.dfentity import StaticEntity, StaticEntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import not_implemented_for
 
@@ -144,61 +144,49 @@ class Hypergraph:
                 use_nwhy = False
         else:
             self.nwhy = False
-        if not name:
-            self.name = ""
+
+        self.name = name or ""
+
+        # for testing purposes, set static True for all hypergraphs for now
+        self._static = True
+        if setsystem is None:
+            self._edges = StaticEntitySet()
+            self._nodes = StaticEntitySet()
         else:
-            self.name = name
-
-        if static == True or (
-            isinstance(setsystem, StaticEntitySet)
-            or isinstance(setsystem, StaticEntity)
-            or isinstance(setsystem, pd.DataFrame)
-        ):
-            self._static = True
-            if setsystem is None:
-                self._edges = StaticEntitySet()
-                self._nodes = StaticEntitySet()
-            else:
-                if weights is not None:
-                    E = StaticEntitySet(
-                        entity=setsystem, weights=weights, aggregateby=aggregateby
-                    )
-                else:
-                    E = StaticEntitySet(entity=setsystem)
-                self._edges = E
-                self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
-                self._nodes._memberships = E.memberships
-                for n in self._nodes:
-                    self._nodes[n].memberships = self._nodes._memberships[n]  ### a bit of a hack to get same functionality from static as dynamic
-                                                                            ### we will have to see if it slows things down too much
-        else:
-            self._static = False
-            if setsystem is None:
-                setsystem = EntitySet("_", elements=[])
-            elif isinstance(setsystem, Entity):
-                setsystem = EntitySet("_", setsystem.incidence_dict)
-            elif isinstance(setsystem, dict):
-                # Must be a dictionary with values equal to iterables of Entities and hashables.
-                # Keys will be uids for new edges and values of the dictionary will generate the nodes.
-                setsystem = EntitySet("_", setsystem)
-            elif not isinstance(setsystem, EntitySet):
-                # If no ids are given, return default ids indexed by position in iterator
-                # This should be an iterable of sets
-                edge_labels = [self.name + str(x) for x in range(len(setsystem))]
-                setsystem = EntitySet("_", dict(zip(edge_labels, setsystem)))
-
-            _reg = setsystem.registry
-            _nodes = {k: Entity(k, **_reg[k].properties) for k in _reg}
-            _elements = {j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
-            _edges = {
-                j: Entity(j, elements=_elements[j].values(), **setsystem[j].properties)
-                for j in setsystem
-            }
-
-            self._edges = EntitySet(
-                f"{self.name}:Edges", elements=_edges.values(), **setsystem.properties
+            E = StaticEntitySet(
+                entity=setsystem, weights=weights, aggregateby=aggregateby
             )
-            self._nodes = EntitySet(f"{self.name}:Nodes", elements=_nodes.values())
+            self._edges = E
+            self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
+
+        # else:
+        #     self._static = False
+        #     if setsystem is None:
+        #         setsystem = EntitySet("_", elements=[])
+        #     elif isinstance(setsystem, Entity):
+        #         setsystem = EntitySet("_", setsystem.incidence_dict)
+        #     elif isinstance(setsystem, dict):
+        #         # Must be a dictionary with values equal to iterables of Entities and hashables.
+        #         # Keys will be uids for new edges and values of the dictionary will generate the nodes.
+        #         setsystem = EntitySet("_", setsystem)
+        #     elif not isinstance(setsystem, EntitySet):
+        #         # If no ids are given, return default ids indexed by position in iterator
+        #         # This should be an iterable of sets
+        #         edge_labels = [self.name + str(x) for x in range(len(setsystem))]
+        #         setsystem = EntitySet("_", dict(zip(edge_labels, setsystem)))
+
+        #     _reg = setsystem.registry
+        #     _nodes = {k: Entity(k, **_reg[k].properties) for k in _reg}
+        #     _elements = {j: {k: _nodes[k] for k in setsystem[j]} for j in setsystem}
+        #     _edges = {
+        #         j: Entity(j, elements=_elements[j].values(), **setsystem[j].properties)
+        #         for j in setsystem
+        #     }
+
+        #     self._edges = EntitySet(
+        #         f"{self.name}:Edges", elements=_edges.values(), **setsystem.properties
+        #     )
+        #     self._nodes = EntitySet(f"{self.name}:Nodes", elements=_nodes.values())
         if self._static:
             temprows, tempcols = self.edges.data.T
             tempdata = np.ones(len(temprows), dtype=int)
@@ -371,9 +359,8 @@ class Hypergraph:
         : int
             internal id assigned at construction
         """
-        kdx = (edges + 1) % 2
-        # return list(self.edges.labs(kdx)).index(uid)
-        return int(np.argwhere(self.edges.labs(kdx) == uid)[0])
+        column = self.edges._data_cols[int(not edges)]
+        return self.edges.index(column, uid)[1]
 
     @not_implemented_for("dynamic")
     def get_name(self, id, edges=False):
@@ -393,8 +380,8 @@ class Hypergraph:
         str
             User provided name/id/label for hypergraph object
         """
-        kdx = (edges + 1) % 2
-        return self.edges.labs(kdx)[id]
+        level = int(not edges)
+        return self.edges.translate(level, id)
 
     @not_implemented_for("dynamic")
     def get_linegraph(self, s, edges=True, use_nwhy=True):
@@ -687,13 +674,13 @@ class Hypergraph:
         """
         if self.isstatic:
             ndx = self.get_id(node)
-            if self.nwhy:                
+            if self.nwhy:
                 return self.g.degree(ndx, min_size=s, max_size=None)
             else:
                 memberships = set(self.nodes.memberships[node])
         else:
             memberships = set(self.nodes[node].memberships)
-                                  
+
         if max_size is not None:
             return len(
                 set(
@@ -726,7 +713,7 @@ class Hypergraph:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
-                edx = self.get_id(edge,edges=True)
+                edx = self.get_id(edge, edges=True)
                 return self.g.size(edx)
             else:
                 return len(self.edges[edge])
@@ -1116,42 +1103,36 @@ class Hypergraph:
 
         """
         if self.isstatic:
-            if weights == False:
-                mat = self.state_dict.get("incidence_matrix", None)
-                if mat is None:
-                    mat = self.edges.incidence_matrix()
-                    self.state_dict["incidence_matrix"] = mat
-                if index:
-                    rdict = dict(enumerate(self.edges.labs(1)))
-                    cdict = dict(enumerate(self.edges.labs(0)))
-                    return mat, rdict, cdict
-                else:
-                    return mat
-            if weights == True:
-                mat = self.state_dict.get("weighted_incidence_matrix", None)
-                if mat is None:
-                    mat = self.edges.incidence_matrix(weights=True)
-                    self.state_dict["weighted_incidence_matrix"] = mat
-                if index:
-                    rdict = dict(enumerate(self.edges.labs(1)))
-                    cdict = dict(enumerate(self.edges.labs(0)))
-                    return mat, rdict, cdict
-                else:
-                    return mat
+            sdkey = "incidence_matrix"
+            if weights:
+                sdkey = "weighted_" + sdkey
+
+            if sdkey not in self.state_dict:
+                self.state_dict[sdkey] = self.edges.incidence_matrix(weights=weights)
+
+            if index:
+                edgecol, nodecol = self.edges._data_cols
+                rdict = dict(enumerate(self.edges.labels[nodecol]))
+                cdict = dict(enumerate(self.edges.labels[edgecol]))
+
+                return self.state_dict[sdkey], rdict, cdict
+
+            return self.state_dict[sdkey]
+
         else:
             return self.edges.incidence_matrix(index=index)
 
     @staticmethod
     def _incidence_to_adjacency(M, s=1, weights=False):
         """
-        Helper method to obtain adjacency matrix from 
+        Helper method to obtain adjacency matrix from
         boolean incidence matrix for s-metrics.
         Self loops are not supported.
         The adjacency matrix will define an s-linegraph.
 
         Parameters
         ----------
-        M : scipy.sparse.csr.csr_matrix 
+        M : scipy.sparse.csr.csr_matrix
             incidence matrix of 0's and 1's
 
         s : int, optional, default: 1
@@ -1166,7 +1147,7 @@ class Hypergraph:
 
         """
         M = csr_matrix(M)
-        weights = False ## currently weighting is not supported
+        weights = False  ## currently weighting is not supported
 
         if weights == False:
             A = M.dot(M.transpose())
@@ -1174,8 +1155,7 @@ class Hypergraph:
             A = (A >= s) * 1
         return A
 
-
-    def adjacency_matrix(self, index=False, s=1):## , weights=False):
+    def adjacency_matrix(self, index=False, s=1):  ## , weights=False):
         """
         The sparse weighted :term:`s-adjacency matrix`
 
@@ -1197,7 +1177,7 @@ class Hypergraph:
         row dictionary : dict
 
         """
-        weights = False ## Currently default weights are not supported.
+        weights = False  ## Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
             return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
@@ -1232,7 +1212,7 @@ class Hypergraph:
         If index=True, returns a dictionary column_index:edge_uid
 
         """
-        weights=False  ## Currently default weights are not supported
+        weights = False  ## Currently default weights are not supported
 
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
@@ -1578,7 +1558,7 @@ class Hypergraph:
         """
         if self._static:
             E = self._edges
-            setsystem = E.restrict_to(sorted(E.indices(E.keys[0], list(edgeset))))
+            setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(edgeset))))
             return Hypergraph(setsystem, name=name, use_nwhy=self.nwhy)
         else:
             inneredges = set()
