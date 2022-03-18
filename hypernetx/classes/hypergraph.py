@@ -9,8 +9,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
 from collections import OrderedDict, defaultdict
-from hypernetx.classes.entity import Entity, EntitySet
-from hypernetx.classes.dfentity import StaticEntity, StaticEntitySet
+from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import not_implemented_for
 
