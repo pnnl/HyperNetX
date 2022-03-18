@@ -177,7 +177,7 @@ def test_restrict_to_nodes(sbs_hypergraph):
     assert len(H1.nodes) == 3
     assert len(H1.edges) == 5
     assert "C" in H.edges["P"]
-    assert not "C" in H1.edges["P"]
+    assert "C" not in H1.edges["P"]
 
 
 # def test_remove_from_restriction(triloop):
@@ -199,10 +199,10 @@ def test_toplexes(sbsd_hypergraph):
 def test_is_connected():
     setsystem = [{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
-    assert h.is_connected() == True
-    assert h.is_connected(s=2) == False
-    assert h.is_connected(s=2, edges=True) == True
-    assert h.is_connected(s=3, edges=True) == False
+    assert h.is_connected() is True
+    assert h.is_connected(s=2) is False
+    assert h.is_connected(s=2, edges=True) is True
+    assert h.is_connected(s=3, edges=True) is False
 
 
 # def test_singletons():

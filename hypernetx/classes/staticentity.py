@@ -365,7 +365,7 @@ class StaticEntity(object):
         if max_level is None or max_level >= self._dimsize:
             max_level = self._dimsize - 1
 
-        columns = self._data_cols[min_level : max_level + 1]
+        columns = self._data_cols[min_level: max_level + 1]
         levels = range(min_level, max_level + 1)
 
         for col, lev in zip(columns, levels):
@@ -516,7 +516,7 @@ class StaticEntitySet(StaticEntity):
         return restricted
 
     def restrict_to(self, indices, **kwargs):
-        return self.restrict_to_indices(indices,**kwargs)
+        return self.restrict_to_indices(indices, **kwargs)
 
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):

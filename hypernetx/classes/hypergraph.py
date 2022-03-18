@@ -137,7 +137,7 @@ class Hypergraph:
 
                 self.nwhy = True
 
-            except:
+            except Exception:
                 self.nwhy = False
                 print("NWHypergraph is not available. Will continue with static=True.")
                 use_nwhy = False
@@ -734,7 +734,7 @@ class Hypergraph:
         if nodeset:
             return len([n for n in self.nodes if n in nodeset])
         else:
-            if self.nwhy == True:
+            if self.nwhy:
                 return self.g.number_of_nodes()
             else:
                 return len(self.nodes)
@@ -755,7 +755,7 @@ class Hypergraph:
         if edgeset:
             return len([e for e in self.edges if e in edgeset])
         else:
-            if self.nwhy == True:
+            if self.nwhy:
                 return self.g.number_of_edges()
             else:
                 return len(self.edges)
@@ -797,14 +797,14 @@ class Hypergraph:
             List of neighbors
 
         """
-        if not node in self.nodes:
+        if node not in self.nodes:
             print(f"Node is not in hypergraph {self.name}.")
             return
 
         if self.isstatic:
             g = self.get_linegraph(s=s, edges=False)
             ndx = self.get_id(node)
-            if self.nwhy == True:
+            if self.nwhy:
                 nbrs = g.s_neighbors(ndx)
             else:
                 nbrs = list(g.neighbors(ndx))
@@ -843,14 +843,14 @@ class Hypergraph:
             List of edge neighbors
 
         """
-        if not edge in self.edges:
+        if edge not in self.edges:
             print(f"Edge is not in hypergraph {self.name}.")
             return
 
         if self.isstatic:
             g = self.get_linegraph(s=s, edges=True)
             edx = self.get_id(edge, edges=True)
-            if self.nwhy == True:
+            if self.nwhy:
                 nbrs = g.s_neighbors(edx)
             else:
                 nbrs = list(g.neighbors(edx))
@@ -875,7 +875,7 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        if not node in self._nodes:
+        if node not in self._nodes:
             return self
         else:
             if not isinstance(node, Entity):
@@ -1146,15 +1146,15 @@ class Hypergraph:
 
         """
         M = csr_matrix(M)
-        weights = False  ## currently weighting is not supported
+        weights = False  # currently weighting is not supported
 
-        if weights == False:
+        if weights is False:
             A = M.dot(M.transpose())
             A.setdiag(0)
             A = (A >= s) * 1
         return A
 
-    def adjacency_matrix(self, index=False, s=1):  ## , weights=False):
+    def adjacency_matrix(self, index=False, s=1):  # , weights=False):
         """
         The sparse weighted :term:`s-adjacency matrix`
 
@@ -1176,7 +1176,7 @@ class Hypergraph:
         row dictionary : dict
 
         """
-        weights = False  ## Currently default weights are not supported.
+        weights = False  # Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
             return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
@@ -1211,7 +1211,7 @@ class Hypergraph:
         If index=True, returns a dictionary column_index:edge_uid
 
         """
-        weights = False  ## Currently default weights are not supported
+        weights = False  # Currently default weights are not supported
 
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
@@ -1643,7 +1643,7 @@ class Hypergraph:
 
         if collapse:
             msg = """
-            collapse, return_counts, and use_reps are no longer supported keyword arguments 
+            collapse, return_counts, and use_reps are no longer supported keyword arguments
             and will throw an error in the next release.
             """
             warnings.warn(msg, DeprecationWarning)

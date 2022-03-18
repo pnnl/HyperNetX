@@ -26,7 +26,7 @@ def test_staticentity_property(harry_potter):
     assert len(ent.uidset) == 7
     assert len(ent.elements) == 7
     assert isinstance(ent.elements["Hufflepuff"], UserList)
-    assert ent.is_empty(2) == False
+    assert ent.is_empty(2) is False
     assert len(ent.incidence_dict["Gryffindor"]) == 6
     # assert ent.keyindex("House") == 0
 
@@ -62,7 +62,7 @@ def test_staticentity_custom_attributes(harry_potter):
     assert isinstance(ent.__str__(), str)
     assert isinstance(ent.__repr__(), str)
     assert isinstance(ent.__contains__("Muggle"), bool)
-    assert ent.__contains__("Muggle") == True
+    assert ent.__contains__("Muggle") is True
     assert ent.__getitem__("Slytherin") == [
         "Half-blood",
         "Pure-blood",
@@ -78,7 +78,7 @@ def test_staticentity_level(seven_by_six):
     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
     assert ent.level("I") == (0, 5)
     assert ent.level("K") == (1, 3)
-    assert ent.level("K", max_level=0) == None
+    assert ent.level("K", max_level=0) is None
 
 
 def test_staticentity_uidset_by_level(seven_by_six):
@@ -91,7 +91,7 @@ def test_staticentity_uidset_by_level(seven_by_six):
 def test_staticentity_elements_by_level(seven_by_six):
     sbs = seven_by_six
     ent = StaticEntity(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent.elements_by_level(0,1)
+    assert ent.elements_by_level(0, 1)
 
 
 def test_staticentity_incidence_matrix(seven_by_six):
