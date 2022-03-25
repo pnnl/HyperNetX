@@ -386,6 +386,7 @@ class StaticEntity(object):
     def add_elements_from(self, arg_set):
         for item in arg_set:
             self.add_element(item)
+            print('test')
         return self
 
     def add_element(self, data):
