@@ -378,10 +378,28 @@ class StaticEntity(object):
         print(f'"{item}" not found.')
         return None
 
-    def add(self, data, aggregateby="sum"):
-        # TODO: add from other data types
-        if self.isstatic:
-            raise HyperNetXError("Cannot add data to a static Entity")
+    def add(self, *args):
+        for item in args:
+            self.add_element(item)
+        return self
+
+    def add_elements_from(self, arg_set):
+        for item in arg_set:
+            self.add_element(item)
+        return self
+
+    def add_element(self, data):
+        if isinstance(data, StaticEntity):
+            if data.uid = self.uid:
+                raise HyperNetXError(
+                    f"Error: Self reference in submitted elements."
+                    f" Entity {self.uid} may not contain itself. "
+                )
+        elif data in self:
+
+            
+        if isinstance(data, dict):
+
         if isinstance(data, pd.DataFrame) and all(
             col in data for col in self._data_cols
         ):
@@ -392,14 +410,13 @@ class StaticEntity(object):
                 new_data,
                 self._data_cols,
                 weights=self._cell_weight_col,
-                aggregateby=aggregateby,
             )
 
             self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
                 "category"
             )
-            # TODO: check to see if we really need to clear everything
             self._state_dict.clear()
+        return self
 
     def encode(self, data):
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
