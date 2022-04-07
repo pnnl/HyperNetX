@@ -387,25 +387,26 @@ class StaticEntity(object):
     def add_elements_from(self, arg_set):
         for item in arg_set:
             self.add_element(item)
-            print('test')
         return self
 
     def add_element(self, data):
         if isinstance(data, StaticEntity):
-            if data.uid = self.uid:
-                raise HyperNetXError(
-                    f"Error: Self reference in submitted elements."
-                    f" Entity {self.uid} may not contain itself. "
-                )
-        elif data in self:
+            df = data.dataframe
+            self.__add_from_dataframe(df)
 
-            
         if isinstance(data, dict):
+            df = pd.DataFrame.from_dict(data)
+            self.__add_from_dataframe(df)
 
-        if isinstance(data, pd.DataFrame) and all(
-            col in data for col in self._data_cols
-        ):
-            new_data = pd.concat((self._dataframe, data), ignore_index=True)
+        if isinstance(data, pd.DataFrame):
+            self.__add_from_dataframe(data)
+
+        #Todo: list of lists
+        return self
+
+    def __add_from_dataframe(self, df):
+        if all(col in df for col in self._data_cols):
+            new_data = pd.concat((self._dataframe, df), ignore_index=True)
             new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
 
             self._dataframe, _ = remove_row_duplicates(
@@ -418,6 +419,34 @@ class StaticEntity(object):
                 "category"
             )
             self._state_dict.clear()
+
+    def remove(self, *args):
+        for item in args:
+            self.remove_element(item)
+        return self
+
+    def remove_elements_from(self, arg_set):
+        for item in arg_set:
+            self.remove_element(item)
+        return self
+
+    def remove_element(self, column):
+        if type(column) == int:
+            if len(self._data_cols) > column:
+                self._dataframe = self._dataframe.drop(self._dataframe.columns[column], axis=1)
+            else:
+                warnings.warn("Column Index out of range, cannot delete column.")
+        elif type(column) == str:
+            print(column)
+            if column in self._data_cols:
+                self._dataframe = self._dataframe.drop(column, axis=1)
+            else:
+
+                warnings.warn("Column does not exist in Entity, cannot delete column.")
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                "category"
+            )
+        self._state_dict.clear()
         return self
 
     def encode(self, data):
