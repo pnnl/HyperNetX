@@ -1,3 +1,4 @@
+import warnings
 from hypernetx import *
 import pandas as pd
 from pandas.api.types import CategoricalDtype

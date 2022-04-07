@@ -917,13 +917,13 @@ class Hypergraph:
         for node in nodes:
             if node in self._edges:
                 raise HyperNetXError("Node already an edge.")
-            elif node in self._nodes and isinstance(node, Entity):
-                self._nodes[node].__dict__.update(node.properties)
+            #elif node in self._nodes and isinstance(node, Entity):
+                #self._nodes[node].__dict__.update(node.properties)
             elif node not in self._nodes:
-                if isinstance(node, Entity):
-                    self._nodes.add(Entity(node.uid, **node.properties))
+                if isinstance(node, StaticEntity):
+                    self._nodes.add(node)
                 else:
-                    self._nodes.add(Entity(node))
+                    self._nodes.add(StaticEntity(node))
 
     @not_implemented_for("static")
     def add_edge(self, edge):
