@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reports.descriptive_stats &mdash; HyperNetX 1.2.3 documentation</title>
+  <title>reports.descriptive_stats &mdash; HyperNetX 1.2.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -433,62 +433,63 @@
 <span class="sd">     dist_stats : dict</span>
 <span class="sd">        Dictionary which keeps track of each of the above items (e.g., basic[&#39;nrows&#39;] = the number of nodes in H)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">cstats</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">]</span>
-        <span class="n">basic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">H</span><span class="o">.</span><span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;dist_stats&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Number of rows (nodes), columns (edges), and aspect ratio</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;aspect ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span>
+    <span class="n">cstats</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">]</span>
+    <span class="n">basic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="c1"># Number of cells and density</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">nnz</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">])</span>
+    <span class="c1"># Number of rows (nodes), columns (edges), and aspect ratio</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;aspect ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Node degree distribution</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]))</span>
-        <span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max node degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
+    <span class="c1"># Number of cells and density</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">incidence_matrix</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">nnz</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncells&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">])</span>
 
-        <span class="c1"># Edge size distribution</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]))</span>
-        <span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max edge size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">])</span>
+    <span class="c1"># Node degree distribution</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">]))</span>
+    <span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max node degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;node degree list&quot;</span><span class="p">])</span>
 
-        <span class="c1"># Component size distribution (nodes)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]))</span>
-        <span class="p">)</span>
+    <span class="c1"># Edge size distribution</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edge_size_dist</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">]))</span>
+    <span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size list&quot;</span><span class="p">])</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;max edge size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;edge size hist&quot;</span><span class="p">])</span>
 
-        <span class="c1"># Component size distribution (edges)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">])</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]))</span>
-        <span class="p">)</span>
+    <span class="c1"># Component size distribution (nodes)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">]))</span>
+    <span class="p">)</span>
 
-        <span class="c1"># Number of components</span>
-        <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;num comps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
+    <span class="c1"># Component size distribution (edges)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges hist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">])</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges centrality stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">cstats</span><span class="p">,</span> <span class="n">centrality_stats</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp edges list&quot;</span><span class="p">]))</span>
+    <span class="p">)</span>
 
-        <span class="c1"># # Diameters</span>
-        <span class="c1"># basic[&#39;s edge diam list&#39;] = s_edge_diameter_dist(H)</span>
-        <span class="c1"># basic[&#39;s node diam list&#39;] = s_node_diameter_dist(H)</span>
-        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
-            <span class="n">H</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">dist_stats</span><span class="o">=</span><span class="n">basic</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">basic</span></div>
+    <span class="c1"># Number of components</span>
+    <span class="n">basic</span><span class="p">[</span><span class="s2">&quot;num comps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basic</span><span class="p">[</span><span class="s2">&quot;comp nodes list&quot;</span><span class="p">])</span>
+
+    <span class="c1"># # Diameters</span>
+    <span class="c1"># basic[&#39;s edge diam list&#39;] = s_edge_diameter_dist(H)</span>
+    <span class="c1"># basic[&#39;s node diam list&#39;] = s_node_diameter_dist(H)</span>
+    <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">isstatic</span><span class="p">:</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">dist_stats</span><span class="o">=</span><span class="n">basic</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">basic</span></div>
 </pre></div>
 
            </div>
