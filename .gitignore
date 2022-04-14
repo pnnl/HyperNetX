@@ -2,7 +2,8 @@
 gitmerge.sh 
 dist 
 hypernetx.egg-info*
-
+hypernetx.egg-info/PKG-INFO
+hypernetx.egg-info/requires.txt
 stashmerge.sh
 homology_log.log
 logfiles/

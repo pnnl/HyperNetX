@@ -264,6 +264,15 @@ def test_s_component_subgraphs():
         [len(g) for g in h.s_component_subgraphs(s=3, return_singletons=True)]
     )
 
+def test_size(seven_by_six):
+    sbs = seven_by_six
+    h = Hypergraph(sbs.edgedict)
+    assert h.size('S') == 4
+    assert h.size('S',{'T2','V'}) == 2
+    assert h.size('S',{'T1','T2'}) == 1
+    assert h.size('S',{'T2'}) == 1
+    assert h.size('S',{'T1'}) == 0
+    assert h.size('S',{}) == 0
 
 def test_diameter(seven_by_six):
     sbs = seven_by_six
