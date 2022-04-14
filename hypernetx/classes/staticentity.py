@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict, OrderedDict, UserList
 from collections.abc import Hashable
 from scipy.sparse import csr_matrix
+from hypernetx.classes.helpers import *
 
 
 class StaticEntity(object):
