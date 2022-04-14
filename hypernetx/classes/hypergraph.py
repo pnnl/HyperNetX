@@ -722,7 +722,7 @@ class Hypergraph:
         size : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
