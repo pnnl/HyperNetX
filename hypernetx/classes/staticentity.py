@@ -390,6 +390,7 @@ class StaticEntity(object):
         return self
 
     def add_element(self, data):
+        print(data)
         if isinstance(data, StaticEntity):
             df = data.dataframe
             self.__add_from_dataframe(df)
@@ -406,6 +407,7 @@ class StaticEntity(object):
 
     def __add_from_dataframe(self, df):
         if all(col in df for col in self._data_cols):
+            print('line 411 staticentity')
             new_data = pd.concat((self._dataframe, df), ignore_index=True)
             new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
 
