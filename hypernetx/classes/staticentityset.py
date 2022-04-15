@@ -1,0 +1,69 @@
+import pandas as pd
+from hypernetx.classes.staticentity import StaticEntity
+
+class StaticEntitySet(StaticEntity):
+    def __init__(
+        self,
+        entity=None,
+        data=None,
+        static=True,
+        labels=None,
+        uid=None,
+        level1=0,
+        level2=1,
+        weights=None,
+        keep_weights=True,
+        aggregateby="sum",
+    ):
+
+        if isinstance(entity, StaticEntity):
+            if keep_weights:
+                weights = entity._cell_weight_col
+            entity = entity.dataframe
+
+        if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
+            if isinstance(weights, Hashable) and weights in entity:
+                columns = entity.columns.drop(weights)[[level1, level2]]
+                columns = columns.append(pd.Index([weights]))
+            else:
+                columns = entity.columns[[level1, level2]]
+            entity = entity[columns]
+
+        elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
+            data = data[:, (level1, level2)]
+
+        if isinstance(labels, dict) and len(labels) > 2:
+            label_keys = list(labels)
+            columns = (label_keys[level1], label_keys[level2])
+            labels = {col: labels[col] for col in columns}
+
+        super().__init__(
+            entity=entity,
+            data=data,
+            static=static,
+            labels=labels,
+            uid=uid,
+            weights=weights,
+            aggregateby=aggregateby,
+        )
+
+    @property
+    def memberships(self):
+        if self._dimsize == 1:
+            return self._state_dict.get("memberships")
+
+        return super().memberships
+
+    def restrict_to_levels(
+        self, levels, weights=False, aggregateby="sum", keep_memberships=True, **kwargs
+    ):
+        restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
+
+        if keep_memberships:
+            restricted._state_dict["memberships"] = self.memberships
+
+        return restricted
+
+    def restrict_to(self, indices, **kwargs):
+        return self.restrict_to_indices(indices, **kwargs)
+
