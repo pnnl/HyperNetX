@@ -1,5 +1,7 @@
 import pandas as pd
 from hypernetx.classes.staticentity import StaticEntity
+from collections.abc import Hashable
+import numpy as np
 
 class StaticEntitySet(StaticEntity):
     def __init__(
