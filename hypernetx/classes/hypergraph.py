@@ -836,7 +836,6 @@ class Hypergraph:
             node = self.edges[edge].uid
             return self.dual().neighbors(node, s=s)
 
-    @not_implemented_for("static")
     def remove_node(self, node):
         """
         Removes node from edges and deletes reference in hypergraph nodes
@@ -854,14 +853,12 @@ class Hypergraph:
         if node not in self._nodes:
             return self
         else:
-            if not isinstance(node, Entity):
-                node = self._nodes[node]
-            for edge in node.memberships:
-                self._edges[edge].remove(node)
+            for edge in self._edges.memberships[node]:
+                if node in self._edges[edge]:
+                    self._edges[edge].remove(node)
             self._nodes.remove(node)
         return self
 
-    @not_implemented_for("static")
     def remove_nodes(self, node_set):
         """
         Removes nodes from edges and deletes references in hypergraph nodes
@@ -880,7 +877,6 @@ class Hypergraph:
             self.remove_node(node)
         return self
 
-    #@not_implemented_for("static")
     def _add_nodes_from(self, nodes):
         """
         Private helper method instantiates new nodes when edges added to hypergraph.
@@ -890,18 +886,7 @@ class Hypergraph:
         nodes : iterable of hashables or Entities
 
         """
-        for node in nodes[0]:
-            if node in self._edges.elements:
-                raise HyperNetXError("Node already an edge.")
-            elif node not in self._nodes.elements:
-                print('line 898')
-                if isinstance(node, StaticEntity):
-                    self._nodes.add(node)
-                else:
-                    print('line 902')
-                    print(node)
-                    self._nodes.add({node: []})
-        print(self._nodes)
+        self._nodes.add(nodes)
 
     def add_edge(self, edge):
         """
@@ -934,16 +919,9 @@ class Hypergraph:
         elif key in self._nodes.elements:
             warnings.warn("Cannot add edge. Edge is already a Node")
         if len(edge) > 0:
-            self._add_nodes_from(list(edge.values()))
+            self._nodes.add(edge)
             self._edges.add(edge)
-        # else:
-        #     self._edges.add(Entity(edge.uid, **edge.properties))
 
-        # else:
-        #     self._edges.add(Entity(edge))  # this generates an empty edge
-        # return self
-
-    @not_implemented_for("static")
     def add_edges_from(self, edge_set):
         """
         Add edges to hypergraph.
@@ -958,11 +936,10 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        for edge in edge_set.items():
-            self.add_edge({edge[0]: edge[1]})
+        for edge in edge_set:
+            self.add_edge(edge)
         return self
 
-    @not_implemented_for("static")
     def add_node_to_edge(self, node, edge):
         """
 
@@ -997,7 +974,6 @@ class Hypergraph:
 
         return self
 
-    @not_implemented_for("static")
     def remove_edge(self, edge):
         """
         Removes a single edge from hypergraph.
@@ -1019,16 +995,13 @@ class Hypergraph:
 
         """
         if edge in self._edges:
-            if not isinstance(edge, Entity):
-                edge = self._edges[edge]
-            for node in edge.uidset:
-                edge.remove(node)
-                if len(self._nodes[node]._memberships) == 1:
-                    self._nodes.remove(node)
+            for node in self._edges.memberships:
+                if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
+                    self.remove_node(node)
             self._edges.remove(edge)
+            print(self._edges.memberships)
         return self
 
-    @not_implemented_for("static")
     def remove_edges(self, edge_set):
         """
         Removes edges from hypergraph.

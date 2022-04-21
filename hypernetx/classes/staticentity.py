@@ -85,7 +85,6 @@ class StaticEntity(object):
         # set unique identifier
         self._uid = uid
         self._properties = {}
-
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
         # data is altered - the dict will be cleared when data is added or removed
@@ -391,7 +390,6 @@ class StaticEntity(object):
         return self
 
     def add_element(self, data):
-        print(data)
         if isinstance(data, StaticEntity):
             df = data.dataframe
             self.__add_from_dataframe(df)
@@ -403,12 +401,15 @@ class StaticEntity(object):
         if isinstance(data, pd.DataFrame):
             self.__add_from_dataframe(data)
 
-        #Todo: list of lists
         return self
 
+# change add_element and add_elements_from to add 
+# Point old add_element to new add command 
+# look at where state dict should be and potentially move it to Hypergraph (like it was)
+
+# REQUIRE that the data passed in has values for every row
     def __add_from_dataframe(self, df):
         if all(col in df for col in self._data_cols):
-            print('line 411 staticentity')
             new_data = pd.concat((self._dataframe, df), ignore_index=True)
             new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
 
@@ -417,11 +418,11 @@ class StaticEntity(object):
                 self._data_cols,
                 weights=self._cell_weight_col,
             )
-
             self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
                 "category"
             )
             self._state_dict.clear()
+        # else return warning 
 
     def remove(self, *args):
         for item in args:
@@ -433,24 +434,19 @@ class StaticEntity(object):
             self.remove_element(item)
         return self
 
-    def remove_element(self, column):
-        if type(column) == int:
-            if len(self._data_cols) > column:
-                self._dataframe = self._dataframe.drop(self._dataframe.columns[column], axis=1)
-            else:
-                warnings.warn("Column Index out of range, cannot delete column.")
-        elif type(column) == str:
-            print(column)
-            if column in self._data_cols:
-                self._dataframe = self._dataframe.drop(column, axis=1)
-            else:
-
-                warnings.warn("Column does not exist in Entity, cannot delete column.")
+    def remove_element(self, item):
+        new_data = self._dataframe[self._dataframe.iloc[:, 0] != item]
+        self._dataframe, _ = remove_row_duplicates(
+            new_data,
+            self._data_cols,
+            weights=self._cell_weight_col,
+        )
         self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-                "category"
-            )
+            "category"
+        )
         self._state_dict.clear()
-        return self
+        if item in self.elements:
+            del self.elements[item]
 
     def encode(self, data):
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
