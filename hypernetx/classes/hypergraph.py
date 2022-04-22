@@ -912,6 +912,15 @@ class Hypergraph:
         then an error will be raised.
 
         """
+        # This piece of code is to allow a user to pass in a dictionary 
+        # Of the format {'New_edge': ['Node1', 'Node2']}.
+
+        cols = list(self._edges.labels.keys())
+        edge_dict = {}
+        edge_dict[cols[0]] = list(edge.keys())[0]
+        edge_dict[cols[1]] = list(edge.values())[0]
+        edge = edge_dict
+
         key = list(edge.keys())[0]
 
         if key in self._edges.elements:
@@ -936,8 +945,8 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        for edge in edge_set:
-            self.add_edge(edge)
+        for edge, nodes in edge_set.items():
+            self.add_edge({edge: nodes})
         return self
 
     def add_node_to_edge(self, node, edge):
@@ -959,19 +968,9 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        if edge in self._edges:
-            if not isinstance(edge, Entity):
-                edge = self._edges[edge]
-            if node in self._nodes:
-                self._edges[edge].add(self._nodes[node])
-            else:
-                if not isinstance(node, Entity):
-                    node = Entity(node)
-                else:
-                    node = Entity(node.uid, **node.properties)
-                self._edges[edge].add(node)
-                self._nodes.add(node)
 
+        if edge in self._edges:
+            self.add_edge({edge: [node]})
         return self
 
     def remove_edge(self, edge):
@@ -995,11 +994,10 @@ class Hypergraph:
 
         """
         if edge in self._edges:
-            for node in self._edges.memberships: #for node in self._edges.memberships[edge]: Consider changing to this to self._edges.elements[edge]
+            for node in self._edges.memberships:
                 if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
                     self.remove_node(node)
             self._edges.remove(edge)
-            print(self._edges.memberships)
         return self
 
     def remove_edges(self, edge_set):

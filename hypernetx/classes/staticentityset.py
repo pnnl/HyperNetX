@@ -9,6 +9,7 @@ from collections.abc import Hashable
 from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import *
 
+
 class StaticEntitySet(StaticEntity):
     def __init__(
         self,

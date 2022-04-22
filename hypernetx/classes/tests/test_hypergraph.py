@@ -1,7 +1,8 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
+from hypernetx.classes.staticentity import StaticEntity
+from hypernetx.classes.staticentityset import StaticEntitySet
 from hypernetx import HyperNetXError
 from hypernetx.classes.hypergraph import Hypergraph
 
