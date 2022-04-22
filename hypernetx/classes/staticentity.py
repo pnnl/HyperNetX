@@ -435,18 +435,22 @@ class StaticEntity(object):
         return self
 
     def remove_element(self, item):
-        new_data = self._dataframe[self._dataframe.iloc[:, 0] != item]
+        updated_dataframe = self._dataframe
+        
+        for column in self._dataframe:
+            updated_dataframe = updated_dataframe[updated_dataframe[column] != item]
+
         self._dataframe, _ = remove_row_duplicates(
-            new_data,
+            updated_dataframe,
             self._data_cols,
             weights=self._cell_weight_col,
         )
         self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
             "category"
-        )
+        )        
         self._state_dict.clear()
-        if item in self.elements:
-            del self.elements[item]
+        for col in self._data_cols:
+            self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
     def encode(self, data):
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()

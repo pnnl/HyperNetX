@@ -855,7 +855,7 @@ class Hypergraph:
         else:
             for edge in self._edges.memberships[node]:
                 if node in self._edges[edge]:
-                    self._edges[edge].remove(node)
+                    self._edges.remove(node)
             self._nodes.remove(node)
         return self
 
@@ -995,7 +995,7 @@ class Hypergraph:
 
         """
         if edge in self._edges:
-            for node in self._edges.memberships:
+            for node in self._edges.memberships: #for node in self._edges.memberships[edge]: Consider changing to this to self._edges.elements[edge]
                 if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
                     self.remove_node(node)
             self._edges.remove(edge)
