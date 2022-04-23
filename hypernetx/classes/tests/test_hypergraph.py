@@ -88,48 +88,48 @@ def test_hypergraph_from_entity_set(seven_by_six):
     assert len(H.edge_neighbors("S")) == 4
 
 
-# def test_add_node_to_edge(seven_by_six):
-#     sbs = seven_by_six
-#     H = Hypergraph(sbs.edgedict)
-#     assert H.shape == (7, 6)
-#     # add node not already in hypergraph to edge
-#     # alreadyin hypergraph
-#     node = Entity("B")
-#     edge = H.edges["P"]
-#     H.add_node_to_edge(node, edge)
-#     assert H.shape == (8, 6)
-#     # add edge with nodes already in hypergraph
-#     H.add_edge(Entity("Z", ["A", "B"]))
-#     assert H.shape == (8, 7)
-#     # add edge not in hypergraph with nodes not in hypergraph
-#     H.add_edge(Entity("Y", ["M", "N"]))
-#     assert H.shape == (10, 8)
+def test_add_node_to_edge(seven_by_six):
+    sbs = seven_by_six
+    H = Hypergraph(sbs.edgedict)
+    assert H.shape == (7, 6)
+    # add node not already in hypergraph to edge
+    # alreadyin hypergraph
+    node = "B"
+    edge = H.edges["P"]
+    H.add_node_to_edge(node, edge)
+    assert H.shape == (8, 6)
+    # add edge with nodes already in hypergraph
+    H.add_edge({"Z": ["A", "B"]})
+    assert H.shape == (8, 7)
+    # add edge not in hypergraph with nodes not in hypergraph
+    H.add_edge({"Y": ["M", "N"]})
+    assert H.shape == (10, 8)
 
 
-# def test_remove_edge(seven_by_six):
-#     sbs = seven_by_six
-#     H = Hypergraph(sbs.edgedict)
-#     assert H.shape == (7, 6)
-#     # remove an edge without removing any nodes
-#     H.remove_edge("P")
-#     assert H.shape == (7, 5)
-#     # remove an edge containing a singleton ear
-#     H.remove_edge("O")
-#     assert H.shape == (6, 4)
+def test_remove_edge(seven_by_six):
+    sbs = seven_by_six
+    H = Hypergraph(sbs.edgedict)
+    assert H.shape == (7, 6)
+    # remove an edge without removing any nodes
+    H.remove_edge("P")
+    assert H.shape == (7, 5)
+    # remove an edge containing a singleton ear
+    H.remove_edge("O")
+    assert H.shape == (6, 4)
 
 
-# def test_remove_node():
-#     a, b, c, d = "a", "b", "c", "d"
-#     hbug = Hypergraph({0: [a, b], 1: [a, c], 2: [a, d]})
-#     assert a in hbug.nodes
-#     assert a in hbug.edges[0]
-#     assert a in hbug.edges[1]
-#     assert a in hbug.edges[2]
-#     hbug.remove_node(a)
-#     assert a not in hbug.nodes
-#     assert a not in hbug.edges[0]
-#     assert a not in hbug.edges[1]
-#     assert a not in hbug.edges[2]
+def test_remove_node():
+    a, b, c, d = "a", "b", "c", "d"
+    hbug = Hypergraph({0: [a, b], 1: [a, c], 2: [a, d]})
+    assert a in hbug.nodes
+    assert a in hbug.edges[0]
+    assert a in hbug.edges[1]
+    assert a in hbug.edges[2]
+    hbug.remove_node(a)
+    assert a not in hbug.nodes
+    assert a not in hbug.edges[0]
+    assert a not in hbug.edges[1]
+    assert a not in hbug.edges[2]
 
 
 def test_matrix(sbs_hypergraph):
