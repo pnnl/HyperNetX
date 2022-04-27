@@ -83,7 +83,7 @@ class StaticEntity(object):
     ):
         # set unique identifier
         self._uid = uid
-        self._properties = {}
+        # self._properties = {}
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
@@ -451,3 +451,27 @@ class StaticEntity(object):
         for col in self._data_cols:
             entity[col] = entity[col].cat.remove_unused_categories()
         return self.__class__(entity=entity, **kwargs)
+
+    def _create_properties(self, props):
+        levels = [self.level(item,return_index=False) for item in props]
+        levels_items = [(lev, item) for lev, item in zip(levels,props) if lev is not None]
+        index = pd.MultiIndex.from_tuples(levels_items, names=('level','item'))
+        data = [props[item] for _,item in index]
+        return pd.DataFrame(index=index, data={'properties':data})
+
+    def assign_properties(self, props):
+        properties = self._create_properties(props)
+
+        if hasattr(self, 'properties'):
+            update = self.properties.index.intersection(properties.index)
+            for idx in update:
+                self.properties.properties[idx].update(properties.properties[idx])
+            new_properties = properties[~properties.index.isin(update)]
+            properties = pd.concat((self.properties, new_properties))
+
+        self._properties = properties
+
+
+
+
+
