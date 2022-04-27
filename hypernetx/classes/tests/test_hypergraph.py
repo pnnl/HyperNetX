@@ -95,7 +95,7 @@ def test_add_node_to_edge(seven_by_six):
     # add node not already in hypergraph to edge
     # alreadyin hypergraph
     node = "B"
-    edge = H.edges["P"]
+    edge = "P"
     H.add_node_to_edge(node, edge)
     assert H.shape == (8, 6)
     # add edge with nodes already in hypergraph
