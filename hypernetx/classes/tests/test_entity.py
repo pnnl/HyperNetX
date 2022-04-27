@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from collections.abc import Iterable
 from collections import UserList
-from hypernetx.classes.staticentity import StaticEntity, StaticEntitySet
+from hypernetx.classes import StaticEntity, StaticEntitySet
 from hypernetx import HyperNetXError
 
 
