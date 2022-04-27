@@ -291,7 +291,10 @@ class StaticEntity(object):
         return self.dimensions[0]
 
     def __contains__(self, item):
-        return item in np.concatenate(list(self.labels.values()))
+        for labels in self.labels.values():
+            if item in labels: 
+                return True
+        return False
 
     def __getitem__(self, item):
         return self.elements[item]
