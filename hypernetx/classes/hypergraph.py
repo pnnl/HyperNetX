@@ -294,10 +294,7 @@ class Hypergraph:
         item : hashable or Entity
 
         """
-        if isinstance(item, Entity):
-            return item.uid in self.nodes
-        else:
-            return item in self.nodes
+        return item in self.nodes
 
     def __getitem__(self, node):
         """
