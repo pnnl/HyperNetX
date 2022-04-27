@@ -1,3 +1,4 @@
+import warnings
 from hypernetx import *
 import pandas as pd
 from pandas.api.types import CategoricalDtype
@@ -84,7 +85,6 @@ class StaticEntity(object):
         # set unique identifier
         self._uid = uid
         self._properties = {}
-
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
         # data is altered - the dict will be cleared when data is added or removed
@@ -291,7 +291,10 @@ class StaticEntity(object):
         return self.dimensions[0]
 
     def __contains__(self, item):
-        return item in np.concatenate(list(self.labels.values()))
+        for labels in self.labels.values():
+            if item in labels: 
+                return True
+        return False
 
     def __getitem__(self, item):
         return self.elements[item]
@@ -379,28 +382,78 @@ class StaticEntity(object):
         print(f'"{item}" not found.')
         return None
 
-    def add(self, data, aggregateby="sum"):
-        # TODO: add from other data types
-        if self.isstatic:
-            raise HyperNetXError("Cannot add data to a static Entity")
-        if isinstance(data, pd.DataFrame) and all(
-            col in data for col in self._data_cols
-        ):
-            new_data = pd.concat((self._dataframe, data), ignore_index=True)
+    def add(self, *args):
+        for item in args:
+            self.add_element(item)
+        return self
+
+    def add_elements_from(self, arg_set):
+        for item in arg_set:
+            self.add_element(item)
+        return self
+
+    def add_element(self, data):
+        if isinstance(data, StaticEntity):
+            df = data.dataframe
+            self.__add_from_dataframe(df)
+
+        if isinstance(data, dict):
+            df = pd.DataFrame.from_dict(data)
+            self.__add_from_dataframe(df)
+
+        if isinstance(data, pd.DataFrame):
+            self.__add_from_dataframe(data)
+
+        return self
+
+# change add_element and add_elements_from to add 
+# Point old add_element to new add command 
+# look at where state dict should be and potentially move it to Hypergraph (like it was)
+
+# REQUIRE that the data passed in has values for every row
+    def __add_from_dataframe(self, df):
+        if all(col in df for col in self._data_cols):
+            new_data = pd.concat((self._dataframe, df), ignore_index=True)
             new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
 
             self._dataframe, _ = remove_row_duplicates(
                 new_data,
                 self._data_cols,
                 weights=self._cell_weight_col,
-                aggregateby=aggregateby,
             )
-
             self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
                 "category"
             )
-            # TODO: check to see if we really need to clear everything
             self._state_dict.clear()
+        # else return warning 
+
+    def remove(self, *args):
+        for item in args:
+            self.remove_element(item)
+        return self
+
+    def remove_elements_from(self, arg_set):
+        for item in arg_set:
+            self.remove_element(item)
+        return self
+
+    def remove_element(self, item):
+        updated_dataframe = self._dataframe
+        
+        for column in self._dataframe:
+            updated_dataframe = updated_dataframe[updated_dataframe[column] != item]
+
+        self._dataframe, _ = remove_row_duplicates(
+            updated_dataframe,
+            self._data_cols,
+            weights=self._cell_weight_col,
+        )
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+            "category"
+        )        
+        self._state_dict.clear()
+        for col in self._data_cols:
+            self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
     def encode(self, data):
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()

@@ -1,7 +1,14 @@
 import pandas as pd
 from hypernetx.classes.staticentity import StaticEntity
-from collections.abc import Hashable
+import warnings
+from hypernetx import *
+from pandas.api.types import CategoricalDtype
 import numpy as np
+from collections import defaultdict, OrderedDict, UserList
+from collections.abc import Hashable
+from scipy.sparse import csr_matrix
+from hypernetx.classes.helpers import *
+
 
 class StaticEntitySet(StaticEntity):
     def __init__(
