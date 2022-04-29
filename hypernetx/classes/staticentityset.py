@@ -23,6 +23,8 @@ class StaticEntitySet(StaticEntity):
         weights=None,
         keep_weights=True,
         aggregateby="sum",
+        properties=None,
+        cell_properties=None,
     ):
 
         if isinstance(entity, StaticEntity):
@@ -54,7 +56,14 @@ class StaticEntitySet(StaticEntity):
             uid=uid,
             weights=weights,
             aggregateby=aggregateby,
+            properties=properties
         )
+
+        self._cell_properties = self._create_cell_properties(cell_properties) if self._dimsize == 2 else None
+
+    @property
+    def cell_properties(self):
+        return self._cell_properties
 
     @property
     def memberships(self):
@@ -75,4 +84,23 @@ class StaticEntitySet(StaticEntity):
 
     def restrict_to(self, indices, **kwargs):
         return self.restrict_to_indices(indices, **kwargs)
+
+    def _create_cell_properties(self, props):
+        index = pd.MultiIndex(levels=([],[]),codes=([],[]),names=self._data_cols)
+        kwargs = {'index':index,'name':'cell_properties'}
+        if props:
+            cells = [(edge,node) for edge in props for node in props[edge]]
+            index = pd.MultiIndex.from_tuples(cells, names=self._data_cols)
+            data = [props[edge][node] for edge, node in index]
+            kwargs.update(index=index,data=data)
+        return pd.Series(**kwargs)
+
+    def assign_cell_properties(self, props):
+        if self._dimsize == 2:
+            cell_properties = self._create_cell_properties(props)
+
+            if not self._cell_properties.empty:
+                cell_properties = update_properties(self._cell_properties, cell_properties)
+
+            self._cell_properties = cell_properties
 
