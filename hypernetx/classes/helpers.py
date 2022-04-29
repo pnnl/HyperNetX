@@ -1,6 +1,25 @@
 import numpy as np
+import pandas as pd
+from collections import UserList
 from collections.abc import Hashable
 from pandas.api.types import CategoricalDtype
+
+class AttrList(UserList):
+    def __init__(self,entity,key,initlist=None):
+        self._entity = entity
+        self._key = key
+        super().__init__(initlist)
+
+    def __getattr__(self,attr):
+        return self._entity.properties[self._key].get(attr)
+
+    def __setattr__(self,attr,val):
+        if attr in ['_entity','_key','data']:
+            object.__setattr__(self,attr,val)
+        elif self._key in self._entity.properties.index:
+            self._entity.properties[self._key].update({attr:val})
+        else:
+            self._entity.properties[self._key] = {attr:val}
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
@@ -32,6 +51,15 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
         df[weight_col] = np.ones(len(df), dtype=int)
 
     return df, weight_col
+
+def update_properties(props, new_props):
+    if new_props is None:
+        return props
+    update = props.index.intersection(new_props.index)
+    for idx in update:
+        props[idx].update(new_props[idx])
+    new_props = new_props[~new_props.index.isin(update)]
+    return pd.concat((props, new_props))
 
 
 def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
