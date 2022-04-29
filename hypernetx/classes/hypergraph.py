@@ -1337,7 +1337,7 @@ class Hypergraph:
             temp = self._collapse_nwhy(True, return_equivalence_classes)
         else:
             temp = self.edges.collapse_identical_elements(
-                "_", return_equivalence_classes=return_equivalence_classes
+                return_equivalence_classes=return_equivalence_classes
             )
         if return_equivalence_classes:
             return Hypergraph(temp[0], name, use_nwhy=self.nwhy), temp[1]
@@ -1408,7 +1408,7 @@ class Hypergraph:
                 return Hypergraph(temp, name, use_nwhy=self.nwhy)
         else:
             temp = self.dual().edges.collapse_identical_elements(
-                "_", return_equivalence_classes=return_equivalence_classes
+                return_equivalence_classes=return_equivalence_classes
             )
 
             if return_equivalence_classes:
