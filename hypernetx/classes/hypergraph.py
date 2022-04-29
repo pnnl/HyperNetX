@@ -1530,7 +1530,7 @@ class Hypergraph:
         if self.isstatic:
             E = self.edges.restrict_to_levels((1, 0))
             setsystem = E.restrict_to(
-                sorted(E.indices(E.keys[0], list(nodeset))))
+                sorted(E.indices(E._data_cols[0], list(nodeset))))
             return Hypergraph(
                 setsystem.restrict_to_levels((1, 0)), name=name, use_nwhy=self.nwhy
             )
