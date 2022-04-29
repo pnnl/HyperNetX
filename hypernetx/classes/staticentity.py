@@ -81,10 +81,11 @@ class StaticEntity(object):
         uid=None,
         weights=None,
         aggregateby="sum",
+        properties=None
     ):
         # set unique identifier
         self._uid = uid
-        # self._properties = {}
+        self._properties = self._create_properties(properties)
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated if the
@@ -242,7 +243,7 @@ class StaticEntity(object):
     @property
     def elements(self):
         if self._dimsize == 1:
-            return {k: UserList() for k in self.uidset}
+            return {k: AttrList(entity=self,key=(0,k)) for k in self.uidset}
 
         return self.elements_by_level(0, 1)
 
@@ -263,10 +264,12 @@ class StaticEntity(object):
         if "elements" not in self._state_dict:
             self._state_dict["elements"] = defaultdict(dict)
         if col2 not in self._state_dict["elements"][col1]:
-            elements = self._dataframe.groupby(col1)[col2].unique()
-            self._state_dict["elements"][col1][col2] = elements.apply(
-                UserList
-            ).to_dict()
+            level = self.index(col1)
+            elements = self._dataframe.groupby(col1)[col2].unique().to_dict()
+            # breakpoint()
+            self._state_dict["elements"][col1][col2] = {
+                item: AttrList(entity=self,key=(level,item),initlist=elem) for item, elem in elements.items()
+            }
 
         return self._state_dict["elements"][col1][col2]
 
@@ -309,7 +312,7 @@ class StaticEntity(object):
     def __repr__(self):
         return (
             self.__class__.__name__
-            + f"({self._uid},{list(self.uidset)},{self.properties})"
+            + f"({self._uid},{list(self.uidset)},{[] if self.properties.empty else self.properties.droplevel(0).to_dict()})"
         )
 
     def index(self, column, value=None):
@@ -507,24 +510,23 @@ class StaticEntity(object):
         return self.__class__(entity=entity, **kwargs)
 
     def _create_properties(self, props):
-        levels = [self.level(item,return_index=False) for item in props]
-        levels_items = [(lev, item) for lev, item in zip(levels,props) if lev is not None]
-        index = pd.MultiIndex.from_tuples(levels_items, names=('level','item'))
-        data = [props[item] for _,item in index]
-        return pd.DataFrame(index=index, data={'properties':data})
+        index = pd.MultiIndex(levels=([],[]),codes=([],[]),names=('level','item'))
+        kwargs = {'index':index,'name':'properties'}
+        if props:
+            levels = [self.level(item,return_index=False) for item in props]
+            levels_items = [(lev, item) for lev, item in zip(levels,props) if lev is not None]
+            index = pd.MultiIndex.from_tuples(levels_items, names=('level','item'))
+            data = [props[item] for _,item in index]
+            kwargs.update(index=index,data=data)
+        return pd.Series(**kwargs)
 
     def assign_properties(self, props):
         properties = self._create_properties(props)
 
-        if hasattr(self, 'properties'):
-            update = self.properties.index.intersection(properties.index)
-            for idx in update:
-                self.properties.properties[idx].update(properties.properties[idx])
-            new_properties = properties[~properties.index.isin(update)]
-            properties = pd.concat((self.properties, new_properties))
+        if not self._properties.empty:
+            properties = update_properties(self._properties, properties)
 
         self._properties = properties
-
 
 
 
