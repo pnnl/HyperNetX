@@ -29,8 +29,8 @@ class Hypergraph:
     be known at creation. A hypergraph is dynamic by default.
 
     *Dynamic hypergraphs* require the user to keep track of its objects,
-    by using a unique names for each node and edge. This allows for multi-edge graphs and
-    inseperable nodes.
+    by using a unique names for each node and edge. This allows for multi-edge
+    graphs and inseperable nodes.
 
     For example: Let V = {1,2,3} and E = {e1,e2,e3},
     where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
@@ -61,17 +61,21 @@ class Hypergraph:
         >>> H.nodes, H.edges
         ({}, {})
 
-    2. From a dictionary of iterables (elements of iterables must be of type hypernetx.Entity or hashable): ::
+    2. From a dictionary of iterables (elements of iterables must be of type
+       hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph({'a':[1,2,3],'b':[4,5,6]})
         >>> H.nodes, H.edges
-        # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(_:Edges,['b', 'a'],{}))
+        # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), EntitySet(
+        #   _:Edges,['b', 'a'],{}))
 
-    3. From an iterable of iterables: (elements of iterables must be of type hypernetx.Entity or hashable): ::
+    3. From an iterable of iterables: (elements of iterables must be of type
+       hypernetx.Entity or hashable): ::
 
         >>> H = Hypergraph([{'a','b'},{'b','c'},{'a','c','d'}])
         >>> H.nodes, H.edges
-        # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), EntitySet(_:Edges,['_1', '_2', '_0'],{}))
+        # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), EntitySet(
+        # _:Edges,['_1', '_2', '_0'],{}))
 
     4. From a hypernetx.EntitySet or StaticEntitySet: ::
 
@@ -79,12 +83,14 @@ class Hypergraph:
         >>> E = EntitySet('sample',elements=[a,b])
         >>> H = Hypergraph(E)
         >>> H.nodes, H.edges.
-        # output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(_:Edges,['b', 'a'],{}))
+        # output: (EntitySet(_:Nodes,[1, 2, 3],{}), EntitySet(
+        # _:Edges,['b', 'a'],{}))
 
-    All of these constructions apply for both dynamic and static hypergraphs. To
-    create a static hypergraph set the parameter `static=True`. In addition a static
-    hypergraph is automatically created if a StaticEntity, StaticEntitySet, or pandas.DataFrame object
-    is passed to the Hypergraph constructor.
+    All of these constructions apply for both dynamic and static hypergraphs.
+    To create a static hypergraph set the parameter `static=True`. In addition
+    a static hypergraph is automatically created if a StaticEntity,
+    StaticEntitySet, or pandas.DataFrame object is passed to the Hypergraph
+    constructor.
 
     5. | From a pandas.DataFrame. The dataframe must have at least two columns with headers and there can be no nans.
        | By default the first column corresponds to the edge names and the second column to the node names.
@@ -140,7 +146,8 @@ class Hypergraph:
 
             except Exception:
                 self.nwhy = False
-                print("NWHypergraph is not available. Will continue with static=True.")
+                print("NWHypergraph is not available. Will continue with
+                      static=True.")
                 use_nwhy = False
         else:
             self.nwhy = False
@@ -214,7 +221,8 @@ class Hypergraph:
     @property
     def incidence_dict(self):
         """
-        Dictionary keyed by edge uids with values the uids of nodes in each edge
+        Dictionary keyed by edge uids with values the uids of nodes in each
+        edge
 
         Returns
         -------
@@ -357,12 +365,12 @@ class Hypergraph:
     def get_linegraph(self, s, edges=True, use_nwhy=True):
         """
         Creates an ::term::s-linegraph for the Hypergraph.
-        If edges=True (default)then the edges will be the vertices of the line graph.
-        Two vertices are connected by an s-line-graph edge if the corresponding
-        hypergraphedges intersect in at least s hypergraph nodes.
-        If edges=False, the hypergraph nodes will be the vertices of the line graph.
-        Two vertices are connected if the nodes they correspond to share at least s
-        incident hyper edges.
+        If edges=True (default)then the edges will be the vertices of the line
+        graph. Two vertices are connected by an s-line-graph edge if the
+        corresponding hypergraphedges intersect in at least s hypergraph nodes.
+        If edges=False, the hypergraph nodes will be the vertices of the line
+        graph. Two vertices are connected if the nodes they correspond to share
+        at least s incident hyper edges.
 
         Parameters
         ----------
@@ -371,7 +379,8 @@ class Hypergraph:
         edges : bool, optional
             Determine if edges or nodes will be the vertices in the linegraph.
         use_nwhy : bool, optional
-            Requests that nwhy be used to construct the linegraph. If NWHy is not available this is ignored.
+            Requests that nwhy be used to construct the linegraph. If NWHy is 
+            not available this is ignored.
 
         Returns
         -------
@@ -429,7 +438,8 @@ class Hypergraph:
         pickle.dump([self.state_dict, self.edges.labels], open(fpath, "wb"))
 
     @classmethod
-    def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True):
+    def recover_from_state(cls, fpath="current_state.p", newfpath=None,
+                           use_nwhy=True):
         """
         Recover a static hypergraph pickled using save_state.
 
@@ -485,7 +495,11 @@ class Hypergraph:
             H.state_dict.update(sd)
             return H
         else:
-            return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
+            return Hypergraph(
+                StaticEntitySet(h.edges),
+                use_nwhy=True,
+                filepath=fpath
+            )
 
     def edge_size_dist(self):
         """
@@ -548,7 +562,12 @@ class Hypergraph:
         else:
             edict = self.incidence_dict
             E = StaticEntitySet(edict)
-            return Hypergraph(E, use_nwhy=use_nwhy, filepath=filepath, name=name)
+            return Hypergraph(
+                E,
+                use_nwhy=use_nwhy,
+                filepath=filepath,
+                name=name
+            )
 
     def remove_static(self, name=None):
         """
@@ -562,9 +581,9 @@ class Hypergraph:
         Returns
         -------
         hnx.Hypergraph
-            A new hypergraph with the same dictionary as self but allowing dynamic
-            changes to nodes and edges.
-            If hypergraph is not static, returns self.
+            A new hypergraph with the same dictionary as self but allowing
+            dynamic changes to nodes and edges. If hypergraph is not static,
+            returns self.
         """
         if not self.isstatic:
             return self
@@ -582,8 +601,8 @@ class Hypergraph:
         idx : int
             class assigned integer for internal manipulation of Hypergraph data
         edges : bool, optional, default: True
-            If True then translates from edge index. Otherwise will translate from
-            node index, default=False
+            If True then translates from edge index. Otherwise will translate
+            from node index, default=False
 
         Returns
         -------
@@ -876,7 +895,8 @@ class Hypergraph:
 
     def _add_nodes_from(self, nodes):
         """
-        Private helper method instantiates new nodes when edges added to hypergraph.
+        Private helper method instantiates new nodes when edges added to
+        hypergraph.
 
         Parameters
         ----------
@@ -909,8 +929,6 @@ class Hypergraph:
         then an error will be raised.
 
         """
-        # This piece of code is to allow a user to pass in a dictionary 
-        # Of the format {'New_edge': ['Node1', 'Node2']}.
 
         cols = list(self._edges.labels.keys())
         edge_dict = {}
@@ -992,7 +1010,8 @@ class Hypergraph:
         """
         if edge in self._edges:
             for node in self._edges.memberships:
-                if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
+                if (len(self._edges.memberships[node]) == 1
+                        and self._edges.memberships[node][0] == edge):
                     self.remove_node(node)
             self._edges.remove(edge)
         return self
@@ -1119,7 +1138,11 @@ class Hypergraph:
         weights = False  # Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
-            return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
+            return Hypergraph._incidence_to_adjacency(
+                M[0],
+                s=s,
+                weights=weights
+            ), M[1]
         else:
             return Hypergraph._incidence_to_adjacency(M, s=s, weights=weights)
 
@@ -1204,9 +1227,9 @@ class Hypergraph:
         Notes
         -----
         Creates a bipartite networkx graph from hypergraph.
-        The nodes and (hyper)edges of hypergraph become the nodes of bipartite graph.
-        For every (hyper)edge e in the hypergraph and node n in e there is an edge (n,e)
-        in the graph.
+        The nodes and (hyper)edges of hypergraph become the nodes of bipartite
+        graph. For every (hyper)edge e in the hypergraph and node n in e there
+        is an edge (n,e) in the graph.
 
         """
         B = nx.Graph()
@@ -1219,7 +1242,8 @@ class Hypergraph:
 
     def dual(self, name=None):
         """
-        Constructs a new hypergraph with roles of edges and nodes of hypergraph reversed.
+        Constructs a new hypergraph with roles of edges and nodes of hypergraph
+        reversed.
 
         Parameters
         ----------
@@ -1295,41 +1319,45 @@ class Hypergraph:
         return_equivalence_classes=False,
     ):
         """
-        Constructs a new hypergraph gotten by identifying edges containing the same nodes
+        Constructs a new hypergraph gotten by identifying edges containing the
+        same nodes
 
         Parameters
         ----------
         name : hashable, optional, default: None
 
         return_equivalence_classes: boolean, optional, default: False
-            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
+            Returns a dictionary of edge equivalence classes keyed by frozen
+            sets of nodes
 
         Returns
         -------
         new hypergraph : Hypergraph
-            Equivalent edges are collapsed to a single edge named by a representative of the equivalent
-            edges followed by a colon and the number of edges it represents.
+            Equivalent edges are collapsed to a single edge named by a
+            representative of the equivalent edges followed by a colon and the
+            number of edges it represents.
 
         equivalence_classes : dict
-            A dictionary keyed by representative edge names with values equal to the edges in
-            its equivalence class
+            A dictionary keyed by representative edge names with values equal
+            to the edges in its equivalence class
 
         Notes
         -----
         Two edges are identified if their respective elements are the same.
-        Using this as an equivalence relation, the uids of the edges are partitioned into
-        equivalence classes.
+        Using this as an equivalence relation, the uids of the edges are
+        partitioned into equivalence classes.
 
-        A single edge from the collapsed edges followed by a colon and the number of elements
-        in its equivalence class as uid for the new edge
+        A single edge from the collapsed edges followed by a colon and the
+        number of elements in its equivalence class as uid for the new edge
 
 
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword arguments and will throw
-            an error in the next release.
-            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            use_reps ane return_counts are no longer supported keyword
+            arguments and will throw an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a
+            string "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
 
@@ -1352,22 +1380,25 @@ class Hypergraph:
         return_equivalence_classes=False,
     ):
         """
-        Constructs a new hypergraph gotten by identifying nodes contained by the same edges
+        Constructs a new hypergraph gotten by identifying nodes contained by
+        the same edges
 
         Parameters
         ----------
         name: str, optional, default: None
 
         return_equivalence_classes: boolean, optional, default: False
-            Returns a dictionary of node equivalence classes keyed by frozen sets of edges
+            Returns a dictionary of node equivalence classes keyed by frozen
+            sets of edges
 
-        use_reps : boolean, optional, default: False - Deprecated, this no longer works and will be removed
-            Choose a single element from the collapsed nodes as uid for the new node, otherwise uses
-            a frozen set of the uids of nodes in the equivalence class
+        use_reps : boolean, optional, default: False - Deprecated, this no
+            longer works and will be removed Choose a single element from the
+            collapsed nodes as uid for the new node, otherwise uses a frozen
+            set of the uids of nodes in the equivalence class
 
-        return_counts: boolean, - Deprecated, this no longer works and will be removed
-            if use_reps is True the new nodes have uids given by a tuple of the rep
-            and the count
+        return_counts: boolean, - Deprecated, this no longer works and will be
+            removed if use_reps is True the new nodes have uids given by a
+            tuple of the rep and the count
 
         Returns
         -------
@@ -1376,27 +1407,31 @@ class Hypergraph:
         Notes
         -----
         Two nodes are identified if their respective memberships are the same.
-        Using this as an equivalence relation, the uids of the nodes are partitioned into
-        equivalence classes. A single member of the equivalence class is chosen to represent
-        the class followed by the number of members of the class.
+        Using this as an equivalence relation, the uids of the nodes are
+        partitioned into equivalence classes. A single member of the
+        equivalence class is chosen to represent the class followed by the
+        number of members of the class.
 
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])]))
+            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1',
+                        ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
             >>> h.collapse_nodes().incidence_dict
-            {'E1': {frozenset({'a', 'b'})}, 'E2': {frozenset({'a', 'b'})}} ### Fix this
+            {'E1': {frozenset({'a', 'b'})}, 'E2': {frozenset({'a', 'b'})}}
+            ### Fix this
             >>> h.collapse_nodes(use_reps=True).incidence_dict
             {'E1': {('a', 2)}, 'E2': {('a', 2)}}
 
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword arguments and will throw
-            an error in the next release.
-            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            use_reps ane return_counts are no longer supported keyword
+            arguments and will throw an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a
+            string "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
 
@@ -1412,7 +1447,11 @@ class Hypergraph:
             )
 
             if return_equivalence_classes:
-                return Hypergraph(temp[0], name, use_nwhy=self.nwhy).dual(), temp[1]
+                return Hypergraph(
+                    temp[0],
+                    name,
+                    use_nwhy=self.nwhy
+                ).dual(), temp[1]
             else:
                 return Hypergraph(temp, name, use_nwhy=self.nwhy).dual()
 
@@ -1432,14 +1471,16 @@ class Hypergraph:
         name: str, optional, default: None
 
         use_reps: boolean, optional, default: False
-            Choose a single element from the collapsed elements as a representative
+            Choose a single element from the collapsed elements as a
+            representative
 
         return_counts: boolean, optional, default: True
-            if use_reps is True the new elements are keyed by a tuple of the rep
-            and the count
+            if use_reps is True the new elements are keyed by a tuple of the
+            rep and the count
 
         return_equivalence_classes: boolean, optional, default: False
-            Returns a dictionary of edge equivalence classes keyed by frozen sets of nodes
+            Returns a dictionary of edge equivalence classes keyed by frozen
+            sets of nodes
 
         Returns
         -------
@@ -1447,16 +1488,18 @@ class Hypergraph:
 
         Notes
         -----
-        Collapses the Nodes and Edges EntitySets. Two nodes(edges) are duplicates
-        if their respective memberships(elements) are the same. Using this as an
-        equivalence relation, the uids of the nodes(edges) are partitioned into
-        equivalence classes. A single member of the equivalence class is chosen to represent
-        the class followed by the number of members of the class.
+        Collapses the Nodes and Edges EntitySets. Two nodes(edges) are
+        duplicates if their respective memberships(elements) are the same.
+        Using this as an equivalence relation, the uids of the nodes(edges)
+        are partitioned into equivalence classes. A single member of the
+        equivalence class is chosen to represent the class followed by the
+        number of members of the class.
 
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])]))
+            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1',
+                                ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
             >>> h.collapse_nodes_and_edges().incidence_dict   ### Fix this
@@ -1465,9 +1508,10 @@ class Hypergraph:
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword arguments and will throw
-            an error in the next release.
-            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
+            use_reps ane return_counts are no longer supported keyword
+            arguments and will throw an error in the next release. Collapsed
+            hypergraph automatically names collapsed objects by a string
+            "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
 
@@ -1509,12 +1553,15 @@ class Hypergraph:
                     inneredges.add(e.uid)
                 else:
                     inneredges.add(e)
-            return Hypergraph({e: self.edges[e] for e in inneredges}, name=name)
+            return Hypergraph(
+                {e: self.edges[e] for e in inneredges},
+                name=name
+            )
 
     def restrict_to_nodes(self, nodeset, name=None):
         """
-        Constructs a new hypergraph by restricting the edges in the hypergraph to
-        the nodes referenced by nodeset.
+        Constructs a new hypergraph by restricting the edges in the hypergraph
+        to the nodes referenced by nodeset.
 
         Parameters
         ----------
@@ -1532,7 +1579,9 @@ class Hypergraph:
             setsystem = E.restrict_to(
                 sorted(E.indices(E.keys[0], list(nodeset))))
             return Hypergraph(
-                setsystem.restrict_to_levels((1, 0)), name=name, use_nwhy=self.nwhy
+                setsystem.restrict_to_levels(
+                    (1, 0)
+                ), name=name, use_nwhy=self.nwhy
             )
         else:
             memberships = set()
@@ -1550,7 +1599,8 @@ class Hypergraph:
                             e, temp, **self.edges[e].properties)
             return Hypergraph(newedgeset, name=name)
 
-    def toplexes(self, name=None, collapse=False, use_reps=False, return_counts=True):
+    def toplexes(self, name=None, collapse=False, use_reps=False,
+                 return_counts=True):
         """
         Returns a :term:`simple hypergraph` corresponding to self.
 

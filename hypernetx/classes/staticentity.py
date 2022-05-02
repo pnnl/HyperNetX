@@ -19,17 +19,18 @@ class StaticEntity(object):
     Parameters
     ----------
     entity: pandas.DataFrame, dict of lists or sets, list of lists or sets
-        If a pandas.DataFrame with N columns, represents N-dimensonal entity data,
-        Otherwise, a dict or list represents 2-dimensional entity data
+        If a pandas.DataFrame with N columns, represents N-dimensonal entity
+        data, Otherwise, a dict or list represents 2-dimensional entity data
     data : 2d numpy.ndarray
-        A sparse representation of an N-dimensional incidence tensor with M nonzero
-        cells as an M x N matrix of tensor indices.
+        A sparse representation of an N-dimensional incidence tensor with M
+        nonzero cells as an M x N matrix of tensor indices.
     static : bool, default=True
-        If True, data may not be altered, and the state dict will never be cleared
-        If False, rows may be added to and removed from data, and updates will clear the
-        state dict
+        If True, data may not be altered, and the state dict will never be
+        cleared. If False, rows may be added to and removed from data, and
+        updates will clear the state dict
     labels : OrderedDict of lists, optional
-        User defined labels corresponding to integers in data, ignored if data=None
+        User defined labels corresponding to integers in data, ignored if
+        data=None
     uid : Hashable, optional
     weights : array-like or Hashable, optional
         User specified cell weights corresponding to data,
@@ -38,7 +39,8 @@ class StaticEntity(object):
         Otherwise, weight for all rows is assumed to be 1.
     aggregateby : str, optional, default='sum'
         Method to aggregate cell weights of duplicate rows of data.
-        If None, duplicate rows will be dropped without aggregating cell weights
+        If None, duplicate rows will be dropped without aggregating cell
+        weights
 
     Attributes
     ----------
@@ -49,26 +51,29 @@ class StaticEntity(object):
     cell_weight_col: Hashable
     dimsize: int
     state_dict: dict
-        The state_dict holds all attributes that must be recomputed when the data is
-        updated. The values for these attributes will be computed as needed if they do
-        not already exist in the state_dict.
+        The state_dict holds all attributes that must be recomputed when the
+        data is updated. The values for these attributes will be computed as
+        needed if they do not already exist in the state_dict.
 
         data : numpy.ndarray
             sparse tensor indices for incidence tensor
         labels: dict of lists
-            labels corresponding to integers in sparse tensor indices given by data
+            labels corresponding to integers in sparse tensor indices given by
+            data
         cell_weights: dict
-            keys are rows of labeled data as tuples, values are cell weight of the row
+            keys are rows of labeled data as tuples, values are cell weight of
+            the row
         dimensions: tuple of ints
-            tuple of number of unique labels in each column/dimension of the data
+            tuple of number of unique labels in each column/dimension of the
+            data
         uidset: dict of sets
-            keys are columns of the dataframe, values are the set of unique labeled
-            values in the column
+            keys are columns of the dataframe, values are the set of unique
+            labeled values in the column
         elements: defaultdict of nested dicts
-            top level keys are column names, elements[col1][col2] holds the elements
-            by level dict with col1 as level 1 and col2 as level 2 (keys are unique
-            values of col1, values are list of unique values of col2 that appear in a
-            row of data with the col1 value key)
+            top level keys are column names, elements[col1][col2] holds the
+            elements by level dict with col1 as level 1 and col2 as level 2
+            (keys are unique values of col1, values are list of unique values
+            of col2 that appear in a row of data with the col1 value key)
 
     """
 
@@ -88,33 +93,37 @@ class StaticEntity(object):
         self._properties = self._create_properties(properties)
 
         # if static, the original data cannot be altered
-        # the state dict stores all computed values that may need to be updated if the
-        # data is altered - the dict will be cleared when data is added or removed
+        # the state dict stores all computed values that may need to be updated
+        # if the data is altered - the dict will be cleared when data is added
+        # or removed
         self._static = static
         self._state_dict = {}
 
-        # entity data is stored in a DataFrame for basic access without the need for
-        # any label encoding lookups
+        # entity data is stored in a DataFrame for basic access without the n
+        # need for any label encoding lookups
         if isinstance(entity, pd.DataFrame):
             self._dataframe = entity.copy()
 
-        # if the entity data is passed as a dict of lists or a list of lists, we convert
-        # it to a 2-column dataframe by exploding each list to cover one row per element
-        # for a dict of lists, the first level/column will be filled in with dict keys
-        # for a list of N lists, 0,1,...,N will be used to fill the first level/column
+        # if the entity data is passed as a dict of lists or a list of lists,
+        # we convert it to a 2-column dataframe by exploding each list to cover
+        # one row per element for a dict of lists, the first level/column will
+        # be filled in with dict keys for a list of N lists, 0,1,...,N will be
+        # used to fill the first level/column
         elif isinstance(entity, (dict, list)):
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
             self._dataframe = pd.DataFrame({0: entity.index, 1: entity.values})
 
-        # if a 2d numpy ndarray is passed, store it as both a DataFrame and an ndarray
-        # in the state dict
+        # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
+        # ndarray in the state dict
         elif isinstance(data, np.ndarray) and data.ndim == 2:
             self._state_dict["data"] = data
             self._dataframe = pd.DataFrame(data)
-            # if a dict of labels was passed, use keys as column names in the DataFrame,
-            # translate the dataframe, and store the dict of labels in the state dict
-            if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
+            # if a dict of labels was passed, use keys as column names in the
+            # DataFrame, translate the dataframe, and store the dict of labels
+            # in the state dict
+            if isinstance(labels, dict) and len(labels) == len(self._dataframe
+                                                               .columns):
                 self._dataframe.columns = labels.keys()
                 self._state_dict["labels"] = labels
 
@@ -136,7 +145,8 @@ class StaticEntity(object):
         self._dataframe, self._cell_weight_col = assign_weights(
             self._dataframe, weights=weights
         )
-        # store a list of columns that hold entity data (not properties or weights)
+        # store a list of columns that hold entity data (not properties or
+        # weights)
         self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
 
         # each entity data column represents one dimension of the data
@@ -243,7 +253,7 @@ class StaticEntity(object):
     @property
     def elements(self):
         if self._dimsize == 1:
-            return {k: AttrList(entity=self,key=(0,k)) for k in self.uidset}
+            return {k: AttrList(entity=self, key=(0, k)) for k in self.uidset}
 
         return self.elements_by_level(0, 1)
 
@@ -268,7 +278,8 @@ class StaticEntity(object):
             elements = self._dataframe.groupby(col1)[col2].unique().to_dict()
             # breakpoint()
             self._state_dict["elements"][col1][col2] = {
-                item: AttrList(entity=self,key=(level,item),initlist=elem) for item, elem in elements.items()
+                item: AttrList(entity=self, key=(level, item), initlist=elem)
+                for item, elem in elements.items()
             }
 
         return self._state_dict["elements"][col1][col2]
@@ -312,7 +323,10 @@ class StaticEntity(object):
     def __repr__(self):
         return (
             self.__class__.__name__
-            + f"({self._uid},{list(self.uidset)},{[] if self.properties.empty else self.properties.droplevel(0).to_dict()})"
+            + f"({self._uid},
+                 {list(self.uidset)},
+                 {[] if self.properties.empty
+                     else self.properties.droplevel(0).to_dict()})"
         )
 
     def index(self, column, value=None):
@@ -362,7 +376,6 @@ class StaticEntity(object):
 
     def translate_arr(self, coords):
         assert len(coords) == self._dimsize
-
         translation = []
         for level, index in enumerate(coords):
             translation.append(self.translate(level, index))
@@ -387,16 +400,63 @@ class StaticEntity(object):
         return None
 
     def add(self, *args):
+        """
+        Adds unpacked arguments(args) to entity elements. Depends on
+        add_element()
+
+        Parameters
+        ----------
+        args : One or more data representations of an Entity
+
+        Returns
+        -------
+        self : StaticEntity
+
+        Note
+        ----
+        Adding an element to an object in a hypergraph will not add the
+        element to the hypergraph and will cause an error. Use
+        :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>` or
+        :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph \
+            .add_node_to_edge>` instead.
+
+        """
         for item in args:
             self.add_element(item)
         return self
 
     def add_elements_from(self, arg_set):
+        """
+        Similar to :func:`add()` it allows for adding from an interable.
+
+        Parameters
+        ----------
+        arg_set : Iterable of data representations of an StaticEntity
+
+        Returns
+        -------
+        self : StaticEntity
+
+        """
         for item in arg_set:
             self.add_element(item)
         return self
 
     def add_element(self, data):
+        """
+        Converts the data to a dataframe then utilizes
+        :func`_add_from_dataframe()` to append the dataframe of new data to
+        the existing underlying dataframe representation of the StaticEntity.
+
+        Parameters
+        ----------
+        data : Data representation of Hypergraph edges and/or nodes.
+
+        Returns
+        -------
+        self : StaticEntity
+
+        """
         if isinstance(data, StaticEntity):
             df = data.dataframe
             self.__add_from_dataframe(df)
@@ -410,54 +470,102 @@ class StaticEntity(object):
 
         return self
 
-# change add_element and add_elements_from to add 
-# Point old add_element to new add command 
-# look at where state dict should be and potentially move it to Hypergraph (like it was)
-
-# REQUIRE that the data passed in has values for every row
     def __add_from_dataframe(self, df):
+        """
+        Takes a new dataframe of nodes and edges and appends to the existing
+        dataframe representation of the StaticEntity.
+        Parameters
+        ----------
+        data : Data representation of Hypergraph edges and/or nodes.
+
+        Returns
+        -------
+        self : StaticEntity
+
+        """
         if all(col in df for col in self._data_cols):
             new_data = pd.concat((self._dataframe, df), ignore_index=True)
-            new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
+            new_data[self._cell_weight_col] = new_data[self._cell_weight_col] \
+                .fillna(1)
 
             self._dataframe, _ = remove_row_duplicates(
                 new_data,
                 self._data_cols,
                 weights=self._cell_weight_col,
             )
-            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-                "category"
-            )
+
+            self._dataframe[self._data_cols] = self. \
+                _dataframe[self._data_cols].astype("category")
+
             self._state_dict.clear()
-        # else return warning 
 
     def remove(self, *args):
+        """
+        Removes nodes or edges from a StaticEntity if they exist in the
+        StaticEntity
+
+        Parameters
+        ----------
+        args : One or more data representations of a StaticEntities elements
+
+        Returns
+        -------
+        self : StaticEntity
+
+
+        """
         for item in args:
             self.remove_element(item)
         return self
 
     def remove_elements_from(self, arg_set):
+        """
+        Similar to :func:`remove()`. Removes elements in arg_set.
+
+        Parameters
+        ----------
+        arg_set : !!!// Ask Brenda about phrasing
+
+        Returns
+        -------
+        self : StaticEntity
+
+        """
         for item in arg_set:
             self.remove_element(item)
         return self
 
     def remove_element(self, item):
+        """
+        Removes item from dataframe.
+
+        Parameters
+        ----------
+        item : Data representation of StaticEntity
+
+        Returns
+        -------
+        self : StaticEntity
+
+        """
         updated_dataframe = self._dataframe
-        
+
         for column in self._dataframe:
-            updated_dataframe = updated_dataframe[updated_dataframe[column] != item]
+            updated_dataframe = updated_dataframe[updated_dataframe[column]
+                                                  != item]
 
         self._dataframe, _ = remove_row_duplicates(
             updated_dataframe,
             self._data_cols,
             weights=self._cell_weight_col,
         )
-        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-            "category"
-        )        
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols] \
+            .astype("category")
+
         self._state_dict.clear()
         for col in self._data_cols:
-            self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
+            self._dataframe[col] = self._dataframe[col].cat \
+                .remove_unused_categories()
 
     def encode(self, data):
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
@@ -484,7 +592,8 @@ class StaticEntity(object):
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
+    def restrict_to_levels(self, levels, weights=False, aggregateby="sum",
+                           **kwargs):
         levels = [lev for lev in levels if lev < self._dimsize]
 
         if levels:
@@ -497,7 +606,8 @@ class StaticEntity(object):
 
             entity = self._dataframe[cols]
 
-            kwargs.update(entity=entity, weights=weights, aggregateby=aggregateby)
+            kwargs.update(entity=entity, weights=weights,
+                          aggregateby=aggregateby)
 
         return self.__class__(**kwargs)
 
@@ -510,14 +620,17 @@ class StaticEntity(object):
         return self.__class__(entity=entity, **kwargs)
 
     def _create_properties(self, props):
-        index = pd.MultiIndex(levels=([],[]),codes=([],[]),names=('level','item'))
-        kwargs = {'index':index,'name':'properties'}
+        index = pd.MultiIndex(levels=([], []), codes=([], []), names=('level',
+                                                                      'item'))
+        kwargs = {'index': index, 'name': 'properties'}
         if props:
-            levels = [self.level(item,return_index=False) for item in props]
-            levels_items = [(lev, item) for lev, item in zip(levels,props) if lev is not None]
-            index = pd.MultiIndex.from_tuples(levels_items, names=('level','item'))
-            data = [props[item] for _,item in index]
-            kwargs.update(index=index,data=data)
+            levels = [self.level(item, return_index=False) for item in props]
+            levels_items = [(lev, item) for lev, item in zip(levels, props) if
+                            lev is not None]
+            index = pd.MultiIndex.from_tuples(levels_items, names=('level',
+                                                                   'item'))
+            data = [props[item] for _, item in index]
+            kwargs.update(index=index, data=data)
         return pd.Series(**kwargs)
 
     def assign_properties(self, props):
@@ -527,7 +640,3 @@ class StaticEntity(object):
             properties = update_properties(self._properties, properties)
 
         self._properties = properties
-
-
-
-
