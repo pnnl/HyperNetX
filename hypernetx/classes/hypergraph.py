@@ -160,19 +160,14 @@ class Hypergraph:
             self._nodes = E.restrict_to_levels(
                 [1], weights=False, aggregateby=None)
 
-        if self._static:
-            temprows, tempcols = self.edges.data.T
-            tempdata = np.ones(len(temprows), dtype=int)
-            self.state_dict = {
-                "data": (temprows, tempcols, tempdata)
-            }  # how can we incorporate the counts into the nwhy hypergraph?
-            if self.nwhy:
-                self.g = nwhy.NWHypergraph(*self.state_dict["data"])
-                self.nwhy_dict = {"snodelg": dict(), "sedgelg": dict()}
-            self.state_dict["snodelg"] = dict()
-            self.state_dict["sedgelg"] = dict()
-            if self.filepath is not None:
-                self.save_state(fpath=self.filepath)
+        self.state_dict = {}
+        self.update_state()
+        # how can we incorporate the counts into the nwhy hypergraph?
+        if self.nwhy:
+            self.g = nwhy.NWHypergraph(*self.state_dict["data"])
+            self.nwhy_dict = {"snodelg": dict(), "sedgelg": dict()}
+        if self.filepath is not None:
+            self.save_state(fpath=self.filepath)
 
     @property
     def edges(self):
@@ -407,6 +402,15 @@ class Hypergraph:
         self.state_dict.update(kwargs)
         if self.filepath is not None:
             self.save_state(fpath=self.filepath)
+
+    def update_state(self):
+        temprows, tempcols = self.edges.data.T
+        tempdata = np.ones(len(temprows), dtype=int)
+        self.state_dict["data"] = (temprows, tempcols, tempdata)
+        self.state_dict["snodelg"] = dict()
+        self.state_dict["sedgelg"] = dict()
+        for sdkey in (set(self.state_dict) - {"data", "snodelg", "sedgelg"}):
+            self.state_dict.pop(sdkey)
 
     def save_state(self, fpath=None):
         """
@@ -799,7 +803,7 @@ class Hypergraph:
             nbrs = list(g.neighbors(edx))
         return [self.translate(nb, edges=True) for nb in nbrs]
 
-    def remove_node(self, node):
+    def remove_node(self, node, update_state=True):
         """
         Removes node from edges and deletes reference in hypergraph nodes
 
@@ -820,6 +824,8 @@ class Hypergraph:
                 if node in self._edges[edge]:
                     self._edges.remove(node)
             self._nodes.remove(node)
+        if update_state:
+            self.update_state()
         return self
 
     def remove_nodes(self, node_set):
@@ -837,7 +843,8 @@ class Hypergraph:
 
         """
         for node in node_set:
-            self.remove_node(node)
+            self.remove_node(node,update_state=False)
+        self.update_state()
         return self
 
     def _add_nodes_from(self, nodes):
@@ -851,7 +858,7 @@ class Hypergraph:
         """
         self._nodes.add(nodes)
 
-    def add_edge(self, edge):
+    def add_edge(self, edge, update_state=True):
         """
 
         Adds a single edge to hypergraph.
@@ -894,6 +901,8 @@ class Hypergraph:
             self._nodes.add(edge)
             self._edges.add(edge)
 
+        if update_state:
+            self.update_state()
     def add_edges_from(self, edge_set):
         """
         Add edges to hypergraph.
@@ -909,10 +918,12 @@ class Hypergraph:
 
         """
         for edge, nodes in edge_set.items():
-            self.add_edge({edge: nodes})
+            self.add_edge({edge: nodes}, update_state=False)
+
+        self.update_state()
         return self
 
-    def add_node_to_edge(self, node, edge):
+    def add_node_to_edge(self, node, edge, update_state=True):
         """
 
         Adds node to an edge in hypergraph edges
@@ -933,10 +944,11 @@ class Hypergraph:
         """
 
         if edge in self._edges:
-            self.add_edge({edge: [node]})
+            self.add_edge({edge: [node]}, update_state)
+
         return self
 
-    def remove_edge(self, edge):
+    def remove_edge(self, edge, update_state=True):
         """
         Removes a single edge from hypergraph.
 
@@ -961,6 +973,9 @@ class Hypergraph:
                 if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
                     self.remove_node(node)
             self._edges.remove(edge)
+
+        if update_state:
+            self.update_state()
         return self
 
     def remove_edges(self, edge_set):
@@ -977,7 +992,9 @@ class Hypergraph:
 
         """
         for edge in edge_set:
-            self.remove_edge(edge)
+            self.remove_edge(edge, update_state=False)
+
+        self.update_state()
         return self
 
     def incidence_matrix(self, weights=False, index=False):
