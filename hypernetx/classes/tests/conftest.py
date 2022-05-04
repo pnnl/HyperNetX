@@ -47,7 +47,7 @@ class SevenBySix:
             ]
         )
 
-        self.data = [
+        self.data = np.array([
             [0, 0],
             [0, 1],
             [0, 2],
@@ -63,7 +63,7 @@ class SevenBySix:
             [4, 6],
             [5, 0],
             [5, 5],
-        ]
+        ])
 
 
 class TriLoop:

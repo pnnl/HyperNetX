@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 import networkx as nx
-from hypernetx import Hypergraph, Entity, EntitySet
+from hypernetx import Hypergraph
 from hypernetx import HyperNetXError
 
 
@@ -10,8 +10,8 @@ def test_from_bipartite():
     g = nx.complete_bipartite_graph(2, 3)
     left, right = nx.bipartite.sets(g)
     h = Hypergraph.from_bipartite(g)
-    assert left.issubset(h.nodes)
-    assert right.issubset(h.edges)
+    assert left.issubset({*h.nodes})
+    assert right.issubset({*h.edges})
     with pytest.raises(Exception) as excinfo:
         h.edge_diameter(s=4)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
