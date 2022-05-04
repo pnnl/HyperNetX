@@ -13,7 +13,7 @@ def test_precompute(modularityexample):
     HG = precompute_attributes(HG)
     assert HG.nodes['F'].strength == 3
     assert HG.total_weight == 6
-    assert HG.edges['e2'].weight == 1
+    assert HG.edges[2].weight == 1
 
 
 def test_modularity(modularityexample):

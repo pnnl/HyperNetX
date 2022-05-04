@@ -104,3 +104,17 @@ class StaticEntitySet(StaticEntity):
 
             self._cell_properties = cell_properties
 
+    def collapse_identical_elements(self, return_equivalence_classes=False,**kwargs):
+        collapse = self._dataframe[self._data_cols].groupby(self._data_cols[0],as_index=False).agg(frozenset)
+        agg_kwargs = {'name': (self._data_cols[0],lambda x:  f'{x.iloc[0]}:{len(x)}')}
+        if return_equivalence_classes:
+            agg_kwargs.update(equivalence_class=(0,list))
+        collapse = collapse.groupby(self._data_cols[1],as_index=False).agg(**agg_kwargs)
+        collapse = collapse.set_index('name')
+        new_entity_dict = collapse[self._data_cols[1]].to_dict()
+        new_entity = StaticEntitySet(new_entity_dict, **kwargs)
+        if return_equivalence_classes:
+            equivalence_classes = collapse.equivalence_class.to_dict()
+            return new_entity, equivalence_classes
+        return new_entity
+

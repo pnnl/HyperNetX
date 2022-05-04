@@ -425,7 +425,7 @@ def _delta_ec(HG, P, v, a, b, wdc):
     Pm = P[a] - {v}
     Pn = P[b].union({v})
     ec = 0
-    for e in list(HG.nodes[v].memberships):
+    for e in list(HG.nodes.memberships[v]):
         d = HG.size(e)
         w = HG.edges[e].weight
         ec += w * (wdc(d, HG.size(e, Pm)) + wdc(d, HG.size(e, Pn))
