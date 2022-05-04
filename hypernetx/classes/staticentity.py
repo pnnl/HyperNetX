@@ -266,7 +266,6 @@ class StaticEntity(object):
         if col2 not in self._state_dict["elements"][col1]:
             level = self.index(col1)
             elements = self._dataframe.groupby(col1)[col2].unique().to_dict()
-            # breakpoint()
             self._state_dict["elements"][col1][col2] = {
                 item: AttrList(entity=self,key=(level,item),initlist=elem) for item, elem in elements.items()
             }
