@@ -146,8 +146,7 @@ class Hypergraph:
 
             except Exception:
                 self.nwhy = False
-                print("NWHypergraph is not available. Will continue with
-                      static=True.")
+                print("NWHypergraph is not available. Will continue with static=True.")
                 use_nwhy = False
         else:
             self.nwhy = False

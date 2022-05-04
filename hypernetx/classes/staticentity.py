@@ -323,10 +323,7 @@ class StaticEntity(object):
     def __repr__(self):
         return (
             self.__class__.__name__
-            + f"({self._uid},
-                 {list(self.uidset)},
-                 {[] if self.properties.empty
-                     else self.properties.droplevel(0).to_dict()})"
+            + f"({self._uid},{list(self.uidset)},{[] if self.properties.empty else self.properties.droplevel(0).to_dict()})"
         )
 
     def index(self, column, value=None):
