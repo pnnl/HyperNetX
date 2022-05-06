@@ -150,7 +150,8 @@ class StaticEntity(object):
         self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
 
         # each entity data column represents one dimension of the data
-        # (data updates can only add or remove rows, so this isn't stored in state dict)
+        # (data updates can only add or remove rows, so this isn't stored in
+        # state dict)
         self._dimsize = len(self._data_cols)
 
         # remove duplicate rows and aggregate cell weights as needed
@@ -161,18 +162,30 @@ class StaticEntity(object):
             aggregateby=aggregateby,
         )
 
-        # set the dtype of entity data columns to categorical (simplifies encoding, etc.)
+        # set the dtype of entity data columns to categorical (simplifies
+        # encoding, etc.)
         self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
             "category"
         )
 
     @property
     def data(self):
+        """
+        Data array or tensor array of Static Entity
+
+        Returns
+        -------
+        numpy.ndarray
+            Two dimensional array. Each row has system ids of objects in the static entity.
+            Each column corresponds to one level of the static entity.
+
+        """
         if "data" not in self._state_dict:
             if self.empty:
                 self._state_dict["data"] = np.zeros((0, 0), dtype=int)
             else:
-                # assumes dtype of data cols is categorical and dataframe not altered
+                # assumes dtype of data cols is categorical and dataframe not
+                # altered
                 self._state_dict["data"] = (
                     self._dataframe[self._data_cols]
                     .apply(lambda x: x.cat.codes)
@@ -183,8 +196,18 @@ class StaticEntity(object):
 
     @property
     def labels(self):
+        """
+        Dictionary of labels
+
+        Returns
+        -------
+        dict
+            User defined identifiers for objects in static entity. Ordered keys correspond
+            levels. Ordered values correspond to integer representation of values in data.
+        """
         if "labels" not in self._state_dict:
-            # assumes dtype of data cols is categorical and dataframe not altered
+            # assumes dtype of data cols is categorical and dataframe not
+            # altered
             self._state_dict["labels"] = {
                 col: self._dataframe[col].cat.categories.to_list()
                 for col in self._data_cols
@@ -194,6 +217,14 @@ class StaticEntity(object):
 
     @property
     def cell_weights(self):
+        """
+        User defined weights corresponding to unique rows in data.
+
+        Returns
+        -------
+        dict
+            Dictionary of values aligned to data.
+        """
         if "cell_weights" not in self._state_dict:
             if self.empty:
                 self._state_dict["cell_weights"] = {}
@@ -206,6 +237,14 @@ class StaticEntity(object):
 
     @property
     def dimensions(self):
+        """
+        Dimension of data
+
+        Returns
+        -------
+        tuple
+            Tuple of number of distinct labels in each level, ordered by level.
+        """
         if "dimensions" not in self._state_dict:
             if self.empty:
                 self._state_dict["dimensions"] = tuple()
@@ -218,29 +257,96 @@ class StaticEntity(object):
 
     @property
     def dimsize(self):
+        """
+        Number of categories in the data
+
+        Returns
+        -------
+        int
+            Number of levels in static entity, equals length of self.dimensions
+        """
         return self._dimsize
 
     @property
     def properties(self):
+        #Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
+        """
+        Pandas series containing properties for the Static Entity.
+
+        Returns
+        -------
+        pandas.Series
+            Properties for the Static Entity
+        """
+
         return self._properties
 
     @property
     def uid(self):
+        # Dev Note: This also returned nothing in my harry potter dataset, not sure if it was supposed to contain anything
+        """
+        User defined identifier for each object in static entity.
+
+        Returns
+        -------
+        str, int
+            Identifiers, which distinguish  objects within each level.
+        """
         return self._uid
 
     @property
     def uidset(self):
+        """
+        Returns a set of the string identifiers for Static Entity
+
+        Returns
+        -------
+        frozenset
+            Hashable set of keys.
+        """
         return self.uidset_by_level(0)
 
     @property
     def children(self):
+        """
+        Labels of keys of first index
+
+        Returns
+        -------
+        frozenset
+            Set of labels in the second level.
+        """
         return self.uidset_by_level(1)
 
     def uidset_by_level(self, level):
+        """
+        The labels found in a specific level
+
+        Parameters
+        ----------
+        level : int
+
+        Returns
+        -------
+        frozenset
+        """
         col = self._data_cols[level]
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column):
+        # Dev Note: This threw an error when trying it on the harry potter dataset,
+        # when trying 0, or 1 for column. I'm not sure how this should be used
+        """
+        The labels found in a specific column of the data
+
+        Parameters
+        ----------
+        level : int
+
+        Returns
+        -------
+        frozenset
+        """
         if "uidset" not in self._state_dict:
             self._state_dict["uidset"] = {}
         if column not in self._state_dict["uidset"]:
@@ -252,6 +358,16 @@ class StaticEntity(object):
 
     @property
     def elements(self):
+        """
+        Keys and values in the order of insertion
+
+        Returns
+        -------
+        dict
+            Same as elements_by_level with level1 = 0, level2 = 1.
+            Compare with EntitySet with level1 = elements, level2 = children.
+
+        """
         if self._dimsize == 1:
             return {k: AttrList(entity=self, key=(0, k)) for k in self.uidset}
 
@@ -259,18 +375,69 @@ class StaticEntity(object):
 
     @property
     def incidence_dict(self):
+        """
+        Same as elements.
+
+        Returns
+        -------
+        dict
+            Same as elements_by_level with level1 = 0, level2 = 1.
+            Compare with EntitySet with level1 = elements, level2 = children.
+        """
         return self.elements
 
     @property
     def memberships(self):
+        """
+        Reverses the elements dictionary
+
+        Returns
+        -------
+        dict
+            Same as elements_by_level with level1 = 1, level2 = 0.
+        """
         return self.elements_by_level(1, 0)
 
     def elements_by_level(self, level1, level2):
+        """
+        Elements of Static Entity by specified level(s)
+
+        Parameters
+        ----------
+        level1 : int, optional
+            edges
+        level2 : int, optional
+            nodes
+
+        Returns
+        -------
+        dict
+
+        think: level1 = edges, level2 = nodes
+        """
         col1 = self._data_cols[level1]
         col2 = self._data_cols[level2]
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
+        # Dev Note: This threw an error when trying it on the harry potter dataset,
+        # when trying 0, or 1 for column. I'm not sure how this should be used
+        """
+        Elements of Static Entity by specified column(s)
+
+        Parameters
+        ----------
+        level1 : int, optional
+            edges
+        level2 : int, optional
+            nodes
+
+        Returns
+        -------
+        dict
+
+        think: level1 = edges, level2 = nodes
+        """
         if "elements" not in self._state_dict:
             self._state_dict["elements"] = defaultdict(dict)
         if col2 not in self._state_dict["elements"][col1]:
@@ -285,47 +452,138 @@ class StaticEntity(object):
 
     @property
     def dataframe(self):
+        """
+        Pandas dataframe representation of the data
+
+        Returns
+        -------
+        pandas.core.frame.DataFrame
+        """
         return self._dataframe
 
     @property
     def isstatic(self):
+        #Dev Note: I'm guessing this is no longer necessary?
         return self._static
 
     def size(self, level=0):
+        """
+        The number of elements in E, the size of dimension 0 in the E.arr
+
+        Returns
+        -------
+        int
+        """
         return self.dimensions[level]
 
     @property
     def empty(self):
+        """
+        Checks if the dimsize = 0
+
+        Returns
+        -------
+        bool
+        """
         return self._dimsize == 0
 
     def is_empty(self, level=0):
+        """
+        Checks if a level is empty
+
+        Returns
+        -------
+        bool
+        """
         return self.empty or self.size(level) == 0
 
     def __len__(self):
+        """
+        Returns the number of elements in Static Entity
+
+        Returns
+        -------
+        int
+            Number of distinct labels in level 0.
+        """
         return self.dimensions[0]
 
     def __contains__(self, item):
+        """
+        Defines containment for StaticEntity based on labels/categories.
+
+        Parameters
+        ----------
+        item : string
+
+        Returns
+        -------
+        bool
+        """
         for labels in self.labels.values():
-            if item in labels: 
+            if item in labels:
                 return True
         return False
 
     def __getitem__(self, item):
+        """
+        Get value of key in E.elements
+
+        Parameters
+        ----------
+        item : string
+
+        Returns
+        -------
+        list
+        """
         return self.elements[item]
 
     def __iter__(self):
+        """
+        Create iterator from E.elements
+
+        Returns
+        -------
+        odict_iterator
+        """
         return iter(self.elements)
 
     def __call__(self, label_index=0):
+        """
+        Allows user to create instance of class that behaves like a function
+        """
         return iter(self.labels[self._data_cols[label_index]])
 
     def __repr__(self):
+        """
+        Returns a string resembling the constructor for staticentity without
+        any children
+
+        Returns
+        -------
+        string
+        """
         return (
-            self.__class__.__name__
-            + f"({self._uid},{list(self.uidset)},{[] if self.properties.empty else self.properties.droplevel(0).to_dict()})"
+            self.__class__.__name__ + f"({self._uid}, {list(self.uidset)},
+                                         {[] if self.properties.empty
+                                         else self.properties.droplevel(0)
+                                         .to_dict()})"
         )
 
     def index(self, column, value=None):
+        """
+        Returns dimension of category and index of value
+
+        Parameters
+        ----------
+        category : string
+        value : string, optional
+
+        Returns
+        -------
+        int or tuple of ints
+        """
         if "keyindex" not in self._state_dict:
             self._state_dict["keyindex"] = {}
         if column not in self._state_dict["keyindex"]:
@@ -349,6 +607,18 @@ class StaticEntity(object):
         )
 
     def indices(self, column, values):
+        """
+        Returns dimension of category and index of values (array)
+
+        Parameters
+        ----------
+        category : string
+        values : single string or array of strings
+
+        Returns
+        -------
+        list
+        """
         if isinstance(values, Hashable):
             values = [values]
 
@@ -363,6 +633,20 @@ class StaticEntity(object):
         return [self._state_dict["index"][column][v] for v in values]
 
     def translate(self, level, index):
+        """
+        Replaces a category index and value index with label
+
+        Parameters
+        ----------
+        level : int
+            category index of label
+        index : int
+            value index of label
+
+        Returns
+        -------
+         str
+        """
         column = self._data_cols[level]
 
         if isinstance(index, (int, np.integer)):
@@ -371,6 +655,17 @@ class StaticEntity(object):
         return [self.labels[column][i] for i in index]
 
     def translate_arr(self, coords):
+        """
+        Translates a single cell in the entity array
+
+        Parameters
+        ----------
+        coords : tuple of ints
+
+        Returns
+        -------
+        list
+        """
         assert len(coords) == self._dimsize
         translation = []
         for level, index in enumerate(coords):
@@ -379,6 +674,22 @@ class StaticEntity(object):
         return translation
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
+        """
+        Returns first level item appears by order of keys from minlevel to
+        maxlevel inclusive
+
+        Parameters
+        ----------
+        item : string
+        min_level : int, optional
+        max_level : int, optional
+
+        return_index : bool, optional
+
+        Returns
+        -------
+        str
+        """
         if max_level is None or max_level >= self._dimsize:
             max_level = self._dimsize - 1
 
@@ -520,7 +831,7 @@ class StaticEntity(object):
 
         Parameters
         ----------
-        arg_set : !!!// Ask Brenda about phrasing
+        arg_set : Dev Note: Ask Brenda about phrasing
 
         Returns
         -------
@@ -564,12 +875,56 @@ class StaticEntity(object):
                 .remove_unused_categories()
 
     def encode(self, data):
+        """
+        Encode dataframe to numpy array
+
+        Parameters
+        ----------
+        data : dataframe
+
+        Returns
+        -------
+        numpy.array
+
+        """
         encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
         return encoded_array
 
     def incidence_matrix(
         self, level1=0, level2=1, weights=False, aggregateby=None, index=False
     ):
+        """
+        Convenience method to navigate large tensor
+
+        Parameters
+        ----------
+        level1 : int, optional
+            indexes columns
+        level2 : int, optional
+            indexes rows
+        weights : bool, dict optional, default=False
+            If False all nonzero entries are 1.
+            If True all nonzero entries are filled by self.cell_weight
+            dictionary values, use :code:`aggregateby` to specify how duplicate
+            entries should have weights aggregated.
+            If dict, keys must be in (edge.uid, node.uid) form; only nonzero
+            cells in the incidence matrix will be updated by dictionary.
+        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean',
+            'median', max', 'min', 'first', 'last'}, default : 'count'
+            Method to aggregate weights of duplicate rows in data. If None,
+            then all cell weights will be set to 1.
+        index : bool, optional
+
+        Returns
+        -------
+        scipy.sparse.csr.csr_matrix
+            Sparse matrix representation of incidence matrix for two levels of
+            static entity.
+
+        Note
+        ----
+        In the context of hypergraphs think level1 = edges, level2 = nodes
+        """
         if self.dimsize < 2:
             warnings.warn("Incidence matrix requires two levels of data.")
             return None
@@ -590,6 +945,27 @@ class StaticEntity(object):
 
     def restrict_to_levels(self, levels, weights=False, aggregateby="sum",
                            **kwargs):
+        """
+        Limit Static Entity data to specific levels
+
+        Parameters
+        ----------
+        levels : array
+            index of labels in data
+        weights : bool, optional, default : False
+            Whether or not to aggregate existing weights in self when
+            restricting to levels. If False then weights will be assigned 1.
+        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean',
+            'median', max', 'min', 'first', 'last'}, default : 'count' Method
+            to aggregate cell_weights of duplicate rows in setsystem of type
+            pandas.DataFrame. If None then all cell_weights will be set to 1.
+        uid : None, optional
+
+        Returns
+        -------
+        Static Entity class
+            hnx.classes.staticentity.StaticEntity
+        """
         levels = [lev for lev in levels if lev < self._dimsize]
 
         if levels:
@@ -608,14 +984,41 @@ class StaticEntity(object):
         return self.__class__(**kwargs)
 
     def restrict_to_indices(self, indices, level=0, **kwargs):
+        """
+        Limit Static Entity data to specific indices of keys
+
+        Parameters
+        ----------
+        indices : array
+            array of category indices
+        level : int, optional
+            index of label
+        uid : None, optional
+
+        Returns
+        -------
+        Static Entity class
+            hnx.classes.staticentity.StaticEntity
+        """
         column = self._dataframe[self._data_cols[level]]
         values = column.cat.categories[list(indices)]
         entity = self._dataframe.loc[column.isin(values)]
         for col in self._data_cols:
-            entity.loc[:,col] = entity[col].cat.remove_unused_categories()
+            entity.loc[:, col] = entity[col].cat.remove_unused_categories()
         return self.__class__(entity=entity, **kwargs)
 
     def _create_properties(self, props):
+        """
+        Create new properties
+
+        Parameters
+        ----------
+        props : list of properties
+
+        Returns
+        -------
+        pandas.Series
+        """
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=('level',
                                                                       'item'))
         kwargs = {'index': index, 'name': 'properties'}
@@ -630,6 +1033,7 @@ class StaticEntity(object):
         return pd.Series(**kwargs)
 
     def assign_properties(self, props):
+        #Dev Note: Not sure what the put here.
         properties = self._create_properties(props)
 
         if not self._properties.empty:
