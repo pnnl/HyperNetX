@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hypernetx import Hypergraph, StaticEntitySet
+from hypernetx import Hypergraph, EntitySet
 from hypernetx import HyperNetXError
 
 try:
@@ -16,7 +16,7 @@ def test_static_hypergraph_constructor_setsystem_nwhy(seven_by_six):
     sbs = seven_by_six
     edict = sbs.edgedict
     H = Hypergraph(edict, use_nwhy=True)
-    assert isinstance(H.edges, StaticEntitySet)
+    assert isinstance(H.edges, EntitySet)
     assert H.isstatic == True
     if nwhy_available:
         assert H.nwhy == True

@@ -1,5 +1,5 @@
 import pandas as pd
-from hypernetx.classes.staticentity import StaticEntity
+from hypernetx.classes.entity import Entity
 import warnings
 from hypernetx import *
 from pandas.api.types import CategoricalDtype
@@ -10,7 +10,7 @@ from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import *
 
 
-class StaticEntitySet(StaticEntity):
+class EntitySet(Entity):
     def __init__(
         self,
         entity=None,
@@ -27,7 +27,7 @@ class StaticEntitySet(StaticEntity):
         cell_properties=None,
     ):
 
-        if isinstance(entity, StaticEntity):
+        if isinstance(entity, Entity):
             if keep_weights:
                 weights = entity._cell_weight_col
             entity = entity.dataframe
@@ -59,8 +59,7 @@ class StaticEntitySet(StaticEntity):
             properties=properties
         )
 
-        self._cell_properties = self._create_cell_properties(cell_properties) /
-        if self._dimsize == 2 else None
+        self._cell_properties = self._create_cell_properties(cell_properties) if self._dimsize == 2 else None
 
     @property
     def cell_properties(self):
@@ -104,7 +103,7 @@ class StaticEntitySet(StaticEntity):
         Returns
         -------
         Static Entity class
-            hnx.classes.staticentity.StaticEntity
+            hnx.classes.entity.Entity
         """
         restricted = super().restrict_to_levels(levels, weights, aggregateby,
                                                 **kwargs)
@@ -126,8 +125,8 @@ class StaticEntitySet(StaticEntity):
 
         Returns
         -------
-        StaticEntitySet
-            hnx.classes.staticentity.StaticEntitySet
+        EntitySet
+            hnx.classes.entity.EntitySet
 
         """
         return self.restrict_to_indices(indices, **kwargs)
@@ -158,9 +157,9 @@ class StaticEntitySet(StaticEntity):
     def collapse_identical_elements(self, return_equivalence_classes=False,
                                     **kwargs):
         """
-        Returns StaticEntitySet after collapsing elements if they have same
+        Returns EntitySet after collapsing elements if they have same
         children If no elements share same children, a copy of the original
-        StaticEntitySet is returned
+        EntitySet is returned
 
         Parameters
         ----------
@@ -172,8 +171,8 @@ class StaticEntitySet(StaticEntity):
 
         Returns
         -------
-        StaticEntitySet
-            hnx.classes.staticentity.StaticEntitySet
+        EntitySet
+            hnx.classes.Entity.EntitySet
         """
         collapse = self._dataframe[self._data_cols].groupby(self._data_cols[0], as_index=False).agg(frozenset)
         agg_kwargs = {'name': (self._data_cols[0], lambda x:  f'{x.iloc[0]}: {len(x)}')}
@@ -182,7 +181,7 @@ class StaticEntitySet(StaticEntity):
         collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(**agg_kwargs)
         collapse = collapse.set_index('name')
         new_entity_dict = collapse[self._data_cols[1]].to_dict()
-        new_entity = StaticEntitySet(new_entity_dict, **kwargs)
+        new_entity = EntitySet(new_entity_dict, **kwargs)
         if return_equivalence_classes:
             equivalence_classes = collapse.equivalence_class.to_dict()
             return new_entity, equivalence_classes

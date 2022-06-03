@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
 from collections import OrderedDict, defaultdict
-from hypernetx.classes.staticentity import StaticEntity
-from hypernetx.classes.staticentityset import StaticEntitySet
+from hypernetx.classes.entity import Entity
+from hypernetx.classes.entityset import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import not_implemented_for
 
@@ -77,7 +77,7 @@ class Hypergraph:
         # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), /
         # EntitySet(_:Edges,['_1', '_2', '_0'],{}))
 
-    4. From a hypernetx.EntitySet or StaticEntitySet: ::
+    4. From a hypernetx.EntitySet or EntitySet: ::
 
         >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
         >>> E = EntitySet('sample',elements=[a,b])
@@ -89,7 +89,7 @@ class Hypergraph:
     All of these constructions apply for both dynamic and static hypergraphs.
     To create a static hypergraph set the parameter `static=True`. In addition
     a static
-    hypergraph is automatically created if a StaticEntity, StaticEntitySet, or
+    hypergraph is automatically created if a Entity, EntitySet, or
     pandas.DataFrame object is passed to the Hypergraph constructor.
 
     5. | From a pandas.DataFrame. The dataframe must have at least two columns
@@ -105,7 +105,7 @@ class Hypergraph:
 
     Parameters
     ----------
-    setsystem : (optional) EntitySet, StaticEntitySet, dict, iterable,
+    setsystem : (optional) EntitySet, EntitySet, dict, iterable,
         pandas.dataframe, default: None See notes above for setsystem
         requirements.
     name : hashable, optional, default: None
@@ -118,12 +118,12 @@ class Hypergraph:
         pandas.DataFrame, length must equal number of rows in dataframe. If
         None, weight for all rows is assumed to be 1.
     keep_weights : bool, optional, default : True
-        Whether or not to use existing weights when input is StaticEntity,
-        or StaticEntitySet.
+        Whether or not to use existing weights when input is Entity,
+        or EntitySet.
     aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max',
         'min', 'first','last', None}, default : 'sum'
         Method to aggregate cell_weights of duplicate rows if setsystem  is of
-        type pandas.DataFrame or StaticEntity. If None all cell weights will
+        type pandas.DataFrame or Entity. If None all cell weights will
         be set to 1.
     use_nwhy : boolean, optional, default : False
         If True hypergraph will be static and computations will be done using
@@ -166,10 +166,10 @@ class Hypergraph:
         self._static = static
 
         if setsystem is None:
-            self._edges = StaticEntitySet()
-            self._nodes = StaticEntitySet()
+            self._edges = EntitySet()
+            self._nodes = EntitySet()
         else:
-            E = StaticEntitySet(
+            E = EntitySet(
                 entity=setsystem, weights=weights, aggregateby=aggregateby, static=static
             )
             self._edges = E
@@ -192,8 +192,8 @@ class Hypergraph:
 
         Returns
         -------
-        StaticEntitySet or EntitySet
-            If self.isstatic the StaticEntitySet, otherwise EntitySet.
+        EntitySet or EntitySet
+            If self.isstatic the EntitySet, otherwise EntitySet.
         """
         return self._edges
 
@@ -204,8 +204,8 @@ class Hypergraph:
 
         Returns
         -------
-        StaticEntitySet or EntitySet
-            If self.isstatic the StaticEntitySet, otherwise EntitySet.
+        EntitySet or EntitySet
+            If self.isstatic the EntitySet, otherwise EntitySet.
 
         """
         return self._nodes
@@ -467,7 +467,7 @@ class Hypergraph:
         recovered_counts = np.array(temp["data"])[
             [2]
         ]  # ammend this to store cell weights
-        E = StaticEntitySet(data=recovered_data, labels=labels)
+        E = EntitySet(data=recovered_data, labels=labels)
         E.properties["counts"] = recovered_counts
         H = Hypergraph(E, use_nwhy=use_nwhy)
         H.state_dict.update(temp)
@@ -502,7 +502,7 @@ class Hypergraph:
             H.state_dict.update(sd)
             return H
         else:
-            return Hypergraph(StaticEntitySet(h.edges), use_nwhy=True, filepath=fpath)
+            return Hypergraph(EntitySet(h.edges), use_nwhy=True, filepath=fpath)
 
     def edge_size_dist(self):
         """
@@ -563,7 +563,7 @@ class Hypergraph:
             self._static = True
             return self
         else:
-            E = StaticEntitySet(self.edges,static=True)
+            E = EntitySet(self.edges,static=True)
             return Hypergraph(E, use_nwhy=use_nwhy, filepath=filepath, name=name, static=True)
 
     def remove_static(self, name=None):
@@ -2240,7 +2240,7 @@ class Hypergraph:
             else:
                 elist.append([e[0], e[1]])
         df = pd.DataFrame(elist, columns=set_names)
-        E = StaticEntitySet(entity=df)
+        E = EntitySet(entity=df)
         name = name or "_"
         return Hypergraph(E, name=name, use_nwhy=use_nwhy)
 
@@ -2327,7 +2327,7 @@ class Hypergraph:
 
         data = np.stack(M.T.nonzero()).T
         labels = OrderedDict([(edge_label, edgenames), (node_label, nodenames)])
-        E = StaticEntitySet(data=data, labels=labels)
+        E = EntitySet(data=data, labels=labels)
         return Hypergraph(E, name=name, use_nwhy=use_nwhy)
 
     @classmethod

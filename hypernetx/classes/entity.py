@@ -9,7 +9,7 @@ from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import *
 
 
-class StaticEntity(object):
+class Entity(object):
     """
     A new Entity object using pandas.DataFrame as the base data structure
 
@@ -510,7 +510,7 @@ class StaticEntity(object):
 
     def __contains__(self, item):
         """
-        Defines containment for StaticEntity based on labels/categories.
+        Defines containment for Entity based on labels/categories.
 
         Parameters
         ----------
@@ -557,7 +557,7 @@ class StaticEntity(object):
 
     def __repr__(self):
         """
-        Returns a string resembling the constructor for staticentity without
+        Returns a string resembling the constructor for Entity without
         any children
 
         Returns
@@ -565,10 +565,10 @@ class StaticEntity(object):
         string
         """
         return (
-            self.__class__.__name__ + f"({self._uid}, {list(self.uidset)},
+            self.__class__.__name__ + f"""({self._uid}, {list(self.uidset)},
                                          {[] if self.properties.empty
                                          else self.properties.droplevel(0)
-                                         .to_dict()})"
+                                         .to_dict()})"""
         )
 
     def index(self, column, value=None):
@@ -717,7 +717,7 @@ class StaticEntity(object):
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         Note
         ----
@@ -738,11 +738,11 @@ class StaticEntity(object):
 
         Parameters
         ----------
-        arg_set : Iterable of data representations of an StaticEntity
+        arg_set : Iterable of data representations of an Entity
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         """
         for item in arg_set:
@@ -753,7 +753,7 @@ class StaticEntity(object):
         """
         Converts the data to a dataframe then utilizes
         :func`_add_from_dataframe()` to append the dataframe of new data to
-        the existing underlying dataframe representation of the StaticEntity.
+        the existing underlying dataframe representation of the Entity.
 
         Parameters
         ----------
@@ -761,10 +761,10 @@ class StaticEntity(object):
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         """
-        if isinstance(data, StaticEntity):
+        if isinstance(data, Entity):
             df = data.dataframe
             self.__add_from_dataframe(df)
 
@@ -780,14 +780,14 @@ class StaticEntity(object):
     def __add_from_dataframe(self, df):
         """
         Takes a new dataframe of nodes and edges and appends to the existing
-        dataframe representation of the StaticEntity.
+        dataframe representation of the Entity.
         Parameters
         ----------
         data : Data representation of Hypergraph edges and/or nodes.
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         """
         if all(col in df for col in self._data_cols):
@@ -808,8 +808,8 @@ class StaticEntity(object):
 
     def remove(self, *args):
         """
-        Removes nodes or edges from a StaticEntity if they exist in the
-        StaticEntity
+        Removes nodes or edges from a Entity if they exist in the
+        Entity
 
         Parameters
         ----------
@@ -817,7 +817,7 @@ class StaticEntity(object):
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
 
         """
@@ -835,7 +835,7 @@ class StaticEntity(object):
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         """
         for item in arg_set:
@@ -848,11 +848,11 @@ class StaticEntity(object):
 
         Parameters
         ----------
-        item : Data representation of StaticEntity
+        item : Data representation of Entity
 
         Returns
         -------
-        self : StaticEntity
+        self : Entity
 
         """
         updated_dataframe = self._dataframe
@@ -964,7 +964,7 @@ class StaticEntity(object):
         Returns
         -------
         Static Entity class
-            hnx.classes.staticentity.StaticEntity
+            hnx.classes.Entity.Entity
         """
         levels = [lev for lev in levels if lev < self._dimsize]
 
@@ -998,7 +998,7 @@ class StaticEntity(object):
         Returns
         -------
         Static Entity class
-            hnx.classes.staticentity.StaticEntity
+            hnx.classes.Entity.Entity
         """
         column = self._dataframe[self._data_cols[level]]
         values = column.cat.categories[list(indices)]
