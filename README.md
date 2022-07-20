@@ -170,6 +170,15 @@ For an editable installation with access to jupyter notebooks:
 
     >>> pip install [-e] .
 
+> ℹ️ **TIP:**  For the following installation commnads, if you are using ZSH as your shell, you might encounter the 
+> following error: 
+>>**zsh: no matches found: .[tutorials]** 
+>
+> To successfully run the below installation commands, put the single quote around the square brackets. For example:
+> >pip install -e .'[tutorials]'
+> 
+> For more information on this ZSH-related issue, see this [StackOverflow post](https://stackoverflow.com/a/68888466/11145086).
+
 To install with the tutorials:
 
     >>> pip install -e .['tutorials']
@@ -185,7 +194,16 @@ To install with the documentation:
 To install and test using pytest:
 
     >>> pip install -e .['testing']
-    >>> pytest
+    
+    # run tests
+    >>> python -m pytest
+    
+    # run tests and show coverage report
+    >>> python -m pytest --cov=hypernetx
+    
+    # Generate an HTML code coverage report and view it on a browser
+    >>> coverage html
+    >>> open htmlcov/index.html
 
 To install the whole shabang:
 
