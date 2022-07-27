@@ -170,7 +170,7 @@ For an editable installation with access to jupyter notebooks:
 
     >>> pip install [-e] .
 
-> ℹ️ **TIP:**  For the following installation commnads, if you are using ZSH as your shell, you might encounter the 
+> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter the 
 > following error: 
 >>**zsh: no matches found: .[tutorials]** 
 >
