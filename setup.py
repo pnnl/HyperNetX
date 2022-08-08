@@ -32,6 +32,7 @@ setup(
         "pandas>=0.23",
         "python-igraph>=0.9.6",
         "celluloid>=0.2.0",
+        "decorator>=5.1.1"
     ],
     license="3-Clause BSD license",
     long_description="""
