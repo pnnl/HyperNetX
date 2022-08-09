@@ -722,7 +722,7 @@ class Hypergraph:
         size : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
@@ -2302,7 +2302,7 @@ class Hypergraph:
 
     @classmethod
     def from_bipartite(
-        cls, B, set_names=("nodes", "edges"), name=None, static=False, use_nwhy=False
+        cls, B, set_names=("edges", "nodes"), name=None, static=False, use_nwhy=False
     ):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -2356,7 +2356,7 @@ class Hypergraph:
         if static:
             elist = []
             for e in list(B.edges):
-                if e[0] in nodes:
+                if e[0] in edges:
                     elist.append([e[0], e[1]])
                 else:
                     elist.append([e[1], e[0]])

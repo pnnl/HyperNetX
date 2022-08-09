@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.2.1"
+__version__ = "1.2.4"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -30,6 +30,9 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
+        "python-igraph>=0.9.6",
+        "celluloid>=0.2.0",
+        "decorator>=5.1.1"
     ],
     license="3-Clause BSD license",
     long_description="""

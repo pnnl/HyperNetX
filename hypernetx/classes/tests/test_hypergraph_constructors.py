@@ -1,9 +1,11 @@
+from collections import OrderedDict
+
 import pytest
 import numpy as np
 import pandas as pd
 import networkx as nx
-from hypernetx import Hypergraph, Entity, EntitySet
-from hypernetx import HyperNetXError
+from hypernetx import Hypergraph, EntitySet
+
 
 
 def test_from_bipartite():
@@ -15,6 +17,25 @@ def test_from_bipartite():
     with pytest.raises(Exception) as excinfo:
         h.edge_diameter(s=4)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
+
+
+@pytest.mark.parametrize("static", [(True), (False)])
+def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(seven_by_six, static):
+    edgedict = OrderedDict(seven_by_six.edgedict)
+
+    bipartite_graph = Hypergraph(edgedict).bipartite()
+    hg_from_bipartite = Hypergraph.from_bipartite(bipartite_graph, static=static)
+
+    entityset = EntitySet("_", edgedict)
+    hg_from_constructor = Hypergraph(entityset, static=static)
+
+    assert hg_from_bipartite.isstatic == hg_from_constructor.isstatic
+
+    assert hg_from_bipartite.shape == hg_from_constructor.shape
+
+    incidence_dict_hg_from_bipartite = {key: sorted(value) for key, value in hg_from_bipartite.incidence_dict.items()}
+    incidence_dict_hg_from_constructor = {key: sorted(value) for key, value in hg_from_constructor.incidence_dict.items()}
+    assert incidence_dict_hg_from_bipartite == incidence_dict_hg_from_constructor
 
 
 def test_from_numpy_array():
