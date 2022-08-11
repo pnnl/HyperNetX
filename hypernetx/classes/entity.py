@@ -78,15 +78,15 @@ class Entity(object):
     """
 
     def __init__(
-        self,
-        entity=None,
-        data=None,
-        static=True,
-        labels=None,
-        uid=None,
-        weights=None,
-        aggregateby="sum",
-        properties=None
+            self,
+            entity=None,
+            data=None,
+            static=False,
+            labels=None,
+            uid=None,
+            weights=None,
+            aggregateby="sum",
+            properties=None
     ):
         # set unique identifier
         self._uid = uid
