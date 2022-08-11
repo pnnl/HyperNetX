@@ -7,71 +7,65 @@ from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import *
 
 
-class Entity(object):
-    """
-    A new Entity object using pandas.DataFrame as the base data structure
-
-    TODO: allow addition of rows of data from dict of lists or lists of lists
-    TODO: allow removal of rows of data
+class Entity:
+    """Base class for handling underlying N-dimensional data when building network-like models i.e. :class:`Hypergraph`
 
     Parameters
     ----------
-    entity: pandas.DataFrame, dict of lists or sets, list of lists or sets
-        If a pandas.DataFrame with N columns, represents N-dimensonal entity
-        data, Otherwise, a dict or list represents 2-dimensional entity data
-    data : 2d numpy.ndarray
-        A sparse representation of an N-dimensional incidence tensor with M
-        nonzero cells as an M x N matrix of tensor indices.
+    entity : `pandas.DataFrame`, dict of lists or sets, list of lists or sets, optional
+        If a `pandas.DataFrame` with N columns, represents N-dimensional entity data (data table)
+        Otherwise, represents 2-dimensional entity data (system of sets)
+        TODO: Test for compatibility with list of Entities and update docs
+    data : `numpy.ndarray`, optional
+        2D M x N ndarray of ints (data table)
+        Sparse representation of an N-dimensional incidence tensor with M nonzero cells,
+        Ignored if `entity` is provided
     static : bool, default=True
-        If True, data may not be altered, and the state dict will never be
-        cleared. If False, rows may be added to and removed from data, and
-        updates will clear the state dict
-    labels : OrderedDict of lists, optional
-        User defined labels corresponding to integers in data, ignored if
-        data=None
-    uid : Hashable, optional
-    weights : array-like or Hashable, optional
-        User specified cell weights corresponding to data,
-        If array-like, length must equal number of rows in data.
-        If Hashable, must be the name of a column in data.
-        Otherwise, weight for all rows is assumed to be 1.
-    aggregateby : str, optional, default='sum'
-        Method to aggregate cell weights of duplicate rows of data.
-        If None, duplicate rows will be dropped without aggregating cell
-        weights
+        If True, entity data may not be altered, and the `state_dict` will never be cleared
+        Otherwise, rows may be added to and removed from the data table, and updates will clear the `state_dict`
+    labels : `collections.OrderedDict` of lists, optional
+        User-specified labels in corresponding order to ints in `data`
+        Ignored if `entity` is provided or `data` is not provided
+    uid : hashable, optional
+        A unique identifier for the `Entity`
+    weights : array-like or hashable, optional
+        User-specified cell weights corresponding to entity data
+        If array-like and `entity` or `data` defines a data table, length must equal the number of rows
+        If array-like and `entity` defines a system of sets, length must equal the total sum of the sizes of all sets
+        If hashable and `entity` is a `pandas.DataFrame`, must be the name of a column in `entity`
+        Otherwise, weight for all cells is assumed to be 1
+    aggregateby : str, optional
+        Name of function to use for aggregating cell weights of duplicate rows
+        when `entity` or `data` defines a data table (default is "sum")
+        If None, duplicate rows will be dropped without aggregating cell weights
+        Effectively ignored if `entity` defines a system of sets
+    properties : dict of dicts
+        Nested dict of {item label: dict of {property name : property value}}
+        User-specified properties to be assigned to individual items in the data
+            i.e., cell entries in an ND data table; sets or set elements in a system of sets
+        TODO: {item level: {item label: {property name : property value}}
 
     Attributes
     ----------
-    uid: Hashable
-    static: bool
-    dataframe: pandas.DataFrame
-    data_cols: list of Hashables
-    cell_weight_col: Hashable
-    dimsize: int
-    state_dict: dict
-        The state_dict holds all attributes that must be recomputed when the
-        data is updated. The values for these attributes will be computed as
-        needed if they do not already exist in the state_dict.
-
-        data : numpy.ndarray
-            sparse tensor indices for incidence tensor
-        labels: dict of lists
-            labels corresponding to integers in sparse tensor indices given by
-            data
-        cell_weights: dict
-            keys are rows of labeled data as tuples, values are cell weight of
-            the row
-        dimensions: tuple of ints
-            tuple of number of unique labels in each column/dimension of the
-            data
-        uidset: dict of sets
-            keys are columns of the dataframe, values are the set of unique
-            labeled values in the column
-        elements: defaultdict of nested dicts
-            top level keys are column names, elements[col1][col2] holds the
-            elements by level dict with col1 as level 1 and col2 as level 2
-            (keys are unique values of col1, values are list of unique values
-            of col2 that appear in a row of data with the col1 value key)
+    data
+    labels
+    cell_weights
+    dimensions
+    dimsize
+    properties
+    uid
+    uidset
+    children
+    elements
+    incidence_dict
+    memberships
+    dataframe
+    isstatic
+    empty
+    _state_dict : dict
+        The state_dict holds all attributes that must be recomputed when the data is updated,
+        including `data`, `labels`, `cell_weights`, `dimensions`, `uidset`, and `elements`
+        The values for these attributes will be computed as needed if they do not already exist in the state_dict.
 
     """
 
@@ -86,6 +80,7 @@ class Entity(object):
             aggregateby="sum",
             properties=None
     ):
+
         # set unique identifier
         self._uid = uid
         self._properties = self._create_properties(properties)
@@ -121,7 +116,7 @@ class Entity(object):
             # DataFrame, translate the dataframe, and store the dict of labels
             # in the state dict
             if isinstance(labels, dict) and len(labels) == len(self._dataframe
-                                                               .columns):
+                                                                       .columns):
                 self._dataframe.columns = labels.keys()
                 self._state_dict["labels"] = labels
 
@@ -168,22 +163,27 @@ class Entity(object):
 
     @property
     def data(self):
-        """
-        Data array or tensor array of Static Entity
+        """Sparse representation of the data table as an incidence tensor
 
+        This can also be thought of as an encoding of `dataframe`, where items in each column of
+        the data table are translated to their int position in the `self.labels[column]` list
         Returns
         -------
         numpy.ndarray
-            Two dimensional array. Each row has system ids of objects in the static entity.
-            Each column corresponds to one level of the static entity.
+            2D array of ints representing rows of the underlying data table as indices in an incidence tensor
+
+        See Also
+        --------
+        labels, dataframe
 
         """
+        # generate if not already stored in state dict
         if "data" not in self._state_dict:
             if self.empty:
                 self._state_dict["data"] = np.zeros((0, 0), dtype=int)
             else:
-                # assumes dtype of data cols is categorical and dataframe not
-                # altered
+                # assumes dtype of data cols is already converted to categorical
+                # and state dict has been properly cleared after updates
                 self._state_dict["data"] = (
                     self._dataframe[self._data_cols]
                     .apply(lambda x: x.cat.codes)
@@ -194,18 +194,22 @@ class Entity(object):
 
     @property
     def labels(self):
-        """
-        Dictionary of labels
+        """Labels of all items in each column of the underlying data table
 
         Returns
         -------
-        dict
-            User defined identifiers for objects in static entity. Ordered keys correspond
-            levels. Ordered values correspond to integer representation of values in data.
+        dict of lists
+            dict of {column name: [item labels]}
+            The order of [item labels] corresponds to the int encoding of each item in `self.data`.
+
+        See Also
+        --------
+        data, dataframe
         """
+        # generate if not already stored in state dict
         if "labels" not in self._state_dict:
-            # assumes dtype of data cols is categorical and dataframe not
-            # altered
+            # assumes dtype of data cols is already converted to categorical
+            # and state dict has been properly cleared after updates
             self._state_dict["labels"] = {
                 col: self._dataframe[col].cat.categories.to_list()
                 for col in self._data_cols
@@ -215,14 +219,14 @@ class Entity(object):
 
     @property
     def cell_weights(self):
-        """
-        User defined weights corresponding to unique rows in data.
+        """Cell weights corresponding to each row of the underlying data table
 
         Returns
         -------
-        dict
-            Dictionary of values aligned to data.
+        dict of {tuple: int or float}
+            Keyed by row of data table (as a tuple)
         """
+        # generate if not already stored in state dict
         if "cell_weights" not in self._state_dict:
             if self.empty:
                 self._state_dict["cell_weights"] = {}
@@ -235,14 +239,14 @@ class Entity(object):
 
     @property
     def dimensions(self):
-        """
-        Dimension of data
+        """Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table
 
         Returns
         -------
-        tuple
-            Tuple of number of distinct labels in each level, ordered by level.
+        tuple of ints
+            Length and order corresponds to columns of `self.dataframe` (excluding cell weight column)
         """
+        # generate if not already stored in state dict
         if "dimensions" not in self._state_dict:
             if self.empty:
                 self._state_dict["dimensions"] = tuple()
@@ -255,26 +259,23 @@ class Entity(object):
 
     @property
     def dimsize(self):
-        """
-        Number of categories in the data
+        """Number of levels (columns) in the underlying data table
 
         Returns
         -------
         int
-            Number of levels in static entity, equals length of self.dimensions
+            Equal to length of `self.dimensions`
         """
         return self._dimsize
 
     @property
     def properties(self):
-        #Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
-        """
-        Pandas series containing properties for the Static Entity.
+        # Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
+        """Properties assigned to items in the underlying data table
 
         Returns
         -------
         pandas.Series
-            Properties for the Static Entity
         """
 
         return self._properties
@@ -282,43 +283,48 @@ class Entity(object):
     @property
     def uid(self):
         # Dev Note: This also returned nothing in my harry potter dataset, not sure if it was supposed to contain anything
-        """
-        User defined identifier for each object in static entity.
+        """User-defined unique identifier for the `Entity`
 
         Returns
         -------
-        str, int
-            Identifiers, which distinguish  objects within each level.
+        hashable
         """
         return self._uid
 
     @property
     def uidset(self):
-        """
-        Returns a set of the string identifiers for Static Entity
+        """Labels of all items in level 0 (first column) of the underlying data table
 
         Returns
         -------
         frozenset
-            Hashable set of keys.
+
+        See Also
+        --------
+        children : Labels of all items in level 1 (second column)
+        uidset_by_level, uidset_by_column :
+            Labels of all items in any level (column); specified by level index or column name
         """
         return self.uidset_by_level(0)
 
     @property
     def children(self):
-        """
-        Labels of keys of first index
+        """Labels of all items in level 1 (second column) of the underlying data table
 
         Returns
         -------
         frozenset
-            Set of labels in the second level.
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        uidset_by_level, uidset_by_column :
+            Labels of all items in any level (column); specified by level index or column name
         """
         return self.uidset_by_level(1)
 
     def uidset_by_level(self, level):
-        """
-        The labels found in a specific level
+        """Labels of all items in a particular level (column) of the underlying data table
 
         Parameters
         ----------
@@ -327,6 +333,12 @@ class Entity(object):
         Returns
         -------
         frozenset
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        children : Labels of all items in level 1 (second column)
+        uidset_by_column : Same functionality, takes the column name instead of level index
         """
         col = self._data_cols[level]
         return self.uidset_by_column(col)
@@ -334,17 +346,24 @@ class Entity(object):
     def uidset_by_column(self, column):
         # Dev Note: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
-        """
-        The labels found in a specific column of the data
+        """Labels of all items in a particular column (level) of the underlying data table
 
         Parameters
         ----------
-        level : int
+        column : Hashable
+            Name of a column in `self.dataframe`
 
         Returns
         -------
         frozenset
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        children : Labels of all items in level 1 (second column)
+        uidset_by_level : Same functionality, takes the level index instead of column name
         """
+        # generate if not already stored in state dict
         if "uidset" not in self._state_dict:
             self._state_dict["uidset"] = {}
         if column not in self._state_dict["uidset"]:
@@ -356,14 +375,24 @@ class Entity(object):
 
     @property
     def elements(self):
-        """
-        Keys and values in the order of insertion
+        """System of sets representation of the first two levels (columns) of the underlying data table
+
+        Each item in level 0 (first column) defines a set containing all the level 1 (second column) items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in level 0 (first column):
+            ``self.elements[item].new_property = new_value``
 
         Returns
         -------
-        dict
-            Same as elements_by_level with level1 = 0, level2 = 1.
-            Compare with EntitySet with level1 = elements, level2 = children.
+        dict of `AttrList`
+            System of sets representation as dict of {level 0 item : AttrList(level 1 items)}
+
+        See Also
+        --------
+        memberships : dual of this representation i.e., each item in level 1 (second column) defines a set
+        elements_by_level, elements_by_column :
+            system of sets representation of any two levels (columns); specified by level index or column name
 
         """
         if self._dimsize == 1:
@@ -373,45 +402,69 @@ class Entity(object):
 
     @property
     def incidence_dict(self):
-        """
-        Same as elements.
+        """ System of sets representation of the first two levels (columns) of the underlying data table
+
+        .. deprecated:: 2.0.0
+            Duplicates `elements`
 
         Returns
         -------
-        dict
-            Same as elements_by_level with level1 = 0, level2 = 1.
-            Compare with EntitySet with level1 = elements, level2 = children.
+        dict of `AttrList`
+            System of sets representation as dict of {level 0 item : AttrList(level 1 items)}
+
         """
         return self.elements
 
     @property
     def memberships(self):
-        """
-        Reverses the elements dictionary
+        """System of sets representation of the first two levels (columns) of the underlying data table
+
+        Each item in level 1 (second column) defines a set containing all the level 0 (first column) items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in level 1 (first column):
+            ``self.memberships[item].new_property = new_value``
 
         Returns
         -------
-        dict
-            Same as elements_by_level with level1 = 1, level2 = 0.
+        dict of `AttrList`
+            System of sets representation as dict of {level 1 item : AttrList(level 0 items)}
+
+        See Also
+        --------
+        elements : dual of this representation i.e., each item in level 0 (first column) defines a set
+        elements_by_level, elements_by_column :
+            system of sets representation of any two levels (columns); specified by level index or column name
+
         """
+
         return self.elements_by_level(1, 0)
 
     def elements_by_level(self, level1, level2):
-        """
-        Elements of Static Entity by specified level(s)
+        """System of sets representation of two levels (columns) of the underlying data table
+
+        Each item in level1 defines a set containing all the level2 items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in level1
 
         Parameters
         ----------
-        level1 : int, optional
-            edges
-        level2 : int, optional
-            nodes
+        level1 : int
+            index of level whose items define sets
+        level2 : int
+            index of level whose items are elements in the system of sets
 
         Returns
         -------
-        dict
+        dict of `AttrList`
+            System of sets representation as dict of {level1 item : AttrList(level2 items)}
 
-        think: level1 = edges, level2 = nodes
+        See Also
+        --------
+        elements, memberships : dual system of sets representations of the first two levels (columns)
+        elements_by_column : same functionality, takes column names instead of level indices
+
         """
         col1 = self._data_cols[level1]
         col2 = self._data_cols[level2]
@@ -420,21 +473,30 @@ class Entity(object):
     def elements_by_column(self, col1, col2):
         # Dev Note: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
-        """
-        Elements of Static Entity by specified column(s)
+        """System of sets representation of two columns (levels) of the underlying data table
+
+        Each item in col1 defines a set containing all the col2 items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in col1
 
         Parameters
         ----------
-        level1 : int, optional
-            edges
-        level2 : int, optional
-            nodes
+        col1 : Hashable
+            name of column whose items define sets
+        col2 : Hashable
+            name of column whose items are elements in the system of sets
 
         Returns
         -------
-        dict
+        dict of `AttrList`
+            System of sets representation as dict of {col1 item : AttrList(col2 items)}
 
-        think: level1 = edges, level2 = nodes
+        See Also
+        --------
+        elements, memberships : dual system of sets representations of the first two columns (levels)
+        elements_by_level : same functionality, takes level indices instead of column names
+
         """
         if "elements" not in self._state_dict:
             self._state_dict["elements"] = defaultdict(dict)
@@ -450,69 +512,91 @@ class Entity(object):
 
     @property
     def dataframe(self):
-        """
-        Pandas dataframe representation of the data
+        """The underlying data table stored by the Entity
 
         Returns
         -------
-        pandas.core.frame.DataFrame
+        pandas.DataFrame
         """
         return self._dataframe
 
     @property
     def isstatic(self):
-        #Dev Note: I'm guessing this is no longer necessary?
+        # Dev Note: I'm guessing this is no longer necessary?
+        """Whether to treat the underlying data as static or not
+
+        If True, the underlying data may not be altered, and the state_dict will never be cleared
+        Otherwise, rows may be added to and removed from the data table, and updates will clear the state_dict
+
+        Returns
+        -------
+        bool
+        """
         return self._static
 
     def size(self, level=0):
-        """
-        The number of elements in E, the size of dimension 0 in the E.arr
+        """The number of items in a level of the underlying data table
+
+        Equivalent to ``self.dimensions[level]``
+
+        Parameters
+        ----------
+        level : int, default=0
 
         Returns
         -------
         int
+
+        See Also
+        --------
+        dimensions
         """
         return self.dimensions[level]
 
     @property
     def empty(self):
-        """
-        Checks if the dimsize = 0
+        """Whether the underlying data table is empty or not
 
         Returns
         -------
         bool
+
+        See Also
+        --------
+        is_empty : for checking whether a specified level (column) is empty
+        dimsize : 0 if empty
         """
         return self._dimsize == 0
 
     def is_empty(self, level=0):
-        """
-        Checks if a level is empty
+        """Whether a specified level (column) of the underlying data table is empty or not
 
         Returns
         -------
         bool
+
+        See Also
+        --------
+        empty : for checking whether the underlying data table is empty
+        size : number of items in a level (columns); 0 if level is empty
         """
         return self.empty or self.size(level) == 0
 
     def __len__(self):
-        """
-        Returns the number of elements in Static Entity
+        """Number of items in level 0 (first column)
 
         Returns
         -------
         int
-            Number of distinct labels in level 0.
         """
         return self.dimensions[0]
 
     def __contains__(self, item):
-        """
-        Defines containment for Entity based on labels/categories.
+        """Whether an item is contained within any level of the data
 
         Parameters
         ----------
-        item : string
+        item : str
 
         Returns
         -------
@@ -524,63 +608,96 @@ class Entity(object):
         return False
 
     def __getitem__(self, item):
-        """
-        Get value of key in E.elements
+        """Access into the system of sets representation of the first two levels (columns) given by `elements`
+
+        Can be used to access and assign properties to an ``item`` in level 0 (first column)
 
         Parameters
         ----------
-        item : string
+        item : str
+            label of an item in level 0 (first column)
 
         Returns
         -------
-        list
+        AttrList :
+            list of level 1 items in the set defined by ``item``
+
+        See Also
+        --------
+        uidset, elements
         """
         return self.elements[item]
 
     def __iter__(self):
-        """
-        Create iterator from E.elements
+        """Iterates over items in level 0 (first column) of the underlying data table
 
         Returns
         -------
-        odict_iterator
+        Iterator
+
+        See Also
+        --------
+        uidset, elements
         """
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        """
-        Allows user to create instance of class that behaves like a function
+        # Dev Note (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
+        """Iterates over items labels in a specified level (column) of the underlying data table
+
+        Parameters
+        ----------
+        label_index : int
+            level index
+
+        Returns
+        -------
+        Iterator
+
+        See Also
+        --------
+        labels
         """
         return iter(self.labels[self._data_cols[label_index]])
 
     def __repr__(self):
-        """
-        Returns a string resembling the constructor for Entity without
-        any children
+        """String representation of the Entity
+
+        e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
 
         Returns
         -------
-        string
+        str
         """
         return (
-            self.__class__.__name__ + f"""({self._uid}, {list(self.uidset)},
+                self.__class__.__name__ + f"""({self._uid}, {list(self.uidset)},
                                          {[] if self.properties.empty
-                                         else self.properties.droplevel(0)
-                                         .to_dict()})"""
+        else self.properties.droplevel(0)
+                .to_dict()})"""
         )
 
     def index(self, column, value=None):
-        """
-        Returns dimension of category and index of value
+        """Get level index corresponding to a column and (optionally) the index of a value in that column
+
+        The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used
+        in the integer encoding of the data table ``self.data``
 
         Parameters
         ----------
-        category : string
-        value : string, optional
+        column: str
+            name of a column in self.dataframe
+        value : str, optional
+            label of an item in the specified column
 
         Returns
         -------
-        int or tuple of ints
+        int or (int, int)
+            level index corresponding to column, index of value if provided
+
+        See Also
+        --------
+        indices : for finding indices of multiple values in a column
+        level : same functionality, search for the value without specifying column
         """
         if "keyindex" not in self._state_dict:
             self._state_dict["keyindex"] = {}
@@ -605,17 +722,21 @@ class Entity(object):
         )
 
     def indices(self, column, values):
-        """
-        Returns dimension of category and index of values (array)
+        """ Get indices of one or more value(s) in a column
 
         Parameters
         ----------
-        category : string
-        values : single string or array of strings
+        column : str
+        values : str or iterable of str
 
         Returns
         -------
-        list
+        list of int
+            indices of values
+
+        See Also
+        --------
+        index : for finding level index of a column and index of a single value
         """
         if isinstance(values, Hashable):
             values = [values]
@@ -631,19 +752,23 @@ class Entity(object):
         return [self._state_dict["index"][column][v] for v in values]
 
     def translate(self, level, index):
-        """
-        Replaces a category index and value index with label
+        """Given indices of a level and value(s), return the corresponding value label(s)
 
         Parameters
         ----------
         level : int
-            category index of label
-        index : int
-            value index of label
+            level index
+        index : int or list of int
+            value index or indices
 
         Returns
         -------
-         str
+        str or list of str
+            label(s) corresponding to value index or indices
+
+        See Also
+        --------
+        translate_arr : translate a full row of value indices across all levels (columns)
         """
         column = self._data_cols[level]
 
@@ -653,16 +778,17 @@ class Entity(object):
         return [self.labels[column][i] for i in index]
 
     def translate_arr(self, coords):
-        """
-        Translates a single cell in the entity array
+        """Translate a full encoded row of the data table e.g., a row of ``self.data``
 
         Parameters
         ----------
         coords : tuple of ints
+            encoded value indices, with one value index for each level of the data
 
         Returns
         -------
-        list
+        list of str
+            full row of translated value labels
         """
         assert len(coords) == self._dimsize
         translation = []
@@ -672,21 +798,27 @@ class Entity(object):
         return translation
 
     def level(self, item, min_level=0, max_level=None, return_index=True):
-        """
-        Returns first level item appears by order of keys from minlevel to
-        maxlevel inclusive
+        """First level containing the given item label
+
+        Order of levels corresponds to order of columns in `self.dataframe`
 
         Parameters
         ----------
-        item : string
-        min_level : int, optional
-        max_level : int, optional
-
-        return_index : bool, optional
+        item : str
+        min_level, max_level : int, optional
+            inclusive bounds on range of levels to search for item
+        return_index : bool, default=True
+            If True, return index of item within the level
 
         Returns
         -------
-        str
+        int, (int, int), or None
+            index of first level containing the item, index of item if `return_index=True`
+            returns None if item is not found
+
+        See Also
+        --------
+        index, indices : for finding level and/or value indices when the column is known
         """
         if max_level is None or max_level >= self._dimsize:
             max_level = self._dimsize - 1
@@ -705,25 +837,29 @@ class Entity(object):
         return None
 
     def add(self, *args):
-        """
-        Adds unpacked arguments(args) to entity elements. Depends on
-        add_element()
+        """Updates the underlying data table with new entity data from multiple sources
 
         Parameters
         ----------
-        args : One or more data representations of an Entity
+        *args
+            variable length argument list of Entity and/or representations of entity data
 
         Returns
         -------
         self : Entity
 
-        Note
-        ----
-        Adding an element to an object in a hypergraph will not add the
-        element to the hypergraph and will cause an error. Use
+        Warnings
+        --------
+        Adding an element directly to an Entity will not add the
+        element to any Hypergraphs constructed from that Entity, and will cause an error. Use
         :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>` or
         :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph \
             .add_node_to_edge>` instead.
+
+        See Also
+        --------
+        add_element : update from a single source
+        Hypergraph.add_edge, Hypergraph.add_node_to_edge : for adding elements to a Hypergraph
 
         """
         for item in args:
@@ -731,12 +867,15 @@ class Entity(object):
         return self
 
     def add_elements_from(self, arg_set):
-        """
-        Similar to :func:`add()` it allows for adding from an interable.
+        """Adds arguments from an iterable to the data table one at a time
+
+        ..deprecated:: 2.0.0
+            Duplicates `add`
 
         Parameters
         ----------
-        arg_set : Iterable of data representations of an Entity
+        arg_set : iterable
+            list of Entity and/or representations of entity data
 
         Returns
         -------
@@ -748,18 +887,30 @@ class Entity(object):
         return self
 
     def add_element(self, data):
-        """
-        Converts the data to a dataframe then utilizes
-        :func`_add_from_dataframe()` to append the dataframe of new data to
-        the existing underlying dataframe representation of the Entity.
+        """Updates the underlying data table with new entity data
+
+        Supports adding from either an existing Entity or a representation of entity
+        (data table or labeled system of sets are both supported representations)
 
         Parameters
         ----------
-        data : Data representation of Hypergraph edges and/or nodes.
+        data : Entity, `pandas.DataFrame`, or dict of lists or sets
+            new entity data
 
         Returns
         -------
         self : Entity
+
+        Warnings
+        --------
+        Adding an element directly to an Entity will not add the
+        element to any Hypergraphs constructed from that Entity, and will cause an error. Use
+        `Hypergraph.add_edge` or `Hypergraph.add_node_to_edge` instead.
+
+        See Also
+        --------
+        add : takes multiple sources of new entity data as variable length argument list
+        Hypergraph.add_edge, Hypergraph.add_node_to_edge : for adding elements to a Hypergraph
 
         """
         if isinstance(data, Entity):
@@ -776,12 +927,11 @@ class Entity(object):
         return self
 
     def __add_from_dataframe(self, df):
-        """
-        Takes a new dataframe of nodes and edges and appends to the existing
-        dataframe representation of the Entity.
+        """Helper function to append rows to `self.dataframe`
+
         Parameters
         ----------
-        data : Data representation of Hypergraph edges and/or nodes.
+        data : pd.DataFrame
 
         Returns
         -------
@@ -805,18 +955,20 @@ class Entity(object):
             self._state_dict.clear()
 
     def remove(self, *args):
-        """
-        Removes nodes or edges from a Entity if they exist in the
-        Entity
+        """Removes all rows containing specified item(s) from the underlying data table
 
         Parameters
         ----------
-        args : One or more data representations of a StaticEntities elements
+        *args
+            variable length argument list of item labels
 
         Returns
         -------
         self : Entity
 
+        See Also
+        --------
+        remove_element : remove all rows containing a single specified item
 
         """
         for item in args:
@@ -824,12 +976,15 @@ class Entity(object):
         return self
 
     def remove_elements_from(self, arg_set):
-        """
-        Similar to :func:`remove()`. Removes elements in arg_set.
+        """Removes all rows containing specified item(s) from the underlying data table
+
+        ..deprecated: 2.0.0
+            Duplicates `remove`
 
         Parameters
         ----------
-        arg_set : Dev Note: Ask Brenda about phrasing
+        arg_set : iterable
+            list of item labels
 
         Returns
         -------
@@ -841,16 +996,20 @@ class Entity(object):
         return self
 
     def remove_element(self, item):
-        """
-        Removes item from dataframe.
+        """Removes all rows containing a specified item from the underlying data table
 
         Parameters
         ----------
-        item : Data representation of Entity
+        item
+            item label
 
         Returns
         -------
         self : Entity
+
+        See Also
+        --------
+        remove : same functionality, accepts variable length argument list of item labels
 
         """
         updated_dataframe = self._dataframe
@@ -889,39 +1048,46 @@ class Entity(object):
         return encoded_array
 
     def incidence_matrix(
-        self, level1=0, level2=1, weights=False, aggregateby=None, index=False
+            self, level1=0, level2=1, weights=False, aggregateby=None, index=False
     ):
-        """
-        Convenience method to navigate large tensor
+        """Incidence matrix representation for two levels (columns) of the underlying data table
+
+        If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
+        In other words, the items in `level1` and `level2` correspond to the columns and rows of the incidence matrix,
+        respectively, in the order in which they appear in `self.labels[column1]` and `self.labels[column2]`
+        (`column1` and `column2` are the column labels of `level1` and `level2`)
 
         Parameters
         ----------
-        level1 : int, optional
-            indexes columns
-        level2 : int, optional
-            indexes rows
-        weights : bool, dict optional, default=False
+        level1 : int, default=0
+            index of first level (column)
+        level2 : int, default=1
+            index of second level
+        weights : bool or dict, default=False
             If False all nonzero entries are 1.
             If True all nonzero entries are filled by self.cell_weight
             dictionary values, use :code:`aggregateby` to specify how duplicate
             entries should have weights aggregated.
-            If dict, keys must be in (edge.uid, node.uid) form; only nonzero
-            cells in the incidence matrix will be updated by dictionary.
-        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean',
-            'median', max', 'min', 'first', 'last'}, default : 'count'
-            Method to aggregate weights of duplicate rows in data. If None,
-            then all cell weights will be set to 1.
-        index : bool, optional
+            If dict of {(level1 item, level2 item): weight value} form;
+            only nonzero cells in the incidence matrix will be updated by dictionary,
+            i.e., `level1 item` and `level2 item` must appear in the same row at least once in the underlying data table
+        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='count'
+            Method to aggregate weights of duplicate rows in data table.
+             If None, then all cell weights will be set to 1.
 
         Returns
         -------
         scipy.sparse.csr.csr_matrix
-            Sparse matrix representation of incidence matrix for two levels of
-            static entity.
+            sparse representation of incidence matrix
+
+        Other Parameters
+        ----------------
+        index : bool, optional
+            Not used
 
         Note
         ----
-        In the context of hypergraphs think level1 = edges, level2 = nodes
+        In the context of Hypergraphs, think `level1 = edges, level2 = nodes`
         """
         if self.dimsize < 2:
             warnings.warn("Incidence matrix requires two levels of data.")
@@ -943,26 +1109,28 @@ class Entity(object):
 
     def restrict_to_levels(self, levels, weights=False, aggregateby="sum",
                            **kwargs):
-        """
-        Limit Static Entity data to specific levels
+        """Create a new Entity by restricting the underlying data table to a subset of levels (columns)
 
         Parameters
         ----------
-        levels : array
-            index of labels in data
-        weights : bool, optional, default : False
-            Whether or not to aggregate existing weights in self when
-            restricting to levels. If False then weights will be assigned 1.
-        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean',
-            'median', max', 'min', 'first', 'last'}, default : 'count' Method
-            to aggregate cell_weights of duplicate rows in setsystem of type
-            pandas.DataFrame. If None then all cell_weights will be set to 1.
-        uid : None, optional
+        levels : iterable of int
+            indices of a subset of levels (columns) of data
+        weights : bool, default=False
+            If True, aggregate existing cell weights to get new cell weights
+            Otherwise, all new cell weights will be 1
+        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='count'
+            Method to aggregate weights of duplicate rows in data table
+            If None or weights=False then all new cell weights will be 1
+        **kwargs
+            Extra arguments to `Entity` constructor
 
         Returns
         -------
-        Static Entity class
-            hnx.classes.Entity.Entity
+        Entity
+
+        See Also
+        --------
+        EntitySet
         """
         levels = [lev for lev in levels if lev < self._dimsize]
 
@@ -982,21 +1150,20 @@ class Entity(object):
         return self.__class__(**kwargs)
 
     def restrict_to_indices(self, indices, level=0, **kwargs):
-        """
-        Limit Static Entity data to specific indices of keys
+        """Create a new Entity by restricting the data table to rows containing specific items in a given level
 
         Parameters
         ----------
-        indices : array
-            array of category indices
-        level : int, optional
-            index of label
-        uid : None, optional
+        indices : int or iterable of int
+            indices of item label(s) in `level` to restrict to
+        level : int, default=0
+            level index
+        **kwargs
+            Extra arguments to `Entity` constructor
 
         Returns
         -------
-        Static Entity class
-            hnx.classes.Entity.Entity
+        Entity
         """
         column = self._dataframe[self._data_cols[level]]
         values = column.cat.categories[list(indices)]
@@ -1006,16 +1173,17 @@ class Entity(object):
         return self.__class__(entity=entity, **kwargs)
 
     def _create_properties(self, props):
-        """
-        Create new properties
+        """Helper function for `assign_properties`
 
         Parameters
         ----------
-        props : list of properties
+        props : dict of dicts
+            Nested dict of {item label: dict of {property name : property value}}
 
         Returns
         -------
         pandas.Series
+            MultiIndex of (level, item label), each entry holds dict of {property name: property value}
         """
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=('level',
                                                                       'item'))
@@ -1031,7 +1199,17 @@ class Entity(object):
         return pd.Series(**kwargs)
 
     def assign_properties(self, props):
-        #Dev Note: Not sure what the put here.
+        """Assign new properties to items in the data table and update `self.properties`
+
+        Parameters
+        ----------
+        props : dict of dicts
+            Nested dict of {item label: dict of {property name : property value}}
+
+        See Also
+        --------
+        properties, update_properties
+        """
         properties = self._create_properties(props)
 
         if not self._properties.empty:
