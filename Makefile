@@ -9,7 +9,7 @@ PYTHON = $(VENV)/bin/python
 
 venv:
 	@rm -rf VENV;
-	@python -m venv $(VENV);
+	@python3 -m venv $(VENV);
 
 deps:
 	@$(PYTHON) -m pip install tox
@@ -25,6 +25,6 @@ test: venv deps
 .PHONY: test
 
 clean:
-	rm -rf .out .pytest_cache .tox *.egg-info dist build
+	rm -rf .out .pytest_cache .tox *.egg-info dist build $(VENV)
 
 .PHONY: clean

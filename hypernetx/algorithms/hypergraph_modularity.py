@@ -15,10 +15,13 @@ References
 from collections import Counter
 import numpy as np
 from functools import reduce
-import igraph as ig
 import itertools
 from scipy.special import comb
 
+try:
+    import igraph as ig
+except Exception as e:
+    print(f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']")
 ################################################################################
 
 # we use 2 representations for partitions (0-based part ids):
