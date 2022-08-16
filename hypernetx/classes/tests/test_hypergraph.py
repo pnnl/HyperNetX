@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hypernetx.classes.staticentity import StaticEntity
-from hypernetx.classes.staticentityset import StaticEntitySet
+from hypernetx.classes.entity import Entity
+from hypernetx.classes.entityset import EntitySet
 from hypernetx import HyperNetXError
 from hypernetx.classes.hypergraph import Hypergraph
 
@@ -77,7 +77,7 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
 
 def test_hypergraph_from_entity_set(seven_by_six):
     sbs = seven_by_six
-    entityset = StaticEntitySet(sbs.edgedict)
+    entityset = EntitySet(sbs.edgedict)
     H = Hypergraph(entityset)
     assert set(H.edges.incidence_dict.keys()) == set(sbs.edgedict.keys())
     assert all(set(v) == sbs.edgedict[k] for k, v in H.edges.incidence_dict.items())
