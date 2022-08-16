@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NWHy &mdash; HyperNetX 1.2.4 documentation</title>
+  <title>NWHy &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/copybutton.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -102,9 +103,9 @@
            <div itemprop="articleBody">
              
   <section id="nwhy">
-<span id="id1"></span><h1>NWHy<a class="headerlink" href="#nwhy" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>NWHy<a class="headerlink" href="#nwhy" title="Permalink to this heading"></a></h1>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>NWHy is an addon for HNX providing optimized C++ implementations of many of the hypergraph methods.
 NWHy is a scalable, high-performance hypergraph library. It has three dependencies.</p>
 <blockquote>
@@ -118,22 +119,22 @@ NWHy is a scalable, high-performance hypergraph library. It has three dependenci
 NWHy was developed by Xu Tony Liu. The current version is preliminary and under active development.</p>
 </section>
 <section id="installing-nwhy">
-<h2>Installing NWHy<a class="headerlink" href="#installing-nwhy" title="Permalink to this headline"></a></h2>
+<h2>Installing NWHy<a class="headerlink" href="#installing-nwhy" title="Permalink to this heading"></a></h2>
 <p>The NWHy library provides <a class="reference external" href="https://github.com/pybind/pybind11">Pybind11</a> APIs for analysis of complex data sets interpreted as hypergraphs.</p>
 <section id="to-install-in-an-anaconda-environment">
-<h3>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this headline"></a></h3>
+<h3>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this heading"></a></h3>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span>
 </pre></div>
 </div>
 </section>
 <section id="then-activate-the-environment">
-<h3>Then activate the environment<a class="headerlink" href="#then-activate-the-environment" title="Permalink to this headline"></a></h3>
+<h3>Then activate the environment<a class="headerlink" href="#then-activate-the-environment" title="Permalink to this heading"></a></h3>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </section>
 <section id="install-intel-threading-building-blocks-tbb">
-<h3>Install Intel Threading Building Blocks(TBB)<a class="headerlink" href="#install-intel-threading-building-blocks-tbb" title="Permalink to this headline"></a></h3>
+<h3>Install Intel Threading Building Blocks(TBB)<a class="headerlink" href="#install-intel-threading-building-blocks-tbb" title="Permalink to this heading"></a></h3>
 <p>To install <a class="reference external" href="https://github.com/oneapi-src/oneTBB">TBB</a>:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">install</span> <span class="n">tbb</span>
 </pre></div>
@@ -144,7 +145,7 @@ NWHy was developed by Xu Tony Liu. The current version is preliminary and under 
 </div>
 </section>
 <section id="install-using-pip">
-<h3>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this headline"></a></h3>
+<h3>Install using Pip<a class="headerlink" href="#install-using-pip" title="Permalink to this heading"></a></h3>
 <p>For installation:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
 </pre></div>
@@ -159,7 +160,7 @@ NWHy was developed by Xu Tony Liu. The current version is preliminary and under 
 </div>
 </section>
 <section id="quick-test-with-import">
-<h3>Quick test with import<a class="headerlink" href="#quick-test-with-import" title="Permalink to this headline"></a></h3>
+<h3>Quick test with import<a class="headerlink" href="#quick-test-with-import" title="Permalink to this heading"></a></h3>
 <p>For quick test:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;import nwhy&quot;</span>
 </pre></div>
@@ -168,9 +169,9 @@ NWHy was developed by Xu Tony Liu. The current version is preliminary and under 
 </section>
 </section>
 <section id="nwhy-apis">
-<h2>NWHy APIs<a class="headerlink" href="#nwhy-apis" title="Permalink to this headline"></a></h2>
+<h2>NWHy APIs<a class="headerlink" href="#nwhy-apis" title="Permalink to this heading"></a></h2>
 <section id="nwhy-module">
-<span id="nwhy-sorted"></span><h3>nwhy module<a class="headerlink" href="#nwhy-module" title="Permalink to this headline"></a></h3>
+<span id="nwhy-sorted"></span><h3>nwhy module<a class="headerlink" href="#nwhy-module" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>_version</dt><dd><p>Attribute in nwhy module.
@@ -180,7 +181,7 @@ Return the version number of nwhy module.</p>
 </div></blockquote>
 </section>
 <section id="nwhypergraph-class">
-<h3>NWHypergraph class<a class="headerlink" href="#nwhypergraph-class" title="Permalink to this headline"></a></h3>
+<h3>NWHypergraph class<a class="headerlink" href="#nwhypergraph-class" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>NWHypergraph</dt><dd><p>Class in nwhy module.
@@ -190,7 +191,7 @@ The base class for hypergraph representation in nwhy. It accepts a directed edge
 </div></blockquote>
 </section>
 <section id="nwhypergraph-class-attributes">
-<h3>NWHypergraph class attributes<a class="headerlink" href="#nwhypergraph-class-attributes" title="Permalink to this headline"></a></h3>
+<h3>NWHypergraph class attributes<a class="headerlink" href="#nwhypergraph-class-attributes" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>NWHypergraph.row</dt><dd><p>Attribute in class NWHypergraph.
@@ -206,7 +207,7 @@ Return a Numpy array of IDs, weights of sparse matrix of the hypergraph.</p>
 </div></blockquote>
 </section>
 <section id="nwhypergraph-class-methods">
-<h3>NWHypergraph class methods<a class="headerlink" href="#nwhypergraph-class-methods" title="Permalink to this headline"></a></h3>
+<h3>NWHypergraph class methods<a class="headerlink" href="#nwhypergraph-class-methods" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>NWHypergraph.NWHypergraph(x, y)</dt><dd><p>Constructor of class NWHypergraph.
@@ -267,7 +268,7 @@ Return a list of Slinegraph objects. For each positive integer in list <cite>l</
 </div></blockquote>
 </section>
 <section id="slinegraph-class">
-<h3>Slinegraph class<a class="headerlink" href="#slinegraph-class" title="Permalink to this headline"></a></h3>
+<h3>Slinegraph class<a class="headerlink" href="#slinegraph-class" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>Slinegraph</dt><dd><p>Class in nwhy module.
@@ -277,7 +278,7 @@ The base class for s-line graph representation in nwhy. It store an undirected g
 </div></blockquote>
 </section>
 <section id="slinegraph-class-attributes">
-<h3>Slinegraph class attributes<a class="headerlink" href="#slinegraph-class-attributes" title="Permalink to this headline"></a></h3>
+<h3>Slinegraph class attributes<a class="headerlink" href="#slinegraph-class-attributes" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>Slinegraph.row</dt><dd><p>Attribute in class Slinegraph.
@@ -296,7 +297,7 @@ Return s value of the s-line graph.</p>
 </div></blockquote>
 </section>
 <section id="slinegraph-class-methods">
-<h3>Slinegraph class methods<a class="headerlink" href="#slinegraph-class-methods" title="Permalink to this headline"></a></h3>
+<h3>Slinegraph class methods<a class="headerlink" href="#slinegraph-class-methods" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>Slinegraph.Slinegraph(g, s=1, edges=True)</dt><dd><p>Constructor of class Slinegraph.

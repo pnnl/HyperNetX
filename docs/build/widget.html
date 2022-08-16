@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hypernetx-Widget &mdash; HyperNetX 1.2.4 documentation</title>
+  <title>Hypernetx-Widget &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -91,17 +92,17 @@
            <div itemprop="articleBody">
              
   <section id="hypernetx-widget">
-<span id="widget"></span><h1>Hypernetx-Widget<a class="headerlink" href="#hypernetx-widget" title="Permalink to this headline"></a></h1>
+<span id="widget"></span><h1>Hypernetx-Widget<a class="headerlink" href="#hypernetx-widget" title="Permalink to this heading"></a></h1>
 <a class="reference internal image-reference" href="_images/WidgetScreenShot.png"><img alt="_images/WidgetScreenShot.png" class="align-right" src="_images/WidgetScreenShot.png" style="width: 300px;" /></a>
 <section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
 <p>The <a class="reference external" href="https://github.com/pnnl/hypernetx-widget">HyperNetXWidget</a> is an addon for HNX, which extends the built in visualization
 capabilities of HNX to a JavaScript based interactive visualization. The tool has two main interfaces,
 the hypergraph visualization and the nodes &amp; edges panel.
 You may <a class="reference external" href="https://pnnl.github.io/hypernetx-widget/">demo the widget here</a></p>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>The <a class="reference external" href="https://github.com/pnnl/hypernetx-widget">HypernetxWidget</a> is available on <a class="reference external" href="https://github.com">GitHub</a> and may be
 installed using pip:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hnxwidget</span>
@@ -109,9 +110,9 @@ installed using pip:</p>
 </div>
 </section>
 <section id="using-the-tool">
-<h2>Using the Tool<a class="headerlink" href="#using-the-tool" title="Permalink to this headline"></a></h2>
+<h2>Using the Tool<a class="headerlink" href="#using-the-tool" title="Permalink to this heading"></a></h2>
 <section id="layout">
-<h3>Layout<a class="headerlink" href="#layout" title="Permalink to this headline"></a></h3>
+<h3>Layout<a class="headerlink" href="#layout" title="Permalink to this heading"></a></h3>
 <p>The hypergraph visualization is an Euler diagram that shows nodes as circles and hyper edges as outlines
 containing the nodes/circles they contain. The visualization uses a force directed optimization to perform
 the layout. This algorithm is not perfect and sometimes gives results that the user might want to improve upon.
@@ -120,7 +121,7 @@ re-position any nodes that are not specified by the user. Ctrl (Windows) or Comm
 will release a pinned node it to be re-positioned by the algorithm.</p>
 </section>
 <section id="selection">
-<h3>Selection<a class="headerlink" href="#selection" title="Permalink to this headline"></a></h3>
+<h3>Selection<a class="headerlink" href="#selection" title="Permalink to this heading"></a></h3>
 <p>Nodes and edges can be selected by clicking them. Nodes and edges can be selected independently of each other,
 i.e., it is possible to select an edge without selecting the nodes it contains. Multiple nodes and edges can
 be selected, by holding down Shift while clicking. Shift clicking an already selected node will de-select it.
@@ -139,11 +140,11 @@ or reverse the selected nodes (or edges). An advanced user might:</p>
 </ul>
 </section>
 <section id="side-panel">
-<h3>Side Panel<a class="headerlink" href="#side-panel" title="Permalink to this headline"></a></h3>
+<h3>Side Panel<a class="headerlink" href="#side-panel" title="Permalink to this heading"></a></h3>
 <p>Details on nodes and edges are visible in the side panel. For both nodes and edges, a table shows the node name, degree (or size for edges), its selection state, removed state, and color. These properties can also be controlled directly from this panel. The color of nodes and edges can be set in bulk here as well, for example, coloring by degree.</p>
 </section>
 <section id="other-features">
-<h3>Other Features<a class="headerlink" href="#other-features" title="Permalink to this headline"></a></h3>
+<h3>Other Features<a class="headerlink" href="#other-features" title="Permalink to this heading"></a></h3>
 <p>Nodes with identical edge membership can be collapsed into a super node, which can be helpful for larger hypergraphs. Dragging any node in a super node will drag the entire super node. This feature is available as a toggle in the nodes panel.</p>
 <p>The hypergraph can also be visualized as a bipartite graph (similar to a traditional node-link diagram). Toggling this feature will preserve the locations of the nodes between the bipartite and the Euler diagrams.</p>
 </section>
