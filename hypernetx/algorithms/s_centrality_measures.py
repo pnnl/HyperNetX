@@ -17,8 +17,6 @@ EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*
 
 """
 
-import numpy as np
-from collections import defaultdict
 import networkx as nx
 import warnings
 import sys
@@ -32,14 +30,6 @@ except:
     nwhy_available = False
 
 sys.setrecursionlimit(10000)
-
-__all__ = [
-    "s_betweenness_centrality",
-    "s_harmonic_closeness_centrality",
-    "s_harmonic_centrality",
-    "s_closeness_centrality",
-    "s_eccentricity",
-]
 
 
 def _s_centrality(

@@ -21,15 +21,11 @@ Please direct any inquiries concerning the clustering module to Sinan Aksoy, sin
 """
 
 import numpy as np
-from collections import defaultdict
-import networkx as nx
-import warnings
 import sys
-from scipy.sparse import csr_matrix, coo_matrix, diags, find, identity
+from scipy.sparse import csr_matrix, diags, identity
 from scipy.sparse.linalg import eigs
-from sklearn.cluster import SpectralClustering, KMeans
+from sklearn.cluster import KMeans
 from sklearn import preprocessing
-from functools import partial
 from hypernetx import HyperNetXError
 
 try:
@@ -40,13 +36,6 @@ except:
     nwhy_available = False
 
 sys.setrecursionlimit(10000)
-
-__all__ = [
-    "prob_trans",
-    "get_pi",
-    "norm_lap",
-    "spec_clus",
-]
 
 
 def prob_trans(H, weights=False, index=True, check_connected=True):
