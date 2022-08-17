@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "1.2.1"
+__version__ = "1.2.4"
 
 if sys.version_info < (3, 7):
     sys.exit("HyperNetX requires Python 3.7 or later.")
@@ -30,6 +30,7 @@ setup(
         "matplotlib>3.0",
         "scikit-learn>=0.20.0",
         "pandas>=0.23",
+        "decorator>=5.1.1",
     ],
     license="3-Clause BSD license",
     long_description="""
@@ -72,7 +73,7 @@ setup(
     1. Added module and tutorial for Modularity and Clustering
     """,
     extras_require={
-        "testing": ["pytest>=4.0", "pytest-cov>=3.0.0", "decorator>=5.1.1", "celluloid>=0.2.0", "igraph>=0.9.11"],
+        "testing": ["pytest>=4.0", "pytest-cov>=3.0.0", "celluloid>=0.2.0", "igraph>=0.9.11"],
         "tutorials": ["jupyter>=1.0", "python-igraph>=0.9.6", "celluloid>=0.2.0"],
         "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
         "all": [
@@ -80,9 +81,11 @@ setup(
             "nb2plots>=0.6",
             "sphinx-rtd-theme>=0.4.2",
             "pytest>=4.0",
+            "pytest-cov>=3.0.0",
             "jupyter>=1.0",
             "python-igraph>=0.9.6",
             "celluloid>=0.2.0",
+            "igraph>=0.9.11"
         ],
     },
 )
