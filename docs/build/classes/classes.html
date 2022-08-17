@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>classes package &mdash; HyperNetX 1.2.4 documentation</title>
+  <title>classes package &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -98,15 +99,15 @@
            <div itemprop="articleBody">
              
   <section id="classes-package">
-<h1>classes package<a class="headerlink" href="#classes-package" title="Permalink to this headline"></a></h1>
+<h1>classes package<a class="headerlink" href="#classes-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-classes.entity">
-<span id="classes-entity-module"></span><h2>classes.entity module<a class="headerlink" href="#module-classes.entity" title="Permalink to this headline"></a></h2>
+<span id="classes-entity-module"></span><h2>classes.entity module<a class="headerlink" href="#module-classes.entity" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.entity.Entity">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.entity.</span></span><span class="sig-name descname"><span class="pre">Entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.Entity" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.entity.</span></span><span class="sig-name descname"><span class="pre">Entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.Entity" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for objects used in building network-like objects including
 Hypergraphs, Posets, Cell Complexes.</p>
@@ -237,7 +238,7 @@ for identical instances within the entities registry.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.children">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#classes.entity.Entity.children" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#classes.entity.Entity.children" title="Permalink to this definition"></a></dt>
 <dd><p>Set of uids of the elements of elements of entity.</p>
 <p>To return set of ids for deeper level use:
 <code class="code docutils literal notranslate"><span class="pre">Entity.levelset(level).keys()</span></code>
@@ -298,7 +299,7 @@ If there is a cycle output will be numpy infinity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.elements">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#classes.entity.Entity.elements" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#classes.entity.Entity.elements" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary of elements belonging to entity.</p>
 </dd></dl>
 
@@ -325,7 +326,7 @@ to lastlevel.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.incidence_dict">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.entity.Entity.incidence_dict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.entity.Entity.incidence_dict" title="Permalink to this definition"></a></dt>
 <dd><p>element.uidset for each element in entity</p>
 <p>To return an incidence dictionary of all nested entities in entity
 use nested_incidence_dict</p>
@@ -355,13 +356,13 @@ use nested_incidence_dict</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.is_bipartite">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_bipartite</span></span><a class="headerlink" href="#classes.entity.Entity.is_bipartite" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_bipartite</span></span><a class="headerlink" href="#classes.entity.Entity.is_bipartite" title="Permalink to this definition"></a></dt>
 <dd><p>Returns boolean indicating if the entity satisfies the <a class="reference internal" href="#bipartite-condition">Bipartite Condition</a></p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.is_empty">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_empty</span></span><a class="headerlink" href="#classes.entity.Entity.is_empty" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_empty</span></span><a class="headerlink" href="#classes.entity.Entity.is_empty" title="Permalink to this definition"></a></dt>
 <dd><p>Boolean indicating if entity.elements is empty</p>
 </dd></dl>
 
@@ -416,7 +417,7 @@ a certain level.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.memberships">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">memberships</span></span><a class="headerlink" href="#classes.entity.Entity.memberships" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">memberships</span></span><a class="headerlink" href="#classes.entity.Entity.memberships" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary of elements to which entity belongs.</p>
 <p>This assignment is done on construction and controlled by
 <a class="reference internal" href="#classes.entity.Entity.add_element" title="classes.entity.Entity.add_element"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.add_element()</span></code></a>
@@ -425,7 +426,7 @@ and <a class="reference internal" href="#classes.entity.Entity.remove_element" t
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.entity.Entity.merge_entities">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">merge_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity.merge_entities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.Entity.merge_entities" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ent2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#Entity.merge_entities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.Entity.merge_entities" title="Permalink to this definition"></a></dt>
 <dd><p>Merge two entities making sure they do not conflict.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -466,13 +467,13 @@ Properties of ent2 will update properties of ent1 in new entity.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.properties">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#classes.entity.Entity.properties" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#classes.entity.Entity.properties" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary of properties of entity</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.registry">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">registry</span></span><a class="headerlink" href="#classes.entity.Entity.registry" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">registry</span></span><a class="headerlink" href="#classes.entity.Entity.registry" title="Permalink to this definition"></a></dt>
 <dd><p>Entity pairs for children entity.</p>
 <p>To return a dictionary of all entities at all depths
 <a class="reference internal" href="#classes.entity.Entity.complete_registry" title="classes.entity.Entity.complete_registry"><code class="xref py py-func docutils literal notranslate"><span class="pre">Entity.complete_registry()</span></code></a></p>
@@ -564,13 +565,13 @@ item.memberships</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.uid">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#classes.entity.Entity.uid" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#classes.entity.Entity.uid" title="Permalink to this definition"></a></dt>
 <dd><p>String identifier for entity</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.entity.Entity.uidset">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">uidset</span></span><a class="headerlink" href="#classes.entity.Entity.uidset" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uidset</span></span><a class="headerlink" href="#classes.entity.Entity.uidset" title="Permalink to this definition"></a></dt>
 <dd><p>Set of uids of elements of entity.</p>
 </dd></dl>
 
@@ -578,8 +579,8 @@ item.memberships</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.entity.EntitySet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.entity.</span></span><span class="sig-name descname"><span class="pre">EntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#EntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.EntitySet" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity"><code class="xref py py-class docutils literal notranslate"><span class="pre">classes.entity.Entity</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.entity.</span></span><span class="sig-name descname"><span class="pre">EntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/entity.html#EntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.entity.EntitySet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Entity</span></code></a></p>
 <dl class="field-list simple" id="entityset">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -658,11 +659,8 @@ Two elements of an EntitySet are collapsed if they share the same children.</p>
 <li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>default=False</em>) – If True, return a dictionary of equivalence classes keyed by new edge names</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.entity.EntitySet" title="classes.entity.EntitySet">EntitySet</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#classes.entity.EntitySet" title="classes.entity.EntitySet">EntitySet</a></p>
 </dd>
 </dl>
 <dl class="simple">
@@ -749,10 +747,10 @@ and element uid : column number</p></li>
 
 </section>
 <section id="module-classes.hypergraph">
-<span id="classes-hypergraph-module"></span><h2>classes.hypergraph module<a class="headerlink" href="#module-classes.hypergraph" title="Permalink to this headline"></a></h2>
+<span id="classes-hypergraph-module"></span><h2>classes.hypergraph module<a class="headerlink" href="#module-classes.hypergraph" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.hypergraph.</span></span><span class="sig-name descname"><span class="pre">Hypergraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.hypergraph.</span></span><span class="sig-name descname"><span class="pre">Hypergraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Hypergraph H = (V,E) references a pair of disjoint sets:
 V = nodes (vertices) and E = (hyper)edges.</p>
@@ -912,7 +910,7 @@ be used</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.add_nwhy">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">add_nwhy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.add_nwhy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.add_nwhy" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_nwhy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.add_nwhy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.add_nwhy" title="Permalink to this definition"></a></dt>
 <dd><p>Add nwhy functionality to a hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1196,11 +1194,8 @@ with column headers given by the edge names.</p>
 <li><p><strong>max_size</strong> (<em>positive integer</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – largest size of edge to consider in degree</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1420,18 +1415,15 @@ generated by the s-edge_adjacency matrix.</p>
 <span class="sig-name descname"><span class="pre">edge_size_dist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.edge_size_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.edge_size_dist" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the size for each edge</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>np.array</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.edges">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.edges" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.edges" title="Permalink to this definition"></a></dt>
 <dd><p>Object associated with self._edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1445,7 +1437,7 @@ generated by the s-edge_adjacency matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.from_bipartite">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_bipartite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('nodes',</span> <span class="pre">'edges')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_bipartite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_bipartite" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_bipartite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('edges',</span> <span class="pre">'nodes')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_bipartite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_bipartite" title="Permalink to this definition"></a></dt>
 <dd><p>Static method creates a Hypergraph from a bipartite graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1457,11 +1449,8 @@ generated by the s-edge_adjacency matrix.</p>
 <li><p><strong>static</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1480,7 +1469,7 @@ generated by the s-edge_adjacency matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.from_dataframe">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition"></a></dt>
 <dd><p>Create a hypergraph from a Pandas Dataframe object using index to label vertices
 and Columns to label edges. The values of the dataframe are transformed into an
 incidence matrix.
@@ -1515,11 +1504,8 @@ arrays.</p></li>
 <p><a class="reference internal" href="#classes.hypergraph.Hypergraph.from_numpy_array" title="classes.hypergraph.Hypergraph.from_numpy_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_numpy_array</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1544,7 +1530,7 @@ constructor.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.from_numpy_array">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_numpy_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_numpy_array" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_numpy_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_numpy_array" title="Permalink to this definition"></a></dt>
 <dd><p>Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
 The matrix is converted to a matrix of 0’s and 1’s so that any truthy cells are converted to 1’s and
 all others to 0’s.</p>
@@ -1561,11 +1547,8 @@ If None then the edge names correspond to column indices with ‘e’ prepended.
 must be applicable to numpy.array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1646,14 +1629,11 @@ internally assigned id.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.incidence_dict">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.incidence_dict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.incidence_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary keyed by edge uids with values the uids of nodes in each edge</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1715,14 +1695,11 @@ share at least s nodes.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.isstatic">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">isstatic</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.isstatic" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isstatic</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.isstatic" title="Permalink to this definition"></a></dt>
 <dd><p>Checks whether nodes and edges are immutable</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Boolean</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Boolean</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1763,7 +1740,7 @@ share at least s nodes.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.nodes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.nodes" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.nodes" title="Permalink to this definition"></a></dt>
 <dd><p>Object associated with self._nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1825,7 +1802,7 @@ share at least s nodes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.recover_from_state">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">recover_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'current_state.p'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.recover_from_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.recover_from_state" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recover_from_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'current_state.p'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.recover_from_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.recover_from_state" title="Permalink to this definition"></a></dt>
 <dd><p>Recover a static hypergraph pickled using save_state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2125,14 +2102,11 @@ The hypergraph can be recovered using the command:</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.shape" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.shape" title="Permalink to this definition"></a></dt>
 <dd><p>(number of nodes, number of edges)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>tuple</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2189,7 +2163,7 @@ collapsed hypergraph and compute the toplexes of the new hypergraph.</p>
 <li><p><strong>use_reps</strong> (<em>#</em>) – </p></li>
 <li><p><strong>of</strong> (<em>#     If collapse=True then each toplex will be named by a representative of the set</em>) – </p></li>
 <li><p><strong>edges</strong> (<em>#     equivalent</em>) – </p></li>
-<li><p><strong>collapse_edges</strong><strong>)</strong><strong></strong> (<em>default is False</em><em> (</em><em>see</em>) – </p></li>
+<li><p><strong>collapse_edges</strong><strong>)</strong><strong>.</strong> (<em>default is False</em><em> (</em><em>see</em>) – </p></li>
 <li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – # If collapse=True then each toplex will be named by a tuple of the representative
 # of the set of equivalent edges and their count</p></li>
 </ul>
@@ -2224,10 +2198,10 @@ node index, default=False</p></li>
 
 </section>
 <section id="module-classes.staticentity">
-<span id="classes-staticentity-module"></span><h2>classes.staticentity module<a class="headerlink" href="#module-classes.staticentity" title="Permalink to this headline"></a></h2>
+<span id="classes-staticentity-module"></span><h2>classes.staticentity module<a class="headerlink" href="#module-classes.staticentity" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="field-list simple" id="staticentity">
 <dt class="field-odd">Parameters</dt>
@@ -2260,7 +2234,7 @@ StaticEntity. If None all cell weights will be set to 1.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.arr">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">arr</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.arr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arr</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.arr" title="Permalink to this definition"></a></dt>
 <dd><p>Tensor like representation of data indexed by labels with values given by incidence or cell weight.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2275,7 +2249,7 @@ self.data gives a list of nonzero coordinates aligned with cell_weights.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.cell_weights">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cell_weights</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.cell_weights" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cell_weights</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.cell_weights" title="Permalink to this definition"></a></dt>
 <dd><p>User defined weights corresponding to unique rows in data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2289,7 +2263,7 @@ self.data gives a list of nonzero coordinates aligned with cell_weights.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.children">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.children" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.children" title="Permalink to this definition"></a></dt>
 <dd><p>Labels of keys of first index</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2303,7 +2277,7 @@ self.data gives a list of nonzero coordinates aligned with cell_weights.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.data">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.data" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.data" title="Permalink to this definition"></a></dt>
 <dd><p>Data array or tensor array of Static Entity</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2318,7 +2292,7 @@ Each column corresponds to one level of the static entity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.dataframe">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dataframe</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dataframe" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataframe</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dataframe" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the entity data in DataFrame format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2332,7 +2306,7 @@ Each column corresponds to one level of the static entity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.dimensions">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dimensions</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dimensions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dimensions</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dimensions" title="Permalink to this definition"></a></dt>
 <dd><p>Dimension of Static Entity data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2346,7 +2320,7 @@ Each column corresponds to one level of the static entity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.dimsize">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dimsize</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dimsize" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dimsize</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.dimsize" title="Permalink to this definition"></a></dt>
 <dd><p>Number of categories in the data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2360,7 +2334,7 @@ Each column corresponds to one level of the static entity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.elements">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.elements" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.elements" title="Permalink to this definition"></a></dt>
 <dd><p>Keys and values in the order of insertion</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2397,7 +2371,7 @@ Compare with EntitySet with level1 = elements, level2 = children.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.incidence_dict">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_dict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.incidence_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Same as elements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2454,11 +2428,8 @@ will be set to 1.</p></li>
 <li><p><strong>value</strong> (<em>string</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int or tuple of ints</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int or tuple of ints</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2474,11 +2445,8 @@ will be set to 1.</p></li>
 <li><p><strong>values</strong> (<em>single string</em><em> or </em><em>array of strings</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2491,11 +2459,8 @@ will be set to 1.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2517,7 +2482,7 @@ category.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.keys" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.keys" title="Permalink to this definition"></a></dt>
 <dd><p>Array of keys of labels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2531,7 +2496,7 @@ category.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.labels">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">labels</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.labels" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">labels</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.labels" title="Permalink to this definition"></a></dt>
 <dd><p>Ordered dictionary of labels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2552,11 +2517,8 @@ levels. Ordered values correspond to integer representation of values in data.</
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kdx</strong> (<em>int</em>) – index of key in E.keys</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2575,18 +2537,15 @@ inclusive</p>
 <li><p><strong>return_index</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.memberships">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">memberships</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.memberships" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">memberships</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.memberships" title="Permalink to this definition"></a></dt>
 <dd><p>Reverses the elements dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2648,11 +2607,8 @@ If None then all cell_weights will be set to 1.</p></li>
 <span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntity.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntity.size" title="Permalink to this definition"></a></dt>
 <dd><p>The number of elements in E, the size of dimension 0 in the E.arr</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2668,11 +2624,8 @@ If None then all cell_weights will be set to 1.</p></li>
 <li><p><strong>index</strong> (<em>int</em>) – value index of label</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array(str)</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.array(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2685,11 +2638,8 @@ If None then all cell_weights will be set to 1.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>coords</strong> (<em>tuple of ints</em>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2713,7 +2663,7 @@ If None then all cell_weights will be set to 1.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.uid">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.uid" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.uid" title="Permalink to this definition"></a></dt>
 <dd><p>User defined identifier for each object in static entity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2727,7 +2677,7 @@ If None then all cell_weights will be set to 1.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntity.uidset">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">uidset</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.uidset" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uidset</span></span><a class="headerlink" href="#classes.staticentity.StaticEntity.uidset" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a set of the string identifiers for Static Entity</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -2747,11 +2697,8 @@ If None then all cell_weights will be set to 1.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>level</strong> (<em>int</em><em>, </em><em>optional</em>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>frozenset</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>frozenset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2760,8 +2707,8 @@ If None then all cell_weights will be set to 1.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntitySet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#classes.staticentity.StaticEntity" title="classes.staticentity.StaticEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">classes.staticentity.StaticEntity</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.staticentity.</span></span><span class="sig-name descname"><span class="pre">StaticEntitySet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregateby</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">props</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#classes.staticentity.StaticEntity" title="classes.staticentity.StaticEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticEntity</span></code></a></p>
 <span class="target" id="staticentityset"></span><dl class="py method">
 <dt class="sig sig-object py" id="classes.staticentity.StaticEntitySet.collapse_identical_elements">
 <span class="sig-name descname"><span class="pre">collapse_identical_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_equivalence_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/staticentity.html#StaticEntitySet.collapse_identical_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.staticentity.StaticEntitySet.collapse_identical_elements" title="Permalink to this definition"></a></dt>
@@ -2848,7 +2795,7 @@ will be updated by dictionary.</p></li>
 
 </section>
 <section id="module-classes">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-classes" title="Permalink to this headline"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-classes" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 

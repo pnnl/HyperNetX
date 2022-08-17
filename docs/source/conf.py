@@ -19,7 +19,7 @@ import sys
 import os
 import shlex
 
-__version__ = "1.2.4"
+__version__ = "1.2.5"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
