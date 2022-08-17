@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>classes.hypergraph &mdash; HyperNetX 1.2.4 documentation</title>
+  <title>classes.hypergraph &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -2381,7 +2382,7 @@
 
 <div class="viewcode-block" id="Hypergraph.from_bipartite"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_bipartite</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">set_names</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">set_names</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="s2">&quot;nodes&quot;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Static method creates a Hypergraph from a bipartite graph.</span>
@@ -2435,7 +2436,7 @@
         <span class="k">if</span> <span class="n">static</span><span class="p">:</span>
             <span class="n">elist</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
                     <span class="n">elist</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">elist</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>

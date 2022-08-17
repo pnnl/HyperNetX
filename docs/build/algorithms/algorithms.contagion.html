@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>algorithms.contagion package &mdash; HyperNetX 1.2.4 documentation</title>
+  <title>algorithms.contagion package &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -102,12 +103,12 @@
            <div itemprop="articleBody">
              
   <section id="algorithms-contagion-package">
-<h1>algorithms.contagion package<a class="headerlink" href="#algorithms-contagion-package" title="Permalink to this headline"></a></h1>
+<h1>algorithms.contagion package<a class="headerlink" href="#algorithms-contagion-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-algorithms.contagion.animation">
-<span id="algorithms-contagion-animation-module"></span><h2>algorithms.contagion.animation module<a class="headerlink" href="#module-algorithms.contagion.animation" title="Permalink to this headline"></a></h2>
+<span id="algorithms-contagion-animation-module"></span><h2>algorithms.contagion.animation module<a class="headerlink" href="#module-algorithms.contagion.animation" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.animation.contagion_animation">
 <span class="sig-prename descclassname"><span class="pre">algorithms.contagion.animation.</span></span><span class="sig-name descname"><span class="pre">contagion_animation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/animation.html#contagion_animation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.animation.contagion_animation" title="Permalink to this definition"></a></dt>
@@ -126,11 +127,8 @@
 <li><p><strong>fps</strong> (<em>int &gt; 0</em><em>, </em><em>default: 1</em>) – Frames per second of the animation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib Animation object</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib Animation object</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -161,10 +159,10 @@
 
 </section>
 <section id="module-algorithms.contagion.epidemics">
-<span id="algorithms-contagion-epidemics-module"></span><h2>algorithms.contagion.epidemics module<a class="headerlink" href="#module-algorithms.contagion.epidemics" title="Permalink to this headline"></a></h2>
+<span id="algorithms-contagion-epidemics-module"></span><h2>algorithms.contagion.epidemics module<a class="headerlink" href="#module-algorithms.contagion.epidemics" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.epidemics.Gillespie_SIR">
-<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">Gillespie_SIR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">H</span></em>, <em class="sig-param"><span class="pre">tau</span></em>, <em class="sig-param"><span class="pre">gamma</span></em>, <em class="sig-param"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></em>, <em class="sig-param"><span class="pre">initial_infecteds=None</span></em>, <em class="sig-param"><span class="pre">initial_recovereds=None</span></em>, <em class="sig-param"><span class="pre">rho=None</span></em>, <em class="sig-param"><span class="pre">tmin=0</span></em>, <em class="sig-param"><span class="pre">tmax=inf</span></em>, <em class="sig-param"><span class="pre">**args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#Gillespie_SIR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.Gillespie_SIR" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">Gillespie_SIR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_infecteds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_recovereds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax=inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#Gillespie_SIR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.Gillespie_SIR" title="Permalink to this definition"></a></dt>
 <dd><p>A continuous-time SIR model for hypergraphs similar to the model in
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a> and
@@ -212,7 +210,7 @@ implemented for networks in the EoN package by Joel C. Miller
 
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.epidemics.Gillespie_SIS">
-<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">Gillespie_SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">H</span></em>, <em class="sig-param"><span class="pre">tau</span></em>, <em class="sig-param"><span class="pre">gamma</span></em>, <em class="sig-param"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></em>, <em class="sig-param"><span class="pre">initial_infecteds=None</span></em>, <em class="sig-param"><span class="pre">rho=None</span></em>, <em class="sig-param"><span class="pre">tmin=0</span></em>, <em class="sig-param"><span class="pre">tmax=inf</span></em>, <em class="sig-param"><span class="pre">return_full_data=False</span></em>, <em class="sig-param"><span class="pre">sim_kwargs=None</span></em>, <em class="sig-param"><span class="pre">**args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#Gillespie_SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.Gillespie_SIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">Gillespie_SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_infecteds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax=inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_full_data=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_kwargs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#Gillespie_SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.Gillespie_SIS" title="Permalink to this definition"></a></dt>
 <dd><p>A continuous-time SIS model for hypergraphs similar to the model in
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a> and
@@ -293,7 +291,7 @@ implemented for networks in the EoN package by Joel C. Miller
 
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.epidemics.discrete_SIR">
-<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">discrete_SIR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">H</span></em>, <em class="sig-param"><span class="pre">tau</span></em>, <em class="sig-param"><span class="pre">gamma</span></em>, <em class="sig-param"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></em>, <em class="sig-param"><span class="pre">initial_infecteds=None</span></em>, <em class="sig-param"><span class="pre">initial_recovereds=None</span></em>, <em class="sig-param"><span class="pre">rho=None</span></em>, <em class="sig-param"><span class="pre">tmin=0</span></em>, <em class="sig-param"><span class="pre">tmax=inf</span></em>, <em class="sig-param"><span class="pre">dt=1.0</span></em>, <em class="sig-param"><span class="pre">return_full_data=False</span></em>, <em class="sig-param"><span class="pre">**args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#discrete_SIR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.discrete_SIR" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">discrete_SIR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_infecteds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_recovereds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax=inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_full_data=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#discrete_SIR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.discrete_SIR" title="Permalink to this definition"></a></dt>
 <dd><p>A discrete-time SIR model for hypergraphs similar to the construction described in
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a> and
@@ -354,7 +352,7 @@ implemented for networks in the EoN package by Joel C. Miller
 
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.contagion.epidemics.discrete_SIS">
-<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">discrete_SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">H</span></em>, <em class="sig-param"><span class="pre">tau</span></em>, <em class="sig-param"><span class="pre">gamma</span></em>, <em class="sig-param"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></em>, <em class="sig-param"><span class="pre">initial_infecteds=None</span></em>, <em class="sig-param"><span class="pre">rho=None</span></em>, <em class="sig-param"><span class="pre">tmin=0</span></em>, <em class="sig-param"><span class="pre">tmax=100</span></em>, <em class="sig-param"><span class="pre">dt=1.0</span></em>, <em class="sig-param"><span class="pre">return_full_data=False</span></em>, <em class="sig-param"><span class="pre">**args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#discrete_SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.discrete_SIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">algorithms.contagion.epidemics.</span></span><span class="sig-name descname"><span class="pre">discrete_SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_function=&lt;function</span> <span class="pre">threshold&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_infecteds=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmin=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax=100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_full_data=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion/epidemics.html#discrete_SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.epidemics.discrete_SIS" title="Permalink to this definition"></a></dt>
 <dd><p>A discrete-time SIS model for hypergraphs as implemented in
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a> and
@@ -517,7 +515,7 @@ choose randomly.</p>
 
 </section>
 <section id="module-algorithms.contagion">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-algorithms.contagion" title="Permalink to this headline"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-algorithms.contagion" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
