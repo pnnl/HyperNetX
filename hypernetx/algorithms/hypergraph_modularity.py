@@ -14,7 +14,6 @@ References
 
 from collections import Counter
 import numpy as np
-from functools import reduce
 import itertools
 from scipy.special import comb
 

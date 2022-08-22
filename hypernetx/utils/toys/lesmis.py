@@ -1,17 +1,12 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
 
-import numpy as np
 import pandas as pd
 from itertools import islice, chain, repeat
-
-import networkx as nx
 
 import matplotlib.pyplot as plt
 
 import hypernetx as hnx
-
-__all__ = ["LesMis", "lesmis_hypergraph_from_df", "book_tour"]
 
 
 class LesMis(object):

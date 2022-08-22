@@ -1,8 +1,6 @@
 from networkx import bipartite
 import os
 
-__all__ = ["GeneData"]
-
 
 class GeneData:
     def __init__(self):

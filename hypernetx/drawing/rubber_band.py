@@ -2,7 +2,7 @@
 # All rights reserved.
 
 from hypernetx import Hypergraph
-from .util import (
+from hypernetx.drawing.util import (
     get_frozenset_label,
     get_collapsed_size,
     get_set_layering,
@@ -11,17 +11,14 @@ from .util import (
 )
 
 import matplotlib.pyplot as plt
-from matplotlib.collections import PolyCollection, LineCollection, CircleCollection
+from matplotlib.collections import PolyCollection
 
 import networkx as nx
 
-from itertools import combinations
-from collections import defaultdict
 
 import numpy as np
 from scipy.spatial.distance import pdist
 from scipy.spatial import ConvexHull
-from scipy.spatial import Voronoi
 
 # increases the default figure size to 8in square.
 plt.rcParams["figure.figsize"] = (8, 8)

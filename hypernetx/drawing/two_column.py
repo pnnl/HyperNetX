@@ -6,7 +6,7 @@ from matplotlib.collections import LineCollection
 
 import networkx as nx
 
-from .util import get_frozenset_label
+from hypernetx.drawing.util import get_frozenset_label
 
 
 def layout_two_column(H, spacing=2):

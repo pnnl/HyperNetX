@@ -6,6 +6,7 @@ try:
 except Exception as e:
     print(f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']")
 
+
 def contagion_animation(
     fig,
     H,
