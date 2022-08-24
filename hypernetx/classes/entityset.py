@@ -186,6 +186,8 @@ class EntitySet(Entity):
         restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
 
         if keep_memberships:
+            # use original memberships to set memberships for the new EntitySet
+            # TODO: This assumes levels=[1], add explicit checks for other cases
             restricted._state_dict["memberships"] = self.memberships
 
         return restricted
