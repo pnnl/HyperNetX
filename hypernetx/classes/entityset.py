@@ -7,6 +7,60 @@ from hypernetx.classes.helpers import update_properties
 
 
 class EntitySet(Entity):
+    """ Class for handling 2-dimensional (i.e., system of sets, bipartite) data when
+    building network-like models, i.e., :class:`Hypergraph`
+
+    Parameters
+    ----------
+    entity : `Entity`, `pandas.DataFrame`, dict of lists or sets, list of lists or sets, optional
+        If an `Entity` with N levels or a `pandas.DataFrame` with N columns, represents
+        N-dimensional entity data (data table);
+        if N > 2, only considers levels (columns) `level1` and `level2`.
+        Otherwise, represents 2-dimensional entity data (system of sets).
+    data : `numpy.ndarray`, optional
+        2D M x N ndarray of ints (data table)
+        Sparse representation of an N-dimensional incidence tensor with M nonzero cells;
+        if N > 2, only considers levels (columns) `level1` and `level2`.
+        Ignored if `entity` is provided.
+    static : bool, default=True
+        If True, entity data may not be altered, and the `state_dict` will never be cleared
+        Otherwise, rows may be added to and removed from the data table, and updates will clear the `state_dict`
+    labels : `collections.OrderedDict` of lists, optional
+        User-specified labels in corresponding order to ints in `data`.
+        For M x N `data`, N > 2, `labels` must contain either 2 or N keys; if N keys,
+        only considers labels for levels (columns) `level1` and `level2`.
+        Ignored if `entity` is provided or `data` is not provided.
+    uid : hashable, optional
+        A unique identifier for the `StaticEntity`
+    level1, level2 : int, default=0,1
+        Each item in `level1` defines a set containing all the `level2` items with which
+        it appears in the same row of the underlying data table.
+        Ignored if `entity`, `data` (if `entity` not provided), and `labels` all (if
+        provided) represent 1- or 2-dimensional data (set or system of sets)
+    weights : array-like or hashable, optional
+        User-specified cell weights corresponding to entity data;
+        If array-like and `entity` or `data` defines a data table, length must equal the number of rows;
+        If array-like and `entity` defines a system of sets, length must equal the total sum of the sizes of all sets;
+        If hashable and `entity` is a `pandas.DataFrame`, must be the name of a column in `entity`;
+        Otherwise, weight for all cells is assumed to be 1.
+        Ignored if `entity` is an `Entity` and `keep_weights`=True
+    keep_weights : bool, default=True
+        If `entity` is an `Entity`, whether to preserve the existing cell weights or not;
+        otherwise, ignored.
+    aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='sum'
+        Name of function to use for aggregating cell weights of duplicate rows when
+        `entity` or `data` defines a data table.
+        If None, duplicate rows will be dropped without aggregating cell weights.
+        Effectively ignored if `entity` defines a system of sets
+    properties : dict of dicts
+        Nested dict of {item label: dict of {property name : property value}}
+        User-specified properties to be assigned to individual items in the data,
+            i.e., cell entries in a data table; sets or set elements in a system of sets
+    cell_properties : dict of dicts of dicts
+        Nested dict of {level1 item label: {level2 item label: dict of {cell property name : cell property value}}}
+        User-specified properties to be assigned to cells of the incidence matrix,
+            i.e., rows in a data table; pairs of (set, element of set) in a system of sets
+    """
     def __init__(
         self,
         entity=None,
