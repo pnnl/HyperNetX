@@ -117,18 +117,32 @@ class EntitySet(Entity):
 
     @property
     def cell_properties(self):
-        # Dev Note:
+        """Properties assigned to cells of the incidence matrix
+
+        Returns
+        -------
+        pandas.Series, optional
+            Returns None if dimsize=1
+        """
         return self._cell_properties
 
     @property
     def memberships(self):
-        """
-        Reverses the elements dictionary
+        """Extends Entity.memberships
+
+        Each item in level 1 (second column) defines a set containing all the level 0
+        (first column) items with which it appears in the same row of the underlying
+        data table.
 
         Returns
         -------
-        dict
-            Same as elements_by_level with level1 = 1, level2 = 0.
+        dict of `AttrList`
+            System of sets representation as dict of {level 1 item : AttrList(level 0 items)}
+
+        See Also
+        --------
+        elements : dual of this representation i.e., each item in level 0 (first column) defines a set
+        restrict_to_levels : for more information on how memberships work for 1-dimensional (set) data
         """
         if self._dimsize == 1:
             return self._state_dict.get("memberships")
@@ -138,26 +152,27 @@ class EntitySet(Entity):
     def restrict_to_levels(
         self, levels, weights=False, aggregateby="sum", keep_memberships=True, **kwargs
     ):
-        """
-        Limit Static Entity data to specific levels
+        """Extends Entity.restrict_to_levels
 
         Parameters
         ----------
-        levels : array
-            index of labels in data
-        weights : bool, optional, default : False
-            Whether or not to aggregate existing weights in self when
-            restricting to levels. If False then weights will be assigned 1.
-        aggregateby : str, optional, {None, 'last', count', 'sum', 'mean',
-            'median', max', 'min', 'first', 'last'}, default : 'count' Method
-            to aggregate cell_weights of duplicate rows in setsystem of type
-            pandas.DataFrame. If None then all cell_weights will be set to 1.
-        uid : None, optional
+        levels : iterable of int
+            indices of a subset of levels (columns) of data
+        weights : bool, default=False
+            If True, aggregate existing cell weights to get new cell weights
+            Otherwise, all new cell weights will be 1
+        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', None}, default='sum'
+            Method to aggregate weights of duplicate rows in data table
+            If None or weights=False then all new cell weights will be 1
+        keep_memberships : bool, default=True
+            Whether to preserve membership information for the discarded level when
+            the new EntitySet is restricted to a single level
+        **kwargs
+            Extra arguments to `StaticEntity` constructor
 
         Returns
         -------
-        Static Entity class
-            hnx.classes.entity.Entity
+        EntitySet
         """
         restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
 
@@ -167,25 +182,38 @@ class EntitySet(Entity):
         return restricted
 
     def restrict_to(self, indices, **kwargs):
-        """
-        Limit Static Entityset data to specific indices of keys
+        """Alias of `restrict_to_indices` with default parameter `level`=0
 
         Parameters
         ----------
-        indices : array
-            array of indices in keys
-        uid : None, optional
+        indices : int or iterable of int
+            indices of item label(s) in `level` to restrict to
+        **kwargs
+            Extra arguments to `StaticEntity` constructor
 
         Returns
         -------
         EntitySet
-            hnx.classes.entity.EntitySet
 
+        See Also
+        --------
+        restrict_to_indices
         """
         return self.restrict_to_indices(indices, **kwargs)
 
     def _create_cell_properties(self, props):
-        # Dev Note:
+        """Helper function for `assign_cell_properties`
+
+        Parameters
+        ----------
+        props : dict of dicts of dicts
+            Nested dict of {level 0 item label: dict of {level 1 item label: dict of {cell property name : cell property value}}}
+
+        Returns
+        -------
+        pandas.Series
+            MultiIndex of (level 0 item, level 1 item), each entry holds dict of {cell property name: cell property value}
+        """
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=self._data_cols)
         kwargs = {"index": index, "name": "cell_properties"}
         if props:
@@ -196,7 +224,17 @@ class EntitySet(Entity):
         return pd.Series(**kwargs)
 
     def assign_cell_properties(self, props):
-        # Dev Note: Not sure on this one
+        """Assign new properties to cells of the incidence matrix and update `self.properties`
+
+        Parameters
+        ----------
+        props : dict of dicts of dicts
+            Nested dict of {level 0 item label: dict of {level 1 item label: dict of {cell property name : cell property value}}}
+
+        Notes
+        -----
+        Not supported for dimsize=1
+        """
         if self._dimsize == 2:
             cell_properties = self._create_cell_properties(props)
 
@@ -208,23 +246,26 @@ class EntitySet(Entity):
             self._cell_properties = cell_properties
 
     def collapse_identical_elements(self, return_equivalence_classes=False, **kwargs):
-        """
-        Returns EntitySet after collapsing elements if they have same
-        children If no elements share same children, a copy of the original
-        EntitySet is returned
+        """ Create a new EntitySet by collapsing sets with the same set elements
+
+        Each item in level 0 (first column) defines a set containing all the level 1
+        (second column) items with which it appears in the same row of the underlying
+        data table.
 
         Parameters
         ----------
-        uid : None, optional
-        return_equivalence_classes : bool, optional
-            If True, return a dictionary of equivalence classes keyed by new
-            edge names
-
+        return_equivalence_classes : bool, default=False
+            If True, return a dictionary of equivalence classes keyed by new edge names
+        **kwargs
+            Extra arguments to `StaticEntity` constructor
 
         Returns
         -------
-        EntitySet
-            hnx.classes.Entity.EntitySet
+        new_entity : EntitySet
+            new EntitySet with identical sets collapsed; if all sets are unique, the set
+            system will be the same as the original
+        equivalence_classes : dict of lists, optional
+            if `return_equivalence_classes`=True, {collapsed set label: [level 0 item labels]}
         """
         collapse = (
             self._dataframe[self._data_cols]
