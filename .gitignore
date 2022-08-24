@@ -30,4 +30,4 @@ venv*
 .coverage
 .idea
 env
-.venv
+.venv*
