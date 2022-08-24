@@ -240,13 +240,20 @@ class EntitySet(Entity):
         pandas.Series
             MultiIndex of (level 0 item, level 1 item), each entry holds dict of {cell property name: cell property value}
         """
+        # hierarchical index over columns of data
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=self._data_cols)
         kwargs = {"index": index, "name": "cell_properties"}
+
+        # format initial properties if provided
         if props:
+            # construct MultiIndex from all (level 0 item, level 1 item) pairs from
+            # nested keys of props dict
             cells = [(edge, node) for edge in props for node in props[edge]]
             index = pd.MultiIndex.from_tuples(cells, names=self._data_cols)
+            # properties for each cell
             data = [props[edge][node] for edge, node in index]
             kwargs.update(index=index, data=data)
+
         return pd.Series(**kwargs)
 
     def assign_cell_properties(
@@ -264,13 +271,16 @@ class EntitySet(Entity):
         Not supported for dimsize=1
         """
         if self._dimsize == 2:
+            # convert nested dict of cell properties to MultiIndexed Series
             cell_properties = self._create_cell_properties(props)
 
+            # update with current cell properties if they exist
             if not self._cell_properties.empty:
                 cell_properties = update_properties(
                     self._cell_properties, cell_properties
                 )
 
+            # update stored cell properties
             self._cell_properties = cell_properties
 
     def collapse_identical_elements(
@@ -297,21 +307,31 @@ class EntitySet(Entity):
         equivalence_classes : dict of lists, optional
             if `return_equivalence_classes`=True, {collapsed set label: [level 0 item labels]}
         """
+        # group by level 0 (set), aggregate level 1 (set elements) as frozenset
         collapse = (
             self._dataframe[self._data_cols]
             .groupby(self._data_cols[0], as_index=False)
             .agg(frozenset)
         )
+
+        # aggregation method to rename equivalence classes as [first item]: [# items]
         agg_kwargs = {"name": (self._data_cols[0], lambda x: f"{x.iloc[0]}: {len(x)}")}
         if return_equivalence_classes:
+            # aggregation method to list all items in each equivalence class
             agg_kwargs.update(equivalence_class=(0, list))
+        # group by frozenset of level 1 items (set elements), aggregate to get names of
+        # equivalence classes and (optionally) list of level 0 items (sets) in each
         collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(
             **agg_kwargs
         )
+        # convert to nested dict representation of collapsed system of sets
         collapse = collapse.set_index("name")
         new_entity_dict = collapse[self._data_cols[1]].to_dict()
+        # construct new EntitySet from system of sets
         new_entity = EntitySet(new_entity_dict, **kwargs)
+
         if return_equivalence_classes:
+            # lists of equivalent sets, keyed by equivalence class name
             equivalence_classes = collapse.equivalence_class.to_dict()
             return new_entity, equivalence_classes
         return new_entity
