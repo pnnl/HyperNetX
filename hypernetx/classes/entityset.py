@@ -60,6 +60,7 @@ class EntitySet(Entity):
         Nested dict of {level1 item label: {level2 item label: dict of {cell property name : cell property value}}}
         User-specified properties to be assigned to cells of the incidence matrix,
             i.e., rows in a data table; pairs of (set, element of set) in a system of sets
+        Ignored if underlying data is 1-dimensional (set)
     """
     def __init__(
         self,
@@ -76,13 +77,17 @@ class EntitySet(Entity):
         properties=None,
         cell_properties=None,
     ):
-
+        # if the entity data is passed as an Entity, get its underlying data table and
+        # proceed to the case for entity data passed as a DataFrame
         if isinstance(entity, Entity):
             if keep_weights:
+                # preserve original weights
                 weights = entity._cell_weight_col
             entity = entity.dataframe
 
+        # if the entity data is passed as a DataFrame, restrict to two columns if needed
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
+            # if there is a column for weights, preserve it
             if isinstance(weights, Hashable) and weights in entity:
                 columns = entity.columns.drop(weights)[[level1, level2]]
                 columns = columns.append(pd.Index([weights]))
@@ -90,14 +95,17 @@ class EntitySet(Entity):
                 columns = entity.columns[[level1, level2]]
             entity = entity[columns]
 
+        # if a 2D ndarray is passed, restrict to two columns if needed
         elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
             data = data[:, (level1, level2)]
 
+        # if a dict of labels is provided, restrict to labels for two columns if needed
         if isinstance(labels, dict) and len(labels) > 2:
             label_keys = list(labels)
             columns = (label_keys[level1], label_keys[level2])
             labels = {col: labels[col] for col in columns}
 
+        # pass reformatted params to Entity constructor
         super().__init__(
             entity=entity,
             data=data,
@@ -109,6 +117,7 @@ class EntitySet(Entity):
             properties=properties,
         )
 
+        # if underlying data is 2D (system of sets), create and assign cell properties
         self._cell_properties = (
             self._create_cell_properties(cell_properties)
             if self._dimsize == 2
