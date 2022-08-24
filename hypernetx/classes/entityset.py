@@ -1,13 +1,18 @@
-from collections.abc import Hashable
+from __future__ import annotations
+
+from collections import OrderedDict
+from collections.abc import Hashable, Iterable, Sequence
+from typing import Optional, Any
+
 import pandas as pd
 import numpy as np
 
 from hypernetx.classes.entity import Entity
-from hypernetx.classes.helpers import update_properties
+from hypernetx.classes.helpers import update_properties, AttrList
 
 
 class EntitySet(Entity):
-    """ Class for handling 2-dimensional (i.e., system of sets, bipartite) data when
+    """Class for handling 2-dimensional (i.e., system of sets, bipartite) data when
     building network-like models, i.e., :class:`Hypergraph`
 
     Parameters
@@ -62,20 +67,23 @@ class EntitySet(Entity):
             i.e., rows in a data table; pairs of (set, element of set) in a system of sets
         Ignored if underlying data is 1-dimensional (set)
     """
+
     def __init__(
         self,
-        entity=None,
-        data=None,
-        static=True,
-        labels=None,
-        uid=None,
-        level1=0,
-        level2=1,
-        weights=None,
-        keep_weights=True,
-        aggregateby="sum",
-        properties=None,
-        cell_properties=None,
+        entity: Optional[
+            Entity | pd.DataFrame | dict[Iterable] | list[Iterable]
+        ] = None,
+        data: Optional[np.ndarray] = None,
+        static: bool = True,
+        labels: Optional[OrderedDict[str, list[str]]] = None,
+        uid: Optional[Hashable] = None,
+        level1: int = 0,
+        level2: int = 1,
+        weights: Optional[Sequence | Hashable] = None,
+        keep_weights: bool = True,
+        aggregateby: str = "sum",
+        properties: Optional[dict[str, dict[str, Any]]] = None,
+        cell_properties: Optional[dict[str, dict[str, dict[str, Any]]]] = None,
     ):
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
@@ -125,7 +133,7 @@ class EntitySet(Entity):
         )
 
     @property
-    def cell_properties(self):
+    def cell_properties(self) -> pd.Series:
         """Properties assigned to cells of the incidence matrix
 
         Returns
@@ -136,7 +144,7 @@ class EntitySet(Entity):
         return self._cell_properties
 
     @property
-    def memberships(self):
+    def memberships(self) -> dict[str, AttrList[str]]:
         """Extends Entity.memberships
 
         Each item in level 1 (second column) defines a set containing all the level 0
@@ -159,13 +167,18 @@ class EntitySet(Entity):
         return super().memberships
 
     def restrict_to_levels(
-        self, levels, weights=False, aggregateby="sum", keep_memberships=True, **kwargs
-    ):
+        self,
+        levels: int | Iterable[int],
+        weights: bool = False,
+        aggregateby: Optional[str] = "sum",
+        keep_memberships: bool = True,
+        **kwargs,
+    ) -> EntitySet:
         """Extends Entity.restrict_to_levels
 
         Parameters
         ----------
-        levels : iterable of int
+        levels : array_like of int
             indices of a subset of levels (columns) of data
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights
@@ -192,12 +205,12 @@ class EntitySet(Entity):
 
         return restricted
 
-    def restrict_to(self, indices, **kwargs):
+    def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of `restrict_to_indices` with default parameter `level`=0
 
         Parameters
         ----------
-        indices : int or iterable of int
+        indices : array_like of int
             indices of item label(s) in `level` to restrict to
         **kwargs
             Extra arguments to `StaticEntity` constructor
@@ -212,7 +225,9 @@ class EntitySet(Entity):
         """
         return self.restrict_to_indices(indices, **kwargs)
 
-    def _create_cell_properties(self, props):
+    def _create_cell_properties(
+        self, props: dict[str, dict[str, dict[str, Any]]]
+    ) -> pd.Series:
         """Helper function for `assign_cell_properties`
 
         Parameters
@@ -234,7 +249,9 @@ class EntitySet(Entity):
             kwargs.update(index=index, data=data)
         return pd.Series(**kwargs)
 
-    def assign_cell_properties(self, props):
+    def assign_cell_properties(
+        self, props: dict[str, dict[str, dict[str, Any]]]
+    ) -> None:
         """Assign new properties to cells of the incidence matrix and update `self.properties`
 
         Parameters
@@ -256,8 +273,10 @@ class EntitySet(Entity):
 
             self._cell_properties = cell_properties
 
-    def collapse_identical_elements(self, return_equivalence_classes=False, **kwargs):
-        """ Create a new EntitySet by collapsing sets with the same set elements
+    def collapse_identical_elements(
+        self, return_equivalence_classes: bool = False, **kwargs
+    ) -> EntitySet | tuple[EntitySet, dict[str, list[str]]]:
+        """Create a new EntitySet by collapsing sets with the same set elements
 
         Each item in level 0 (first column) defines a set containing all the level 1
         (second column) items with which it appears in the same row of the underlying
