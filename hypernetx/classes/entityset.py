@@ -226,13 +226,13 @@ class EntitySet(Entity):
         return self.restrict_to_indices(indices, **kwargs)
 
     def _create_cell_properties(
-        self, props: dict[str, dict[str, dict[str, Any]]]
+        self, props: Optional[dict[str, dict[str, dict[str, Any]]]] = None
     ) -> pd.Series:
         """Helper function for `assign_cell_properties`
 
         Parameters
         ----------
-        props : dict of dicts of dicts
+        props : dict of dicts of dicts, optional
             Nested dict of {level 0 item label: dict of {level 1 item label: dict of {cell property name : cell property value}}}
 
         Returns
