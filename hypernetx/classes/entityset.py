@@ -1,13 +1,9 @@
-import pandas as pd
-from hypernetx.classes.entity import Entity
-import warnings
-from hypernetx import *
-from pandas.api.types import CategoricalDtype
-import numpy as np
-from collections import defaultdict, OrderedDict, UserList
 from collections.abc import Hashable
-from scipy.sparse import csr_matrix
-from hypernetx.classes.helpers import *
+import pandas as pd
+import numpy as np
+
+from hypernetx.classes.entity import Entity
+from hypernetx.classes.helpers import update_properties
 
 
 class EntitySet(Entity):
@@ -56,14 +52,18 @@ class EntitySet(Entity):
             uid=uid,
             weights=weights,
             aggregateby=aggregateby,
-            properties=properties
+            properties=properties,
         )
 
-        self._cell_properties = self._create_cell_properties(cell_properties) if self._dimsize == 2 else None
+        self._cell_properties = (
+            self._create_cell_properties(cell_properties)
+            if self._dimsize == 2
+            else None
+        )
 
     @property
     def cell_properties(self):
-        # Dev Note: 
+        # Dev Note:
         return self._cell_properties
 
     @property
@@ -82,8 +82,8 @@ class EntitySet(Entity):
         return super().memberships
 
     def restrict_to_levels(
-                           self, levels, weights=False, aggregateby="sum",
-                           keep_memberships=True, **kwargs):
+        self, levels, weights=False, aggregateby="sum", keep_memberships=True, **kwargs
+    ):
         """
         Limit Static Entity data to specific levels
 
@@ -105,8 +105,7 @@ class EntitySet(Entity):
         Static Entity class
             hnx.classes.entity.Entity
         """
-        restricted = super().restrict_to_levels(levels, weights, aggregateby,
-                                                **kwargs)
+        restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
 
         if keep_memberships:
             restricted._state_dict["memberships"] = self.memberships
@@ -133,9 +132,8 @@ class EntitySet(Entity):
 
     def _create_cell_properties(self, props):
         # Dev Note:
-        index = pd.MultiIndex(levels=([], []), codes=([], []),
-                              names=self._data_cols)
-        kwargs = {'index': index, 'name': 'cell_properties'}
+        index = pd.MultiIndex(levels=([], []), codes=([], []), names=self._data_cols)
+        kwargs = {"index": index, "name": "cell_properties"}
         if props:
             cells = [(edge, node) for edge in props for node in props[edge]]
             index = pd.MultiIndex.from_tuples(cells, names=self._data_cols)
@@ -149,13 +147,13 @@ class EntitySet(Entity):
             cell_properties = self._create_cell_properties(props)
 
             if not self._cell_properties.empty:
-                cell_properties = update_properties(self._cell_properties,
-                                                    cell_properties)
+                cell_properties = update_properties(
+                    self._cell_properties, cell_properties
+                )
 
             self._cell_properties = cell_properties
 
-    def collapse_identical_elements(self, return_equivalence_classes=False,
-                                    **kwargs):
+    def collapse_identical_elements(self, return_equivalence_classes=False, **kwargs):
         """
         Returns EntitySet after collapsing elements if they have same
         children If no elements share same children, a copy of the original
@@ -174,12 +172,18 @@ class EntitySet(Entity):
         EntitySet
             hnx.classes.Entity.EntitySet
         """
-        collapse = self._dataframe[self._data_cols].groupby(self._data_cols[0], as_index=False).agg(frozenset)
-        agg_kwargs = {'name': (self._data_cols[0], lambda x:  f'{x.iloc[0]}: {len(x)}')}
+        collapse = (
+            self._dataframe[self._data_cols]
+            .groupby(self._data_cols[0], as_index=False)
+            .agg(frozenset)
+        )
+        agg_kwargs = {"name": (self._data_cols[0], lambda x: f"{x.iloc[0]}: {len(x)}")}
         if return_equivalence_classes:
             agg_kwargs.update(equivalence_class=(0, list))
-        collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(**agg_kwargs)
-        collapse = collapse.set_index('name')
+        collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(
+            **agg_kwargs
+        )
+        collapse = collapse.set_index("name")
         new_entity_dict = collapse[self._data_cols[1]].to_dict()
         new_entity = EntitySet(new_entity_dict, **kwargs)
         if return_equivalence_classes:
