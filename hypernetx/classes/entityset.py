@@ -17,55 +17,61 @@ class EntitySet(Entity):
 
     Parameters
     ----------
-    entity : `Entity`, `pandas.DataFrame`, dict of lists or sets, list of lists or sets, optional
-        If an `Entity` with N levels or a `pandas.DataFrame` with N columns, represents
-        N-dimensional entity data (data table);
-        if N > 2, only considers levels (columns) `level1` and `level2`.
+    entity : Entity, pandas.DataFrame, dict of lists or sets, or list of lists or sets, optional
+        If an ``Entity`` with N levels or a ``DataFrame`` with N columns,
+        represents N-dimensional entity data (data table).
+        If N > 2, only considers levels (columns) `level1` and `level2`.
         Otherwise, represents 2-dimensional entity data (system of sets).
-    data : `numpy.ndarray`, optional
-        2D M x N ndarray of ints (data table)
-        Sparse representation of an N-dimensional incidence tensor with M nonzero cells;
-        if N > 2, only considers levels (columns) `level1` and `level2`.
+    data : numpy.ndarray, optional
+        2D M x N ``ndarray`` of ints (data table);
+        sparse representation of an N-dimensional incidence tensor with M nonzero cells.
+        If N > 2, only considers levels (columns) `level1` and `level2`.
         Ignored if `entity` is provided.
     static : bool, default=True
-        If True, entity data may not be altered, and the `state_dict` will never be cleared
-        Otherwise, rows may be added to and removed from the data table, and updates will clear the `state_dict`
-    labels : `collections.OrderedDict` of lists, optional
-        User-specified labels in corresponding order to ints in `data`.
-        For M x N `data`, N > 2, `labels` must contain either 2 or N keys; if N keys,
-        only considers labels for levels (columns) `level1` and `level2`.
+        If True, entity data may not be altered,
+        and the :attr:`state_dict <_state_dict>` will never be cleared.
+        Otherwise, rows may be added to and removed from the data table,
+        and updates will clear the :attr:`state_dict <_state_dict>`.
+    labels : collections.OrderedDict of lists, optional
+        User-specified labels in corresponding order to ``ints`` in `data`.
+        For M x N `data`, N > 2, `labels` must contain either 2 or N keys.
+        If N keys, only considers labels for levels (columns) `level1` and `level2`.
         Ignored if `entity` is provided or `data` is not provided.
     uid : hashable, optional
-        A unique identifier for the `StaticEntity`
+        A unique identifier for the ``StaticEntity``.
     level1, level2 : int, default=0,1
         Each item in `level1` defines a set containing all the `level2` items with which
         it appears in the same row of the underlying data table.
         Ignored if `entity`, `data` (if `entity` not provided), and `labels` all (if
-        provided) represent 1- or 2-dimensional data (set or system of sets)
-    weights : array-like or hashable, optional
-        User-specified cell weights corresponding to entity data;
-        If array-like and `entity` or `data` defines a data table, length must equal the number of rows;
-        If array-like and `entity` defines a system of sets, length must equal the total sum of the sizes of all sets;
-        If hashable and `entity` is a `pandas.DataFrame`, must be the name of a column in `entity`;
+        provided) represent 1- or 2-dimensional data (set or system of sets).
+    weights : array_like or hashable, optional
+        User-specified cell weights corresponding to entity data.
+        If ``array_like`` and `entity` or `data` defines a data table,
+            length must equal the number of rows.
+        If ``array_like`` and `entity` defines a system of sets,
+            length must equal the total sum of the sizes of all sets.
+        If ``hashable`` and `entity` is a ``DataFrame``,
+            must be the name of a column in `entity`.
         Otherwise, weight for all cells is assumed to be 1.
-        Ignored if `entity` is an `Entity` and `keep_weights`=True
+        Ignored if `entity` is an :class:`Entity` and `keep_weights`=True.
     keep_weights : bool, default=True
-        If `entity` is an `Entity`, whether to preserve the existing cell weights or not;
-        otherwise, ignored.
-    aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='sum'
+        Whether to preserve any existing cell weights.
+        Ignored if `entity` is not an :class:`Entity`.
+    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, optional
         Name of function to use for aggregating cell weights of duplicate rows when
-        `entity` or `data` defines a data table.
+        `entity` or `data` defines a data table, default is "sum".
         If None, duplicate rows will be dropped without aggregating cell weights.
         Effectively ignored if `entity` defines a system of sets
     properties : dict of dicts
-        Nested dict of {item label: dict of {property name : property value}}
+        Nested dict of ``{item label: dict of {property name : property value}}``.
         User-specified properties to be assigned to individual items in the data,
-            i.e., cell entries in a data table; sets or set elements in a system of sets
+        i.e., cell entries in a data table; sets or set elements in a system of sets
     cell_properties : dict of dicts of dicts
-        Nested dict of {level1 item label: {level2 item label: dict of {cell property name : cell property value}}}
+        Doubly-nested dict of
+        ``{level1 item: {level2 item: {cell property name: cell property value}}}``.
         User-specified properties to be assigned to cells of the incidence matrix,
-            i.e., rows in a data table; pairs of (set, element of set) in a system of sets
-        Ignored if underlying data is 1-dimensional (set)
+        i.e., rows in a data table; pairs of (set, element of set) in a system of sets.
+        Ignored if underlying data is 1-dimensional (set).
     """
 
     def __init__(
@@ -133,19 +139,19 @@ class EntitySet(Entity):
         )
 
     @property
-    def cell_properties(self) -> pd.Series:
+    def cell_properties(self) -> Optional[pd.Series]:
         """Properties assigned to cells of the incidence matrix
 
         Returns
         -------
         pandas.Series, optional
-            Returns None if dimsize=1
+            Returns None if :attr:`dimsize`=1
         """
         return self._cell_properties
 
     @property
     def memberships(self) -> dict[str, AttrList[str]]:
-        """Extends Entity.memberships
+        """Extends :attr:`Entity.memberships`
 
         Each item in level 1 (second column) defines a set containing all the level 0
         (first column) items with which it appears in the same row of the underlying
@@ -153,13 +159,16 @@ class EntitySet(Entity):
 
         Returns
         -------
-        dict of `AttrList`
-            System of sets representation as dict of {level 1 item : AttrList(level 0 items)}
+        dict of AttrList
+            System of sets representation as dict of
+            ``{level 1 item : AttrList(level 0 items)}``.
 
         See Also
         --------
-        elements : dual of this representation i.e., each item in level 0 (first column) defines a set
-        restrict_to_levels : for more information on how memberships work for 1-dimensional (set) data
+        elements : dual of this representation,
+                   i.e., each item in level 0 (first column) defines a set
+        restrict_to_levels : for more information on how memberships work for
+                             1-dimensional (set) data
         """
         if self._dimsize == 1:
             return self._state_dict.get("memberships")
@@ -174,23 +183,23 @@ class EntitySet(Entity):
         keep_memberships: bool = True,
         **kwargs,
     ) -> EntitySet:
-        """Extends Entity.restrict_to_levels
+        """Extends :meth:`Entity.restrict_to_levels`
 
         Parameters
         ----------
         levels : array_like of int
             indices of a subset of levels (columns) of data
         weights : bool, default=False
-            If True, aggregate existing cell weights to get new cell weights
-            Otherwise, all new cell weights will be 1
-        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', None}, default='sum'
-            Method to aggregate weights of duplicate rows in data table
-            If None or weights=False then all new cell weights will be 1
+            If True, aggregate existing cell weights to get new cell weights.
+            Otherwise, all new cell weights will be 1.
+        aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, optional
+            Method to aggregate weights of duplicate rows in data table;
+            If None or `weights`=False then all new cell weights will be 1
         keep_memberships : bool, default=True
             Whether to preserve membership information for the discarded level when
-            the new EntitySet is restricted to a single level
+            the new ``EntitySet`` is restricted to a single level
         **kwargs
-            Extra arguments to `StaticEntity` constructor
+            Extra arguments to :class:`EntitySet` constructor
 
         Returns
         -------
@@ -206,14 +215,14 @@ class EntitySet(Entity):
         return restricted
 
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
-        """Alias of `restrict_to_indices` with default parameter `level`=0
+        """Alias of :meth:`restrict_to_indices` with default parameter `level`=0
 
         Parameters
         ----------
         indices : array_like of int
             indices of item label(s) in `level` to restrict to
         **kwargs
-            Extra arguments to `StaticEntity` constructor
+            Extra arguments to :class:`EntitySet` constructor
 
         Returns
         -------
@@ -228,17 +237,19 @@ class EntitySet(Entity):
     def _create_cell_properties(
         self, props: Optional[dict[str, dict[str, dict[str, Any]]]] = None
     ) -> pd.Series:
-        """Helper function for `assign_cell_properties`
+        """Helper function for :meth:`assign_cell_properties`
 
         Parameters
         ----------
         props : dict of dicts of dicts, optional
-            Nested dict of {level 0 item label: dict of {level 1 item label: dict of {cell property name : cell property value}}}
+            Doubly-nested dict of
+            ``{level 0 item: {level 1 item: {cell property name : cell property value}}}``
 
         Returns
         -------
         pandas.Series
-            MultiIndex of (level 0 item, level 1 item), each entry holds dict of {cell property name: cell property value}
+            with ``MultiIndex`` on ``(level 0 item, level 1 item)``;
+            each entry holds dict of ``{cell property name: cell property value}``
         """
         # hierarchical index over columns of data
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=self._data_cols)
@@ -259,16 +270,18 @@ class EntitySet(Entity):
     def assign_cell_properties(
         self, props: dict[str, dict[str, dict[str, Any]]]
     ) -> None:
-        """Assign new properties to cells of the incidence matrix and update `self.properties`
+        """Assign new properties to cells of the incidence matrix and update
+        :attr:`properties`
 
         Parameters
         ----------
         props : dict of dicts of dicts
-            Nested dict of {level 0 item label: dict of {level 1 item label: dict of {cell property name : cell property value}}}
+            Doubly-nested dict of
+            ``{level 0 item: {level 1 item: {cell property name : cell property value}}}``
 
         Notes
         -----
-        Not supported for dimsize=1
+        Not supported for :attr:`dimsize`=1
         """
         if self._dimsize == 2:
             # convert nested dict of cell properties to MultiIndexed Series
@@ -286,7 +299,7 @@ class EntitySet(Entity):
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs
     ) -> EntitySet | tuple[EntitySet, dict[str, list[str]]]:
-        """Create a new EntitySet by collapsing sets with the same set elements
+        """Create a new :class:`EntitySet` by collapsing sets with the same set elements
 
         Each item in level 0 (first column) defines a set containing all the level 1
         (second column) items with which it appears in the same row of the underlying
@@ -297,15 +310,16 @@ class EntitySet(Entity):
         return_equivalence_classes : bool, default=False
             If True, return a dictionary of equivalence classes keyed by new edge names
         **kwargs
-            Extra arguments to `StaticEntity` constructor
+            Extra arguments to :class:`EntitySet` constructor
 
         Returns
         -------
         new_entity : EntitySet
-            new EntitySet with identical sets collapsed; if all sets are unique, the set
-            system will be the same as the original
+            new :class:`EntitySet` with identical sets collapsed;
+            if all sets are unique, the system of sets will be the same as the original.
         equivalence_classes : dict of lists, optional
-            if `return_equivalence_classes`=True, {collapsed set label: [level 0 item labels]}
+            if `return_equivalence_classes`=True,
+            ``{collapsed set label: [level 0 item labels]}``.
         """
         # group by level 0 (set), aggregate level 1 (set elements) as frozenset
         collapse = (
