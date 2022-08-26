@@ -63,15 +63,22 @@ class EntitySet(Entity):
         If None, duplicate rows will be dropped without aggregating cell weights.
         Effectively ignored if `entity` defines a system of sets
     properties : dict of dicts
-        Nested dict of ``{item label: dict of {property name : property value}}``.
+        Nested dict of ``{item label: dict of {property name: property value}}``.
         User-specified properties to be assigned to individual items in the data,
         i.e., cell entries in a data table; sets or set elements in a system of sets
     cell_properties : dict of dicts of dicts
-        Doubly-nested dict of
-        ``{level1 item: {level2 item: {cell property name: cell property value}}}``.
         User-specified properties to be assigned to cells of the incidence matrix,
         i.e., rows in a data table; pairs of (set, element of set) in a system of sets.
         Ignored if underlying data is 1-dimensional (set).
+        If Hashable and `entity` is an :class:`Entity` or ``DataFrame``, name of a
+        column in the data table containing entries of the form
+        ``{cell property name: cell property value}``.
+        If ``DataFrame``, each row gives
+        ``[level1 item, level2 item, {cell property name: cell property value}]``
+        (order of columns does not matter; column names for `level1` and `level2`
+        must be the same as in :attr:`dataframe`).
+        If doubly-nested dict,
+        ``{level1 item: {level2 item: {cell property name: cell property value}}}``.
     """
 
     def __init__(
@@ -89,7 +96,9 @@ class EntitySet(Entity):
         keep_weights: bool = True,
         aggregateby: str = "sum",
         properties: Optional[dict[str, dict[str, Any]]] = None,
-        cell_properties: Optional[dict[str, dict[str, dict[str, Any]]]] = None,
+        cell_properties: Optional[
+            Hashable | pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
+        ] = None,
     ):
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
@@ -101,12 +110,23 @@ class EntitySet(Entity):
 
         # if the entity data is passed as a DataFrame, restrict to two columns if needed
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
+            # metadata columns are not considered levels of data,
+            # remove them before indexing by level
+            meta_cols = [
+                col
+                for col in (weights, cell_properties)
+                if isinstance(col, Hashable) and col in entity
+            ]
+            columns = entity.columns.drop(meta_cols)[[level1, level2]].to_list()
+
+            # if there is a column for cell properties, convert to separate DataFrame
+            if cell_properties in meta_cols:
+                cell_properties = entity[[*columns, cell_properties]]
             # if there is a column for weights, preserve it
-            if isinstance(weights, Hashable) and weights in entity:
-                columns = entity.columns.drop(weights)[[level1, level2]]
-                columns = columns.append(pd.Index([weights]))
-            else:
-                columns = entity.columns[[level1, level2]]
+            if weights in meta_cols:
+                columns.append(weights)
+
+            # pass level1, level2, and weights (optional) to Entity constructor
             entity = entity[columns]
 
         # if a 2D ndarray is passed, restrict to two columns if needed
@@ -161,7 +181,7 @@ class EntitySet(Entity):
         -------
         dict of AttrList
             System of sets representation as dict of
-            ``{level 1 item : AttrList(level 0 items)}``.
+            ``{level 1 item: AttrList(level 0 items)}``.
 
         See Also
         --------
@@ -235,15 +255,20 @@ class EntitySet(Entity):
         return self.restrict_to_indices(indices, **kwargs)
 
     def _create_cell_properties(
-        self, props: Optional[dict[str, dict[str, dict[str, Any]]]] = None
+        self,
+        props: Optional[pd.DataFrame | dict[str, dict[str, dict[str, Any]]]] = None,
     ) -> pd.Series:
         """Helper function for :meth:`assign_cell_properties`
 
         Parameters
         ----------
-        props : dict of dicts of dicts, optional
-            Doubly-nested dict of
-            ``{level 0 item: {level 1 item: {cell property name : cell property value}}}``
+        props : pandas.DataFrame or doubly-nested dict, optional
+            If ``DataFrame``, each row gives
+            ``[level 0 item, level 1 item, {cell property name: cell property value}]``
+            (order of columns does not matter;
+            column names for level 0 and 1 must be the same as in :attr:`dataframe`).
+            Otherwise, doubly-nested dict of
+            ``{level 0 item: {level 1 item: {cell property name: cell property value}}}``
 
         Returns
         -------
@@ -251,33 +276,47 @@ class EntitySet(Entity):
             with ``MultiIndex`` on ``(level 0 item, level 1 item)``;
             each entry holds dict of ``{cell property name: cell property value}``
         """
-        # hierarchical index over columns of data
-        index = pd.MultiIndex(levels=([], []), codes=([], []), names=self._data_cols)
-        kwargs = {"index": index, "name": "cell_properties"}
 
-        # format initial properties if provided
-        if props:
+        if isinstance(props, pd.DataFrame):
+            # TODO: assumes there are no row duplicates,
+            #       add checks to handle removal if there are
+            index = None
+            # set MultiIndex on (level 0, level1)
+            data = props.set_index(self._data_cols).squeeze()
+
+        elif isinstance(props, dict):
             # construct MultiIndex from all (level 0 item, level 1 item) pairs from
             # nested keys of props dict
             cells = [(edge, node) for edge in props for node in props[edge]]
             index = pd.MultiIndex.from_tuples(cells, names=self._data_cols)
             # properties for each cell
             data = [props[edge][node] for edge, node in index]
-            kwargs.update(index=index, data=data)
 
-        return pd.Series(**kwargs)
+        else:
+            # hierarchical index over columns of data
+            index = pd.MultiIndex(
+                levels=([], []), codes=([], []), names=self._data_cols
+            )
+            # empty if no valid props provided
+            data = None
+
+        return pd.Series(data=data, index=index, name="cell_properties")
 
     def assign_cell_properties(
-        self, props: dict[str, dict[str, dict[str, Any]]]
+        self, props: pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
     ) -> None:
         """Assign new properties to cells of the incidence matrix and update
         :attr:`properties`
 
         Parameters
         ----------
-        props : dict of dicts of dicts
-            Doubly-nested dict of
-            ``{level 0 item: {level 1 item: {cell property name : cell property value}}}``
+        props : pandas.DataFrame or doubly-nested dict
+            If ``DataFrame``, each row gives
+            ``[level 0 item, level 1 item, {cell property name: cell property value}]``
+            (order of columns does not matter;
+            column names for level 0 and 1 must be the same as in :attr:`dataframe`).
+            Otherwise, doubly-nested dict of
+            ``{level 0 item: {level 1 item: {cell property name: cell property value}}}``
 
         Notes
         -----
