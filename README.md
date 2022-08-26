@@ -2,27 +2,29 @@
 
 HyperNetX
 =========
+![Passing?](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-The HNX library provides classes and methods for modeling the entities and relationships 
+The HNX library provides classes and methods for modeling the entities and relationships
 found in complex networks as hypergraphs, the natural models for multi-dimensional network data.
-As strict generalizations of graphs, hyperedges can represent arbitrary multi-way relations 
+As strict generalizations of graphs, hyperedges can represent arbitrary multi-way relations
 among entities, and in particular can distinguish cliques and simplices, and admit singleton edges.
 As both vertex adjacency and edge
 incidence are generalized to be quantities,
-hypergraph paths and walks thereby have both length and *width* because of these multiway connections. 
+hypergraph paths and walks thereby have both length and *width* because of these multiway connections.
 Most graph metrics have natural generalizations to hypergraphs, but since
 hypergraphs are basically set systems, they also admit to the powerful tools of algebraic topology,
 including simplicial complexes and simplicial homology, to study their structure.
 
 This library serves as a repository of the methods and algorithms we find most useful
-as we explore what hypergraphs can tell us. We have a growing community of users and contributors. 
+as we explore what hypergraphs can tell us. We have a growing community of users and contributors.
 To learn more about some of our research check out our publications below:
 
 Publications
 ------------
 Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE; Jefferson, Brett ; Praggastis, Brenda ; Purvine, Emilie AH ; Tripodi, Ignacio J: (2020) "Hypernetwork Science: From Multidimensional Networks to Computational Topology", in: Int. Conf. Complex Systems (ICCS 2020), https://arxiv.org/abs/2003.11782, (in press)
 
-Feng, Song; Heath, Emily; Jefferson, Brett; Joslyn, CA; Kvinge, Henry; McDermott, Jason E ; Mitchell, Hugh D ; Praggastis, Brenda ; Eisfeld, Amie J; Sims, Amy C ; Thackray, Larissa B ; Fan, Shufang ; Walters, Kevin B; Halfmann, Peter J ; Westhoff-Smith, Danielle ; Tan, Qing ; Menachery, Vineet D ; Sheahan, Timothy P ; Cockrell, 
+Feng, Song; Heath, Emily; Jefferson, Brett; Joslyn, CA; Kvinge, Henry; McDermott, Jason E ; Mitchell, Hugh D ; Praggastis, Brenda ; Eisfeld, Amie J; Sims, Amy C ; Thackray, Larissa B ; Fan, Shufang ; Walters, Kevin B; Halfmann, Peter J ; Westhoff-Smith, Danielle ; Tan, Qing ; Menachery, Vineet D ; Sheahan, Timothy P ; Cockrell,
 Adam S ; Kocher, Jacob F ; Stratton, Kelly G ; Heller, Natalie C ; Bramer, Lisa M ; Diamond, Michael S ; Baric, Ralph S ; Waters, Katrina M ; Kawaoka, Yoshihiro ; Purvine, Emilie: (2020) "Hypergraph Models of Biological Networks to Identify Genes Critical to Pathogenic Viral Response", in: https://arxiv.org/abs/2010.03068, BMC Bioinformatics, 22:287, doi: 10.1186/s12859-021-04197-2
 
 Aksoy, Sinan G; Joslyn, Cliff A; Marrero, Carlos O; Praggastis, B; Purvine, Emilie AH: (2020) "Hypernetwork Science via High-Order Hypergraph Walks", EPJ Data Science, v. 9:16, https://doi.org/10.1140/epjds/s13688-020-00231-0
@@ -109,10 +111,10 @@ Tutorials may be run in your browser using Google Colab
     <span >Tutorial 7 - s-Centrality</span>
 </a>
 </br>
-    
+
 Installing HyperNetX
 ====================
-HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX> 
+HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX>
 
 To install in an Anaconda environment
 -------------------------------------
@@ -126,9 +128,9 @@ the conda version of matplotlib:
 
     >>> conda create -n <env name> python=3.7 matplotlib
     >>> source activate <env name>
-    >>> pip install hypernetx   
+    >>> pip install hypernetx
 
-To use [NWHy](docs/build/nwhy.html) use python=3.9 and the conda version of tbb in your environment. 
+To use [NWHy](docs/build/nwhy.html) use python=3.9 and the conda version of tbb in your environment.
 **Note** that [NWHy](docs/build/nwhy.html) only works on Linux and some OSX systems. See [NWHy documentation](docs/build/nwhy.html) for more.:
 
     >>> conda create -n <env name> python=3.9 tbb
@@ -170,13 +172,13 @@ For an editable installation with access to jupyter notebooks:
 
     >>> pip install [-e] .
 
-> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter the 
-> following error: 
->>**zsh: no matches found: .[tutorials]** 
+> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter the
+> following error:
+>>**zsh: no matches found: .[tutorials]**
 >
 > To successfully run the below installation commands, put the single quote around the square brackets. For example:
 > >pip install -e .'[tutorials]'
-> 
+>
 > For more information on this ZSH-related issue, see this [StackOverflow post](https://stackoverflow.com/a/68888466/11145086).
 
 To install with the tutorials:
@@ -194,13 +196,13 @@ To install with the documentation:
 To install and test using pytest:
 
     >>> pip install -e .['testing']
-    
+
     # run tests
     >>> python -m pytest
-    
+
     # run tests and show coverage report
     >>> python -m pytest --cov=hypernetx
-    
+
     # Generate an HTML code coverage report and view it on a browser
     >>> coverage html
     >>> open htmlcov/index.html
@@ -230,5 +232,3 @@ License
 -------
 
 Released under the 3-Clause BSD license (see License.rst)
-
-

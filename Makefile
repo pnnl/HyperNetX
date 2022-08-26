@@ -1,33 +1,36 @@
 SHELL = /bin/bash
 
 VENV = .venv_test
-PYTHON = $(VENV)/bin/python
+PYTHON = $(VENV)/bin/python3
+PYTHON3 = python3
 
 ## Environment
 
 venv:
 	@python3 -m venv $(VENV);
 
-deps-testing:
-	@$(PYTHON) -m pip install -e .'[testing]'
-
-deps-packaging:
-	@$(PYTHON) -m pip install -e .'[packaging]'
-
-.PHONY: venv deps-testing deps-packaging
+.PHONY: venv
 
 ## Test
 
-test: clean venv deps-testing
+test: clean venv
+	@$(PYTHON) -m pip install -e .'[auto-testing]'
 	@$(PYTHON) -m tox
 
-.PHONY: test
+test-ci:
+	@$(PYTHON3) -m pip install -e .'[auto-testing]'
+	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
+	@$(PYTHON3) -m precommit run --all-files
+	@$(PYTHON3) -m tox
+
+.PHONY: test, test-ci
 
 ## Build package
 
-build: clean venv deps-packaging
-	@$(PYTHON) -m build --wheel --sdist
-	@$(PYTHON) -m twine check dist/*
+build-dist: clean
+	@$(PYTHON3) -m pip install -e .'[packaging]'
+	@$(PYTHON3) -m build --wheel --sdist
+	@$(PYTHON3) -m twine check dist/*
 
 
 publish-to-test-pypi:
@@ -38,7 +41,7 @@ publish-to-pypi:
 	@echo "Publishing to PyPi"
 	# $(PYTHON) -m twine upload --repository pypi dist/*
 
-.PHONY: build publish-to-test-pypi
+.PHONY: build-dist publish-to-test-pypi publish-to-pypi
 
 clean:
 	rm -rf .out .pytest_cache .tox *.egg-info dist build $(VENV)
