@@ -1,0 +1,54 @@
+name: Continuous Deployment
+
+
+on:
+  push:
+    branches: [release/**]
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  LANG: en_US.utf-8
+  LC_ALL: en_US.utf-8
+
+jobs:
+
+  run-tests:
+
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-12, windows-2022]
+        python: ['3.7']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+    - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+    - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Check that the latest tag and version from release/** are equal
+
+    # get the latest tag and create and official release
+    # BUT ONLY if the version from release is equal to the tag version
+
+    # Merge release branch into develop
+    # Merge release branch into master
+
+    # build package from tag
+    - name: Upload to PyPi
+      run: |
+        make build-ci
+        make publish-to-pypi
+
+    # Delete release branch
