@@ -323,6 +323,7 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
             }
         )
 
+
 def draw(
     H,
     pos=None,
@@ -427,9 +428,7 @@ def draw(
         pos = layout_node_link(H, layout=layout, **layout_kwargs)
 
     r0 = get_default_radius(H, pos)
-    a0 = np.pi * r0 ** 2
-
-
+    a0 = np.pi * r0**2
 
     def get_node_radius(v):
         if node_radius is None:

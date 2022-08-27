@@ -1,6 +1,6 @@
-.DS_Store 
-gitmerge.sh 
-dist 
+.DS_Store
+gitmerge.sh
+dist
 hypernetx.egg-info*
 hypernetx.egg-info/PKG-INFO
 hypernetx.egg-info/requires.txt

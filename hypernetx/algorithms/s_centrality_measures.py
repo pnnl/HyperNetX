@@ -11,7 +11,7 @@ constructing the corresponding graph of the matrix. We then use existing graph m
 on this representation of the hypergraph. In essence we construct an *s*-line graph
 corresponding to the hypergraph on which to apply our methods.
 
-S-Metrics for hypergraphs are discussed in depth in:        
+S-Metrics for hypergraphs are discussed in depth in:
 *Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.
 EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*
 
@@ -229,8 +229,8 @@ def s_closeness_centrality(
 
 def s_harmonic_closeness_centrality(H, s=1, edge=None, use_nwhy=True):
     msg = """
-    s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality 
-    and will not be available in future releases. 
+    s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality
+    and will not be available in future releases.
     """
     warnings.warn(msg)
     return s_harmonic_centrality(H, s=s, edges=True, normalized=True, source=edge)

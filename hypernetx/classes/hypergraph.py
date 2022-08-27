@@ -169,8 +169,10 @@ class Hypergraph:
                 self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
                 self._nodes._memberships = E.memberships
                 for n in self._nodes:
-                    self._nodes[n].memberships = self._nodes._memberships[n]  ### a bit of a hack to get same functionality from static as dynamic
-                                                                            ### we will have to see if it slows things down too much
+                    self._nodes[n].memberships = self._nodes._memberships[
+                        n
+                    ]  ### a bit of a hack to get same functionality from static as dynamic
+                    ### we will have to see if it slows things down too much
         else:
             self._static = False
             if setsystem is None:
@@ -687,13 +689,13 @@ class Hypergraph:
         """
         if self.isstatic:
             ndx = self.get_id(node)
-            if self.nwhy:                
+            if self.nwhy:
                 return self.g.degree(ndx, min_size=s, max_size=None)
             else:
                 memberships = set(self.nodes.memberships[node])
         else:
             memberships = set(self.nodes[node].memberships)
-                                  
+
         if max_size is not None:
             return len(
                 set(
@@ -726,7 +728,7 @@ class Hypergraph:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
-                edx = self.get_id(edge,edges=True)
+                edx = self.get_id(edge, edges=True)
                 return self.g.size(edx)
             else:
                 return len(self.edges[edge])
@@ -1144,14 +1146,14 @@ class Hypergraph:
     @staticmethod
     def _incidence_to_adjacency(M, s=1, weights=False):
         """
-        Helper method to obtain adjacency matrix from 
+        Helper method to obtain adjacency matrix from
         boolean incidence matrix for s-metrics.
         Self loops are not supported.
         The adjacency matrix will define an s-linegraph.
 
         Parameters
         ----------
-        M : scipy.sparse.csr.csr_matrix 
+        M : scipy.sparse.csr.csr_matrix
             incidence matrix of 0's and 1's
 
         s : int, optional, default: 1
@@ -1166,7 +1168,7 @@ class Hypergraph:
 
         """
         M = csr_matrix(M)
-        weights = False ## currently weighting is not supported
+        weights = False  ## currently weighting is not supported
 
         if weights == False:
             A = M.dot(M.transpose())
@@ -1174,8 +1176,7 @@ class Hypergraph:
             A = (A >= s) * 1
         return A
 
-
-    def adjacency_matrix(self, index=False, s=1):## , weights=False):
+    def adjacency_matrix(self, index=False, s=1):  ## , weights=False):
         """
         The sparse weighted :term:`s-adjacency matrix`
 
@@ -1197,7 +1198,7 @@ class Hypergraph:
         row dictionary : dict
 
         """
-        weights = False ## Currently default weights are not supported.
+        weights = False  ## Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
             return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
@@ -1232,7 +1233,7 @@ class Hypergraph:
         If index=True, returns a dictionary column_index:edge_uid
 
         """
-        weights=False  ## Currently default weights are not supported
+        weights = False  ## Currently default weights are not supported
 
         M = self.incidence_matrix(index=index, weights=weights)
         if index:
@@ -1664,7 +1665,7 @@ class Hypergraph:
 
         if collapse:
             msg = """
-            collapse, return_counts, and use_reps are no longer supported keyword arguments 
+            collapse, return_counts, and use_reps are no longer supported keyword arguments
             and will throw an error in the next release.
             """
             warnings.warn(msg, DeprecationWarning)
