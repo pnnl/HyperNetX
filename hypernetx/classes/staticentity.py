@@ -62,7 +62,7 @@ class StaticEntity(object):
         arr=None,
         labels=None,
         uid=None,
-        weights=None, ### in this context weights is just a column of values corresponding to the rows in data.
+        weights=None,  ### in this context weights is just a column of values corresponding to the rows in data.
         keep_weights=True,
         aggregateby="sum",
         **props,

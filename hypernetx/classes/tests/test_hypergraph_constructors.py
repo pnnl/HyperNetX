@@ -7,7 +7,6 @@ import networkx as nx
 from hypernetx import Hypergraph, EntitySet
 
 
-
 def test_from_bipartite():
     g = nx.complete_bipartite_graph(2, 3)
     left, right = nx.bipartite.sets(g)
@@ -20,7 +19,9 @@ def test_from_bipartite():
 
 
 @pytest.mark.parametrize("static", [(True), (False)])
-def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(seven_by_six, static):
+def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(
+    seven_by_six, static
+):
     edgedict = OrderedDict(seven_by_six.edgedict)
 
     bipartite_graph = Hypergraph(edgedict).bipartite()
@@ -33,8 +34,12 @@ def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(seven_by
 
     assert hg_from_bipartite.shape == hg_from_constructor.shape
 
-    incidence_dict_hg_from_bipartite = {key: sorted(value) for key, value in hg_from_bipartite.incidence_dict.items()}
-    incidence_dict_hg_from_constructor = {key: sorted(value) for key, value in hg_from_constructor.incidence_dict.items()}
+    incidence_dict_hg_from_bipartite = {
+        key: sorted(value) for key, value in hg_from_bipartite.incidence_dict.items()
+    }
+    incidence_dict_hg_from_constructor = {
+        key: sorted(value) for key, value in hg_from_constructor.incidence_dict.items()
+    }
     assert incidence_dict_hg_from_bipartite == incidence_dict_hg_from_constructor
 
 
@@ -91,7 +96,7 @@ def test_from_dataframe_with_transforms_and_fillna(dataframe):
     df = dataframe.df
 
     def key1(x):
-        return x ** 2
+        return x**2
 
     def key2(x):
         return (x < 5) * x
