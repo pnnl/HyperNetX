@@ -6,8 +6,9 @@ from typing import Optional, Any
 
 import pandas as pd
 import numpy as np
+from ast import literal_eval
 
-from hypernetx.classes.entity import Entity
+from hypernetx.classes import Entity
 from hypernetx.classes.helpers import update_properties, AttrList
 
 
@@ -283,6 +284,8 @@ class EntitySet(Entity):
             index = None
             # set MultiIndex on (level 0, level1)
             data = props.set_index(self._data_cols).squeeze()
+            if isinstance(data.iloc[0], str):
+                data = data.apply(literal_eval)
 
         elif isinstance(props, dict):
             # construct MultiIndex from all (level 0 item, level 1 item) pairs from
@@ -300,7 +303,9 @@ class EntitySet(Entity):
             # empty if no valid props provided
             data = None
 
-        return pd.Series(data=data, index=index, name="cell_properties")
+        return pd.Series(
+            data=data, index=index, name="cell_properties", dtype="object"
+        ).sort_index()
 
     def assign_cell_properties(
         self, props: pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
