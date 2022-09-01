@@ -1185,18 +1185,20 @@ class Entity:
         pandas.Series
             MultiIndex of (level, item label), each entry holds dict of {property name: property value}
         """
-        index = pd.MultiIndex(levels=([], []), codes=([], []), names=('level',
-                                                                      'item'))
-        kwargs = {'index': index, 'name': 'properties'}
-        if props:
-            levels = [self.level(item, return_index=False) for item in props]
-            levels_items = [(lev, item) for lev, item in zip(levels, props) if
-                            lev is not None]
-            index = pd.MultiIndex.from_tuples(levels_items, names=('level',
-                                                                   'item'))
-            data = [props[item] for _, item in index]
-            kwargs.update(index=index, data=data)
-        return pd.Series(**kwargs)
+
+        if isinstance(props, pd.DataFrame):
+            index = None
+            data = props.set_index(["level","id"]).squeeze()
+
+        elif isinstance(props, dict):
+            itemlevels = [(level, label) for level in props for label in props[level]]
+            index = pd.MultiIndex.from_tuples(itemlevels, names=["level","id"])
+            data = [props[level][label] for level, label in index]
+        else:
+            index = pd.MultiIndex(levels=([], []), codes=([], []), names=("level", "id"))
+            data = None
+
+        return pd.Series(data=data, index=index, name="properties",dtype="object")
 
     def assign_properties(self, props):
         """Assign new properties to items in the data table and update `self.properties`

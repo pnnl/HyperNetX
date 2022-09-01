@@ -169,8 +169,17 @@ class Hypergraph:
             self._edges = EntitySet()
             self._nodes = EntitySet()
         else:
+            properties = (
+                setsystem.properties.to_frame().reset_index()
+                if isinstance(setsystem, (Entity, EntitySet))
+                else None
+            )
             E = EntitySet(
-                entity=setsystem, weights=weights, aggregateby=aggregateby, static=static
+                entity=setsystem,
+                weights=weights,
+                aggregateby=aggregateby,
+                static=static,
+                properties=properties,
             )
             self._edges = E
             self._nodes = E.restrict_to_levels(
