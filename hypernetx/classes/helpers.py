@@ -11,15 +11,19 @@ class AttrList(UserList):
         super().__init__(initlist)
 
     def __getattr__(self,attr):
-        return self._entity.properties[self._key].get(attr)
+        return self._entity.properties[self._key].squeeze().get(attr)
 
     def __setattr__(self,attr,val):
         if attr in ['_entity','_key','data']:
             object.__setattr__(self,attr,val)
-        elif self._key in self._entity.properties.index:
-            self._entity.properties[self._key].update({attr:val})
         else:
-            self._entity.properties[self._key] = {attr:val}
+            keyprops = self._entity.properties.get(self._key)
+            if keyprops is not None:
+                keyprops = keyprops.squeeze()
+                keyprops.update({attr: val})
+            else:
+                keyprops = {attr: val}
+            self._entity.properties[self._key] = keyprops
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
     """

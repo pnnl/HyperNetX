@@ -9,8 +9,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
 from collections import OrderedDict, defaultdict
-from hypernetx.classes.entity import Entity
-from hypernetx.classes.entityset import EntitySet
+from hypernetx.classes import Entity, EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import not_implemented_for
 
@@ -169,8 +168,17 @@ class Hypergraph:
             self._edges = EntitySet()
             self._nodes = EntitySet()
         else:
+            properties = (
+                setsystem.properties.to_frame().reset_index()
+                if isinstance(setsystem, (Entity, EntitySet))
+                else None
+            )
             E = EntitySet(
-                entity=setsystem, weights=weights, aggregateby=aggregateby, static=static
+                entity=setsystem,
+                weights=weights,
+                aggregateby=aggregateby,
+                static=static,
+                properties=properties,
             )
             self._edges = E
             self._nodes = E.restrict_to_levels(

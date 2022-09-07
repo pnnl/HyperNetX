@@ -3,6 +3,7 @@ from collections import defaultdict
 from collections.abc import Hashable
 
 from scipy.sparse import csr_matrix
+from ast import literal_eval
 
 from hypernetx.classes.helpers import *
 
@@ -1144,8 +1145,19 @@ class Entity:
 
             entity = self._dataframe[cols]
 
-            kwargs.update(entity=entity, weights=weights,
-                          aggregateby=aggregateby)
+            if not self.properties.empty:
+                new_levels = {old: new for new, old in enumerate(levels)}
+
+                properties = self.properties.loc[levels].to_frame().reset_index()
+                properties.level = properties.level.map(new_levels)
+
+                kwargs.update(properties=properties)
+
+            kwargs.update(
+                entity=entity,
+                weights=weights,
+                aggregateby=aggregateby,
+            )
 
         return self.__class__(**kwargs)
 
@@ -1185,18 +1197,28 @@ class Entity:
         pandas.Series
             MultiIndex of (level, item label), each entry holds dict of {property name: property value}
         """
-        index = pd.MultiIndex(levels=([], []), codes=([], []), names=('level',
-                                                                      'item'))
-        kwargs = {'index': index, 'name': 'properties'}
-        if props:
-            levels = [self.level(item, return_index=False) for item in props]
-            levels_items = [(lev, item) for lev, item in zip(levels, props) if
-                            lev is not None]
-            index = pd.MultiIndex.from_tuples(levels_items, names=('level',
-                                                                   'item'))
-            data = [props[item] for _, item in index]
-            kwargs.update(index=index, data=data)
-        return pd.Series(**kwargs)
+
+        if isinstance(props, pd.DataFrame) and not props.empty:
+            index = None
+            data = props.set_index(["level", "id"]).squeeze()
+            # TODO: this is kind of a hacky check, I think we should require the user to
+            #       parse string-formatted dicts
+            if isinstance(data.iloc[0], str):
+                data = data.apply(literal_eval)
+
+        elif isinstance(props, dict):
+            itemlevels = [(level, label) for level in props for label in props[level]]
+            index = pd.MultiIndex.from_tuples(itemlevels, names=["level", "id"])
+            data = [props[level][label] for level, label in index]
+        else:
+            index = pd.MultiIndex(
+                levels=([], []), codes=([], []), names=("level", "id")
+            )
+            data = None
+
+        return pd.Series(
+            data=data, index=index, name="properties", dtype="object"
+        ).sort_index()
 
     def assign_properties(self, props):
         """Assign new properties to items in the data table and update `self.properties`
