@@ -144,6 +144,7 @@ class Hypergraph:
         aggregateby="sum",
         use_nwhy=False,
         filepath=None,
+        **kwargs,
     ):
         self.filepath = filepath
         if use_nwhy:
@@ -168,21 +169,28 @@ class Hypergraph:
             self._edges = EntitySet()
             self._nodes = EntitySet()
         else:
-            properties = (
-                setsystem.properties.to_frame().reset_index()
-                if isinstance(setsystem, (Entity, EntitySet))
-                else None
-            )
+            try:
+                kwargs.update(properties=setsystem.properties.reset_index())
+            except AttributeError:
+                pass
+
+            try:
+                kwargs.update(
+                    cell_properties=setsystem.cell_properties.reset_index(),
+                    cell_props_col=setsystem._cell_props_col,
+                )
+            except AttributeError:
+                pass
+
             E = EntitySet(
                 entity=setsystem,
                 weights=weights,
                 aggregateby=aggregateby,
                 static=static,
-                properties=properties,
+                **kwargs,
             )
             self._edges = E
-            self._nodes = E.restrict_to_levels(
-                [1], weights=False, aggregateby=None)
+            self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
 
         self.state_dict = {}
         self.update_state()

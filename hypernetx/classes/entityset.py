@@ -9,7 +9,7 @@ import numpy as np
 from ast import literal_eval
 
 from hypernetx.classes import Entity
-from hypernetx.classes.helpers import update_properties, AttrList
+from hypernetx.classes.helpers import AttrList
 
 
 class EntitySet(Entity):
@@ -39,7 +39,7 @@ class EntitySet(Entity):
         If N keys, only considers labels for levels (columns) `level1` and `level2`.
         Ignored if `entity` is provided or `data` is not provided.
     uid : hashable, optional
-        A unique identifier for the ``StaticEntity``.
+        A unique identifier for the ``EntitySet``.
     level1, level2 : int, default=0,1
         Each item in `level1` defines a set containing all the `level2` items with which
         it appears in the same row of the underlying data table.
@@ -91,8 +91,8 @@ class EntitySet(Entity):
         static: bool = True,
         labels: Optional[OrderedDict[str, list[str]]] = None,
         uid: Optional[Hashable] = None,
-        level1: int = 0,
-        level2: int = 1,
+        level1: str | int = 0,
+        level2: str | int = 1,
         weights: Optional[Sequence | Hashable] = None,
         keep_weights: bool = True,
         aggregateby: str = "sum",
@@ -100,7 +100,11 @@ class EntitySet(Entity):
         cell_properties: Optional[
             Hashable | pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
         ] = None,
+        cell_props_col="cell_properties",
+        **kwargs,
     ):
+        self._cell_props_col = cell_props_col
+
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
         if isinstance(entity, Entity):
@@ -113,19 +117,43 @@ class EntitySet(Entity):
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
             # metadata columns are not considered levels of data,
             # remove them before indexing by level
-            meta_cols = [
-                col
-                for col in (weights, cell_properties)
-                if isinstance(col, Hashable) and col in entity
-            ]
-            columns = entity.columns.drop(meta_cols)[[level1, level2]].to_list()
+
+            if isinstance(cell_properties, Hashable):
+                cell_properties = [cell_properties]
+
+            prop_cols = []
+            if isinstance(cell_properties, list):
+                for col in cell_properties:
+                    try:
+                        if col in entity:
+                            prop_cols.append(col)
+                    except TypeError:
+                        continue
+
+            try:
+                weight_col = [weights] if weights in entity else []
+            except TypeError:
+                weight_col = []
+
+            meta_cols = prop_cols + weight_col
+
+            # if both levels are column names, no need to index by level
+            if isinstance(level1, str) and isinstance(level2, str):
+                columns = [level1, level2]
+            # if one or both of the levels are given by index, get column name
+            else:
+                all_columns = entity.columns.drop(meta_cols)
+                columns = [
+                    all_columns[lev] if isinstance(lev, int) else lev
+                    for lev in (level1, level2)
+                ]
 
             # if there is a column for cell properties, convert to separate DataFrame
-            if cell_properties in meta_cols:
-                cell_properties = entity[[*columns, cell_properties]]
+            if prop_cols:
+                cell_properties = entity[[*columns, *prop_cols]]
+                self._cell_props_col = prop_cols[0]
             # if there is a column for weights, preserve it
-            if weights in meta_cols:
-                columns.append(weights)
+            columns += weight_col
 
             # pass level1, level2, and weights (optional) to Entity constructor
             entity = entity[columns]
@@ -150,6 +178,7 @@ class EntitySet(Entity):
             weights=weights,
             aggregateby=aggregateby,
             properties=properties,
+            **kwargs,
         )
 
         # if underlying data is 2D (system of sets), create and assign cell properties
@@ -160,7 +189,7 @@ class EntitySet(Entity):
         )
 
     @property
-    def cell_properties(self) -> Optional[pd.Series]:
+    def cell_properties(self) -> Optional[pd.DataFrame]:
         """Properties assigned to cells of the incidence matrix
 
         Returns
@@ -226,7 +255,9 @@ class EntitySet(Entity):
         -------
         EntitySet
         """
-        restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
+        restricted = super().restrict_to_levels(
+            levels, weights, aggregateby, cell_props_col=self._cell_props_col, **kwargs
+        )
 
         if keep_memberships:
             # use original memberships to set memberships for the new EntitySet
@@ -253,12 +284,20 @@ class EntitySet(Entity):
         --------
         restrict_to_indices
         """
-        return self.restrict_to_indices(indices, **kwargs)
+        restricted = self.restrict_to_indices(
+            indices, cell_props_col=self._cell_props_col, **kwargs
+        )
+        if not self.cell_properties.empty:
+            cell_properties = self.cell_properties.loc[
+                list(restricted.uidset)
+            ].reset_index()
+            restricted.assign_cell_properties(cell_properties)
+        return restricted
 
     def _create_cell_properties(
         self,
         props: Optional[pd.DataFrame | dict[str, dict[str, dict[str, Any]]]] = None,
-    ) -> pd.Series:
+    ) -> pd.DataFrame:
         """Helper function for :meth:`assign_cell_properties`
 
         Parameters
@@ -273,7 +312,7 @@ class EntitySet(Entity):
 
         Returns
         -------
-        pandas.Series
+        pandas.DataFrame
             with ``MultiIndex`` on ``(level 0 item, level 1 item)``;
             each entry holds dict of ``{cell property name: cell property value}``
         """
@@ -283,9 +322,13 @@ class EntitySet(Entity):
             #       add checks to handle removal if there are
             index = None
             # set MultiIndex on (level 0, level1)
-            data = props.set_index(self._data_cols).squeeze()
-            if isinstance(data.iloc[0], str):
-                data = data.apply(literal_eval)
+            data = props.set_index(self._data_cols)
+            if self._cell_props_col not in data:
+                data[self._cell_props_col] = [{} for _ in range(len(data))]
+            elif isinstance(data[self._cell_props_col].iloc[0], str):
+                data[self._cell_props_col] = data[self._cell_props_col].apply(
+                    literal_eval
+                )
 
         elif isinstance(props, dict):
             # construct MultiIndex from all (level 0 item, level 1 item) pairs from
@@ -303,12 +346,11 @@ class EntitySet(Entity):
             # empty if no valid props provided
             data = None
 
-        return pd.Series(
-            data=data, index=index, name="cell_properties", dtype="object"
-        ).sort_index()
+        return pd.DataFrame(data=data, index=index).sort_index()
 
     def assign_cell_properties(
-        self, props: pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
+        self,
+        props: pd.DataFrame | dict[str, dict[str, dict[str, Any]]],
     ) -> None:
         """Assign new properties to cells of the incidence matrix and update
         :attr:`properties`
@@ -331,14 +373,9 @@ class EntitySet(Entity):
             # convert nested dict of cell properties to MultiIndexed Series
             cell_properties = self._create_cell_properties(props)
 
-            # update with current cell properties if they exist
-            if not self._cell_properties.empty:
-                cell_properties = update_properties(
-                    self._cell_properties, cell_properties
-                )
-
             # update stored cell properties
-            self._cell_properties = cell_properties
+            self._cell_properties = self._cell_properties.combine_first(cell_properties)
+            self._cell_properties.update(cell_properties)
 
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs
@@ -376,7 +413,7 @@ class EntitySet(Entity):
         agg_kwargs = {"name": (self._data_cols[0], lambda x: f"{x.iloc[0]}: {len(x)}")}
         if return_equivalence_classes:
             # aggregation method to list all items in each equivalence class
-            agg_kwargs.update(equivalence_class=(0, list))
+            agg_kwargs.update(equivalence_class=(self._data_cols[0], list))
         # group by frozenset of level 1 items (set elements), aggregate to get names of
         # equivalence classes and (optionally) list of level 0 items (sets) in each
         collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(
@@ -393,3 +430,14 @@ class EntitySet(Entity):
             equivalence_classes = collapse.equivalence_class.to_dict()
             return new_entity, equivalence_classes
         return new_entity
+
+    def set_cell_property(self, item1, item2, prop_name, prop_val):
+        if (item1, item2) in self.cell_properties.index:
+            if prop_name in self.properties:
+                self._cell_properties.loc[(item1, item2), prop_name] = pd.Series(
+                    [prop_val]
+                )
+            else:
+                self._cell_properties.loc[(item1, item2), self._cell_props_col].update(
+                    {prop_name: prop_val}
+                )

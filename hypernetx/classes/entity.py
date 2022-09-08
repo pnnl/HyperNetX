@@ -71,19 +71,21 @@ class Entity:
     """
 
     def __init__(
-            self,
-            entity=None,
-            data=None,
-            static=False,
-            labels=None,
-            uid=None,
-            weights=None,
-            aggregateby="sum",
-            properties=None
+        self,
+        entity=None,
+        data=None,
+        static=False,
+        labels=None,
+        uid=None,
+        weights=None,
+        aggregateby="sum",
+        properties=None,
+        props_col=None,
     ):
 
         # set unique identifier
         self._uid = uid
+        self._props_col = props_col or "properties"
         self._properties = self._create_properties(properties)
 
         # if static, the original data cannot be altered
@@ -93,7 +95,7 @@ class Entity:
         self._static = static
         self._state_dict = {}
 
-        # entity data is stored in a DataFrame for basic access without the n
+        # entity data is stored in a DataFrame for basic access without the
         # need for any label encoding lookups
         if isinstance(entity, pd.DataFrame):
             self._dataframe = entity.copy()
@@ -116,8 +118,7 @@ class Entity:
             # if a dict of labels was passed, use keys as column names in the
             # DataFrame, translate the dataframe, and store the dict of labels
             # in the state dict
-            if isinstance(labels, dict) and len(labels) == len(self._dataframe
-                                                                       .columns):
+            if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
                 self._dataframe.columns = labels.keys()
                 self._state_dict["labels"] = labels
 
@@ -1108,8 +1109,7 @@ class Entity:
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="sum",
-                           **kwargs):
+    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
         """Create a new Entity by restricting the underlying data table to a subset of levels (columns)
 
         Parameters
@@ -1147,8 +1147,7 @@ class Entity:
 
             if not self.properties.empty:
                 new_levels = {old: new for new, old in enumerate(levels)}
-
-                properties = self.properties.loc[levels].to_frame().reset_index()
+                properties = self.properties.loc[levels].reset_index()
                 properties.level = properties.level.map(new_levels)
 
                 kwargs.update(properties=properties)
@@ -1157,6 +1156,7 @@ class Entity:
                 entity=entity,
                 weights=weights,
                 aggregateby=aggregateby,
+                props_col=self._props_col,
             )
 
         return self.__class__(**kwargs)
@@ -1178,13 +1178,29 @@ class Entity:
         Entity
         """
         column = self._dataframe[self._data_cols[level]]
-        values = column.cat.categories[list(indices)]
-        entity = self._dataframe.loc[column.isin(values)]
-        for col in self._data_cols:
-            entity.loc[:, col] = entity[col].cat.remove_unused_categories()
-        return self.__class__(entity=entity, **kwargs)
+        values = self.translate(level, indices)
+        entity = self._dataframe.loc[column.isin(values)].copy()
 
-    def _create_properties(self, props):
+        for col in self._data_cols:
+            entity[col] = entity[col].cat.remove_unused_categories()
+        restricted = self.__class__(entity=entity, props_col=self._props_col, **kwargs)
+
+        if not self.properties.empty:
+            prop_idx = [
+                (lv, uid)
+                for lv in range(restricted.dimsize)
+                for uid in restricted.uidset_by_level(lv)
+            ]
+            properties = self.properties.loc[prop_idx].reset_index()
+            restricted.assign_properties(properties)
+        return restricted
+
+    def _create_properties(
+        self,
+        props,
+        level_col="level",
+        id_col="id",
+    ):
         """Helper function for `assign_properties`
 
         Parameters
@@ -1200,25 +1216,24 @@ class Entity:
 
         if isinstance(props, pd.DataFrame) and not props.empty:
             index = None
-            data = props.set_index(["level", "id"]).squeeze()
+            data = props.set_index([level_col, id_col])
+            if self._props_col not in data:
+                data[self._props_col] = [{} for _ in range(len(data))]
             # TODO: this is kind of a hacky check, I think we should require the user to
             #       parse string-formatted dicts
-            if isinstance(data.iloc[0], str):
-                data = data.apply(literal_eval)
+            elif isinstance(data[self._props_col].iloc[0], str):
+                data[self._props_col] = data[self._props_col].apply(literal_eval)
 
         elif isinstance(props, dict):
             itemlevels = [(level, label) for level in props for label in props[level]]
-            index = pd.MultiIndex.from_tuples(itemlevels, names=["level", "id"])
+            index = pd.MultiIndex.from_tuples(itemlevels, names=[level_col, id_col])
             data = [props[level][label] for level, label in index]
         else:
             index = pd.MultiIndex(
-                levels=([], []), codes=([], []), names=("level", "id")
+                levels=([], []), codes=([], []), names=(level_col, id_col)
             )
             data = None
-
-        return pd.Series(
-            data=data, index=index, name="properties", dtype="object"
-        ).sort_index()
+        return pd.DataFrame(data=data, index=index).sort_index()
 
     def assign_properties(self, props):
         """Assign new properties to items in the data table and update `self.properties`
@@ -1234,7 +1249,26 @@ class Entity:
         """
         properties = self._create_properties(props)
 
-        if not self._properties.empty:
-            properties = update_properties(self._properties, properties)
+        # update stored properties
+        self._properties = self._properties.combine_first(properties)
+        self._properties.update(properties)
 
-        self._properties = properties
+    def set_property(self, item, prop_name, prop_val, level=None):
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self.properties.xs(
+                    item, level=1, drop_level=False
+                ).index.item()
+            except KeyError:
+                raise  # item not in df
+            except ValueError:
+                raise  # item not unique
+
+        if prop_name in self.properties:
+            self._properties.loc[item_key, prop_name] = pd.Series([prop_val])
+        else:
+            self._properties.loc[item_key, self._props_col].update(
+                {prop_name: prop_val}
+            )

@@ -4,26 +4,25 @@ from collections import UserList
 from collections.abc import Hashable
 from pandas.api.types import CategoricalDtype
 
+
 class AttrList(UserList):
-    def __init__(self,entity,key,initlist=None):
+    def __init__(self, entity, key, initlist=None):
         self._entity = entity
         self._key = key
         super().__init__(initlist)
 
-    def __getattr__(self,attr):
-        return self._entity.properties[self._key].squeeze().get(attr)
+    def __getattr__(self, attr):
+        try:
+            return self._entity.properties.loc[self._key, attr]
+        except KeyError:
+            return None
 
-    def __setattr__(self,attr,val):
-        if attr in ['_entity','_key','data']:
-            object.__setattr__(self,attr,val)
+    def __setattr__(self, attr, val):
+        if attr in ["_entity", "_key", "data"]:
+            object.__setattr__(self, attr, val)
         else:
-            keyprops = self._entity.properties.get(self._key)
-            if keyprops is not None:
-                keyprops = keyprops.squeeze()
-                keyprops.update({attr: val})
-            else:
-                keyprops = {attr: val}
-            self._entity.properties[self._key] = keyprops
+            self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
     """
