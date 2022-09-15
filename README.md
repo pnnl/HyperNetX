@@ -232,3 +232,19 @@ License
 -------
 
 Released under the 3-Clause BSD license (see License.rst)
+
+
+Development
+-----------
+
+Continuous Integration/Continuous Deployment
+--------------------------------------------
+
+Versioning is automated using [bump2version](https://pypi.org/project/bump2version/).
+To automatically update the version when preparing a release, run the following commands:
+
+```
+# part is one of "major", "minor", or "patch"
+make bump-version-<part>
+make commit-docs
+```
