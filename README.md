@@ -234,6 +234,26 @@ License
 Released under the 3-Clause BSD license (see License.rst)
 
 
+Continuous Integration/Continuous Deployment
+--------------------------------------------
+
+This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
+on pull requests, pushes to certain branches, and other events.
+
+Maintainers of the GitHub repository can manually trigger CI using [GitHub CLI](https://cli.github.com/). See instructions below on how to manually trigger CI on GitHub Actions:
+
+```commandline
+# login to Github
+gh auth login --with-token <  ~/.ssh/tokens/<path to my personal access token>
+
+# Trigger CI
+gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want CI to run on> --field triggeredBy="<Your name>"
+
+# Get the status of the workflow
+gh run list --workflow=ci.yml --repo pnnl/HyperNetX
+```
+
+
 Development
 -----------
 

@@ -6,6 +6,11 @@ on:
     branches: [master, develop, release/**]
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      triggeredBy:
+        description: 'Name of team member who is manually triggering this workflow'
+        required: true
 
 defaults:
   run:
@@ -21,12 +26,17 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-12, windows-2022]
-        python: ['3.7']
+        os: [ubuntu-22.04, macos-12, windows-2022]
+        python: ['3.7', '3.8', '3.9', '3.10']
 
     runs-on: ${{ matrix.os }}
 
     steps:
+
+    - run: |
+        echo "This workflow was triggered by: $TRIGGER_PERSON"
+      env:
+        TRIGGER_PERSON: ${{ inputs.triggeredBy }}
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
@@ -34,10 +44,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python }}
 
     # https://github.com/pre-commit/action
     - name: Run pre-commit hooks
