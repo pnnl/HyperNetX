@@ -1195,76 +1195,137 @@ class Entity:
             restricted.assign_properties(properties)
         return restricted
 
-    def _create_properties(
+    def assign_properties(
         self,
-        props,
-        level_col="level",
-        id_col="id",
-    ):
-        """Helper function for `assign_properties`
-
-        Parameters
-        ----------
-        props : dict of dicts
-            Nested dict of {item label: dict of {property name : property value}}
-
-        Returns
-        -------
-        pandas.Series
-            MultiIndex of (level, item label), each entry holds dict of {property name: property value}
-        """
-
-        if isinstance(props, pd.DataFrame) and not props.empty:
-            index = None
-            data = props.set_index([level_col, id_col])
-            if self._props_col not in data:
-                data[self._props_col] = [{} for _ in range(len(data))]
-            # TODO: this is kind of a hacky check, I think we should require the user to
-            #       parse string-formatted dicts
-            elif isinstance(data[self._props_col].iloc[0], str):
-                data[self._props_col] = data[self._props_col].apply(literal_eval)
-
-        elif isinstance(props, dict):
-            itemlevels = [(level, label) for level in props for label in props[level]]
-            index = pd.MultiIndex.from_tuples(itemlevels, names=[level_col, id_col])
-            data = [props[level][label] for level, label in index]
-        else:
-            index = pd.MultiIndex(
-                levels=([], []), codes=([], []), names=(level_col, id_col)
-            )
-            data = None
-        return pd.DataFrame(data=data, index=index).sort_index()
-
-    def assign_properties(self, props):
+        props: pd.DataFrame | dict[int, dict[T, dict[Any, Any]]],
+        level_col: Optional[str] = None,
+        id_col: Optional[str] = None,
+        misc_col: Optional[str] = None,
+        replace: bool = False,
+    ) -> None:
         """Assign new properties to items in the data table and update `self.properties`
 
         Parameters
         ----------
-        props : dict of dicts
-            Nested dict of {item label: dict of {property name : property value}}
+        props : pandas.DataFrame, dict of iterables, doubly-nested dict, or None
+            See documentation of the `properties` parameter in :class:`Entity`
+        level_col, id_col, misc_col : str, optional
+            column names corresponding to the levels, items, and misc. properties;
+            if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_props_col`,
+            respectively.
+        replace: bool, default=False
+            If True, replace existing :attr:`properties` with result;
+            otherwise update with new values from result
+
 
         See Also
         --------
         properties, update_properties
         """
-        properties = self._create_properties(props)
+        level_col = level_col or self.properties.index.names[0]
+        id_col = id_col or self.properties.index.names[1]
+        misc_col = misc_col or self._props_col
+        # convert properties to MultiIndexed DataFrame
+        properties = create_properties(props, [level_col, id_col], misc_col)
+        if level_col != self.properties.index.names[0]:
+            properties.index.set_names(
+                self.properties.index.names[0], level=0, inplace=True
+            )
+        if id_col != self.properties.index.names[1]:
+            properties.index.set_names(
+                self.properties.index.names[1], level=1, inplace=True
+            )
+        if misc_col != self._props_col:
+            properties.rename(columns={misc_col: self._props_col}, inplace=True)
 
-        # update stored properties
-        self._properties = self._properties.combine_first(properties)
-        self._properties.update(properties)
+        if replace:
+            self._properties = properties
+        else:
+            self._properties = self._properties.combine_first(properties)
+            self._properties.update(properties)
 
-    def set_property(self, item, prop_name, prop_val, level=None):
+    def _property_loc(self, item: T) -> tuple[int, T]:
+        """Get index in :attr:`properties` of an item of unspecified level
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+
+        Returns
+        -------
+        item_key : tuple of (int, hashable)
+            ``(level, item)``
+
+        Raises
+        ------
+        KeyError
+            If `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `item` appears in multiple levels, returns the first (closest to 0)
+
+        """
+        try:
+            item_loc = self.properties.xs(item, level=1, drop_level=False).index
+        except KeyError:  # item not in df
+            raise KeyError(f"no properties initialized for 'item': {item}")
+
+        try:
+            item_key = item_loc.item()
+        except ValueError:
+            item_loc, _ = item_loc.sortlevel(sort_remaining=False)
+            item_key = item_loc[0]
+            warnings.warn(f"item found in multiple levels: {tuple(item_loc)}")
+        return item_key
+
+    def set_property(
+        self,
+        item: T,
+        prop_name: Any,
+        prop_val: Any,
+        level: Optional[int] = None,
+    ) -> None:
+        """Set a property of an item
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+        prop_name : hashable
+            name of the property to set
+        prop_val : any
+            value of the property to set
+        level : int, optional
+            level index of the item;
+            required if `item` is not already in :attr:`properties`
+
+        Raises
+        ------
+        ValueError
+            If `level` is not provided and `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
+
+        See Also
+        --------
+        get_property, get_properties
+        """
         if level is not None:
             item_key = (level, item)
         else:
             try:
-                item_key = self.properties.xs(
-                    item, level=1, drop_level=False
-                ).index.item()
-            except KeyError:
-                raise  # item not in df
-            except ValueError:
-                raise  # item not unique
+                item_key = self._property_loc(item)
+            except KeyError as ex:
+                raise ValueError(
+                    "cannot infer 'level' when initializing 'item' properties"
+                ) from ex
 
         if prop_name in self.properties:
             self._properties.loc[item_key, prop_name] = pd.Series([prop_val])
@@ -1272,3 +1333,105 @@ class Entity:
             self._properties.loc[item_key, self._props_col].update(
                 {prop_name: prop_val}
             )
+
+    def get_property(self, item: T, prop_name: Any, level: Optional[int] = None) -> Any:
+        """Get a property of an item
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+        prop_name : hashable
+            name of the property to get
+        level : int, optional
+            level index of the item
+
+        Returns
+        -------
+        prop_val : any
+            value of the property
+
+        Raises
+        ------
+        KeyError
+            if (`level`, `item`) is not in :attr:`properties`,
+            or if `level` is not provided and `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
+
+        See Also
+        --------
+        get_properties, set_property
+        """
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self._property_loc(item)
+            except KeyError:
+                raise  # item not in properties
+
+        try:
+            prop_val = self.properties.loc[item_key, prop_name]
+        except KeyError as ex:
+            if ex.args[0] == prop_name:
+                prop_val = self.properties.loc[item_key, self._props_col].get(prop_name)
+            else:
+                raise KeyError(
+                    f"no properties initialized for ('level','item'): {item_key}"
+                ) from ex
+
+        return prop_val
+
+    def get_properties(self, item: T, level: Optional[int] = None) -> dict[Any, Any]:
+        """Get all properties of an item
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+        level : int, optional
+            level index of the item
+
+        Returns
+        -------
+        prop_vals : dict
+            ``{named property: property value, ...,
+            misc. property column name: {property name: property value}}``
+
+        Raises
+        ------
+        KeyError
+            if (`level`, `item`) is not in :attr:`properties`,
+            or if `level` is not provided and `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
+
+        See Also
+        --------
+        get_property, set_property
+        """
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self._property_loc(item)
+            except KeyError:
+                raise
+
+        try:
+            prop_vals = self.properties.loc[item_key].to_dict()
+        except KeyError as ex:
+            raise KeyError(
+                f"no properties initialized for ('level','item'): {item_key}"
+            ) from ex
+
+        return prop_vals

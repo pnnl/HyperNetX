@@ -1,8 +1,11 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
+from __future__ import annotations
 
 import warnings
 import pickle
+from typing import Optional, Any
+
 import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
@@ -170,7 +173,12 @@ class Hypergraph:
             self._nodes = EntitySet()
         else:
             try:
-                kwargs.update(properties=setsystem.properties.reset_index())
+                kwargs.update(
+                    properties=setsystem.properties.reset_index(),
+                    props_col=setsystem._props_col,
+                    level_col=setsystem.properties.index.names[0],
+                    id_col=setsystem.properties.index.names[1],
+                )
             except AttributeError:
                 pass
 
@@ -378,6 +386,31 @@ class Hypergraph:
         """
         level = int(not edges)
         return self.edges.translate(level, id)
+
+    def get_cell_properties(
+        self, edge: str, node: str, prop_name: Optional[str] = None
+    ) -> Any | dict[str, Any]:
+        """Get cell properties on a specified edge and node
+
+        Parameters
+        ----------
+        edge : str
+            name of an edge
+        node : str
+            name of a node
+        prop_name : str, optional
+            name of a cell property; if None, all cell properties will be returned
+
+        Returns
+        -------
+        any or dict of {str: any}
+            cell property value if `prop_name` is provided, otherwise ``dict`` of all
+            cell properties and values
+        """
+        if prop_name is None:
+            return self.edges.get_cell_properties(edge, node)
+
+        return self.edges.get_cell_property(edge, node, prop_name)
 
     def get_linegraph(self, s, edges=True, use_nwhy=True):
         """
