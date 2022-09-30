@@ -252,3 +252,19 @@ gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want
 # Get the status of the workflow
 gh run list --workflow=ci.yml --repo pnnl/HyperNetX
 ```
+
+
+Development
+-----------
+
+Continuous Integration/Continuous Deployment
+--------------------------------------------
+
+Versioning is automated using [bump2version](https://pypi.org/project/bump2version/).
+To automatically update the version when preparing a release, run the following commands:
+
+```
+# part is one of "major", "minor", or "patch"
+make bump-version-<part>
+make commit-docs
+```
