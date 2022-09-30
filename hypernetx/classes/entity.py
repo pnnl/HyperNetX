@@ -1,92 +1,132 @@
+from __future__ import annotations
+
 import warnings
-from collections import defaultdict
-from collections.abc import Hashable
+from collections import OrderedDict, defaultdict
+from collections.abc import Hashable, Mapping, Sequence, Iterable
+from typing import Union, TypeVar, Optional, Any
 
+import numpy as np
+import pandas as pd
 from scipy.sparse import csr_matrix
-from ast import literal_eval
 
-from hypernetx.classes.helpers import *
+from hypernetx.classes.helpers import (
+    AttrList,
+    assign_weights,
+    create_properties,
+    remove_row_duplicates,
+)
+
+T = TypeVar("T", bound=Union[str, int])
 
 
 class Entity:
-    """Base class for handling underlying N-dimensional data when building network-like models i.e. :class:`Hypergraph`
+    """Base class for handling N-dimensional data when building network-like models,
+    i.e., :class:`Hypergraph`
 
     Parameters
     ----------
-    entity : `pandas.DataFrame`, dict of lists or sets, list of lists or sets, optional
-        If a `pandas.DataFrame` with N columns, represents N-dimensional entity data (data table)
-        Otherwise, represents 2-dimensional entity data (system of sets)
+    entity : pandas.DataFrame, dict of lists or sets, list of lists or sets, optional
+        If a ``DataFrame`` with N columns,
+        represents N-dimensional entity data (data table).
+        Otherwise, represents 2-dimensional entity data (system of sets).
         TODO: Test for compatibility with list of Entities and update docs
-    data : `numpy.ndarray`, optional
-        2D M x N ndarray of ints (data table)
-        Sparse representation of an N-dimensional incidence tensor with M nonzero cells,
-        Ignored if `entity` is provided
+    data : numpy.ndarray, optional
+        2D M x N ``ndarray`` of ``ints`` (data table);
+        sparse representation of an N-dimensional incidence tensor with M nonzero cells.
+        Ignored if `entity` is provided.
     static : bool, default=True
-        If True, entity data may not be altered, and the `state_dict` will never be cleared
-        Otherwise, rows may be added to and removed from the data table, and updates will clear the `state_dict`
-    labels : `collections.OrderedDict` of lists, optional
-        User-specified labels in corresponding order to ints in `data`
-        Ignored if `entity` is provided or `data` is not provided
+        If ``True``, entity data may not be altered,
+        and the :attr:`state_dict <_state_dict>` will never be cleared.
+        Otherwise, rows may be added to and removed from the data table,
+        and updates will clear the :attr:`state_dict <_state_dict>`.
+    labels : collections.OrderedDict of lists, optional
+        User-specified labels in corresponding order to ``ints`` in `data`.
+        Ignored if `entity` is provided or `data` is not provided.
     uid : hashable, optional
-        A unique identifier for the `Entity`
-    weights : array-like or hashable, optional
-        User-specified cell weights corresponding to entity data
-        If array-like and `entity` or `data` defines a data table, length must equal the number of rows
-        If array-like and `entity` defines a system of sets, length must equal the total sum of the sizes of all sets
-        If hashable and `entity` is a `pandas.DataFrame`, must be the name of a column in `entity`
-        Otherwise, weight for all cells is assumed to be 1
-    aggregateby : str, optional
-        Name of function to use for aggregating cell weights of duplicate rows
-        when `entity` or `data` defines a data table (default is "sum")
-        If None, duplicate rows will be dropped without aggregating cell weights
-        Effectively ignored if `entity` defines a system of sets
-    properties : dict of dicts
-        Nested dict of {item label: dict of {property name : property value}}
-        User-specified properties to be assigned to individual items in the data
-            i.e., cell entries in an ND data table; sets or set elements in a system of sets
-        TODO: {item level: {item label: {property name : property value}}
+        A unique identifier for the object
+    weights : str or sequence of float, optional
+        User-specified cell weights corresponding to entity data.
+        If sequence of ``floats`` and `entity` or `data` defines a data table,
+            length must equal the number of rows.
+        If sequence of ``floats`` and `entity` defines a system of sets,
+            length must equal the total sum of the sizes of all sets.
+        If ``str`` and `entity` is a ``DataFrame``,
+            must be the name of a column in `entity`.
+        Otherwise, weight for all cells is assumed to be 1.
+    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}
+        Name of function to use for aggregating cell weights of duplicate rows when
+        `entity` or `data` defines a data table, default is "sum".
+        If None, duplicate rows will be dropped without aggregating cell weights.
+        Effectively ignored if `entity` defines a system of sets.
+    properties : pandas.DataFrame or doubly-nested dict, optional
+        User-specified properties to be assigned to individual items in the data, i.e.,
+        cell entries in a data table; sets or set elements in a system of sets.
+        See Notes for detailed explanation.
+        If ``DataFrame``, each row gives
+        ``[item level, item label, optional named properties,
+        {property name: property value}]``
+        (order of columns does not matter; see note for an example).
+        If doubly-nested dict,
+        ``{item level: {item label: {property name: property value}}}``.
+    props_col, level_col, id_col : str, default="properties", "level, "id"
+        Column names for miscellaneous properties, level index, and item name in
+        :attr:`properties`; see Notes for explanation.
 
-    Attributes
-    ----------
-    data
-    labels
-    cell_weights
-    dimensions
-    dimsize
-    properties
-    uid
-    uidset
-    children
-    elements
-    incidence_dict
-    memberships
-    dataframe
-    isstatic
-    empty
-    _state_dict : dict
-        The state_dict holds all attributes that must be recomputed when the data is updated,
-        including `data`, `labels`, `cell_weights`, `dimensions`, `uidset`, and `elements`
-        The values for these attributes will be computed as needed if they do not already exist in the state_dict.
+    Notes
+    -----
+    A property is a named attribute assigned to a single item in the data.
+
+    You can pass a **table of properties** to `properties` as a ``DataFrame``:
+
+    +-------+---------+--------------------------+-------+------------------+
+    | Level | ID      | [explicit property type] | [...] | misc. properties |
+    +=======+=========+==========================+=======+==================+
+    | 0     | level 0 | property value           | ...   | {property name:  |
+    |       | item    |                          |       | property value}  |
+    +-------+---------+--------------------------+-------+------------------+
+    | 1     | level 1 | property value           | ...   | {property name:  |
+    |       | item    |                          |       | property value}  |
+    +-------+---------+--------------------------+-------+------------------+
+    | ...   | ...     | ...                      | ...   | ...              |
+    +-------+---------+--------------------------+-------+------------------+
+    | N     | level N | property value           | ...   | {property name:  |
+    |       | item    |                          |       | property value}  |
+    +-------+---------+--------------------------+-------+------------------+
+
+    The names of the Level and ID columns must be specified by `level_col` and `id_col`.
+    `props_col` can be used to specify the nme of the column to be used for
+    miscellaneous properties; if no column by that name is found, a new column will be
+    created and populated with empty ``dicts``. All other columns will be considered
+    explicit property types. The order of the columns does not matter.
+
+    This method assumes that there are no row duplicates in the `properties` table;
+    if duplicates are found, all but the first occurrence will be dropped.
 
     """
 
     def __init__(
         self,
-        entity=None,
-        data=None,
-        static=False,
-        labels=None,
-        uid=None,
-        weights=None,
-        aggregateby="sum",
-        properties=None,
-        props_col=None,
+        entity: Optional[
+            pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
+        ] = None,
+        data: Optional[np.ndarray] = None,
+        static: bool = False,
+        labels: Optional[OrderedDict[T, Sequence[T]]] = None,
+        uid: Optional[Hashable] = None,
+        weights: Optional[Sequence[float] | str] = None,
+        aggregateby: Optional[str] = "sum",
+        properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
+        props_col: str = "properties",
+        level_col: str = "level",
+        id_col: str = "id",
     ):
 
         # set unique identifier
         self._uid = uid
-        self._props_col = props_col or "properties"
-        self._properties = self._create_properties(properties)
+
+        # create properties
+        self._props_col = props_col
+        self._properties = create_properties(properties, [level_col, id_col], props_col)
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated
@@ -379,11 +419,9 @@ class Entity:
     def elements(self):
         """System of sets representation of the first two levels (columns) of the underlying data table
 
-        Each item in level 0 (first column) defines a set containing all the level 1 (second column) items
-        with which it appears in the same row of the underlying data table
-
-        Properties can be accessed and assigned to items in level 0 (first column):
-            ``self.elements[item].new_property = new_value``
+        Each item in level 0 (first column) defines a set containing all the level 1
+        (second column) items with which it appears in the same row of the underlying
+        data table
 
         Returns
         -------
@@ -392,7 +430,9 @@ class Entity:
 
         See Also
         --------
-        memberships : dual of this representation i.e., each item in level 1 (second column) defines a set
+        memberships :
+            dual of this representation,
+            i.e., each item in level 1 (second column) defines a set
         elements_by_level, elements_by_column :
             system of sets representation of any two levels (columns); specified by level index or column name
 
@@ -419,13 +459,12 @@ class Entity:
 
     @property
     def memberships(self):
-        """System of sets representation of the first two levels (columns) of the underlying data table
+        """System of sets representation of the first two levels (columns) of the
+        underlying data table
 
-        Each item in level 1 (second column) defines a set containing all the level 0 (first column) items
-        with which it appears in the same row of the underlying data table
-
-        Properties can be accessed and assigned to items in level 1 (first column):
-            ``self.memberships[item].new_property = new_value``
+        Each item in level 1 (second column) defines a set containing all the level 0
+        (first column) items with which it appears in the same row of the underlying
+        data table
 
         Returns
         -------
