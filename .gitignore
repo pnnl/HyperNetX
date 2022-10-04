@@ -31,3 +31,4 @@ venv*
 .idea
 env
 .venv*
+pylint-results.txt
