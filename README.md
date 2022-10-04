@@ -4,6 +4,7 @@ HyperNetX
 =========
 ![Passing?](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 
 The HNX library provides classes and methods for modeling the entities and relationships
 found in complex networks as hypergraphs, the natural models for multi-dimensional network data.
@@ -234,8 +235,8 @@ License
 Released under the 3-Clause BSD license (see License.rst)
 
 
-Continuous Integration/Continuous Deployment
---------------------------------------------
+Continuous Integration
+----------------------
 
 This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
 on pull requests, pushes to certain branches, and other events.
@@ -253,12 +254,8 @@ gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want
 gh run list --workflow=ci.yml --repo pnnl/HyperNetX
 ```
 
-
-Development
------------
-
-Continuous Integration/Continuous Deployment
---------------------------------------------
+Versioning
+----------
 
 Versioning is automated using [bump2version](https://pypi.org/project/bump2version/).
 To automatically update the version when preparing a release, run the following commands:
@@ -267,4 +264,55 @@ To automatically update the version when preparing a release, run the following 
 # part is one of "major", "minor", or "patch"
 make bump-version-<part>
 make commit-docs
+```
+
+
+# Development
+
+## Code Quality
+
+HyperNetX uses a number of tools to maintain code quality:
+
+* Pylint
+* Black
+
+### Pylint
+
+[Pylint](https://pylint.pycqa.org/en/latest/index.html) is a static code analyzer for Python-based projects. From the [Pylint docs](https://pylint.pycqa.org/en/latest/index.html#what-is-pylint):
+
+> Pylint analyses your code without actually running it. It checks for errors, enforces a coding standard, looks for code smells, and can make suggestions about how the code could be refactored. Pylint can infer actual values from your code using its internal code representation (astroid). If your code is import logging as argparse, Pylint will know that argparse.error(...) is in fact a logging call and not an argparse call.
+
+Before using this tool, ensure that you install Pylint in your environment:
+
+```commandline
+pip install -e .['auto-testing']
+```
+
+We have a Pylint configuration file, `.pylintrc`, located at the root of this project.
+To run Pylint and view the results of Pylint, run the following command:
+
+```commandline
+pylint hypernetx --rcfile=.pylintrc
+```
+
+You can also run Pylint on the command line to generate a report on the quality of the codebase and save it to a file named "pylint-results.txt":
+
+```commandline
+pylint hypernetx --output=pylint-results.txt
+```
+
+For more information on configuration, see https://pylint.pycqa.org/en/latest/user_guide/configuration/index.html
+
+### Black
+
+[Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
+
+Before using this tool, ensure that you install Pylint in your environment:
+
+```commandline
+pip install -e .['auto-testing']
+```
+
+```commandline
+black hypernetx
 ```

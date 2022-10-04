@@ -49,6 +49,9 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
 
+    - name: Install Pylint
+      run: pip install pylint
+
     # https://github.com/pre-commit/action
     - name: Run pre-commit hooks
       uses: pre-commit/action@v3.0.0

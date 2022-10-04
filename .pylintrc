@@ -1,0 +1,13 @@
+[MAIN]
+
+# Specify a score threshold under which the program will exit with error.
+fail-under=5.86
+
+[REPORTS]
+# Tells whether to display a full report or only the messages.
+reports=yes
+
+# Set the output format. Available formats are text, parseable, colorized, json
+# and msvs (visual studio). You can also give a reporter class, e.g.
+# mypackage.mymodule.MyReporterClass.
+output-format=colorized

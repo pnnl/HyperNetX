@@ -28,3 +28,16 @@ repos:
       - id: mypy
         exclude: (?x)(docs/|tests/)
         args: [--no-strict-optional, --ignore-missing-imports]
+
+- repo: local
+  hooks:
+    - id: pylint
+      name: pylint
+      entry: pylint
+      language: system
+      types: [python]
+      args:
+        [
+          "--rcfile=.pylintrc",
+          "--exit-zero" # Always return a 0 (non-error) status code, even if lint errors are found. This is primarily useful in continuous integration scripts.
+        ]
