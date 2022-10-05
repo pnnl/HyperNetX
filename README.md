@@ -195,6 +195,8 @@ To install with the documentation:
 
 To install and test using pytest:
 
+> ℹ️ **NOTE:** This project has a pytest configuration file named 'pytest.ini'. By default, pytest will use those configuration settings to run tests.
+
     >>> pip install -e .['testing']
 
     # run tests

@@ -13,7 +13,7 @@ class LesMis(object):
     def __init__(self):
         self.volumes = pd.DataFrame.from_dict(volume_names, orient="index")
 
-        accents = {"\`e": "è", "\\`e": "è", "'e": "é", "\\c{c}": "ç", "\^o": "ô"}
+        accents = {r"\`e": "è", "\\`e": "è", "'e": "é", "\\c{c}": "ç", r"\^o": "ô"}
         for k, v in accents.items():
             self.names = names.replace(k, v)
 
@@ -109,7 +109,7 @@ def get_scene_data():
 
 
 # LesMis Data:
-names = """AZ Anzelma, daughter of TH and TM
+names = r"""AZ Anzelma, daughter of TH and TM
 BA Bahorel, `Friends of the ABC' cutup
 BB Babet, tooth-pulling bandit of Paris
 BJ Brujon, notorious criminal
