@@ -70,7 +70,7 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     HB = Hypergraph.from_bipartite(H.bipartite())
     assert len(HB.edges) == 7
     assert len(HB.nodes) == 8
-    assert HB.s_degree("T1") == 1
+    assert HB.degree("T1") == 1
 
 
 def test_hypergraph_from_entity_set(seven_by_six):
@@ -78,7 +78,7 @@ def test_hypergraph_from_entity_set(seven_by_six):
     entityset = EntitySet("_", sbs.edgedict)
     H = Hypergraph(entityset)
     assert H.edges.incidence_dict == sbs.edgedict
-    assert H.s_degree("A") == 3
+    assert H.degree("A") == 3
     assert H.dim("O") == 1
     assert len(H.edge_size_dist()) == 6
     assert len(H.edge_neighbors("S")) == 4
@@ -146,13 +146,13 @@ def test_collapse_edges(sbsd_hypergraph):
 def test_collapse_nodes(sbsd_hypergraph):
     H = sbsd_hypergraph
     assert len(H.nodes) == 8
-    HC = H.collapse_nodes()
+    HC = H.collapse_nodes(use_reps=None, return_counts=None)
     assert len(HC.nodes) == 7
 
 
 def test_collapse_nodes_and_edges(sbsd_hypergraph):
     H = sbsd_hypergraph
-    HC2 = H.collapse_nodes_and_edges()
+    HC2 = H.collapse_nodes_and_edges(use_reps=None, return_counts=None)
     assert len(H.edges) == 7
     assert len(HC2.edges) == 6
     assert len(H.nodes) == 8
@@ -189,7 +189,7 @@ def test_toplexes(sbsd_hypergraph):
     T = H.toplexes()
     assert len(T.nodes) == 8
     assert len(T.edges) == 5
-    T = T.collapse_nodes()
+    T = T.collapse_nodes(use_reps=None, return_counts=None)
     assert len(T.nodes) == 7
 
 
@@ -317,6 +317,7 @@ def test_dual(sbs_hypergraph):
     assert set(H.edges) == set(HD.nodes)
 
 
+@pytest.mark.filterwarnings("ignore:No 3-path between ME and FN")
 def test_distance(lesmis):
     h = lesmis.hypergraph
     assert h.distance("ME", "FN") == 2
@@ -324,6 +325,7 @@ def test_distance(lesmis):
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
+@pytest.mark.filterwarnings("ignore:No 2-path between 1 and 4")
 def test_edge_distance(lesmis):
     h = lesmis.hypergraph
     assert h.edge_distance(1, 4) == 2
