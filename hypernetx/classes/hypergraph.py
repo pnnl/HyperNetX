@@ -1475,7 +1475,7 @@ class Hypergraph:
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword arguments and will throw
+            use_reps and return_counts are no longer supported keyword arguments and will throw
             an error in the next release.
             collapsed hypergraph automatically names collapsed objects by a string "rep:count"
             """
@@ -1559,7 +1559,7 @@ class Hypergraph:
             ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)
             return ntemp, neq, eeq
         else:
-            temp = self.collapse_nodes(name="temp")
+            temp = self.collapse_nodes(name="temp", use_reps=None, return_counts=None)
             return temp.collapse_edges(name=name)
 
     def restrict_to_edges(self, edgeset, name=None):
