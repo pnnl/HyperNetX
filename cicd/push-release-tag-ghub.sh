@@ -17,7 +17,7 @@ git checkout "${current_tag}"
 echo "${current_tag}" > tempbranch.txt
 cat tempbranch.txt
 
-# log the branch, remotes, and last commit for forsensics
+# log the branch, remotes, and last commit for forensics
 git branch -vv
 git remote -vv
 git --no-pager show --name-only
@@ -30,7 +30,7 @@ git --no-pager show --name-only
 # to access the HyperNetX Github repo
 git remote add gh-origin "https://${bamboo.GITHUB_USERNAME}:${bamboo.GHUB_PAT_PASSWORD}@github.com/pnnl/HyperNetX.git"
 
-# log the remotes for forsensics
+# log the remotes for forensics
 git remote -vv
 
 # Push the latest tag branch to HyperNetX repo on Github
