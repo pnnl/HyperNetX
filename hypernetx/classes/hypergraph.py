@@ -183,8 +183,7 @@ class Hypergraph:
                 properties=properties,
             )
             self._edges = E
-            self._nodes = E.restrict_to_levels(
-                [1], weights=False, aggregateby=None)
+            self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
 
         self.state_dict = {}
         self.update_state()
@@ -437,7 +436,7 @@ class Hypergraph:
         self.state_dict["data"] = (temprows, tempcols, tempdata)
         self.state_dict["snodelg"] = dict()
         self.state_dict["sedgelg"] = dict()
-        for sdkey in (set(self.state_dict) - {"data", "snodelg", "sedgelg"}):
+        for sdkey in set(self.state_dict) - {"data", "snodelg", "sedgelg"}:
             self.state_dict.pop(sdkey)
 
     def save_state(self, fpath=None):
@@ -573,8 +572,10 @@ class Hypergraph:
             self._static = True
             return self
         else:
-            E = EntitySet(self.edges,static=True)
-            return Hypergraph(E, use_nwhy=use_nwhy, filepath=filepath, name=name, static=True)
+            E = EntitySet(self.edges, static=True)
+            return Hypergraph(
+                E, use_nwhy=use_nwhy, filepath=filepath, name=name, static=True
+            )
 
     def remove_static(self, name=None):
         """
@@ -872,7 +873,7 @@ class Hypergraph:
 
         """
         for node in node_set:
-            self.remove_node(node,update_state=False)
+            self.remove_node(node, update_state=False)
         self.update_state()
         return self
 
@@ -933,6 +934,7 @@ class Hypergraph:
 
         if update_state:
             self.update_state()
+
     def add_edges_from(self, edge_set):
         """
         Add edges to hypergraph.
@@ -1000,7 +1002,10 @@ class Hypergraph:
         """
         if edge in self._edges:
             for node in self._edges.memberships:
-                if (len(self._edges.memberships[node]) == 1 and self._edges.memberships[node][0] == edge):
+                if (
+                    len(self._edges.memberships[node]) == 1
+                    and self._edges.memberships[node][0] == edge
+                ):
                     self.remove_node(node)
             self._edges.remove(edge)
 
@@ -1058,8 +1063,7 @@ class Hypergraph:
             sdkey = "weighted_" + sdkey
 
         if sdkey not in self.state_dict:
-            self.state_dict[sdkey] = self.edges.incidence_matrix(
-                weights=weights)
+            self.state_dict[sdkey] = self.edges.incidence_matrix(weights=weights)
 
         if index:
             edgecol, nodecol = self.edges._data_cols
@@ -1282,8 +1286,7 @@ class Hypergraph:
             }
             ec = {}
         lev = self.edges.keys[1 - 1 * edges]
-        E = self.edges.restrict_to_indices(
-            sorted(d.keys()), level=1 - 1 * edges)
+        E = self.edges.restrict_to_indices(sorted(d.keys()), level=1 - 1 * edges)
         E.labels[str(lev)] = np.array([en[k] for k in E.labels[lev]])
         if rec:
             return E, ec
@@ -1493,8 +1496,7 @@ class Hypergraph:
             temp, neq = self.collapse_nodes(
                 name="temp", return_equivalence_classes=True
             )
-            ntemp, eeq = temp.collapse_edges(
-                name=name, return_equivalence_classes=True)
+            ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)
             return ntemp, neq, eeq
         else:
             temp = self.collapse_nodes(name="temp", use_reps=None, return_counts=None)
@@ -1516,8 +1518,7 @@ class Hypergraph:
         new hypergraph : Hypergraph
         """
         E = self._edges
-        setsystem = E.restrict_to(
-            sorted(E.indices(E._data_cols[0], list(edgeset))))
+        setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(edgeset))))
         return Hypergraph(setsystem, name=name, use_nwhy=self.nwhy)
 
     def restrict_to_nodes(self, nodeset, name=None):
@@ -1537,8 +1538,7 @@ class Hypergraph:
         new hypergraph : Hypergraph
         """
         E = self.edges.restrict_to_levels((1, 0))
-        setsystem = E.restrict_to(
-            sorted(E.indices(E._data_cols[0], list(nodeset))))
+        setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(nodeset))))
         return Hypergraph(
             setsystem.restrict_to_levels((1, 0)), name=name, use_nwhy=self.nwhy
         )
@@ -1762,8 +1762,7 @@ class Hypergraph:
         if self.nwhy:
             g = self.get_linegraph(s, edges=edges)
             if return_singletons:
-                allobjects = set(
-                    self.edges) if edges == True else set(self.nodes)
+                allobjects = set(self.edges) if edges == True else set(self.nodes)
                 for c in g.s_connected_components():
                     comp = {self.get_name(nd, edges=edges) for nd in c}
                     allobjects.difference_update(comp)
@@ -1810,8 +1809,7 @@ class Hypergraph:
 
         """
         for idx, c in enumerate(
-            self.s_components(s=s, edges=edges,
-                              return_singletons=return_singletons)
+            self.s_components(s=s, edges=edges, return_singletons=return_singletons)
         ):
             if edges:
                 yield self.restrict_to_edges(c, name=f"{self.name}:{idx}")
@@ -1891,8 +1889,7 @@ class Hypergraph:
                 for c in g.s_connected_components():
                     tc = self.edges.labs(1)[c]
                     nodelists.append(tc)
-                    diameters.append(self.restrict_to_nodes(
-                        tc).node_diameters(s=s))
+                    diameters.append(self.restrict_to_nodes(tc).node_diameters(s=s))
         else:
             A, coldict = self.adjacency_matrix(s=s, index=True)
             G = nx.from_scipy_sparse_matrix(A)
@@ -1938,8 +1935,7 @@ class Hypergraph:
                 for c in g.s_connected_components():
                     tc = self.edges.labs(0)[c]
                     edgelists.append(tc)
-                    diameters.append(self.restrict_to_edges(
-                        tc).edge_diameters(s=s))
+                    diameters.append(self.restrict_to_edges(tc).edge_diameters(s=s))
         else:
             A, coldict = self.edge_adjacency_matrix(s=s, index=True)
             G = nx.from_scipy_sparse_matrix(A)
@@ -2079,8 +2075,7 @@ class Hypergraph:
             if self.nwhy:
                 d = g.s_distance(src, tgt)
                 if d == -1:
-                    warnings.warn(
-                        f"No {s}-path between {source} and {target}")
+                    warnings.warn(f"No {s}-path between {source} and {target}")
                     return np.inf
                 else:
                     return d
@@ -2142,8 +2137,7 @@ class Hypergraph:
             if self.nwhy:
                 d = g.s_distance(src, tgt)
                 if d == -1:
-                    warnings.warn(
-                        f"No {s}-path between {source} and {target}")
+                    warnings.warn(f"No {s}-path between {source} and {target}")
                     return np.inf
                 else:
                     return d
@@ -2172,13 +2166,13 @@ class Hypergraph:
         df = self.edges.dataframe.pivot(
             index=self.edges._data_cols[1],
             columns=self.edges._data_cols[0],
-            values=self.edges._cell_weight_col
+            values=self.edges._cell_weight_col,
         ).fillna(0)
 
         if sort_rows:
-            df = df.sort_index('index')
+            df = df.sort_index("index")
         if sort_columns:
-            df = df.sort_index('columns')
+            df = df.sort_index("columns")
         if not cell_weights:
             df[df > 0] = 1
 
@@ -2427,8 +2421,7 @@ class Hypergraph:
         """
 
         if type(df) != pd.core.frame.DataFrame:
-            raise HyperNetXError(
-                "Error: Input object must be a pandas dataframe.")
+            raise HyperNetXError("Error: Input object must be a pandas dataframe.")
 
         if columns:
             df = df[columns]
