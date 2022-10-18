@@ -2,8 +2,8 @@
 
 rm -rf docs/build
 rm -rf docs/source/classes
-rm -rf docs/source/algorithms 
-rm -rf docs/source/drawing 
+rm -rf docs/source/algorithms
+rm -rf docs/source/drawing
 rm -rf docs/source/reports
 
 sphinx-apidoc -o docs/source/classes hypernetx/classes

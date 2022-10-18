@@ -28,7 +28,7 @@ class Hypergraph:
     be known at creation. A hypergraph is dynamic by default.
 
     *Dynamic hypergraphs* require the user to keep track of its objects,
-    by using a unique names for each node and edge. This allows for multi-edge 
+    by using a unique names for each node and edge. This allows for multi-edge
     graphs and inseperable nodes.
 
     For example: Let V = {1,2,3} and E = {e1,e2,e3},
@@ -159,8 +159,10 @@ class Hypergraph:
                 use_nwhy = False
         else:
             self.nwhy = False
-
-        self.name = name or ""
+        if not name:
+            self.name = ""
+        else:
+            self.name = name
 
         self._static = static
 
@@ -699,7 +701,7 @@ class Hypergraph:
         size : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len(set(nodeset).intersection(set(self.edges[edge])))
         else:
             if self.nwhy:
@@ -910,7 +912,7 @@ class Hypergraph:
         then an error will be raised.
 
         """
-        # This piece of code is to allow a user to pass in a dictionary 
+        # This piece of code is to allow a user to pass in a dictionary
         # Of the format {'New_edge': ['Node1', 'Node2']}.
 
         cols = list(self._edges.labels.keys())
@@ -1405,10 +1407,9 @@ class Hypergraph:
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword
-            arguments and will throw an error in the next release.
-            collapsed hypergraph automatically names collapsed objects by a
-            string "rep:count"
+            use_reps and return_counts are no longer supported keyword arguments and will throw
+            an error in the next release.
+            collapsed hypergraph automatically names collapsed objects by a string "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
 
@@ -1496,7 +1497,7 @@ class Hypergraph:
                 name=name, return_equivalence_classes=True)
             return ntemp, neq, eeq
         else:
-            temp = self.collapse_nodes(name="temp")
+            temp = self.collapse_nodes(name="temp", use_reps=None, return_counts=None)
             return temp.collapse_edges(name=name)
 
     def restrict_to_edges(self, edgeset, name=None):
@@ -1597,7 +1598,7 @@ class Hypergraph:
         else:
             for e in temp.edges:
                 thdict[e] = temp.edges[e]
-            
+
             tops = list()
             for e in temp.edges:
                 flag = True
@@ -1614,7 +1615,7 @@ class Hypergraph:
 
     def is_connected(self, s=1, edges=False):
         """
-        Determines if hypergraph is :term:`s-connected <s-connected, 
+        Determines if hypergraph is :term:`s-connected <s-connected,
         s-node-connected>`.
 
         Parameters
@@ -2185,7 +2186,7 @@ class Hypergraph:
 
     @classmethod
     def from_bipartite(
-        cls, B, set_names=("nodes", "edges"), name=None, static=False, use_nwhy=False
+        cls, B, set_names=("edges", "nodes"), name=None, static=False, use_nwhy=False
     ):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -2243,7 +2244,7 @@ class Hypergraph:
 
         elist = []
         for e in list(B.edges):
-            if e[0] in nodes:
+            if e[0] in edges:
                 elist.append([e[1], e[0]])
             else:
                 elist.append([e[0], e[1]])

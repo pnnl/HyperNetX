@@ -1,6 +1,12 @@
 from collections import defaultdict
 import hypernetx as hnx
-from celluloid import Camera
+
+try:
+    from celluloid import Camera
+except Exception as e:
+    print(
+        f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
+    )
 
 
 def contagion_animation(
@@ -104,7 +110,7 @@ def contagion_animation(
             edges_kwargs=edgeStyle,
             with_edge_labels=False,
             with_node_labels=False,
-            **kwargs
+            **kwargs,
         )
         camera.snap()
 

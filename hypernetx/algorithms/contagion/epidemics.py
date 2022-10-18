@@ -1,8 +1,8 @@
 import random
-import heapq
 import numpy as np
 from collections import defaultdict
 from collections import Counter
+
 
 # Canned Contagion Functions
 def collective_contagion(node, status, edge):
