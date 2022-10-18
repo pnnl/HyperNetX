@@ -4,16 +4,16 @@ import pytest
 import numpy as np
 import pandas as pd
 import networkx as nx
-from hypernetx import Hypergraph
-from hypernetx import HyperNetXError
+from hypernetx import Hypergraph, EntitySet, HyperNetXError
+# from hypernetx import HyperNetXError
 
 
 def test_from_bipartite():
     g = nx.complete_bipartite_graph(2, 3)
     left, right = nx.bipartite.sets(g)
     h = Hypergraph.from_bipartite(g)
-    assert left.issubset({*h.nodes})
-    assert right.issubset({*h.edges})
+    assert left.issubset({*h.edges})
+    assert right.issubset({*h.nodes})
     with pytest.raises(Exception) as excinfo:
         h.edge_diameter(s=4)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
@@ -28,7 +28,9 @@ def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(
     bipartite_graph = Hypergraph(edgedict).bipartite()
     hg_from_bipartite = Hypergraph.from_bipartite(bipartite_graph, static=static)
 
-    entityset = EntitySet("_", edgedict)
+    # entityset = EntitySet("_", edgedict)
+    entityset = EntitySet(edgedict)
+
     hg_from_constructor = Hypergraph(entityset, static=static)
 
     assert hg_from_bipartite.isstatic == hg_from_constructor.isstatic
