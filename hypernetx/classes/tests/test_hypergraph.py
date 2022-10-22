@@ -1,9 +1,6 @@
 import pytest
 import numpy as np
-import networkx as nx
-from hypernetx.classes.entity import Entity
 from hypernetx.classes.entityset import EntitySet
-from hypernetx import HyperNetXError
 from hypernetx.classes.hypergraph import Hypergraph
 
 
@@ -72,9 +69,6 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     HB = Hypergraph.from_bipartite(H.bipartite())
     assert len(HB.edges) == 7
     assert len(HB.nodes) == 8
-    # assert len(HB.edges) == 8
-    # assert len(HB.nodes) == 7
-    # assert HB.degree("T1") == 1
 
 
 def test_hypergraph_from_entity_set(seven_by_six):

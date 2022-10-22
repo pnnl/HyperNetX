@@ -7,11 +7,10 @@ import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
 import pandas as pd
-from scipy.sparse import issparse, coo_matrix, dok_matrix, csr_matrix
-from collections import OrderedDict, defaultdict
+from scipy.sparse import coo_matrix, csr_matrix
+from collections import OrderedDict
 from hypernetx.classes import Entity, EntitySet
 from hypernetx.exception import HyperNetXError
-from hypernetx.utils.decorators import not_implemented_for
 
 
 __all__ = ["Hypergraph"]
@@ -2193,7 +2192,7 @@ class Hypergraph:
             'bipartite' taking the value of 0 or 1 indicating a 2-coloring of
             the graph.
 
-        set_names: iterable of length 2, optional, default = ['nodes','edges']
+        set_names: iterable of length 2, optional, default = ['edges','nodes']
             Category names assigned to the graph nodes associated to each
             bipartite set
 
@@ -2239,13 +2238,13 @@ class Hypergraph:
         elist = []
         for e in list(B.edges):
             if e[0] in edges:
-                elist.append([e[1], e[0]])
-            else:
                 elist.append([e[0], e[1]])
+            else:
+                elist.append([e[1], e[0]])
         df = pd.DataFrame(elist, columns=set_names)
         E = EntitySet(entity=df)
         name = name or "_"
-        return Hypergraph(E, name=name, use_nwhy=use_nwhy)
+        return Hypergraph(E, name=name, use_nwhy=use_nwhy, static=static)
 
     @classmethod
     def from_numpy_array(
