@@ -1,30 +1,84 @@
+from __future__ import annotations
+
+from typing import Any, Optional
 import numpy as np
 import pandas as pd
 from collections import UserList
-from collections.abc import Hashable
+from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
+from ast import literal_eval
+
+from hypernetx.classes.entity import *
 
 
 class AttrList(UserList):
-    def __init__(self, entity, key, initlist=None):
+    """Custom list wrapper for integrated property storage in :class:`Entity`
+
+    Parameters
+    ----------
+    entity : hypernetx.Entity
+    key : tuple of (int, str or int)
+        ``(level, item)``
+    initlist : list, optional
+        list of elements, passed to ``UserList`` constructor
+    """
+
+    def __init__(
+        self,
+        entity: Entity,
+        key: tuple[int, str | int],
+        initlist: Optional[list] = None,
+    ):
         self._entity = entity
         self._key = key
         super().__init__(initlist)
 
-    def __getattr__(self, attr):
-        return self._entity.properties[self._key].squeeze().get(attr)
+    def __getattr__(self, attr: str) -> Any:
+        """Get attribute value from properties of :attr:`entity`
 
-    def __setattr__(self, attr, val):
+        Parameters
+        ----------
+        attr : str
+
+        Returns
+        -------
+        any
+            attribute value; None if not found
+        """
+        try:
+            return self._entity.properties.loc[self._key, attr]
+        except KeyError:
+            return None
+
+    def __setattr__(self, attr: str, val: Any) -> None:
+        """Set attribute value in properties of :attr:`entity`
+
+        Parameters
+        ----------
+        attr : str
+        val : any
+        """
         if attr in ["_entity", "_key", "data"]:
             object.__setattr__(self, attr, val)
         else:
-            keyprops = self._entity.properties.get(self._key)
-            if keyprops is not None:
-                keyprops = keyprops.squeeze()
-                keyprops.update({attr: val})
-            else:
-                keyprops = {attr: val}
-            self._entity.properties[self._key] = keyprops
+            self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+
+
+def encode(data: pd.DataFrame):
+    """
+    Encode dataframe to numpy array
+
+    Parameters
+    ----------
+    data : dataframe
+
+    Returns
+    -------
+    numpy.array
+
+    """
+    encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
+    return encoded_array
 
 
 def assign_weights(df, weights=None, weight_col="cell_weights"):
@@ -59,14 +113,71 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
     return df, weight_col
 
 
-def update_properties(props, new_props):
-    if new_props is None:
-        return props
-    update = props.index.intersection(new_props.index)
-    for idx in update:
-        props[idx].update(new_props[idx])
-    new_props = new_props[~new_props.index.isin(update)]
-    return pd.concat((props, new_props))
+def create_properties(
+    props: pd.DataFrame
+    | dict[str | int, Iterable[str | int]]
+    | dict[str | int, dict[str | int, dict[Any, Any]]]
+    | None,
+    index_cols: list[str],
+    misc_col: str,
+) -> pd.DataFrame:
+    """Helper function for initializing properties and cell properties
+
+    Parameters
+    ----------
+    props : pandas.DataFrame, dict of iterables, doubly-nested dict, or None
+        See documentation of the `properties` parameter in :class:`Entity`,
+        `cell_properties` parameter in :class:`EntitySet`
+    index_cols : list of str
+        names of columns to be used as levels of the MultiIndex
+    misc_col : str
+        name of column to be used for miscellaneous property dicts
+
+    Returns
+    -------
+    pandas.DataFrame
+        with ``MultiIndex`` on `index_cols`;
+        each entry of the miscellaneous column holds dict of
+        ``{property name: property value}``
+    """
+
+    if isinstance(props, pd.DataFrame) and not props.empty:
+        try:
+            data = props.set_index(index_cols, verify_integrity=True)
+        except ValueError:
+            warnings.warn(
+                "duplicate (level, ID) rows will be dropped after first occurrence"
+            )
+            props = props.drop_duplicates(index_cols)
+            data = props.set_index(index_cols)
+
+        if misc_col not in data:
+            data[misc_col] = [{} for _ in range(len(data))]
+        try:
+            data[misc_col] = data[misc_col].apply(literal_eval)
+        except ValueError:
+            pass  # data already parsed, no literal eval needed
+        else:
+            warnings.warn("parsed property dict column from string literal")
+
+        return data.sort_index()
+
+    # build MultiIndex from dict of {level: iterable of items}
+    try:
+        item_levels = [(level, item) for level in props for item in props[level]]
+        index = pd.MultiIndex.from_tuples(item_levels, names=index_cols)
+    # empty MultiIndex if props is None or other unexpected type
+    except TypeError:
+        index = pd.MultiIndex(levels=([], []), codes=([], []), names=index_cols)
+
+    # get inner data from doubly-nested dict of {level: {item: {prop: val}}}
+    try:
+        data = [props[level][item] for level, item in index]
+    # empty prop dict for each (level, ID) if iterable of items is not a dict
+    except TypeError:
+        data = [{} for _ in index]
+
+    return pd.DataFrame(data=data, index=index, columns=[misc_col]).sort_index()
 
 
 def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):

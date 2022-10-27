@@ -1,8 +1,11 @@
 # Copyright © 2018 Battelle Memorial Institute
 # All rights reserved.
+from __future__ import annotations
 
 import warnings
 import pickle
+from typing import Optional, Any
+
 import networkx as nx
 from networkx.algorithms import bipartite
 import numpy as np
@@ -143,6 +146,7 @@ class Hypergraph:
         aggregateby="sum",
         use_nwhy=False,
         filepath=None,
+        **kwargs,
     ):
         self.filepath = filepath
         if use_nwhy:
@@ -169,17 +173,30 @@ class Hypergraph:
             self._edges = EntitySet()
             self._nodes = EntitySet()
         else:
-            properties = (
-                setsystem.properties.to_frame().reset_index()
-                if isinstance(setsystem, (Entity, EntitySet))
-                else None
-            )
+            try:
+                kwargs.update(
+                    properties=setsystem.properties.reset_index(),
+                    props_col=setsystem._props_col,
+                    level_col=setsystem.properties.index.names[0],
+                    id_col=setsystem.properties.index.names[1],
+                )
+            except AttributeError:
+                pass
+
+            try:
+                kwargs.update(
+                    cell_properties=setsystem.cell_properties.reset_index(),
+                    cell_props_col=setsystem._cell_props_col,
+                )
+            except AttributeError:
+                pass
+
             E = EntitySet(
                 entity=setsystem,
                 weights=weights,
                 aggregateby=aggregateby,
                 static=static,
-                properties=properties,
+                **kwargs,
             )
             self._edges = E
             self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
@@ -370,6 +387,31 @@ class Hypergraph:
         """
         level = int(not edges)
         return self.edges.translate(level, id)
+
+    def get_cell_properties(
+        self, edge: str, node: str, prop_name: Optional[str] = None
+    ) -> Any | dict[str, Any]:
+        """Get cell properties on a specified edge and node
+
+        Parameters
+        ----------
+        edge : str
+            name of an edge
+        node : str
+            name of a node
+        prop_name : str, optional
+            name of a cell property; if None, all cell properties will be returned
+
+        Returns
+        -------
+        any or dict of {str: any}
+            cell property value if `prop_name` is provided, otherwise ``dict`` of all
+            cell properties and values
+        """
+        if prop_name is None:
+            return self.edges.get_cell_properties(edge, node)
+
+        return self.edges.get_cell_property(edge, node, prop_name)
 
     def get_linegraph(self, s, edges=True, use_nwhy=True):
         """
