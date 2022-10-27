@@ -444,7 +444,7 @@ class Entity:
 
     @property
     def incidence_dict(self):
-        """ System of sets representation of the first two levels (columns) of the underlying data table
+        """System of sets representation of the first two levels (columns) of the underlying data table
 
         .. deprecated:: 2.0.0
             Duplicates `elements`
@@ -711,7 +711,8 @@ class Entity:
         str
         """
         return (
-                self.__class__.__name__ + f"""({self._uid}, {list(self.uidset)},
+            self.__class__.__name__
+            + f"""({self._uid}, {list(self.uidset)},
                                          {[] if self.properties.empty
         else self.properties.droplevel(0)
                 .to_dict()})"""
@@ -763,7 +764,7 @@ class Entity:
         )
 
     def indices(self, column, values):
-        """ Get indices of one or more value(s) in a column
+        """Get indices of one or more value(s) in a column
 
         Parameters
         ----------
@@ -864,7 +865,7 @@ class Entity:
         if max_level is None or max_level >= self._dimsize:
             max_level = self._dimsize - 1
 
-        columns = self._data_cols[min_level: max_level + 1]
+        columns = self._data_cols[min_level : max_level + 1]
         levels = range(min_level, max_level + 1)
 
         for col, lev in zip(columns, levels):
@@ -981,8 +982,7 @@ class Entity:
         """
         if all(col in df for col in self._data_cols):
             new_data = pd.concat((self._dataframe, df), ignore_index=True)
-            new_data[self._cell_weight_col] = new_data[self._cell_weight_col] \
-                .fillna(1)
+            new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
 
             self._dataframe, _ = remove_row_duplicates(
                 new_data,
@@ -990,8 +990,9 @@ class Entity:
                 weights=self._cell_weight_col,
             )
 
-            self._dataframe[self._data_cols] = self. \
-                _dataframe[self._data_cols].astype("category")
+            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                "category"
+            )
 
             self._state_dict.clear()
 
@@ -1056,21 +1057,20 @@ class Entity:
         updated_dataframe = self._dataframe
 
         for column in self._dataframe:
-            updated_dataframe = updated_dataframe[updated_dataframe[column]
-                                                  != item]
+            updated_dataframe = updated_dataframe[updated_dataframe[column] != item]
 
         self._dataframe, _ = remove_row_duplicates(
             updated_dataframe,
             self._data_cols,
             weights=self._cell_weight_col,
         )
-        self._dataframe[self._data_cols] = self._dataframe[self._data_cols] \
-            .astype("category")
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+            "category"
+        )
 
         self._state_dict.clear()
         for col in self._data_cols:
-            self._dataframe[col] = self._dataframe[col].cat \
-                .remove_unused_categories()
+            self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
     def encode(self, data):
         """
@@ -1089,7 +1089,7 @@ class Entity:
         return encoded_array
 
     def incidence_matrix(
-            self, level1=0, level2=1, weights=False, aggregateby=None, index=False
+        self, level1=0, level2=1, weights=False, aggregateby=None, index=False
     ):
         """Incidence matrix representation for two levels (columns) of the underlying data table
 

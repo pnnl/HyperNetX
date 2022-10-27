@@ -1,13 +1,10 @@
 import os
 from hypernetx.utils import HNXCount, remove_row_duplicates
 from collections import OrderedDict, defaultdict
-import scipy
-from scipy.sparse import coo_matrix, issparse
+
 import pandas as pd
 import numpy as np
-import itertools as it
 
-__all__ = ["HarryPotter"]
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -2,8 +2,6 @@ import pandas as pd
 import os
 
 
-__all__ = ["TransmissionProblem"]
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 

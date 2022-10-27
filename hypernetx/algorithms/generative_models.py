@@ -31,7 +31,7 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
 
 
     Example::
-    
+
     >>> import hypernetx.algorithms.generative_models as gm
     >>> n = 1000
     >>> m = n
