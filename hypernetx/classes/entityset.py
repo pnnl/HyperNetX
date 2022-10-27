@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from collections import OrderedDict
-from collections.abc import Hashable, Iterable, Sequence
-from typing import Optional, Any
-
-import pandas as pd
-import numpy as np
+import warnings
 from ast import literal_eval
+from collections import OrderedDict
+from collections.abc import Iterable, Sequence, Mapping
+from typing import Optional, Any, TypeVar, Union
+
+import numpy as np
+import pandas as pd
 
 from hypernetx.classes import Entity
-from hypernetx.classes.helpers import update_properties, AttrList
+from hypernetx.classes.helpers import AttrList, create_properties
+
+T = TypeVar("T", bound=Union[str, int])
 
 
 class EntitySet(Entity):
@@ -24,83 +27,122 @@ class EntitySet(Entity):
         If N > 2, only considers levels (columns) `level1` and `level2`.
         Otherwise, represents 2-dimensional entity data (system of sets).
     data : numpy.ndarray, optional
-        2D M x N ``ndarray`` of ints (data table);
+        2D M x N ``ndarray`` of ``ints`` (data table);
         sparse representation of an N-dimensional incidence tensor with M nonzero cells.
         If N > 2, only considers levels (columns) `level1` and `level2`.
         Ignored if `entity` is provided.
-    static : bool, default=True
-        If True, entity data may not be altered,
-        and the :attr:`state_dict <_state_dict>` will never be cleared.
-        Otherwise, rows may be added to and removed from the data table,
-        and updates will clear the :attr:`state_dict <_state_dict>`.
     labels : collections.OrderedDict of lists, optional
         User-specified labels in corresponding order to ``ints`` in `data`.
         For M x N `data`, N > 2, `labels` must contain either 2 or N keys.
         If N keys, only considers labels for levels (columns) `level1` and `level2`.
         Ignored if `entity` is provided or `data` is not provided.
-    uid : hashable, optional
-        A unique identifier for the ``StaticEntity``.
-    level1, level2 : int, default=0,1
+    level1, level2 : str or int, default=0,1
         Each item in `level1` defines a set containing all the `level2` items with which
         it appears in the same row of the underlying data table.
+        If ``int``, gives the index of a level;
+        if ``str``, gives the name of a column in `entity`.
         Ignored if `entity`, `data` (if `entity` not provided), and `labels` all (if
         provided) represent 1- or 2-dimensional data (set or system of sets).
-    weights : array_like or hashable, optional
+    weights : str or sequence of float, optional
         User-specified cell weights corresponding to entity data.
-        If ``array_like`` and `entity` or `data` defines a data table,
+        If sequence of ``floats`` and `entity` or `data` defines a data table,
             length must equal the number of rows.
-        If ``array_like`` and `entity` defines a system of sets,
+        If sequence of ``floats`` and `entity` defines a system of sets,
             length must equal the total sum of the sizes of all sets.
-        If ``hashable`` and `entity` is a ``DataFrame``,
+        If ``str`` and `entity` is a ``DataFrame``,
             must be the name of a column in `entity`.
         Otherwise, weight for all cells is assumed to be 1.
-        Ignored if `entity` is an :class:`Entity` and `keep_weights`=True.
+        Ignored if `entity` is an ``Entity`` and `keep_weights`=True.
     keep_weights : bool, default=True
-        Whether to preserve any existing cell weights.
-        Ignored if `entity` is not an :class:`Entity`.
-    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, optional
-        Name of function to use for aggregating cell weights of duplicate rows when
-        `entity` or `data` defines a data table, default is "sum".
-        If None, duplicate rows will be dropped without aggregating cell weights.
-        Effectively ignored if `entity` defines a system of sets
-    properties : dict of dicts
-        Nested dict of ``{item label: dict of {property name: property value}}``.
-        User-specified properties to be assigned to individual items in the data,
-        i.e., cell entries in a data table; sets or set elements in a system of sets
-    cell_properties : dict of dicts of dicts
-        User-specified properties to be assigned to cells of the incidence matrix,
-        i.e., rows in a data table; pairs of (set, element of set) in a system of sets.
+        Whether to preserve any existing cell weights;
+        ignored if `entity` is not an ``Entity``.
+    cell_properties : str, list of str, pandas.DataFrame, or doubly-nested dict, optional
+        User-specified properties to be assigned to cells of the incidence matrix, i.e.,
+        rows in a data table; pairs of (set, element of set) in a system of sets.
+        See Notes for detailed explanation.
         Ignored if underlying data is 1-dimensional (set).
-        If Hashable and `entity` is an :class:`Entity` or ``DataFrame``, name of a
-        column in the data table containing entries of the form
-        ``{cell property name: cell property value}``.
-        If ``DataFrame``, each row gives
-        ``[level1 item, level2 item, {cell property name: cell property value}]``
-        (order of columns does not matter; column names for `level1` and `level2`
-        must be the same as in :attr:`dataframe`).
         If doubly-nested dict,
         ``{level1 item: {level2 item: {cell property name: cell property value}}}``.
+    cell_props_col : str, default='cell_properties'
+        Column name for miscellaneous cell properties; see Notes for explanation.
+    kwargs
+        Keyword arguments passed to the ``Entity`` constructor, e.g., `static`,
+        `uid`, `aggregateby`, `properties`, etc. See :class:`Entity` for documentation
+        of these parameters.
+
+    Notes
+    -----
+    A **cell property** is a named attribute assigned jointly to a set and one of its
+    elements, i.e, a cell of the incidence matrix.
+
+    When an ``Entity`` or ``DataFrame`` is passed to the `entity` parameter of the
+    constructor, it should represent a data table:
+
+    +--------------+--------------+--------------+-------+--------------+
+    | Column_1     | Column_2     | Column_3     | [...] | Column_N     |
+    +==============+==============+==============+=======+==============+
+    | level 1 item | level 2 item | level 3 item | ...   | level N item |
+    +--------------+--------------+--------------+-------+--------------+
+    | ...          | ...          | ...          | ...   | ...          |
+    +--------------+--------------+--------------+-------+--------------+
+
+    Assuming the default values for parameters `level1`, `level2`, the data table will
+    be restricted to the set system defined by Column 1 and Column 2.
+    Since each row of the data table represents an incidence or cell, values from other
+    columns may contain data that should be converted to cell properties.
+
+    By passing a **column name or list of column names** as `cell_properties`, each
+    given column will be preserved in the :attr:`cell_properties` as an explicit cell
+    property type. An additional column in :attr:`cell_properties` will be created to
+    store a ``dict`` of miscellaneous cell properties, which will store cell properties
+    of types that have not been explicitly defined and do not have a dedicated column
+    (which may be assigned after construction). The name of the miscellaneous column is
+    determined by `cell_props_col`.
+
+    You can also pass a **pre-constructed table** to `cell_properties` as a
+    ``DataFrame``:
+
+    +----------+----------+----------------------------+-------+-----------------------+
+    | Column_1 | Column_2 | [explicit cell prop. type] | [...] | misc. cell properties |
+    +==========+==========+============================+=======+=======================+
+    | level 1  | level 2  | cell property value        | ...   | {cell property name:  |
+    | item     | item     |                            |       | cell property value}  |
+    +----------+----------+----------------------------+-------+-----------------------+
+    | ...      | ...      | ...                        | ...   | ...                   |
+    +----------+----------+----------------------------+-------+-----------------------+
+
+    Column 1 and Column 2 must have the same names as the corresponding columns in the
+    `entity` data table, and `cell_props_col` can be used to specify the name of the
+    column to be used for miscellaneous cell properties. If no column by that name is
+    found, a new column will be created and populated with empty ``dicts``. All other
+    columns will be considered explicit cell property types. The order of the columns
+    does not matter.
+
+    Both of these methods assume that there are no row duplicates in the tables passed
+    to `entity` and/or `cell_properties`; if duplicates are found, all but the first
+    occurrence will be dropped.
+
     """
 
     def __init__(
         self,
         entity: Optional[
-            Entity | pd.DataFrame | dict[Iterable] | list[Iterable]
+            Entity | pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
         ] = None,
         data: Optional[np.ndarray] = None,
-        static: bool = True,
-        labels: Optional[OrderedDict[str, list[str]]] = None,
-        uid: Optional[Hashable] = None,
-        level1: int = 0,
-        level2: int = 1,
-        weights: Optional[Sequence | Hashable] = None,
+        labels: Optional[OrderedDict[T, Sequence[T]]] = None,
+        level1: str | int = 0,
+        level2: str | int = 1,
+        weights: Optional[Sequence[float] | str] = None,
         keep_weights: bool = True,
-        aggregateby: str = "sum",
-        properties: Optional[dict[str, dict[str, Any]]] = None,
         cell_properties: Optional[
-            Hashable | pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
+            str | Sequence[str] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
+        cell_props_col: str = "cell_properties",
+        **kwargs,
     ):
+        self._cell_props_col = cell_props_col
+
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
         if isinstance(entity, Entity):
@@ -113,19 +155,42 @@ class EntitySet(Entity):
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
             # metadata columns are not considered levels of data,
             # remove them before indexing by level
-            meta_cols = [
-                col
-                for col in (weights, cell_properties)
-                if isinstance(col, Hashable) and col in entity
-            ]
-            columns = entity.columns.drop(meta_cols)[[level1, level2]].to_list()
+            if isinstance(cell_properties, str):
+                cell_properties = [cell_properties]
+
+            prop_cols = []
+            if isinstance(cell_properties, Sequence):
+                for col in cell_properties:
+                    try:
+                        if col in entity:
+                            prop_cols.append(col)
+                    except TypeError:
+                        continue
+
+            try:
+                weight_col = [weights] if weights in entity else []
+            except TypeError:
+                weight_col = []
+
+            meta_cols = prop_cols + weight_col
+
+            # if both levels are column names, no need to index by level
+            if isinstance(level1, str) and isinstance(level2, str):
+                columns = [level1, level2]
+            # if one or both of the levels are given by index, get column name
+            else:
+                all_columns = entity.columns.drop(meta_cols)
+                columns = [
+                    all_columns[lev] if isinstance(lev, int) else lev
+                    for lev in (level1, level2)
+                ]
 
             # if there is a column for cell properties, convert to separate DataFrame
-            if cell_properties in meta_cols:
-                cell_properties = entity[[*columns, cell_properties]]
+            if prop_cols:
+                cell_properties = entity[[*columns, *prop_cols]]
+                self._cell_props_col = prop_cols[0]
             # if there is a column for weights, preserve it
-            if weights in meta_cols:
-                columns.append(weights)
+            columns += weight_col
 
             # pass level1, level2, and weights (optional) to Entity constructor
             entity = entity[columns]
@@ -144,23 +209,19 @@ class EntitySet(Entity):
         super().__init__(
             entity=entity,
             data=data,
-            static=static,
             labels=labels,
-            uid=uid,
             weights=weights,
-            aggregateby=aggregateby,
-            properties=properties,
+            **kwargs,
         )
 
         # if underlying data is 2D (system of sets), create and assign cell properties
-        self._cell_properties = (
-            self._create_cell_properties(cell_properties)
-            if self._dimsize == 2
-            else None
-        )
+        try:
+            self.assign_cell_properties(cell_properties, replace=True)
+        except AttributeError:
+            self._cell_properties = None
 
     @property
-    def cell_properties(self) -> Optional[pd.Series]:
+    def cell_properties(self) -> Optional[pd.DataFrame]:
         """Properties assigned to cells of the incidence matrix
 
         Returns
@@ -226,7 +287,9 @@ class EntitySet(Entity):
         -------
         EntitySet
         """
-        restricted = super().restrict_to_levels(levels, weights, aggregateby, **kwargs)
+        restricted = super().restrict_to_levels(
+            levels, weights, aggregateby, cell_props_col=self._cell_props_col, **kwargs
+        )
 
         if keep_memberships:
             # use original memberships to set memberships for the new EntitySet
@@ -253,92 +316,57 @@ class EntitySet(Entity):
         --------
         restrict_to_indices
         """
-        return self.restrict_to_indices(indices, **kwargs)
-
-    def _create_cell_properties(
-        self,
-        props: Optional[pd.DataFrame | dict[str, dict[str, dict[str, Any]]]] = None,
-    ) -> pd.Series:
-        """Helper function for :meth:`assign_cell_properties`
-
-        Parameters
-        ----------
-        props : pandas.DataFrame or doubly-nested dict, optional
-            If ``DataFrame``, each row gives
-            ``[level 0 item, level 1 item, {cell property name: cell property value}]``
-            (order of columns does not matter;
-            column names for level 0 and 1 must be the same as in :attr:`dataframe`).
-            Otherwise, doubly-nested dict of
-            ``{level 0 item: {level 1 item: {cell property name: cell property value}}}``
-
-        Returns
-        -------
-        pandas.Series
-            with ``MultiIndex`` on ``(level 0 item, level 1 item)``;
-            each entry holds dict of ``{cell property name: cell property value}``
-        """
-
-        if isinstance(props, pd.DataFrame):
-            # TODO: assumes there are no row duplicates,
-            #       add checks to handle removal if there are
-            index = None
-            # set MultiIndex on (level 0, level1)
-            data = props.set_index(self._data_cols).squeeze()
-            if isinstance(data.iloc[0], str):
-                data = data.apply(literal_eval)
-
-        elif isinstance(props, dict):
-            # construct MultiIndex from all (level 0 item, level 1 item) pairs from
-            # nested keys of props dict
-            cells = [(edge, node) for edge in props for node in props[edge]]
-            index = pd.MultiIndex.from_tuples(cells, names=self._data_cols)
-            # properties for each cell
-            data = [props[edge][node] for edge, node in index]
-
-        else:
-            # hierarchical index over columns of data
-            index = pd.MultiIndex(
-                levels=([], []), codes=([], []), names=self._data_cols
-            )
-            # empty if no valid props provided
-            data = None
-
-        return pd.Series(
-            data=data, index=index, name="cell_properties", dtype="object"
-        ).sort_index()
+        restricted = self.restrict_to_indices(
+            indices, cell_props_col=self._cell_props_col, **kwargs
+        )
+        if not self.cell_properties.empty:
+            cell_properties = self.cell_properties.loc[
+                list(restricted.uidset)
+            ].reset_index()
+            restricted.assign_cell_properties(cell_properties)
+        return restricted
 
     def assign_cell_properties(
-        self, props: pd.DataFrame | dict[str, dict[str, dict[str, Any]]]
+        self,
+        props: pd.DataFrame | dict[T, dict[T, dict[Any, Any]]],
+        misc_col: Optional[str] = None,
+        replace: bool = False,
     ) -> None:
         """Assign new properties to cells of the incidence matrix and update
         :attr:`properties`
 
         Parameters
         ----------
-        props : pandas.DataFrame or doubly-nested dict
-            If ``DataFrame``, each row gives
-            ``[level 0 item, level 1 item, {cell property name: cell property value}]``
-            (order of columns does not matter;
-            column names for level 0 and 1 must be the same as in :attr:`dataframe`).
-            Otherwise, doubly-nested dict of
-            ``{level 0 item: {level 1 item: {cell property name: cell property value}}}``
+        props : pandas.DataFrame, dict of iterables, or doubly-nested dict, optional
+            See documentation of the `cell_properties` parameter in :class:`EntitySet`
+        misc_col: str, optional
+            name of column to be used for miscellaneous cell property dicts
+        replace: bool, default=False
+            If True, replace existing :attr:`cell_properties` with result;
+            otherwise update with new values from result
 
-        Notes
+        Raises
         -----
-        Not supported for :attr:`dimsize`=1
+        AttributeError
+            Not supported for :attr:`dimsize`=1
         """
-        if self._dimsize == 2:
-            # convert nested dict of cell properties to MultiIndexed Series
-            cell_properties = self._create_cell_properties(props)
+        if self._dimsize == 1:
+            raise AttributeError("cell properties are not supported for 'dimsize'=1")
 
-            # update with current cell properties if they exist
-            if not self._cell_properties.empty:
-                cell_properties = update_properties(
-                    self._cell_properties, cell_properties
-                )
+        misc_col = misc_col or self._cell_props_col
+        # convert cell properties to MultiIndexed DataFrame
+        cell_properties = create_properties(props, self._data_cols, misc_col)
 
-            # update stored cell properties
+        if misc_col != self._cell_props_col:
+            cell_properties.rename(
+                columns={misc_col: self._cell_props_col}, inplace=True
+            )
+
+        if replace:
             self._cell_properties = cell_properties
+        else:
+            self._cell_properties = self._cell_properties.combine_first(cell_properties)
+            self._cell_properties.update(cell_properties)
 
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs
@@ -376,7 +404,7 @@ class EntitySet(Entity):
         agg_kwargs = {"name": (self._data_cols[0], lambda x: f"{x.iloc[0]}: {len(x)}")}
         if return_equivalence_classes:
             # aggregation method to list all items in each equivalence class
-            agg_kwargs.update(equivalence_class=(0, list))
+            agg_kwargs.update(equivalence_class=(self._data_cols[0], list))
         # group by frozenset of level 1 items (set elements), aggregate to get names of
         # equivalence classes and (optionally) list of level 0 items (sets) in each
         collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(
@@ -393,3 +421,96 @@ class EntitySet(Entity):
             equivalence_classes = collapse.equivalence_class.to_dict()
             return new_entity, equivalence_classes
         return new_entity
+
+    def set_cell_property(
+        self, item1: T, item2: T, prop_name: Any, prop_val: Any
+    ) -> None:
+        """Set a property of a cell i.e., incidence between items of different levels
+
+        Parameters
+        ----------
+        item1 : hashable
+            name of an item in level 0
+        item2 : hashable
+            name of an item in level 1
+        prop_name : hashable
+            name of the cell property to set
+        prop_val : any
+            value of the cell property to set
+
+        See Also
+        --------
+        get_cell_property, get_cell_properties
+        """
+        if (item1, item2) in self.cell_properties.index:
+            if prop_name in self.properties:
+                self._cell_properties.loc[(item1, item2), prop_name] = pd.Series(
+                    [prop_val]
+                )
+            else:
+                self._cell_properties.loc[(item1, item2), self._cell_props_col].update(
+                    {prop_name: prop_val}
+                )
+
+    def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
+        """Get a property of a cell i.e., incidence between items of different levels
+
+        Parameters
+        ----------
+        item1 : hashable
+            name of an item in level 0
+        item2 : hashable
+            name of an item in level 1
+        prop_name : hashable
+            name of the cell property to get
+
+        Returns
+        -------
+        prop_val : any
+            value of the cell property
+
+        See Also
+        --------
+        get_cell_properties, set_cell_property
+        """
+        try:
+            cell_props = self.cell_properties.loc[(item1, item2)]
+        except KeyError:
+            raise
+            # TODO: raise informative exception
+
+        try:
+            prop_val = cell_props.loc[prop_name]
+        except KeyError:
+            prop_val = cell_props.loc[self._cell_props_col].get(prop_name)
+
+        return prop_val
+
+    def get_cell_properties(self, item1: T, item2: T) -> dict[Any, Any]:
+        """Get all properties of a cell, i.e., incidence between items of different
+        levels
+
+        Parameters
+        ----------
+        item1 : hashable
+            name of an item in level 0
+        item2 : hashable
+            name of an item in level 1
+
+        Returns
+        -------
+        dict
+            ``{named cell property: cell property value, ..., misc. cell property column
+            name: {cell property name: cell property value}}``
+
+        See Also
+        --------
+        get_cell_property, set_cell_property
+        """
+        try:
+            cell_props = self.cell_properties.loc[(item1, item2)]
+        except KeyError:
+            raise
+            # TODO: raise informative exception
+
+        return cell_props.to_dict()
