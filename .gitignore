@@ -30,5 +30,6 @@ venv*
 .coverage
 .idea
 env
+.env
 .venv*
 pylint-results.txt
