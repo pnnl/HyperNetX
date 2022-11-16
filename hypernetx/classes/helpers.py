@@ -45,10 +45,7 @@ class AttrList(UserList):
         any
             attribute value; None if not found
         """
-        try:
-            return self._entity.properties.loc[self._key, attr]
-        except KeyError:
-            return None
+        return self._entity.get_property(self._key[1], attr, self._key[0])
 
     def __setattr__(self, attr: str, val: Any) -> None:
         """Set attribute value in properties of :attr:`entity`
