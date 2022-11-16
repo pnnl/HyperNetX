@@ -1369,9 +1369,14 @@ class Entity:
         if prop_name in self.properties:
             self._properties.loc[item_key, prop_name] = pd.Series([prop_val])
         else:
-            self._properties.loc[item_key, self._props_col].update(
-                {prop_name: prop_val}
-            )
+            try:
+                self._properties.loc[item_key, self._props_col].update(
+                    {prop_name: prop_val}
+                )
+            except KeyError:
+                self._properties.loc[item_key, :] = {
+                    self._props_col: {prop_name: prop_val}
+                }
 
     def get_property(self, item: T, prop_name: Any, level: Optional[int] = None) -> Any:
         """Get a property of an item
