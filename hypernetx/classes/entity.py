@@ -148,7 +148,7 @@ class Entity:
         elif isinstance(entity, (dict, list)):
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
-            self._dataframe = pd.DataFrame({0: entity.index, 1: entity.values})
+            self._dataframe = pd.DataFrame({0: entity.index.to_list(), 1: entity.values})
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
         # ndarray in the state dict
