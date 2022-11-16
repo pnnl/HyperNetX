@@ -29,7 +29,7 @@ class Hypergraph:
     from them. Static hypergraphs require that all of the nodes and edges
     be known at creation. A hypergraph is dynamic by default.
 
-    *Dynamic hypergraphs* require the user to keep track of its objects,
+    *Dynamic hypergraphs* require the user to keep track of its objects
     by using a unique names for each node and edge. This allows for multi-edge
     graphs and inseperable nodes.
 
@@ -156,7 +156,7 @@ class Hypergraph:
 
                 self.nwhy = True
 
-            except Exception:
+            except ImportError:
                 self.nwhy = False
                 print("NWHypergraph is not available. Will continue with static=True.")
                 use_nwhy = False

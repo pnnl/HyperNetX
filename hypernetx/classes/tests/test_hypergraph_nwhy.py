@@ -1,14 +1,10 @@
-import pytest
-import numpy as np
-import networkx as nx
 from hypernetx import Hypergraph, EntitySet
-from hypernetx import HyperNetXError
 
 try:
     import nwhy
 
     nwhy_available = True
-except:
+except ImportError:
     nwhy_available = False
 
 

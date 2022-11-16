@@ -168,6 +168,7 @@ def create_properties(
         index = pd.MultiIndex.from_tuples(item_levels, names=index_cols)
     # empty MultiIndex if props is None or other unexpected type
     except TypeError:
+        print(f"\nindex_cols!!!!: {index_cols}")
         index = pd.MultiIndex(levels=([], []), codes=([], []), names=index_cols)
 
     # get inner data from doubly-nested dict of {level: {item: {prop: val}}}

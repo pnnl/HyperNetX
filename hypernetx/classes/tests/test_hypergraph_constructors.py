@@ -123,3 +123,18 @@ def test_from_dataframe_with_transforms_and_fillna(dataframe):
     assert "B" in h.edges["b"]
     assert "C" not in h.edges["c"]
     assert "C" in h.edges["a"]
+
+
+def test_empty_instance():
+    h = Hypergraph()
+    assert h.nodes == {}
+    assert h.edges == {}
+
+
+def test_from_dict_of_iterables():
+    H = Hypergraph({"a": [1, 2, 3], "b": [4, 5, 6]})
+    print(H.nodes)
+    # assert H.nodes == EntitySet(None, [1, 2, 3, 4, 5, 6], [])
+
+    print(H.edges)
+    # assert H.edges == EntitySet(None, ['b', 'a'], [])
