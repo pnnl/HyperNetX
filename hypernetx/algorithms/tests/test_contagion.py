@@ -1,39 +1,45 @@
 import numpy as np
-import pytest
-import warnings
-import hypernetx.algorithms.contagion as contagion
+from hypernetx.algorithms.contagion import (
+    Gillespie_SIR,
+    Gillespie_SIS,
+    discrete_SIR,
+    discrete_SIS,
+    majority_vote,
+    collective_contagion,
+    individual_contagion,
+    threshold,
+)
 import hypernetx as hnx
-import sys
 import random
 
 # Test the contagion functions
 def test_collective_contagion():
     status = {0: "S", 1: "I", 2: "I", 3: "S", 4: "R"}
-    assert contagion.collective_contagion(0, status, (0, 1, 2)) == True
-    assert contagion.collective_contagion(1, status, (0, 1, 2)) == False
-    assert contagion.collective_contagion(3, status, (0, 1, 2)) == False
+    assert collective_contagion(0, status, (0, 1, 2)) == True
+    assert collective_contagion(1, status, (0, 1, 2)) == False
+    assert collective_contagion(3, status, (0, 1, 2)) == False
 
 
 def test_individual_contagion():
     status = {0: "S", 1: "I", 2: "I", 3: "S", 4: "R"}
-    assert contagion.individual_contagion(0, status, (0, 1, 3)) == True
-    assert contagion.individual_contagion(1, status, (0, 1, 2)) == False
-    assert contagion.individual_contagion(3, status, (0, 3, 4)) == False
+    assert individual_contagion(0, status, (0, 1, 3)) == True
+    assert individual_contagion(1, status, (0, 1, 2)) == False
+    assert individual_contagion(3, status, (0, 3, 4)) == False
 
 
 def test_threshold():
     status = {0: "S", 1: "I", 2: "I", 3: "S", 4: "R"}
-    assert contagion.threshold(0, status, (0, 2, 3, 4), tau=0.2) == True
-    assert contagion.threshold(0, status, (0, 2, 3, 4), tau=0.5) == False
-    assert contagion.threshold(1, status, (1, 2, 3), tau=1) == False
+    assert threshold(0, status, (0, 2, 3, 4), tau=0.2) == True
+    assert threshold(0, status, (0, 2, 3, 4), tau=0.5) == False
+    assert threshold(1, status, (1, 2, 3), tau=1) == False
 
 
 def test_majority_vote():
     status = {0: "S", 1: "I", 2: "I", 3: "S", 4: "R"}
-    assert contagion.majority_vote(0, status, (0, 1, 2)) == True
-    assert contagion.majority_vote(0, status, (0, 1, 2, 3)) == True
-    assert contagion.majority_vote(1, status, (0, 1, 2)) == False
-    assert contagion.majority_vote(3, status, (0, 1, 2)) == False
+    assert majority_vote(0, status, (0, 1, 2)) == True
+    assert majority_vote(0, status, (0, 1, 2, 3)) == True
+    assert majority_vote(1, status, (0, 1, 2)) == False
+    assert majority_vote(3, status, (0, 1, 2)) == False
 
 
 # Test the epidemic simulations
@@ -47,9 +53,7 @@ def test_discrete_SIR():
     gamma = 0.1
     tmax = 100
     dt = 0.1
-    t, S, I, R = contagion.discrete_SIR(
-        H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt
-    )
+    t, S, I, R = discrete_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     assert max(t) < tmax + dt
     assert t[1] - t[0] == dt
     # checks population conservation over all time
@@ -66,7 +70,7 @@ def test_discrete_SIS():
     gamma = 0.1
     tmax = 100
     dt = 0.1
-    t, S, I = contagion.discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
+    t, S, I = discrete_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax, dt=dt)
     assert max(t) < tmax + dt
     assert t[1] - t[0] == dt
     # checks population conservation over all time
@@ -82,7 +86,7 @@ def test_Gillespie_SIR():
     tau = {2: 0.1, 3: 0.1}
     gamma = 0.1
     tmax = 100
-    t, S, I, R = contagion.Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    t, S, I, R = Gillespie_SIR(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     assert max(t) < tmax
     # checks population conservation over all time
     assert np.array_equal(S + I + R, n * np.ones(len(t))) == True
@@ -97,7 +101,7 @@ def test_Gillespie_SIS():
     tau = {2: 0.1, 3: 0.1}
     gamma = 0.1
     tmax = 100
-    t, S, I = contagion.Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
+    t, S, I = Gillespie_SIS(H, tau, gamma, rho=0.1, tmin=0, tmax=tmax)
     assert max(t) < tmax
     # checks population conservation over all time
     assert np.array_equal(S + I, n * np.ones(len(t))) == True
