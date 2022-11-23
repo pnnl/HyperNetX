@@ -26,8 +26,8 @@ from hypernetx.algorithms.s_centrality_measures import (
     s_closeness_centrality,
     s_eccentricity,
 )
-from hypernetx.algorithms.contagion.animation import contagion_animation
-from hypernetx.algorithms.contagion.epidemics import (
+from hypernetx.algorithms.contagion import (
+    contagion_animation,
     collective_contagion,
     individual_contagion,
     threshold,
