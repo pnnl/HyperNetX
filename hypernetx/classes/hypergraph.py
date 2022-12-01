@@ -162,8 +162,8 @@ class Hypergraph:
         self._static = static
 
         if setsystem is None:
-            self._edges = EntitySet()
-            self._nodes = EntitySet()
+            self._edges = EntitySet(data=np.empty((0, 2), dtype=int))
+            self._nodes = EntitySet(data=np.empty((0, 1), dtype=int))
         else:
             try:
                 kwargs.update(
