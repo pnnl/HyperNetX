@@ -168,13 +168,8 @@ class Entity:
                     )
 
         # create an empty Entity
-        # TODO: clean this up to be less hacky?
         else:
             self._dataframe = pd.DataFrame()
-            self._data_cols = []
-            self._cell_weight_col = None
-            self._dimsize = 0
-            return
 
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
@@ -382,6 +377,8 @@ class Entity:
         children : Labels of all items in level 1 (second column)
         uidset_by_column : Same functionality, takes the column name instead of level index
         """
+        if self.is_empty(level):
+            return {}
         col = self._data_cols[level]
         return self.uidset_by_column(col)
 
@@ -437,7 +434,7 @@ class Entity:
             system of sets representation of any two levels (columns); specified by level index or column name
 
         """
-        if self._dimsize == 1:
+        if self._dimsize < 2:
             return {k: AttrList(entity=self, key=(0, k)) for k in self.uidset}
 
         return self.elements_by_level(0, 1)
