@@ -337,3 +337,10 @@ def test_dataframe(lesmis):
     h = lesmis.hypergraph
     df = h.dataframe()
     assert np.allclose(np.array(np.sum(df)), np.array([10, 9, 8, 4, 8, 3, 12, 6]))
+
+
+def test_construct_empty_hypergraph():
+    h = Hypergraph()
+    assert h.shape == (0, 0)
+    assert h.edges.is_empty()
+    assert h.nodes.is_empty()

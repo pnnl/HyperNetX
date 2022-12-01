@@ -227,7 +227,7 @@ class EntitySet(Entity):
         Returns
         -------
         pandas.Series, optional
-            Returns None if :attr:`dimsize`=1
+            Returns None if :attr:`dimsize` < 2
         """
         return self._cell_properties
 
@@ -350,8 +350,8 @@ class EntitySet(Entity):
         AttributeError
             Not supported for :attr:`dimsize`=1
         """
-        if self._dimsize == 1:
-            raise AttributeError("cell properties are not supported for 'dimsize'=1")
+        if self.dimsize < 2:
+            raise AttributeError(f"cell properties are not supported for 'dimsize'={self.dimsize}")
 
         misc_col = misc_col or self._cell_props_col
         # convert cell properties to MultiIndexed DataFrame
