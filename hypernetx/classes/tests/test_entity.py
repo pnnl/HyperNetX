@@ -122,3 +122,18 @@ def test_Entity_construct_from_entity(seven_by_six):
     sbs = seven_by_six
     ent = Entity(entity=sbs.edgedict)
     assert len(ent.elements) == 6
+
+
+def test_construct_empty_entity():
+    ent = Entity()
+    assert ent.empty
+    assert ent.is_empty()
+    assert len(ent.elements) == 0
+    assert ent.dimsize == 0
+
+
+def test_construct_empty_entityset():
+    ent = EntitySet()
+    assert ent.empty
+    assert len(ent.elements) == 0
+    assert ent.dimsize == 0

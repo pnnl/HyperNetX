@@ -45,6 +45,10 @@ class AttrList(UserList):
         any
             attribute value; None if not found
         """
+        if attr == "uidset":
+            return frozenset(self.data)
+        if attr in ["memberships", "elements"]:
+            return self._entity.__getattribute__(attr).get(self._key[1])
         return self._entity.get_property(self._key[1], attr, self._key[0])
 
     def __setattr__(self, attr: str, val: Any) -> None:
