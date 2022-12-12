@@ -2,20 +2,20 @@
 # All rights reserved.
 from __future__ import annotations
 
-import warnings
 import pickle
+import warnings
+from collections import OrderedDict
 from typing import Optional, Any
 
 import networkx as nx
-from networkx.algorithms import bipartite
 import numpy as np
 import pandas as pd
+from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
-from collections import OrderedDict
+
 from hypernetx.classes import Entity, EntitySet
 from hypernetx.exception import HyperNetXError, NWHY_WARNING
 from hypernetx.utils.decorators import warn_nwhy
-
 
 __all__ = ["Hypergraph"]
 
@@ -465,11 +465,12 @@ class Hypergraph:
         ----------
         fpath : str, optional
         """
-        if fpath is None:
-            fpath = self.filepath or "current_state.p"
-        pickle.dump([self.state_dict, self.edges.labels], open(fpath, "wb"))
+        fpath = fpath or self.filepath or "current_state.p"
+        with open(fpath, "wb") as f:
+            pickle.dump([self.state_dict, self.edges.labels], f)
 
     @classmethod
+    @warn_nwhy
     def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True):
         """
         Recover a static hypergraph pickled using save_state.
@@ -485,7 +486,8 @@ class Hypergraph:
         H : Hypergraph
             static hypergraph with state dictionary prefilled
         """
-        temp, labels = pickle.load(open(fpath, "rb"))
+        with open(fpath, "rb") as f:
+            temp, labels = pickle.load(f)
         # need to save counts as well
         recovered_data = np.array(temp["data"])[[0, 1]].T
         recovered_counts = np.array(temp["data"])[
@@ -493,7 +495,7 @@ class Hypergraph:
         ]  # ammend this to store cell weights
         E = EntitySet(data=recovered_data, labels=labels)
         E.properties["counts"] = recovered_counts
-        H = Hypergraph(E, use_nwhy=use_nwhy)
+        H = Hypergraph(E)
         H.state_dict.update(temp)
         if newfpath == "same":
             newfpath = fpath
@@ -578,9 +580,7 @@ class Hypergraph:
             return self
 
         E = EntitySet(self.edges, static=True)
-        return Hypergraph(
-            E, filepath=filepath, name=name, static=True
-        )
+        return Hypergraph(E, filepath=filepath, name=name, static=True)
 
     def remove_static(self, name=None):
         """
@@ -697,7 +697,7 @@ class Hypergraph:
         size : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len(set(nodeset).intersection(set(self.edges[edge])))
 
         return len(self.edges[edge])
@@ -716,7 +716,7 @@ class Hypergraph:
         number_of_nodes : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len([n for n in self.nodes if n in nodeset])
 
         return len(self.nodes)
@@ -1941,10 +1941,12 @@ class Hypergraph:
         src = self.get_id(source, edges=False)
         tgt = self.get_id(target, edges=False)
         try:
-            return nx.shortest_path_length(g, src, tgt)
-        except:
+            dist = nx.shortest_path_length(g, src, tgt)
+        except nx.NetworkXNoPath:
             warnings.warn(f"No {s}-path between {source} and {target}")
-            return np.inf
+            dist = np.inf
+
+        return dist
 
     def edge_distance(self, source, target, s=1):
         """XX TODO: still need to return path and translate into user defined
@@ -1995,18 +1997,12 @@ class Hypergraph:
         src = self.get_id(source, edges=True)
         tgt = self.get_id(target, edges=True)
         try:
-            if self.nwhy:
-                d = g.s_distance(src, tgt)
-                if d == -1:
-                    warnings.warn(f"No {s}-path between {source} and {target}")
-                    return np.inf
-                else:
-                    return d
-            else:
-                return nx.shortest_path_length(g, src, tgt)
-        except:
+            edge_dist = nx.shortest_path_length(g, src, tgt)
+        except nx.NetworkXNoPath:
             warnings.warn(f"No {s}-path between {source} and {target}")
-            return np.inf
+            edge_dist = np.inf
+
+        return edge_dist
 
     def dataframe(self, sort_rows=False, sort_columns=False, cell_weights=True):
         """
@@ -2040,6 +2036,7 @@ class Hypergraph:
         return df
 
     @classmethod
+    @warn_nwhy
     def from_bipartite(
         cls, B, set_names=("edges", "nodes"), name=None, static=False, use_nwhy=False
     ):
@@ -2106,9 +2103,10 @@ class Hypergraph:
         df = pd.DataFrame(elist, columns=set_names)
         E = EntitySet(entity=df)
         name = name or "_"
-        return Hypergraph(E, name=name, use_nwhy=use_nwhy, static=static)
+        return Hypergraph(E, name=name, static=static)
 
     @classmethod
+    @warn_nwhy
     def from_numpy_array(
         cls,
         M,
@@ -2192,9 +2190,10 @@ class Hypergraph:
         data = np.stack(M.T.nonzero()).T
         labels = OrderedDict([(edge_label, edgenames), (node_label, nodenames)])
         E = EntitySet(data=data, labels=labels)
-        return Hypergraph(E, name=name, use_nwhy=use_nwhy)
+        return Hypergraph(E, name=name)
 
     @classmethod
+    @warn_nwhy
     def from_dataframe(
         cls,
         df,
@@ -2310,7 +2309,6 @@ class Hypergraph:
             "node_label": node_label,
             "edge_label": edge_label,
             "static": static,
-            "use_nwhy": use_nwhy,
         }
         return cls.from_numpy_array(mat, **params)
 
