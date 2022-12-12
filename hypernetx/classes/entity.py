@@ -94,7 +94,7 @@ class Entity:
     +-------+---------+--------------------------+-------+------------------+
 
     The names of the Level and ID columns must be specified by `level_col` and `id_col`.
-    `props_col` can be used to specify the nme of the column to be used for
+    `props_col` can be used to specify the name of the column to be used for
     miscellaneous properties; if no column by that name is found, a new column will be
     created and populated with empty ``dicts``. All other columns will be considered
     explicit property types. The order of the columns does not matter.
