@@ -438,7 +438,6 @@ class Hypergraph:
 
         return d[key][s]
 
-    @warn_nwhy
     def set_state(self, **kwargs):
         """
         Allow state_dict updates from outside of class. Use with caution.

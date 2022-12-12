@@ -5,9 +5,11 @@
 Base classes for HyperNetX exceptions
 """
 
-NWHY_WARNING = """As of HyperNetX v2.0.0, NWHy C++ backend is no longer supported. \
-Public references to the deprecated NWHy add-on will be removed from the Hypergraph \
-API in a future release."""
+NWHY_WARNING = (
+    "As of HyperNetX v2.0.0, NWHy C++ backend is no longer supported. "
+    "Public references to the deprecated NWHy add-on will be removed from the "
+    "Hypergraph API in a future release."
+)
 
 
 class HyperNetXException(Exception):

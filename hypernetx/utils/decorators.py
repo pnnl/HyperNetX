@@ -1,13 +1,10 @@
-import sys
 import warnings
-import hypernetx as hnx
-from decorator import decorator
-from hypernetx.exception import (
-    HyperNetXError,
-    HyperNetXNotImplementedError,
-    NWHY_WARNING,
-)
+from functools import wraps
 
+from decorator import decorator
+
+import hypernetx as hnx
+from hypernetx.exception import NWHY_WARNING
 
 __all__ = [
     "not_implemented_for",
@@ -68,8 +65,7 @@ def not_implemented_for(*object_types):
     return _not_implemented_for
 
 
-@decorator
-def warn_nwhy(func, *args, **kwargs):
+def warn_nwhy(func):
     """Decorator for methods that allow the deprecated `use_nwhy` kwarg
 
     As of HyperNetX v2.0.0, NWHy C++ backend is no longer supported.
@@ -81,10 +77,15 @@ def warn_nwhy(func, *args, **kwargs):
     FutureWarning
         If kwargs contain ``use_nwhy=True``
     """
-    if kwargs.get("use_nwhy"):
-        kwargs.update(use_nwhy=False)
-        warnings.simplefilter("always", FutureWarning)
-        warnings.warn(NWHY_WARNING, FutureWarning, stacklevel=2)
-        warnings.simplefilter("default", FutureWarning)
 
-    return func(*args, **kwargs)
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if kwargs.get("use_nwhy"):
+            kwargs.update(use_nwhy=False)
+            warnings.simplefilter("always", FutureWarning)
+            warnings.warn(NWHY_WARNING, FutureWarning, stacklevel=2)
+            warnings.simplefilter("default", FutureWarning)
+
+        return func(*args, **kwargs)
+
+    return wrapper

@@ -132,9 +132,20 @@ class Dataframe:
         self.df = pd.read_csv(fname, index_col=0)
 
 
+class CompleteBipartite:
+    def __init__(self, n1, n2):
+        self.g = nx.complete_bipartite_graph(n1, n2)
+        self.left, self.right = nx.bipartite.sets(self.g)
+
+
 @pytest.fixture
 def seven_by_six():
     return SevenBySix()
+
+
+@pytest.fixture
+def sbs_edgedict():
+    return SevenBySix().edgedict
 
 
 @pytest.fixture
@@ -189,10 +200,30 @@ def bipartite_example():
 
 
 @pytest.fixture
+def complete_bipartite_example():
+    return CompleteBipartite(2, 3).g
+
+
+@pytest.fixture
 def dataframe():
     return Dataframe()
 
 
 @pytest.fixture
+def dataframe_example():
+    M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
+    index = ["A", "B", "C"]
+    columns = ["a", "b", "c", "d"]
+    return pd.DataFrame(M, index=index, columns=columns)
+
+
+@pytest.fixture
 def harry_potter():
     return hnx.HarryPotter()
+
+
+@pytest.fixture
+def array_example():
+    return np.array(
+        [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+    )
