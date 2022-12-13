@@ -1,47 +1,35 @@
-import os
-
 import pytest
+import os
+import itertools as it
 import networkx as nx
+import hypernetx as hnx
 import pandas as pd
 import numpy as np
-
-import hypernetx as hnx
-
-from dataclasses import dataclass, field
 from collections import OrderedDict
+from hypernetx.utils.toys import HarryPotter
+
+# from harrypotter import HarryPotter
 
 
-@dataclass
 class SevenBySix:
-    nodes_t: tuple  # exactly size 7
-    edges_t: tuple  # exactly size 6
-    edges: list = field(init=False)
-    nodes: set = field(init=False)
-    edgedict: OrderedDict = field(init=False)
-    arr: np.array = field(init=False)
-    labels: OrderedDict = field(init=False)
-    data: np.array = field(init=False)
+    """Example hypergraph with 7 nodes and 6 edges."""
 
-    def __post_init__(self):
-        self.edges = [
-            {self.nodes_t[0], self.nodes_t[1], self.nodes_t[3]},
-            {self.nodes_t[0], self.nodes_t[2]},
-            {self.nodes_t[0], self.nodes_t[3], self.nodes_t[5], self.nodes_t[6]},
-            {self.nodes_t[1], self.nodes_t[2]},
-            {self.nodes_t[4], self.nodes_t[5]},
-            {self.nodes_t[3], self.nodes_t[5]},
-        ]
-        self.nodes = set(self.nodes_t)
+    def __init__(self, static=False):
+        a, c, e, k, t1, t2, v = nd = ("A", "C", "E", "K", "T1", "T2", "V")
+        i, l, o, p, r, s = ("I", "L", "O", "P", "R", "S")
+        self.edges = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
+        self.nodes = set(nd)
         self.edgedict = OrderedDict(
             [
-                (self.edges_t[3], self.edges[0]),
-                (self.edges_t[4], self.edges[1]),
-                (self.edges_t[5], self.edges[2]),
-                (self.edges_t[1], self.edges[3]),
-                (self.edges_t[2], self.edges[4]),
-                (self.edges_t[0], self.edges[5]),
+                (p, {a, c, k}),
+                (r, {a, e}),
+                (s, {a, k, t2, v}),
+                (l, {c, e}),
+                (o, {t1, t2}),
+                (i, {k, t2}),
             ]
         )
+
         self.arr = np.array(
             [
                 [0, 0, 0, 1, 0, 1, 0],
@@ -54,20 +42,11 @@ class SevenBySix:
         )
         self.labels = OrderedDict(
             [
-                (
-                    "edges",
-                    [
-                        self.edges_t[3],
-                        self.edges_t[4],
-                        self.edges_t[5],
-                        self.edges_t[1],
-                        self.edges_t[2],
-                        self.edges_t[0],
-                    ],
-                ),
-                ("nodes", self.nodes_t),
+                ("edges", ["P", "R", "S", "L", "O", "I"]),
+                ("nodes", ["A", "C", "E", "K", "T1", "T2", "V"]),
             ]
         )
+
         self.data = np.array(
             [
                 [0, 0],
@@ -153,11 +132,15 @@ class Dataframe:
         self.df = pd.read_csv(fname, index_col=0)
 
 
+class CompleteBipartite:
+    def __init__(self, n1, n2):
+        self.g = nx.complete_bipartite_graph(n1, n2)
+        self.left, self.right = nx.bipartite.sets(self.g)
+
+
 @pytest.fixture
 def seven_by_six():
-    return SevenBySix(
-        ("A", "C", "E", "K", "T1", "T2", "V"), ("I", "L", "O", "P", "R", "S")
-    )
+    return SevenBySix()
 
 
 @pytest.fixture
@@ -166,13 +149,30 @@ def ent7x6(seven_by_six):
 
 
 @pytest.fixture
-def sbs_hypergraph(seven_by_six):
-    return hnx.Hypergraph(seven_by_six.edgedict, name="sbsh")
+def sbs_edgedict():
+    return SevenBySix().edgedict
 
 
 @pytest.fixture
 def triloop():
     return TriLoop()
+
+
+@pytest.fixture
+def sbs_hypergraph():
+    sbs = SevenBySix()
+    return hnx.Hypergraph(sbs.edgedict, name="sbsh")
+
+
+@pytest.fixture
+def sbs_graph():
+    sbs = SevenBySix()
+    edges = set()
+    for _, e in sbs.edgedict.items():
+        edges.update(it.combinations(e, 2))
+    G = nx.Graph(name="sbsg")
+    G.add_edges_from(edges)
+    return G
 
 
 @pytest.fixture
@@ -205,13 +205,33 @@ def bipartite_example():
 
 
 @pytest.fixture
+def complete_bipartite_example():
+    return CompleteBipartite(2, 3).g
+
+
+@pytest.fixture
 def dataframe():
     return Dataframe()
 
 
 @pytest.fixture
+def dataframe_example():
+    M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
+    index = ["A", "B", "C"]
+    columns = ["a", "b", "c", "d"]
+    return pd.DataFrame(M, index=index, columns=columns)
+
+
+@pytest.fixture
 def harry_potter():
     return hnx.HarryPotter()
+
+
+@pytest.fixture
+def array_example():
+    return np.array(
+        [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+    )
 
 
 @pytest.fixture
