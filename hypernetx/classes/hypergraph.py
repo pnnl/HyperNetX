@@ -2,20 +2,20 @@
 # All rights reserved.
 from __future__ import annotations
 
-import warnings
 import pickle
+import warnings
+from collections import OrderedDict
 from typing import Optional, Any
 
 import networkx as nx
-from networkx.algorithms import bipartite
 import numpy as np
 import pandas as pd
+from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
-from collections import OrderedDict
+
 from hypernetx.classes import Entity, EntitySet
 from hypernetx.exception import HyperNetXError, NWHY_WARNING
 from hypernetx.utils.decorators import warn_nwhy
-
 
 __all__ = ["Hypergraph"]
 
@@ -89,9 +89,8 @@ class Hypergraph:
         # EntitySet(_:Edges,['b', 'a'],{}))
 
     All of these constructions apply for both dynamic and static hypergraphs.
-    To create a static hypergraph set the parameter `static=True`. In addition
-    a static
-    hypergraph is automatically created if a Entity, EntitySet, or
+    To create a static hypergraph set the parameter `static=True`. In addition,
+    a static hypergraph is automatically created if a Entity, EntitySet, or
     pandas.DataFrame object is passed to the Hypergraph constructor.
 
     5. | From a pandas.DataFrame. The dataframe must have at least two columns
@@ -154,10 +153,8 @@ class Hypergraph:
         if use_nwhy:
             static = True
         self.nwhy = False
-        if not name:
-            self.name = ""
-        else:
-            self.name = name
+
+        self.name = name or ""
 
         self._static = static
 
@@ -205,8 +202,7 @@ class Hypergraph:
 
         Returns
         -------
-        EntitySet or EntitySet
-            If self.isstatic the EntitySet, otherwise EntitySet.
+        EntitySet
         """
         return self._edges
 
@@ -217,9 +213,7 @@ class Hypergraph:
 
         Returns
         -------
-        EntitySet or EntitySet
-            If self.isstatic the EntitySet, otherwise EntitySet.
-
+        EntitySet
         """
         return self._nodes
 
@@ -230,8 +224,7 @@ class Hypergraph:
 
         Returns
         -------
-        Boolean
-
+        bool
         """
         return self._static
 
@@ -401,7 +394,7 @@ class Hypergraph:
         Creates an ::term::s-linegraph for the Hypergraph.
         If edges=True (default)then the edges will be the vertices of the line
         graph. Two vertices are connected by an s-line-graph edge if the
-        corresponding hypergraphedges intersect in at least s hypergraph nodes.
+        corresponding hypergraph edges intersect in at least s hypergraph nodes.
         If edges=False, the hypergraph nodes will be the vertices of the line
         graph. Two vertices are connected if the nodes they correspond to share
         at least s incident hyper edges.
@@ -452,11 +445,12 @@ class Hypergraph:
             self.save_state(fpath=self.filepath)
 
     def update_state(self):
+        """Populate state_dict with default values"""
         temprows, tempcols = self.edges.data.T
         tempdata = np.ones(len(temprows), dtype=int)
         self.state_dict["data"] = (temprows, tempcols, tempdata)
-        self.state_dict["snodelg"] = dict()
-        self.state_dict["sedgelg"] = dict()
+        self.state_dict["snodelg"] = {}
+        self.state_dict["sedgelg"] = {}
         for sdkey in set(self.state_dict) - {"data", "snodelg", "sedgelg"}:
             self.state_dict.pop(sdkey)
 
@@ -471,13 +465,13 @@ class Hypergraph:
         ----------
         fpath : str, optional
         """
-        if fpath is None:
-            fpath = self.filepath or "current_state.p"
-        pickle.dump([self.state_dict, self.edges.labels], open(fpath, "wb"))
+        fpath = fpath or self.filepath or "current_state.p"
+        with open(fpath, "wb") as f:
+            pickle.dump([self.state_dict, self.edges.labels], f)
 
     @classmethod
     @warn_nwhy
-    def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=False):
+    def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True):
         """
         Recover a static hypergraph pickled using save_state.
 
@@ -492,7 +486,8 @@ class Hypergraph:
         H : Hypergraph
             static hypergraph with state dictionary prefilled
         """
-        temp, labels = pickle.load(open(fpath, "rb"))
+        with open(fpath, "rb") as f:
+            temp, labels = pickle.load(f)
         # need to save counts as well
         recovered_data = np.array(temp["data"])[[0, 1]].T
         recovered_counts = np.array(temp["data"])[
@@ -578,14 +573,14 @@ class Hypergraph:
         for faster processing.
 
         """
+        if self.edges.isstatic and self.nodes.isstatic:
+            self._static = True
+
         if self.isstatic:
             return self
-        elif self.edges.isstatic and self.nodes.isstatic:
-            self._static = True
-            return self
-        else:
-            E = EntitySet(self.edges, static=True)
-            return Hypergraph(E, filepath=filepath, name=name, static=True)
+
+        E = EntitySet(self.edges, static=True)
+        return Hypergraph(E, filepath=filepath, name=name, static=True)
 
     def remove_static(self, name=None):
         """
@@ -605,8 +600,8 @@ class Hypergraph:
         """
         if not self.isstatic:
             return self
-        else:
-            return Hypergraph(self.edges.incidence_dict, name=name)
+
+        return Hypergraph(self.edges, name=name)
 
     def translate(self, idx, edges=False):
         """
@@ -679,20 +674,13 @@ class Hypergraph:
 
         """
 
-        memberships = set(self.nodes.memberships[node])
+        memberships = set()
+        for edge in self.nodes.memberships[node]:
+            size = len(self.edges[edge])
+            if size >= s and (max_size is None or size <= max_size):
+                memberships.add(edge)
 
-        if max_size is not None:
-            return len(
-                set(
-                    e
-                    for e in memberships
-                    if len(self.edges[e]) in range(s, max_size + 1)
-                )
-            )
-        elif s > 1:
-            return len(set(e for e in memberships if len(self.edges[e]) >= s))
-        else:
-            return len(memberships)
+        return len(memberships)
 
     def size(self, edge, nodeset=None):
         """
@@ -728,7 +716,7 @@ class Hypergraph:
         number_of_nodes : int
 
         """
-        if nodeset:
+        if nodeset is not None:
             return len([n for n in self.nodes if n in nodeset])
 
         return len(self.nodes)
@@ -739,7 +727,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edgeset : an interable of Entities, optional, default: None
+        edgeset : an iterable of Entities, optional, default: None
             If None, then return the number of edges in hypergraph.
 
         Returns
@@ -787,7 +775,7 @@ class Hypergraph:
         """
         if node not in self.nodes:
             print(f"Node is not in hypergraph {self.name}.")
-            return
+            return None
 
         g = self.get_linegraph(s=s, edges=False)
         ndx = self.get_id(node)
@@ -814,7 +802,7 @@ class Hypergraph:
         """
         if edge not in self.edges:
             print(f"Edge is not in hypergraph {self.name}.")
-            return
+            return None
 
         g = self.get_linegraph(s=s, edges=True)
         edx = self.get_id(edge, edges=True)
@@ -835,15 +823,16 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        if node not in self._nodes:
-            return self
-        else:
+
+        if node in self._nodes:
             for edge in self._edges.memberships[node]:
                 if node in self._edges[edge]:
                     self._edges.remove(node)
             self._nodes.remove(node)
-        if update_state:
-            self.update_state()
+
+            if update_state:
+                self.update_state()
+
         return self
 
     def remove_nodes(self, node_set):
@@ -903,20 +892,18 @@ class Hypergraph:
         """
         # This piece of code is to allow a user to pass in a dictionary
         # Of the format {'New_edge': ['Node1', 'Node2']}.
-
+        # TODO: type check to correctly handle other valid input types
         cols = list(self._edges.labels.keys())
-        edge_dict = {}
-        edge_dict[cols[0]] = list(edge.keys())[0]
-        edge_dict[cols[1]] = list(edge.values())[0]
-        edge = edge_dict
+        edge = {cols[0]: list(edge.keys())[0], cols[1]: list(edge.values())[0]}
 
-        key = list(edge.keys())[0]
+        key = edge[cols[0]]
 
         if key in self._edges.elements:
             warnings.warn("Cannot add edge. Edge already in hypergraph")
         elif key in self._nodes.elements:
             warnings.warn("Cannot add edge. Edge is already a Node")
         if len(edge) > 0:
+            # TODO: this isn't right
             self._nodes.add(edge)
             self._edges.add(edge)
 
@@ -937,8 +924,8 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-        for edge, nodes in edge_set.items():
-            self.add_edge({edge: nodes}, update_state=False)
+        for edge in edge_set:
+            self.add_edge(edge, update_state=False)
 
         self.update_state()
         return self
@@ -963,6 +950,7 @@ class Hypergraph:
 
         """
 
+        # TODO: see add_edge; suppress "Edge already in hypergraph" warning
         if edge in self._edges:
             self.add_edge({edge: [node]}, update_state)
 
@@ -988,12 +976,9 @@ class Hypergraph:
         the node is dropped from self.
 
         """
-        if edge in self._edges:
-            for node in self._edges.memberships:
-                if (
-                    len(self._edges.memberships[node]) == 1
-                    and self._edges.memberships[node][0] == edge
-                ):
+        if edge in self.edges:
+            for node in self.edges[edge]:
+                if len(self.edges.memberships[node]) == 1:
                     self.remove_node(node)
             self._edges.remove(edge)
 
@@ -1119,10 +1104,11 @@ class Hypergraph:
         """
         weights = False  # Currently default weights are not supported.
         M = self.incidence_matrix(index=index, weights=weights)
+
         if index:
             return Hypergraph._incidence_to_adjacency(M[0], s=s, weights=weights), M[1]
-        else:
-            return Hypergraph._incidence_to_adjacency(M, s=s, weights=weights)
+
+        return Hypergraph._incidence_to_adjacency(M, s=s, weights=weights)
 
     def edge_adjacency_matrix(self, index=False, s=1, weights=False):
         """
@@ -1162,10 +1148,8 @@ class Hypergraph:
                 ),
                 M[2],
             )
-        else:
-            return Hypergraph._incidence_to_adjacency(
-                M.transpose(), s=s, weights=weights
-            )
+
+        return Hypergraph._incidence_to_adjacency(M.transpose(), s=s, weights=weights)
 
     def auxiliary_matrix(self, s=1, index=False):
         """
@@ -1211,11 +1195,9 @@ class Hypergraph:
 
         """
         B = nx.Graph()
-        E = self.edges
-        V = self.nodes
-        B.add_nodes_from(E, bipartite=1)
-        B.add_nodes_from(V, bipartite=0)
-        B.add_edges_from([(v, e) for e in E for v in self.edges[e]])
+        B.add_nodes_from(self.edges, bipartite=1)
+        B.add_nodes_from(self.nodes, bipartite=0)
+        B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
         return B
 
     def dual(self, name=None):
@@ -1306,8 +1288,8 @@ class Hypergraph:
 
         if return_equivalence_classes:
             return Hypergraph(temp[0], name), temp[1]
-        else:
-            return Hypergraph(temp, name)
+
+        return Hypergraph(temp, name)
 
     def collapse_nodes(
         self,
@@ -1377,8 +1359,8 @@ class Hypergraph:
 
         if return_equivalence_classes:
             return Hypergraph(temp[0], name).dual(), temp[1]
-        else:
-            return Hypergraph(temp, name).dual()
+
+        return Hypergraph(temp, name).dual()
 
     def collapse_nodes_and_edges(
         self,
@@ -1446,9 +1428,9 @@ class Hypergraph:
             )
             ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)
             return ntemp, neq, eeq
-        else:
-            temp = self.collapse_nodes(name="temp", use_reps=None, return_counts=None)
-            return temp.collapse_edges(name=name)
+
+        temp = self.collapse_nodes(name="temp")
+        return temp.collapse_edges(name=name)
 
     def restrict_to_edges(self, edgeset, name=None):
         """
@@ -1465,8 +1447,9 @@ class Hypergraph:
         -------
         new hypergraph : Hypergraph
         """
-        E = self._edges
-        setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(edgeset))))
+
+        indices = self.edges.indices(self.edges._data_cols[0], list(edgeset))
+        setsystem = self.edges.restrict_to(sorted(indices))
         return Hypergraph(setsystem, name=name)
 
     def restrict_to_nodes(self, nodeset, name=None):
@@ -1485,9 +1468,9 @@ class Hypergraph:
         -------
         new hypergraph : Hypergraph
         """
-        E = self.edges.restrict_to_levels((1, 0))
-        setsystem = E.restrict_to(sorted(E.indices(E._data_cols[0], list(nodeset))))
-        return Hypergraph(setsystem.restrict_to_levels((1, 0)), name=name)
+        indices = self.edges.indices(self.edges._data_cols[1], list(nodeset))
+        setsystem = self.edges.restrict_to_indices(sorted(indices), level=1)
+        return Hypergraph(setsystem, name=name)
 
     def toplexes(self, name=None, collapse=False, use_reps=False, return_counts=True):
         """
@@ -1522,9 +1505,12 @@ class Hypergraph:
         # TODO: There is a better way to do this....need to refactor
         if collapse:
             if len(self.edges) > 20:  # TODO: Determine how big is too big.
-                warnings.warn(
-                    "Collapsing a hypergraph can take a long time. It may be preferable to collapse the graph first and pickle it then apply the toplex method separately."
-                )
+                msg = """
+                Collapsing a hypergraph can take a long time. It may be preferable to
+                collapse the graph first and pickle it then apply the toplex method
+                separately.
+                """
+                warnings.warn(msg)
             temp = self.collapse_edges()
         else:
             temp = self
@@ -1536,11 +1522,11 @@ class Hypergraph:
             """
             warnings.warn(msg, DeprecationWarning)
 
-        thdict = dict()
+        thdict = {}
         for e in temp.edges:
             thdict[e] = temp.edges[e]
 
-        tops = list()
+        tops = []
         for e in temp.edges:
             flag = True
             old_tops = list(tops)
@@ -1548,7 +1534,8 @@ class Hypergraph:
                 if set(thdict[e]).issubset(thdict[top]):
                     flag = False
                     break
-                elif set(thdict[top]).issubset(thdict[e]):
+
+                if set(thdict[top]).issubset(thdict[e]):
                     tops.remove(top)
             if flag:
                 tops += [e]
@@ -1600,12 +1587,12 @@ class Hypergraph:
             A list of edge uids.
         """
 
-        M, rdict, cdict = self.incidence_matrix(index=True)
+        M, _, cdict = self.incidence_matrix(index=True)
         # which axis has fewest members? if 1 then columns
         idx = np.argmax(M.shape)
         # we add down the row index if there are fewer columns
         cols = M.sum(idx)
-        singles = list()
+        singles = []
         # index along opposite axis
         for c in range(cols.shape[(idx + 1) % 2]):
             if cols[idx * c, c * ((idx + 1) % 2)] == 1:
@@ -1641,8 +1628,9 @@ class Hypergraph:
         new hypergraph : Hypergraph
 
         """
-        E = [e for e in self.edges if e not in self.singletons()]
-        return self.restrict_to_edges(E)
+        singletons = self.singletons()
+        E = [e for e in self.edges if e not in singletons]
+        return self.restrict_to_edges(E, name=name)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
@@ -1745,7 +1733,7 @@ class Hypergraph:
             s=s, edges=edges, return_singletons=return_singletons
         )
 
-    def connected_components(self, edges=False, return_singletons=True):
+    def connected_components(self, edges=False):
         """
         Same as :meth:`s_connected_components` with s=1, but nodes are returned
         by default. Return iterator.
@@ -1766,7 +1754,7 @@ class Hypergraph:
         """
         return self.s_component_subgraphs(return_singletons=return_singletons)
 
-    def components(self, edges=False, return_singletons=True):
+    def components(self, edges=False):
         """
         Same as :meth:`s_connected_components` with s=1, but nodes are returned
         by default. Return iterator.
@@ -1875,8 +1863,8 @@ class Hypergraph:
         G = nx.from_scipy_sparse_matrix(A)
         if nx.is_connected(G):
             return nx.diameter(G)
-        else:
-            raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
+
+        raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
 
     def edge_diameter(self, s=1):
         """
@@ -1909,8 +1897,8 @@ class Hypergraph:
         G = nx.from_scipy_sparse_matrix(A)
         if nx.is_connected(G):
             return nx.diameter(G)
-        else:
-            raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
+
+        raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
 
     def distance(self, source, target, s=1):
         """
@@ -1951,10 +1939,12 @@ class Hypergraph:
         src = self.get_id(source, edges=False)
         tgt = self.get_id(target, edges=False)
         try:
-            return nx.shortest_path_length(g, src, tgt)
-        except:
+            dist = nx.shortest_path_length(g, src, tgt)
+        except nx.NetworkXNoPath:
             warnings.warn(f"No {s}-path between {source} and {target}")
-            return np.inf
+            dist = np.inf
+
+        return dist
 
     def edge_distance(self, source, target, s=1):
         """XX TODO: still need to return path and translate into user defined
@@ -2005,10 +1995,12 @@ class Hypergraph:
         src = self.get_id(source, edges=True)
         tgt = self.get_id(target, edges=True)
         try:
-            return nx.shortest_path_length(g, src, tgt)
-        except:
+            edge_dist = nx.shortest_path_length(g, src, tgt)
+        except nx.NetworkXNoPath:
             warnings.warn(f"No {s}-path between {source} and {target}")
-            return np.inf
+            edge_dist = np.inf
+
+        return edge_dist
 
     def dataframe(self, sort_rows=False, sort_columns=False, cell_weights=True):
         """
@@ -2086,7 +2078,7 @@ class Hypergraph:
 
         """
         # TODO: Add filepath keyword to signatures here and with dataframe and
-        # numpy array
+        #       numpy array
         edges = []
         nodes = []
         for n, d in B.nodes(data=True):
@@ -2259,7 +2251,7 @@ class Hypergraph:
 
         See also
         --------
-        from_numpy_array())
+        from_numpy_array
 
 
         Returns
@@ -2286,7 +2278,7 @@ class Hypergraph:
 
         """
 
-        if type(df) != pd.core.frame.DataFrame:
+        if not isinstance(df, pd.DataFrame):
             raise HyperNetXError("Error: Input object must be a pandas dataframe.")
 
         if columns:
