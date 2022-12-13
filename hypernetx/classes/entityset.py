@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import warnings
-from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import Iterable, Sequence, Mapping
 from typing import Optional, Any, TypeVar, Union
@@ -351,7 +349,9 @@ class EntitySet(Entity):
             Not supported for :attr:`dimsize`=1
         """
         if self.dimsize < 2:
-            raise AttributeError(f"cell properties are not supported for 'dimsize'={self.dimsize}")
+            raise AttributeError(
+                f"cell properties are not supported for 'dimsize'={self.dimsize}"
+            )
 
         misc_col = misc_col or self._cell_props_col
         # convert cell properties to MultiIndexed DataFrame

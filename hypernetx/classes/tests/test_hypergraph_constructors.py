@@ -24,9 +24,9 @@ def test_from_bipartite():
 
 @pytest.mark.parametrize("static", [(True), (False)])
 def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(
-    seven_by_six, static
+        sbs, static
 ):
-    edgedict = OrderedDict(seven_by_six.edgedict)
+    edgedict = OrderedDict(sbs.edgedict)
 
     bipartite_graph = Hypergraph(edgedict).bipartite()
     hg_from_bipartite = Hypergraph.from_bipartite(bipartite_graph, static=static)

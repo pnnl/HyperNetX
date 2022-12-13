@@ -5,10 +5,8 @@ import networkx as nx
 import hypernetx as hnx
 import pandas as pd
 import numpy as np
-from collections import OrderedDict
-from hypernetx.utils.toys import HarryPotter
 
-# from harrypotter import HarryPotter
+from collections import OrderedDict
 
 
 class SevenBySix:
@@ -139,8 +137,13 @@ class CompleteBipartite:
 
 
 @pytest.fixture
-def seven_by_six():
+def sbs():
     return SevenBySix()
+
+
+@pytest.fixture
+def ent_sbs(sbs):
+    return hnx.Entity(data=np.asarray(sbs.data), labels=sbs.labels)
 
 
 @pytest.fixture
@@ -227,3 +230,8 @@ def array_example():
     return np.array(
         [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
     )
+
+
+@pytest.fixture
+def ent_hp(harry_potter):
+    return hnx.Entity(data=np.asarray(harry_potter.data), labels=harry_potter.labels)

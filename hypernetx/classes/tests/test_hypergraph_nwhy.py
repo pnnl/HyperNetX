@@ -6,8 +6,8 @@ from hypernetx import Hypergraph
 from hypernetx.exception import NWHY_WARNING
 
 
-def test_get_linegraph_warn_nwhy(seven_by_six):
-    H = Hypergraph(seven_by_six.edgedict)
+def test_get_linegraph_warn_nwhy(sbs):
+    H = Hypergraph(sbs.edgedict)
     lg = H.get_linegraph(s=1, use_nwhy=False)
     with pytest.warns(FutureWarning, match=re.escape(NWHY_WARNING)):
         lg_nwhy = H.get_linegraph(s=1, use_nwhy=True)
@@ -20,8 +20,8 @@ def test_recover_from_state_warn_nwhy():
             Hypergraph.recover_from_state(use_nwhy=True)
 
 
-def test_convert_to_static_warn_nwhy(seven_by_six):
-    H = Hypergraph(seven_by_six.edgedict, static=False)
+def test_convert_to_static_warn_nwhy(sbs):
+    H = Hypergraph(sbs.edgedict, static=False)
     H_static = H.convert_to_static(use_nwhy=False)
     with pytest.warns(FutureWarning, match=re.escape(NWHY_WARNING)):
         H_static_nwhy = H.convert_to_static(use_nwhy=True)

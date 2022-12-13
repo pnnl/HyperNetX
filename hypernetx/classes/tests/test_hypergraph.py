@@ -4,8 +4,7 @@ from hypernetx.classes.entityset import EntitySet
 from hypernetx.classes.hypergraph import Hypergraph
 
 
-def test_hypergraph_from_iterable_of_sets(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_iterable_of_sets(sbs):
     H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
@@ -14,8 +13,7 @@ def test_hypergraph_from_iterable_of_sets(seven_by_six):
     assert H.number_of_nodes() == 7
 
 
-def test_hypergraph_from_dict(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_dict(sbs):
     H = Hypergraph(sbs.edgedict)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
@@ -24,8 +22,7 @@ def test_hypergraph_from_dict(seven_by_six):
     assert H.order() == 7
 
 
-def test_hypergraph_custom_attributes(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_custom_attributes(sbs):
     H = Hypergraph(sbs.edges)
     assert isinstance(H.__str__(), str)
     assert isinstance(H.__repr__(), str)
@@ -36,8 +33,7 @@ def test_hypergraph_custom_attributes(seven_by_six):
     assert sorted(H.__getitem__("C")) == ["A", "E", "K"]
 
 
-def test_hypergraph_static(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_static(sbs):
     H = Hypergraph(sbs.edges, static=True)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
@@ -55,8 +51,7 @@ def test_hypergraph_from_dataframe(lesmis):
     assert H.degree("JA") == 3
 
 
-def test_hypergraph_from_numpy_array(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_numpy_array(sbs):
     H = Hypergraph.from_numpy_array(sbs.arr)
     assert len(H.nodes) == 6
     assert len(H.edges) == 7
@@ -71,8 +66,7 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     assert len(HB.nodes) == 8
 
 
-def test_hypergraph_from_entity_set(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_entity_set(sbs):
     entityset = EntitySet(sbs.edgedict)
     H = Hypergraph(entityset)
     assert set(H.edges.incidence_dict.keys()) == set(sbs.edgedict.keys())
@@ -83,8 +77,7 @@ def test_hypergraph_from_entity_set(seven_by_six):
     assert len(H.edge_neighbors("S")) == 4
 
 
-def test_add_node_to_edge(seven_by_six):
-    sbs = seven_by_six
+def test_add_node_to_edge(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
     # add node not already in hypergraph to edge
@@ -101,8 +94,7 @@ def test_add_node_to_edge(seven_by_six):
     assert H.shape == (10, 8)
 
 
-def test_remove_edge(seven_by_six):
-    sbs = seven_by_six
+def test_remove_edge(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
     # remove an edge without removing any nodes
@@ -264,8 +256,7 @@ def test_s_component_subgraphs():
     )
 
 
-def test_size(seven_by_six):
-    sbs = seven_by_six
+def test_size(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.size("S") == 4
     assert h.size("S", {"T2", "V"}) == 2
@@ -275,8 +266,7 @@ def test_size(seven_by_six):
     assert h.size("S", {}) == 0
 
 
-def test_diameter(seven_by_six):
-    sbs = seven_by_six
+def test_diameter(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.diameter() == 3
     with pytest.raises(Exception) as excinfo:
@@ -284,15 +274,13 @@ def test_diameter(seven_by_six):
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
-def test_node_diameters(seven_by_six):
-    sbs = seven_by_six
+def test_node_diameters(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.node_diameters()[0] == 3
     assert h.node_diameters()[2] == [{"A", "C", "E", "K", "T1", "T2", "V"}]
 
 
-def test_edge_diameter(seven_by_six):
-    sbs = seven_by_six
+def test_edge_diameter(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.edge_diameter() == 3
     assert h.edge_diameters()[2] == [{"I", "L", "O", "P", "R", "S"}]

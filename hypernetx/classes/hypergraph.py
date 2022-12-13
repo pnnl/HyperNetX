@@ -1216,7 +1216,6 @@ class Hypergraph:
         E = self.edges.restrict_to_levels((1, 0))
         return Hypergraph(E, name=name)
 
-
     def _collapse_nwhy(self, edges, rec):
         """
         Helper method for collapsing nodes and edges when hypergraph
@@ -1282,7 +1281,6 @@ class Hypergraph:
             string "rep:count"
             """
             warnings.warn(msg, DeprecationWarning)
-
 
         temp = self.edges.collapse_identical_elements(
             return_equivalence_classes=return_equivalence_classes
