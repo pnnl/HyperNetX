@@ -1194,21 +1194,16 @@ class Entity:
 
             entity = self._dataframe[cols]
 
-            properties = self.properties.loc[levels]
-            contains_data = (properties[self._props_col] != {}) | (
-                properties.drop(columns=self._props_col).notna().any(axis=1)
-            )
-            if contains_data.any():
-                new_levels = {old: new for new, old in enumerate(levels)}
-                properties = properties.loc[contains_data].reset_index()
-                properties.level = properties.level.map(new_levels)
-                properties.set_index(self.properties.index.names, inplace=True)
-                kwargs.update(properties=properties)
+            properties = self.properties.loc[levels].reset_index()
+            new_levels = {old: new for new, old in enumerate(levels)}
+            properties.level = properties.level.map(new_levels)
+            properties.set_index(self.properties.index.names, inplace=True)
 
             kwargs.update(
                 entity=entity,
                 weights=weights,
                 aggregateby=aggregateby,
+                properties=properties,
                 props_col=self._props_col,
             )
 
