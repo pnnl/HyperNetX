@@ -124,10 +124,6 @@ class Entity:
         # set unique identifier
         self._uid = uid
 
-        # create properties
-        self._props_col = props_col
-        self._properties = create_properties(properties, [level_col, id_col], props_col)
-
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated
         # if the data is altered - the dict will be cleared when data is added
@@ -148,7 +144,9 @@ class Entity:
         elif isinstance(entity, (dict, list)):
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
-            self._dataframe = pd.DataFrame({0: entity.index.to_list(), 1: entity.values})
+            self._dataframe = pd.DataFrame(
+                {0: entity.index.to_list(), 1: entity.values}
+            )
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
         # ndarray in the state dict
@@ -197,6 +195,19 @@ class Entity:
         self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
             "category"
         )
+
+        # create properties
+        self._props_col = props_col
+        self._properties = create_properties(
+            props={
+                lev: self.dataframe[col].cat.categories.to_list()
+                for lev, col in enumerate(self._data_cols)
+            },
+            index_cols=[level_col, id_col],
+            misc_col=props_col,
+        )
+        if properties is not None:
+            self.assign_properties(properties)
 
     @property
     def data(self):
@@ -306,13 +317,13 @@ class Entity:
         return self._dimsize
 
     @property
-    def properties(self):
+    def properties(self) -> pd.DataFrame:
         # Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
         """Properties assigned to items in the underlying data table
 
         Returns
         -------
-        pandas.Series
+        pandas.DataFrame
         """
 
         return self._properties
@@ -1181,11 +1192,15 @@ class Entity:
 
             entity = self._dataframe[cols]
 
-            if not self.properties.empty:
+            properties = self.properties.loc[levels]
+            contains_data = (properties[self._props_col] != {}) | (
+                properties.drop(columns=self._props_col).notna().any(axis=1)
+            )
+            if contains_data.any():
                 new_levels = {old: new for new, old in enumerate(levels)}
-                properties = self.properties.loc[levels].reset_index()
+                properties = properties.loc[contains_data].reset_index()
                 properties.level = properties.level.map(new_levels)
-
+                properties.set_index(self.properties.index.names, inplace=True)
                 kwargs.update(properties=properties)
 
             kwargs.update(
@@ -1227,7 +1242,7 @@ class Entity:
                 for lv in range(restricted.dimsize)
                 for uid in restricted.uidset_by_level(lv)
             ]
-            properties = self.properties.loc[prop_idx].reset_index()
+            properties = self.properties.loc[prop_idx]
             restricted.assign_properties(properties)
         return restricted
 
@@ -1237,7 +1252,6 @@ class Entity:
         level_col: Optional[str] = None,
         id_col: Optional[str] = None,
         misc_col: Optional[str] = None,
-        replace: bool = False,
     ) -> None:
         """Assign new properties to items in the data table and update `self.properties`
 
@@ -1249,36 +1263,56 @@ class Entity:
             column names corresponding to the levels, items, and misc. properties;
             if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_props_col`,
             respectively.
-        replace: bool, default=False
-            If True, replace existing :attr:`properties` with result;
-            otherwise update with new values from result
-
 
         See Also
         --------
-        properties, update_properties
+        properties
         """
-        level_col = level_col or self.properties.index.names[0]
-        id_col = id_col or self.properties.index.names[1]
-        misc_col = misc_col or self._props_col
-        # convert properties to MultiIndexed DataFrame
-        properties = create_properties(props, [level_col, id_col], misc_col)
-        if level_col != self.properties.index.names[0]:
-            properties.index.set_names(
-                self.properties.index.names[0], level=0, inplace=True
+        column_map = {
+            old: new
+            for old, new in zip(
+                (level_col, id_col, misc_col),
+                (*self.properties.index.names, self._props_col),
             )
-        if id_col != self.properties.index.names[1]:
-            properties.index.set_names(
-                self.properties.index.names[1], level=1, inplace=True
-            )
-        if misc_col != self._props_col:
-            properties.rename(columns={misc_col: self._props_col}, inplace=True)
+            if old is not None
+        }
 
-        if replace:
-            self._properties = properties
+        try:
+            props = props.rename(columns=column_map)
+        except AttributeError:
+            self._properties_from_dict(props)
         else:
-            self._properties = self._properties.combine_first(properties)
-            self._properties.update(properties)
+            props.rename_axis(index=column_map)
+            # if
+            self._properties_from_dataframe(props)
+
+    def _properties_from_dataframe(self, props):
+        level, item = self.properties.index.names
+        if props.index.nlevels > 1:
+            # drop extra levels
+            extra_levels = list(set(props.index.names) - {level, item})
+            props.reset_index(level=extra_levels, inplace=True)
+
+        try:  # multiindex + contains both correct levels
+            props.index = props.index.reorder_levels((level, item))
+        except AttributeError:  # not multi index
+            if props.index.name in (level, item):
+                props.reset_index(inplace=True)
+            props = create_properties(
+                props, self.properties.index.names, self._props_col
+            )
+
+        properties = props.combine_first(self.properties)
+        properties[self._props_col] = self.properties[self._props_col].combine(
+            properties[self._props_col], lambda x, y: {**x, **y}, fill_value={}
+        )
+        self._properties = properties
+
+    def _properties_from_dict(self, props):
+        for level in props:
+            for item in props[level]:
+                for prop_name, prop_val in props[level][item].items():
+                    self.set_property(item, prop_name, prop_val, level)
 
     def _property_loc(self, item: T) -> tuple[int, T]:
         """Get index in :attr:`properties` of an item of unspecified level
