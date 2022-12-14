@@ -1400,7 +1400,7 @@ class Entity:
                 ) from ex
 
         if prop_name in self.properties:
-            self._properties.loc[item_key, prop_name] = pd.Series([prop_val])
+            self._properties.loc[item_key, prop_name] = prop_val
         else:
             try:
                 self._properties.loc[item_key, self._props_col].update(
