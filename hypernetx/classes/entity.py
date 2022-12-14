@@ -197,15 +197,17 @@ class Entity:
         )
 
         # create properties
+        item_levels = [
+            (level, item)
+            for level, col in enumerate(self._data_cols)
+            for item in self.dataframe[col].cat.categories
+        ]
+        index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
+        data = [(i, 1, {}) for i in range(len(index))]
+        self._properties = pd.DataFrame(
+            data=data, index=index, columns=["uid", "weight", props_col]
+        ).sort_index()
         self._props_col = props_col
-        self._properties = create_properties(
-            props={
-                lev: self.dataframe[col].cat.categories.to_list()
-                for lev, col in enumerate(self._data_cols)
-            },
-            index_cols=[level_col, id_col],
-            misc_col=props_col,
-        )
         if properties is not None:
             self.assign_properties(properties)
 
