@@ -1250,11 +1250,11 @@ class Entity:
         id_col: Optional[str] = None,
         misc_col: Optional[str] = None,
     ) -> None:
-        """Assign new properties to items in the data table and update `self.properties`
+        """Assign new properties to items in the data table, update :attr:`properties`
 
         Parameters
         ----------
-        props : pandas.DataFrame, dict of iterables, doubly-nested dict, or None
+        props : pandas.DataFrame or doubly-nested dict
             See documentation of the `properties` parameter in :class:`Entity`
         level_col, id_col, misc_col : str, optional
             column names corresponding to the levels, items, and misc. properties;
@@ -1265,6 +1265,7 @@ class Entity:
         --------
         properties
         """
+        # mapping from user-specified level, id, misc column names to internal names
         column_map = {
             old: new
             for old, new in zip(
@@ -1274,38 +1275,74 @@ class Entity:
             if old is not None
         }
 
-        try:
+        try:  # rename columns according to mapping
             props = props.rename(columns=column_map)
-        except AttributeError:
+        except AttributeError:  # handle props in nested dict format
             self._properties_from_dict(props)
-        else:
+        else:  # handle props in DataFrame format
+            # rename any index levels matching user-specified column names
             props.rename_axis(index=column_map)
-            # if
             self._properties_from_dataframe(props)
 
-    def _properties_from_dataframe(self, props):
+    def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
+        """Private handler for updating :attr:`properties` from a DataFrame
+
+        Parameters
+        ----------
+        props
+
+        Notes
+        -----
+        For clarity in in-line developer comments:
+
+        idx-level
+            refers generally to a level of a MultiIndex
+        level
+            refers specifically to the idx-level in the MultiIndex of :attr:`properties`
+            that stores the level/column id for the item
+        """
+        # names of property table idx-levels for level and item id, respectively
+        # ``item`` used instead of ``id`` to avoid redefining python built-in func `id`
         level, item = self.properties.index.names
-        if props.index.nlevels > 1:
-            # drop extra levels
+        if props.index.nlevels > 1:  # props has MultiIndex
+            # drop all idx-levels from props other than level and id (if present)
             extra_levels = list(set(props.index.names) - {level, item})
             props.reset_index(level=extra_levels, inplace=True)
 
-        try:  # multiindex + contains both correct levels
+        try:
+            # if props index is already in the correct format,
+            # enforce the correct idx-level ordering
             props.index = props.index.reorder_levels((level, item))
-        except AttributeError:  # not multi index
+        except AttributeError:  # props is not in (level, id) MultiIndex format
+            # if the index matches level or id, drop index to column
             if props.index.name in (level, item):
                 props.reset_index(inplace=True)
+            # send to helper to format correctly
             props = create_properties(
                 props, self.properties.index.names, self._props_col
             )
 
+        # combine with existing properties
+        # non-null values in new props override existing value
         properties = props.combine_first(self.properties)
+        # update misc. column to combine existing and new misc. property dicts
+        # new props override existing value for overlapping misc. property dict keys
         properties[self._props_col] = self.properties[self._props_col].combine(
             properties[self._props_col], lambda x, y: {**x, **y}, fill_value={}
         )
         self._properties = properties
 
-    def _properties_from_dict(self, props):
+    def _properties_from_dict(self, props: dict[int, dict[T, dict[Any, Any]]]) -> None:
+        """Private handler for updating :attr:`properties` from a doubly-nested dict
+
+        Parameters
+        ----------
+        props
+        """
+        # TODO: there may be a more efficient way to convert this to a dataframe instead
+        #  of updating one-by-one via nested loop, but checking whether each prop_name
+        #  belongs in a designated existing column or the misc. property dict column
+        #  makes it more challenging
         for level in props:
             for item in props[level]:
                 for prop_name, prop_val in props[level][item].items():
@@ -1337,8 +1374,8 @@ class Entity:
         """
         try:
             item_loc = self.properties.xs(item, level=1, drop_level=False).index
-        except KeyError:  # item not in df
-            raise KeyError(f"no properties initialized for 'item': {item}")
+        except KeyError as ex:  # item not in df
+            raise KeyError(f"no properties initialized for 'item': {item}") from ex
 
         try:
             item_key = item_loc.item()
