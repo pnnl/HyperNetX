@@ -148,7 +148,9 @@ class Entity:
         elif isinstance(entity, (dict, list)):
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
-            self._dataframe = pd.DataFrame({0: entity.index.to_list(), 1: entity.values})
+            self._dataframe = pd.DataFrame(
+                {0: entity.index.to_list(), 1: entity.values}
+            )
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
         # ndarray in the state dict
@@ -1087,7 +1089,7 @@ class Entity:
 
     def incidence_matrix(
         self, level1=0, level2=1, weights=False, aggregateby=None, index=False
-    ):
+    ) -> csr_matrix | None:
         """Incidence matrix representation for two levels (columns) of the underlying data table
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
@@ -1116,7 +1118,7 @@ class Entity:
         Returns
         -------
         scipy.sparse.csr.csr_matrix
-            sparse representation of incidence matrix
+            sparse representation of incidence matrix (i.e. Compressed Sparse Row matrix)
 
         Other Parameters
         ----------------
