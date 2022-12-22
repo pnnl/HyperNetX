@@ -1100,7 +1100,7 @@ class Entity:
 
     def incidence_matrix(
         self, level1=0, level2=1, weights=False, aggregateby=None, index=False
-    ):
+    ) -> csr_matrix | None:
         """Incidence matrix representation for two levels (columns) of the underlying data table
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
@@ -1129,7 +1129,7 @@ class Entity:
         Returns
         -------
         scipy.sparse.csr.csr_matrix
-            sparse representation of incidence matrix
+            sparse representation of incidence matrix (i.e. Compressed Sparse Row matrix)
 
         Other Parameters
         ----------------

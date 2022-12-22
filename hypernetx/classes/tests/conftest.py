@@ -147,8 +147,8 @@ def ent_sbs(sbs):
 
 
 @pytest.fixture
-def sbs_edgedict():
-    return SevenBySix().edgedict
+def sbs_edgedict(sbs):
+    return sbs.edgedict
 
 
 @pytest.fixture
@@ -157,14 +157,12 @@ def triloop():
 
 
 @pytest.fixture
-def sbs_hypergraph():
-    sbs = SevenBySix()
+def sbs_hypergraph(sbs):
     return hnx.Hypergraph(sbs.edgedict, name="sbsh")
 
 
 @pytest.fixture
-def sbs_graph():
-    sbs = SevenBySix()
+def sbs_graph(sbs):
     edges = set()
     for _, e in sbs.edgedict.items():
         edges.update(it.combinations(e, 2))

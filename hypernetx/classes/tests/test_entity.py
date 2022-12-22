@@ -2,7 +2,7 @@ import numpy as np
 
 from collections.abc import Iterable
 from collections import UserList
-from hypernetx.classes import Entity, EntitySet
+from hypernetx.classes import Entity
 
 
 def test_Entity_constructor(ent_sbs):
@@ -105,19 +105,6 @@ def test_restrict_to_indices(ent_hp):
     }
 
 
-def test_Entityset(harry_potter):
-    data = np.asarray(harry_potter.data)
-    labels = harry_potter.labels
-    ent = EntitySet(data=data, labels=labels, level1=1, level2=3)
-    # assert ent.keys[0] == "Blood status"
-    # assert len(ent.keys) == 2
-    assert ent.indices("Blood status", ["Pure-blood", "Half-blood"]) == [2, 1]
-    # assert ent.restrict_to([2, 1]).keys[1] == "Hair colour"
-    assert ent.incidence_matrix().shape == (36, 11)
-    # assert len(ent.convert_to_entityset("Hair colour")) == 11
-    assert len(ent.collapse_identical_elements()) == 11
-
-
 def test_Entity_construct_from_entity(sbs):
     ent = Entity(entity=sbs.edgedict)
     assert len(ent.elements) == 6
@@ -127,12 +114,5 @@ def test_construct_empty_entity():
     ent = Entity()
     assert ent.empty
     assert ent.is_empty()
-    assert len(ent.elements) == 0
-    assert ent.dimsize == 0
-
-
-def test_construct_empty_entityset():
-    ent = EntitySet()
-    assert ent.empty
     assert len(ent.elements) == 0
     assert ent.dimsize == 0

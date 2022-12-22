@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from collections.abc import Iterable, Sequence, Mapping
+from collections.abc import Iterable, Sequence
+from typing import Mapping
 from typing import Optional, Any, TypeVar, Union
+from pprint import pformat
 
 import numpy as np
 import pandas as pd
 
 from hypernetx.classes import Entity
 from hypernetx.classes.helpers import AttrList, create_properties
+from hypernetx.utils.log import get_logger
+
+_log = get_logger("entity_set")
 
 T = TypeVar("T", bound=Union[str, int])
 
@@ -144,6 +149,7 @@ class EntitySet(Entity):
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
         if isinstance(entity, Entity):
+            _log.info(f"Changing entity from type {Entity} to {type(entity.dataframe)}")
             if keep_weights:
                 # preserve original weights
                 weights = entity._cell_weight_col
@@ -151,6 +157,7 @@ class EntitySet(Entity):
 
         # if the entity data is passed as a DataFrame, restrict to two columns if needed
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
+            _log.info(f"Processing parameter of 'entity' of type {type(entity)}...")
             # metadata columns are not considered levels of data,
             # remove them before indexing by level
             if isinstance(cell_properties, str):
@@ -159,18 +166,18 @@ class EntitySet(Entity):
             prop_cols = []
             if isinstance(cell_properties, Sequence):
                 for col in cell_properties:
-                    try:
-                        if col in entity:
-                            prop_cols.append(col)
-                    except TypeError:
-                        continue
+                    if col in entity:
+                        _log.debug(f"Adding column to prop_cols: {col}")
+                        prop_cols.append(col)
 
-            try:
-                weight_col = [weights] if weights in entity else []
-            except TypeError:
+            if weights in entity:
+                weight_col = [weights]
+            else:
                 weight_col = []
+            _log.debug(f"weight_col: {weight_col}")
 
             meta_cols = prop_cols + weight_col
+            _log.debug(f"meta_cols: {meta_cols}")
 
             # if both levels are column names, no need to index by level
             if isinstance(level1, str) and isinstance(level2, str):
@@ -187,14 +194,17 @@ class EntitySet(Entity):
             if prop_cols:
                 cell_properties = entity[[*columns, *prop_cols]]
                 self._cell_props_col = prop_cols[0]
+
             # if there is a column for weights, preserve it
-            columns += weight_col
+            columns.extend(weight_col)
+            _log.debug(f"columns: {columns}")
 
             # pass level1, level2, and weights (optional) to Entity constructor
             entity = entity[columns]
 
         # if a 2D ndarray is passed, restrict to two columns if needed
         elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
+            _log.info(f"Processing parameter 'data' of type {type(data)}...")
             data = data[:, (level1, level2)]
 
         # if a dict of labels is provided, restrict to labels for two columns if needed
@@ -202,8 +212,13 @@ class EntitySet(Entity):
             label_keys = list(labels)
             columns = (label_keys[level1], label_keys[level2])
             labels = {col: labels[col] for col in columns}
+            _log.debug(f"Restricted labels to columns:\n{pformat(labels)}")
 
-        # pass reformatted params to Entity constructor
+        _log.info(
+            f"Creating instance of {Entity} using reformatted params: \n\tentity: {type(entity)} \n\tdata: {type(data)} \n\tlabels: {type(labels)}, \n\tweights: {weights}, \n\tkwargs: {kwargs}"
+        )
+        _log.debug(f"entity:\n{pformat(entity)}")
+        _log.debug(f"data: {pformat(data)}")
         super().__init__(
             entity=entity,
             data=data,
@@ -356,6 +371,7 @@ class EntitySet(Entity):
         misc_col = misc_col or self._cell_props_col
         # convert cell properties to MultiIndexed DataFrame
         cell_properties = create_properties(props, self._data_cols, misc_col)
+        _log.debug(f"props: {props}")
 
         if misc_col != self._cell_props_col:
             cell_properties.rename(
@@ -367,6 +383,7 @@ class EntitySet(Entity):
         else:
             self._cell_properties = self._cell_properties.combine_first(cell_properties)
             self._cell_properties.update(cell_properties)
+        _log.debug(f"_cell_properties assigned to: \n{self._cell_properties}")
 
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs

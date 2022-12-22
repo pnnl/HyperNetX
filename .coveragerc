@@ -1,2 +1,5 @@
 [run]
 omit = */tests/*
+[report]
+exclude_lines =
+    _log
