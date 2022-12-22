@@ -175,10 +175,10 @@ def create_properties(
     try:
         data = [props[level][item] for level, item in index]
     # empty prop dict for each (level, ID) if iterable of items is not a dict
-    except TypeError:
+    except (TypeError, IndexError):
         data = [{} for _ in index]
 
-    return pd.DataFrame(data=data, index=index, columns=[misc_col]).sort_index()
+    return pd.DataFrame({misc_col:data}, index=index).sort_index()
 
 
 def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
