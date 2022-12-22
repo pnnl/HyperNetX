@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from collections.abc import Iterable, Sequence, Mapping
+from collections.abc import Iterable, Sequence
+from typing import Mapping
 from typing import Optional, Any, TypeVar, Union
 from pprint import pformat
 
