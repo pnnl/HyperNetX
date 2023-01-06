@@ -63,7 +63,7 @@ class Entity:
         cell entries in a data table; sets or set elements in a system of sets.
         See Notes for detailed explanation.
         If ``DataFrame``, each row gives
-        ``[item level, item label, optional named properties,
+        ``[optional item level, item label, optional named properties,
         {property name: property value}]``
         (order of columns does not matter; see note for an example).
         If doubly-nested dict,
@@ -78,28 +78,34 @@ class Entity:
 
     You can pass a **table of properties** to `properties` as a ``DataFrame``:
 
-    +-------+---------+--------------------------+-------+------------------+
-    | Level | ID      | [explicit property type] | [...] | misc. properties |
-    +=======+=========+==========================+=======+==================+
-    | 0     | level 0 | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
-    | 1     | level 1 | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
-    | ...   | ...     | ...                      | ...   | ...              |
-    +-------+---------+--------------------------+-------+------------------+
-    | N     | level N | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
+    +------------+---------+----------------+-------+------------------+
+    | Level      | ID      | [explicit      | [...] | misc. properties |
+    | (optional) |         | property type] |       |                  |
+    +============+=========+================+=======+==================+
+    | 0          | level 0 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | 1          | level 1 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | ...        | ...     | ...            | ...   | ...              |
+    +------------+---------+----------------+-------+------------------+
+    | N          | level N | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
 
-    The names of the Level and ID columns must be specified by `level_col` and `id_col`.
-    `props_col` can be used to specify the name of the column to be used for
-    miscellaneous properties; if no column by that name is found, a new column will be
-    created and populated with empty ``dicts``. All other columns will be considered
-    explicit property types. The order of the columns does not matter.
+    The Level column is optional. If not provided, properties will be assigned by ID
+    (i.e., if an ID appears at multiple levels, the same properties will be assigned to
+    all occurrences).
 
-    This method assumes that there are no row duplicates in the `properties` table;
+    The names of the Level (if provided) and ID columns must be specified by `level_col`
+    and `id_col`. `props_col` can be used to specify the name of the column to be used
+    for miscellaneous properties; if no column by that name is found,
+    a new column will be created and populated with empty ``dicts``.
+    All other columns will be considered explicit property types.
+    The order of the columns does not matter.
+
+    This method assumes that there are no rows with the same (Level, ID);
     if duplicates are found, all but the first occurrence will be dropped.
 
     """
@@ -1319,10 +1325,15 @@ class Entity:
             # if the index matches level or id, drop index to column
             if props.index.name in (level, item):
                 props.reset_index(inplace=True)
+            index_cols = [item]
+            if level in props:
+                index_cols.insert(level)
             # send to helper to format correctly
-            props = create_properties(
-                props, self.properties.index.names, self._props_col
-            )
+            props = create_properties(props, index_cols, self._props_col)
+
+            # reindex with level if not provided
+            if props.index.nlevels == 1:
+                props = props.reindex(self.properties.index, level=1)
 
         # combine with existing properties
         # non-null values in new props override existing value
