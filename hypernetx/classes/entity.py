@@ -1327,7 +1327,7 @@ class Entity:
                 props.reset_index(inplace=True)
             index_cols = [item]
             if level in props:
-                index_cols.insert(level)
+                index_cols.insert(0,level)
             # send to helper to format correctly
             props = create_properties(props, index_cols, self._props_col)
 
