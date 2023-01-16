@@ -282,13 +282,14 @@ class EntitySet(Entity):
 
         Parameters
         ----------
-        levels : array_like of int
+        levels : array-like of int
             indices of a subset of levels (columns) of data
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights.
             Otherwise, all new cell weights will be 1.
-        aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, optional
-            Method to aggregate weights of duplicate rows in data table;
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
+    'min', None}, optional
+            Method to aggregate weights of duplicate rows in data table
             If None or `weights`=False then all new cell weights will be 1
         keep_memberships : bool, default=True
             Whether to preserve membership information for the discarded level when
@@ -299,9 +300,18 @@ class EntitySet(Entity):
         Returns
         -------
         EntitySet
+
+        Raises
+        ------
+        KeyError
+            If `levels` contains any invalid values
         """
         restricted = super().restrict_to_levels(
-            levels, weights, aggregateby, cell_props_col=self._cell_props_col, **kwargs
+            levels,
+            weights,
+            aggregateby,
+            cell_props_col=self._cell_props_col,
+            **kwargs,
         )
 
         if keep_memberships:

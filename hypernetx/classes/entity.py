@@ -1166,19 +1166,27 @@ class Entity:
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
-        """Create a new Entity by restricting the underlying data table to a subset of levels (columns)
+    def restrict_to_levels(
+        self,
+        levels: int | Iterable[int],
+        weights: bool = False,
+        aggregateby: str | None = "sum",
+        **kwargs,
+    ) -> Entity:
+        """Create a new Entity by restricting to a subset of levels (columns) in the
+        underlying data table
 
         Parameters
         ----------
-        levels : iterable of int
+        levels : array-like of int
             indices of a subset of levels (columns) of data
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights
             Otherwise, all new cell weights will be 1
-        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='count'
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
+    'min', None}, optional
             Method to aggregate weights of duplicate rows in data table
-            If None or weights=False then all new cell weights will be 1
+            If None or `weights`=False then all new cell weights will be 1
         **kwargs
             Extra arguments to `Entity` constructor
 
@@ -1186,36 +1194,44 @@ class Entity:
         -------
         Entity
 
+        Raises
+        ------
+        KeyError
+            If `levels` contains any invalid values
+
         See Also
         --------
         EntitySet
         """
-        levels = [lev for lev in levels if lev < self._dimsize]
 
-        if levels:
-            cols = [self._data_cols[lev] for lev in levels]
+        levels = np.asarray(levels)
+        invalid_levels = (levels < 0) | (levels >= self.dimsize)
+        if invalid_levels.any():
+            raise KeyError(f"Invalid levels: {levels[invalid_levels]}")
 
-            weights = self._cell_weight_col if weights else None
+        cols = [self._data_cols[lev] for lev in levels]
 
-            if weights:
-                cols.append(weights)
+        if weights:
+            weights = self._cell_weight_col
+            cols.append(weights)
+            kwargs.update(weights=weights)
 
-            entity = self._dataframe[cols]
+        properties = self.properties.loc[levels]
+        properties.index = properties.index.remove_unused_levels()
+        level_map = {old: new for new, old in enumerate(levels)}
+        new_levels = properties.index.levels[0].map(level_map)
+        properties.index = properties.index.set_levels(new_levels, level=0)
+        level_col, id_col = properties.index.names
 
-            properties = self.properties.loc[levels].reset_index()
-            new_levels = {old: new for new, old in enumerate(levels)}
-            properties.level = properties.level.map(new_levels)
-            properties.set_index(self.properties.index.names, inplace=True)
-
-            kwargs.update(
-                entity=entity,
-                weights=weights,
-                aggregateby=aggregateby,
-                properties=properties,
-                props_col=self._props_col,
-            )
-
-        return self.__class__(**kwargs)
+        return self.__class__(
+            entity=self.dataframe[cols],
+            aggregateby=aggregateby,
+            properties=properties,
+            props_col=self._props_col,
+            level_col=level_col,
+            id_col=id_col,
+            **kwargs,
+        )
 
     def restrict_to_indices(self, indices, level=0, **kwargs):
         """Create a new Entity by restricting the data table to rows containing specific items in a given level
@@ -1289,7 +1305,7 @@ class Entity:
             self._properties_from_dict(props)
         else:  # handle props in DataFrame format
             # rename any index levels matching user-specified column names
-            props.rename_axis(index=column_map)
+            props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
