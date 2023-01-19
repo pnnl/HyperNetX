@@ -164,7 +164,7 @@ class Hypergraph:
         else:
             try:
                 kwargs.update(
-                    properties=setsystem.properties.reset_index(),
+                    properties=setsystem.properties,
                     props_col=setsystem._props_col,
                     level_col=setsystem.properties.index.names[0],
                     id_col=setsystem.properties.index.names[1],

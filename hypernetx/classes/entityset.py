@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import warnings
+from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import Iterable, Sequence
 from typing import Mapping
@@ -10,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 from hypernetx.classes import Entity
-from hypernetx.classes.helpers import AttrList, create_properties
+from hypernetx.classes.helpers import AttrList
 from hypernetx.utils.log import get_logger
 
 _log = get_logger("entity_set")
@@ -165,18 +167,14 @@ class EntitySet(Entity):
 
             prop_cols = []
             if isinstance(cell_properties, Sequence):
-                for col in cell_properties:
+                for col in [*cell_properties, self._cell_props_col]:
                     if col in entity:
                         _log.debug(f"Adding column to prop_cols: {col}")
                         prop_cols.append(col)
 
+            meta_cols = prop_cols
             if weights in entity:
-                weight_col = [weights]
-            else:
-                weight_col = []
-            _log.debug(f"weight_col: {weight_col}")
-
-            meta_cols = prop_cols + weight_col
+                meta_cols.append(weights)
             _log.debug(f"meta_cols: {meta_cols}")
 
             # if both levels are column names, no need to index by level
@@ -193,10 +191,10 @@ class EntitySet(Entity):
             # if there is a column for cell properties, convert to separate DataFrame
             if prop_cols:
                 cell_properties = entity[[*columns, *prop_cols]]
-                self._cell_props_col = prop_cols[0]
 
             # if there is a column for weights, preserve it
-            columns.extend(weight_col)
+            if weights in entity:
+                columns.append(weights)
             _log.debug(f"columns: {columns}")
 
             # pass level1, level2, and weights (optional) to Entity constructor
@@ -228,9 +226,14 @@ class EntitySet(Entity):
         )
 
         # if underlying data is 2D (system of sets), create and assign cell properties
-        try:
-            self.assign_cell_properties(cell_properties, replace=True)
-        except AttributeError:
+        if self.dimsize == 2:
+            self._cell_properties = pd.DataFrame(
+                columns=[*self._data_cols, self._cell_props_col]
+            )
+            self._cell_properties.set_index(self._data_cols, inplace=True)
+            if cell_properties is not None:
+                self.assign_cell_properties(cell_properties)
+        else:
             self._cell_properties = None
 
     @property
@@ -351,7 +354,7 @@ class EntitySet(Entity):
 
     def assign_cell_properties(
         self,
-        props: pd.DataFrame | dict[T, dict[T, dict[Any, Any]]],
+        cell_props: pd.DataFrame | dict[T, dict[T, dict[Any, Any]]],
         misc_col: Optional[str] = None,
         replace: bool = False,
     ) -> None:
@@ -360,7 +363,7 @@ class EntitySet(Entity):
 
         Parameters
         ----------
-        props : pandas.DataFrame, dict of iterables, or doubly-nested dict, optional
+        cell_props : pandas.DataFrame, dict of iterables, or doubly-nested dict, optional
             See documentation of the `cell_properties` parameter in :class:`EntitySet`
         misc_col: str, optional
             name of column to be used for miscellaneous cell property dicts
@@ -379,21 +382,95 @@ class EntitySet(Entity):
             )
 
         misc_col = misc_col or self._cell_props_col
-        # convert cell properties to MultiIndexed DataFrame
-        cell_properties = create_properties(props, self._data_cols, misc_col)
-        _log.debug(f"props: {props}")
+        try:
+            cell_props = cell_props.rename(columns={misc_col: self._cell_props_col})
+        except AttributeError:  # handle cell props in nested dict format
+            self._cell_properties_from_dict(cell_props)
+        else:  # handle cell props in DataFrame format
+            self._cell_properties_from_dataframe(cell_props)
 
-        if misc_col != self._cell_props_col:
-            cell_properties.rename(
-                columns={misc_col: self._cell_props_col}, inplace=True
-            )
+    def _cell_properties_from_dataframe(self, cell_props: pd.DataFrame) -> None:
+        """Private handler for updating :attr:`properties` from a DataFrame
 
-        if replace:
-            self._cell_properties = cell_properties
+        Parameters
+        ----------
+        props
+
+        Parameters
+        ----------
+        cell_props : DataFrame
+        """
+        if cell_props.index.nlevels > 1:
+            extra_levels = [
+                idx_lev
+                for idx_lev in cell_props.index.names
+                if idx_lev not in self._data_cols
+            ]
+            cell_props = cell_props.reset_index(level=extra_levels)
+
+        misc_col = self._cell_props_col
+
+        try:
+            cell_props.index = cell_props.index.reorder_levels(self._data_cols)
+        except AttributeError:
+            if cell_props.index.name in self._data_cols:
+                cell_props = cell_props.reset_index()
+
+            try:
+                cell_props = cell_props.set_index(
+                    self._data_cols, verify_integrity=True
+                )
+            except ValueError:
+                warnings.warn(
+                    "duplicate cell rows will be dropped after first occurrence"
+                )
+                cell_props = cell_props.drop_duplicates(self._data_cols)
+                cell_props = cell_props.set_index(self._data_cols)
+
+        if misc_col in cell_props:
+            try:
+                cell_props[misc_col] = cell_props[misc_col].apply(literal_eval)
+            except ValueError:
+                pass  # data already parsed, no literal eval needed
+            else:
+                warnings.warn("parsed cell property dict column from string literal")
+
+        cell_properties = cell_props.combine_first(self.cell_properties)
+        cell_properties[misc_col] = self.cell_properties[misc_col].combine(
+            cell_properties[misc_col],
+            lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
+            fill_value={},
+        )
+
+        self._cell_properties = cell_properties.sort_index()
+
+    def _cell_properties_from_dict(
+        self, cell_props: dict[T, dict[T, dict[Any, Any]]]
+    ) -> None:
+        """Private handler for updating :attr:`cell_properties` from a doubly-nested dict
+
+        Parameters
+        ----------
+        cell_props
+        """
+        # TODO: there may be a more efficient way to convert this to a dataframe instead
+        #  of updating one-by-one via nested loop, but checking whether each prop_name
+        #  belongs in a designated existing column or the misc. property dict column
+        #  makes it more challenging.
+        #  For now: only use nested loop update if non-misc. columns currently exist
+        if len(self.cell_properties.columns) > 1:
+            for item1 in cell_props:
+                for item2 in cell_props[item1]:
+                    for prop_name, prop_val in cell_props[item1][item2].items():
+                        self.set_cell_property(item1, item2, prop_name, prop_val)
         else:
-            self._cell_properties = self._cell_properties.combine_first(cell_properties)
-            self._cell_properties.update(cell_properties)
-        _log.debug(f"_cell_properties assigned to: \n{self._cell_properties}")
+            cells = pd.MultiIndex.from_tuples(
+                [(item1, item2) for item1 in cell_props for item2 in cell_props[item1]],
+                names=self._data_cols,
+            )
+            props_data = [cell_props[item1][item2] for item1, item2 in cells]
+            cell_props = pd.DataFrame({self._cell_props_col: props_data}, index=cells)
+            self._cell_properties_from_dataframe(cell_props)
 
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs

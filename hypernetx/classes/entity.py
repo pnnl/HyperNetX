@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from ast import literal_eval
 from collections import OrderedDict, defaultdict
 from collections.abc import Hashable, Mapping, Sequence, Iterable
 from typing import Union, TypeVar, Optional, Any
@@ -12,7 +13,6 @@ from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
-    create_properties,
     remove_row_duplicates,
 )
 
@@ -1330,8 +1330,10 @@ class Entity:
         level, item = self.properties.index.names
         if props.index.nlevels > 1:  # props has MultiIndex
             # drop all idx-levels from props other than level and id (if present)
-            extra_levels = list(set(props.index.names) - {level, item})
-            props.reset_index(level=extra_levels, inplace=True)
+            extra_levels = [
+                idx_lev for idx_lev in props.index.names if idx_lev not in (level, item)
+            ]
+            props = props.reset_index(level=extra_levels)
 
         try:
             # if props index is already in the correct format,
@@ -1340,16 +1342,29 @@ class Entity:
         except AttributeError:  # props is not in (level, id) MultiIndex format
             # if the index matches level or id, drop index to column
             if props.index.name in (level, item):
-                props.reset_index(inplace=True)
+                props = props.reset_index()
             index_cols = [item]
             if level in props:
-                index_cols.insert(0,level)
-            # send to helper to format correctly
-            props = create_properties(props, index_cols, self._props_col)
+                index_cols.insert(0, level)
+            try:
+                props = props.set_index(index_cols, verify_integrity=True)
+            except ValueError:
+                warnings.warn(
+                    "duplicate (level, ID) rows will be dropped after first occurrence"
+                )
+                props = props.drop_duplicates(index_cols)
+                props = props.set_index(index_cols)
 
-            # reindex with level if not provided
-            if props.index.nlevels == 1:
-                props = props.reindex(self.properties.index, level=1)
+        if self._props_col in props:
+            try:
+                props[self._props_col] = props[self._props_col].apply(literal_eval)
+            except ValueError:
+                pass  # data already parsed, no literal eval needed
+            else:
+                warnings.warn("parsed property dict column from string literal")
+
+        if props.index.nlevels == 1:
+            props = props.reindex(self.properties.index, level=1)
 
         # combine with existing properties
         # non-null values in new props override existing value
@@ -1357,9 +1372,11 @@ class Entity:
         # update misc. column to combine existing and new misc. property dicts
         # new props override existing value for overlapping misc. property dict keys
         properties[self._props_col] = self.properties[self._props_col].combine(
-            properties[self._props_col], lambda x, y: {**x, **y}, fill_value={}
+            properties[self._props_col],
+            lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
+            fill_value={},
         )
-        self._properties = properties
+        self._properties = properties.sort_index()
 
     def _properties_from_dict(self, props: dict[int, dict[T, dict[Any, Any]]]) -> None:
         """Private handler for updating :attr:`properties` from a doubly-nested dict
@@ -1372,10 +1389,20 @@ class Entity:
         #  of updating one-by-one via nested loop, but checking whether each prop_name
         #  belongs in a designated existing column or the misc. property dict column
         #  makes it more challenging
-        for level in props:
-            for item in props[level]:
-                for prop_name, prop_val in props[level][item].items():
-                    self.set_property(item, prop_name, prop_val, level)
+        #  For now: only use nested loop update if non-misc. columns currently exist
+        if len(self.properties.columns) > 1:
+            for level in props:
+                for item in props[level]:
+                    for prop_name, prop_val in props[level][item].items():
+                        self.set_property(item, prop_name, prop_val, level)
+        else:
+            item_keys = pd.MultiIndex.from_tuples(
+                [(level, item) for level in props for item in props[level]],
+                names=self.properties.index.names,
+            )
+            props_data = [props[level][item] for level, item in item_keys]
+            props = pd.DataFrame({self._props_col: props_data}, index=item_keys)
+            self._properties_from_dataframe(props)
 
     def _property_loc(self, item: T) -> tuple[int, T]:
         """Get index in :attr:`properties` of an item of unspecified level
