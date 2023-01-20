@@ -33,7 +33,7 @@ def test_construct_entityset_from_entity_hp(harry_potter):
 
 
 def test_construct_entityset_from_entity(sbs):
-    es = EntitySet(entity=Entity(entity=sbs.edgedict), cell_properties="cell_weights")
+    es = EntitySet(entity=Entity(entity=sbs.edgedict))
 
     assert not es.empty
     assert es.dimsize == 2

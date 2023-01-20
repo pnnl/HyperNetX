@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from ast import literal_eval
 from collections import OrderedDict, defaultdict
 from collections.abc import Hashable, Mapping, Sequence, Iterable
 from typing import Union, TypeVar, Optional, Any
@@ -12,7 +13,6 @@ from scipy.sparse import csr_matrix
 from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
-    create_properties,
     remove_row_duplicates,
 )
 
@@ -63,7 +63,7 @@ class Entity:
         cell entries in a data table; sets or set elements in a system of sets.
         See Notes for detailed explanation.
         If ``DataFrame``, each row gives
-        ``[item level, item label, optional named properties,
+        ``[optional item level, item label, optional named properties,
         {property name: property value}]``
         (order of columns does not matter; see note for an example).
         If doubly-nested dict,
@@ -78,28 +78,34 @@ class Entity:
 
     You can pass a **table of properties** to `properties` as a ``DataFrame``:
 
-    +-------+---------+--------------------------+-------+------------------+
-    | Level | ID      | [explicit property type] | [...] | misc. properties |
-    +=======+=========+==========================+=======+==================+
-    | 0     | level 0 | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
-    | 1     | level 1 | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
-    | ...   | ...     | ...                      | ...   | ...              |
-    +-------+---------+--------------------------+-------+------------------+
-    | N     | level N | property value           | ...   | {property name:  |
-    |       | item    |                          |       | property value}  |
-    +-------+---------+--------------------------+-------+------------------+
+    +------------+---------+----------------+-------+------------------+
+    | Level      | ID      | [explicit      | [...] | misc. properties |
+    | (optional) |         | property type] |       |                  |
+    +============+=========+================+=======+==================+
+    | 0          | level 0 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | 1          | level 1 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | ...        | ...     | ...            | ...   | ...              |
+    +------------+---------+----------------+-------+------------------+
+    | N          | level N | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
 
-    The names of the Level and ID columns must be specified by `level_col` and `id_col`.
-    `props_col` can be used to specify the name of the column to be used for
-    miscellaneous properties; if no column by that name is found, a new column will be
-    created and populated with empty ``dicts``. All other columns will be considered
-    explicit property types. The order of the columns does not matter.
+    The Level column is optional. If not provided, properties will be assigned by ID
+    (i.e., if an ID appears at multiple levels, the same properties will be assigned to
+    all occurrences).
 
-    This method assumes that there are no row duplicates in the `properties` table;
+    The names of the Level (if provided) and ID columns must be specified by `level_col`
+    and `id_col`. `props_col` can be used to specify the name of the column to be used
+    for miscellaneous properties; if no column by that name is found,
+    a new column will be created and populated with empty ``dicts``.
+    All other columns will be considered explicit property types.
+    The order of the columns does not matter.
+
+    This method assumes that there are no rows with the same (Level, ID);
     if duplicates are found, all but the first occurrence will be dropped.
 
     """
@@ -1160,19 +1166,27 @@ class Entity:
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
-    def restrict_to_levels(self, levels, weights=False, aggregateby="sum", **kwargs):
-        """Create a new Entity by restricting the underlying data table to a subset of levels (columns)
+    def restrict_to_levels(
+        self,
+        levels: int | Iterable[int],
+        weights: bool = False,
+        aggregateby: str | None = "sum",
+        **kwargs,
+    ) -> Entity:
+        """Create a new Entity by restricting to a subset of levels (columns) in the
+        underlying data table
 
         Parameters
         ----------
-        levels : iterable of int
+        levels : array-like of int
             indices of a subset of levels (columns) of data
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights
             Otherwise, all new cell weights will be 1
-        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='count'
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
+    'min', None}, optional
             Method to aggregate weights of duplicate rows in data table
-            If None or weights=False then all new cell weights will be 1
+            If None or `weights`=False then all new cell weights will be 1
         **kwargs
             Extra arguments to `Entity` constructor
 
@@ -1180,36 +1194,44 @@ class Entity:
         -------
         Entity
 
+        Raises
+        ------
+        KeyError
+            If `levels` contains any invalid values
+
         See Also
         --------
         EntitySet
         """
-        levels = [lev for lev in levels if lev < self._dimsize]
 
-        if levels:
-            cols = [self._data_cols[lev] for lev in levels]
+        levels = np.asarray(levels)
+        invalid_levels = (levels < 0) | (levels >= self.dimsize)
+        if invalid_levels.any():
+            raise KeyError(f"Invalid levels: {levels[invalid_levels]}")
 
-            weights = self._cell_weight_col if weights else None
+        cols = [self._data_cols[lev] for lev in levels]
 
-            if weights:
-                cols.append(weights)
+        if weights:
+            weights = self._cell_weight_col
+            cols.append(weights)
+            kwargs.update(weights=weights)
 
-            entity = self._dataframe[cols]
+        properties = self.properties.loc[levels]
+        properties.index = properties.index.remove_unused_levels()
+        level_map = {old: new for new, old in enumerate(levels)}
+        new_levels = properties.index.levels[0].map(level_map)
+        properties.index = properties.index.set_levels(new_levels, level=0)
+        level_col, id_col = properties.index.names
 
-            properties = self.properties.loc[levels].reset_index()
-            new_levels = {old: new for new, old in enumerate(levels)}
-            properties.level = properties.level.map(new_levels)
-            properties.set_index(self.properties.index.names, inplace=True)
-
-            kwargs.update(
-                entity=entity,
-                weights=weights,
-                aggregateby=aggregateby,
-                properties=properties,
-                props_col=self._props_col,
-            )
-
-        return self.__class__(**kwargs)
+        return self.__class__(
+            entity=self.dataframe[cols],
+            aggregateby=aggregateby,
+            properties=properties,
+            props_col=self._props_col,
+            level_col=level_col,
+            id_col=id_col,
+            **kwargs,
+        )
 
     def restrict_to_indices(self, indices, level=0, **kwargs):
         """Create a new Entity by restricting the data table to rows containing specific items in a given level
@@ -1283,7 +1305,7 @@ class Entity:
             self._properties_from_dict(props)
         else:  # handle props in DataFrame format
             # rename any index levels matching user-specified column names
-            props.rename_axis(index=column_map)
+            props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
@@ -1308,8 +1330,10 @@ class Entity:
         level, item = self.properties.index.names
         if props.index.nlevels > 1:  # props has MultiIndex
             # drop all idx-levels from props other than level and id (if present)
-            extra_levels = list(set(props.index.names) - {level, item})
-            props.reset_index(level=extra_levels, inplace=True)
+            extra_levels = [
+                idx_lev for idx_lev in props.index.names if idx_lev not in (level, item)
+            ]
+            props = props.reset_index(level=extra_levels)
 
         try:
             # if props index is already in the correct format,
@@ -1318,11 +1342,29 @@ class Entity:
         except AttributeError:  # props is not in (level, id) MultiIndex format
             # if the index matches level or id, drop index to column
             if props.index.name in (level, item):
-                props.reset_index(inplace=True)
-            # send to helper to format correctly
-            props = create_properties(
-                props, self.properties.index.names, self._props_col
-            )
+                props = props.reset_index()
+            index_cols = [item]
+            if level in props:
+                index_cols.insert(0, level)
+            try:
+                props = props.set_index(index_cols, verify_integrity=True)
+            except ValueError:
+                warnings.warn(
+                    "duplicate (level, ID) rows will be dropped after first occurrence"
+                )
+                props = props.drop_duplicates(index_cols)
+                props = props.set_index(index_cols)
+
+        if self._props_col in props:
+            try:
+                props[self._props_col] = props[self._props_col].apply(literal_eval)
+            except ValueError:
+                pass  # data already parsed, no literal eval needed
+            else:
+                warnings.warn("parsed property dict column from string literal")
+
+        if props.index.nlevels == 1:
+            props = props.reindex(self.properties.index, level=1)
 
         # combine with existing properties
         # non-null values in new props override existing value
@@ -1330,9 +1372,11 @@ class Entity:
         # update misc. column to combine existing and new misc. property dicts
         # new props override existing value for overlapping misc. property dict keys
         properties[self._props_col] = self.properties[self._props_col].combine(
-            properties[self._props_col], lambda x, y: {**x, **y}, fill_value={}
+            properties[self._props_col],
+            lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
+            fill_value={},
         )
-        self._properties = properties
+        self._properties = properties.sort_index()
 
     def _properties_from_dict(self, props: dict[int, dict[T, dict[Any, Any]]]) -> None:
         """Private handler for updating :attr:`properties` from a doubly-nested dict
@@ -1345,10 +1389,20 @@ class Entity:
         #  of updating one-by-one via nested loop, but checking whether each prop_name
         #  belongs in a designated existing column or the misc. property dict column
         #  makes it more challenging
-        for level in props:
-            for item in props[level]:
-                for prop_name, prop_val in props[level][item].items():
-                    self.set_property(item, prop_name, prop_val, level)
+        #  For now: only use nested loop update if non-misc. columns currently exist
+        if len(self.properties.columns) > 1:
+            for level in props:
+                for item in props[level]:
+                    for prop_name, prop_val in props[level][item].items():
+                        self.set_property(item, prop_name, prop_val, level)
+        else:
+            item_keys = pd.MultiIndex.from_tuples(
+                [(level, item) for level in props for item in props[level]],
+                names=self.properties.index.names,
+            )
+            props_data = [props[level][item] for level, item in item_keys]
+            props = pd.DataFrame({self._props_col: props_data}, index=item_keys)
+            self._properties_from_dataframe(props)
 
     def _property_loc(self, item: T) -> tuple[int, T]:
         """Get index in :attr:`properties` of an item of unspecified level
