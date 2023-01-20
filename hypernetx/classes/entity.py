@@ -440,6 +440,7 @@ class Entity:
 
         See Also
         --------
+        incidence_dict : same data as dict of list
         memberships :
             dual of this representation,
             i.e., each item in level 1 (second column) defines a set
@@ -453,19 +454,20 @@ class Entity:
         return self.elements_by_level(0, 1)
 
     @property
-    def incidence_dict(self):
+    def incidence_dict(self) -> dict[T, list[T]]:
         """System of sets representation of the first two levels (columns) of the underlying data table
-
-        .. deprecated:: 2.0.0
-            Duplicates `elements`
 
         Returns
         -------
-        dict of `AttrList`
+        dict of list
             System of sets representation as dict of {level 0 item : AttrList(level 1 items)}
 
+        See Also
+        --------
+        elements : same data as dict of AttrList
+
         """
-        return self.elements
+        return {item: elements.data for item, elements in self.elements.items()}
 
     @property
     def memberships(self):
