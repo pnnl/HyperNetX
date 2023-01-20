@@ -9,7 +9,7 @@ def test_Entity_constructor(ent_sbs):
     assert ent_sbs.size() == 6
     assert len(ent_sbs.uidset) == 6
     assert len(ent_sbs.children) == 7
-    assert isinstance(ent_sbs.incidence_dict["I"], UserList)
+    assert isinstance(ent_sbs.incidence_dict["I"], list)
     assert "I" in ent_sbs
     assert "K" in ent_sbs
 
