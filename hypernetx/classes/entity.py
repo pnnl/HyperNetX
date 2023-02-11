@@ -68,7 +68,7 @@ class Entity:
         (order of columns does not matter; see note for an example).
         If doubly-nested dict,
         ``{item level: {item label: {property name: property value}}}``.
-    props_col, level_col, id_col : str, default="properties", "level, "id"
+    misc_props_col, level_col, id_col : str, default="properties", "level, "id"
         Column names for miscellaneous properties, level index, and item name in
         :attr:`properties`; see Notes for explanation.
 
@@ -99,7 +99,7 @@ class Entity:
     all occurrences).
 
     The names of the Level (if provided) and ID columns must be specified by `level_col`
-    and `id_col`. `props_col` can be used to specify the name of the column to be used
+    and `id_col`. `misc_props_col` can be used to specify the name of the column to be used
     for miscellaneous properties; if no column by that name is found,
     a new column will be created and populated with empty ``dicts``.
     All other columns will be considered explicit property types.
@@ -122,7 +122,7 @@ class Entity:
         weights: Optional[Sequence[float] | str] = None,
         aggregateby: Optional[str] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
-        props_col: str = "properties",
+        misc_props_col: str = "properties",
         level_col: str = "level",
         id_col: str = "id",
     ):
@@ -211,9 +211,9 @@ class Entity:
         index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
         data = [(i, 1, {}) for i in range(len(index))]
         self._properties = pd.DataFrame(
-            data=data, index=index, columns=["uid", "weight", props_col]
+            data=data, index=index, columns=["uid", "weight", misc_props_col]
         ).sort_index()
-        self._props_col = props_col
+        self._misc_props_col = misc_props_col
         if properties is not None:
             self.assign_properties(properties)
 
@@ -1227,7 +1227,7 @@ class Entity:
             entity=self.dataframe[cols],
             aggregateby=aggregateby,
             properties=properties,
-            props_col=self._props_col,
+            misc_props_col=self._misc_props_col,
             level_col=level_col,
             id_col=id_col,
             **kwargs,
@@ -1255,7 +1255,7 @@ class Entity:
 
         for col in self._data_cols:
             entity[col] = entity[col].cat.remove_unused_categories()
-        restricted = self.__class__(entity=entity, props_col=self._props_col, **kwargs)
+        restricted = self.__class__(entity=entity, misc_props_col=self._misc_props_col, **kwargs)
 
         if not self.properties.empty:
             prop_idx = [
@@ -1282,7 +1282,7 @@ class Entity:
             See documentation of the `properties` parameter in :class:`Entity`
         level_col, id_col, misc_col : str, optional
             column names corresponding to the levels, items, and misc. properties;
-            if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_props_col`,
+            if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_misc_props_col`,
             respectively.
 
         See Also
@@ -1294,7 +1294,7 @@ class Entity:
             old: new
             for old, new in zip(
                 (level_col, id_col, misc_col),
-                (*self.properties.index.names, self._props_col),
+                (*self.properties.index.names, self._misc_props_col),
             )
             if old is not None
         }
@@ -1355,9 +1355,9 @@ class Entity:
                 props = props.drop_duplicates(index_cols)
                 props = props.set_index(index_cols)
 
-        if self._props_col in props:
+        if self._misc_props_col in props:
             try:
-                props[self._props_col] = props[self._props_col].apply(literal_eval)
+                props[self._misc_props_col] = props[self._misc_props_col].apply(literal_eval)
             except ValueError:
                 pass  # data already parsed, no literal eval needed
             else:
@@ -1371,8 +1371,8 @@ class Entity:
         properties = props.combine_first(self.properties)
         # update misc. column to combine existing and new misc. property dicts
         # new props override existing value for overlapping misc. property dict keys
-        properties[self._props_col] = self.properties[self._props_col].combine(
-            properties[self._props_col],
+        properties[self._misc_props_col] = self.properties[self._misc_props_col].combine(
+            properties[self._misc_props_col],
             lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
             fill_value={},
         )
@@ -1401,7 +1401,7 @@ class Entity:
                 names=self.properties.index.names,
             )
             props_data = [props[level][item] for level, item in item_keys]
-            props = pd.DataFrame({self._props_col: props_data}, index=item_keys)
+            props = pd.DataFrame({self._misc_props_col: props_data}, index=item_keys)
             self._properties_from_dataframe(props)
 
     def _property_loc(self, item: T) -> tuple[int, T]:
@@ -1491,12 +1491,12 @@ class Entity:
             self._properties.loc[item_key, prop_name] = prop_val
         else:
             try:
-                self._properties.loc[item_key, self._props_col].update(
+                self._properties.loc[item_key, self._misc_props_col].update(
                     {prop_name: prop_val}
                 )
             except KeyError:
                 self._properties.loc[item_key, :] = {
-                    self._props_col: {prop_name: prop_val}
+                    self._misc_props_col: {prop_name: prop_val}
                 }
 
     def get_property(self, item: T, prop_name: Any, level: Optional[int] = None) -> Any:
@@ -1544,7 +1544,7 @@ class Entity:
             prop_val = self.properties.loc[item_key, prop_name]
         except KeyError as ex:
             if ex.args[0] == prop_name:
-                prop_val = self.properties.loc[item_key, self._props_col].get(prop_name)
+                prop_val = self.properties.loc[item_key, self._misc_props_col].get(prop_name)
             else:
                 raise KeyError(
                     f"no properties initialized for ('level','item'): {item_key}"
