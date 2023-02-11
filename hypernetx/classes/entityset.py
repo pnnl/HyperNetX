@@ -167,7 +167,7 @@ class EntitySet(Entity):
 
             prop_cols = []
             if isinstance(cell_properties, Sequence):
-                for col in [*cell_properties, self._misc_cell_props_col]:
+                for col in {*cell_properties, self._misc_cell_props_col}:
                     if col in entity:
                         _log.debug(f"Adding column to prop_cols: {col}")
                         prop_cols.append(col)
