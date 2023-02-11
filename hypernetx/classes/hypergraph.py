@@ -165,7 +165,7 @@ class Hypergraph:
             try:
                 kwargs.update(
                     properties=setsystem.properties,
-                    props_col=setsystem._props_col,
+                    misc_props_col=setsystem._misc_props_col,
                     level_col=setsystem.properties.index.names[0],
                     id_col=setsystem.properties.index.names[1],
                 )
@@ -175,7 +175,7 @@ class Hypergraph:
             try:
                 kwargs.update(
                     cell_properties=setsystem.cell_properties.reset_index(),
-                    cell_props_col=setsystem._cell_props_col,
+                    misc_cell_props_col=setsystem._misc_cell_props_col,
                 )
             except AttributeError:
                 pass

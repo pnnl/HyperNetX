@@ -68,7 +68,7 @@ class EntitySet(Entity):
         Ignored if underlying data is 1-dimensional (set).
         If doubly-nested dict,
         ``{level1 item: {level2 item: {cell property name: cell property value}}}``.
-    cell_props_col : str, default='cell_properties'
+    misc_cell_props_col : str, default='cell_properties'
         Column name for miscellaneous cell properties; see Notes for explanation.
     kwargs
         Keyword arguments passed to the ``Entity`` constructor, e.g., `static`,
@@ -102,7 +102,7 @@ class EntitySet(Entity):
     store a ``dict`` of miscellaneous cell properties, which will store cell properties
     of types that have not been explicitly defined and do not have a dedicated column
     (which may be assigned after construction). The name of the miscellaneous column is
-    determined by `cell_props_col`.
+    determined by `misc_cell_props_col`.
 
     You can also pass a **pre-constructed table** to `cell_properties` as a
     ``DataFrame``:
@@ -117,7 +117,7 @@ class EntitySet(Entity):
     +----------+----------+----------------------------+-------+-----------------------+
 
     Column 1 and Column 2 must have the same names as the corresponding columns in the
-    `entity` data table, and `cell_props_col` can be used to specify the name of the
+    `entity` data table, and `misc_cell_props_col` can be used to specify the name of the
     column to be used for miscellaneous cell properties. If no column by that name is
     found, a new column will be created and populated with empty ``dicts``. All other
     columns will be considered explicit cell property types. The order of the columns
@@ -143,10 +143,10 @@ class EntitySet(Entity):
         cell_properties: Optional[
             str | Sequence[str] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
-        cell_props_col: str = "cell_properties",
+        misc_cell_props_col: str = "cell_properties",
         **kwargs,
     ):
-        self._cell_props_col = cell_props_col
+        self._misc_cell_props_col = misc_cell_props_col
 
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
@@ -167,7 +167,7 @@ class EntitySet(Entity):
 
             prop_cols = []
             if isinstance(cell_properties, Sequence):
-                for col in [*cell_properties, self._cell_props_col]:
+                for col in [*cell_properties, self._misc_cell_props_col]:
                     if col in entity:
                         _log.debug(f"Adding column to prop_cols: {col}")
                         prop_cols.append(col)
@@ -228,7 +228,7 @@ class EntitySet(Entity):
         # if underlying data is 2D (system of sets), create and assign cell properties
         if self.dimsize == 2:
             self._cell_properties = pd.DataFrame(
-                columns=[*self._data_cols, self._cell_props_col]
+                columns=[*self._data_cols, self._misc_cell_props_col]
             )
             self._cell_properties.set_index(self._data_cols, inplace=True)
             if cell_properties is not None:
@@ -313,7 +313,7 @@ class EntitySet(Entity):
             levels,
             weights,
             aggregateby,
-            cell_props_col=self._cell_props_col,
+            misc_cell_props_col=self._misc_cell_props_col,
             **kwargs,
         )
 
@@ -343,7 +343,7 @@ class EntitySet(Entity):
         restrict_to_indices
         """
         restricted = self.restrict_to_indices(
-            indices, cell_props_col=self._cell_props_col, **kwargs
+            indices, misc_cell_props_col=self._misc_cell_props_col, **kwargs
         )
         if not self.cell_properties.empty:
             cell_properties = self.cell_properties.loc[
@@ -381,9 +381,9 @@ class EntitySet(Entity):
                 f"cell properties are not supported for 'dimsize'={self.dimsize}"
             )
 
-        misc_col = misc_col or self._cell_props_col
+        misc_col = misc_col or self._misc_cell_props_col
         try:
-            cell_props = cell_props.rename(columns={misc_col: self._cell_props_col})
+            cell_props = cell_props.rename(columns={misc_col: self._misc_cell_props_col})
         except AttributeError:  # handle cell props in nested dict format
             self._cell_properties_from_dict(cell_props)
         else:  # handle cell props in DataFrame format
@@ -408,7 +408,7 @@ class EntitySet(Entity):
             ]
             cell_props = cell_props.reset_index(level=extra_levels)
 
-        misc_col = self._cell_props_col
+        misc_col = self._misc_cell_props_col
 
         try:
             cell_props.index = cell_props.index.reorder_levels(self._data_cols)
@@ -469,7 +469,7 @@ class EntitySet(Entity):
                 names=self._data_cols,
             )
             props_data = [cell_props[item1][item2] for item1, item2 in cells]
-            cell_props = pd.DataFrame({self._cell_props_col: props_data}, index=cells)
+            cell_props = pd.DataFrame({self._misc_cell_props_col: props_data}, index=cells)
             self._cell_properties_from_dataframe(cell_props)
 
     def collapse_identical_elements(
@@ -554,11 +554,11 @@ class EntitySet(Entity):
             else:
                 try:
                     self._cell_properties.loc[
-                        (item1, item2), self._cell_props_col
+                        (item1, item2), self._misc_cell_props_col
                     ].update({prop_name: prop_val})
                 except KeyError:
                     self._cell_properties.loc[(item1, item2), :] = {
-                        self._cell_props_col: {prop_name: prop_val}
+                        self._misc_cell_props_col: {prop_name: prop_val}
                     }
 
     def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
@@ -591,7 +591,7 @@ class EntitySet(Entity):
         try:
             prop_val = cell_props.loc[prop_name]
         except KeyError:
-            prop_val = cell_props.loc[self._cell_props_col].get(prop_name)
+            prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
 
         return prop_val
 
