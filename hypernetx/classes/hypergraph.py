@@ -949,10 +949,10 @@ class Hypergraph:
         hypergraph : Hypergraph
 
         """
-
-        # TODO: see add_edge; suppress "Edge already in hypergraph" warning
         if edge in self._edges:
-            self.add_edge({edge: [node]}, update_state)
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', message="Cannot add edge. Edge already in hypergraph")
+                self.add_edge({edge: [node]}, update_state)
 
         return self
 
