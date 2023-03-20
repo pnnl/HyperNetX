@@ -33,3 +33,4 @@ env
 .env
 .venv*
 pylint-results.txt
+*pytest.xml
