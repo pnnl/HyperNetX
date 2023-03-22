@@ -10,14 +10,14 @@ PYTHON3 = python3
 
 test: clean venv
 	@$(PYTHON_VENV) -m pip install -e .'[auto-testing]' --use-pep517
-	@$(PYTHON_VENV) -m tox
+	@$(PYTHON_VENV) -m tox -e py38 -e py311
 
 test-ci:
 	@$(PYTHON3) -m pip install -e .'[auto-testing]' --use-pep517
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	pre-commit install
 	pre-commit run --all-files
-	@$(PYTHON3) -m tox
+	@$(PYTHON3) -m tox -e py38
 
 .PHONY: test, test-ci
 
