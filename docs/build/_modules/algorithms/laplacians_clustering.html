@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -46,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
@@ -66,9 +67,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>algorithms.laplacians_clustering</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">algorithms.laplacians_clustering</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -85,14 +86,14 @@
 
 <span class="sd">Hypergraph Probability Transition Matrices, Laplacians, and Clustering</span>
 <span class="sd">======================================================================</span>
-<span class="sd">We contruct hypergraph random walks utilizing optional &quot;edge-dependent vertex weights&quot;, which are </span>
+<span class="sd">We contruct hypergraph random walks utilizing optional &quot;edge-dependent vertex weights&quot;, which are</span>
 <span class="sd">weights associated with each vertex-hyperedge pair (i.e. cell weights on the incidence matrix).</span>
-<span class="sd">The probability transition matrix of this random walk is used to construct a normalized Laplacian </span>
+<span class="sd">The probability transition matrix of this random walk is used to construct a normalized Laplacian</span>
 <span class="sd">matrix for the hypergraph. That normalized Laplacian then serves as the input for a spectral clustering</span>
 <span class="sd">algorithm. This spectral clustering algorithm, as well as the normalized Laplacian and other details of</span>
-<span class="sd">this methodology are described in </span>
+<span class="sd">this methodology are described in</span>
 
-<span class="sd">K. Hayashi, S. Aksoy, C. Park, H. Park, &quot;Hypergraph random walks, Laplacians, and clustering&quot;, </span>
+<span class="sd">K. Hayashi, S. Aksoy, C. Park, H. Park, &quot;Hypergraph random walks, Laplacians, and clustering&quot;,</span>
 <span class="sd">Proceedings of the 29th ACM International Conference on Information &amp; Knowledge Management. 2020.</span>
 <span class="sd">https://doi.org/10.1145/3340531.3412034</span>
 
@@ -101,15 +102,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">diags</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">identity</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">diags</span><span class="p">,</span> <span class="n">identity</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">eigs</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">SpectralClustering</span><span class="p">,</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">HyperNetXError</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -120,13 +117,6 @@
     <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">setrecursionlimit</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;prob_trans&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_pi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;norm_lap&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;spec_clus&quot;</span><span class="p">,</span>
-<span class="p">]</span>
 
 
 <div class="viewcode-block" id="prob_trans"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.laplacians_clustering.prob_trans">[docs]</a><span class="k">def</span> <span class="nf">prob_trans</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_connected</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

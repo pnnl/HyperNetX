@@ -16,12 +16,13 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="drawing package" href="drawing.html" />
-    <link rel="prev" title="algorithms.contagion package" href="../algorithms/algorithms.contagion.html" /> 
+    <link rel="prev" title="algorithms package" href="../algorithms/algorithms.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -58,7 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../reports/modules.html">Reports</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
@@ -78,9 +79,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../core.html">HyperNetX Packages</a> &raquo;</li>
-      <li>drawing</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
+      <li class="breadcrumb-item active">drawing</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/drawing/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,10 +97,39 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="drawing.html">drawing package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="drawing.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.rubber_band">drawing.rubber_band module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.two_column">drawing.two_column module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.util">drawing.util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.rubber_band">drawing.rubber_band module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.draw_hyper_edge_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edge_labels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.draw_hyper_edges"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.draw_hyper_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_labels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.draw_hyper_nodes"><code class="docutils literal notranslate"><span class="pre">draw_hyper_nodes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.get_default_radius"><code class="docutils literal notranslate"><span class="pre">get_default_radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.layout_hyper_edges"><code class="docutils literal notranslate"><span class="pre">layout_hyper_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.rubber_band.layout_node_link"><code class="docutils literal notranslate"><span class="pre">layout_node_link()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.two_column">drawing.two_column module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.two_column.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.two_column.draw_hyper_edges"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.two_column.draw_hyper_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_labels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.two_column.layout_two_column"><code class="docutils literal notranslate"><span class="pre">layout_two_column()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing.util">drawing.util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.get_collapsed_size"><code class="docutils literal notranslate"><span class="pre">get_collapsed_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.get_frozenset_label"><code class="docutils literal notranslate"><span class="pre">get_frozenset_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.get_line_graph"><code class="docutils literal notranslate"><span class="pre">get_line_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.get_set_layering"><code class="docutils literal notranslate"><span class="pre">get_set_layering()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.inflate"><code class="docutils literal notranslate"><span class="pre">inflate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.inflate_kwargs"><code class="docutils literal notranslate"><span class="pre">inflate_kwargs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.util.transpose_inflated_kwargs"><code class="docutils literal notranslate"><span class="pre">transpose_inflated_kwargs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="drawing.html#module-drawing">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing.html#drawing.draw_two_column"><code class="docutils literal notranslate"><span class="pre">draw_two_column()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -110,7 +140,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../algorithms/algorithms.contagion.html" class="btn btn-neutral float-left" title="algorithms.contagion package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../algorithms/algorithms.html" class="btn btn-neutral float-left" title="algorithms package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="drawing.html" class="btn btn-neutral float-right" title="drawing package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

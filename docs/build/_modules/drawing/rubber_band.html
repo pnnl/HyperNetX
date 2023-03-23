@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -46,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
@@ -66,9 +67,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>drawing.rubber_band</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">drawing.rubber_band</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -82,7 +83,7 @@
 <span class="c1"># All rights reserved.</span>
 
 <span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="n">Hypergraph</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">hypernetx.drawing.util</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_frozenset_label</span><span class="p">,</span>
     <span class="n">get_collapsed_size</span><span class="p">,</span>
     <span class="n">get_set_layering</span><span class="p">,</span>
@@ -91,17 +92,14 @@
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">PolyCollection</span><span class="p">,</span> <span class="n">LineCollection</span><span class="p">,</span> <span class="n">CircleCollection</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">PolyCollection</span>
 
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Voronoi</span>
 
 <span class="c1"># increases the default figure size to 8in square.</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
@@ -406,6 +404,7 @@
             <span class="p">}</span>
         <span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="draw"><a class="viewcode-back" href="../../drawing/drawing.html#drawing.rubber_band.draw">[docs]</a><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span>
     <span class="n">H</span><span class="p">,</span>
     <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -510,9 +509,7 @@
         <span class="n">pos</span> <span class="o">=</span> <span class="n">layout_node_link</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="o">**</span><span class="n">layout_kwargs</span><span class="p">)</span>
 
     <span class="n">r0</span> <span class="o">=</span> <span class="n">get_default_radius</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-    <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r0</span> <span class="o">**</span> <span class="mi">2</span>
-
-
+    <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r0</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="k">def</span> <span class="nf">get_node_radius</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">node_radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

@@ -38,7 +38,7 @@ Contents
    install
    Glossary <glossary>
    core
-   NWHypergraph C++ Optimization <nwhy>
+   A Gentle Introduction to Hypergraph Mathematics <hypergraph101>
    HyperNetX Visualization Widget <widget>
    Algorithms: Modularity and Clustering <modularity>
    Publications <publications>

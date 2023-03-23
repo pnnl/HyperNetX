@@ -16,11 +16,12 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="NWHy" href="../nwhy.html" />
+    <link rel="next" title="A Gentle Introduction to Hypergraph Mathematics" href="../hypergraph101.html" />
     <link rel="prev" title="reports" href="modules.html" /> 
 </head>
 
@@ -63,7 +64,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
@@ -83,10 +84,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../core.html">HyperNetX Packages</a> &raquo;</li>
-          <li><a href="modules.html">reports</a> &raquo;</li>
-      <li>reports package</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">reports</a></li>
+      <li class="breadcrumb-item active">reports package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/reports/reports.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -377,6 +378,266 @@ is False, returns a list of toplex sizes in H.</p></li>
 </section>
 <section id="module-reports">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-reports" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.centrality_stats">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">centrality_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#centrality_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.centrality_stats" title="Permalink to this definition"></a></dt>
+<dd><p>Computes basic centrality statistics for X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> – an iterable of numbers</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>[min, max, mean, median, standard deviation]</strong> – List of centrality statistics for X</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.comp_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">comp_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#comp_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.comp_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Computes component sizes, number of nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>aggregated</strong> – If aggregated is True, returns a dictionary of
+component sizes (number of nodes) and counts. If aggregated
+is False, returns a list of components sizes in H.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>comp_dist</strong> – List of component sizes or dictionary of component size distribution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or dictionary</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#reports.s_comp_dist" title="reports.s_comp_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s_comp_dist</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.degree_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">degree_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#degree_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.degree_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Computes degrees of nodes of a hypergraph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>aggregated</strong> – If aggregated is True, returns a dictionary of
+degrees and counts. If aggregated is False, returns a
+list of degrees in H.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>degree_dist</strong> – List of degrees or dictionary of degree distribution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.dist_stats">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">dist_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#dist_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.dist_stats" title="Permalink to this definition"></a></dt>
+<dd><p>Computes many basic hypergraph stats and puts them all into a single dictionary object</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>nrows = number of nodes (rows in the incidence matrix)</p></li>
+<li><p>ncols = number of edges (columns in the incidence matrix)</p></li>
+<li><p>aspect ratio = nrows/ncols</p></li>
+<li><p>ncells = number of filled cells in incidence matrix</p></li>
+<li><p>density = ncells/(nrows*ncols)</p></li>
+<li><p>node degree list = degree_dist(H)</p></li>
+<li><p>node degree dist = centrality_stats(degree_dist(H))</p></li>
+<li><p>node degree hist = Counter(degree_dist(H))</p></li>
+<li><p>max node degree = max(degree_dist(H))</p></li>
+<li><p>edge size list = edge_size_dist(H)</p></li>
+<li><p>edge size dist = centrality_stats(edge_size_dist(H))</p></li>
+<li><p>edge size hist = Counter(edge_size_dist(H))</p></li>
+<li><p>max edge size = max(edge_size_dist(H))</p></li>
+<li><p>comp nodes list = s_comp_dist(H, s=1, edges=False)</p></li>
+<li><p>comp nodes dist = centrality_stats(s_comp_dist(H, s=1, edges=False))</p></li>
+<li><p>comp nodes hist = Counter(s_comp_dist(H, s=1, edges=False))</p></li>
+<li><p>comp edges list = s_comp_dist(H, s=1, edges=True)</p></li>
+<li><p>comp edges dist = centrality_stats(s_comp_dist(H, s=1, edges=True))</p></li>
+<li><p>comp edges hist = Counter(s_comp_dist(H, s=1, edges=True))</p></li>
+<li><p>num comps = len(s_comp_dist(H))</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>dist_stats</strong> – Dictionary which keeps track of each of the above items (e.g., basic[‘nrows’] = the number of nodes in H)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.edge_size_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">edge_size_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#edge_size_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.edge_size_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Computes edge sizes of a hypergraph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>aggregated</strong> – If aggregated is True, returns a dictionary of
+edge sizes and counts. If aggregated is False, returns a
+list of edge sizes in H.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>edge_size_dist</strong> – List of edge sizes or dictionary of edge size distribution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.info">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.info" title="Permalink to this definition"></a></dt>
+<dd><p>Print a summary of simple statistics for H</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>obj</strong> (<em>optional</em>) – either a node or edge uid from the hypergraph</p></li>
+<li><p><strong>dictionary</strong> (<em>optional</em>) – If True then returns the info as a dictionary rather
+than a string
+If False (default) returns the info as a string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>info</strong> – Returns a string of statistics of the size,
+aspect ratio, and density of the hypergraph.
+Print the string to see it formatted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.info_dict">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">info_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#info_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.info_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Create a summary of simple statistics for H</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>obj</strong> (<em>optional</em>) – either a node or edge uid from the hypergraph</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>info_dict</strong> – Returns a dictionary of statistics of the size,
+aspect ratio, and density of the hypergraph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.s_comp_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">s_comp_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_singletons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#s_comp_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.s_comp_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Computes s-component sizes, counting nodes or edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>s</strong> (<em>positive integer</em><em>, </em><em>default is 1</em>) – </p></li>
+<li><p><strong>aggregated</strong> – If aggregated is True, returns a dictionary of
+s-component sizes and counts in H. If aggregated is
+False, returns a list of s-component sizes in H.</p></li>
+<li><p><strong>edges</strong> – If edges is True, the component size is number of edges.
+If edges is False, the component size is number of nodes.</p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>s_comp_dist</strong> – List of component sizes or dictionary of component size distribution in H</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or dictionary</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#reports.comp_dist" title="reports.comp_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comp_dist</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.s_edge_diameter_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">s_edge_diameter_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#s_edge_diameter_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.s_edge_diameter_dist" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>s_edge_diameter_dist</strong> – List of s-edge-diameters for hypergraph H starting with s=1
+and going up as long as the hypergraph is s-edge-connected</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.s_node_diameter_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">s_node_diameter_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#s_node_diameter_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.s_node_diameter_dist" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>s_node_diameter_dist</strong> – List of s-node-diameters for hypergraph H starting with s=1
+and going up as long as the hypergraph is s-node-connected</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reports.toplex_dist">
+<span class="sig-prename descclassname"><span class="pre">reports.</span></span><span class="sig-name descname"><span class="pre">toplex_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/reports/descriptive_stats.html#toplex_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reports.toplex_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Computes toplex sizes for hypergraph H.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
+<li><p><strong>aggregated</strong> – If aggregated is True, returns a dictionary of
+toplex sizes and counts in H. If aggregated
+is False, returns a list of toplex sizes in H.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>toplex_dist</strong> – List of toplex sizes or dictionary of toplex size distribution in H</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -385,7 +646,7 @@ is False, returns a list of toplex sizes in H.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="modules.html" class="btn btn-neutral float-left" title="reports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../nwhy.html" class="btn btn-neutral float-right" title="NWHy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../hypergraph101.html" class="btn btn-neutral float-right" title="A Gentle Introduction to Hypergraph Mathematics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
