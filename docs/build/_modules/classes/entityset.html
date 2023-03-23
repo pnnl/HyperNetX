@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>classes.entityset &mdash; HyperNetX 1.2.5 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> HyperNetX
+            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">classes.entityset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for classes.entityset</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">hypernetx.classes</span> <span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">hypernetx.classes.helpers</span> <span class="kn">import</span> <span class="n">AttrList</span>
+<span class="kn">from</span> <span class="nn">hypernetx.utils.log</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">_log</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;entity_set&quot;</span><span class="p">)</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="EntitySet"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet">[docs]</a><span class="k">class</span> <span class="nc">EntitySet</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for handling 2-dimensional (i.e., system of sets, bipartite) data when</span>
+<span class="sd">    building network-like models, i.e., :class:`Hypergraph`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    entity : Entity, pandas.DataFrame, dict of lists or sets, or list of lists or sets, optional</span>
+<span class="sd">        If an ``Entity`` with N levels or a ``DataFrame`` with N columns,</span>
+<span class="sd">        represents N-dimensional entity data (data table).</span>
+<span class="sd">        If N &gt; 2, only considers levels (columns) `level1` and `level2`.</span>
+<span class="sd">        Otherwise, represents 2-dimensional entity data (system of sets).</span>
+<span class="sd">    data : numpy.ndarray, optional</span>
+<span class="sd">        2D M x N ``ndarray`` of ``ints`` (data table);</span>
+<span class="sd">        sparse representation of an N-dimensional incidence tensor with M nonzero cells.</span>
+<span class="sd">        If N &gt; 2, only considers levels (columns) `level1` and `level2`.</span>
+<span class="sd">        Ignored if `entity` is provided.</span>
+<span class="sd">    labels : collections.OrderedDict of lists, optional</span>
+<span class="sd">        User-specified labels in corresponding order to ``ints`` in `data`.</span>
+<span class="sd">        For M x N `data`, N &gt; 2, `labels` must contain either 2 or N keys.</span>
+<span class="sd">        If N keys, only considers labels for levels (columns) `level1` and `level2`.</span>
+<span class="sd">        Ignored if `entity` is provided or `data` is not provided.</span>
+<span class="sd">    level1, level2 : str or int, default=0,1</span>
+<span class="sd">        Each item in `level1` defines a set containing all the `level2` items with which</span>
+<span class="sd">        it appears in the same row of the underlying data table.</span>
+<span class="sd">        If ``int``, gives the index of a level;</span>
+<span class="sd">        if ``str``, gives the name of a column in `entity`.</span>
+<span class="sd">        Ignored if `entity`, `data` (if `entity` not provided), and `labels` all (if</span>
+<span class="sd">        provided) represent 1- or 2-dimensional data (set or system of sets).</span>
+<span class="sd">    weights : str or sequence of float, optional</span>
+<span class="sd">        User-specified cell weights corresponding to entity data.</span>
+<span class="sd">        If sequence of ``floats`` and `entity` or `data` defines a data table,</span>
+<span class="sd">            length must equal the number of rows.</span>
+<span class="sd">        If sequence of ``floats`` and `entity` defines a system of sets,</span>
+<span class="sd">            length must equal the total sum of the sizes of all sets.</span>
+<span class="sd">        If ``str`` and `entity` is a ``DataFrame``,</span>
+<span class="sd">            must be the name of a column in `entity`.</span>
+<span class="sd">        Otherwise, weight for all cells is assumed to be 1.</span>
+<span class="sd">        Ignored if `entity` is an ``Entity`` and `keep_weights`=True.</span>
+<span class="sd">    keep_weights : bool, default=True</span>
+<span class="sd">        Whether to preserve any existing cell weights;</span>
+<span class="sd">        ignored if `entity` is not an ``Entity``.</span>
+<span class="sd">    cell_properties : str, list of str, pandas.DataFrame, or doubly-nested dict, optional</span>
+<span class="sd">        User-specified properties to be assigned to cells of the incidence matrix, i.e.,</span>
+<span class="sd">        rows in a data table; pairs of (set, element of set) in a system of sets.</span>
+<span class="sd">        See Notes for detailed explanation.</span>
+<span class="sd">        Ignored if underlying data is 1-dimensional (set).</span>
+<span class="sd">        If doubly-nested dict,</span>
+<span class="sd">        ``{level1 item: {level2 item: {cell property name: cell property value}}}``.</span>
+<span class="sd">    misc_cell_props_col : str, default=&#39;cell_properties&#39;</span>
+<span class="sd">        Column name for miscellaneous cell properties; see Notes for explanation.</span>
+<span class="sd">    kwargs</span>
+<span class="sd">        Keyword arguments passed to the ``Entity`` constructor, e.g., `static`,</span>
+<span class="sd">        `uid`, `aggregateby`, `properties`, etc. See :class:`Entity` for documentation</span>
+<span class="sd">        of these parameters.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    A **cell property** is a named attribute assigned jointly to a set and one of its</span>
+<span class="sd">    elements, i.e, a cell of the incidence matrix.</span>
+
+<span class="sd">    When an ``Entity`` or ``DataFrame`` is passed to the `entity` parameter of the</span>
+<span class="sd">    constructor, it should represent a data table:</span>
+
+<span class="sd">    +--------------+--------------+--------------+-------+--------------+</span>
+<span class="sd">    | Column_1     | Column_2     | Column_3     | [...] | Column_N     |</span>
+<span class="sd">    +==============+==============+==============+=======+==============+</span>
+<span class="sd">    | level 1 item | level 2 item | level 3 item | ...   | level N item |</span>
+<span class="sd">    +--------------+--------------+--------------+-------+--------------+</span>
+<span class="sd">    | ...          | ...          | ...          | ...   | ...          |</span>
+<span class="sd">    +--------------+--------------+--------------+-------+--------------+</span>
+
+<span class="sd">    Assuming the default values for parameters `level1`, `level2`, the data table will</span>
+<span class="sd">    be restricted to the set system defined by Column 1 and Column 2.</span>
+<span class="sd">    Since each row of the data table represents an incidence or cell, values from other</span>
+<span class="sd">    columns may contain data that should be converted to cell properties.</span>
+
+<span class="sd">    By passing a **column name or list of column names** as `cell_properties`, each</span>
+<span class="sd">    given column will be preserved in the :attr:`cell_properties` as an explicit cell</span>
+<span class="sd">    property type. An additional column in :attr:`cell_properties` will be created to</span>
+<span class="sd">    store a ``dict`` of miscellaneous cell properties, which will store cell properties</span>
+<span class="sd">    of types that have not been explicitly defined and do not have a dedicated column</span>
+<span class="sd">    (which may be assigned after construction). The name of the miscellaneous column is</span>
+<span class="sd">    determined by `misc_cell_props_col`.</span>
+
+<span class="sd">    You can also pass a **pre-constructed table** to `cell_properties` as a</span>
+<span class="sd">    ``DataFrame``:</span>
+
+<span class="sd">    +----------+----------+----------------------------+-------+-----------------------+</span>
+<span class="sd">    | Column_1 | Column_2 | [explicit cell prop. type] | [...] | misc. cell properties |</span>
+<span class="sd">    +==========+==========+============================+=======+=======================+</span>
+<span class="sd">    | level 1  | level 2  | cell property value        | ...   | {cell property name:  |</span>
+<span class="sd">    | item     | item     |                            |       | cell property value}  |</span>
+<span class="sd">    +----------+----------+----------------------------+-------+-----------------------+</span>
+<span class="sd">    | ...      | ...      | ...                        | ...   | ...                   |</span>
+<span class="sd">    +----------+----------+----------------------------+-------+-----------------------+</span>
+
+<span class="sd">    Column 1 and Column 2 must have the same names as the corresponding columns in the</span>
+<span class="sd">    `entity` data table, and `misc_cell_props_col` can be used to specify the name of the</span>
+<span class="sd">    column to be used for miscellaneous cell properties. If no column by that name is</span>
+<span class="sd">    found, a new column will be created and populated with empty ``dicts``. All other</span>
+<span class="sd">    columns will be considered explicit cell property types. The order of the columns</span>
+<span class="sd">    does not matter.</span>
+
+<span class="sd">    Both of these methods assume that there are no row duplicates in the tables passed</span>
+<span class="sd">    to `entity` and/or `cell_properties`; if duplicates are found, all but the first</span>
+<span class="sd">    occurrence will be dropped.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Entity</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">level1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">level2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_weights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cell_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">misc_cell_props_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cell_properties&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span> <span class="o">=</span> <span class="n">misc_cell_props_col</span>
+
+        <span class="c1"># if the entity data is passed as an Entity, get its underlying data table and</span>
+        <span class="c1"># proceed to the case for entity data passed as a DataFrame</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Changing entity from type </span><span class="si">{</span><span class="n">Entity</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">dataframe</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keep_weights</span><span class="p">:</span>
+                <span class="c1"># preserve original weights</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">_cell_weight_col</span>
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">dataframe</span>
+
+        <span class="c1"># if the entity data is passed as a DataFrame, restrict to two columns if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing parameter of &#39;entity&#39; of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="c1"># metadata columns are not considered levels of data,</span>
+            <span class="c1"># remove them before indexing by level</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_properties</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">cell_properties</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_properties</span><span class="p">]</span>
+
+            <span class="n">prop_cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_properties</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">{</span><span class="o">*</span><span class="n">cell_properties</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">}:</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
+                        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding column to prop_cols: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">prop_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="n">meta_cols</span> <span class="o">=</span> <span class="n">prop_cols</span>
+            <span class="k">if</span> <span class="n">weights</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
+                <span class="n">meta_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;meta_cols: </span><span class="si">{</span><span class="n">meta_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># if both levels are column names, no need to index by level</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level1</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">]</span>
+            <span class="c1"># if one or both of the levels are given by index, get column name</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">all_columns</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">meta_cols</span><span class="p">)</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">all_columns</span><span class="p">[</span><span class="n">lev</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lev</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="n">lev</span>
+                    <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="p">(</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">)</span>
+                <span class="p">]</span>
+
+            <span class="c1"># if there is a column for cell properties, convert to separate DataFrame</span>
+            <span class="k">if</span> <span class="n">prop_cols</span><span class="p">:</span>
+                <span class="n">cell_properties</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[[</span><span class="o">*</span><span class="n">columns</span><span class="p">,</span> <span class="o">*</span><span class="n">prop_cols</span><span class="p">]]</span>
+
+            <span class="c1"># if there is a column for weights, preserve it</span>
+            <span class="k">if</span> <span class="n">weights</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;columns: </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># pass level1, level2, and weights (optional) to Entity constructor</span>
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="c1"># if a 2D ndarray is passed, restrict to two columns if needed</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing parameter &#39;data&#39; of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">(</span><span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">)]</span>
+
+        <span class="c1"># if a dict of labels is provided, restrict to labels for two columns if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">label_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">label_keys</span><span class="p">[</span><span class="n">level1</span><span class="p">],</span> <span class="n">label_keys</span><span class="p">[</span><span class="n">level2</span><span class="p">])</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">}</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restricted labels to columns:</span><span class="se">\n</span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Creating instance of </span><span class="si">{</span><span class="n">Entity</span><span class="si">}</span><span class="s2"> using reformatted params: </span><span class="se">\n\t</span><span class="s2">entity: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\t</span><span class="s2">data: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\t</span><span class="s2">labels: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="se">\n\t</span><span class="s2">weights: </span><span class="si">{</span><span class="n">weights</span><span class="si">}</span><span class="s2">, </span><span class="se">\n\t</span><span class="s2">kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;entity:</span><span class="se">\n</span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data: </span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># if underlying data is 2D (system of sets), create and assign cell properties</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cell_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">assign_cell_properties</span><span class="p">(</span><span class="n">cell_properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cell_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Properties assigned to cells of the incidence matrix</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.Series, optional</span>
+<span class="sd">            Returns None if :attr:`dimsize` &lt; 2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">memberships</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttrList</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Extends :attr:`Entity.memberships`</span>
+
+<span class="sd">        Each item in level 1 (second column) defines a set containing all the level 0</span>
+<span class="sd">        (first column) items with which it appears in the same row of the underlying</span>
+<span class="sd">        data table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of AttrList</span>
+<span class="sd">            System of sets representation as dict of</span>
+<span class="sd">            ``{level 1 item: AttrList(level 0 items)}``.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        elements : dual of this representation,</span>
+<span class="sd">                   i.e., each item in level 0 (first column) defines a set</span>
+<span class="sd">        restrict_to_levels : for more information on how memberships work for</span>
+<span class="sd">                             1-dimensional (set) data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memberships&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">memberships</span>
+
+<div class="viewcode-block" id="EntitySet.restrict_to_levels"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.restrict_to_levels">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_levels</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">aggregateby</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+        <span class="n">keep_memberships</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extends :meth:`Entity.restrict_to_levels`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        levels : array-like of int</span>
+<span class="sd">            indices of a subset of levels (columns) of data</span>
+<span class="sd">        weights : bool, default=False</span>
+<span class="sd">            If True, aggregate existing cell weights to get new cell weights.</span>
+<span class="sd">            Otherwise, all new cell weights will be 1.</span>
+<span class="sd">        aggregateby : {&#39;sum&#39;, &#39;first&#39;, &#39;last&#39;, &#39;count&#39;, &#39;mean&#39;, &#39;median&#39;, &#39;max&#39;, \</span>
+<span class="sd">    &#39;min&#39;, None}, optional</span>
+<span class="sd">            Method to aggregate weights of duplicate rows in data table</span>
+<span class="sd">            If None or `weights`=False then all new cell weights will be 1</span>
+<span class="sd">        keep_memberships : bool, default=True</span>
+<span class="sd">            Whether to preserve membership information for the discarded level when</span>
+<span class="sd">            the new ``EntitySet`` is restricted to a single level</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Extra arguments to :class:`EntitySet` constructor</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        EntitySet</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        KeyError</span>
+<span class="sd">            If `levels` contains any invalid values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">restricted</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">(</span>
+            <span class="n">levels</span><span class="p">,</span>
+            <span class="n">weights</span><span class="p">,</span>
+            <span class="n">aggregateby</span><span class="p">,</span>
+            <span class="n">misc_cell_props_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">keep_memberships</span><span class="p">:</span>
+            <span class="c1"># use original memberships to set memberships for the new EntitySet</span>
+            <span class="c1"># TODO: This assumes levels=[1], add explicit checks for other cases</span>
+            <span class="n">restricted</span><span class="o">.</span><span class="n">_state_dict</span><span class="p">[</span><span class="s2">&quot;memberships&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memberships</span>
+
+        <span class="k">return</span> <span class="n">restricted</span></div>
+
+<div class="viewcode-block" id="EntitySet.restrict_to"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.restrict_to">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Alias of :meth:`restrict_to_indices` with default parameter `level`=0</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : array_like of int</span>
+<span class="sd">            indices of item label(s) in `level` to restrict to</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Extra arguments to :class:`EntitySet` constructor</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        EntitySet</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        restrict_to_indices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">restricted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">restrict_to_indices</span><span class="p">(</span>
+            <span class="n">indices</span><span class="p">,</span> <span class="n">misc_cell_props_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">cell_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">restricted</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">restricted</span><span class="o">.</span><span class="n">assign_cell_properties</span><span class="p">(</span><span class="n">cell_properties</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">restricted</span></div>
+
+<div class="viewcode-block" id="EntitySet.assign_cell_properties"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.assign_cell_properties">[docs]</a>    <span class="k">def</span> <span class="nf">assign_cell_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cell_props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+        <span class="n">misc_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Assign new properties to cells of the incidence matrix and update</span>
+<span class="sd">        :attr:`properties`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cell_props : pandas.DataFrame, dict of iterables, or doubly-nested dict, optional</span>
+<span class="sd">            See documentation of the `cell_properties` parameter in :class:`EntitySet`</span>
+<span class="sd">        misc_col: str, optional</span>
+<span class="sd">            name of column to be used for miscellaneous cell property dicts</span>
+<span class="sd">        replace: bool, default=False</span>
+<span class="sd">            If True, replace existing :attr:`cell_properties` with result;</span>
+<span class="sd">            otherwise update with new values from result</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -----</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            Not supported for :attr:`dimsize`=1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;cell properties are not supported for &#39;dimsize&#39;=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dimsize</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">misc_col</span> <span class="o">=</span> <span class="n">misc_col</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">misc_col</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># handle cell props in nested dict format</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dict</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># handle cell props in DataFrame format</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dataframe</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_cell_properties_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a DataFrame</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        props</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cell_props : DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">extra_levels</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">idx_lev</span>
+                <span class="k">for</span> <span class="n">idx_lev</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">if</span> <span class="n">idx_lev</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span>
+            <span class="p">]</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">extra_levels</span><span class="p">)</span>
+
+        <span class="n">misc_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cell_props</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">reorder_levels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">:</span>
+                <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">,</span> <span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;duplicate cell rows will be dropped after first occurrence&quot;</span>
+                <span class="p">)</span>
+                <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">)</span>
+                <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">misc_col</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cell_props</span><span class="p">[</span><span class="n">misc_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_props</span><span class="p">[</span><span class="n">misc_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">literal_eval</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># data already parsed, no literal eval needed</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;parsed cell property dict column from string literal&quot;</span><span class="p">)</span>
+
+        <span class="n">cell_properties</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">combine_first</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="p">)</span>
+        <span class="n">cell_properties</span><span class="p">[</span><span class="n">misc_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="p">[</span><span class="n">misc_col</span><span class="p">]</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span>
+            <span class="n">cell_properties</span><span class="p">[</span><span class="n">misc_col</span><span class="p">],</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}),</span> <span class="o">**</span><span class="p">(</span><span class="n">y</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">else</span> <span class="p">{})},</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">{},</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span> <span class="o">=</span> <span class="n">cell_properties</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_cell_properties_from_dict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cell_props</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`cell_properties` from a doubly-nested dict</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cell_props</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: there may be a more efficient way to convert this to a dataframe instead</span>
+        <span class="c1">#  of updating one-by-one via nested loop, but checking whether each prop_name</span>
+        <span class="c1">#  belongs in a designated existing column or the misc. property dict column</span>
+        <span class="c1">#  makes it more challenging.</span>
+        <span class="c1">#  For now: only use nested loop update if non-misc. columns currently exist</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item1</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="p">[</span><span class="n">item1</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_val</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="p">[</span><span class="n">item1</span><span class="p">][</span><span class="n">item2</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_cell_property</span><span class="p">(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cells</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span>
+                <span class="p">[(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)</span> <span class="k">for</span> <span class="n">item1</span> <span class="ow">in</span> <span class="n">cell_props</span> <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">cell_props</span><span class="p">[</span><span class="n">item1</span><span class="p">]],</span>
+                <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">props_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_props</span><span class="p">[</span><span class="n">item1</span><span class="p">][</span><span class="n">item2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item1</span><span class="p">,</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">]</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">:</span> <span class="n">props_data</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dataframe</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">EntitySet</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot;Create a new :class:`EntitySet` by collapsing sets with the same set elements</span>
+
+<span class="sd">        Each item in level 0 (first column) defines a set containing all the level 1</span>
+<span class="sd">        (second column) items with which it appears in the same row of the underlying</span>
+<span class="sd">        data table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        return_equivalence_classes : bool, default=False</span>
+<span class="sd">            If True, return a dictionary of equivalence classes keyed by new edge names</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Extra arguments to :class:`EntitySet` constructor</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_entity : EntitySet</span>
+<span class="sd">            new :class:`EntitySet` with identical sets collapsed;</span>
+<span class="sd">            if all sets are unique, the system of sets will be the same as the original.</span>
+<span class="sd">        equivalence_classes : dict of lists, optional</span>
+<span class="sd">            if `return_equivalence_classes`=True,</span>
+<span class="sd">            ``{collapsed set label: [level 0 item labels]}``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># group by level 0 (set), aggregate level 1 (set elements) as frozenset</span>
+        <span class="n">collapse</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataframe</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># aggregation method to rename equivalence classes as [first item]: [# items]</span>
+        <span class="n">agg_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)}</span>
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="c1"># aggregation method to list all items in each equivalence class</span>
+            <span class="n">agg_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">equivalence_class</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">))</span>
+        <span class="c1"># group by frozenset of level 1 items (set elements), aggregate to get names of</span>
+        <span class="c1"># equivalence classes and (optionally) list of level 0 items (sets) in each</span>
+        <span class="n">collapse</span> <span class="o">=</span> <span class="n">collapse</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">agg_kwargs</span>
+        <span class="p">)</span>
+        <span class="c1"># convert to nested dict representation of collapsed system of sets</span>
+        <span class="n">collapse</span> <span class="o">=</span> <span class="n">collapse</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">new_entity_dict</span> <span class="o">=</span> <span class="n">collapse</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="c1"># construct new EntitySet from system of sets</span>
+        <span class="n">new_entity</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">new_entity_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_equivalence_classes</span><span class="p">:</span>
+            <span class="c1"># lists of equivalent sets, keyed by equivalence class name</span>
+            <span class="n">equivalence_classes</span> <span class="o">=</span> <span class="n">collapse</span><span class="o">.</span><span class="n">equivalence_class</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">new_entity</span><span class="p">,</span> <span class="n">equivalence_classes</span>
+        <span class="k">return</span> <span class="n">new_entity</span></div>
+
+<div class="viewcode-block" id="EntitySet.set_cell_property"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.set_cell_property">[docs]</a>    <span class="k">def</span> <span class="nf">set_cell_property</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">prop_val</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set a property of a cell i.e., incidence between items of different levels</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item1 : hashable</span>
+<span class="sd">            name of an item in level 0</span>
+<span class="sd">        item2 : hashable</span>
+<span class="sd">            name of an item in level 1</span>
+<span class="sd">        prop_name : hashable</span>
+<span class="sd">            name of the cell property to set</span>
+<span class="sd">        prop_val : any</span>
+<span class="sd">            value of the cell property to set</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        get_cell_property, get_cell_properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">item2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">item1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">prop_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">),</span> <span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">prop_val</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                        <span class="p">(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">prop_name</span><span class="p">:</span> <span class="n">prop_val</span><span class="p">})</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">),</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">:</span> <span class="p">{</span><span class="n">prop_name</span><span class="p">:</span> <span class="n">prop_val</span><span class="p">}</span>
+                    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="EntitySet.get_cell_property"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.get_cell_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_cell_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get a property of a cell i.e., incidence between items of different levels</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item1 : hashable</span>
+<span class="sd">            name of an item in level 0</span>
+<span class="sd">        item2 : hashable</span>
+<span class="sd">            name of an item in level 1</span>
+<span class="sd">        prop_name : hashable</span>
+<span class="sd">            name of the cell property to get</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prop_val : any</span>
+<span class="sd">            value of the cell property</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        get_cell_properties, set_cell_property</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span>
+            <span class="c1"># TODO: raise informative exception</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prop_val</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">prop_val</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prop_val</span></div>
+
+<div class="viewcode-block" id="EntitySet.get_cell_properties"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.get_cell_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_cell_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get all properties of a cell, i.e., incidence between items of different</span>
+<span class="sd">        levels</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item1 : hashable</span>
+<span class="sd">            name of an item in level 0</span>
+<span class="sd">        item2 : hashable</span>
+<span class="sd">            name of an item in level 1</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            ``{named cell property: cell property value, ..., misc. cell property column</span>
+<span class="sd">            name: {cell property name: cell property value}}``</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        get_cell_property, set_cell_property</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span>
+            <span class="c1"># TODO: raise informative exception</span>
+
+        <span class="k">return</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -16,6 +16,7 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -58,7 +59,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
@@ -78,9 +79,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../core.html">HyperNetX Packages</a> &raquo;</li>
-      <li>reports</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
+      <li class="breadcrumb-item active">reports</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/reports/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,8 +97,34 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">reports package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reports.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.descriptive_stats">reports.descriptive_stats module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports.descriptive_stats">reports.descriptive_stats module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.centrality_stats"><code class="docutils literal notranslate"><span class="pre">centrality_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.comp_dist"><code class="docutils literal notranslate"><span class="pre">comp_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.degree_dist"><code class="docutils literal notranslate"><span class="pre">degree_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.dist_stats"><code class="docutils literal notranslate"><span class="pre">dist_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">edge_size_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.info_dict"><code class="docutils literal notranslate"><span class="pre">info_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.s_comp_dist"><code class="docutils literal notranslate"><span class="pre">s_comp_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.s_edge_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_edge_diameter_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.s_node_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_node_diameter_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.descriptive_stats.toplex_dist"><code class="docutils literal notranslate"><span class="pre">toplex_dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#module-reports">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.centrality_stats"><code class="docutils literal notranslate"><span class="pre">centrality_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.comp_dist"><code class="docutils literal notranslate"><span class="pre">comp_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.degree_dist"><code class="docutils literal notranslate"><span class="pre">degree_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.dist_stats"><code class="docutils literal notranslate"><span class="pre">dist_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">edge_size_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.info_dict"><code class="docutils literal notranslate"><span class="pre">info_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.s_comp_dist"><code class="docutils literal notranslate"><span class="pre">s_comp_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.s_edge_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_edge_diameter_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.s_node_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_node_diameter_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports.html#reports.toplex_dist"><code class="docutils literal notranslate"><span class="pre">toplex_dist()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

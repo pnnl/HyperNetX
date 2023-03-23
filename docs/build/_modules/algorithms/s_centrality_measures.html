@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -46,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
@@ -66,9 +67,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>algorithms.s_centrality_measures</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">algorithms.s_centrality_measures</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -91,14 +92,12 @@
 <span class="sd">on this representation of the hypergraph. In essence we construct an *s*-line graph</span>
 <span class="sd">corresponding to the hypergraph on which to apply our methods.</span>
 
-<span class="sd">S-Metrics for hypergraphs are discussed in depth in:        </span>
+<span class="sd">S-Metrics for hypergraphs are discussed in depth in:</span>
 <span class="sd">*Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.</span>
 <span class="sd">EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -112,14 +111,6 @@
     <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">setrecursionlimit</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;s_betweenness_centrality&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_harmonic_closeness_centrality&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_harmonic_centrality&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_closeness_centrality&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_eccentricity&quot;</span><span class="p">,</span>
-<span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_s_centrality</span><span class="p">(</span>
@@ -319,8 +310,8 @@
 
 <div class="viewcode-block" id="s_harmonic_closeness_centrality"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_closeness_centrality">[docs]</a><span class="k">def</span> <span class="nf">s_harmonic_closeness_centrality</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality </span>
-<span class="s2">    and will not be available in future releases. </span>
+<span class="s2">    s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality</span>
+<span class="s2">    and will not be available in future releases.</span>
 <span class="s2">    &quot;&quot;&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s_harmonic_centrality</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">edge</span><span class="p">)</span></div>

@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -46,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nwhy.html">NWHypergraph C++ Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../widget.html">HyperNetX Visualization Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
@@ -66,9 +67,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>reports.descriptive_stats</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reports.descriptive_stats</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,23 +91,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">hypernetx</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">hypernetx.utils.decorators</span> <span class="kn">import</span> <span class="n">not_implemented_for</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;centrality_stats&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;edge_size_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;degree_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;comp_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_comp_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;toplex_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_node_diameter_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s_edge_diameter_dist&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;info&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;info_dict&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dist_stats&quot;</span><span class="p">,</span>
-<span class="p">]</span>
 
 
 <div class="viewcode-block" id="centrality_stats"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.centrality_stats">[docs]</a><span class="k">def</span> <span class="nf">centrality_stats</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
