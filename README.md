@@ -318,3 +318,30 @@ pip install -e .['auto-testing']
 ```commandline
 black hypernetx
 ```
+
+# Documentation
+
+NOTE: make sure you install the required dependencies using: `pip install -e .['documentation']`
+
+When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
+live on the browser without having to rebuild every time you have a change.
+
+```
+cd docs
+
+make livehtml
+```
+
+This make script will run in the foreground on your terminal. You should see the following:
+
+```shell
+The HTML pages are in docs/html.
+[I 230324 09:50:48 server:335] Serving on http://127.0.0.1:8000
+[I 230324 09:50:48 handlers:62] Start watching changes
+[I 230324 09:50:48 handlers:64] Start detecting changes
+[I 230324 09:50:54 handlers:135] Browser Connected: http://127.0.0.1:8000/install.html
+[I 230324 09:51:02 handlers:135] Browser Connected: http://127.0.0.1:8000/
+```
+
+Click on `http://127.0.0.1:8000/install.html` to open the docs on your browser. Since this will auto-rebuild, every time
+you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
