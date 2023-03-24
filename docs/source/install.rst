@@ -1,87 +1,128 @@
+********************
 Installing HyperNetX
-====================
-
-HyperNetX may be cloned or forked from: https://github.com/pnnl/HyperNetX .
-
-To install in an Anaconda environment
--------------------------------------
-
-	>>> conda create -n <env name> python=3.7
-	>>> source activate <env name>
-	>>> pip install hypernetx
-
-Mac Users: If you wish to build the documentation you will need
-the conda version of matplotlib:
-
-	>>> conda create -n <env name> python=3.7 matplotlib
-	>>> source activate <env name>
-	>>> pip install hypernetx	
-
-To use :ref:`NWHy <nwhy>` use python=3.9 and the conda version of tbb in your environment. 
-**Note** that :ref:`NWHy <nwhy>` only works on Linux and some OSX systems. See NWHy docs for more.:
-
-	>>> conda create -n <env name> python=3.9 tbb
-	>>> source activate <env name>
-	>>> pip install hypernetx
-	>>> pip install nwhy
-
-To install in a virtualenv environment
---------------------------------------
-
-	>>> virtualenv --python=<path to python 3.7 executable> <path to env name>
-
-This will create a virtual environment in the specified location using
-the specified python executable. For example:
-
-	>>> virtualenv --python=C:\Anaconda3\python.exe hnx
-
-This will create a virtual environment in .\hnx using the python
-that comes with Anaconda3.
-
-	>>> <path to env name>\Scripts\activate<file extension>
-
-If you are running in Windows PowerShell use <file extension>=.ps1
-
-If you are running in Windows Command Prompt use <file extension>=.bat
-
-Otherwise use <file extension>=NULL (no file extension).
-
-Once activated continue to follow the installation instructions below.
+********************
 
 
-Install using Pip options
--------------------------
-For a minimal installation:
+Installation
+############
 
-	>>> pip install hypernetx
+The recommended installation method for most users is to create a virtual environment
+and install HyperNetX from PyPi.
 
-For an editable installation with access to jupyter notebooks:
-
-    >>> pip install [-e] .
-
-To install with the tutorials:
-
-	>>> pip install -e .['tutorials']
-
-To install with the documentation:
-
-	>>> pip install -e .['documentation']
-	>>> chmod 755 build_docs.sh
-	>>> sh build_docs.sh
-	## This will generate the documentation in /docs/build/
-	## Open them in your browser with /docs/index.html
-
-To install and test using pytest:
-
-	>>> pip install -e .['testing']
-	>>> pytest
-
-To install the whole shabang:
-
-	>>> pip install -e .['all']
+.. _Github:  https://github.com/pnnl/HyperNetX
+HyperNetX may be cloned or forked from Github_.
 
 
+Prerequisites
+######################
+
+HyperNetX officially supports Python 3.8, 3.9, 3.10 and 3.11.
 
 
+Create a virtual environment
+############################
+
+Using Anaconda
+*************************
+
+    >>> conda create -n env-hnx python=3.8 -y
+    >>> conda activate env-hnx
+
+Using venv
+*************************
+
+    >>> python -m venv venv-hnx
+    >>> source env-hnx/bin/activate
+
+
+Using virtualenv
+*************************
+
+    >>> virtualenv env-hnx
+    >>> source env-hnx/bin/activate
+
+
+For Windows Users
+******************
+
+On both Windows PowerShell or Command Prompt, you can use the following command to activate your virtual environment:
+
+    >>> .\env-hnx\Scripts\activate
+
+
+To deactivate your environment, use:
+
+    >>> .\env-hnx\Scripts\deactivate
+
+
+Installing Hypernetx
+####################
+
+Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.8.
+
+Installing from PyPi
+*************************
+
+    >>> pip install hypernetx
+
+
+Installing from Source
+*************************
+
+Ensure that you have ``git`` installed.
+
+    >>> git clone https://github.com/pnnl/HyperNetX.git
+    >>> cd HyperNetX
+    >>> pip install -e .['all']
+
+If you are using zsh as your shell, ensure that the single quotation marks are placed outside the square brackets:
+
+    >>> pip install -e .'[all]'
+
+
+Post-Installation Actions
+##################
+
+Running Tests
+**************
+
+    >>> python -m pytest
+
+Interact with HyperNetX in a REPL
+********************************************
+
+Ensure that your environment is activated and that you run ``python`` on your terminal to open a REPL:
+
+    >>> import hypernetx as hnx
+    >>> data = { 0: ('A', 'B'), 1: ('B', 'C'), 2: ('D', 'A', 'E'), 3: ('F', 'G', 'H', 'D') }
+    >>> H = hnx.Hypergraph(data)
+    >>> list(H.nodes)
+    ['G', 'F', 'D', 'A', 'B', 'H', 'C', 'E']
+    >>> list(H.edges)
+    [0, 1, 2, 3]
+    >>> H.shape
+    (8, 4)
+
+
+Other Actions if installed from source
+********************************************
+
+Ensure that you are at the root of the source directory before running any of the following commands:
+
+Viewing jupyter notebooks
+--------------------------
+
+The following command will automatically open the notebooks in a browser.
+
+    >>> jupyter-notebook tutorials
+
+
+Building documentation
+-----------------------
+
+The following commands will build and open a local version of the documentation in a browser:
+
+    >>> make build-docs
+    >>> open docs/build/index.html
 
 
