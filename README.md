@@ -321,6 +321,15 @@ black hypernetx
 
 # Documentation
 
+## Build and view docs locally
+
+```
+make build-docs
+open docs/build/index.html
+```
+
+## Develop documentation
+
 NOTE: make sure you install the required dependencies using: `pip install -e .['documentation']`
 
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
@@ -328,7 +337,6 @@ live on the browser without having to rebuild every time you have a change.
 
 ```
 cd docs
-
 make livehtml
 ```
 

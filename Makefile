@@ -64,14 +64,14 @@ clean-docs:
 	rm -rf docs/source/drawing
 	rm -rf docs/source/reports
 
-update-docs: clean-docs
+build-docs: clean-docs
 	sphinx-apidoc -o docs/source/classes hypernetx/classes
 	sphinx-apidoc -o docs/source/algorithms hypernetx/algorithms
 	sphinx-apidoc -o docs/source/drawing hypernetx/drawing
 	sphinx-apidoc -o docs/source/reports hypernetx/reports
 	sphinx-build -b html docs/source docs/build
 
-commit-docs: update-docs
+commit-docs: build-docs
 	git add -A
 	git commit -m "Bump version in docs"
 
