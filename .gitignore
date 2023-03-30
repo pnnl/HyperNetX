@@ -34,3 +34,4 @@ env
 .venv*
 pylint-results.txt
 *pytest.xml
+*_alt*
