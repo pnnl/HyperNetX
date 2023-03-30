@@ -29,8 +29,8 @@ dist/
 venv*
 .coverage
 .idea
-env
-.env
+*env*
 .venv*
 pylint-results.txt
 *pytest.xml
+docs/docs
