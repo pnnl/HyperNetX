@@ -65,6 +65,8 @@ clean-docs:
 	rm -rf docs/source/reports
 
 build-docs: clean-docs
+	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
+
 	sphinx-apidoc -o docs/source/classes hypernetx/classes
 	sphinx-apidoc -o docs/source/algorithms hypernetx/algorithms
 	sphinx-apidoc -o docs/source/drawing hypernetx/drawing
