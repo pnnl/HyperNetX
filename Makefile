@@ -17,7 +17,7 @@ test-ci:
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	pre-commit install
 	pre-commit run --all-files
-	@$(PYTHON3) -m tox -e py38
+	@$(PYTHON3) -m tox -e py38 -r
 
 .PHONY: test, test-ci
 
