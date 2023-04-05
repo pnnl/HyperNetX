@@ -159,8 +159,8 @@ class Hypergraph:
         self._static = static
 
         if setsystem is None:
-            self._edges = EntitySet(data=np.empty((0, 2), dtype=int))
-            self._nodes = EntitySet(data=np.empty((0, 1), dtype=int))
+            self._edges = EntitySet(data=np.empty((0, 2), uid="Edges", dtype=int))
+            self._nodes = EntitySet(data=np.empty((0, 1), uid="Nodes", dtype=int))
         else:
             try:
                 kwargs.update(
@@ -185,10 +185,11 @@ class Hypergraph:
                 weights=weights,
                 aggregateby=aggregateby,
                 static=static,
+                uid="Edges"
                 **kwargs,
             )
             self._edges = E
-            self._nodes = E.restrict_to_levels([1], weights=False, aggregateby=None)
+            self._nodes = E.restrict_to_levels([1], uid="Nodes", weights=False, aggregateby=None)
 
         self.state_dict = {}
         self.update_state()
