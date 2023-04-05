@@ -22,116 +22,237 @@ __all__ = ["Hypergraph"]
 
 class Hypergraph:
     """
-    Hypergraph H = (V,E) references a pair of disjoint sets:
-    V = nodes (vertices) and E = (hyper)edges.
+    ======================
+Hypergraphs in HNX 2.0
+======================
 
-    An HNX Hypergraph is either dynamic or static.
-    Dynamic hypergraphs can change by adding or subtracting objects
-    from them. Static hypergraphs require that all of the nodes and edges
-    be known at creation. A hypergraph is dynamic by default.
+An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
+V = nodes (vertices) and E = (hyper)edges.
 
-    *Dynamic hypergraphs* require the user to keep track of its objects,
-    by using a unique names for each node and edge. This allows for multi-edge
-    graphs and inseperable nodes.
+HNX allows for multi-edges by distinguishing edges by 
+their identifiers instead of their contents. For example let      
+V = {1,2,3} and E = {e1,e2,e3},  
+where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
+The edges e1 and e2 contain the same set of nodes and yet
+are distinct and are distinguishable within H = (V,E).
 
-    For example: Let V = {1,2,3} and E = {e1,e2,e3},
-    where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
-    The edges e1 and e2 contain the same set of nodes and yet
-    are distinct and must be distinguishable within H.
+New as of version 2.0, HNX provides methods to easily store and  
+access additional metadata such as cell, edge, and node weights. 
+Metadata associated with (edge,node) incidences
+are referenced as **cell_properties**. 
+Metadata associated with a single edge or node is referenced 
+as its **properties**. 
 
-    In a dynamic hypergraph each node and edge is
-    instantiated as an Entity and given an identifier or uid. Entities
-    keep track of inclusion relationships and can be nested. Since
-    hypergraphs can be quite large, only the entity identifiers will be used
-    for computation intensive methods, this means the user must take care
-    to keep a one to one correspondence between their set of uids and
-    the objects in their hypergraph. See `Honor System`_
-    Dynamic hypergraphs are most practical for small to modestly sized
-    hypergraphs (<1000 objects).
+The fundamental object needed to create a hypergraph is a **setsystem**. The
+setsystem defines the many to many relationships between edges and nodes in
+the hypergraph. Cell properties for the incidence pairs can be defined within the setsystem or in a separate pandas.Dataframe or dict. 
+Edge and node properties are defined with a pandas.DataFrame or dict.
 
-    *Static hypergraphs* store node and edge information in numpy arrays and
-    are immutable. Each node and edge receives a class generated internal
-    identifier used for computations so do not require the user to create
-    different ids for nodes and edges. To create a static hypergraph set
-    `static = True` in the signature.
+SetSystems
+----------
+There are five types of setsystems currently accepted by the library. 
 
-    We will create hypergraphs in multiple ways:
+1.  **iterable of iterables** : Barebones hypergraph uses Pandas default 
+    indexing to generate hyperedge ids. Elements must be hashable.: ::
 
-    1. As an empty instance: ::
+    >>> H = Hypergraph([{1,2},{1,2},{1,2,3}])
 
-        >>> H = hnx.Hypergraph()
-        >>> H.nodes, H.edges
-        ({}, {})
+2.  **dictionary of iterables** : the most basic way to express many to many 
+    relationships providing edge ids. The elements of the iterables must be
+    hashable): ::
 
-    2. From a dictionary of iterables (elements of iterables must be of type
-       hypernetx.Entity or hashable): ::
+    >>> H = Hypergraph({'e1':[1,2],'e2':[1,2],'e3':[1,2,3]})
 
-        >>> H = Hypergraph({'a':[1,2,3],'b':[4,5,6]})
-        >>> H.nodes, H.edges
-        # output: (EntitySet(_:Nodes,[1, 2, 3, 4, 5, 6],{}), /
-        # EntitySet(_:Edges,['b', 'a'],{}))
+3.  **dictionary of dictionaries**  : allows cell properties to be assigned
+    to a specific (edge, node) incidence. This is particularly useful when 
+    there are variable length dictionaries assigned to each pair: ::
 
-    3. From an iterable of iterables: (elements of iterables must be of type
-       hypernetx.Entity or hashable): ::
+    >>> d = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
+    >>>             2: {'w':0.1, 'name': 'related_to', 
+    >>>                 'startdate': '05.13.2020'}},
+    >>>      'e2':{ 1: {'w':0.52, 'name': 'owned_by'},
+    >>>             2: {'w':0.2}},
+    >>>      'e3':{ 1: {'w':0.5, 'name': 'related_to'},
+    >>>             2: {'w':0.2, 'name': 'owner_of'},
+    >>>             3: {'w':1, 'type': 'relationship'}}
+    
+    >>> H = Hypergraph(d, cell_weight_col='w')
 
-        >>> H = Hypergraph([{'a','b'},{'b','c'},{'a','c','d'}])
-        >>> H.nodes, H.edges
-        # output: (EntitySet(_:Nodes,['d', 'b', 'c', 'a'],{}), /
-        # EntitySet(_:Edges,['_1', '_2', '_0'],{}))
-
-    4. From a hypernetx.EntitySet or EntitySet: ::
-
-        >>> a = Entity('a',{1,2}); b = Entity('b',{2,3})
-        >>> E = EntitySet('sample',elements=[a,b])
-        >>> H = Hypergraph(E)
-        >>> H.nodes, H.edges.
-        # output: (EntitySet(_:Nodes,[1, 2, 3],{}), /
-        # EntitySet(_:Edges,['b', 'a'],{}))
-
-    All of these constructions apply for both dynamic and static hypergraphs.
-    To create a static hypergraph set the parameter `static=True`. In addition,
-    a static hypergraph is automatically created if a Entity, EntitySet, or
-    pandas.DataFrame object is passed to the Hypergraph constructor.
-
-    5. | From a pandas.DataFrame. The dataframe must have at least two columns
-         with headers and there can be no nans.
-       | By default the first column corresponds to the edge names and the
-         second column to the node names.
-       | You can specify the columns by restricting the dataframe to the
-         columns of interest in the order:
-       | :code:`hnx.Hypergraph(df[[edge_column_name,node_column_name]])`
-       | See :ref:`Colab Tutorials <colab>`  Tutorial 6 - Static Hypergraphs
-         and Entities for additional information.
+4.  **pandas.DataFrame** For large datasets and for datasets with cell
+    properties it is most efficient to construct a hypergraph directly from 
+    a pandas.DataFrame. Incidence pairs are in the first two columns. 
+    Cell properties shared by all incidence pairs can be placed in their own
+    column of the dataframe. Variable length dictionaries of cell properties
+    particular to only some of the incidence pairs may be placed in a single
+    column of the dataframe. Representing the data above as a dataframe df:
 
 
-    Parameters
-    ----------
-    setsystem : (optional) EntitySet, EntitySet, dict, iterable,
-        pandas.dataframe, default: None See notes above for setsystem
-        requirements.
-    name : hashable, optional, default: None
-        If None then a placeholder '_'  will be inserted as name
-    static : boolean, optional, default: False
-        If True the hypergraph will be immutable, edges and nodes may not be
-        changed.
-    weights : array-like, optional, default : None
-        User specified weights corresponding to setsytem of type
-        pandas.DataFrame, length must equal number of rows in dataframe. If
-        None, weight for all rows is assumed to be 1.
-    keep_weights : bool, optional, default : True
-        Whether or not to use existing weights when input is Entity,
-        or EntitySet.
-    aggregateby : str, optional, {'count', 'sum', 'mean', 'median', max',
-        'min', 'first','last', None}, default : 'sum'
-        Method to aggregate cell_weights of duplicate rows if setsystem  is of
-        type pandas.DataFrame or Entity. If None all cell weights will
-        be set to 1.
-    use_nwhy : boolean, optional, default : False
-        If True hypergraph will be static and computations will be done using
-        C++ backend offered by NWHypergraph. This requires installation of the
-        NWHypergraph C++ library. Please see the :ref:`NWHy documentation
-        <nwhy>` for more information.
-    filepath : str, optional, default : None
+    +-----------+-----------+-----------+-----------------------------------+
+    |   col1    |   col2    |   w       |  col3                             |
+    +-----------+-----------+-----------+-----------------------------------+
+    |   e1      |   1       |   0.5     | {'name':'related_to'}             |
+    +-----------+-----------+-----------+-----------------------------------+
+    |   e1      |   2       |   0.1     | {"name":"related_to",             |
+    |           |           |           |  "startdate":"05.13.2020"}        |
+    +-----------+-----------+-----------+-----------------------------------+
+    |   e2      |   1       |   0.52    | {"name":"owned_by"}               |
+    +-----------+-----------+-----------+-----------------------------------+
+    |   e2      |   2       |   0.2     |                                   |
+    +-----------+-----------+-----------+-----------------------------------+
+    |   ...     |   ...     |   ...     | {...}                             |
+    +-----------+-----------+-----------+-----------------------------------+ 
+
+    The first row of the dataframe is used to reference each column. ::
+
+    >>> H = Hypergraph(df,edge_col="col1",node_col="col2",
+    >>>                 cell_weight_col="w",misc_cell_properties="col3") 
+
+5.  **numpy.ndarray** For homogeneous datasets given in an ndarray a 
+    pandas dataframe is generated and column names are added from the 
+    column_names keyword argument. Cell properties containing multiple data
+    types can be added with a separate dataframe or dict. ::
+
+    >>> arr = np.array([['e1','1'],['e1','2'],
+    >>>                 ['e2','1'],['e2','2'],
+    >>>                 ['e3','1'],['e3','2'],['e3','3']])
+    >>> H = hnx.Hypergraph(arr, column_names=['col1','col2'])
+
+Edge and Node Properties
+~~~~~~~~~~~~~~~~~~~~~~~~
+Properties specific to a single edge or node are passed through the 
+keywords: **edge_properties, node_properties, properties**.
+Properties may be passed as dataframes or dicts. 
+When a dataframe is passed to the edge_properties or node_properties, 
+the value assigned to edge_col and node_col is used to index the 
+properties. If a dataframe is passed as the properties keyword
+argument, then the first column must contain identifiers. This is useful
+if all nodes and edges have distinct uids or an object is used as both an
+edge and a node in the hypergraph and uses the same set of properties in
+both roles. Define the properties dataframe dfp: 
+
++-----------+-----------+---------------------------------------+
+|   id      |   weight  |   properties                          |
++-----------+-----------+---------------------------------------+
+|   1       |   1.2     |   {'color':'red'}                     |
++-----------+-----------+---------------------------------------+
+|   2       |   .003    |   {'name':'Fido','color':'brown'}     |
++-----------+-----------+---------------------------------------+
+|   3       |   1.0     |                                       |
++-----------+-----------+---------------------------------------+
+|   e1      |   5.0     |   {'type':'event'}                    |
++-----------+-----------+---------------------------------------+
+|   ...     |   ...     |   {...}                               |
++-----------+-----------+---------------------------------------+
+
+OR with levels:
+
++-------+-----------+-----------+---------------------------------------+
+| level |   id      |   weight  |   properties                          |
++-------+-----------+-----------+---------------------------------------+
+|   1   |   1       |   1.2     |   {'color':'red'}                     |
++-------+-----------+-----------+---------------------------------------+
+|   1   |   2       |   .003    |   {'name':'Fido','color':'brown'}     |
++-------+-----------+-----------+---------------------------------------+
+|   1   |   3       |   1.0     |                                       |
++-------+-----------+-----------+---------------------------------------+
+|   0   |   e1      |   5.0     |   {'type':'event'}                    |
++-------+-----------+-----------+---------------------------------------+
+|   0   |   ...     |   ...     |   {...}                               |
++-------+-----------+-----------+---------------------------------------+
+
+Then we pass it to the constructor as properties: ::
+
+    >>> H = hnx.Hypergraph(df,properties=dfp) 
+
+Similarly, a properties dictionary with the format: ::
+
+    dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
+
+may be passed:
+::
+    >>> H = hnx.Hypergraph(d,properties=dp)
+
+
+Weights
+~~~~~~~
+The default key for cell and object weights is "weight". The default value 
+is 1. Weights may be assigned and/or a new default prescribed in the 
+constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop, 
+default_edge_weight,** and **default_node_weight**. See parameters below for 
+details.
+
+Parameters
+----------
+setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables, pandas.DataFrame, numpy.ndarray, default: None
+    See SetSystem above for additional setsystem requirements.
+column_names : (optional) : Sequence[str], default : None
+    used to assign as column names when setsystem is an ndarray or empty, 
+    otherwise ignored.
+edge_col : (optional) int | str, default : 0
+    column index (or name) in pandas.dataframe or numpy.ndarray, 
+    used for (hyper)edge ids 
+node_col : (optional) int | str, default : 1
+    column index (or name) in pandas.dataframe or numpy.ndarray, 
+    used for node ids
+cell_weight_col : (optional) int | str, default = None
+    column index (or name) in pandas.dataframe or numpy.ndarray used for
+    referencing cell weights. For a dict of dicts references key in cell 
+    property dicts.      
+cell_weights : (optional) Sequence[float,int] | int |  float , default : 1
+    User specified cell_weights or default weight.
+    Sequential values are only used if setsystem is a 
+    dataframe or ndarray in which case the sequence must
+    have the same length and order as these objects.
+    Sequential values are ignored if cell_weight_col is given.
+    If cell_weights is assigned a single value 
+    then it will be used as default when no cell_weight_col 
+    is given or if cell weight is missing from the cell_weight_col   
+cell_properties : (optional) Sequence[int | str] | Map[int | str , str], 
+    default : None
+    Indices or names of columns from set system to use as properties 
+    or a dict assigning cell_property to incidence pairs of edges and nodes.
+    Will update properties if setsystem is dict of dicts.
+misc_cell_properties : (optional) int | str, default="cell_properties" 
+    Column index or name of dataframe corresponding to a column of variable
+    length property dictionaries for the cell. Ignored for other setsystem
+    types.
+aggregateby : (optional) str, dict optional, default : 'first'
+    By default duplicate edge,node incidences will be dropped unless 
+    specified with `aggregateby`.  
+    See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for 
+    additional syntax and usage information.
+
+edge_properties : (optional) pd.DataFrame | dict, default : None
+    Properties associated with edge ids.
+    First column of dataframe or keys of dict link to object ids in 
+    setsystem.
+node_properties : (optional) pd.DataFrame | dict, default : None
+    Properties associated with node ids.
+    First column of dataframe or keys of dict link to object ids in 
+    setsystem.
+properties : (optional) pd.DataFrame | dict, default = None
+    Concatenation/union of edge_properties and node_properties.
+    By default the object id is used and should be the first column of
+    the dataframe, or key in the dict. If there are nodes and edges
+    with the same ids and different properties then the first column of the
+    dataframe is binary indicator of 0 or edge_col_name and 1 or 
+    node_col_name and the second column should reference object id. If a dict
+    then nest the edge and node dictionaries with keys 0/edge_col_name 
+    and 1/node_col_name. See notes for example.
+misc_properties : (optional) int | str, default = "properties"
+    Column of property dataframes with dtype=dict. Intended for variable
+    length property dictionaries for the objects.
+edge_weight_prop : (optional) str, default : 'weight', 
+    Name of property in edge_properties to use for for weight.
+node_weight_prop : (optional) str, default : 'weight', 
+    Name of property in node_properties to use for for weight.
+weight_prop : (optional) str, default : 'weight'
+    Name of property in properties to use for 'weight' 
+default_edge_weight : (optional) int | float, default : 1
+    Used when edge weight property is missing or undefined.
+default_node_weight : (optional) int | float, default : 1
+    Used when node weight property is missing or undefined
+
 
     """
 
