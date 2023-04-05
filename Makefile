@@ -17,7 +17,7 @@ test-ci:
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	pre-commit install
 	pre-commit run --all-files
-	@$(PYTHON3) -m tox -e py38
+	@$(PYTHON3) -m tox -e py38 -r
 
 .PHONY: test, test-ci
 
@@ -65,6 +65,8 @@ clean-docs:
 	rm -rf docs/source/reports
 
 build-docs: clean-docs
+	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
+
 	sphinx-apidoc -o docs/source/classes hypernetx/classes
 	sphinx-apidoc -o docs/source/algorithms hypernetx/algorithms
 	sphinx-apidoc -o docs/source/drawing hypernetx/drawing
