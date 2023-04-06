@@ -11,11 +11,12 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 
 
 - Principle Developer and Designer: Brenda Praggastis
+- Lead developer for 2.0: Madelyn Shapiro
+- Continuous integration and development: Mark Bonicillo
 - Visualization: Dustin Arendt, Ji Young Yun
-- High Performance Computing: Tony Liu, Andrew Lumsdaine
 - Principal Investigator: Cliff Joslyn
 - Program Manager: Brian Kritzstein
-- Contributors: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Brenda Praggastis, Emilie Purvine, Mirah Shi, François Théberge
+- Contributors: Sinan Aksoy, Dustin Arendt, Mark Bonicillo, Cliff Joslyn, Nicholas Landry, Andrew Lumsdaine, Tony Liu, Audun Meyers, Christopher Potvin, Brenda Praggastis, Emilie Purvine, Madelyn Shapiro, Mirah Shi, François Théberge
 
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
@@ -23,22 +24,38 @@ Documentation is available at: https://pnnl.github.io/HyperNetX
 
 For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
-**New Features of Version 1.0**
+**New Features in Version 2.0**
 ===============================
 
-1. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. The new hypergraphs are given an attribute `static=True`.
-2. A C++ addon called NWHy (docs/build/nwhy.html) can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
-3. A JavaScript addon called Hypernetx-Widget (docs/build/widget.html) can be used to interactively inspect hypergraphs in a Jupyter Notebook.
-4. Four new tutorials highlighting the s-centrality metrics, static Hypergraphs, NWHy (docs/build/nwhy.html), and Hypernetx-Widget (docs/build/widget.html).
+HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a 
+hypergraph. While the library continues to accept lists, dictionaries and 
+dataframes as basic inputs for hypergraph constructions, both cell 
+properties and edge and node properties can now be easily added for 
+retrieval as object attributes. The core library has been rebuilt to take 
+advantage of the flexibility and speed of Pandas Dataframes.
+Dataframes offer the ability to store and easily access hypergraph metadata.
+Metadata can be used for filtering objects, and characterize their 
+distributions by their attributes.
+Version 2.0 is not backwards compatible. Objects constructed using version 
+1.x can be imported from their incidence dictionaries. 
 
-**New Features of Version 1.1**
-===============================
+New features to look for:
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Static Hypergraph refactored to improve performance across all methods.
-2. Added modules and tutorials for Contagion Modeling, Community Detection, Clustering, and Hypergraph Generation.
-3. Cell weights for incidence matrices may be added to static hypergraphs on construction.
+1. 	Hypergraph constructor accepts cell properties and object properties as 	dict or pd.DataFrame. 
+2. 	Cell weights now available in the incidence matrix (fixes bug in earlier 
+	release).
+3. 	API does not require user to access the Entity or EntitySet classes. 	
+	Instead all user input is inserted directly into the hypergraph 
+	constructor and user defined ids for edges and nodes do not have to be disjoint sets.
+4.	New tutorials for barycentric homology and zigzag homology have been 
+	added.
+5.  The Modularity tutorial was updated - removing bugs.
+6.  NWHy is no longer supported as new Pandas backend has provided better 
+	scalability.
+7.	No distinction between dynamic and static hypergraph is made. ADD/REMOVE 
+	functionality will be in V. 2.1. 
 
-**New Features of Version 1.2**
-===============================
 
-1. Added module and tutorial for Modularity and Clustering
+
+
