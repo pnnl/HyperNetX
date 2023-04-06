@@ -178,7 +178,7 @@ def create_properties(
     except (TypeError, IndexError):
         data = [{} for _ in index]
 
-    return pd.DataFrame({misc_col:data}, index=index).sort_index()
+    return pd.DataFrame({misc_col: data}, index=index).sort_index()
 
 
 def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
