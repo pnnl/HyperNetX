@@ -10,6 +10,7 @@ The recommended installation method for most users is to create a virtual enviro
 and install HyperNetX from PyPi.
 
 .. _Github:  https://github.com/pnnl/HyperNetX
+
 HyperNetX may be cloned or forked from Github_.
 
 
@@ -81,7 +82,7 @@ If you are using zsh as your shell, ensure that the single quotation marks are p
 
 
 Post-Installation Actions
-##################
+##########################
 
 Running Tests
 **************
