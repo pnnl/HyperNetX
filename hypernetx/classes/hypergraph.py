@@ -45,7 +45,8 @@ class Hypergraph:
 
     The fundamental object needed to create a hypergraph is a **setsystem**. The
     setsystem defines the many to many relationships between edges and nodes in
-    the hypergraph. Cell properties for the incidence pairs can be defined within the setsystem or in a separate pandas.Dataframe or dict. 
+    the hypergraph. Cell properties for the incidence pairs can be defined within 
+    the setsystem or in a separate pandas.Dataframe or dict. 
     Edge and node properties are defined with a pandas.DataFrame or dict.
 
     SetSystems
@@ -177,13 +178,15 @@ class Hypergraph:
     ~~~~~~~
     The default key for cell and object weights is "weight". The default value 
     is 1. Weights may be assigned and/or a new default prescribed in the 
-    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop, 
+    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, 
+    and using **edge_weight_prop, node_weight_prop, weight_prop, 
     default_edge_weight,** and **default_node_weight**. See parameters below for 
     details.
 
     Parameters
     ----------
-    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables, pandas.DataFrame, numpy.ndarray, default: None
+    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables, 
+        pandas.DataFrame, numpy.ndarray, default: None
         See SetSystem above for additional setsystem requirements.
     column_names : (optional) : Sequence[str], default : None
         used to assign as column names when setsystem is an ndarray or empty, 
@@ -253,7 +256,6 @@ class Hypergraph:
     default_node_weight : (optional) int | float, default : 1
         Used when node weight property is missing or undefined
 
-
     """
 
     @warn_nwhy
@@ -305,10 +307,12 @@ class Hypergraph:
                 aggregateby=aggregateby,
                 static=static,
                 uid="Edges",
-                **kwargs,
+                **kwargs
             )
             self._edges = E
-            self._nodes = E.restrict_to_levels([1], uid="Nodes", weights=False, aggregateby=None)
+            self._nodes = E.restrict_to_levels(
+                [1], uid="Nodes", weights=False, aggregateby=None
+            )
 
         self.state_dict = {}
         self.update_state()
@@ -1067,7 +1071,9 @@ class Hypergraph:
         """
         if edge in self._edges:
             with warnings.catch_warnings():
-                warnings.filterwarnings('ignore', message="Cannot add edge. Edge already in hypergraph")
+                warnings.filterwarnings(
+                    "ignore", message="Cannot add edge. Edge already in hypergraph"
+                )
                 self.add_edge({edge: [node]}, update_state)
 
         return self

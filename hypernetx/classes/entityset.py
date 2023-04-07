@@ -383,7 +383,9 @@ class EntitySet(Entity):
 
         misc_col = misc_col or self._misc_cell_props_col
         try:
-            cell_props = cell_props.rename(columns={misc_col: self._misc_cell_props_col})
+            cell_props = cell_props.rename(
+                columns={misc_col: self._misc_cell_props_col}
+            )
         except AttributeError:  # handle cell props in nested dict format
             self._cell_properties_from_dict(cell_props)
         else:  # handle cell props in DataFrame format
@@ -469,7 +471,9 @@ class EntitySet(Entity):
                 names=self._data_cols,
             )
             props_data = [cell_props[item1][item2] for item1, item2 in cells]
-            cell_props = pd.DataFrame({self._misc_cell_props_col: props_data}, index=cells)
+            cell_props = pd.DataFrame(
+                {self._misc_cell_props_col: props_data}, index=cells
+            )
             self._cell_properties_from_dataframe(cell_props)
 
     def collapse_identical_elements(

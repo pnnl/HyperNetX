@@ -79,7 +79,7 @@ def draw_hyper_edges(H, pos, ax=None, **kwargs):
     """
     ax = ax or plt.gca()
 
-    pairs = [(v, e ) for e in H.edges() for v in H.edges[e]]
+    pairs = [(v, e) for e in H.edges() for v in H.edges[e]]
 
     kwargs = {
         k: v if type(v) != dict else [v.get(e) for _, e in pairs]

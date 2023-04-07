@@ -728,9 +728,7 @@ class Entity:
         -------
         str
         """
-        return (
-            self.__class__.__name__+ f"({self._uid}, {list(self.uidset)})"
-        )
+        return self.__class__.__name__ + f"({self._uid}, {list(self.uidset)})"
 
     def index(self, column, value=None):
         """Get level index corresponding to a column and (optionally) the index of a value in that column
@@ -1251,7 +1249,9 @@ class Entity:
 
         for col in self._data_cols:
             entity[col] = entity[col].cat.remove_unused_categories()
-        restricted = self.__class__(entity=entity, misc_props_col=self._misc_props_col, **kwargs)
+        restricted = self.__class__(
+            entity=entity, misc_props_col=self._misc_props_col, **kwargs
+        )
 
         if not self.properties.empty:
             prop_idx = [
@@ -1353,7 +1353,9 @@ class Entity:
 
         if self._misc_props_col in props:
             try:
-                props[self._misc_props_col] = props[self._misc_props_col].apply(literal_eval)
+                props[self._misc_props_col] = props[self._misc_props_col].apply(
+                    literal_eval
+                )
             except ValueError:
                 pass  # data already parsed, no literal eval needed
             else:
@@ -1367,7 +1369,9 @@ class Entity:
         properties = props.combine_first(self.properties)
         # update misc. column to combine existing and new misc. property dicts
         # new props override existing value for overlapping misc. property dict keys
-        properties[self._misc_props_col] = self.properties[self._misc_props_col].combine(
+        properties[self._misc_props_col] = self.properties[
+            self._misc_props_col
+        ].combine(
             properties[self._misc_props_col],
             lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
             fill_value={},
@@ -1540,7 +1544,9 @@ class Entity:
             prop_val = self.properties.loc[item_key, prop_name]
         except KeyError as ex:
             if ex.args[0] == prop_name:
-                prop_val = self.properties.loc[item_key, self._misc_props_col].get(prop_name)
+                prop_val = self.properties.loc[item_key, self._misc_props_col].get(
+                    prop_name
+                )
             else:
                 raise KeyError(
                     f"no properties initialized for ('level','item'): {item_key}"
