@@ -57,6 +57,8 @@ bump-version-patch: version-deps
 	bump2version --dry-run --verbose patch
 	bump2version --verbose patch
 
+#### Documentation
+
 clean-docs:
 	rm -rf docs/build
 	rm -rf docs/source/classes
@@ -64,14 +66,18 @@ clean-docs:
 	rm -rf docs/source/drawing
 	rm -rf docs/source/reports
 
-build-docs: clean-docs
+docs-deps:
 	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
 
+build-docs: clean-docs all-deps docs-deps
 	sphinx-apidoc -o docs/source/classes hypernetx/classes
 	sphinx-apidoc -o docs/source/algorithms hypernetx/algorithms
 	sphinx-apidoc -o docs/source/drawing hypernetx/drawing
 	sphinx-apidoc -o docs/source/reports hypernetx/reports
 	sphinx-build -b html docs/source docs/build
+
+livehtml: all-deps docs-deps
+	sphinx-autobuild docs/source docs/build
 
 commit-docs: build-docs
 	git add -A
@@ -91,6 +97,9 @@ clean: clean-venv
 venv:
 	@$(PYTHON3) -m venv $(VENV);
 
+all-deps:
+	@$(PYTHON3) -m pip install -e .'[all]' --use-pep517
+
 .PHONY: venv
 
-.PHONY: clean clean-venv venv
+.PHONY: clean clean-venv venv all-deps
