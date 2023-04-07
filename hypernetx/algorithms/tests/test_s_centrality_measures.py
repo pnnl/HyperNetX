@@ -5,17 +5,17 @@ from hypernetx.algorithms.s_centrality_measures import *
 
 warnings.simplefilter("ignore")
 
-
-# def test_s_betweenness_centrality(fish):
-#     h = fish.hypergraph
-#     bc = s_betweenness_centrality(h)
-#     assert bc["AB"] == 0.2
-#     assert bc["ACD"] == 0.2
-#     assert bc["CF"] == 0
-#     bcd = s_betweenness_centrality(h.dual(), normalized=False)
-#     assert bcd["C"] == 7.5
-#     assert bcd["B"] == 10
-#     assert bcd["F"] == 0
+@pytest.mark.skip(reason="fix test")
+def test_s_betweenness_centrality(fish):
+    h = fish.hypergraph
+    bc = s_betweenness_centrality(h)
+    assert bc["AB"] == 0.2
+    assert bc["ACD"] == 0.2
+    assert bc["CF"] == 0
+    bcd = s_betweenness_centrality(h.dual(), normalized=False)
+    assert bcd["C"] == 7.5
+    assert bcd["B"] == 10
+    assert bcd["F"] == 0
 
 
 def test_s_harmonic_centrality(sixbyfive):
