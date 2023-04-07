@@ -6,16 +6,16 @@
   <title>classes.entityset &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">classes.entityset</li>
       <li class="wy-breadcrumbs-aside">
@@ -102,7 +106,7 @@
 
 
 <div class="viewcode-block" id="EntitySet"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet">[docs]</a><span class="k">class</span> <span class="nc">EntitySet</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for handling 2-dimensional (i.e., system of sets, bipartite) data when</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for handling 2-dimensional (i.e., system of sets, bipartite) data when</span>
 <span class="sd">    building network-like models, i.e., :class:`Hypergraph`</span>
 
 <span class="sd">    Parameters</span>
@@ -319,7 +323,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cell_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Properties assigned to cells of the incidence matrix</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Properties assigned to cells of the incidence matrix</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -330,7 +334,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">memberships</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttrList</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Extends :attr:`Entity.memberships`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extends :attr:`Entity.memberships`</span>
 
 <span class="sd">        Each item in level 1 (second column) defines a set containing all the level 0</span>
 <span class="sd">        (first column) items with which it appears in the same row of the underlying</span>
@@ -362,7 +366,7 @@
         <span class="n">keep_memberships</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Extends :meth:`Entity.restrict_to_levels`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extends :meth:`Entity.restrict_to_levels`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -406,7 +410,7 @@
         <span class="k">return</span> <span class="n">restricted</span></div>
 
 <div class="viewcode-block" id="EntitySet.restrict_to"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.restrict_to">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Alias of :meth:`restrict_to_indices` with default parameter `level`=0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alias of :meth:`restrict_to_indices` with default parameter `level`=0</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -439,7 +443,7 @@
         <span class="n">misc_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Assign new properties to cells of the incidence matrix and update</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign new properties to cells of the incidence matrix and update</span>
 <span class="sd">        :attr:`properties`</span>
 
 <span class="sd">        Parameters</span>
@@ -464,14 +468,16 @@
 
         <span class="n">misc_col</span> <span class="o">=</span> <span class="n">misc_col</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">misc_col</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">})</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">cell_props</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">misc_col</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">}</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># handle cell props in nested dict format</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dict</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># handle cell props in DataFrame format</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dataframe</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_cell_properties_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a DataFrame</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a DataFrame</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -528,7 +534,7 @@
     <span class="k">def</span> <span class="nf">_cell_properties_from_dict</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">cell_props</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`cell_properties` from a doubly-nested dict</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`cell_properties` from a doubly-nested dict</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -550,13 +556,15 @@
                 <span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">props_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_props</span><span class="p">[</span><span class="n">item1</span><span class="p">][</span><span class="n">item2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item1</span><span class="p">,</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">]</span>
-            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">:</span> <span class="n">props_data</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span>
+            <span class="n">cell_props</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">:</span> <span class="n">props_data</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">cells</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cell_properties_from_dataframe</span><span class="p">(</span><span class="n">cell_props</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EntitySet.collapse_identical_elements"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.collapse_identical_elements">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_identical_elements</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">return_equivalence_classes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntitySet</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">EntitySet</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
-        <span class="sd">&quot;&quot;&quot;Create a new :class:`EntitySet` by collapsing sets with the same set elements</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new :class:`EntitySet` by collapsing sets with the same set elements</span>
 
 <span class="sd">        Each item in level 0 (first column) defines a set containing all the level 1</span>
 <span class="sd">        (second column) items with which it appears in the same row of the underlying</span>
@@ -610,7 +618,7 @@
 <div class="viewcode-block" id="EntitySet.set_cell_property"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.set_cell_property">[docs]</a>    <span class="k">def</span> <span class="nf">set_cell_property</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">prop_val</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set a property of a cell i.e., incidence between items of different levels</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a property of a cell i.e., incidence between items of different levels</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -643,7 +651,7 @@
                     <span class="p">}</span></div>
 
 <div class="viewcode-block" id="EntitySet.get_cell_property"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.get_cell_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_cell_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a property of a cell i.e., incidence between items of different levels</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a property of a cell i.e., incidence between items of different levels</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -677,7 +685,7 @@
         <span class="k">return</span> <span class="n">prop_val</span></div>
 
 <div class="viewcode-block" id="EntitySet.get_cell_properties"><a class="viewcode-back" href="../../classes/classes.html#classes.entityset.EntitySet.get_cell_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_cell_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item1</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">item2</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get all properties of a cell, i.e., incidence between items of different</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all properties of a cell, i.e., incidence between items of different</span>
 <span class="sd">        levels</span>
 
 <span class="sd">        Parameters</span>

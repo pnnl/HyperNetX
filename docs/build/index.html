@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HyperNetX (HNX) &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -29,15 +29,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> HyperNetX
-            <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="#" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -69,7 +73,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">HyperNetX (HNX)</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
@@ -120,9 +124,30 @@ To learn more about some of our research check out our <a class="reference inter
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#to-install-in-a-virtualenv-environment">To install in a virtualenv environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#install-using-pip-options">Install using Pip options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#create-a-virtual-environment">Create a virtual environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#using-anaconda">Using Anaconda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#using-venv">Using venv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#using-virtualenv">Using virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#for-windows-users">For Windows Users</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#id1">Installing Hypernetx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#installing-from-pypi">Installing from PyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#installing-from-source">Installing from Source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#post-installation-actions">Post-Installation Actions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#interact-with-hypernetx-in-a-repl">Interact with HyperNetX in a REPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#other-actions-if-installed-from-source">Other Actions if installed from source</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="install.html#viewing-jupyter-notebooks">Viewing jupyter notebooks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="install.html#building-documentation">Building documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
@@ -204,7 +229,6 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.add_edge"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_edge()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.add_edges_from"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_edges_from()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.add_node_to_edge"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_node_to_edge()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.add_nwhy"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_nwhy()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.adjacency_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.auxiliary_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.auxiliary_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.bipartite()</span></code></a></li>
@@ -215,7 +239,6 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.components()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.connected_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_component_subgraphs()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_components()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.convert_to_static"><code class="docutils literal notranslate"><span class="pre">Hypergraph.convert_to_static()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dataframe()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.degree()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.diameter()</span></code></a></li>
@@ -233,9 +256,7 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_dataframe()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_numpy_array"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_numpy_array()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_cell_properties()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_id"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_id()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_linegraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_linegraph()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_name"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_name()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dict</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.is_connected"><code class="docutils literal notranslate"><span class="pre">Hypergraph.is_connected()</span></code></a></li>
@@ -252,20 +273,17 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_node"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_node()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_nodes()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_singletons()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_static"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_static()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_edges()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_nodes()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_component_subgraphs()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_components()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_connected_components()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_degree()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.save_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.save_state()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.set_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.set_state()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.shape"><code class="docutils literal notranslate"><span class="pre">Hypergraph.shape</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.singletons()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.size"><code class="docutils literal notranslate"><span class="pre">Hypergraph.size()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.toplexes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.toplexes()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.translate"><code class="docutils literal notranslate"><span class="pre">Hypergraph.translate()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.update_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.update_state()</span></code></a></li>
 </ul>
 </li>
@@ -331,7 +349,6 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.add_edge"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_edge()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.add_edges_from"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_edges_from()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.add_node_to_edge"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_node_to_edge()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.add_nwhy"><code class="docutils literal notranslate"><span class="pre">Hypergraph.add_nwhy()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.adjacency_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.auxiliary_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.auxiliary_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.bipartite()</span></code></a></li>
@@ -342,7 +359,6 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.components()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.connected_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_component_subgraphs()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_components()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.convert_to_static"><code class="docutils literal notranslate"><span class="pre">Hypergraph.convert_to_static()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dataframe()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.degree()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.diameter()</span></code></a></li>
@@ -360,9 +376,7 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_dataframe()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_numpy_array"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_numpy_array()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_cell_properties()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_id"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_id()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_linegraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_linegraph()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_name"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_name()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dict</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_matrix()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.is_connected"><code class="docutils literal notranslate"><span class="pre">Hypergraph.is_connected()</span></code></a></li>
@@ -379,20 +393,17 @@ To learn more about some of our research check out our <a class="reference inter
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_node"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_node()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_nodes()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_singletons()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_static"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_static()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.restrict_to_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_edges()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.restrict_to_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_nodes()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_component_subgraphs()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_components()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_connected_components()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_degree()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.save_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.save_state()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.set_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.set_state()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.shape"><code class="docutils literal notranslate"><span class="pre">Hypergraph.shape</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.singletons()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.size"><code class="docutils literal notranslate"><span class="pre">Hypergraph.size()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.toplexes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.toplexes()</span></code></a></li>
-<li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.translate"><code class="docutils literal notranslate"><span class="pre">Hypergraph.translate()</span></code></a></li>
 <li class="toctree-l6"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.update_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.update_state()</span></code></a></li>
 </ul>
 </li>

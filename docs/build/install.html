@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installing HyperNetX &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,15 +30,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> HyperNetX
-            <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -48,9 +52,30 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing HyperNetX</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#to-install-in-an-anaconda-environment">To install in an Anaconda environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#to-install-in-a-virtualenv-environment">To install in a virtualenv environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-using-pip-options">Install using Pip options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment">Create a virtual environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-anaconda">Using Anaconda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-venv">Using venv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#for-windows-users">For Windows Users</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Installing Hypernetx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-from-pypi">Installing from PyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-from-source">Installing from Source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#post-installation-actions">Post-Installation Actions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interact-with-hypernetx-in-a-repl">Interact with HyperNetX in a REPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-actions-if-installed-from-source">Other Actions if installed from source</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-jupyter-notebooks">Viewing jupyter notebooks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-documentation">Building documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
@@ -75,7 +100,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Installing HyperNetX</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
@@ -88,81 +113,116 @@
              
   <section id="installing-hypernetx">
 <h1>Installing HyperNetX<a class="headerlink" href="#installing-hypernetx" title="Permalink to this heading"></a></h1>
-<p>HyperNetX may be cloned or forked from: <a class="reference external" href="https://github.com/pnnl/HyperNetX">https://github.com/pnnl/HyperNetX</a> .</p>
-<section id="to-install-in-an-anaconda-environment">
-<h2>To install in an Anaconda environment<a class="headerlink" href="#to-install-in-an-anaconda-environment" title="Permalink to this heading"></a></h2>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
-</pre></div>
-</div>
-<p>Mac Users: If you wish to build the documentation you will need
-the conda version of matplotlib:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.7</span> <span class="n">matplotlib</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
-</pre></div>
-</div>
-<p>To use <span class="xref std std-ref">NWHy</span> use python=3.9 and the conda version of tbb in your environment.
-<strong>Note</strong> that <span class="xref std std-ref">NWHy</span> only works on Linux and some OSX systems. See NWHy docs for more.:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.9</span> <span class="n">tbb</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">activate</span> <span class="o">&lt;</span><span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nwhy</span>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>The recommended installation method for most users is to create a virtual environment
+and install HyperNetX from PyPi.</p>
+<p>HyperNetX may be cloned or forked from <a class="reference external" href="https://github.com/pnnl/HyperNetX">Github</a>.</p>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<p>HyperNetX officially supports Python 3.8, 3.9, 3.10 and 3.11.</p>
+</section>
+<section id="create-a-virtual-environment">
+<h2>Create a virtual environment<a class="headerlink" href="#create-a-virtual-environment" title="Permalink to this heading"></a></h2>
+<section id="using-anaconda">
+<h3>Using Anaconda<a class="headerlink" href="#using-anaconda" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.8</span> <span class="o">-</span><span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span>
 </pre></div>
 </div>
 </section>
-<section id="to-install-in-a-virtualenv-environment">
-<h2>To install in a virtualenv environment<a class="headerlink" href="#to-install-in-a-virtualenv-environment" title="Permalink to this heading"></a></h2>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">python</span> <span class="mf">3.7</span> <span class="n">executable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>
+<section id="using-venv">
+<h3>Using venv<a class="headerlink" href="#using-venv" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">venv</span><span class="o">-</span><span class="n">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
 </pre></div>
 </div>
-<p>This will create a virtual environment in the specified location using
-the specified python executable. For example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Anaconda3</span>\<span class="n">python</span><span class="o">.</span><span class="n">exe</span> <span class="n">hnx</span>
-</pre></div>
-</div>
-<p>This will create a virtual environment in .hnx using the python
-that comes with Anaconda3.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">env</span> <span class="n">name</span><span class="o">&gt;</span>\<span class="n">Scripts</span>\<span class="n">activate</span><span class="o">&lt;</span><span class="n">file</span> <span class="n">extension</span><span class="o">&gt;</span>
-</pre></div>
-</div>
-<p>If you are running in Windows PowerShell use &lt;file extension&gt;=.ps1</p>
-<p>If you are running in Windows Command Prompt use &lt;file extension&gt;=.bat</p>
-<p>Otherwise use &lt;file extension&gt;=NULL (no file extension).</p>
-<p>Once activated continue to follow the installation instructions below.</p>
 </section>
-<section id="install-using-pip-options">
-<h2>Install using Pip options<a class="headerlink" href="#install-using-pip-options" title="Permalink to this heading"></a></h2>
-<p>For a minimal installation:</p>
+<section id="using-virtualenv">
+<h3>Using virtualenv<a class="headerlink" href="#using-virtualenv" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+</section>
+<section id="for-windows-users">
+<h3>For Windows Users<a class="headerlink" href="#for-windows-users" title="Permalink to this heading"></a></h3>
+<p>On both Windows PowerShell or Command Prompt, you can use the following command to activate your virtual environment:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">.</span>\<span class="n">env</span><span class="o">-</span><span class="n">hnx</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+</pre></div>
+</div>
+<p>To deactivate your environment, use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">.</span>\<span class="n">env</span><span class="o">-</span><span class="n">hnx</span>\<span class="n">Scripts</span>\<span class="n">deactivate</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id1">
+<h2>Installing Hypernetx<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python &gt;=3.8.</p>
+<section id="installing-from-pypi">
+<h3>Installing from PyPi<a class="headerlink" href="#installing-from-pypi" title="Permalink to this heading"></a></h3>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
 </pre></div>
 </div>
-<p>For an editable installation with access to jupyter notebooks:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span><span class="p">]</span> <span class="o">.</span>
+</section>
+<section id="installing-from-source">
+<h3>Installing from Source<a class="headerlink" href="#installing-from-source" title="Permalink to this heading"></a></h3>
+<p>Ensure that you have <code class="docutils literal notranslate"><span class="pre">git</span></code> installed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pnnl</span><span class="o">/</span><span class="n">HyperNetX</span><span class="o">.</span><span class="n">git</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">HyperNetX</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>To install with the tutorials:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;tutorials&#39;</span><span class="p">]</span>
+<p>If you are using zsh as your shell, ensure that the single quotation marks are placed outside the square brackets:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="s1">&#39;[all]&#39;</span>
 </pre></div>
 </div>
-<p>To install with the documentation:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;documentation&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">chmod</span> <span class="mi">755</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sh</span> <span class="n">build_docs</span><span class="o">.</span><span class="n">sh</span>
-<span class="go">## This will generate the documentation in /docs/build/</span>
-<span class="go">## Open them in your browser with /docs/index.html</span>
+</section>
+</section>
+<section id="post-installation-actions">
+<h2>Post-Installation Actions<a class="headerlink" href="#post-installation-actions" title="Permalink to this heading"></a></h2>
+<section id="running-tests">
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pytest</span>
 </pre></div>
 </div>
-<p>To install and test using pytest:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;testing&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pytest</span>
+</section>
+<section id="interact-with-hypernetx-in-a-repl">
+<h3>Interact with HyperNetX in a REPL<a class="headerlink" href="#interact-with-hypernetx-in-a-repl" title="Permalink to this heading"></a></h3>
+<p>Ensure that your environment is activated and that you run <code class="docutils literal notranslate"><span class="pre">python</span></code> on your terminal to open a REPL:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hypergraph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="go">[&#39;G&#39;, &#39;F&#39;, &#39;D&#39;, &#39;A&#39;, &#39;B&#39;, &#39;H&#39;, &#39;C&#39;, &#39;E&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(8, 4)</span>
 </pre></div>
 </div>
-<p>To install the whole shabang:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+</section>
+<section id="other-actions-if-installed-from-source">
+<h3>Other Actions if installed from source<a class="headerlink" href="#other-actions-if-installed-from-source" title="Permalink to this heading"></a></h3>
+<p>Ensure that you are at the root of the source directory before running any of the following commands:</p>
+<section id="viewing-jupyter-notebooks">
+<h4>Viewing jupyter notebooks<a class="headerlink" href="#viewing-jupyter-notebooks" title="Permalink to this heading"></a></h4>
+<p>The following command will automatically open the notebooks in a browser.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jupyter</span><span class="o">-</span><span class="n">notebook</span> <span class="n">tutorials</span>
 </pre></div>
 </div>
+</section>
+<section id="building-documentation">
+<h4>Building documentation<a class="headerlink" href="#building-documentation" title="Permalink to this heading"></a></h4>
+<p>The following commands will build and open a local version of the documentation in a browser:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">build</span><span class="o">-</span><span class="n">docs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">open</span> <span class="n">docs</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 </section>
 
