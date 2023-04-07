@@ -5,6 +5,7 @@ from hypernetx.algorithms.s_centrality_measures import *
 
 warnings.simplefilter("ignore")
 
+
 @pytest.mark.skip(reason="fix test")
 def test_s_betweenness_centrality(fish):
     h = fish.hypergraph
