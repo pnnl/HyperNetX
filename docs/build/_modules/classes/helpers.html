@@ -6,16 +6,16 @@
   <title>classes.helpers &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">classes.helpers</li>
       <li class="wy-breadcrumbs-aside">
@@ -93,7 +97,7 @@
 
 
 <div class="viewcode-block" id="AttrList"><a class="viewcode-back" href="../../classes/classes.html#classes.helpers.AttrList">[docs]</a><span class="k">class</span> <span class="nc">AttrList</span><span class="p">(</span><span class="n">UserList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom list wrapper for integrated property storage in :class:`Entity`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom list wrapper for integrated property storage in :class:`Entity`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -115,7 +119,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">initlist</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get attribute value from properties of :attr:`entity`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get attribute value from properties of :attr:`entity`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -133,7 +137,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entity</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set attribute value in properties of :attr:`entity`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set attribute value in properties of :attr:`entity`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -147,7 +151,7 @@
 
 
 <div class="viewcode-block" id="encode"><a class="viewcode-back" href="../../classes/classes.html#classes.helpers.encode">[docs]</a><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Encode dataframe to numpy array</span>
 
 <span class="sd">    Parameters</span>
@@ -164,7 +168,7 @@
 
 
 <div class="viewcode-block" id="assign_weights"><a class="viewcode-back" href="../../classes/classes.html#classes.helpers.assign_weights">[docs]</a><span class="k">def</span> <span class="nf">assign_weights</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight_col</span><span class="o">=</span><span class="s2">&quot;cell_weights&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : pandas.DataFrame</span>
@@ -203,7 +207,7 @@
     <span class="n">index_cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">misc_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Helper function for initializing properties and cell properties</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function for initializing properties and cell properties</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -259,11 +263,11 @@
     <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">misc_col</span><span class="p">:</span><span class="n">data</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">misc_col</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="remove_row_duplicates"><a class="viewcode-back" href="../../classes/classes.html#classes.helpers.remove_row_duplicates">[docs]</a><span class="k">def</span> <span class="nf">remove_row_duplicates</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">data_cols</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Removes and aggregates duplicate rows of a DataFrame using groupby</span>
 
 <span class="sd">    Parameters</span>

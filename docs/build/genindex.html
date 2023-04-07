@@ -6,16 +6,16 @@
   <title>Index &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> HyperNetX
-            <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Index</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -139,12 +143,6 @@
 
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.add_node_to_edge">(classes.hypergraph.Hypergraph method)</a>
-</li>
-      </ul></li>
-      <li><a href="classes/classes.html#classes.Hypergraph.add_nwhy">add_nwhy() (classes.Hypergraph class method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.add_nwhy">(classes.hypergraph.Hypergraph class method)</a>
 </li>
       </ul></li>
       <li><a href="algorithms/algorithms.html#algorithms.add_to_column">add_to_column() (in module algorithms)</a>
@@ -355,14 +353,14 @@
         <li><a href="classes/classes.html#module-classes.hypergraph">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.Hypergraph.collapse_edges">collapse_edges() (classes.Hypergraph method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.EntitySet.collapse_identical_elements">collapse_identical_elements() (classes.EntitySet method)</a>
 
       <ul>
@@ -421,12 +419,6 @@
 
       <ul>
         <li><a href="algorithms/algorithms.html#algorithms.contagion.contagion_animation">(in module algorithms.contagion)</a>
-</li>
-      </ul></li>
-      <li><a href="classes/classes.html#classes.Hypergraph.convert_to_static">convert_to_static() (classes.Hypergraph method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.convert_to_static">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
       <li><a href="classes/classes.html#classes.helpers.create_properties">create_properties() (in module classes.helpers)</a>
@@ -767,12 +759,6 @@
 </li>
       <li><a href="drawing/drawing.html#drawing.util.get_frozenset_label">get_frozenset_label() (in module drawing.util)</a>
 </li>
-      <li><a href="classes/classes.html#classes.Hypergraph.get_id">get_id() (classes.Hypergraph method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.get_id">(classes.hypergraph.Hypergraph method)</a>
-</li>
-      </ul></li>
       <li><a href="drawing/drawing.html#drawing.util.get_line_graph">get_line_graph() (in module drawing.util)</a>
 </li>
       <li><a href="classes/classes.html#classes.Hypergraph.get_linegraph">get_linegraph() (classes.Hypergraph method)</a>
@@ -783,12 +769,6 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="classes/classes.html#classes.Hypergraph.get_name">get_name() (classes.Hypergraph method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.get_name">(classes.hypergraph.Hypergraph method)</a>
-</li>
-      </ul></li>
       <li><a href="algorithms/algorithms.html#algorithms.get_pi">get_pi() (in module algorithms)</a>
 
       <ul>
@@ -1246,20 +1226,14 @@
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_nodes">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/classes.html#classes.helpers.remove_row_duplicates">remove_row_duplicates() (in module classes.helpers)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/classes.html#classes.helpers.remove_row_duplicates">remove_row_duplicates() (in module classes.helpers)</a>
+</li>
       <li><a href="classes/classes.html#classes.Hypergraph.remove_singletons">remove_singletons() (classes.Hypergraph method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_singletons">(classes.hypergraph.Hypergraph method)</a>
-</li>
-      </ul></li>
-      <li><a href="classes/classes.html#classes.Hypergraph.remove_static">remove_static() (classes.Hypergraph method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.remove_static">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
       <li>
@@ -1382,12 +1356,6 @@
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_connected_components">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/classes.html#classes.Hypergraph.s_degree">s_degree() (classes.Hypergraph method)</a>
-
-      <ul>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.s_degree">(classes.hypergraph.Hypergraph method)</a>
-</li>
-      </ul></li>
       <li><a href="algorithms/algorithms.html#algorithms.s_eccentricity">s_eccentricity() (in module algorithms)</a>
 
       <ul>
@@ -1400,14 +1368,14 @@
         <li><a href="reports/reports.html#reports.descriptive_stats.s_edge_diameter_dist">(in module reports.descriptive_stats)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms/algorithms.html#algorithms.s_harmonic_centrality">s_harmonic_centrality() (in module algorithms)</a>
 
       <ul>
         <li><a href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_centrality">(in module algorithms.s_centrality_measures)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms/algorithms.html#algorithms.s_harmonic_closeness_centrality">s_harmonic_closeness_centrality() (in module algorithms)</a>
 
       <ul>
@@ -1526,18 +1494,14 @@
         <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.toplexes">(classes.hypergraph.Hypergraph method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.Entity.translate">translate() (classes.Entity method)</a>
 
       <ul>
         <li><a href="classes/classes.html#classes.entity.Entity.translate">(classes.entity.Entity method)</a>
 </li>
-        <li><a href="classes/classes.html#classes.Hypergraph.translate">(classes.Hypergraph method)</a>
-</li>
-        <li><a href="classes/classes.html#classes.hypergraph.Hypergraph.translate">(classes.hypergraph.Hypergraph method)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/classes.html#classes.Entity.translate_arr">translate_arr() (classes.Entity method)</a>
 
       <ul>

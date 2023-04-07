@@ -6,16 +6,16 @@
   <title>reports.descriptive_stats &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">reports.descriptive_stats</li>
       <li class="wy-breadcrumbs-aside">
@@ -95,7 +99,7 @@
 
 
 <div class="viewcode-block" id="centrality_stats"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.centrality_stats">[docs]</a><span class="k">def</span> <span class="nf">centrality_stats</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes basic centrality statistics for X</span>
 
 <span class="sd">    Parameters</span>
@@ -108,11 +112,11 @@
 <span class="sd">    [min, max, mean, median, standard deviation] : list</span>
 <span class="sd">        List of centrality statistics for X</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span></div>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span></div>
 
 
 <div class="viewcode-block" id="edge_size_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.edge_size_dist">[docs]</a><span class="k">def</span> <span class="nf">edge_size_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes edge sizes of a hypergraph.</span>
 
 <span class="sd">    Parameters</span>
@@ -136,7 +140,7 @@
 
 
 <div class="viewcode-block" id="degree_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.degree_dist">[docs]</a><span class="k">def</span> <span class="nf">degree_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes degrees of nodes of a hypergraph.</span>
 
 <span class="sd">    Parameters</span>
@@ -163,7 +167,7 @@
 
 
 <div class="viewcode-block" id="comp_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.comp_dist">[docs]</a><span class="k">def</span> <span class="nf">comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes component sizes, number of nodes.</span>
 
 <span class="sd">    Parameters</span>
@@ -193,7 +197,7 @@
 
 
 <div class="viewcode-block" id="s_comp_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_comp_dist">[docs]</a><span class="k">def</span> <span class="nf">s_comp_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes s-component sizes, counting nodes or edges.</span>
 
 <span class="sd">    Parameters</span>
@@ -234,7 +238,7 @@
 
 <div class="viewcode-block" id="toplex_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.toplex_dist">[docs]</a><span class="nd">@not_implemented_for</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">toplex_dist</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">aggregated</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Computes toplex sizes for hypergraph H.</span>
 
@@ -259,7 +263,7 @@
 
 
 <div class="viewcode-block" id="s_node_diameter_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_node_diameter_dist">[docs]</a><span class="k">def</span> <span class="nf">s_node_diameter_dist</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
@@ -279,7 +283,7 @@
 
 
 <div class="viewcode-block" id="s_edge_diameter_dist"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.s_edge_diameter_dist">[docs]</a><span class="k">def</span> <span class="nf">s_edge_diameter_dist</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    H : Hypergraph</span>
@@ -299,7 +303,7 @@
 
 
 <div class="viewcode-block" id="info"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.info">[docs]</a><span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a summary of simple statistics for H</span>
 
 <span class="sd">    Parameters</span>
@@ -343,7 +347,7 @@
 
 
 <div class="viewcode-block" id="info_dict"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.info_dict">[docs]</a><span class="k">def</span> <span class="nf">info_dict</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a summary of simple statistics for H</span>
 
 <span class="sd">    Parameters</span>
@@ -386,7 +390,7 @@
 
 
 <div class="viewcode-block" id="dist_stats"><a class="viewcode-back" href="../../reports/reports.html#reports.descriptive_stats.dist_stats">[docs]</a><span class="k">def</span> <span class="nf">dist_stats</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes many basic hypergraph stats and puts them all into a single dictionary object</span>
 
 <span class="sd">        * nrows = number of nodes (rows in the incidence matrix)</span>

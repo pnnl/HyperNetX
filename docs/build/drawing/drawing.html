@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>drawing package &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -30,15 +30,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> HyperNetX
-            <img src="../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -86,7 +90,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
           <li class="breadcrumb-item"><a href="modules.html">drawing</a></li>
       <li class="breadcrumb-item active">drawing package</li>
@@ -144,7 +148,7 @@ intersection. It is not possible, in general, to draw a “correct” hypergraph
 this way for an arbitrary hypergraph, in the same way that not all graphs
 have planar drawings.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -176,7 +180,7 @@ the return value of draw_hyper_edges.</p>
 <p>The label will be draw on the least curvy part of the polygon, and will be
 aligned parallel to the orientation of the polygon where it is drawn.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>polys</strong> (<em>PolyCollection</em>) – collection of polygons returned by draw_hyper_edges</p></li>
@@ -193,7 +197,7 @@ aligned parallel to the orientation of the polygon where it is drawn.</p>
 <span class="sig-prename descclassname"><span class="pre">drawing.rubber_band.</span></span><span class="sig-name descname"><span class="pre">draw_hyper_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/rubber_band.html#draw_hyper_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.rubber_band.draw_hyper_edges" title="Permalink to this definition"></a></dt>
 <dd><p>Draws a convex hull around the nodes contained within each edge in H</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -203,10 +207,10 @@ aligned parallel to the orientation of the polygon where it is drawn.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments, e.g., linewidth, facecolors, are passed through to the PolyCollection constructor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a Matplotlib PolyCollection that can be further styled</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PolyCollection</p>
 </dd>
 </dl>
@@ -224,7 +228,7 @@ a node to its custom label. By default, the label is the string
 representation of the node.</p>
 <p>Keyword arguments are passed through to Matplotlib’s annotate function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -248,7 +252,7 @@ node is missing from this dictionary, or the node_radius is not specified at
 all, a sensible default radius is chosen based on distances between nodes
 given by pos.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -258,10 +262,10 @@ given by pos.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments, e.g., linewidth, facecolors, are passed through to the PolyCollection constructor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a Matplotlib PolyCollection that can be further styled</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PolyCollection</p>
 </dd>
 </dl>
@@ -275,16 +279,16 @@ given by pos.</p>
 pair of points given the positions provided. Then, the node radius is a fraction
 of the median of this distance take across all hyper-edges.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the recommended radius</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -299,7 +303,7 @@ pos. Convex hulls are spaced out such that if one set contains another, the
 convex hull will surround the contained set. The amount of spacing added
 between hulls is specified by the parameter, dr.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -308,10 +312,10 @@ between hulls is specified by the parameter, dr.</p>
 <li><p><strong>ax</strong> (<em>Axis</em>) – matplotlib axis on which the plot is rendered</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A mapping from hyper edge ids to paths (Nx2 numpy matrices)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -324,17 +328,17 @@ between hulls is specified by the parameter, dr.</p>
 <p>The hypergraph is converted to a bipartite graph, allowing the usual graph layout
 techniques to be applied.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>layout</strong> (<em>function</em>) – the layout algorithm which accepts a NetworkX graph and keyword arguments</p></li>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Keyword arguments are passed through to the layout algorithm</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>mapping of node and edge positions to R^2</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -355,7 +359,7 @@ edges. A line is drawn between a node an an edge</p>
 the two columns. Spacing between disconnected components is adjusted to make
 the diagram easier to read, by reducing the angle of the lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>with_node_labels</strong> (<em>bool</em>) – False to disable node labels</p></li>
@@ -377,7 +381,7 @@ the diagram easier to read, by reducing the angle of the lines.</p>
 <p>Each node-hyper edge membership is rendered as a line connecting the node
 in the left column to the edge in the right column.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -385,10 +389,10 @@ in the left column to the edge in the right column.</p>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments passed to matplotlib.LineCollection</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the hyper edges</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>LineCollection</p>
 </dd>
 </dl>
@@ -399,7 +403,7 @@ in the left column to the edge in the right column.</p>
 <span class="sig-prename descclassname"><span class="pre">drawing.two_column.</span></span><span class="sig-name descname"><span class="pre">draw_hyper_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_node_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_edge_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/two_column.html#draw_hyper_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.two_column.draw_hyper_labels" title="Permalink to this definition"></a></dt>
 <dd><p>Renders hyper labels (nodes and edges) for the two column layout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -424,7 +428,7 @@ independently and then stacked together.</p>
 provides a quick and dirty ordering that minimizes edge crossings in the
 diagram.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>spacing</strong> (<em>float</em>) – amount of whitespace between disconnected components</p></li>
@@ -446,16 +450,16 @@ diagram.</p>
 <span class="sig-prename descclassname"><span class="pre">drawing.util.</span></span><span class="sig-name descname"><span class="pre">get_frozenset_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#get_frozenset_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.util.get_frozenset_label" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function for rendering the labels of possibly collapsed nodes and edges</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>S</strong> (<em>iterable</em>) – list of entities to be labeled</p></li>
 <li><p><strong>count</strong> (<em>bool</em>) – True if labels should be counts of entities instead of list</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>mapping of entity to its string representation</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -467,16 +471,16 @@ diagram.</p>
 <dd><p>Computes the line graph, a directed graph, where a directed edge (u, v)
 exists if the edge u is a subset of the edge v in the hypergraph.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>collapse</strong> (<em>bool</em>) – True if edges should be added if hyper edges are identical</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A directed graph</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>networkx.DiGraph</p>
 </dd>
 </dl>
@@ -489,16 +493,16 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 <p>In this layering, each edge is assigned a level. An edge u will be above
 (e.g., have a smaller level value) another edge v if v is a subset of u.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>collapse</strong> (<em>bool</em>) – True if edges should be added if hyper edges are identical</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a mapping of vertices in H to integer levels</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -514,16 +518,16 @@ exists if the edge u is a subset of the edge v in the hypergraph.</p>
 <span class="sig-prename descclassname"><span class="pre">drawing.util.</span></span><span class="sig-name descname"><span class="pre">inflate_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/drawing/util.html#inflate_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#drawing.util.inflate_kwargs" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to expand keyword arguments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<em>int</em>) – length of resulting list if argument is expanded</p></li>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – keyword arguments to be expanded</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dictionary with same keys as kwargs and whose values are lists of length n</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -575,7 +579,7 @@ intersection. It is not possible, in general, to draw a “correct” hypergraph
 this way for an arbitrary hypergraph, in the same way that not all graphs
 have planar drawings.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>pos</strong> (<em>dict</em>) – mapping of node and edge positions to R^2</p></li>
@@ -610,7 +614,7 @@ edges. A line is drawn between a node an an edge</p>
 the two columns. Spacing between disconnected components is adjusted to make
 the diagram easier to read, by reducing the angle of the lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – the entity to be drawn</p></li>
 <li><p><strong>with_node_labels</strong> (<em>bool</em>) – False to disable node labels</p></li>

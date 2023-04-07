@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>algorithms package &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script src="../_static/copybutton.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -31,15 +31,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> HyperNetX
-            <img src="../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -90,7 +94,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
           <li class="breadcrumb-item"><a href="modules.html">algorithms</a></li>
       <li class="breadcrumb-item active">algorithms package</li>
@@ -119,7 +123,7 @@
 implemented for networks in the EoN package by Joel C. Miller
 <a class="reference external" href="https://epidemicsonnetworks.readthedocs.io/en/latest/">https://epidemicsonnetworks.readthedocs.io/en/latest/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -134,10 +138,10 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>t, S, I, R</strong> – time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
@@ -167,7 +171,7 @@ implemented for networks in the EoN package by Joel C. Miller
 implemented for networks in the EoN package by Joel C. Miller
 <a class="reference external" href="https://epidemicsonnetworks.readthedocs.io/en/latest/">https://epidemicsonnetworks.readthedocs.io/en/latest/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -181,10 +185,10 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>t, S, I</strong> – time (t), number of susceptible (S), and infected (I) at each time.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
@@ -212,17 +216,17 @@ implemented for networks in the EoN package by Joel C. Miller
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – the node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -244,7 +248,7 @@ implemented for networks in the EoN package by Joel C. Miller
 <span class="sig-prename descclassname"><span class="pre">algorithms.contagion.</span></span><span class="sig-name descname"><span class="pre">contagion_animation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion.html#contagion_animation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.contagion_animation" title="Permalink to this definition"></a></dt>
 <dd><p>A function to animate discrete-time contagion models for hypergraphs. Currently only supports a circular layout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fig</strong> (<em>matplotlib Figure object</em>) – </p></li>
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
@@ -257,7 +261,7 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>fps</strong> (<em>int &gt; 0</em><em>, </em><em>default: 1</em>) – Frames per second of the animation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib Animation object</p>
 </dd>
 </dl>
@@ -296,7 +300,7 @@ implemented for networks in the EoN package by Joel C. Miller
 “Simplicial models of social contagion” by Iacopini et al.
 <a class="reference external" href="https://doi.org/10.1038/s41467-019-10431-6">https://doi.org/10.1038/s41467-019-10431-6</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -312,7 +316,7 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><em>if return_full_data</em> –</p>
 <dl class="simple">
@@ -357,7 +361,7 @@ implemented for networks in the EoN package by Joel C. Miller
 “Simplicial models of social contagion” by Iacopini et al.
 <a class="reference external" href="https://doi.org/10.1038/s41467-019-10431-6">https://doi.org/10.1038/s41467-019-10431-6</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -372,7 +376,7 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><em>if return_full_data</em> –</p>
 <dl class="simple">
@@ -415,17 +419,17 @@ implemented for networks in the EoN package by Joel C. Miller
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -449,17 +453,17 @@ implemented for networks in the EoN package by Joel C. Miller
 it is possible for an individual to change their opinion. If opinions are divided equally,
 choose randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -483,7 +487,7 @@ choose randomly.</p>
 <span class="sig-prename descclassname"><span class="pre">algorithms.contagion.</span></span><span class="sig-name descname"><span class="pre">threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/contagion.html#threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion.threshold" title="Permalink to this definition"></a></dt>
 <dd><p>The threshold contagion mechanism</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
@@ -491,10 +495,10 @@ choose randomly.</p>
 <li><p><strong>tau</strong> (<em>float between 0 and 1</em><em>, </em><em>default: 0.1</em>) – The fraction of nodes in an edge that must be infected for the edge to be able to transmit to the node</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -520,13 +524,13 @@ choose randomly.</p>
 <dd><p>A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
 <li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -550,7 +554,7 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 <dd><p>A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Larremore et al. in <a class="reference external" href="https://doi.org/10.1103/PhysRevE.90.012805">https://doi.org/10.1103/PhysRevE.90.012805</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
 <li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
@@ -563,7 +567,7 @@ The number of rows must match the number of node communities and the number of c
 must match the number of edge communities.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -590,7 +594,7 @@ but still runs and the number of entries in the incidence matrix is determined b
 <dd><p>A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<em>int</em>) – Number of nodes</p></li>
 <li><p><strong>m</strong> (<em>int</em>) – Number of edges</p></li>
@@ -599,7 +603,7 @@ bipartite networks by Aksoy et al. in <a class="reference external" href="https:
 <li><p><strong>edge_labels</strong> (<em>list</em><em>, </em><em>default=None</em>) – Hyperedge labels</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -647,17 +651,17 @@ numbers and homology bases are returned.</p>
 <span class="sig-prename descclassname"><span class="pre">algorithms.homology_mod2.</span></span><span class="sig-name descname"><span class="pre">add_to_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_column" title="Permalink to this definition"></a></dt>
 <dd><p>Replaces column i (of M) with logical xor between column i and j</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – matrix</p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of column being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of column being added to altered</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>N</strong></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -668,17 +672,17 @@ numbers and homology bases are returned.</p>
 <span class="sig-prename descclassname"><span class="pre">algorithms.homology_mod2.</span></span><span class="sig-name descname"><span class="pre">add_to_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.homology_mod2.add_to_row" title="Permalink to this definition"></a></dt>
 <dd><p>Replaces row i with logical xor between row i and j</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of row being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of row being added to altered</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>N</strong></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -690,7 +694,7 @@ numbers and homology bases are returned.</p>
 <dd><p>Generate the kth-betti numbers for a chain complex with boundary
 matrices given by bd</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bd</strong> (<em>dict</em><em> of </em><em>k-boundary matrices keyed on dimension</em><em> of </em><em>domain</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em>, </em><em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
@@ -698,10 +702,10 @@ if None, then all betti numbers for dimensions of existing cells will be
 computed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>betti</strong> – Description</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -713,7 +717,7 @@ computed.</p></li>
 <dd><p>Return the kth betti numbers for the simplicial homology of the ASC
 associated to h</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – Hypergraph to compute the betti numbers from</p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
@@ -721,10 +725,10 @@ if None, then all betti numbers for dimensions of existing cells will be
 computed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>betti</strong> – A dictionary of betti numbers keyed by dimension</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -736,16 +740,16 @@ computed.</p></li>
 <dd><p>Compute the boundary map from <span class="math notranslate nohighlight">\(C_{k-1}\)</span>-basis to <span class="math notranslate nohighlight">\(C_k\)</span> basis with
 respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>km1basis</strong> (<em>indexable iterable</em>) – Ordered list of <span class="math notranslate nohighlight">\(k-1\)</span> dimensional cell</p></li>
 <li><p><strong>kbasis</strong> (<em>indexable iterable</em>) – Ordered list of <span class="math notranslate nohighlight">\(k\)</span> dimensional cells</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>bk</strong> – boundary matrix in <span class="math notranslate nohighlight">\(Z_2\)</span> stored as boolean</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -757,10 +761,10 @@ respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 <dd><p>Returns a csr_matrix with rows corresponding to the elements of the
 group  generated by image basis over <span class="math notranslate nohighlight">\(\mathbb{Z}_2\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>image_basis</strong> (<em>numpy.ndarray</em><em> or </em><em>scipy.sparse.csr_matrix</em>) – 2d-array of basis elements</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>scipy.sparse.csr_matrix</p>
 </dd>
 </dl>
@@ -772,7 +776,7 @@ group  generated by image basis over <span class="math notranslate nohighlight">
 <dd><p>Compute the k-chains and k-boundary maps required to compute homology
 for all values in k</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em> of </em><em>length 2</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – k must be an integer greater than 0 or a list of
@@ -782,11 +786,11 @@ and boundary maps for k=1,2,3 will be returned,
 if None than k = [1,max dimension of edge in h]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>C, bd</strong> – C is a dictionary of lists
 bd is a dictionary of numpy arrays</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -798,7 +802,7 @@ bd is a dictionary of numpy arrays</p>
 <dd><p>Compute a basis for the kth-simplicial homology group, <span class="math notranslate nohighlight">\(H_k\)</span>, defined by a
 chain complex <span class="math notranslate nohighlight">\(C\)</span> with boundary maps given by bd <span class="math notranslate nohighlight">\(= \{k:\partial_k \}\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bd</strong> (<em>dict</em>) – dict of boundary matrices on k-chains to k-1 chains keyed on k
 if krange is a tuple then all boundary matrices k in [krange[0],..,krange[1]]
@@ -811,7 +815,7 @@ available boundary matrices in bd</p></li>
 Needed to compute the shortest generators in the homology group.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>basis</strong> (<em>dict</em>) – dict of generators as 0-1 tuples keyed by dim
 basis for dimension k will be returned only if bd[k] and bd[k+1] have
@@ -829,7 +833,7 @@ been provided.</p></li>
 <dd><p>Computes the kth-homology groups mod 2 for the ASC
 associated with the hypergraph h for k in krange inclusive</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em> of </em><em>length 2</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – k must be an integer greater than 0 or a list of
@@ -840,7 +844,7 @@ homology group, only good for relatively small examples</p></li>
 <li><p><strong>interpreted</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if True will return an explicit basis in terms of the k-chains</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>basis</strong> (<em>list</em>) – list of generators as k-chains as boolean vectors</p></li>
 <li><p><em>interpreted_basis</em> – lists of kchains in basis</p></li>
@@ -855,17 +859,17 @@ homology group, only good for relatively small examples</p></li>
 <span class="sig-prename descclassname"><span class="pre">algorithms.homology_mod2.</span></span><span class="sig-name descname"><span class="pre">interpret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/homology_mod2.html#interpret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.homology_mod2.interpret" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the data as represented in Ck associated with the arr</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Ck</strong> (<em>list</em>) – a list of k-cells being referenced by arr</p></li>
 <li><p><strong>arr</strong> (<em>np.array</em>) – array of 0-1 vectors</p></li>
 <li><p><strong>labels</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary of labels to associate to the nodes in the cells</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of k-cells referenced by data in Ck</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -877,16 +881,16 @@ homology group, only good for relatively small examples</p></li>
 <dd><p>Compute the set of k dimensional cells in the abstract simplicial
 complex associated with the hypergraph.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em>) – dimension of cell</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>an ordered list of kchains represented as tuples of length k+1</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -907,19 +911,19 @@ complex associated with the hypergraph.</p>
 <dd><p>Returns the boolean equivalent of the dot product mod 2 on two 1-d arrays of
 the same length.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ar1</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
 <li><p><strong>ar2</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>boolean value associated with dot product mod 2</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If arrays are not of the same length an error will be raised.</p>
 </dd>
 </dl>
@@ -931,20 +935,20 @@ the same length.</p>
 <dd><p>Returns the boolean equivalent of matrix addition mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 <li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix addition of the
 matrices as matrices over Z/2Z</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If dimensions are not equal an error will be raised.</p>
 </dd>
 </dl>
@@ -956,20 +960,20 @@ matrices as matrices over Z/2Z</p>
 <dd><p>Returns the boolean equivalent of matrix multiplication mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 <li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix multiplication of the
 matrices as matrices over Z/2Z</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If inner dimensions are not equal an error will be raised.</p>
 </dd>
 </dl>
@@ -982,16 +986,16 @@ matrices as matrices over Z/2Z</p>
 <p>For arr = [arr[0],arr[1],arr[2]…arr[n]] returns product arr[0]arr[1]…arr[n]
 If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>list</em><em> of </em><em>np.array</em>) – list of nxm matrices represented as np.array</p></li>
 <li><p><strong>reverse</strong> (<em>bool</em><em>, </em><em>optional</em>) – order to multiply the matrices</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>P</strong> – Product of matrices in the list</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -1003,14 +1007,14 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <dd><p>Computes the invertible transformation matrices needed to compute
 the reduced row echelon form of M modulo 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with elements in <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>L, S, Linv</strong> – LM = S where S is the reduced echelon form of M
 and M = LinvS</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.arrays</p>
 </dd>
 </dl>
@@ -1022,17 +1026,17 @@ and M = LinvS</p>
 <dd><p>Computes the invertible transformation matrices needed to compute the
 Smith Normal Form of M modulo 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with data type bool</p></li>
 <li><p><strong>track</strong> (<em>bool</em>) – if track=True will print out the transformation as Z/2Z matrix as it
 discovers L[i] and R[j]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>L, R, S, Linv</strong> – LMR = S is the Smith Normal Form of the matrix M.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.arrays</p>
 </dd>
 </dl>
@@ -1056,17 +1060,17 @@ Finally we verify:
 <dd><p>Swaps ith and jth column of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1078,17 +1082,17 @@ Returns a list of new matrices</p>
 <dd><p>Swaps ith and jth row of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1103,31 +1107,37 @@ Returns a list of new matrices</p>
 Adapted from F. Théberge’s GitHub repository: <a class="reference external" href="https://github.com/ftheberge/Hypergraph_Clustering">Hypergraph Clustering</a>
 See Tutorial 13 in the tutorials folder for library usage.</p>
 <p class="rubric">References</p>
-<dl class="footnote brackets">
-<dt class="label" id="id1"><span class="brackets">1</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id13">2</a>,<a href="#id14">3</a>,<a href="#id23">4</a>)</span></dt>
-<dd><p>Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. “A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering”. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-36687-2_24">https://doi.org/10.1007/978-3-030-36687-2_24</a></p>
-</dd>
-<dt class="label" id="id2"><span class="brackets">2</span><span class="fn-backref">(<a href="#id5">1</a>,<a href="#id6">2</a>,<a href="#id7">3</a>,<a href="#id8">4</a>,<a href="#id10">5</a>,<a href="#id11">6</a>,<a href="#id15">7</a>,<a href="#id16">8</a>,<a href="#id17">9</a>,<a href="#id18">10</a>,<a href="#id20">11</a>,<a href="#id21">12</a>)</span></dt>
-<dd><p>Kamiński  B., Prałat  P. and Théberge  F. “Community Detection Algorithm Using Hypergraph Modularity”. In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks &amp; Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-65347-7_13">https://doi.org/10.1007/978-3-030-65347-7_13</a></p>
-</dd>
-<dt class="label" id="id3"><span class="brackets">3</span><span class="fn-backref">(<a href="#id9">1</a>,<a href="#id12">2</a>,<a href="#id19">3</a>,<a href="#id22">4</a>)</span></dt>
-<dd><p>Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. “Clustering via hypergraph modularity”, Plos ONE 2019, <a class="reference external" href="https://doi.org/10.1371/journal.pone.0224307">https://doi.org/10.1371/journal.pone.0224307</a></p>
-</dd>
-</dl>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="note">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id13">2</a>,<a role="doc-backlink" href="#id14">3</a>,<a role="doc-backlink" href="#id23">4</a>)</span>
+<p>Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. “A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering”. In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-36687-2_24">https://doi.org/10.1007/978-3-030-36687-2_24</a></p>
+</aside>
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id7">3</a>,<a role="doc-backlink" href="#id8">4</a>,<a role="doc-backlink" href="#id10">5</a>,<a role="doc-backlink" href="#id11">6</a>,<a role="doc-backlink" href="#id15">7</a>,<a role="doc-backlink" href="#id16">8</a>,<a role="doc-backlink" href="#id17">9</a>,<a role="doc-backlink" href="#id18">10</a>,<a role="doc-backlink" href="#id20">11</a>,<a role="doc-backlink" href="#id21">12</a>)</span>
+<p>Kamiński  B., Prałat  P. and Théberge  F. “Community Detection Algorithm Using Hypergraph Modularity”. In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks &amp; Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. <a class="reference external" href="https://doi.org/10.1007/978-3-030-65347-7_13">https://doi.org/10.1007/978-3-030-65347-7_13</a></p>
+</aside>
+<aside class="footnote brackets" id="id3" role="note">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id12">2</a>,<a role="doc-backlink" href="#id19">3</a>,<a role="doc-backlink" href="#id22">4</a>)</span>
+<p>Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. “Clustering via hypergraph modularity”, Plos ONE 2019, <a class="reference external" href="https://doi.org/10.1371/journal.pone.0224307">https://doi.org/10.1371/journal.pone.0224307</a></p>
+</aside>
+</aside>
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.dict2part">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">dict2part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#dict2part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.dict2part" title="Permalink to this definition"></a></dt>
 <dd><p>Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>D</strong> (<em>dict</em>) – Dictionary keyed by vertices with values equal to integer
 index of the partition the vertex belongs to</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of sets; one set for each part in the partition</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1136,18 +1146,18 @@ index of the partition the vertex belongs to</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.kumar">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.kumar" title="Permalink to this definition"></a></dt>
-<dd><p>Compute a partition of the vertices in hypergraph HG as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id4">1</a></p>
+<dd><p>Compute a partition of the vertices in hypergraph HG as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
 <li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – convergence stopping criterion</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A partition of the vertices in HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of sets</p>
 </dd>
 </dl>
@@ -1156,7 +1166,7 @@ index of the partition the vertex belongs to</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.last_step">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">last_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta=0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#last_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.last_step" title="Permalink to this definition"></a></dt>
-<dd><p>Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm <a class="footnote-reference brackets" href="#id2" id="id5">2</a></p>
+<dd><p>Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm <a class="footnote-reference brackets" href="#id2" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is a very simple algorithm that tries moving nodes between communities to improve hypergraph modularity.
@@ -1164,18 +1174,18 @@ It requires an initial non-trivial partition which can be obtained for example v
 or via Kumar’s algorithm.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
 <li><p><strong>L</strong> (<em>list</em><em> of </em><em>sets</em>) – some initial partition of the vertices in HG</p></li>
-<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id6">2</a></p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
 <li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – convergence stopping criterion</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new partition for the vertices in HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of sets</p>
 </dd>
 </dl>
@@ -1184,19 +1194,19 @@ or via Kumar’s algorithm.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.linear">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.linear" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id7">2</a> for d-edge with c vertices in the majority class.
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
 This is the default choice for modularity() and last_step() functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>c/d if c&gt;d/2 else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1205,19 +1215,19 @@ This is the default choice for modularity() and last_step() functions.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.majority">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.majority" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id8">2</a> for d-edge with c vertices in the majority class.
-This corresponds to the majority rule <a class="footnote-reference brackets" href="#id3" id="id9">3</a></p>
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
+This corresponds to the majority rule <a class="footnote-reference brackets" href="#id3" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>1 if c&gt;d/2 else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -1228,11 +1238,11 @@ This corresponds to the majority rule <a class="footnote-reference brackets" hre
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.modularity" title="Permalink to this definition"></a></dt>
 <dd><p>Computes modularity of hypergraph HG with respect to partition A.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – The hypergraph with some precomputed attributes via: precompute_attributes(HG)</p></li>
 <li><p><strong>A</strong> (<em>list</em><em> of </em><em>sets</em>) – Partition of the vertices in HG</p></li>
-<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id10">2</a></p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -1242,10 +1252,10 @@ This corresponds to the majority rule <a class="footnote-reference brackets" hre
 Default is ‘linear’; other supplied choices are ‘majority’ and ‘strict’.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The modularity function for partition A on HG</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
@@ -1257,13 +1267,13 @@ Default is ‘linear’; other supplied choices are ‘majority’ and ‘strict
 <dd><p>Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function
 to dict2part</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>A</strong> (<em>list</em><em> of </em><em>sets</em>) – a partition of the vertices</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary with {vertex: partition index}</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1283,13 +1293,13 @@ Binomial coefficients to speed-up modularity computation are stored in HG.bin_co
 Isolated vertices found only in edge(s) of size 1 are dropped.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>H</strong> – New hypergraph with added attributes</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
@@ -1298,19 +1308,19 @@ Isolated vertices found only in edge(s) of size 1 are dropped.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.strict">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">strict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#strict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.strict" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id11">2</a> for d-edge with c vertices in the majority class.
-This corresponds to the strict rule <a class="footnote-reference brackets" href="#id3" id="id12">3</a></p>
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
+This corresponds to the strict rule <a class="footnote-reference brackets" href="#id3" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>1 if c==d else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -1319,16 +1329,16 @@ This corresponds to the strict rule <a class="footnote-reference brackets" href=
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.hypergraph_modularity.two_section">
 <span class="sig-prename descclassname"><span class="pre">algorithms.hypergraph_modularity.</span></span><span class="sig-name descname"><span class="pre">two_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/algorithms/hypergraph_modularity.html#two_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.hypergraph_modularity.two_section" title="Permalink to this definition"></a></dt>
-<dd><p>Creates a random walk based <a class="footnote-reference brackets" href="#id1" id="id13">1</a> 2-section igraph Graph with transition weights defined by the
+<dd><p>Creates a random walk based <a class="footnote-reference brackets" href="#id1" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 2-section igraph Graph with transition weights defined by the
 weights of the hyperedges.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The 2-section graph built from HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>igraph.Graph</p>
 </dd>
 </dl>
@@ -1358,13 +1368,13 @@ normalized so its entries sum to 1. Intended for the probability transition matr
 of a random walk on a (connected) hypergraph, in which case the output can
 be interpreted as the stationary distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>P</strong> (<em>csr matrix</em>) – Probability transition matrix</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>pi</strong> – Stationary distribution of random walk defined by P</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -1383,7 +1393,7 @@ Annals of Combinatorics 9.1 (2005): 1-19.</p>
 Hypergraph random walks, laplacians, and clustering.
 In Proceedings of CIKM 2020, (2020): 495-504.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -1391,7 +1401,7 @@ vertices</p></li>
 <li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return matrix-index to vertex-label mapping</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>scipy.sparse.csr.csr_matrix</em>) – Probability transition matrix of the random walk on the hypergraph</p></li>
 <li><p><strong>index</strong> (<em>dict</em>) – mapping from row and column indices to corresponding vertex label</p></li>
@@ -1415,7 +1425,7 @@ to a simple random walk.
 If weights are specified, the hyperedge weights w(e) are determined from the weights
 gamma(v,e).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -1424,7 +1434,7 @@ If False, uniform weights are utilized.</p></li>
 <li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return matrix index to vertex label mapping</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>scipy.sparse.csr.csr_matrix</em>) – Probability transition matrix of the random walk on the hypergraph</p></li>
 <li><p><strong>index</strong> (<em>dict</em>) – mapping from row and column indices to corresponding vertex label</p></li>
@@ -1444,7 +1454,7 @@ Algorithm 1 in:</p>
 Hypergraph random walks, laplacians, and clustering.
 In Proceedings of CIKM 2020, (2020): 495-504.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -1454,11 +1464,11 @@ will be utilized</p></li>
 <li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use the cell_weights of the hypergraph. If False uniform weights are used.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>clusters</strong> – Vertex cluster dictionary, keyed by integers 0,…,k-1, with lists of
 vertices as values.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1494,7 +1504,7 @@ non-trivial shortest paths in the graph.</p>
 <div class="math notranslate nohighlight">
 \[c_B(v) = \sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s,t)}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em>) – s connectedness requirement</p></li>
@@ -1505,10 +1515,10 @@ where n is the number of edges in H</p></li>
 <li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em>) – if False will ignore singleton components of linegraph</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary of s-betweenness centrality value of the edges.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1526,7 +1536,7 @@ in the component minus 1.</p>
 <div class="math notranslate nohighlight">
 \[C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -1536,12 +1546,12 @@ in the component minus 1.</p>
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-closeness centrality value of the edges(nodes).
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -1556,7 +1566,7 @@ If source then a single value is returned.</p>
 <div class="math notranslate nohighlight">
 \[\text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -1566,12 +1576,12 @@ If source then a single value is returned.</p>
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-eccentricity value of the edges(nodes).
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -1592,7 +1602,7 @@ Edges of size less than s return 0. If H contains only one s-edge a 0 is returne
 $$C(u) = sum_{v neq u in V} frac{1}{d(v, u)}cdotfrac{2}{(n-1)(n-2)}$$
 where <span class="math notranslate nohighlight">\(n\)</span> is the number vertices.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -1602,12 +1612,12 @@ where <span class="math notranslate nohighlight">\(n\)</span> is the number vert
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -1630,7 +1640,7 @@ If source then a single value is returned.</p>
 implemented for networks in the EoN package by Joel C. Miller
 <a class="reference external" href="https://epidemicsonnetworks.readthedocs.io/en/latest/">https://epidemicsonnetworks.readthedocs.io/en/latest/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -1645,10 +1655,10 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>t, S, I, R</strong> – time (t), number of susceptible (S), infected (I), and recovered (R) at each time.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
@@ -1678,7 +1688,7 @@ implemented for networks in the EoN package by Joel C. Miller
 implemented for networks in the EoN package by Joel C. Miller
 <a class="reference external" href="https://epidemicsonnetworks.readthedocs.io/en/latest/">https://epidemicsonnetworks.readthedocs.io/en/latest/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -1692,10 +1702,10 @@ implemented for networks in the EoN package by Joel C. Miller
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>t, S, I</strong> – time (t), number of susceptible (S), and infected (I) at each time.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy arrays</p>
 </dd>
 </dl>
@@ -1721,17 +1731,17 @@ implemented for networks in the EoN package by Joel C. Miller
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">add_to_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/homology_mod2.html#add_to_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.add_to_column" title="Permalink to this definition"></a></dt>
 <dd><p>Replaces column i (of M) with logical xor between column i and j</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – matrix</p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of column being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of column being added to altered</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>N</strong></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -1742,17 +1752,17 @@ implemented for networks in the EoN package by Joel C. Miller
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">add_to_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/homology_mod2.html#add_to_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.add_to_row" title="Permalink to this definition"></a></dt>
 <dd><p>Replaces row i with logical xor between row i and j</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of row being altered</p></li>
 <li><p><strong>j</strong> (<em>int</em>) – index of row being added to altered</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>N</strong></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -1764,7 +1774,7 @@ implemented for networks in the EoN package by Joel C. Miller
 <dd><p>Generate the kth-betti numbers for a chain complex with boundary
 matrices given by bd</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bd</strong> (<em>dict</em><em> of </em><em>k-boundary matrices keyed on dimension</em><em> of </em><em>domain</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em>, </em><em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
@@ -1772,10 +1782,10 @@ if None, then all betti numbers for dimensions of existing cells will be
 computed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>betti</strong> – Description</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1787,7 +1797,7 @@ computed.</p></li>
 <dd><p>Return the kth betti numbers for the simplicial homology of the ASC
 associated to h</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – Hypergraph to compute the betti numbers from</p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – list must be min value and max value of k values inclusive
@@ -1795,10 +1805,10 @@ if None, then all betti numbers for dimensions of existing cells will be
 computed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>betti</strong> – A dictionary of betti numbers keyed by dimension</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1810,16 +1820,16 @@ computed.</p></li>
 <dd><p>Compute the boundary map from <span class="math notranslate nohighlight">\(C_{k-1}\)</span>-basis to <span class="math notranslate nohighlight">\(C_k\)</span> basis with
 respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>km1basis</strong> (<em>indexable iterable</em>) – Ordered list of <span class="math notranslate nohighlight">\(k-1\)</span> dimensional cell</p></li>
 <li><p><strong>kbasis</strong> (<em>indexable iterable</em>) – Ordered list of <span class="math notranslate nohighlight">\(k\)</span> dimensional cells</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>bk</strong> – boundary matrix in <span class="math notranslate nohighlight">\(Z_2\)</span> stored as boolean</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -1831,10 +1841,10 @@ respect to <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 <dd><p>Returns a csr_matrix with rows corresponding to the elements of the
 group  generated by image basis over <span class="math notranslate nohighlight">\(\mathbb{Z}_2\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>image_basis</strong> (<em>numpy.ndarray</em><em> or </em><em>scipy.sparse.csr_matrix</em>) – 2d-array of basis elements</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>scipy.sparse.csr_matrix</p>
 </dd>
 </dl>
@@ -1846,7 +1856,7 @@ group  generated by image basis over <span class="math notranslate nohighlight">
 <dd><p>Compute the k-chains and k-boundary maps required to compute homology
 for all values in k</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em> of </em><em>length 2</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – k must be an integer greater than 0 or a list of
@@ -1856,11 +1866,11 @@ and boundary maps for k=1,2,3 will be returned,
 if None than k = [1,max dimension of edge in h]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>C, bd</strong> – C is a dictionary of lists
 bd is a dictionary of numpy arrays</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1872,13 +1882,13 @@ bd is a dictionary of numpy arrays</p>
 <dd><p>A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
 <li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -1903,17 +1913,17 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – the node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -1935,7 +1945,7 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">contagion_animation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_state_color_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/contagion.html#contagion_animation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.contagion_animation" title="Permalink to this definition"></a></dt>
 <dd><p>A function to animate discrete-time contagion models for hypergraphs. Currently only supports a circular layout.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fig</strong> (<em>matplotlib Figure object</em>) – </p></li>
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
@@ -1948,7 +1958,7 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 <li><p><strong>fps</strong> (<em>int &gt; 0</em><em>, </em><em>default: 1</em>) – Frames per second of the animation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib Animation object</p>
 </dd>
 </dl>
@@ -1984,7 +1994,7 @@ The output currently is a static Hypergraph object. Dynamic hypergraphs are not 
 <dd><p>A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Larremore et al. in <a class="reference external" href="https://doi.org/10.1103/PhysRevE.90.012805">https://doi.org/10.1103/PhysRevE.90.012805</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k1</strong> (<em>dictionary</em>) – This a dictionary where the keys are node ids and the values are node degrees.</p></li>
 <li><p><strong>k2</strong> (<em>dictionary</em>) – This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.</p></li>
@@ -1997,7 +2007,7 @@ The number of rows must match the number of node communities and the number of c
 must match the number of edge communities.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -2023,14 +2033,14 @@ but still runs and the number of entries in the incidence matrix is determined b
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">dict2part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#dict2part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.dict2part" title="Permalink to this definition"></a></dt>
 <dd><p>Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>D</strong> (<em>dict</em>) – Dictionary keyed by vertices with values equal to integer
 index of the partition the vertex belongs to</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of sets; one set for each part in the partition</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -2045,7 +2055,7 @@ index of the partition the vertex belongs to</p>
 “Simplicial models of social contagion” by Iacopini et al.
 <a class="reference external" href="https://doi.org/10.1038/s41467-019-10431-6">https://doi.org/10.1038/s41467-019-10431-6</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -2061,7 +2071,7 @@ index of the partition the vertex belongs to</p>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><em>if return_full_data</em> –</p>
 <dl class="simple">
@@ -2106,7 +2116,7 @@ index of the partition the vertex belongs to</p>
 “Simplicial models of social contagion” by Iacopini et al.
 <a class="reference external" href="https://doi.org/10.1038/s41467-019-10431-6">https://doi.org/10.1038/s41467-019-10431-6</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>HyperNetX Hypergraph object</em>) – </p></li>
 <li><p><strong>tau</strong> (<em>dictionary</em>) – Edge sizes as keys (must account for all edge sizes present) and rates of infection for each size (float)</p></li>
@@ -2121,7 +2131,7 @@ index of the partition the vertex belongs to</p>
 <li><p><strong>**args</strong> (<em>Optional arguments to transmission function</em>) – This allows user-defined transmission functions with extra parameters.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><em>if return_full_data</em> –</p>
 <dl class="simple">
@@ -2163,7 +2173,7 @@ index of the partition the vertex belongs to</p>
 <dd><p>A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
 bipartite networks by Aksoy et al. in <a class="reference external" href="https://doi.org/10.1093/comnet/cnx001">https://doi.org/10.1093/comnet/cnx001</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<em>int</em>) – Number of nodes</p></li>
 <li><p><strong>m</strong> (<em>int</em>) – Number of edges</p></li>
@@ -2172,7 +2182,7 @@ bipartite networks by Aksoy et al. in <a class="reference external" href="https:
 <li><p><strong>edge_labels</strong> (<em>list</em><em>, </em><em>default=None</em>) – Hyperedge labels</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>HyperNetX Hypergraph object</p>
 </dd>
 </dl>
@@ -2194,13 +2204,13 @@ normalized so its entries sum to 1. Intended for the probability transition matr
 of a random walk on a (connected) hypergraph, in which case the output can
 be interpreted as the stationary distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>P</strong> (<em>csr matrix</em>) – Probability transition matrix</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>pi</strong> – Stationary distribution of random walk defined by P</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -2212,7 +2222,7 @@ be interpreted as the stationary distribution.</p>
 <dd><p>Compute a basis for the kth-simplicial homology group, <span class="math notranslate nohighlight">\(H_k\)</span>, defined by a
 chain complex <span class="math notranslate nohighlight">\(C\)</span> with boundary maps given by bd <span class="math notranslate nohighlight">\(= \{k:\partial_k \}\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bd</strong> (<em>dict</em>) – dict of boundary matrices on k-chains to k-1 chains keyed on k
 if krange is a tuple then all boundary matrices k in [krange[0],..,krange[1]]
@@ -2225,7 +2235,7 @@ available boundary matrices in bd</p></li>
 Needed to compute the shortest generators in the homology group.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>basis</strong> (<em>dict</em>) – dict of generators as 0-1 tuples keyed by dim
 basis for dimension k will be returned only if bd[k] and bd[k+1] have
@@ -2243,7 +2253,7 @@ been provided.</p></li>
 <dd><p>Computes the kth-homology groups mod 2 for the ASC
 associated with the hypergraph h for k in krange inclusive</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>list</em><em> of </em><em>length 2</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – k must be an integer greater than 0 or a list of
@@ -2254,7 +2264,7 @@ homology group, only good for relatively small examples</p></li>
 <li><p><strong>interpreted</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if True will return an explicit basis in terms of the k-chains</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>basis</strong> (<em>list</em>) – list of generators as k-chains as boolean vectors</p></li>
 <li><p><em>interpreted_basis</em> – lists of kchains in basis</p></li>
@@ -2271,17 +2281,17 @@ homology group, only good for relatively small examples</p></li>
 “The effect of heterogeneity on hypergraph contagion models” by Landry and Restrepo
 <a class="reference external" href="https://doi.org/10.1063/5.0020034">https://doi.org/10.1063/5.0020034</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -2303,17 +2313,17 @@ homology group, only good for relatively small examples</p></li>
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">interpret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/homology_mod2.html#interpret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.interpret" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the data as represented in Ck associated with the arr</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Ck</strong> (<em>list</em>) – a list of k-cells being referenced by arr</p></li>
 <li><p><strong>arr</strong> (<em>np.array</em>) – array of 0-1 vectors</p></li>
 <li><p><strong>labels</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary of labels to associate to the nodes in the cells</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of k-cells referenced by data in Ck</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -2325,16 +2335,16 @@ homology group, only good for relatively small examples</p></li>
 <dd><p>Compute the set of k dimensional cells in the abstract simplicial
 complex associated with the hypergraph.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>h</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>k</strong> (<em>int</em>) – dimension of cell</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>an ordered list of kchains represented as tuples of length k+1</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -2352,18 +2362,18 @@ complex associated with the hypergraph.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.kumar">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">kumar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#kumar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.kumar" title="Permalink to this definition"></a></dt>
-<dd><p>Compute a partition of the vertices in hypergraph HG as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id14">1</a></p>
+<dd><p>Compute a partition of the vertices in hypergraph HG as per Kumar’s algorithm <a class="footnote-reference brackets" href="#id1" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
 <li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – convergence stopping criterion</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A partition of the vertices in HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of sets</p>
 </dd>
 </dl>
@@ -2372,7 +2382,7 @@ complex associated with the hypergraph.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.last_step">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">last_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta=0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#last_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.last_step" title="Permalink to this definition"></a></dt>
-<dd><p>Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm <a class="footnote-reference brackets" href="#id2" id="id15">2</a></p>
+<dd><p>Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm <a class="footnote-reference brackets" href="#id2" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is a very simple algorithm that tries moving nodes between communities to improve hypergraph modularity.
@@ -2380,18 +2390,18 @@ It requires an initial non-trivial partition which can be obtained for example v
 or via Kumar’s algorithm.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p></li>
 <li><p><strong>L</strong> (<em>list</em><em> of </em><em>sets</em>) – some initial partition of the vertices in HG</p></li>
-<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id16">2</a></p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
 <li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – convergence stopping criterion</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new partition for the vertices in HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of sets</p>
 </dd>
 </dl>
@@ -2400,19 +2410,19 @@ or via Kumar’s algorithm.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.linear">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.linear" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id17">2</a> for d-edge with c vertices in the majority class.
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
 This is the default choice for modularity() and last_step() functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>c/d if c&gt;d/2 else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -2424,19 +2434,19 @@ This is the default choice for modularity() and last_step() functions.</p>
 <dd><p>Returns the boolean equivalent of the dot product mod 2 on two 1-d arrays of
 the same length.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ar1</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
 <li><p><strong>ar2</strong> (<em>numpy.ndarray</em>) – 1-d array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>boolean value associated with dot product mod 2</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If arrays are not of the same length an error will be raised.</p>
 </dd>
 </dl>
@@ -2448,20 +2458,20 @@ the same length.</p>
 <dd><p>Returns the boolean equivalent of matrix addition mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 <li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix addition of the
 matrices as matrices over Z/2Z</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If dimensions are not equal an error will be raised.</p>
 </dd>
 </dl>
@@ -2473,20 +2483,20 @@ matrices as matrices over Z/2Z</p>
 <dd><p>Returns the boolean equivalent of matrix multiplication mod 2 on two
 binary arrays stored as type boolean</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mat1</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 <li><p><strong>mat2</strong> (<em>np.ndarray</em>) – 2-d array of boolean values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>mat</strong> – boolean matrix equivalent to the mod 2 matrix multiplication of the
 matrices as matrices over Z/2Z</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HyperNetXError</strong> – If inner dimensions are not equal an error will be raised.</p>
 </dd>
 </dl>
@@ -2495,19 +2505,19 @@ matrices as matrices over Z/2Z</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.majority">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.majority" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id18">2</a> for d-edge with c vertices in the majority class.
-This corresponds to the majority rule <a class="footnote-reference brackets" href="#id3" id="id19">3</a></p>
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
+This corresponds to the majority rule <a class="footnote-reference brackets" href="#id3" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>1 if c&gt;d/2 else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -2520,17 +2530,17 @@ This corresponds to the majority rule <a class="footnote-reference brackets" hre
 it is possible for an individual to change their opinion. If opinions are divided equally,
 choose randomly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
 <li><p><strong>edge</strong> (<em>iterable</em>) – Iterable of node ids (node must be in the edge or it will automatically return False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -2556,16 +2566,16 @@ choose randomly.</p>
 <p>For arr = [arr[0],arr[1],arr[2]…arr[n]] returns product arr[0]arr[1]…arr[n]
 If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>list</em><em> of </em><em>np.array</em>) – list of nxm matrices represented as np.array</p></li>
 <li><p><strong>reverse</strong> (<em>bool</em><em>, </em><em>optional</em>) – order to multiply the matrices</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>P</strong> – Product of matrices in the list</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
@@ -2576,11 +2586,11 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">modularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wdc=&lt;function</span> <span class="pre">linear&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#modularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.modularity" title="Permalink to this definition"></a></dt>
 <dd><p>Computes modularity of hypergraph HG with respect to partition A.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – The hypergraph with some precomputed attributes via: precompute_attributes(HG)</p></li>
 <li><p><strong>A</strong> (<em>list</em><em> of </em><em>sets</em>) – Partition of the vertices in HG</p></li>
-<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id20">2</a></p></li>
+<li><p><strong>wdc</strong> (<em>func</em><em>, </em><em>optional</em>) – Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -2590,10 +2600,10 @@ If reverse = True, returns product arr[n]arr[n-1]…arr[0]</p>
 Default is ‘linear’; other supplied choices are ‘majority’ and ‘strict’.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The modularity function for partition A on HG</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
@@ -2612,7 +2622,7 @@ Annals of Combinatorics 9.1 (2005): 1-19.</p>
 Hypergraph random walks, laplacians, and clustering.
 In Proceedings of CIKM 2020, (2020): 495-504.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -2620,7 +2630,7 @@ vertices</p></li>
 <li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return matrix-index to vertex-label mapping</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>scipy.sparse.csr.csr_matrix</em>) – Probability transition matrix of the random walk on the hypergraph</p></li>
 <li><p><strong>index</strong> (<em>dict</em>) – mapping from row and column indices to corresponding vertex label</p></li>
@@ -2636,13 +2646,13 @@ vertices</p></li>
 <dd><p>Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function
 to dict2part</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>A</strong> (<em>list</em><em> of </em><em>sets</em>) – a partition of the vertices</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary with {vertex: partition index}</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -2662,13 +2672,13 @@ Binomial coefficients to speed-up modularity computation are stored in HG.bin_co
 Isolated vertices found only in edge(s) of size 1 are dropped.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>H</strong> – New hypergraph with added attributes</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
@@ -2688,7 +2698,7 @@ to a simple random walk.
 If weights are specified, the hyperedge weights w(e) are determined from the weights
 gamma(v,e).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -2697,7 +2707,7 @@ If False, uniform weights are utilized.</p></li>
 <li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return matrix index to vertex label mapping</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>scipy.sparse.csr.csr_matrix</em>) – Probability transition matrix of the random walk on the hypergraph</p></li>
 <li><p><strong>index</strong> (<em>dict</em>) – mapping from row and column indices to corresponding vertex label</p></li>
@@ -2713,14 +2723,14 @@ If False, uniform weights are utilized.</p></li>
 <dd><p>Computes the invertible transformation matrices needed to compute
 the reduced row echelon form of M modulo 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with elements in <span class="math notranslate nohighlight">\(Z_2\)</span></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>L, S, Linv</strong> – LM = S where S is the reduced echelon form of M
 and M = LinvS</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.arrays</p>
 </dd>
 </dl>
@@ -2742,7 +2752,7 @@ non-trivial shortest paths in the graph.</p>
 <div class="math notranslate nohighlight">
 \[c_B(v) = \sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s,t)}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em>) – s connectedness requirement</p></li>
@@ -2753,10 +2763,10 @@ where n is the number of edges in H</p></li>
 <li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em>) – if False will ignore singleton components of linegraph</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary of s-betweenness centrality value of the edges.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -2774,7 +2784,7 @@ in the component minus 1.</p>
 <div class="math notranslate nohighlight">
 \[C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -2784,12 +2794,12 @@ in the component minus 1.</p>
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-closeness centrality value of the edges(nodes).
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -2804,7 +2814,7 @@ If source then a single value is returned.</p>
 <div class="math notranslate nohighlight">
 \[\text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -2814,12 +2824,12 @@ If source then a single value is returned.</p>
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-eccentricity value of the edges(nodes).
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -2840,7 +2850,7 @@ Edges of size less than s return 0. If H contains only one s-edge a 0 is returne
 $$C(u) = sum_{v neq u in V} frac{1}{d(v, u)}cdotfrac{2}{(n-1)(n-2)}$$
 where <span class="math notranslate nohighlight">\(n\)</span> is the number vertices.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – </p></li>
 <li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em>) – </p></li>
@@ -2850,12 +2860,12 @@ where <span class="math notranslate nohighlight">\(n\)</span> is the number vert
 <li><p><strong>use_nwhy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true will use the <span class="xref std std-ref">NWHy library</span> if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
 If source=None a dictionary of values for each s-edge in H is returned.
 If source then a single value is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or float</p>
 </dd>
 </dl>
@@ -2872,17 +2882,17 @@ If source then a single value is returned.</p>
 <dd><p>Computes the invertible transformation matrices needed to compute the
 Smith Normal Form of M modulo 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>np.array</em>) – a rectangular matrix with data type bool</p></li>
 <li><p><strong>track</strong> (<em>bool</em>) – if track=True will print out the transformation as Z/2Z matrix as it
 discovers L[i] and R[j]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>L, R, S, Linv</strong> – LMR = S is the Smith Normal Form of the matrix M.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.arrays</p>
 </dd>
 </dl>
@@ -2910,7 +2920,7 @@ Algorithm 1 in:</p>
 Hypergraph random walks, laplacians, and clustering.
 In Proceedings of CIKM 2020, (2020): 495-504.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H</strong> (<em>hnx.Hypergraph</em>) – The hypergraph must be connected, meaning there is a path linking any two
 vertices</p></li>
@@ -2920,11 +2930,11 @@ will be utilized</p></li>
 <li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use the cell_weights of the hypergraph. If False uniform weights are used.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>clusters</strong> – Vertex cluster dictionary, keyed by integers 0,…,k-1, with lists of
 vertices as values.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -2933,19 +2943,19 @@ vertices as values.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.strict">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">strict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#strict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.strict" title="Permalink to this definition"></a></dt>
-<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id21">2</a> for d-edge with c vertices in the majority class.
-This corresponds to the strict rule <a class="footnote-reference brackets" href="#id3" id="id22">3</a></p>
+<dd><p>Hyperparameter for hypergraph modularity <a class="footnote-reference brackets" href="#id2" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for d-edge with c vertices in the majority class.
+This corresponds to the strict rule <a class="footnote-reference brackets" href="#id3" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d</strong> (<em>int</em>) – Number of vertices in an edge</p></li>
 <li><p><strong>c</strong> (<em>int</em>) – Number of vertices in the majority class</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>1 if c==d else 0</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -2957,17 +2967,17 @@ This corresponds to the strict rule <a class="footnote-reference brackets" href=
 <dd><p>Swaps ith and jth column of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -2979,17 +2989,17 @@ Returns a list of new matrices</p>
 <dd><p>Swaps ith and jth row of each matrix in args
 Returns a list of new matrices</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<em>int</em>) – </p></li>
 <li><p><strong>j</strong> (<em>int</em>) – </p></li>
 <li><p><strong>args</strong> (<em>np.arrays</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of copies of args with ith and jth row swapped</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -3000,7 +3010,7 @@ Returns a list of new matrices</p>
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/contagion.html#threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.threshold" title="Permalink to this definition"></a></dt>
 <dd><p>The threshold contagion mechanism</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – The node uid to infect (If it doesn’t have status “S”, it will automatically return False)</p></li>
 <li><p><strong>status</strong> (<em>dictionary</em>) – The nodes are keys and the values are statuses (The infected state denoted with “I”)</p></li>
@@ -3008,10 +3018,10 @@ Returns a list of new matrices</p>
 <li><p><strong>tau</strong> (<em>float between 0 and 1</em><em>, </em><em>default: 0.1</em>) – The fraction of nodes in an edge that must be infected for the edge to be able to transmit to the node</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>False if there is no potential to infect and True if there is.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -3031,16 +3041,16 @@ Returns a list of new matrices</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="algorithms.two_section">
 <span class="sig-prename descclassname"><span class="pre">algorithms.</span></span><span class="sig-name descname"><span class="pre">two_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HG</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/algorithms/hypergraph_modularity.html#two_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#algorithms.two_section" title="Permalink to this definition"></a></dt>
-<dd><p>Creates a random walk based <a class="footnote-reference brackets" href="#id1" id="id23">1</a> 2-section igraph Graph with transition weights defined by the
+<dd><p>Creates a random walk based <a class="footnote-reference brackets" href="#id1" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 2-section igraph Graph with transition weights defined by the
 weights of the hyperedges.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>HG</strong> (<a class="reference internal" href="../classes/classes.html#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph"><em>Hypergraph</em></a>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The 2-section graph built from HG</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>igraph.Graph</p>
 </dd>
 </dl>

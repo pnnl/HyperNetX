@@ -6,16 +6,16 @@
   <title>classes.entity &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">classes.entity</li>
       <li class="wy-breadcrumbs-aside">
@@ -101,7 +105,7 @@
 
 
 <div class="viewcode-block" id="Entity"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity">[docs]</a><span class="k">class</span> <span class="nc">Entity</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Base class for handling N-dimensional data when building network-like models,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for handling N-dimensional data when building network-like models,</span>
 <span class="sd">    i.e., :class:`Hypergraph`</span>
 
 <span class="sd">    Parameters</span>
@@ -300,7 +304,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sparse representation of the data table as an incidence tensor</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sparse representation of the data table as an incidence tensor</span>
 
 <span class="sd">        This can also be thought of as an encoding of `dataframe`, where items in each column of</span>
 <span class="sd">        the data table are translated to their int position in the `self.labels[column]` list</span>
@@ -331,7 +335,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Labels of all items in each column of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Labels of all items in each column of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -356,7 +360,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cell_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Cell weights corresponding to each row of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cell weights corresponding to each row of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -376,7 +380,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -396,7 +400,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dimsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of levels (columns) in the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of levels (columns) in the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -408,7 +412,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="c1"># Dev Note: Not sure what this contains, when running tests it contained an empty pandas series</span>
-        <span class="sd">&quot;&quot;&quot;Properties assigned to items in the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Properties assigned to items in the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -420,7 +424,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Dev Note: This also returned nothing in my harry potter dataset, not sure if it was supposed to contain anything</span>
-        <span class="sd">&quot;&quot;&quot;User-defined unique identifier for the `Entity`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;User-defined unique identifier for the `Entity`</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -430,7 +434,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">uidset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Labels of all items in level 0 (first column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Labels of all items in level 0 (first column) of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -446,7 +450,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Labels of all items in level 1 (second column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Labels of all items in level 1 (second column) of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -461,7 +465,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uidset_by_level</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Entity.uidset_by_level"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.uidset_by_level">[docs]</a>    <span class="k">def</span> <span class="nf">uidset_by_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Labels of all items in a particular level (column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Labels of all items in a particular level (column) of the underlying data table</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -485,7 +489,7 @@
 <div class="viewcode-block" id="Entity.uidset_by_column"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.uidset_by_column">[docs]</a>    <span class="k">def</span> <span class="nf">uidset_by_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
         <span class="c1"># Dev Note: This threw an error when trying it on the harry potter dataset,</span>
         <span class="c1"># when trying 0, or 1 for column. I&#39;m not sure how this should be used</span>
-        <span class="sd">&quot;&quot;&quot;Labels of all items in a particular column (level) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Labels of all items in a particular column (level) of the underlying data table</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -514,7 +518,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the underlying data table</span>
 
 <span class="sd">        Each item in level 0 (first column) defines a set containing all the level 1</span>
 <span class="sd">        (second column) items with which it appears in the same row of the underlying</span>
@@ -542,7 +546,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">incidence_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -558,7 +562,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">memberships</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;System of sets representation of the first two levels (columns) of the</span>
 <span class="sd">        underlying data table</span>
 
 <span class="sd">        Each item in level 1 (second column) defines a set containing all the level 0</span>
@@ -581,7 +585,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements_by_level</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Entity.elements_by_level"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.elements_by_level">[docs]</a>    <span class="k">def</span> <span class="nf">elements_by_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level1</span><span class="p">,</span> <span class="n">level2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;System of sets representation of two levels (columns) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;System of sets representation of two levels (columns) of the underlying data table</span>
 
 <span class="sd">        Each item in level1 defines a set containing all the level2 items</span>
 <span class="sd">        with which it appears in the same row of the underlying data table</span>
@@ -613,7 +617,7 @@
 <div class="viewcode-block" id="Entity.elements_by_column"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.elements_by_column">[docs]</a>    <span class="k">def</span> <span class="nf">elements_by_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">):</span>
         <span class="c1"># Dev Note: This threw an error when trying it on the harry potter dataset,</span>
         <span class="c1"># when trying 0, or 1 for column. I&#39;m not sure how this should be used</span>
-        <span class="sd">&quot;&quot;&quot;System of sets representation of two columns (levels) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;System of sets representation of two columns (levels) of the underlying data table</span>
 
 <span class="sd">        Each item in col1 defines a set containing all the col2 items</span>
 <span class="sd">        with which it appears in the same row of the underlying data table</span>
@@ -652,7 +656,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The underlying data table stored by the Entity</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The underlying data table stored by the Entity</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -663,7 +667,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">isstatic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Dev Note: I&#39;m guessing this is no longer necessary?</span>
-        <span class="sd">&quot;&quot;&quot;Whether to treat the underlying data as static or not</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether to treat the underlying data as static or not</span>
 
 <span class="sd">        If True, the underlying data may not be altered, and the state_dict will never be cleared</span>
 <span class="sd">        Otherwise, rows may be added to and removed from the data table, and updates will clear the state_dict</span>
@@ -675,7 +679,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static</span>
 
 <div class="viewcode-block" id="Entity.size"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of items in a level of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of items in a level of the underlying data table</span>
 
 <span class="sd">        Equivalent to ``self.dimensions[level]``</span>
 
@@ -695,7 +699,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Whether the underlying data table is empty or not</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the underlying data table is empty or not</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -709,7 +713,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimsize</span> <span class="o">==</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="Entity.is_empty"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Whether a specified level (column) of the underlying data table is empty or not</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether a specified level (column) of the underlying data table is empty or not</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -723,7 +727,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of items in level 0 (first column)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of items in level 0 (first column)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -732,7 +736,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Whether an item is contained within any level of the data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether an item is contained within any level of the data</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -748,7 +752,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Access into the system of sets representation of the first two levels (columns) given by `elements`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access into the system of sets representation of the first two levels (columns) given by `elements`</span>
 
 <span class="sd">        Can be used to access and assign properties to an ``item`` in level 0 (first column)</span>
 
@@ -769,7 +773,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterates over items in level 0 (first column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over items in level 0 (first column) of the underlying data table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -783,7 +787,7 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="c1"># Dev Note (Madelyn) : I don&#39;t think this is the intended use of __call__, can we change/deprecate?</span>
-        <span class="sd">&quot;&quot;&quot;Iterates over items labels in a specified level (column) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over items labels in a specified level (column) of the underlying data table</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -801,7 +805,7 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">[</span><span class="n">label_index</span><span class="p">]])</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;String representation of the Entity</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;String representation of the Entity</span>
 
 <span class="sd">        e.g., &quot;Entity(uid, [level 0 items], {item: {property name: property value}})&quot;</span>
 
@@ -809,16 +813,10 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">                                         </span><span class="si">{</span><span class="p">[]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">empty</span>
-        <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;&quot;&quot;</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uidset</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
 
 <div class="viewcode-block" id="Entity.index"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get level index corresponding to a column and (optionally) the index of a value in that column</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get level index corresponding to a column and (optionally) the index of a value in that column</span>
 
 <span class="sd">        The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used</span>
 <span class="sd">        in the integer encoding of the data table ``self.data``</span>
@@ -863,7 +861,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Entity.indices"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.indices">[docs]</a>    <span class="k">def</span> <span class="nf">indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get indices of one or more value(s) in a column</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get indices of one or more value(s) in a column</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -893,7 +891,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_dict</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">][</span><span class="n">column</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Entity.translate"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Given indices of a level and value(s), return the corresponding value label(s)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given indices of a level and value(s), return the corresponding value label(s)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -919,7 +917,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Entity.translate_arr"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.translate_arr">[docs]</a>    <span class="k">def</span> <span class="nf">translate_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Translate a full encoded row of the data table e.g., a row of ``self.data``</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Translate a full encoded row of the data table e.g., a row of ``self.data``</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -939,7 +937,7 @@
         <span class="k">return</span> <span class="n">translation</span></div>
 
 <div class="viewcode-block" id="Entity.level"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.level">[docs]</a>    <span class="k">def</span> <span class="nf">level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">min_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;First level containing the given item label</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;First level containing the given item label</span>
 
 <span class="sd">        Order of levels corresponds to order of columns in `self.dataframe`</span>
 
@@ -978,7 +976,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Entity.add"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Updates the underlying data table with new entity data from multiple sources</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the underlying data table with new entity data from multiple sources</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1008,7 +1006,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Entity.add_elements_from"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.add_elements_from">[docs]</a>    <span class="k">def</span> <span class="nf">add_elements_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_set</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds arguments from an iterable to the data table one at a time</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds arguments from an iterable to the data table one at a time</span>
 
 <span class="sd">        ..deprecated:: 2.0.0</span>
 <span class="sd">            Duplicates `add`</span>
@@ -1028,7 +1026,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Entity.add_element"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.add_element">[docs]</a>    <span class="k">def</span> <span class="nf">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Updates the underlying data table with new entity data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the underlying data table with new entity data</span>
 
 <span class="sd">        Supports adding from either an existing Entity or a representation of entity</span>
 <span class="sd">        (data table or labeled system of sets are both supported representations)</span>
@@ -1068,7 +1066,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">__add_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper function to append rows to `self.dataframe`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to append rows to `self.dataframe`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1096,7 +1094,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_state_dict</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Entity.remove"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes all rows containing specified item(s) from the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes all rows containing specified item(s) from the underlying data table</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1117,7 +1115,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Entity.remove_elements_from"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.remove_elements_from">[docs]</a>    <span class="k">def</span> <span class="nf">remove_elements_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_set</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes all rows containing specified item(s) from the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes all rows containing specified item(s) from the underlying data table</span>
 
 <span class="sd">        ..deprecated: 2.0.0</span>
 <span class="sd">            Duplicates `remove`</span>
@@ -1137,7 +1135,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Entity.remove_element"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.remove_element">[docs]</a>    <span class="k">def</span> <span class="nf">remove_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes all rows containing a specified item from the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes all rows containing a specified item from the underlying data table</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1172,7 +1170,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_dataframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">remove_unused_categories</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Entity.encode"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Encode dataframe to numpy array</span>
 
 <span class="sd">        Parameters</span>
@@ -1190,7 +1188,7 @@
 <div class="viewcode-block" id="Entity.incidence_matrix"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.incidence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">incidence_matrix</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">level1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">level2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csr_matrix</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Incidence matrix representation for two levels (columns) of the underlying data table</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Incidence matrix representation for two levels (columns) of the underlying data table</span>
 
 <span class="sd">        If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.</span>
 <span class="sd">        In other words, the items in `level1` and `level2` correspond to the columns and rows of the incidence matrix,</span>
@@ -1254,7 +1252,7 @@
         <span class="n">aggregateby</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Entity</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a new Entity by restricting to a subset of levels (columns) in the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Entity by restricting to a subset of levels (columns) in the</span>
 <span class="sd">        underlying data table</span>
 
 <span class="sd">        Parameters</span>
@@ -1315,7 +1313,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Entity.restrict_to_indices"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.restrict_to_indices">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_to_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a new Entity by restricting the data table to rows containing specific items in a given level</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Entity by restricting the data table to rows containing specific items in a given level</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1336,7 +1334,9 @@
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_cols</span><span class="p">:</span>
             <span class="n">entity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">remove_unused_categories</span><span class="p">()</span>
-        <span class="n">restricted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span> <span class="n">misc_props_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">restricted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span> <span class="n">misc_props_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">prop_idx</span> <span class="o">=</span> <span class="p">[</span>
@@ -1355,7 +1355,7 @@
         <span class="n">id_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">misc_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Assign new properties to items in the data table, update :attr:`properties`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign new properties to items in the data table, update :attr:`properties`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1390,7 +1390,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_properties_from_dataframe</span><span class="p">(</span><span class="n">props</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_properties_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a DataFrame</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a DataFrame</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1438,7 +1438,9 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">props</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">literal_eval</span><span class="p">)</span>
+                <span class="n">props</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                    <span class="n">literal_eval</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">pass</span>  <span class="c1"># data already parsed, no literal eval needed</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1452,7 +1454,9 @@
         <span class="n">properties</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">combine_first</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
         <span class="c1"># update misc. column to combine existing and new misc. property dicts</span>
         <span class="c1"># new props override existing value for overlapping misc. property dict keys</span>
-        <span class="n">properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span>
+        <span class="n">properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span>
             <span class="n">properties</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">],</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}),</span> <span class="o">**</span><span class="p">(</span><span class="n">y</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">else</span> <span class="p">{})},</span>
             <span class="n">fill_value</span><span class="o">=</span><span class="p">{},</span>
@@ -1460,7 +1464,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_properties_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a doubly-nested dict</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Private handler for updating :attr:`properties` from a doubly-nested dict</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1486,7 +1490,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_properties_from_dataframe</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_property_loc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get index in :attr:`properties` of an item of unspecified level</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get index in :attr:`properties` of an item of unspecified level</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1529,7 +1533,7 @@
         <span class="n">prop_val</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set a property of an item</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a property of an item</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1581,7 +1585,7 @@
                 <span class="p">}</span></div>
 
 <div class="viewcode-block" id="Entity.get_property"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.get_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a property of an item</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a property of an item</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1625,7 +1629,9 @@
             <span class="n">prop_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">item_key</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">prop_name</span><span class="p">:</span>
-                <span class="n">prop_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">item_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">prop_name</span><span class="p">)</span>
+                <span class="n">prop_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">item_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">prop_name</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;no properties initialized for (&#39;level&#39;,&#39;item&#39;): </span><span class="si">{</span><span class="n">item_key</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1634,7 +1640,7 @@
         <span class="k">return</span> <span class="n">prop_val</span></div>
 
 <div class="viewcode-block" id="Entity.get_properties"><a class="viewcode-back" href="../../classes/classes.html#classes.entity.Entity.get_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get all properties of an item</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all properties of an item</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
