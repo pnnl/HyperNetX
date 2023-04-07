@@ -280,8 +280,8 @@ class Hypergraph:
         self._static = static
 
         if setsystem is None:
-            self._edges = EntitySet(data=np.empty((0, 2), uid="Edges", dtype=int))
-            self._nodes = EntitySet(data=np.empty((0, 1), uid="Nodes", dtype=int))
+            self._edges = EntitySet(data=np.empty((0, 2), dtype=int), uid = 'Edges')
+            self._nodes = EntitySet(data=np.empty((0, 1), dtype=int), uid = 'Nodes')
         else:
             try:
                 kwargs.update(
@@ -1531,9 +1531,9 @@ class Hypergraph:
                 # then see if the singleton entry in that column is also
                 # singleton in its row find the entry
                 if idx == 0:
-                    r = np.argmax(M.getcol(c)).tolist()
+                    r = np.argmax(M.getcol(c))
                     # and get its sum
-                    s = np.sum(M.getrow(r)).tolist()
+                    s = np.sum(M.getrow(r))
                     # if this is also 1 then the entry in r,c represents a
                     # singleton so we want to change that entry to 0 and
                     # remove the row. this means we want to remove the
@@ -1541,8 +1541,8 @@ class Hypergraph:
                     if s == 1:
                         singles.append(cdict[c])
                 else:  # switch the role of r and c
-                    r = np.argmax(M.getrow(c)).tolist()
-                    s = np.sum(M.getcol(r)).tolist()
+                    r = np.argmax(M.getrow(c))
+                    s = np.sum(M.getcol(r))
                     if s == 1:
                         singles.append(cdict[r])
         return singles

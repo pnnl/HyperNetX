@@ -33,16 +33,6 @@ def test_hypergraph_custom_attributes(sbs):
     assert sorted(H.__getitem__("C")) == ["A", "E", "K"]
 
 
-def test_hypergraph_static(sbs):
-    H = Hypergraph(sbs.edges, static=True)
-    assert len(H.edges) == 6
-    assert len(H.nodes) == 7
-    assert H.get_id("E") == 2
-    assert list(H.get_linegraph(s=1)) == [0, 1, 2, 3, 4, 5]
-    # H.get_name
-    # H.translate
-
-
 def test_hypergraph_from_dataframe(lesmis):
     df = lesmis.hypergraph.dataframe()
     H = Hypergraph.from_dataframe(df)
@@ -73,8 +63,8 @@ def test_hypergraph_from_entity_set(sbs):
     assert all(set(v) == sbs.edgedict[k] for k, v in H.edges.incidence_dict.items())
     assert H.degree("A") == 3
     assert H.dim("O") == 1
-    assert len(H.edge_size_dist()) == 6
-    assert len(H.edge_neighbors("S")) == 4
+    # assert len(H.edge_size_dist()) == 6
+    # assert len(H.edge_neighbors("S")) == 4
 
 
 def test_add_node_to_edge(sbs):

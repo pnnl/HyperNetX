@@ -9,7 +9,7 @@ warnings.simplefilter("ignore")
 
 
 def test_prob_trans(fish):
-    h = fish.hypergraph.convert_to_static()
+    h = fish.hypergraph
     P, _ = prob_trans(h)
     assert P[0, 0] - (4 / 9) < 10e-5
     assert P[0, 2] - (1 / 6) < 10e-5
@@ -18,6 +18,6 @@ def test_prob_trans(fish):
 
 
 def test_norm_lap(fish):
-    h = fish.hypergraph.convert_to_static()
+    h = fish.hypergraph
     L, _ = norm_lap(h)
     assert L.shape == (8, 8)
