@@ -27,7 +27,7 @@ def centrality_stats(X):
     [min, max, mean, median, standard deviation] : list
         List of centrality statistics for X
     """
-    return [min(X), max(X), np.mean(X), np.median(X), np.std(X)]
+    return [min(X), max(X), np.mean(X).tolist(), np.median(X).tolist(), np.std(X).tolist()]
 
 
 def edge_size_dist(H, aggregated=False):

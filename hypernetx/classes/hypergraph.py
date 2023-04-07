@@ -448,45 +448,6 @@ class Hypergraph:
         """
         return self.neighbors(node)
 
-    # def get_id(self, uid, edges=False):
-    #     """
-    #     Return the internally assigned id associated with a label.
-
-    #     Parameters
-    #     ----------
-    #     uid : string
-    #         User provided name/id/label for hypergraph object
-    #     edges : bool, optional
-    #         Determines if uid is an edge or node name
-
-    #     Returns
-    #     -------
-    #     : int
-    #         internal id assigned at construction
-    #     """
-    #     column = self.edges._data_cols[int(not edges)]
-    #     return self.edges.index(column, uid)[1]
-
-    # def get_name(self, id, edges=False):
-    #     """
-    #     Return the user defined name/id/label associated to an
-    #     internally assigned id.
-
-    #     Parameters
-    #     ----------
-    #     id : int
-    #         Internally assigned id
-    #     edges : bool, optional
-    #         Determines if id references an edge or node
-
-    #     Returns
-    #     -------
-    #     str
-    #         User provided name/id/label for hypergraph object
-    #     """
-    #     level = int(not edges)
-    #     return self.edges.translate(level, id)
-
     def get_cell_properties(
         self, edge: str, node: str, prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
@@ -628,26 +589,6 @@ class Hypergraph:
             H.save_state()
         return H
 
-    # @classmethod
-    # def add_nwhy(cls, h, fpath=None):
-    #     """
-    #     Add nwhy functionality to a hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     h : hnx.Hypergraph
-    #     fpath : file path for storage of hypergraph state dictionary
-
-    #     Returns
-    #     -------
-    #     hnx.Hypergraph
-    #         Returns a copy of h with static set to true and nwhy set to True
-    #         if it is available.
-
-    #     """
-    #     warnings.warn(NWHY_WARNING, DeprecationWarning, stacklevel=2)
-    #     return h
-
     def edge_size_dist(self):
         """
         Returns the size for each edge
@@ -659,125 +600,10 @@ class Hypergraph:
         """
 
         if "edge_size_dist" not in self.state_dict:
-            dist = list(np.array(np.sum(self.incidence_matrix(), axis=0))[0])
+            dist = np.array(np.sum(self.incidence_matrix(), axis=0))[0].tolist()
             self.set_state(edge_size_dist=dist)
 
         return self.state_dict["edge_size_dist"]
-
-    # @warn_nwhy
-    # def convert_to_static(
-    #     self,
-    #     name=None,
-    #     use_nwhy=False,
-    #     filepath=None,
-    # ):
-    #     """
-    #     Returns new static hypergraph with the same dictionary as original
-    #     hypergraph
-
-    #     Parameters
-    #     ----------
-    #     name : None, optional
-    #         Name
-    #     use_nwhy : bool, optional, default : False
-    #         Description
-    #     filepath : None, optional, default : False
-    #         Description
-
-    #     Returned
-    #     ------------------
-    #     hnx.Hypergraph
-    #         Will have attribute static = True
-
-    #     Note
-    #     ----
-    #     Static hypergraphs store the user defined node and edge names in
-    #     a dictionary of labeled lists. The order of the lists provides an
-    #     index, which the hypergraph uses in place of the node and edge names
-    #     for faster processing.
-
-    #     """
-    #     if self.edges.isstatic and self.nodes.isstatic:
-    #         self._static = True
-
-    #     if self.isstatic:
-    #         return self
-
-    #     E = EntitySet(self.edges, static=True)
-    #     return Hypergraph(E, filepath=filepath, name=name, static=True)
-
-    # def remove_static(self, name=None):
-    #     """
-    #     Returns dynamic hypergraph
-
-    #     Parameters
-    #     ----------
-    #     name : None, optional
-    #         User defined namae of hypergraph
-
-    #     Returns
-    #     -------
-    #     hnx.Hypergraph
-    #         A new hypergraph with the same dictionary as self but allowing
-    #         dynamic changes to nodes and edges.
-    #         If hypergraph is not static, returns self.
-    #     """
-    #     if not self.isstatic:
-    #         return self
-
-    #     return Hypergraph(self.edges, name=name)
-
-    # def translate(self, idx, edges=False):
-    #     """
-    #     Returns the translation of numeric values associated with hypergraph.
-    #     Only needed if exposing the static identifiers assigned by the class.
-    #     If not static then the idx is returned.
-
-    #     Parameters
-    #     ----------
-    #     idx : int
-    #         class assigned integer for internal manipulation of Hypergraph data
-    #     edges : bool, optional, default: True
-    #         If True then translates from edge index. Otherwise will translate
-    #         from node index, default=False
-
-    #     Returns
-    #     -------
-    #      : int or string
-    #         User assigned identifier corresponding to idx
-    #     """
-    #     return self.get_name(idx, edges=edges)
-
-    # def s_degree(self, node, s=1):  # deprecate this to degree
-    #     """
-    #     Same as `degree`
-
-    #     Parameters
-    #     ----------
-    #     node : Entity or hashable
-    #         If hashable, then must be uid of node in hypergraph
-
-    #     s : positive integer, optional, default: 1
-
-    #     Returns
-    #     -------
-    #     s_degree : int
-    #         The degree of a node in the subgraph induced by edges
-    #         of size s
-
-    #     Note
-    #     ----
-    #     The :term:`s-degree` of a node is the number of edges of size
-    #     at least s that contain the node.
-
-    #     """
-    #     msg = (
-    #         "s-degree is deprecated and will be removed in"
-    #         " release 1.0.0. Use degree(node,s=int) instead."
-    #     )
-
-    #     warnings.warn(msg, DeprecationWarning)
-    #     return self.degree(node, s)
 
     def degree(self, node, s=1, max_size=None):
         """
@@ -1338,22 +1164,6 @@ class Hypergraph:
         E = self.edges.restrict_to_levels((1, 0))
         return Hypergraph(E, name=name)
 
-    def _collapse_nwhy(self, edges, rec):
-        """
-        Helper method for collapsing nodes and edges when hypergraph
-        is static and using nwhy
-
-        Parameters
-        ----------
-        edges : bool
-            Collapse the edges if True, otherwise the nodes
-        rec : bool
-            return the equivalence classes
-        """
-
-        warnings.warn(NWHY_WARNING, DeprecationWarning, stacklevel=2)
-        return None
-
     def collapse_edges(
         self,
         name=None,
@@ -1711,7 +1521,7 @@ class Hypergraph:
 
         M, _, cdict = self.incidence_matrix(index=True)
         # which axis has fewest members? if 1 then columns
-        idx = np.argmax(M.shape)
+        idx = np.argmax(M.shape).tolist()
         # we add down the row index if there are fewer columns
         cols = M.sum(idx)
         singles = []
@@ -1721,9 +1531,9 @@ class Hypergraph:
                 # then see if the singleton entry in that column is also
                 # singleton in its row find the entry
                 if idx == 0:
-                    r = np.argmax(M.getcol(c))
+                    r = np.argmax(M.getcol(c)).tolist()
                     # and get its sum
-                    s = np.sum(M.getrow(r))
+                    s = np.sum(M.getrow(r)).tolist()
                     # if this is also 1 then the entry in r,c represents a
                     # singleton so we want to change that entry to 0 and
                     # remove the row. this means we want to remove the
@@ -1731,8 +1541,8 @@ class Hypergraph:
                     if s == 1:
                         singles.append(cdict[c])
                 else:  # switch the role of r and c
-                    r = np.argmax(M.getrow(c))
-                    s = np.sum(M.getcol(r))
+                    r = np.argmax(M.getrow(c)).tolist()
+                    s = np.sum(M.getcol(r)).tolist()
                     if s == 1:
                         singles.append(cdict[r])
         return singles
@@ -1917,7 +1727,7 @@ class Hypergraph:
                 temp.add(coldict[e])
             comps.append(temp)
             diams.append(diamc)
-        loc = np.argmax(diams)
+        loc = np.argmax(diams).tolist()
         return diams[loc], diams, comps
 
     def edge_diameters(self, s=1):
@@ -1951,7 +1761,7 @@ class Hypergraph:
                 temp.add(coldict[e])
             comps.append(temp)
             diams.append(diamc)
-        loc = np.argmax(diams)
+        loc = np.argmax(diams).tolist()
         return diams[loc], diams, comps
 
     def diameter(self, s=1):
