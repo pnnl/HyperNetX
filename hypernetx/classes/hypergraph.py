@@ -246,9 +246,9 @@ class Hypergraph:
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
     edge_weight_prop : (optional) str, default : 'weight',
-        Name of property in edge_properties to use for for weight.
+        Name of property in edge_properties to use for weight.
     node_weight_prop : (optional) str, default : 'weight',
-        Name of property in node_properties to use for for weight.
+        Name of property in node_properties to use for weight.
     weight_prop : (optional) str, default : 'weight'
         Name of property in properties to use for 'weight'
     default_edge_weight : (optional) int | float, default : 1
