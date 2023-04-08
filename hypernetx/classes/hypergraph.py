@@ -342,15 +342,24 @@ class Hypergraph:
         return self._nodes
 
     @property
-    def isstatic(self):
-        """
-        Checks whether nodes and edges are immutable
-
+    def dataframe(self):
+        """Returns dataframe of incidence pairs and their properties.
+        
         Returns
         -------
-        bool
+        pd.DataFrame
         """
-        return self._static
+        return self._edges._dataframe
+
+    @property
+    def properties(self):
+        """Returns dataframe of edge and node properties.
+        
+        Returns
+        -------
+        pd.DataFrame
+        """
+        return self._edges.properties
 
     @property
     def incidence_dict(self):
@@ -1943,7 +1952,6 @@ class Hypergraph:
         sort_columns : bool, optional, default=True
             sort columns based on hashable edge names
         cell_weights : bool, optional, default=True
-            if self.isstatic then include cell weights
 
         """
 
@@ -2032,7 +2040,7 @@ class Hypergraph:
         name = name or "_"
         return Hypergraph(E, name=name, static=static)
 
-    @classmethod
+    @classmethod  #### This will disappear with new signature
     @warn_nwhy
     def from_numpy_array(
         cls,
@@ -2131,10 +2139,8 @@ class Hypergraph:
         transpose=False,
         transforms=[],
         key=None,
-        node_label="nodes",
-        edge_label="edges",
-        static=False,
-        use_nwhy=False,
+        return_only_dataframe=False,
+        **kwargs
     ):
         """
         Create a hypergraph from a Pandas Dataframe object, which has values equal
@@ -2175,6 +2181,10 @@ class Hypergraph:
             boolean function to be applied to dataframe. will be applied to
             entire dataframe.
 
+        return_only_dataframe : (optional) bool, default = False
+            to use the incidence_dataframe with cell_properties or properties, set this
+            to true and use it as the setsystem in the Hypergraph constructor.
+
         See also
         --------
         from_numpy_array
@@ -2201,17 +2211,21 @@ class Hypergraph:
         for t in transforms:
             df = df.apply(t)
         if key:
-            mat = key(df) * 1
+            mat = key(df.values) * 1
         else:
             mat = df.values * 1
 
         cols = df.columns
         rows = df.index
-        CM = coo_matrix(DF.values)
+        CM = coo_matrix(mat)
         c1 = CM.row
         c1 = [rows[c1[idx]] for idx in range(len(c1))]
         c2 = CM.col
         c2 = [cols[c2[idx]] for idx in range(len(c2))]
         c3 = CM.data
+
         dfnew = pd.DataFrame({cols.name: c2, rows.name: c1, "cell_weights": c3})
-        return hnx.Hypergraph(dFnew, weights="cell_weights")
+        if return_only_dataframe == True:
+            return dfnew
+        else:
+            return Hypergraph(dfnew, weights="cell_weights")
