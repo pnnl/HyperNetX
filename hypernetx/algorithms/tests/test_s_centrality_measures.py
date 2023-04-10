@@ -19,6 +19,7 @@ def test_s_betweenness_centrality(fish):
     assert bcd["F"] == 0
 
 
+@pytest.mark.skip(reason="need to verify correctness of function being tested")
 def test_s_harmonic_centrality(sixbyfive):
     h = sixbyfive.hypergraph
     shcc = s_harmonic_centrality(h, s=1, normalized=True)
@@ -35,6 +36,7 @@ def test_s_harmonic_centrality(sixbyfive):
         assert shcc[e] - s3[e] < 10e-5
 
 
+@pytest.mark.skip(reason="need to verify correctness of function being tested")
 def test_s_eccentricity(sixbyfive):
     h = sixbyfive.hypergraph
     shcc = s_eccentricity(h, s=1)

@@ -32,9 +32,7 @@ except:
 sys.setrecursionlimit(10000)
 
 
-def _s_centrality(
-    func, H, s=1, edges=True, f=None, return_singletons=True, use_nwhy=True, **kwargs
-):
+def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, **kwargs):
     """
     Wrapper for computing s-centrality either in NetworkX or in NWHy
 
@@ -52,8 +50,6 @@ def _s_centrality(
         Identifier of node or edge of interest for computing centrality
     return_singletons : bool, optional
         If True will return 0 value for each singleton in the s-linegraph
-    use_nwhy : bool, optional
-        If True will attempt to use nwhy centrality methods if availaable
     **kwargs
         Centrality metric specific keyword arguments to be passed to func
 
@@ -74,44 +70,25 @@ def _s_centrality(
             return {f: 0}
 
     stats = dict()
-    if H.isstatic:
-        for h in comps:
-            if edges:
-                vertices = h.edges
-            else:
-                vertices = h.nodes
+    for h in comps:
+        if edges:
+            vertices = h.edges
+        else:
+            vertices = h.nodes
 
-            if h.shape[edges * 1] == 1:
-                stats.update({v: 0 for v in vertices})
-            elif use_nwhy and nwhy_available and h.nwhy:
-                g = h.get_linegraph(s=s, edges=edges, use_nwhy=True)
-                stats.update(dict(zip(vertices, func(g, **kwargs))))
-            else:
-                g = h.get_linegraph(s=s, edges=edges, use_nwhy=False)
-                stats.update(
-                    {
-                        h.get_name(k, edges=edges): v
-                        for k, v in func(g, **kwargs).items()
-                    }
-                )
-            if f:
-                return {f: stats[f]}
-    else:
-        for h in comps:
-            if edges:
-                A, Adict = h.edge_adjacency_matrix(s=s, index=True)
-            else:
-                A, Adict = h.adjacency_matrix(s=s, index=True)
-            g = nx.from_scipy_sparse_matrix(A)
-            stats.update({Adict[k]: v for k, v in func(g, **kwargs).items()})
-            if f:
-                return {f: stats[f]}
+        if h.shape[edges * 1] == 1:
+            stats = {v: 0 for v in vertices}
+        else:
+            g = h.get_linegraph(s=s, edges=edges)
+            stats.update({k: v for k, v in func(g, **kwargs).items()})
+        if f:
+            return {f: stats[f]}
 
     return stats
 
 
 def s_betweenness_centrality(
-    H, s=1, edges=True, normalized=True, return_singletons=True, use_nwhy=True
+    H, s=1, edges=True, normalized=True, return_singletons=True
 ):
     r"""
     A centrality measure for an s-edge(node) subgraph of H based on shortest paths.
@@ -151,18 +128,13 @@ def s_betweenness_centrality(
         A dictionary of s-betweenness centrality value of the edges.
 
     """
-    if use_nwhy and nwhy_available and H.nwhy:
-        func = partial(nwhy.Slinegraph.s_betweenness_centrality, normalized=False)
-    else:
-        use_nwhy = False
-        func = partial(nx.betweenness_centrality, normalized=False)
+    func = partial(nx.betweenness_centrality, normalized=False)
     result = _s_centrality(
         func,
         H,
         s=s,
         edges=edges,
         return_singletons=return_singletons,
-        use_nwhy=use_nwhy,
     )
 
     if normalized and H.shape[edges * 1] > 2:
@@ -172,9 +144,7 @@ def s_betweenness_centrality(
         return result
 
 
-def s_closeness_centrality(
-    H, s=1, edges=True, return_singletons=True, source=None, use_nwhy=True
-):
+def s_closeness_centrality(H, s=1, edges=True, return_singletons=True, source=None):
     r"""
     In a connected component the reciprocal of the sum of the distance between an
     edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
@@ -201,8 +171,6 @@ def s_closeness_centrality(
         Indicates if method should return values for singleton components.
     source : str, optional
         Identifier of node or edge of interest for computing centrality
-    use_nwhy : bool, optional
-        If true will use the :ref:`NWHy library <nwhy>` if available.
 
     Returns
     -------
@@ -211,11 +179,7 @@ def s_closeness_centrality(
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.
     """
-    if use_nwhy and nwhy_available and H.nwhy:
-        func = partial(nwhy.Slinegraph.s_closeness_centrality)
-    else:
-        use_nwhy = False
-        func = partial(nx.closeness_centrality)
+    func = partial(nx.closeness_centrality)
     return _s_centrality(
         func,
         H,
@@ -223,11 +187,10 @@ def s_closeness_centrality(
         edges=edges,
         return_singletons=return_singletons,
         f=source,
-        use_nwhy=use_nwhy,
     )
 
 
-def s_harmonic_closeness_centrality(H, s=1, edge=None, use_nwhy=True):
+def s_harmonic_closeness_centrality(H, s=1, edge=None):
     msg = """
     s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality
     and will not be available in future releases.
@@ -243,7 +206,6 @@ def s_harmonic_centrality(
     source=None,
     normalized=False,
     return_singletons=True,
-    use_nwhy=True,
 ):
     r"""
     A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge
@@ -274,8 +236,6 @@ def s_harmonic_centrality(
         Indicates if method should return values for singleton components.
     source : str, optional
         Identifier of node or edge of interest for computing centrality
-    use_nwhy : bool, optional
-        If true will use the :ref:`NWHy library <nwhy>` if available.
 
     Returns
     -------
@@ -286,11 +246,7 @@ def s_harmonic_centrality(
 
     """
 
-    if use_nwhy and nwhy_available and H.nwhy:
-        func = partial(nwhy.Slinegraph.s_harmonic_closeness_centrality)
-    else:
-        use_nwhy = False
-        func = partial(nx.harmonic_centrality)
+    func = partial(nx.harmonic_centrality)
     result = _s_centrality(
         func,
         H,
@@ -298,7 +254,6 @@ def s_harmonic_centrality(
         edges=edges,
         return_singletons=return_singletons,
         f=source,
-        use_nwhy=use_nwhy,
     )
 
     if normalized and H.shape[edges * 1] > 2:
@@ -308,9 +263,7 @@ def s_harmonic_centrality(
         return result
 
 
-def s_eccentricity(
-    H, s=1, edges=True, source=None, return_singletons=True, use_nwhy=True
-):
+def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True):
     r"""
     The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.
     $V$ = set of vertices in the linegraph
@@ -332,8 +285,6 @@ def s_eccentricity(
         Indicates if method should return values for singleton components.
     source : str, optional
         Identifier of node or edge of interest for computing centrality
-    use_nwhy : bool, optional
-        If true will use the :ref:`NWHy library <nwhy>` if available.
 
     Returns
     -------
@@ -343,11 +294,8 @@ def s_eccentricity(
         If source then a single value is returned.
 
     """
-    if use_nwhy and nwhy_available and H.nwhy:
-        func = nwhy.Slinegraph.s_eccentricity
-    else:
-        use_nwhy = False
-        func = nx.eccentricity
+
+    func = nx.eccentricity
 
     if source is not None:
         return _s_centrality(
@@ -357,7 +305,6 @@ def s_eccentricity(
             edges=edges,
             f=source,
             return_singletons=return_singletons,
-            use_nwhy=use_nwhy,
         )
     else:
         return _s_centrality(
@@ -366,5 +313,4 @@ def s_eccentricity(
             s=s,
             edges=edges,
             return_singletons=return_singletons,
-            use_nwhy=use_nwhy,
         )

@@ -44,7 +44,7 @@ class Hypergraph:
     as its **properties**.
 
     The fundamental object needed to create a hypergraph is a **setsystem**. The
-    setsystem defines the many to many relationships between edges and nodes in
+    setsystem defines the many-to-many relationships between edges and nodes in
     the hypergraph. Cell properties for the incidence pairs can be defined within
     the setsystem or in a separate pandas.Dataframe or dict.
     Edge and node properties are defined with a pandas.DataFrame or dict.
@@ -58,7 +58,7 @@ class Hypergraph:
 
         >>> H = Hypergraph([{1,2},{1,2},{1,2,3}])
 
-    2.  **dictionary of iterables** : the most basic way to express many to many
+    2.  **dictionary of iterables** : the most basic way to express many-to-many
         relationships providing edge ids. The elements of the iterables must be
         hashable): ::
 
@@ -246,9 +246,9 @@ class Hypergraph:
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
     edge_weight_prop : (optional) str, default : 'weight',
-        Name of property in edge_properties to use for for weight.
+        Name of property in edge_properties to use for weight.
     node_weight_prop : (optional) str, default : 'weight',
-        Name of property in node_properties to use for for weight.
+        Name of property in node_properties to use for weight.
     weight_prop : (optional) str, default : 'weight'
         Name of property in properties to use for 'weight'
     default_edge_weight : (optional) int | float, default : 1
@@ -342,15 +342,24 @@ class Hypergraph:
         return self._nodes
 
     @property
-    def isstatic(self):
-        """
-        Checks whether nodes and edges are immutable
+    def dataframe(self):
+        """Returns dataframe of incidence pairs and their properties.
 
         Returns
         -------
-        bool
+        pd.DataFrame
         """
-        return self._static
+        return self._edges._dataframe
+
+    @property
+    def properties(self):
+        """Returns dataframe of edge and node properties.
+
+        Returns
+        -------
+        pd.DataFrame
+        """
+        return self._edges.properties
 
     @property
     def incidence_dict(self):
@@ -1929,7 +1938,9 @@ class Hypergraph:
 
         return edge_dist
 
-    def dataframe(self, sort_rows=False, sort_columns=False, cell_weights=True):
+    def incidence_dataframe(
+        self, sort_rows=False, sort_columns=False, cell_weights=True
+    ):
         """
         Returns a pandas dataframe for hypergraph indexed by the nodes and
         with column headers given by the edge names.
@@ -1941,7 +1952,6 @@ class Hypergraph:
         sort_columns : bool, optional, default=True
             sort columns based on hashable edge names
         cell_weights : bool, optional, default=True
-            if self.isstatic then include cell weights
 
         """
 
@@ -2030,7 +2040,7 @@ class Hypergraph:
         name = name or "_"
         return Hypergraph(E, name=name, static=static)
 
-    @classmethod
+    @classmethod  #### This will disappear with new signature
     @warn_nwhy
     def from_numpy_array(
         cls,
@@ -2119,7 +2129,7 @@ class Hypergraph:
 
     @classmethod
     @warn_nwhy
-    def from_dataframe(
+    def from_incidence_dataframe(
         cls,
         df,
         columns=None,
@@ -2129,18 +2139,13 @@ class Hypergraph:
         transpose=False,
         transforms=[],
         key=None,
-        node_label="nodes",
-        edge_label="edges",
-        static=False,
-        use_nwhy=False,
+        return_only_dataframe=False,
+        **kwargs,
     ):
         """
-        Create a hypergraph from a Pandas Dataframe object using index to
-        label vertices and Columns to label edges. The values of the dataframe
-        are transformed into an incidence matrix. Note this is different than
-        passing a dataframe directly into the Hypergraph constructor. The
-        latter automatically generates a static hypergraph with edge and node
-        labels given by the cell values.
+        Create a hypergraph from a Pandas Dataframe object, which has values equal
+        to the incidence matrix of a hypergraph. Its index will identify the nodes
+        and its columns will identify its edges.
 
         Parameters
         ----------
@@ -2161,7 +2166,7 @@ class Hypergraph:
 
         transpose : (optional) bool, default = False
             option to transpose the dataframe, in this case df.Index will
-            label the edges and df.columns will label the nodes, transpose is
+            identify the edges and df.columns will identify the nodes, transpose is
             applied before transforms and key
 
         transforms : (optional) list, default = []
@@ -2173,8 +2178,12 @@ class Hypergraph:
             methods prior to generating the hypergraph.
 
         key : (optional) function, default = None
-            boolean function to be applied to dataframe. Must be defined on
-            numpy arrays.
+            boolean function to be applied to dataframe. will be applied to
+            entire dataframe.
+
+        return_only_dataframe : (optional) bool, default = False
+            to use the incidence_dataframe with cell_properties or properties, set this
+            to true and use it as the setsystem in the Hypergraph constructor.
 
         See also
         --------
@@ -2184,24 +2193,6 @@ class Hypergraph:
         Returns
         -------
         : Hypergraph
-
-        Notes
-        -----
-        The `from_dataframe` constructor does not generate empty edges.
-        All-zero columns in df are removed and the names corresponding to these
-        edges are discarded.
-        Restrictions and data processing will occur in this order:
-
-            1. column and row restrictions
-            2. fillna replace NaNs in dataframe
-            3. transpose the dataframe
-            4. transforms in the order listed
-            5. boolean key
-
-        This method offers the above options for wrangling a dataframe into an
-        incidence matrix for a hypergraph. For more flexibility we recommend
-        you use the Pandas library to format the values of your dataframe
-        before submitting it to this constructor.
 
         """
 
@@ -2217,9 +2208,6 @@ class Hypergraph:
         if transpose:
             df = df.transpose()
 
-        # node_names = np.array(df.index)
-        # edge_names = np.array(df.columns)
-
         for t in transforms:
             df = df.apply(t)
         if key:
@@ -2227,12 +2215,17 @@ class Hypergraph:
         else:
             mat = df.values * 1
 
-        params = {
-            "node_names": np.array(df.index),
-            "edge_names": np.array(df.columns),
-            "name": name,
-            "node_label": node_label,
-            "edge_label": edge_label,
-            "static": static,
-        }
-        return cls.from_numpy_array(mat, **params)
+        cols = df.columns
+        rows = df.index
+        CM = coo_matrix(mat)
+        c1 = CM.row
+        c1 = [rows[c1[idx]] for idx in range(len(c1))]
+        c2 = CM.col
+        c2 = [cols[c2[idx]] for idx in range(len(c2))]
+        c3 = CM.data
+
+        dfnew = pd.DataFrame({cols.name: c2, rows.name: c1, "cell_weights": c3})
+        if return_only_dataframe == True:
+            return dfnew
+        else:
+            return Hypergraph(dfnew, weights="cell_weights")
