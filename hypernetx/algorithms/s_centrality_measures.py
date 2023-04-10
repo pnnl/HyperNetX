@@ -32,9 +32,7 @@ except:
 sys.setrecursionlimit(10000)
 
 
-def _s_centrality(
-    func, H, s=1, edges=True, f=None, return_singletons=True, **kwargs
-):
+def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, **kwargs):
     """
     Wrapper for computing s-centrality either in NetworkX or in NWHy
 
@@ -82,14 +80,9 @@ def _s_centrality(
             stats = {v: 0 for v in vertices}
         else:
             g = h.get_linegraph(s=s, edges=edges)
-            stats.update(
-                {
-                    k: v
-                    for k, v in func(g, **kwargs).items()
-                }
-            )
+            stats.update({k: v for k, v in func(g, **kwargs).items()})
         if f:
-                return {f: stats[f]}
+            return {f: stats[f]}
 
     return stats
 
@@ -151,9 +144,7 @@ def s_betweenness_centrality(
         return result
 
 
-def s_closeness_centrality(
-    H, s=1, edges=True, return_singletons=True, source=None
-):
+def s_closeness_centrality(H, s=1, edges=True, return_singletons=True, source=None):
     r"""
     In a connected component the reciprocal of the sum of the distance between an
     edge(node) and all other edges(nodes) in the component times the number of edges(nodes)
@@ -272,9 +263,7 @@ def s_harmonic_centrality(
         return result
 
 
-def s_eccentricity(
-    H, s=1, edges=True, source=None, return_singletons=True
-):
+def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True):
     r"""
     The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.
     $V$ = set of vertices in the linegraph

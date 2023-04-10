@@ -344,7 +344,7 @@ class Hypergraph:
     @property
     def dataframe(self):
         """Returns dataframe of incidence pairs and their properties.
-        
+
         Returns
         -------
         pd.DataFrame
@@ -354,7 +354,7 @@ class Hypergraph:
     @property
     def properties(self):
         """Returns dataframe of edge and node properties.
-        
+
         Returns
         -------
         pd.DataFrame
@@ -2140,7 +2140,7 @@ class Hypergraph:
         transforms=[],
         key=None,
         return_only_dataframe=False,
-        **kwargs
+        **kwargs,
     ):
         """
         Create a hypergraph from a Pandas Dataframe object, which has values equal
