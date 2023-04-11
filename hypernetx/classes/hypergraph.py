@@ -186,22 +186,22 @@ class Hypergraph:
     Parameters
     ----------
     setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,
-        pandas.DataFrame, numpy.ndarray, default: None
+        pandas.DataFrame, numpy.ndarray, default = None
         See SetSystem above for additional setsystem requirements.
-    column_names : (optional) : Sequence[str], default : None
+    column_names : (optional) : Sequence[str], default = None
         used to assign as column names when setsystem is an ndarray or empty,
         otherwise ignored.
-    edge_col : (optional) int | str, default : 0
+    edge_col : (optional) int | str, default = 0
         column index (or name) in pandas.dataframe or numpy.ndarray,
         used for (hyper)edge ids
-    node_col : (optional) int | str, default : 1
+    node_col : (optional) int | str, default = 1
         column index (or name) in pandas.dataframe or numpy.ndarray,
         used for node ids
     cell_weight_col : (optional) int | str, default = None
         column index (or name) in pandas.dataframe or numpy.ndarray used for
         referencing cell weights. For a dict of dicts references key in cell
         property dicts.
-    cell_weights : (optional) Sequence[float,int] | int |  float , default : 1
+    cell_weights : (optional) Sequence[float,int] | int |  float , default = 1
         User specified cell_weights or default weight.
         Sequential values are only used if setsystem is a
         dataframe or ndarray in which case the sequence must
@@ -211,25 +211,25 @@ class Hypergraph:
         then it will be used as default when no cell_weight_col
         is given or if cell weight is missing from the cell_weight_col
     cell_properties : (optional) Sequence[int | str] | Map[int | str , str],
-        default : None
+        default = None
         Indices or names of columns from set system to use as properties
         or a dict assigning cell_property to incidence pairs of edges and nodes.
         Will update properties if setsystem is dict of dicts.
-    misc_cell_properties : (optional) int | str, default="cell_properties"
+    misc_cell_properties : (optional) int | str, default ="cell_properties"
         Column index or name of dataframe corresponding to a column of variable
         length property dictionaries for the cell. Ignored for other setsystem
         types.
-    aggregateby : (optional) str, dict optional, default : 'first'
+    aggregateby : (optional) str, dict optional, default = 'first'
         By default duplicate edge,node incidences will be dropped unless
         specified with `aggregateby`.
         See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for
         additional syntax and usage information.
 
-    edge_properties : (optional) pd.DataFrame | dict, default : None
+    edge_properties : (optional) pd.DataFrame | dict, default = None
         Properties associated with edge ids.
         First column of dataframe or keys of dict link to object ids in
         setsystem.
-    node_properties : (optional) pd.DataFrame | dict, default : None
+    node_properties : (optional) pd.DataFrame | dict, default = None
         Properties associated with node ids.
         First column of dataframe or keys of dict link to object ids in
         setsystem.
@@ -245,15 +245,15 @@ class Hypergraph:
     misc_properties : (optional) int | str, default = "properties"
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
-    edge_weight_prop : (optional) str, default : 'weight',
+    edge_weight_prop : (optional) str, default = 'weight',
         Name of property in edge_properties to use for weight.
-    node_weight_prop : (optional) str, default : 'weight',
+    node_weight_prop : (optional) str, default = 'weight',
         Name of property in node_properties to use for weight.
-    weight_prop : (optional) str, default : 'weight'
+    weight_prop : (optional) str, default = 'weight'
         Name of property in properties to use for 'weight'
-    default_edge_weight : (optional) int | float, default : 1
+    default_edge_weight : (optional) int | float, default = 1
         Used when edge weight property is missing or undefined.
-    default_node_weight : (optional) int | float, default : 1
+    default_node_weight : (optional) int | float, default = 1
         Used when node weight property is missing or undefined
 
     """
@@ -622,9 +622,9 @@ class Hypergraph:
         ----------
         node : hashable
             identifier for the node.
-        s : positive integer, optional, default: 1
+        s : positive integer, optional, default 1
             smallest size of edge to consider in degree
-        max_size : positive integer or None, optional, default: None
+        max_size : positive integer or None, optional, default = None
             largest size of edge to consider in degree
 
         Returns
@@ -667,7 +667,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        nodeset : an interable of Entities, optional, default: None
+        nodeset : an interable of Entities, optional, default = None
             If None, then return the number of nodes in hypergraph.
 
         Returns
@@ -686,7 +686,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edgeset : an iterable of Entities, optional, default: None
+        edgeset : an iterable of Entities, optional, default = None
             If None, then return the number of edges in hypergraph.
 
         Returns
@@ -723,7 +723,7 @@ class Hypergraph:
         node : hashable or Entity
             uid for a node in hypergraph or the node Entity
 
-        s : int, list, optional, default : 1
+        s : int, list, optional, default = 1
             Minimum number of edges shared by neighbors with node.
 
         Returns
@@ -747,7 +747,7 @@ class Hypergraph:
         edge : hashable or Entity
             uid for a edge in hypergraph or the edge Entity
 
-        s : int, list, optional, default : 1
+        s : int, list, optional, default = 1
             Minimum number of nodes shared by neighbors edge node.
 
         Returns
@@ -967,12 +967,12 @@ class Hypergraph:
 
         Parameters
         ----------
-        weights : bool, default=False
+        weights : bool, default =False
             If False all nonzero entries are 1.
             If True and self.static all nonzero entries are filled by
             self.edges.cell_weights dictionary values.
 
-        index : boolean, optional, default False
+        index : boolean, optional, default = False
             If True return will include a dictionary of node uid : row number
             and edge uid : column number
 
@@ -1016,9 +1016,9 @@ class Hypergraph:
         M : scipy.sparse.csr.csr_matrix
             incidence matrix of 0's and 1's
 
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
-        # weights : bool, dict optional, default=True
+        # weights : bool, dict optional, default =True
         #     If False all nonzero entries are 1.
         #     Otherwise, weights will be as in product.
 
@@ -1042,12 +1042,12 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
-        index: boolean, optional, default: False
+        index: boolean, optional, default = False
             if True, will return a rowdict of row to node uid
 
-        weights: bool, default=True
+        weights: bool, default =True
             If False all nonzero entries are 1.
             If True adjacency matrix will depend on weighted incidence matrix,
 
@@ -1072,14 +1072,14 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
-        index: boolean, optional, default: False
+        index: boolean, optional, default = False
             if True, will return a coldict of column to edge uid
 
-        sparse: boolean, optional, default: True
+        sparse: boolean, optional, default = True
 
-        weighted: boolean, optional, default: True
+        weighted: boolean, optional, default = True
 
         Returns
         -------
@@ -1114,7 +1114,7 @@ class Hypergraph:
         Parameters
         ----------
         s : int
-        index : bool, optional, default: False
+        index : bool, optional, default = False
             return a dictionary of labels for the rows of the matrix
 
 
@@ -1167,10 +1167,14 @@ class Hypergraph:
 
         Returns
         -------
-        dual : hypergraph
+        : hypergraph
         """
-        E = self.edges.restrict_to_levels((1, 0))
-        return Hypergraph(E, name=name)
+        dfp = pd.DataFrame(H.properties.reset_index())
+        dfp.level = dfp.level.apply(lambda x : 1*(x==0))
+        df = pd.DataFrame(H.dataframe)
+        df = df[[df.columns[1],df.columns[0]]+
+            list(df.columns[2:])].rename(columns={1:0,0:1})
+        return Hypergraph(df,properties=dfp, name=name)
 
     def collapse_edges(
         self,
@@ -1185,9 +1189,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        name : hashable, optional, default: None
+        name : hashable, optional, default = None
 
-        return_equivalence_classes: boolean, optional, default: False
+        return_equivalence_classes: boolean, optional, default = False
             Returns a dictionary of edge equivalence classes keyed by frozen
             sets of nodes
 
@@ -1244,13 +1248,13 @@ class Hypergraph:
 
         Parameters
         ----------
-        name: str, optional, default: None
+        name: str, optional, default = None
 
-        return_equivalence_classes: boolean, optional, default: False
+        return_equivalence_classes: boolean, optional, default = False
             Returns a dictionary of node equivalence classes keyed by frozen
             sets of edges
 
-        use_reps : boolean, optional, default: False - Deprecated, this no
+        use_reps : boolean, optional, default = False - Deprecated, this no
             longer works and will be removed. Choose a single element from the
             collapsed nodes as uid for the new node, otherwise uses a frozen
             set of the uids of nodes in the equivalence class
@@ -1315,17 +1319,17 @@ class Hypergraph:
         Parameters
         ----------
 
-        name: str, optional, default: None
+        name: str, optional, default = None
 
-        use_reps: boolean, optional, default: False
+        use_reps: boolean, optional, default = False
             Choose a single element from the collapsed elements as a
             representative
 
-        return_counts: boolean, optional, default: True
+        return_counts: boolean, optional, default = True
             if use_reps is True the new elements are keyed by a tuple of the
             rep and the count
 
-        return_equivalence_classes: boolean, optional, default: False
+        return_equivalence_classes: boolean, optional, default = False
             Returns a dictionary of edge equivalence classes keyed by frozen
             sets of nodes
 
@@ -1402,7 +1406,7 @@ class Hypergraph:
         nodeset: iterable of hashables
             References a subset of elements of self.nodes
 
-        name: string, optional, default: None
+        name: string, optional, default = None
 
         Returns
         -------
@@ -1424,20 +1428,20 @@ class Hypergraph:
 
         Parameters
         ----------
-        name: str, optional, default: None
+        name: str, optional, default = None
 
-        # collapse: boolean, optional, default: False
+        # collapse: boolean, optional, default = False
         #     Should the hypergraph be collapsed? This would preserve a link
         #     between duplicate maximal sets. If False then only one of these
         #     sets will be used and uniqueness will be up to sets of equal
         #     size.
 
-        # use_reps: boolean, optional, default: False
+        # use_reps: boolean, optional, default = False
         #     If collapse=True then each toplex will be named by a
         #     representative of the set of equivalent edges, default is False
         #     (see collapse_edges).
 
-        return_counts: boolean, optional, default: True
+        return_counts: boolean, optional, default = True
             # If collapse=True then each toplex will be named by a tuple of
             # the representative of the set of equivalent edges and their count
 
@@ -1488,9 +1492,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        s: int, optional, default: 1
+        s: int, optional, default 1
 
-        edges: boolean, optional, default: False
+        edges: boolean, optional, default = False
             If True, will determine if s-edge-connected.
             For s=1 s-edge-connected is the same as s-connected.
 
@@ -1561,7 +1565,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        name: str, optional, default: None
+        name: str, optional, default = None
 
         Returns
         -------
@@ -1581,12 +1585,12 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
-        edges : boolean, optional, default: True
+        edges : boolean, optional, default = True
             If True will return edge components, if False will return node
             components
-        return_singletons : bool, optional, default : False
+        return_singletons : bool, optional, default = False
 
         Notes
         -----
@@ -1637,7 +1641,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
         edges : boolean, optional, edges=False
             Determines if edge or node components are desired. Returns
@@ -1745,7 +1749,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
         Returns
         -------
@@ -1779,7 +1783,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
         Returns
         -------
@@ -1813,7 +1817,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default: 1
+        s : int, optional, default 1
 
         Return
         ------
@@ -1901,7 +1905,7 @@ class Hypergraph:
             the number of intersections between pairwise consecutive edges
 
         TODO: add edge weights
-        weight : None or string, optional, default: None
+        weight : None or string, optional, default = None
             if None then all edges have weight 1. If string then edge attribute
             string is used if available.
 
@@ -1947,11 +1951,11 @@ class Hypergraph:
 
         Parameters
         ----------
-        sort_rows : bool, optional, default=True
+        sort_rows : bool, optional, default =True
             sort rows based on hashable node names
-        sort_columns : bool, optional, default=True
+        sort_columns : bool, optional, default =True
             sort columns based on hashable edge names
-        cell_weights : bool, optional, default=True
+        cell_weights : bool, optional, default =True
 
         """
 
@@ -2066,12 +2070,12 @@ class Hypergraph:
             representing a real valued matrix with rows corresponding to nodes
             and columns to edges
 
-        node_names : object, array-like, default=None
+        node_names : object, array-like, default =None
             List of node names must be the same length as M.shape[0].
             If None then the node names correspond to row indices with 'v'
             prepended.
 
-        edge_names : object, array-like, default=None
+        edge_names : object, array-like, default =None
             List of edge names must have the same length as M.shape[1].
             If None then the edge names correspond to column indices with 'e'
             prepended.
