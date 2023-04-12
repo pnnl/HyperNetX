@@ -1169,9 +1169,9 @@ class Hypergraph:
         -------
         : hypergraph
         """
-        dfp = pd.DataFrame(H.properties.reset_index())
+        dfp = pd.DataFrame(self.properties.reset_index())
         dfp.level = dfp.level.apply(lambda x : 1*(x==0))
-        df = pd.DataFrame(H.dataframe)
+        df = pd.DataFrame(self.dataframe)
         df = df[[df.columns[1],df.columns[0]]+
             list(df.columns[2:])].rename(columns={1:0,0:1})
         return Hypergraph(df,properties=dfp, name=name)
