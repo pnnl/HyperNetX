@@ -116,7 +116,8 @@ class Hypergraph:
         >>> arr = np.array([['e1','1'],['e1','2'],
         >>>                 ['e2','1'],['e2','2'],
         >>>                 ['e3','1'],['e3','2'],['e3','3']])
-        >>> H = hnx.Hoypergraph(arr, column_names=['col1','col2'])
+        >>> H = hnx.Hypergraph(arr, column_names=['col1','col2'])
+
 
     Edge and Node Properties
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,10 +179,9 @@ class Hypergraph:
     ~~~~~~~
     The default key for cell and object weights is "weight". The default value
     is 1. Weights may be assigned and/or a new default prescribed in the
-    constructor using **cell_weight_col** and **cell_weights** for incidence pairs,
-    and using **edge_weight_prop, node_weight_prop, weight_prop,
-    default_edge_weight,** and **default_node_weight**. See parameters below for
-    details.
+    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop,
+    default_edge_weight,** and **default_node_weight**. See parameters below 
+    for details.
 
     Parameters
     ----------
@@ -213,9 +213,9 @@ class Hypergraph:
     cell_properties : (optional) Sequence[int | str] | Map[int | str , str],
         default = None
         Indices or names of columns from set system to use as properties
-        or a dict assigning cell_property to incidence pairs of edges and nodes.
-        Will update properties if setsystem is dict of dicts.
-    misc_cell_properties : (optional) int | str, default ="cell_properties"
+        or a dict assigning cell_property to incidence pairs of edges and 
+        nodes. Will update properties if setsystem is dict of dicts.
+    misc_cell_properties : (optional) int | str, default = None
         Column index or name of dataframe corresponding to a column of variable
         length property dictionaries for the cell. Ignored for other setsystem
         types.
@@ -237,19 +237,19 @@ class Hypergraph:
         Concatenation/union of edge_properties and node_properties.
         By default the object id is used and should be the first column of
         the dataframe, or key in the dict. If there are nodes and edges
-        with the same ids and different properties then the first column of the
-        dataframe is binary indicator of 0 or edge_col_name and 1 or
-        node_col_name and the second column should reference object id. If a dict
-        then nest the edge and node dictionaries with keys 0/edge_col_name
-        and 1/node_col_name. See notes for example.
-    misc_properties : (optional) int | str, default = "properties"
+        with the same ids and different properties then the first column of 
+        the dataframe is binary indicator of 0 or edge_col_name and 1 or
+        node_col_name and the second column should reference object id. If a 
+        dict then nest the edge and node dictionaries with keys 
+        0/edge_col_name and 1/node_col_name. See notes for example.
+    misc_properties : (optional) int | str, default = None
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
-    edge_weight_prop : (optional) str, default = 'weight',
+    edge_weight_prop : (optional) str, default = None,
         Name of property in edge_properties to use for weight.
-    node_weight_prop : (optional) str, default = 'weight',
+    node_weight_prop : (optional) str, default = None,
         Name of property in node_properties to use for weight.
-    weight_prop : (optional) str, default = 'weight'
+    weight_prop : (optional) str, default = None
         Name of property in properties to use for 'weight'
     default_edge_weight : (optional) int | float, default = 1
         Used when edge weight property is missing or undefined.

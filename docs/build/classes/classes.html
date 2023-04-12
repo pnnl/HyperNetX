@@ -1620,7 +1620,7 @@ are referenced as <strong>cell_properties</strong>.
 Metadata associated with a single edge or node is referenced
 as its <strong>properties</strong>.</p>
 <p>The fundamental object needed to create a hypergraph is a <strong>setsystem</strong>. The
-setsystem defines the many to many relationships between edges and nodes in
+setsystem defines the many-to-many relationships between edges and nodes in
 the hypergraph. Cell properties for the incidence pairs can be defined within
 the setsystem or in a separate pandas.Dataframe or dict.
 Edge and node properties are defined with a pandas.DataFrame or dict.</p>
@@ -1634,7 +1634,7 @@ indexing to generate hyperedge ids. Elements must be hashable.:</p>
 </pre></div>
 </div>
 </li>
-<li><p><strong>dictionary of iterables</strong> : the most basic way to express many to many
+<li><p><strong>dictionary of iterables</strong> : the most basic way to express many-to-many
 relationships providing edge ids. The elements of the iterables must be
 hashable):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="s1">&#39;e1&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e2&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e3&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]})</span>
@@ -1716,7 +1716,7 @@ types can be added with a separate dataframe or dict.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hoypergraph</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hypergraph</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </li>
@@ -1813,13 +1813,12 @@ both roles. Define the properties dataframe dfp:</p>
 <h5>Weights<a class="headerlink" href="#weights" title="Permalink to this heading"></a></h5>
 <p>The default key for cell and object weights is “weight”. The default value
 is 1. Weights may be assigned and/or a new default prescribed in the
-constructor using <strong>cell_weight_col</strong> and <strong>cell_weights</strong> for incidence pairs,
-and using <strong>edge_weight_prop, node_weight_prop, weight_prop,
-default_edge_weight,</strong> and <strong>default_node_weight</strong>. See parameters below for
-details.</p>
+constructor using <strong>cell_weight_col</strong> and <strong>cell_weights</strong> for incidence pairs, and using <strong>edge_weight_prop, node_weight_prop, weight_prop,
+default_edge_weight,</strong> and <strong>default_node_weight</strong>. See parameters below
+for details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param setsystem<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame, numpy.ndarray, default: None
+<dd class="field-odd"><p>pandas.DataFrame, numpy.ndarray, default = None
 See SetSystem above for additional setsystem requirements.</p>
 </dd>
 <dt class="field-even">type setsystem<span class="colon">:</span></dt>
@@ -1830,21 +1829,21 @@ See SetSystem above for additional setsystem requirements.</p>
 otherwise ignored.</p>
 </dd>
 <dt class="field-even">type column_names<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) : Sequence[str], default : None</p>
+<dd class="field-even"><p>(optional) : Sequence[str], default = None</p>
 </dd>
 <dt class="field-odd">param edge_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray,
 used for (hyper)edge ids</p>
 </dd>
 <dt class="field-even">type edge_col<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default : 0</p>
+<dd class="field-even"><p>(optional) int | str, default = 0</p>
 </dd>
 <dt class="field-odd">param node_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray,
 used for node ids</p>
 </dd>
 <dt class="field-even">type node_col<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default : 1</p>
+<dd class="field-even"><p>(optional) int | str, default = 1</p>
 </dd>
 <dt class="field-odd">param cell_weight_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray used for
@@ -1865,13 +1864,13 @@ then it will be used as default when no cell_weight_col
 is given or if cell weight is missing from the cell_weight_col</p>
 </dd>
 <dt class="field-even">type cell_weights<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) Sequence[float,int] | int |  float , default : 1</p>
+<dd class="field-even"><p>(optional) Sequence[float,int] | int |  float , default = 1</p>
 </dd>
 <dt class="field-odd">param cell_properties<span class="colon">:</span></dt>
-<dd class="field-odd"><p>default : None
+<dd class="field-odd"><p>default = None
 Indices or names of columns from set system to use as properties
-or a dict assigning cell_property to incidence pairs of edges and nodes.
-Will update properties if setsystem is dict of dicts.</p>
+or a dict assigning cell_property to incidence pairs of edges and
+nodes. Will update properties if setsystem is dict of dicts.</p>
 </dd>
 <dt class="field-even">type cell_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>(optional) Sequence[int | str] | Map[int | str , str],</p>
@@ -1882,7 +1881,7 @@ length property dictionaries for the cell. Ignored for other setsystem
 types.</p>
 </dd>
 <dt class="field-even">type misc_cell_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default=”cell_properties”</p>
+<dd class="field-even"><p>(optional) int | str, default = None</p>
 </dd>
 <dt class="field-odd">param aggregateby<span class="colon">:</span></dt>
 <dd class="field-odd"><p>By default duplicate edge,node incidences will be dropped unless
@@ -1891,7 +1890,7 @@ See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for
 additional syntax and usage information.</p>
 </dd>
 <dt class="field-even">type aggregateby<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, dict optional, default : ‘first’</p>
+<dd class="field-even"><p>(optional) str, dict optional, default = ‘first’</p>
 </dd>
 <dt class="field-odd">param edge_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Properties associated with edge ids.
@@ -1899,7 +1898,7 @@ First column of dataframe or keys of dict link to object ids in
 setsystem.</p>
 </dd>
 <dt class="field-even">type edge_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) pd.DataFrame | dict, default : None</p>
+<dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
 </dd>
 <dt class="field-odd">param node_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Properties associated with node ids.
@@ -1907,17 +1906,17 @@ First column of dataframe or keys of dict link to object ids in
 setsystem.</p>
 </dd>
 <dt class="field-even">type node_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) pd.DataFrame | dict, default : None</p>
+<dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
 </dd>
 <dt class="field-odd">param properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Concatenation/union of edge_properties and node_properties.
 By default the object id is used and should be the first column of
 the dataframe, or key in the dict. If there are nodes and edges
-with the same ids and different properties then the first column of the
-dataframe is binary indicator of 0 or edge_col_name and 1 or
-node_col_name and the second column should reference object id. If a dict
-then nest the edge and node dictionaries with keys 0/edge_col_name
-and 1/node_col_name. See notes for example.</p>
+with the same ids and different properties then the first column of
+the dataframe is binary indicator of 0 or edge_col_name and 1 or
+node_col_name and the second column should reference object id. If a
+dict then nest the edge and node dictionaries with keys
+0/edge_col_name and 1/node_col_name. See notes for example.</p>
 </dd>
 <dt class="field-even">type properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
@@ -1927,37 +1926,37 @@ and 1/node_col_name. See notes for example.</p>
 length property dictionaries for the objects.</p>
 </dd>
 <dt class="field-even">type misc_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default = “properties”</p>
+<dd class="field-even"><p>(optional) int | str, default = None</p>
 </dd>
 <dt class="field-odd">param edge_weight_prop<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Name of property in edge_properties to use for for weight.</p>
+<dd class="field-odd"><p>Name of property in edge_properties to use for weight.</p>
 </dd>
 <dt class="field-even">type edge_weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’,</p>
+<dd class="field-even"><p>(optional) str, default = None,</p>
 </dd>
 <dt class="field-odd">param node_weight_prop<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Name of property in node_properties to use for for weight.</p>
+<dd class="field-odd"><p>Name of property in node_properties to use for weight.</p>
 </dd>
 <dt class="field-even">type node_weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’,</p>
+<dd class="field-even"><p>(optional) str, default = None,</p>
 </dd>
 <dt class="field-odd">param weight_prop<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Name of property in properties to use for ‘weight’</p>
 </dd>
 <dt class="field-even">type weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’</p>
+<dd class="field-even"><p>(optional) str, default = None</p>
 </dd>
 <dt class="field-odd">param default_edge_weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Used when edge weight property is missing or undefined.</p>
 </dd>
 <dt class="field-even">type default_edge_weight<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | float, default : 1</p>
+<dd class="field-even"><p>(optional) int | float, default = 1</p>
 </dd>
 <dt class="field-odd">param default_node_weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Used when node weight property is missing or undefined</p>
 </dd>
 <dt class="field-even">type default_node_weight<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | float, default : 1</p>
+<dd class="field-even"><p>(optional) int | float, default = 1</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -2030,9 +2029,9 @@ be used</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – if True, will return a rowdict of row to node uid</p></li>
-<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If False all nonzero entries are 1.
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – if True, will return a rowdict of row to node uid</p></li>
+<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default =True</em>) – If False all nonzero entries are 1.
 If True adjacency matrix will depend on weighted incidence matrix,</p></li>
 </ul>
 </dd>
@@ -2054,7 +2053,7 @@ If True adjacency matrix will depend on weighted incidence matrix,</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>s</strong> (<em>int</em>) – </p></li>
-<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – return a dictionary of labels for the rows of the matrix</p></li>
+<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – return a dictionary of labels for the rows of the matrix</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2096,8 +2095,8 @@ same nodes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
+<li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
 sets of nodes</p></li>
 </ul>
 </dd>
@@ -2128,10 +2127,10 @@ the same edges</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of node equivalence classes keyed by frozen
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of node equivalence classes keyed by frozen
 sets of edges</p></li>
-<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False - Deprecated</em><em>, </em><em>this no</em>) – longer works and will be removed. Choose a single element from the
+<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False - Deprecated</em><em>, </em><em>this no</em>) – longer works and will be removed. Choose a single element from the
 collapsed nodes as uid for the new node, otherwise uses a frozen
 set of the uids of nodes in the equivalence class</p></li>
 <li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>- Deprecated</em><em>, </em><em>this no longer works and will be</em>) – removed if use_reps is True the new nodes have uids given by a
@@ -2172,12 +2171,12 @@ number of members of the class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Choose a single element from the collapsed elements as a
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Choose a single element from the collapsed elements as a
 representative</p></li>
-<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – if use_reps is True the new elements are keyed by a tuple of the
+<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if use_reps is True the new elements are keyed by a tuple of the
 rep and the count</p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
 sets of nodes</p></li>
 </ul>
 </dd>
@@ -2248,18 +2247,13 @@ by default. Return iterator.</p>
 </div>
 </dd></dl>
 
-<dl class="py method">
+<dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.dataframe">
-<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.dataframe" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
-with column headers given by the edge names.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataframe</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Returns dataframe of incidence pairs and their properties.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort rows based on hashable node names</p></li>
-<li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort columns based on hashable edge names</p></li>
-<li><p><strong>cell_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – if self.isstatic then include cell weights</p></li>
-</ul>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2272,8 +2266,8 @@ with column headers given by the edge names.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – identifier for the node.</p></li>
-<li><p><strong>s</strong> (<em>positive integer</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – smallest size of edge to consider in degree</p></li>
-<li><p><strong>max_size</strong> (<em>positive integer</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – largest size of edge to consider in degree</p></li>
+<li><p><strong>s</strong> (<em>positive integer</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – smallest size of edge to consider in degree</p></li>
+<li><p><strong>max_size</strong> (<em>positive integer</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – largest size of edge to consider in degree</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -2289,7 +2283,7 @@ with column headers given by the edge names.</p>
 hypergraph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>diameter</strong></p>
@@ -2357,11 +2351,8 @@ reversed.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>hashable</em>) – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dual</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>hypergraph</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>hypergraph</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2373,10 +2364,10 @@ reversed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – if True, will return a coldict of column to edge uid</p></li>
-<li><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – </p></li>
-<li><p><strong>weighted</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – if True, will return a coldict of column to edge uid</p></li>
+<li><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – </p></li>
+<li><p><strong>weighted</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2400,7 +2391,7 @@ If index=True, returns a dictionary column_index:edge_uid</p>
 hypergraph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>edge_diameter</strong></p>
@@ -2427,7 +2418,7 @@ error will be raised.</p>
 in hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
@@ -2453,7 +2444,7 @@ in the hypergraph.</p>
 <li><p><strong>target</strong> (<em>edge.uid</em><em> or </em><em>edge</em>) – an edge in the hypergraph</p></li>
 <li><p><strong>s</strong> (<em>positive integer</em>) – the number of intersections between pairwise consecutive edges</p></li>
 <li><p><strong>TODO</strong> (<em>add edge weights</em>) – </p></li>
-<li><p><strong>weight</strong> (<em>None</em><em> or </em><em>string</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – if None then all edges have weight 1. If string then edge attribute
+<li><p><strong>weight</strong> (<em>None</em><em> or </em><em>string</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – if None then all edges have weight 1. If string then edge attribute
 string is used if available.</p></li>
 </ul>
 </dd>
@@ -2488,7 +2479,7 @@ generated by the s-edge_adjacency matrix.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>edge</strong> (<em>hashable</em><em> or </em><a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity"><em>Entity</em></a>) – uid for a edge in hypergraph or the edge Entity</p></li>
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default : 1</em>) – Minimum number of nodes shared by neighbors edge node.</p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default = 1</em>) – Minimum number of nodes shared by neighbors edge node.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2559,14 +2550,11 @@ bipartite set</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.from_dataframe">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_dataframe" title="Permalink to this definition"></a></dt>
-<dd><p>Create a hypergraph from a Pandas Dataframe object using index to
-label vertices and Columns to label edges. The values of the dataframe
-are transformed into an incidence matrix. Note this is different than
-passing a dataframe directly into the Hypergraph constructor. The
-latter automatically generates a static hypergraph with edge and node
-labels given by the cell values.</p>
+<dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.from_incidence_dataframe">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_incidence_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_only_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.from_incidence_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.from_incidence_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Create a hypergraph from a Pandas Dataframe object, which has values equal
+to the incidence matrix of a hypergraph. Its index will identify the nodes
+and its columns will identify its edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2577,7 +2565,7 @@ labels given by the cell values.</p>
 <li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not
 generate an edge.</p></li>
 <li><p><strong>transpose</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will
-label the edges and df.columns will label the nodes, transpose is
+identify the edges and df.columns will identify the nodes, transpose is
 applied before transforms and key</p></li>
 <li><p><strong>transforms</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default =</em><em> [</em><em>]</em>) – optional list of transformations to apply to each column,
 of the dataframe using pd.DataFrame.apply().
@@ -2585,8 +2573,10 @@ Transformations are applied in the order they are
 given (ex. abs). To apply transforms to rows or for additional
 functionality, consider transforming df using pandas.DataFrame
 methods prior to generating the hypergraph.</p></li>
-<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be applied to dataframe. Must be defined on
-numpy arrays.</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be applied to dataframe. will be applied to
+entire dataframe.</p></li>
+<li><p><strong>return_only_dataframe</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – to use the incidence_dataframe with cell_properties or properties, set this
+to true and use it as the setsystem in the Hypergraph constructor.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2599,24 +2589,6 @@ numpy arrays.</p></li>
 <dd class="field-odd"><p><a class="reference internal" href="#classes.hypergraph.Hypergraph" title="classes.hypergraph.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The <cite>from_dataframe</cite> constructor does not generate empty edges.
-All-zero columns in df are removed and the names corresponding to these
-edges are discarded.
-Restrictions and data processing will occur in this order:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>column and row restrictions</p></li>
-<li><p>fillna replace NaNs in dataframe</p></li>
-<li><p>transpose the dataframe</p></li>
-<li><p>transforms in the order listed</p></li>
-<li><p>boolean key</p></li>
-</ol>
-</div></blockquote>
-<p>This method offers the above options for wrangling a dataframe into an
-incidence matrix for a hypergraph. For more flexibility we recommend
-you use the Pandas library to format the values of your dataframe
-before submitting it to this constructor.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2631,10 +2603,10 @@ to 0’s.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>real valued array-like object</em><em>, </em><em>2 dimensions</em>) – representing a real valued matrix with rows corresponding to nodes
 and columns to edges</p></li>
-<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of node names must be the same length as M.shape[0].
+<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default =None</em>) – List of node names must be the same length as M.shape[0].
 If None then the node names correspond to row indices with ‘v’
 prepended.</p></li>
-<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of edge names must have the same length as M.shape[1].
+<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default =None</em>) – List of edge names must have the same length as M.shape[1].
 If None then the edge names correspond to column indices with ‘e’
 prepended.</p></li>
 <li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
@@ -2704,6 +2676,22 @@ not available this is ignored.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.incidence_dataframe">
+<span class="sig-name descname"><span class="pre">incidence_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.incidence_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.incidence_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
+with column headers given by the edge names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – sort rows based on hashable node names</p></li>
+<li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – sort columns based on hashable edge names</p></li>
+<li><p><strong>cell_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.incidence_dict">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.incidence_dict" title="Permalink to this definition"></a></dt>
@@ -2723,10 +2711,10 @@ edge</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If False all nonzero entries are 1.
+<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default =False</em>) – If False all nonzero entries are 1.
 If True and self.static all nonzero entries are filled by
 self.edges.cell_weights dictionary values.</p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default False</em>) – If True return will include a dictionary of node uid : row number
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True return will include a dictionary of node uid : row number
 and edge uid : column number</p></li>
 </ul>
 </dd>
@@ -2748,8 +2736,8 @@ and edge uid : column number</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – If True, will determine if s-edge-connected.
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True, will determine if s-edge-connected.
 For s=1 s-edge-connected is the same as s-connected.</p></li>
 </ul>
 </dd>
@@ -2771,17 +2759,6 @@ such that every consecutive pair of edges e(i),e(i+1)
 share at least s nodes.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.isstatic">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isstatic</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.isstatic" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether nodes and edges are immutable</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.neighbors">
 <span class="sig-name descname"><span class="pre">neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/classes/hypergraph.html#Hypergraph.neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.hypergraph.Hypergraph.neighbors" title="Permalink to this definition"></a></dt>
@@ -2790,7 +2767,7 @@ share at least s nodes.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em><em> or </em><a class="reference internal" href="#classes.entity.Entity" title="classes.entity.Entity"><em>Entity</em></a>) – uid for a node in hypergraph or the node Entity</p></li>
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default : 1</em>) – Minimum number of edges shared by neighbors with node.</p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default = 1</em>) – Minimum number of edges shared by neighbors with node.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2833,7 +2810,7 @@ share at least s nodes.</p>
 <dd><p>The number of edges in edgeset belonging to hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>edgeset</strong> (<em>an iterable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If None, then return the number of edges in hypergraph.</p>
+<dd class="field-odd"><p><strong>edgeset</strong> (<em>an iterable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – If None, then return the number of edges in hypergraph.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number_of_edges</strong></p>
@@ -2850,7 +2827,7 @@ share at least s nodes.</p>
 <dd><p>The number of nodes in nodeset belonging to hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nodeset</strong> (<em>an interable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If None, then return the number of nodes in hypergraph.</p>
+<dd class="field-odd"><p><strong>nodeset</strong> (<em>an interable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – If None, then return the number of nodes in hypergraph.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number_of_nodes</strong></p>
@@ -2871,6 +2848,17 @@ share at least s nodes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="classes.hypergraph.Hypergraph.properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#classes.hypergraph.Hypergraph.properties" title="Permalink to this definition"></a></dt>
+<dd><p>Returns dataframe of edge and node properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2971,7 +2959,7 @@ the node is dropped from self.</p>
 <dd><p>Constructs clone of hypergraph with singleton edges removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>new hypergraph</strong></p>
@@ -3011,7 +2999,7 @@ to the nodes referenced by nodeset.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nodeset</strong> (<em>iterable</em><em> of </em><em>hashables</em>) – References a subset of elements of self.nodes</p></li>
-<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
+<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3033,7 +3021,7 @@ Computed using s-linegraph generated either by the hypergraph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
 <li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>edges=False</em>) – Determines if edge or node components are desired. Returns
 subgraphs equal to the hypergraph restricted to each set of
 nodes(edges) in the s-connected components or s-edge-connected
@@ -3066,10 +3054,10 @@ or the <a class="reference internal" href="../glossary.html#term-s-connected-com
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – If True will return edge components, if False will return node
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – If True will return edge components, if False will return node
 components</p></li>
-<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – </p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -3188,7 +3176,7 @@ new hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
 <li><p><strong>collapse</strong> (<em>#</em>) – </p></li>
 <li><p><strong>link</strong> (<em>#     Should the hypergraph be collapsed? This would preserve a</em>) – </p></li>
 <li><p><strong>these</strong> (<em>#     between duplicate maximal sets. If False then only one of</em>) – </p></li>
@@ -3199,7 +3187,7 @@ new hypergraph.</p>
 <li><p><strong>edges</strong> (<em>#     representative</em><em> of </em><em>the set</em><em> of </em><em>equivalent</em>) – </p></li>
 <li><p><strong>False</strong> (<em>default is</em>) – </p></li>
 <li><p><strong>collapse_edges</strong><strong>)</strong><strong>.</strong> (<em>#</em><em>     (</em><em>see</em>) – </p></li>
-<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – # If collapse=True then each toplex will be named by a tuple of
+<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – # If collapse=True then each toplex will be named by a tuple of
 # the representative of the set of equivalent edges and their count</p></li>
 </ul>
 </dd>
@@ -4617,7 +4605,7 @@ are referenced as <strong>cell_properties</strong>.
 Metadata associated with a single edge or node is referenced
 as its <strong>properties</strong>.</p>
 <p>The fundamental object needed to create a hypergraph is a <strong>setsystem</strong>. The
-setsystem defines the many to many relationships between edges and nodes in
+setsystem defines the many-to-many relationships between edges and nodes in
 the hypergraph. Cell properties for the incidence pairs can be defined within
 the setsystem or in a separate pandas.Dataframe or dict.
 Edge and node properties are defined with a pandas.DataFrame or dict.</p>
@@ -4631,7 +4619,7 @@ indexing to generate hyperedge ids. Elements must be hashable.:</p>
 </pre></div>
 </div>
 </li>
-<li><p><strong>dictionary of iterables</strong> : the most basic way to express many to many
+<li><p><strong>dictionary of iterables</strong> : the most basic way to express many-to-many
 relationships providing edge ids. The elements of the iterables must be
 hashable):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="s1">&#39;e1&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e2&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e3&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]})</span>
@@ -4713,7 +4701,7 @@ types can be added with a separate dataframe or dict.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hoypergraph</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hypergraph</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </li>
@@ -4810,13 +4798,12 @@ both roles. Define the properties dataframe dfp:</p>
 <h5>Weights<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h5>
 <p>The default key for cell and object weights is “weight”. The default value
 is 1. Weights may be assigned and/or a new default prescribed in the
-constructor using <strong>cell_weight_col</strong> and <strong>cell_weights</strong> for incidence pairs,
-and using <strong>edge_weight_prop, node_weight_prop, weight_prop,
-default_edge_weight,</strong> and <strong>default_node_weight</strong>. See parameters below for
-details.</p>
+constructor using <strong>cell_weight_col</strong> and <strong>cell_weights</strong> for incidence pairs, and using <strong>edge_weight_prop, node_weight_prop, weight_prop,
+default_edge_weight,</strong> and <strong>default_node_weight</strong>. See parameters below
+for details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param setsystem<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame, numpy.ndarray, default: None
+<dd class="field-odd"><p>pandas.DataFrame, numpy.ndarray, default = None
 See SetSystem above for additional setsystem requirements.</p>
 </dd>
 <dt class="field-even">type setsystem<span class="colon">:</span></dt>
@@ -4827,21 +4814,21 @@ See SetSystem above for additional setsystem requirements.</p>
 otherwise ignored.</p>
 </dd>
 <dt class="field-even">type column_names<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) : Sequence[str], default : None</p>
+<dd class="field-even"><p>(optional) : Sequence[str], default = None</p>
 </dd>
 <dt class="field-odd">param edge_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray,
 used for (hyper)edge ids</p>
 </dd>
 <dt class="field-even">type edge_col<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default : 0</p>
+<dd class="field-even"><p>(optional) int | str, default = 0</p>
 </dd>
 <dt class="field-odd">param node_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray,
 used for node ids</p>
 </dd>
 <dt class="field-even">type node_col<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default : 1</p>
+<dd class="field-even"><p>(optional) int | str, default = 1</p>
 </dd>
 <dt class="field-odd">param cell_weight_col<span class="colon">:</span></dt>
 <dd class="field-odd"><p>column index (or name) in pandas.dataframe or numpy.ndarray used for
@@ -4862,13 +4849,13 @@ then it will be used as default when no cell_weight_col
 is given or if cell weight is missing from the cell_weight_col</p>
 </dd>
 <dt class="field-even">type cell_weights<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) Sequence[float,int] | int |  float , default : 1</p>
+<dd class="field-even"><p>(optional) Sequence[float,int] | int |  float , default = 1</p>
 </dd>
 <dt class="field-odd">param cell_properties<span class="colon">:</span></dt>
-<dd class="field-odd"><p>default : None
+<dd class="field-odd"><p>default = None
 Indices or names of columns from set system to use as properties
-or a dict assigning cell_property to incidence pairs of edges and nodes.
-Will update properties if setsystem is dict of dicts.</p>
+or a dict assigning cell_property to incidence pairs of edges and
+nodes. Will update properties if setsystem is dict of dicts.</p>
 </dd>
 <dt class="field-even">type cell_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>(optional) Sequence[int | str] | Map[int | str , str],</p>
@@ -4879,7 +4866,7 @@ length property dictionaries for the cell. Ignored for other setsystem
 types.</p>
 </dd>
 <dt class="field-even">type misc_cell_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default=”cell_properties”</p>
+<dd class="field-even"><p>(optional) int | str, default = None</p>
 </dd>
 <dt class="field-odd">param aggregateby<span class="colon">:</span></dt>
 <dd class="field-odd"><p>By default duplicate edge,node incidences will be dropped unless
@@ -4888,7 +4875,7 @@ See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for
 additional syntax and usage information.</p>
 </dd>
 <dt class="field-even">type aggregateby<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, dict optional, default : ‘first’</p>
+<dd class="field-even"><p>(optional) str, dict optional, default = ‘first’</p>
 </dd>
 <dt class="field-odd">param edge_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Properties associated with edge ids.
@@ -4896,7 +4883,7 @@ First column of dataframe or keys of dict link to object ids in
 setsystem.</p>
 </dd>
 <dt class="field-even">type edge_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) pd.DataFrame | dict, default : None</p>
+<dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
 </dd>
 <dt class="field-odd">param node_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Properties associated with node ids.
@@ -4904,17 +4891,17 @@ First column of dataframe or keys of dict link to object ids in
 setsystem.</p>
 </dd>
 <dt class="field-even">type node_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) pd.DataFrame | dict, default : None</p>
+<dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
 </dd>
 <dt class="field-odd">param properties<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Concatenation/union of edge_properties and node_properties.
 By default the object id is used and should be the first column of
 the dataframe, or key in the dict. If there are nodes and edges
-with the same ids and different properties then the first column of the
-dataframe is binary indicator of 0 or edge_col_name and 1 or
-node_col_name and the second column should reference object id. If a dict
-then nest the edge and node dictionaries with keys 0/edge_col_name
-and 1/node_col_name. See notes for example.</p>
+with the same ids and different properties then the first column of
+the dataframe is binary indicator of 0 or edge_col_name and 1 or
+node_col_name and the second column should reference object id. If a
+dict then nest the edge and node dictionaries with keys
+0/edge_col_name and 1/node_col_name. See notes for example.</p>
 </dd>
 <dt class="field-even">type properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>(optional) pd.DataFrame | dict, default = None</p>
@@ -4924,37 +4911,37 @@ and 1/node_col_name. See notes for example.</p>
 length property dictionaries for the objects.</p>
 </dd>
 <dt class="field-even">type misc_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | str, default = “properties”</p>
+<dd class="field-even"><p>(optional) int | str, default = None</p>
 </dd>
 <dt class="field-odd">param edge_weight_prop<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Name of property in edge_properties to use for for weight.</p>
+<dd class="field-odd"><p>Name of property in edge_properties to use for weight.</p>
 </dd>
 <dt class="field-even">type edge_weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’,</p>
+<dd class="field-even"><p>(optional) str, default = None,</p>
 </dd>
 <dt class="field-odd">param node_weight_prop<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Name of property in node_properties to use for for weight.</p>
+<dd class="field-odd"><p>Name of property in node_properties to use for weight.</p>
 </dd>
 <dt class="field-even">type node_weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’,</p>
+<dd class="field-even"><p>(optional) str, default = None,</p>
 </dd>
 <dt class="field-odd">param weight_prop<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Name of property in properties to use for ‘weight’</p>
 </dd>
 <dt class="field-even">type weight_prop<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) str, default : ‘weight’</p>
+<dd class="field-even"><p>(optional) str, default = None</p>
 </dd>
 <dt class="field-odd">param default_edge_weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Used when edge weight property is missing or undefined.</p>
 </dd>
 <dt class="field-even">type default_edge_weight<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | float, default : 1</p>
+<dd class="field-even"><p>(optional) int | float, default = 1</p>
 </dd>
 <dt class="field-odd">param default_node_weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Used when node weight property is missing or undefined</p>
 </dd>
 <dt class="field-even">type default_node_weight<span class="colon">:</span></dt>
-<dd class="field-even"><p>(optional) int | float, default : 1</p>
+<dd class="field-even"><p>(optional) int | float, default = 1</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -5027,9 +5014,9 @@ be used</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – if True, will return a rowdict of row to node uid</p></li>
-<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If False all nonzero entries are 1.
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – if True, will return a rowdict of row to node uid</p></li>
+<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default =True</em>) – If False all nonzero entries are 1.
 If True adjacency matrix will depend on weighted incidence matrix,</p></li>
 </ul>
 </dd>
@@ -5051,7 +5038,7 @@ If True adjacency matrix will depend on weighted incidence matrix,</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>s</strong> (<em>int</em>) – </p></li>
-<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – return a dictionary of labels for the rows of the matrix</p></li>
+<li><p><strong>index</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – return a dictionary of labels for the rows of the matrix</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -5093,8 +5080,8 @@ same nodes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
+<li><p><strong>name</strong> (<em>hashable</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
 sets of nodes</p></li>
 </ul>
 </dd>
@@ -5125,10 +5112,10 @@ the same edges</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of node equivalence classes keyed by frozen
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of node equivalence classes keyed by frozen
 sets of edges</p></li>
-<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False - Deprecated</em><em>, </em><em>this no</em>) – longer works and will be removed. Choose a single element from the
+<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False - Deprecated</em><em>, </em><em>this no</em>) – longer works and will be removed. Choose a single element from the
 collapsed nodes as uid for the new node, otherwise uses a frozen
 set of the uids of nodes in the equivalence class</p></li>
 <li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>- Deprecated</em><em>, </em><em>this no longer works and will be</em>) – removed if use_reps is True the new nodes have uids given by a
@@ -5169,12 +5156,12 @@ number of members of the class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
-<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Choose a single element from the collapsed elements as a
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
+<li><p><strong>use_reps</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Choose a single element from the collapsed elements as a
 representative</p></li>
-<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – if use_reps is True the new elements are keyed by a tuple of the
+<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – if use_reps is True the new elements are keyed by a tuple of the
 rep and the count</p></li>
-<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
+<li><p><strong>return_equivalence_classes</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – Returns a dictionary of edge equivalence classes keyed by frozen
 sets of nodes</p></li>
 </ul>
 </dd>
@@ -5245,18 +5232,13 @@ by default. Return iterator.</p>
 </div>
 </dd></dl>
 
-<dl class="py method">
+<dl class="py property">
 <dt class="sig sig-object py" id="classes.Hypergraph.dataframe">
-<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/classes/hypergraph.html#Hypergraph.dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.Hypergraph.dataframe" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
-with column headers given by the edge names.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataframe</span></span><a class="headerlink" href="#classes.Hypergraph.dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Returns dataframe of incidence pairs and their properties.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort rows based on hashable node names</p></li>
-<li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – sort columns based on hashable edge names</p></li>
-<li><p><strong>cell_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=True</em>) – if self.isstatic then include cell weights</p></li>
-</ul>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5269,8 +5251,8 @@ with column headers given by the edge names.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em>) – identifier for the node.</p></li>
-<li><p><strong>s</strong> (<em>positive integer</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – smallest size of edge to consider in degree</p></li>
-<li><p><strong>max_size</strong> (<em>positive integer</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – largest size of edge to consider in degree</p></li>
+<li><p><strong>s</strong> (<em>positive integer</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – smallest size of edge to consider in degree</p></li>
+<li><p><strong>max_size</strong> (<em>positive integer</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – largest size of edge to consider in degree</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -5286,7 +5268,7 @@ with column headers given by the edge names.</p>
 hypergraph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>diameter</strong></p>
@@ -5354,11 +5336,8 @@ reversed.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>hashable</em>) – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dual</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>hypergraph</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>hypergraph</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5370,10 +5349,10 @@ reversed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – if True, will return a coldict of column to edge uid</p></li>
-<li><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – </p></li>
-<li><p><strong>weighted</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – if True, will return a coldict of column to edge uid</p></li>
+<li><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – </p></li>
+<li><p><strong>weighted</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -5397,7 +5376,7 @@ If index=True, returns a dictionary column_index:edge_uid</p>
 hypergraph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>edge_diameter</strong></p>
@@ -5424,7 +5403,7 @@ error will be raised.</p>
 in hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p>
+<dd class="field-odd"><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
@@ -5450,7 +5429,7 @@ in the hypergraph.</p>
 <li><p><strong>target</strong> (<em>edge.uid</em><em> or </em><em>edge</em>) – an edge in the hypergraph</p></li>
 <li><p><strong>s</strong> (<em>positive integer</em>) – the number of intersections between pairwise consecutive edges</p></li>
 <li><p><strong>TODO</strong> (<em>add edge weights</em>) – </p></li>
-<li><p><strong>weight</strong> (<em>None</em><em> or </em><em>string</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – if None then all edges have weight 1. If string then edge attribute
+<li><p><strong>weight</strong> (<em>None</em><em> or </em><em>string</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – if None then all edges have weight 1. If string then edge attribute
 string is used if available.</p></li>
 </ul>
 </dd>
@@ -5485,7 +5464,7 @@ generated by the s-edge_adjacency matrix.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>edge</strong> (<em>hashable</em><em> or </em><a class="reference internal" href="#classes.Entity" title="classes.Entity"><em>Entity</em></a>) – uid for a edge in hypergraph or the edge Entity</p></li>
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default : 1</em>) – Minimum number of nodes shared by neighbors edge node.</p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default = 1</em>) – Minimum number of nodes shared by neighbors edge node.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -5556,14 +5535,11 @@ bipartite set</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="classes.Hypergraph.from_dataframe">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nodes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edges'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nwhy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/classes/hypergraph.html#Hypergraph.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.Hypergraph.from_dataframe" title="Permalink to this definition"></a></dt>
-<dd><p>Create a hypergraph from a Pandas Dataframe object using index to
-label vertices and Columns to label edges. The values of the dataframe
-are transformed into an incidence matrix. Note this is different than
-passing a dataframe directly into the Hypergraph constructor. The
-latter automatically generates a static hypergraph with edge and node
-labels given by the cell values.</p>
+<dt class="sig sig-object py" id="classes.Hypergraph.from_incidence_dataframe">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_incidence_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_only_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/classes/hypergraph.html#Hypergraph.from_incidence_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.Hypergraph.from_incidence_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Create a hypergraph from a Pandas Dataframe object, which has values equal
+to the incidence matrix of a hypergraph. Its index will identify the nodes
+and its columns will identify its edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5574,7 +5550,7 @@ labels given by the cell values.</p>
 <li><p><strong>fillna</strong> (<em>float</em><em>, </em><em>default = 0</em>) – a real value to place in empty cell, all-zero columns will not
 generate an edge.</p></li>
 <li><p><strong>transpose</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – option to transpose the dataframe, in this case df.Index will
-label the edges and df.columns will label the nodes, transpose is
+identify the edges and df.columns will identify the nodes, transpose is
 applied before transforms and key</p></li>
 <li><p><strong>transforms</strong> (<em>(</em><em>optional</em><em>) </em><em>list</em><em>, </em><em>default =</em><em> [</em><em>]</em>) – optional list of transformations to apply to each column,
 of the dataframe using pd.DataFrame.apply().
@@ -5582,8 +5558,10 @@ Transformations are applied in the order they are
 given (ex. abs). To apply transforms to rows or for additional
 functionality, consider transforming df using pandas.DataFrame
 methods prior to generating the hypergraph.</p></li>
-<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be applied to dataframe. Must be defined on
-numpy arrays.</p></li>
+<li><p><strong>key</strong> (<em>(</em><em>optional</em><em>) </em><em>function</em><em>, </em><em>default = None</em>) – boolean function to be applied to dataframe. will be applied to
+entire dataframe.</p></li>
+<li><p><strong>return_only_dataframe</strong> (<em>(</em><em>optional</em><em>) </em><em>bool</em><em>, </em><em>default = False</em>) – to use the incidence_dataframe with cell_properties or properties, set this
+to true and use it as the setsystem in the Hypergraph constructor.</p></li>
 </ul>
 </dd>
 </dl>
@@ -5596,24 +5574,6 @@ numpy arrays.</p></li>
 <dd class="field-odd"><p><a class="reference internal" href="#classes.Hypergraph" title="classes.Hypergraph">Hypergraph</a></p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The <cite>from_dataframe</cite> constructor does not generate empty edges.
-All-zero columns in df are removed and the names corresponding to these
-edges are discarded.
-Restrictions and data processing will occur in this order:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>column and row restrictions</p></li>
-<li><p>fillna replace NaNs in dataframe</p></li>
-<li><p>transpose the dataframe</p></li>
-<li><p>transforms in the order listed</p></li>
-<li><p>boolean key</p></li>
-</ol>
-</div></blockquote>
-<p>This method offers the above options for wrangling a dataframe into an
-incidence matrix for a hypergraph. For more flexibility we recommend
-you use the Pandas library to format the values of your dataframe
-before submitting it to this constructor.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -5628,10 +5588,10 @@ to 0’s.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>real valued array-like object</em><em>, </em><em>2 dimensions</em>) – representing a real valued matrix with rows corresponding to nodes
 and columns to edges</p></li>
-<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of node names must be the same length as M.shape[0].
+<li><p><strong>node_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default =None</em>) – List of node names must be the same length as M.shape[0].
 If None then the node names correspond to row indices with ‘v’
 prepended.</p></li>
-<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default=None</em>) – List of edge names must have the same length as M.shape[1].
+<li><p><strong>edge_names</strong> (<em>object</em><em>, </em><em>array-like</em><em>, </em><em>default =None</em>) – List of edge names must have the same length as M.shape[1].
 If None then the edge names correspond to column indices with ‘e’
 prepended.</p></li>
 <li><p><strong>name</strong> (<em>hashable</em>) – </p></li>
@@ -5701,6 +5661,22 @@ not available this is ignored.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.Hypergraph.incidence_dataframe">
+<span class="sig-name descname"><span class="pre">incidence_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sort_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/classes/hypergraph.html#Hypergraph.incidence_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.Hypergraph.incidence_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a pandas dataframe for hypergraph indexed by the nodes and
+with column headers given by the edge names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sort_rows</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – sort rows based on hashable node names</p></li>
+<li><p><strong>sort_columns</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – sort columns based on hashable edge names</p></li>
+<li><p><strong>cell_weights</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default =True</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="classes.Hypergraph.incidence_dict">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incidence_dict</span></span><a class="headerlink" href="#classes.Hypergraph.incidence_dict" title="Permalink to this definition"></a></dt>
@@ -5720,10 +5696,10 @@ edge</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If False all nonzero entries are 1.
+<li><p><strong>weights</strong> (<em>bool</em><em>, </em><em>default =False</em>) – If False all nonzero entries are 1.
 If True and self.static all nonzero entries are filled by
 self.edges.cell_weights dictionary values.</p></li>
-<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default False</em>) – If True return will include a dictionary of node uid : row number
+<li><p><strong>index</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True return will include a dictionary of node uid : row number
 and edge uid : column number</p></li>
 </ul>
 </dd>
@@ -5745,8 +5721,8 @@ and edge uid : column number</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: False</em>) – If True, will determine if s-edge-connected.
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True, will determine if s-edge-connected.
 For s=1 s-edge-connected is the same as s-connected.</p></li>
 </ul>
 </dd>
@@ -5768,17 +5744,6 @@ such that every consecutive pair of edges e(i),e(i+1)
 share at least s nodes.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="classes.Hypergraph.isstatic">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isstatic</span></span><a class="headerlink" href="#classes.Hypergraph.isstatic" title="Permalink to this definition"></a></dt>
-<dd><p>Checks whether nodes and edges are immutable</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="classes.Hypergraph.neighbors">
 <span class="sig-name descname"><span class="pre">neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hypernetx/classes/hypergraph.html#Hypergraph.neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.Hypergraph.neighbors" title="Permalink to this definition"></a></dt>
@@ -5787,7 +5752,7 @@ share at least s nodes.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node</strong> (<em>hashable</em><em> or </em><a class="reference internal" href="#classes.Entity" title="classes.Entity"><em>Entity</em></a>) – uid for a node in hypergraph or the node Entity</p></li>
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default : 1</em>) – Minimum number of edges shared by neighbors with node.</p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>list</em><em>, </em><em>optional</em><em>, </em><em>default = 1</em>) – Minimum number of edges shared by neighbors with node.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -5830,7 +5795,7 @@ share at least s nodes.</p>
 <dd><p>The number of edges in edgeset belonging to hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>edgeset</strong> (<em>an iterable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If None, then return the number of edges in hypergraph.</p>
+<dd class="field-odd"><p><strong>edgeset</strong> (<em>an iterable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – If None, then return the number of edges in hypergraph.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number_of_edges</strong></p>
@@ -5847,7 +5812,7 @@ share at least s nodes.</p>
 <dd><p>The number of nodes in nodeset belonging to hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nodeset</strong> (<em>an interable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – If None, then return the number of nodes in hypergraph.</p>
+<dd class="field-odd"><p><strong>nodeset</strong> (<em>an interable</em><em> of </em><em>Entities</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – If None, then return the number of nodes in hypergraph.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>number_of_nodes</strong></p>
@@ -5868,6 +5833,17 @@ share at least s nodes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="classes.Hypergraph.properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#classes.Hypergraph.properties" title="Permalink to this definition"></a></dt>
+<dd><p>Returns dataframe of edge and node properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5968,7 +5944,7 @@ the node is dropped from self.</p>
 <dd><p>Constructs clone of hypergraph with singleton edges removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>new hypergraph</strong></p>
@@ -6008,7 +5984,7 @@ to the nodes referenced by nodeset.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nodeset</strong> (<em>iterable</em><em> of </em><em>hashables</em>) – References a subset of elements of self.nodes</p></li>
-<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
+<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -6030,7 +6006,7 @@ Computed using s-linegraph generated either by the hypergraph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
 <li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>edges=False</em>) – Determines if edge or node components are desired. Returns
 subgraphs equal to the hypergraph restricted to each set of
 nodes(edges) in the s-connected components or s-edge-connected
@@ -6063,10 +6039,10 @@ or the <a class="reference internal" href="../glossary.html#term-s-connected-com
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 1</em>) – </p></li>
-<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – If True will return edge components, if False will return node
+<li><p><strong>s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 1</em>) – </p></li>
+<li><p><strong>edges</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – If True will return edge components, if False will return node
 components</p></li>
-<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default : False</em>) – </p></li>
+<li><p><strong>return_singletons</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -6185,7 +6161,7 @@ new hypergraph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – </p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – </p></li>
 <li><p><strong>collapse</strong> (<em>#</em>) – </p></li>
 <li><p><strong>link</strong> (<em>#     Should the hypergraph be collapsed? This would preserve a</em>) – </p></li>
 <li><p><strong>these</strong> (<em>#     between duplicate maximal sets. If False then only one of</em>) – </p></li>
@@ -6196,7 +6172,7 @@ new hypergraph.</p>
 <li><p><strong>edges</strong> (<em>#     representative</em><em> of </em><em>the set</em><em> of </em><em>equivalent</em>) – </p></li>
 <li><p><strong>False</strong> (<em>default is</em>) – </p></li>
 <li><p><strong>collapse_edges</strong><strong>)</strong><strong>.</strong> (<em>#</em><em>     (</em><em>see</em>) – </p></li>
-<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default: True</em>) – # If collapse=True then each toplex will be named by a tuple of
+<li><p><strong>return_counts</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default = True</em>) – # If collapse=True then each toplex will be named by a tuple of
 # the representative of the set of equivalent edges and their count</p></li>
 </ul>
 </dd>
