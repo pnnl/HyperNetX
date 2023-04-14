@@ -5,7 +5,7 @@ from __future__ import annotations
 import pickle
 import warnings
 from collections import OrderedDict, defaultdict
-from collections.abc import Sequence
+from collections.abc import Sequence, Iterable
 from typing import Optional, Any, TypeVar, Union
 
 import networkx as nx
@@ -256,18 +256,18 @@ class Hypergraph:
         ] = None,
         edge_col: str | int = 0,
         node_col: str | int = 1,
-        cell_weight_col: str | int = 'cell_weight',
+        cell_weight_col: Optional[ str | int ] = None,
         cell_weights: Sequence[float] | float = 1.0,
         cell_properties: Optional[Sequence[str | int] | Mapping[T,Mapping[T,Mapping[str,Any]]]] = None,
-        misc_cell_properties: str | int = 'misc_cell_properties',
+        misc_cell_properties_col: Optional[ str | int ] = None,
         aggregateby: str | dict[str,str] = 'first',
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
         properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]] | dict[T, dict[T, dict[Any, Any]]]] = None,
-        misc_properties: str | int = 'misc_properties',
-        edge_weight_prop: str | int = "weight",
-        node_weight_prop: str | int = "weight",
-        weight_prop: str | int = "weight",
+        misc_properties_col: Optional[ str | int ] = None,
+        edge_weight_prop_col: str | int = "weight",
+        node_weight_prop_col: str | int = "weight",
+        weight_prop_col: str | int = "weight",
         default_edge_weight: float = 1.0,
         default_node_weight: float = 1.0,
         default_weight: float = 1.0,
@@ -285,18 +285,20 @@ class Hypergraph:
 
         else:
 
+
             if isinstance(setsystem,np.ndarray):
                 entity = pd.DataFrame(setsystem, 
                     columns = [edge_col, node_col])
                 entity['cell_weights'] = cell_weights
-                cell_weights_col = 'cell_weights'
+                cell_weight_col = 'cell_weights'
 
-            elif isinstance(setsystem, Iterable):
+            elif isinstance(setsystem, list):
                 entity = pd.Series(setsystem).explode()
                 entity = pd.DataFrame(
                     {edge_col: entity.index.to_list(), node_col: entity.values}
                 )
-                entity[cell_weight_col] = cell_weights
+                entity['cell_weights'] = cell_weights
+                cell_weight_col = 'cell_weights'
 
             elif isinstance(setsystem, dict):
                 ## check if it is a dict of iterables or a nested dict. if the latter then pull
@@ -307,28 +309,31 @@ class Hypergraph:
                     {edge_col: entity.index.to_list(), node_col: entity.values}
                 )
 
-                if dict_depth(setsystem) >= 2:
+                if dict_depth(setsystem) > 2:
                     cell_props = dict(setsystem)
                     if isinstance(cell_properties,dict):
                         cell_properties = merge_nested_dicts(cell_props, cell_properties)
                     else:
                         cell_properties = cell_props
 
-                    default_wt = list(cell_weights)[0]
-                    entity[cell_weight_col] = [setsystem[row[0]].setdefault(row[1],{}).setdefault(
-                        cell_weight_col,default_wt) 
-                        for row in entity.itertuples() ]                                
+                    default_wt = cell_weights
+                    if cell_weight_col is not None:
+                        entity[cell_weight_col] = [setsystem[row[0]].setdefault(row[1],{}).setdefault(
+                            cell_weight_col,default_wt) 
+                            for row in entity.itertuples() ] 
+                else:
+                    entity['cell_weights'] = cell_weights                               
 
-            elif isinstance(setsystem,pdDataFrame):
+            elif isinstance(setsystem,pd.DataFrame):
                 entity = setsystem
-                default_wt = list(cell_weights)[0]
+                default_wt = cell_weights
                 if cell_weight_col in entity:
                     entity = entity.fillna({cell_weight_col: default_wt})
                 else:
                     entity[cell_weight_col] = cell_weights
 
             else:
-                raise HyperNetX('setsystem is not supported or is of the wrong format.')
+                raise HyperNetX('setsystem is not supported or is in the wrong format.')
 
 
             def props2dict(df = None):
@@ -346,35 +351,37 @@ class Hypergraph:
                     if edge_properties is not None:
                         edge_properties = props2dict(edge_properties)
                         for v in edge_properties.values():
-                            v.setdefault(edge_weight_prop,default_edge_weight)
+                            v.setdefault(edge_weight_prop_col,default_edge_weight)
                     if node_properties is not None:
                         node_properties = props2dict(node_properties)
                         for v in node_properties.values():
-                            v.setdefault(node_weight_prop,default_node_weight)
+                            v.setdefault(node_weight_prop_col,default_node_weight)
                     properties = {0 : edge_properties, 1 : node_properties}
             else:
                 if isinstance(properties, pd.DataFrame):
-                    if weight_prop in properties.columns:
-                        properties.fillna({weight_prop:default_weight},axis=1,inplace=True)
+                    if weight_prop_col in properties.columns:
+                        properties.fillna({weight_prop_col:default_weight},axis=1,inplace=True)
                     else:
-                        properties[weight_prop] = default_weight
+                        properties[weight_prop_col] = default_weight
                 elif isinstance(properties, dict):
                         for v in properties.values():
-                                v.setdefault(weight_prop,default_weight)
+                                v.setdefault(weight_prop_col,default_weight)
+
+
 
 
             E = EntitySet(
-                    entity = entity,
+                    entity = entity or None,
                     level1 = edge_col,
                     level2 = node_col,
-                    weights_col = cell_weight_col,
+                    weights_col = cell_weight_col or None,
                     weights = cell_weights,
-                    cell_properties=cell_properties,
-                    misc_cell_props_col=misc_cell_properties,
+                    cell_properties=cell_properties or None,
+                    misc_cell_props_col=misc_cell_properties_col or 'cell_properties',
                     aggregateby = aggregateby,
-                    properties = properties,
-                    misc_props_col = misc_properties,
-                    uid = name
+                    properties = properties or None,
+                    misc_props_col = misc_properties_col or 'properties',
+                    uid = name or None
                 )
 
             self._edges = E
