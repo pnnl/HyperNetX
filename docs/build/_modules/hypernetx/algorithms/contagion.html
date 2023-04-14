@@ -6,16 +6,16 @@
   <title>hypernetx.algorithms.contagion &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
         <script src="../../../_static/copybutton.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">hypernetx.algorithms.contagion</li>
       <li class="wy-breadcrumbs-aside">
@@ -102,7 +106,7 @@
     <span class="n">node_radius</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">fps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to animate discrete-time contagion models for hypergraphs. Currently only supports a circular layout.</span>
 
 <span class="sd">    Parameters</span>
@@ -203,7 +207,7 @@
 
 <span class="c1"># Canned Contagion Functions</span>
 <div class="viewcode-block" id="collective_contagion"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.collective_contagion">[docs]</a><span class="k">def</span> <span class="nf">collective_contagion</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The collective contagion mechanism described in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034</span>
@@ -246,7 +250,7 @@
 
 
 <div class="viewcode-block" id="individual_contagion"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.individual_contagion">[docs]</a><span class="k">def</span> <span class="nf">individual_contagion</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The individual contagion mechanism described in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034</span>
@@ -289,7 +293,7 @@
 
 
 <div class="viewcode-block" id="threshold"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.threshold">[docs]</a><span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The threshold contagion mechanism</span>
 
 <span class="sd">    Parameters</span>
@@ -334,7 +338,7 @@
 
 
 <div class="viewcode-block" id="majority_vote"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.majority_vote">[docs]</a><span class="k">def</span> <span class="nf">majority_vote</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The majority vote contagion mechanism. If a majority of neighbors are contagious,</span>
 <span class="sd">    it is possible for an individual to change their opinion. If opinions are divided equally,</span>
 <span class="sd">    choose randomly.</span>
@@ -390,7 +394,7 @@
 
 <span class="c1"># The ListDict class is copied from Joel Miller&#39;s Github repository Mathematics-of-Epidemics-on-Networks</span>
 <span class="k">class</span> <span class="nc">_ListDict_</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Gillespie algorithm will involve a step that samples a random element</span>
 <span class="sd">    from a set based on its weight.  This is awkward in Python.</span>
 
@@ -431,7 +435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_count</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">max_weight</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If not present, then inserts the thing (with weight if appropriate)</span>
 <span class="sd">        if already there, replaces the weight unless weight is 0</span>
 
@@ -448,7 +452,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">weight_increment</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">weight_increment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If not present, then inserts the thing (with weight if appropriate)</span>
 <span class="sd">        if already there, increments weight</span>
 
@@ -519,7 +523,7 @@
             <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">random_removal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;uses other class methods to choose and then remove a random node&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;uses other class methods to choose and then remove a random node&quot;&quot;&quot;</span>
         <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">choose_random</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">choice</span>
@@ -549,7 +553,7 @@
     <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A discrete-time SIR model for hypergraphs similar to the construction described in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034 and</span>
@@ -713,7 +717,7 @@
     <span class="n">return_full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A discrete-time SIS model for hypergraphs as implemented in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034 and</span>
@@ -861,7 +865,7 @@
     <span class="n">tmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Inf&quot;</span><span class="p">),</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A continuous-time SIR model for hypergraphs similar to the model in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034 and</span>
@@ -1062,7 +1066,7 @@
     <span class="n">sim_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A continuous-time SIS model for hypergraphs similar to the model in</span>
 <span class="sd">    &quot;The effect of heterogeneity on hypergraph contagion models&quot; by Landry and Restrepo</span>
 <span class="sd">    https://doi.org/10.1063/5.0020034 and</span>

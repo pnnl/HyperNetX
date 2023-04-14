@@ -132,18 +132,25 @@ class EntitySet(Entity):
     def __init__(
         self,
         entity: Optional[
-            Entity | pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
+            pd.DataFrame | np.ndarray | Mapping[T, Iterable[T]] | Iterable[Iterable[T]] | Mapping[T, Mapping[T,Mapping[T,Any]]]
         ] = None,
         data: Optional[np.ndarray] = None,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         level1: str | int = 0,
         level2: str | int = 1,
-        weights: Optional[Sequence[float] | str] = None,
+        weights_col: Optional[str | int] = None,
+        weights: Optional[Sequence[float] | float | int | str] = None,
         keep_weights: bool = True,
         cell_properties: Optional[
             str | Sequence[str] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
         misc_cell_props_col: str = "cell_properties",
+        uid: Optional[Hashable] = None,
+        aggregateby: Optional[str] = "sum",
+        properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
+        misc_props_col: str = "properties",
+        # level_col: str = "level",
+        # id_col: str = "id",
         **kwargs,
     ):
         self._misc_cell_props_col = misc_cell_props_col

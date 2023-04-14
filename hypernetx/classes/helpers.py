@@ -225,3 +225,29 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
         df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
 
     return df, weight_col
+
+# https://stackoverflow.com/a/7205107
+def merge_nested_dicts(a, b, path=None):
+    "merges b into a"
+    if path is None: path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge(a[key], b[key], path + [str(key)])
+            elif a[key] == b[key]:
+                pass # same leaf value
+            else:
+                warnings.warn(f'Conflict at {",".join(path + [str(key)])}, keys ignored')
+        else:
+            a[key] = b[key]
+    return a
+
+
+## https://www.geeksforgeeks.org/python-find-depth-of-a-dictionary/
+def dict_depth(dic, level = 1):
+    ### checks if there is a nested dict, quits once level > 2
+    if level>2:
+        return level
+    if not isinstance(dic, dict) or not dic:
+        return level
+    return max(dict_depth(dic[key], level + 1) for key in dic)

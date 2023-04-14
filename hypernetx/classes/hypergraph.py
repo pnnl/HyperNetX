@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import pickle
 import warnings
-from collections import OrderedDict
-from typing import Optional, Any
+from collections import OrderedDict, defaultdict
+from collections.abc import Sequence
+from typing import Optional, Any, TypeVar, Union
 
 import networkx as nx
 import numpy as np
@@ -16,15 +17,17 @@ from scipy.sparse import coo_matrix, csr_matrix
 from hypernetx.classes import Entity, EntitySet
 from hypernetx.exception import HyperNetXError, NWHY_WARNING
 from hypernetx.utils.decorators import warn_nwhy
+from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 
 __all__ = ["Hypergraph"]
 
+T = TypeVar("T", bound=Union[str, int])
 
 class Hypergraph:
     """
     ======================
     Hypergraphs in HNX 2.0
-    ======================
+    ======================  
 
     An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
     V = nodes (vertices) and E = (hyper)edges.
@@ -87,7 +90,6 @@ class Hypergraph:
         particular to only some of the incidence pairs may be placed in a single
         column of the dataframe. Representing the data above as a dataframe df:
 
-
         +-----------+-----------+-----------+-----------------------------------+
         |   col1    |   col2    |   w       |  col3                             |
         +-----------+-----------+-----------+-----------------------------------+
@@ -111,7 +113,8 @@ class Hypergraph:
     5.  **numpy.ndarray** For homogeneous datasets given in an ndarray a
         pandas dataframe is generated and column names are added from the
         column_names keyword argument. Cell properties containing multiple data
-        types can be added with a separate dataframe or dict. ::
+        types are added with a separate dataframe or dict and passed through the
+        cell_properties keyword. ::
 
         >>> arr = np.array([['e1','1'],['e1','2'],
         >>>                 ['e2','1'],['e2','2'],
@@ -124,13 +127,11 @@ class Hypergraph:
     Properties specific to a single edge or node are passed through the
     keywords: **edge_properties, node_properties, properties**.
     Properties may be passed as dataframes or dicts.
-    When a dataframe is passed to the edge_properties or node_properties,
-    the value assigned to edge_col and node_col is used to index the
-    properties. If a dataframe is passed as the properties keyword
-    argument, then the first column must contain identifiers. This is useful
-    if all nodes and edges have distinct uids or an object is used as both an
-    edge and a node in the hypergraph and uses the same set of properties in
-    both roles. Define the properties dataframe dfp:
+    The first column or index of the dataframe or keys of the dict keys 
+    correspond to the edge and/or node identifiers.
+    If identifiers are shared among edges and nodes, or are distinct
+    for edges and nodes, properties may be combined into a single
+    object and passed to the **properties** keyword. For example:
 
     +-----------+-----------+---------------------------------------+
     |   id      |   weight  |   properties                          |
@@ -146,61 +147,40 @@ class Hypergraph:
     |   ...     |   ...     |   {...}                               |
     +-----------+-----------+---------------------------------------+
 
-    OR with levels:
-
-    +-------+-----------+-----------+---------------------------------------+
-    | level |   id      |   weight  |   properties                          |
-    +-------+-----------+-----------+---------------------------------------+
-    |   1   |   1       |   1.2     |   {'color':'red'}                     |
-    +-------+-----------+-----------+---------------------------------------+
-    |   1   |   2       |   .003    |   {'name':'Fido','color':'brown'}     |
-    +-------+-----------+-----------+---------------------------------------+
-    |   1   |   3       |   1.0     |                                       |
-    +-------+-----------+-----------+---------------------------------------+
-    |   0   |   e1      |   5.0     |   {'type':'event'}                    |
-    +-------+-----------+-----------+---------------------------------------+
-    |   0   |   ...     |   ...     |   {...}                               |
-    +-------+-----------+-----------+---------------------------------------+
-
-    Then we pass it to the constructor as properties: ::
-
-        >>> H = hnx.Hypergraph(df,properties=dfp)
-
-    Similarly, a properties dictionary with the format: ::
+    A properties dictionary should have the format: ::
 
         dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
 
-    may be passed:
-    ::
-        >>> H = hnx.Hypergraph(d,properties=dp)
 
-
-    Weights
-    ~~~~~~~
+    Note
+    ---- 
     The default key for cell and object weights is "weight". The default value
     is 1. Weights may be assigned and/or a new default prescribed in the
     constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop,
     default_edge_weight,** and **default_node_weight**. See parameters below 
     for details.
+    
 
     Parameters
     ----------
+
     setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,
         pandas.DataFrame, numpy.ndarray, default = None
         See SetSystem above for additional setsystem requirements.
-    column_names : (optional) : Sequence[str], default = None
-        used to assign as column names when setsystem is an ndarray or empty,
-        otherwise ignored.
-    edge_col : (optional) int | str, default = 0
+
+    edge_col : (optional) str | int, default = 0
         column index (or name) in pandas.dataframe or numpy.ndarray,
         used for (hyper)edge ids
-    node_col : (optional) int | str, default = 1
+
+    node_col : (optional) str | int, default = 1
         column index (or name) in pandas.dataframe or numpy.ndarray,
         used for node ids
-    cell_weight_col : (optional) int | str, default = None
+
+    cell_weight_col : (optional) str | int, default = None
         column index (or name) in pandas.dataframe or numpy.ndarray used for
         referencing cell weights. For a dict of dicts references key in cell
         property dicts.
+
     cell_weights : (optional) Sequence[float,int] | int |  float , default = 1
         User specified cell_weights or default weight.
         Sequential values are only used if setsystem is a
@@ -210,15 +190,18 @@ class Hypergraph:
         If cell_weights is assigned a single value
         then it will be used as default when no cell_weight_col
         is given or if cell weight is missing from the cell_weight_col
-    cell_properties : (optional) Sequence[int | str] | Map[int | str , str],
+
+    cell_properties : (optional) Sequence[int | str] | Mapping[T,Mapping[T,Mapping[str,Any]]],
         default = None
         Indices or names of columns from set system to use as properties
         or a dict assigning cell_property to incidence pairs of edges and 
-        nodes. Will update properties if setsystem is dict of dicts.
-    misc_cell_properties : (optional) int | str, default = None
+        nodes. Will generate misc_cell_properties column if setsystem is dict of dicts.
+
+    misc_cell_properties : (optional) str | int, default = None
         Column index or name of dataframe corresponding to a column of variable
         length property dictionaries for the cell. Ignored for other setsystem
         types.
+
     aggregateby : (optional) str, dict optional, default = 'first'
         By default duplicate edge,node incidences will be dropped unless
         specified with `aggregateby`.
@@ -229,95 +212,178 @@ class Hypergraph:
         Properties associated with edge ids.
         First column of dataframe or keys of dict link to object ids in
         setsystem.
+
     node_properties : (optional) pd.DataFrame | dict, default = None
         Properties associated with node ids.
         First column of dataframe or keys of dict link to object ids in
         setsystem.
+
     properties : (optional) pd.DataFrame | dict, default = None
         Concatenation/union of edge_properties and node_properties.
         By default the object id is used and should be the first column of
         the dataframe, or key in the dict. If there are nodes and edges
-        with the same ids and different properties then the first column of 
-        the dataframe is binary indicator of 0 or edge_col_name and 1 or
-        node_col_name and the second column should reference object id. If a 
-        dict then nest the edge and node dictionaries with keys 
-        0/edge_col_name and 1/node_col_name. See notes for example.
+        with the same ids and different properties then use the edge_properties 
+        and node_properties keywords.
+
     misc_properties : (optional) int | str, default = None
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
+
     edge_weight_prop : (optional) str, default = None,
         Name of property in edge_properties to use for weight.
+
     node_weight_prop : (optional) str, default = None,
         Name of property in node_properties to use for weight.
+
     weight_prop : (optional) str, default = None
         Name of property in properties to use for 'weight'
+
     default_edge_weight : (optional) int | float, default = 1
         Used when edge weight property is missing or undefined.
+
     default_node_weight : (optional) int | float, default = 1
         Used when node weight property is missing or undefined
 
     """
 
+
+
     @warn_nwhy
     def __init__(
         self,
-        setsystem=None,
-        name=None,
-        static=False,
-        weights=None,
-        aggregateby="sum",
-        use_nwhy=False,
-        filepath=None,
+        setsystem: Optional[
+            pd.DataFrame | np.ndarray | Mapping[T, Iterable[T]] | Iterable[Iterable[T]] | Mapping[T,Mapping[T,Mapping[str,Any]]]
+        ] = None,
+        edge_col: str | int = 0,
+        node_col: str | int = 1,
+        cell_weight_col: str | int = 'cell_weight',
+        cell_weights: Sequence[float] | float = 1.0,
+        cell_properties: Optional[Sequence[str | int] | Mapping[T,Mapping[T,Mapping[str,Any]]]] = None,
+        misc_cell_properties: str | int = 'misc_cell_properties',
+        aggregateby: str | dict[str,str] = 'first',
+        edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
+        node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
+        properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]] | dict[T, dict[T, dict[Any, Any]]]] = None,
+        misc_properties: str | int = 'misc_properties',
+        edge_weight_prop: str | int = "weight",
+        node_weight_prop: str | int = "weight",
+        weight_prop: str | int = "weight",
+        default_edge_weight: float = 1.0,
+        default_node_weight: float = 1.0,
+        default_weight: float = 1.0,
+        name: Optional[str] = None,
         **kwargs,
     ):
-        self.filepath = filepath
-        if use_nwhy:
-            static = True
-        self.nwhy = False
 
         self.name = name or ""
 
-        self._static = static
+        ### cell properties 
 
         if setsystem is None:
             self._edges = EntitySet(data=np.empty((0, 2), dtype=int), uid="Edges")
             self._nodes = EntitySet(data=np.empty((0, 1), dtype=int), uid="Nodes")
-        else:
-            try:
-                kwargs.update(
-                    properties=setsystem.properties,
-                    misc_props_col=setsystem._misc_props_col,
-                    level_col=setsystem.properties.index.names[0],
-                    id_col=setsystem.properties.index.names[1],
-                )
-            except AttributeError:
-                pass
 
-            try:
-                kwargs.update(
-                    cell_properties=setsystem.cell_properties.reset_index(),
-                    misc_cell_props_col=setsystem._misc_cell_props_col,
+        else:
+
+            if isinstance(setsystem,np.ndarray):
+                entity = pd.DataFrame(setsystem, 
+                    columns = [edge_col, node_col])
+                entity['cell_weights'] = cell_weights
+                cell_weights_col = 'cell_weights'
+
+            elif isinstance(setsystem, Iterable):
+                entity = pd.Series(setsystem).explode()
+                entity = pd.DataFrame(
+                    {edge_col: entity.index.to_list(), node_col: entity.values}
                 )
-            except AttributeError:
-                pass
+                entity[cell_weight_col] = cell_weights
+
+            elif isinstance(setsystem, dict):
+                ## check if it is a dict of iterables or a nested dict. if the latter then pull
+                ## out the nested dicts as cell properties.
+
+                entity = pd.Series(setsystem).explode()
+                entity = pd.DataFrame(
+                    {edge_col: entity.index.to_list(), node_col: entity.values}
+                )
+
+                if dict_depth(setsystem) >= 2:
+                    cell_props = dict(setsystem)
+                    if isinstance(cell_properties,dict):
+                        cell_properties = merge_nested_dicts(cell_props, cell_properties)
+                    else:
+                        cell_properties = cell_props
+
+                    default_wt = list(cell_weights)[0]
+                    entity[cell_weight_col] = [setsystem[row[0]].setdefault(row[1],{}).setdefault(
+                        cell_weight_col,default_wt) 
+                        for row in entity.itertuples() ]                                
+
+            elif isinstance(setsystem,pdDataFrame):
+                entity = setsystem
+                default_wt = list(cell_weights)[0]
+                if cell_weight_col in entity:
+                    entity = entity.fillna({cell_weight_col: default_wt})
+                else:
+                    entity[cell_weight_col] = cell_weights
+
+            else:
+                raise HyperNetX('setsystem is not supported or is of the wrong format.')
+
+
+            def props2dict(df = None):
+                if df is None:
+                    return {}
+                elif isinstance(df, pd.DataFrame):
+                    return df.reset_index().set_index(df.columns[0]).to_dict(orient='index')
+                else :
+                    return dict(df)
+
+            ### edge and node properties this may fail later if not all nodes and edges are present
+ 
+            if properties is None:
+                if edge_properties is not None or node_properties is not None:
+                    if edge_properties is not None:
+                        edge_properties = props2dict(edge_properties)
+                        for v in edge_properties.values():
+                            v.setdefault(edge_weight_prop,default_edge_weight)
+                    if node_properties is not None:
+                        node_properties = props2dict(node_properties)
+                        for v in node_properties.values():
+                            v.setdefault(node_weight_prop,default_node_weight)
+                    properties = {0 : edge_properties, 1 : node_properties}
+            else:
+                if isinstance(properties, pd.DataFrame):
+                    if weight_prop in properties.columns:
+                        properties.fillna({weight_prop:default_weight},axis=1,inplace=True)
+                    else:
+                        properties[weight_prop] = default_weight
+                elif isinstance(properties, dict):
+                        for v in properties.values():
+                                v.setdefault(weight_prop,default_weight)
+
 
             E = EntitySet(
-                entity=setsystem,
-                weights=weights,
-                aggregateby=aggregateby,
-                static=static,
-                uid="Edges",
-                **kwargs,
-            )
+                    entity = entity,
+                    level1 = edge_col,
+                    level2 = node_col,
+                    weights_col = cell_weight_col,
+                    weights = cell_weights,
+                    cell_properties=cell_properties,
+                    misc_cell_props_col=misc_cell_properties,
+                    aggregateby = aggregateby,
+                    properties = properties,
+                    misc_props_col = misc_properties,
+                    uid = name
+                )
+
             self._edges = E
             self._nodes = E.restrict_to_levels(
-                [1], uid="Nodes", weights=False, aggregateby=None
-            )
+                [1], uid="Nodes", weights=False, aggregateby=None)
+
 
         self.state_dict = {}
         self.update_state()
-        if self.filepath is not None:
-            self.save_state(fpath=self.filepath)
 
     @property
     def edges(self):
