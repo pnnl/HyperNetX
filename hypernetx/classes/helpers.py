@@ -181,7 +181,7 @@ def create_properties(
     return pd.DataFrame({misc_col: data}, index=index).sort_index()
 
 
-def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
+def remove_row_duplicates(df, data_cols, weights=None, aggregateby=None):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
 
@@ -210,21 +210,25 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
         if df[col].dtype.name == "category":
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
+    df, weight_col = assign_weights(df, weights=weights) ### reconcile this with defaults weights.
 
     if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
+        return df, weights_col
+        
+    else:
+        aggby = {col:'first' for col in df.columns}
+        if isinstance(aggregateby, str):        
+            aggby[weights] = aggregateby
+        else:
+            aggby.update(aggregateby)
+        df = df.groupby(data_cols, as_index=False, sort=False).agg(aggby)
 
-    df, weight_col = assign_weights(df, weights=weights)
+        # for col in categories:
+        #     df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
 
-    if aggregateby:
-        df = df.groupby(data_cols, as_index=False, sort=False).agg(
-            {weight_col: aggregateby}
-        )
+        return df, weight_col
 
-    for col in categories:
-        df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
-
-    return df, weight_col
 
 # https://stackoverflow.com/a/7205107
 def merge_nested_dicts(a, b, path=None):
