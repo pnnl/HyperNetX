@@ -371,22 +371,22 @@ class Hypergraph:
 
 
             E = EntitySet(
-                    entity = entity or None,
+                    entity = entity,
                     level1 = edge_col,
                     level2 = node_col,
                     weights_col = cell_weight_col or None,
                     weights = cell_weights,
                     cell_properties=cell_properties or None,
                     misc_cell_props_col=misc_cell_properties_col or 'cell_properties',
-                    aggregateby = aggregateby,
+                    aggregateby = aggregateby or "sum",
                     properties = properties or None,
                     misc_props_col = misc_properties_col or 'properties',
-                    uid = name or None
+                    uid = 'Edges'
                 )
 
             self._edges = E
             self._nodes = E.restrict_to_levels(
-                [1], uid="Nodes", weights=False, aggregateby=None)
+                [1], uid = 'Nodes', weights=False)
 
 
         self.state_dict = {}
