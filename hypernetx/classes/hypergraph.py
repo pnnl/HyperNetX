@@ -313,14 +313,6 @@ class Hypergraph:
                     entity['cell_weights'] = cell_weights
                     cell_weight_col = 'cell_weights'
 
-                elif isinstance(setsystem, list):
-                    entity = pd.Series(setsystem).explode()
-                    entity = pd.DataFrame(
-                        {edge_col: entity.index.to_list(), node_col: entity.values}
-                    )
-                    entity['cell_weights'] = cell_weights
-                    cell_weight_col = 'cell_weights'
-
                 elif isinstance(setsystem, dict):
                     ## check if it is a dict of iterables or a nested dict. if the latter then pull
                     ## out the nested dicts as cell properties.
@@ -346,6 +338,15 @@ class Hypergraph:
                     else:
                         cell_weight_col = 'cell_weights'
                         entity['cell_weights'] = cell_weights                               
+
+                elif isinstance(setsystem, list):
+                    entity = pd.Series(setsystem).explode()
+                    entity = pd.DataFrame(
+                        {edge_col: entity.index.to_list(), node_col: entity.values}
+                    )
+                    entity['cell_weights'] = cell_weights
+                    cell_weight_col = 'cell_weights'
+
 
                 else:
                     raise HyperNetX('setsystem is not supported or is in the wrong format.')
