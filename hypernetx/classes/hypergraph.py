@@ -1265,7 +1265,7 @@ class Hypergraph:
         return Hypergraph(df,
                 edge_col = edge,
                 node_col = node,
-                cell_weight_col = self._cell_weight_col,
+                cell_weight_col = self.edges._cell_weight_col,
                 cell_properties = cols or None,
                 edge_properties = dfp.loc[0],
                 node_properties = dfp.loc[1],
