@@ -11,6 +11,7 @@ from ast import literal_eval
 from hypernetx.classes.entity import *
 
 
+
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
 
@@ -82,7 +83,7 @@ def encode(data: pd.DataFrame):
     return encoded_array
 
 
-def assign_weights(df, weights=None, weight_col="cell_weights"):
+def assign_weights(df, weights=1, weight_col="cell_weights"):
     """
     Parameters
     ----------
@@ -103,14 +104,18 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
         The original DataFrame with a new column added if needed
     weight_col : str
         Name of the column assigned to hold weights
-    """
-    if isinstance(weights, (list, np.ndarray)) and len(weights) == len(df):
-        df[weight_col] = weights
-    elif isinstance(weights, Hashable) and weights in df:
-        weight_col = weights
-    else:
-        df[weight_col] = np.ones(len(df), dtype=int)
 
+    Note
+    ----
+    TODO: move logic for default weights inside this method
+    """
+
+    if isinstance(weights, (list, np.ndarray)) :
+        df[weight_col] = weights
+    else:
+        if not weight_col in df:
+            df[weight_col] = weights
+    # import ipdb; ipdb.set_trace()
     return df, weight_col
 
 
@@ -181,7 +186,11 @@ def create_properties(
     return pd.DataFrame({misc_col: data}, index=index).sort_index()
 
 
-def remove_row_duplicates(df, data_cols, weights=None, aggregateby=None):
+def remove_row_duplicates(df, 
+                          data_cols, 
+                          weights=1, 
+                          weight_col='cell_weights',
+                          aggregateby=None):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
 
@@ -210,22 +219,24 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby=None):
         if df[col].dtype.name == "category":
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
-    df, weight_col = assign_weights(df, weights=weights) ### reconcile this with defaults weights.
-
+    df, weight_col = assign_weights(df, 
+                                    weights=weights,
+                                    weight_col=weight_col) ### reconcile this with defaults weights.
     if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
-        return df, weights_col
+        return df, weight_col
         
     else:
         aggby = {col:'first' for col in df.columns}
         if isinstance(aggregateby, str):        
-            aggby[weights] = aggregateby
+            aggby[weight_col] = aggregateby
         else:
             aggby.update(aggregateby)
+        # import ipdb; ipdb.set_trace(context=8)
         df = df.groupby(data_cols, as_index=False, sort=False).agg(aggby)
 
-        # for col in categories:
-        #     df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        for col in categories:
+            df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
 
         return df, weight_col
 

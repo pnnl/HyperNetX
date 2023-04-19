@@ -138,11 +138,11 @@ class EntitySet(Entity):
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         level1: str | int = 0,
         level2: str | int = 1,
-        weights_col: Optional[str | int] = None,
-        weights: Optional[Sequence[float] | float | int | str] = None,
+        weight_col: str | int = 'cell_weights',
+        weights: Sequence[float] | float | int | str = 1,
         keep_weights: bool = True,
         cell_properties: Optional[
-            str | Sequence[str] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
+             Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
         misc_cell_props_col: str = "cell_properties",
         uid: Optional[Hashable] = None,
@@ -169,8 +169,8 @@ class EntitySet(Entity):
             _log.info(f"Processing parameter of 'entity' of type {type(entity)}...")
             # metadata columns are not considered levels of data,
             # remove them before indexing by level
-            if isinstance(cell_properties, str):
-                cell_properties = [cell_properties]
+            # if isinstance(cell_properties, str):
+            #     cell_properties = [cell_properties]
 
             prop_cols = []
             if isinstance(cell_properties, Sequence):
@@ -179,29 +179,37 @@ class EntitySet(Entity):
                         _log.debug(f"Adding column to prop_cols: {col}")
                         prop_cols.append(col)
 
-            meta_cols = prop_cols
-            if weights in entity:
-                meta_cols.append(weights)
-            _log.debug(f"meta_cols: {meta_cols}")
+            # meta_cols = prop_cols
+            # if weights in entity and weights not in meta_cols:
+            #     meta_cols.append(weights)
+            # _log.debug(f"meta_cols: {meta_cols}")
+            if weight_col in prop_cols:
+                prop_cols.remove(weight_col)
+            if not weight_col in entity:
+                entity[weight_col] = weights
 
             # if both levels are column names, no need to index by level
-            if isinstance(level1, str) and isinstance(level2, str):
-                columns = [level1, level2]
+            if isinstance(level1, int):
+                level1 = entity.columns[level1]
+            if isinstance(level2, int):
+                level2 = entity.columns[level2]
+            # if isinstance(level1, str) and isinstance(level2, str):
+            columns = [level1, level2,weight_col] + prop_cols
             # if one or both of the levels are given by index, get column name
-            else:
-                all_columns = entity.columns.drop(meta_cols)
-                columns = [
-                    all_columns[lev] if isinstance(lev, int) else lev
-                    for lev in (level1, level2)
-                ]
+            # else:
+            #     all_columns = entity.columns.drop(meta_cols)
+            #     columns = [
+            #         all_columns[lev] if isinstance(lev, int) else lev
+            #         for lev in (level1, level2)
+            #     ]
 
             # if there is a column for cell properties, convert to separate DataFrame
-            if prop_cols:
-                cell_properties = entity[[*columns, *prop_cols]]
+            # if len(prop_cols) > 0:
+            #     cell_properties = entity[[*columns, *prop_cols]]
 
             # if there is a column for weights, preserve it
-            if weights in entity:
-                columns.append(weights)
+            # if weights in entity and weights not in prop_cols:
+            #     columns.append(weights)
             _log.debug(f"columns: {columns}")
 
             # pass level1, level2, and weights (optional) to Entity constructor
@@ -226,19 +234,26 @@ class EntitySet(Entity):
         _log.debug(f"data: {pformat(data)}")
         super().__init__(
             entity=entity,
+            data_cols = [level1,level2],
             data=data,
             labels=labels,
+            uid=uid,
+            weight_col=weight_col,
             weights=weights,
+            aggregateby=aggregateby,
+            properties=properties,
+            misc_props_col=misc_props_col,
             **kwargs,
         )
 
         # if underlying data is 2D (system of sets), create and assign cell properties
         if self.dimsize == 2:
-            self._cell_properties = pd.DataFrame(
-                columns=[*self._data_cols, self._misc_cell_props_col]
-            )
+            # self._cell_properties = pd.DataFrame(
+            #     columns=[*self._data_cols, self._misc_cell_props_col]
+            # )
+            self._cell_properties = pd.DataFrame(self._dataframe)
             self._cell_properties.set_index(self._data_cols, inplace=True)
-            if cell_properties is not None:
+            if isinstance(cell_properties,(dict,pd.DataFrame)):
                 self.assign_cell_properties(cell_properties)
         else:
             self._cell_properties = None

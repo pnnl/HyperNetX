@@ -202,7 +202,7 @@ class Hypergraph:
         length property dictionaries for the cell. Ignored for other setsystem
         types.
 
-    aggregateby : (optional) str, dict optional, default = 'first'
+    aggregateby : (optional) str, dict, default = 'first'
         By default duplicate edge,node incidences will be dropped unless
         specified with `aggregateby`.
         See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for
@@ -284,56 +284,71 @@ class Hypergraph:
             self._nodes = EntitySet(data=np.empty((0, 1), dtype=int), uid="Nodes")
 
         else:
-
-
-            if isinstance(setsystem,np.ndarray):
-                entity = pd.DataFrame(setsystem, 
-                    columns = [edge_col, node_col])
-                entity['cell_weights'] = cell_weights
-                cell_weight_col = 'cell_weights'
-
-            elif isinstance(setsystem, list):
-                entity = pd.Series(setsystem).explode()
-                entity = pd.DataFrame(
-                    {edge_col: entity.index.to_list(), node_col: entity.values}
-                )
-                entity['cell_weights'] = cell_weights
-                cell_weight_col = 'cell_weights'
-
-            elif isinstance(setsystem, dict):
-                ## check if it is a dict of iterables or a nested dict. if the latter then pull
-                ## out the nested dicts as cell properties.
-
-                entity = pd.Series(setsystem).explode()
-                entity = pd.DataFrame(
-                    {edge_col: entity.index.to_list(), node_col: entity.values}
-                )
-
-                if dict_depth(setsystem) > 2:
-                    cell_props = dict(setsystem)
-                    if isinstance(cell_properties,dict):
-                        cell_properties = merge_nested_dicts(cell_props, cell_properties)
-                    else:
-                        cell_properties = cell_props
-
-                    default_wt = cell_weights
-                    if cell_weight_col is not None:
-                        entity[cell_weight_col] = [setsystem[row[0]].setdefault(row[1],{}).setdefault(
-                            cell_weight_col,default_wt) 
-                            for row in entity.itertuples() ] 
-                else:
-                    entity['cell_weights'] = cell_weights                               
-
-            elif isinstance(setsystem,pd.DataFrame):
-                entity = setsystem
+            if isinstance(setsystem,pd.DataFrame):
+                if isinstance(edge_col,int):
+                    edge_col = setsystem.columns[edge_col]
+                    if isinstance(edge_col,int):
+                        setsystem = setsystem.rename(columns={edge_col:'edges'})
+                        edge_col = 'edges'                
+                if isinstance(node_col,int):
+                    node_col = setsystem.columns[node_col]
+                    if isinstance(node_col,int):
+                        setsystem = setsystem.rename(columns={node_col:'nodes'})
+                        node_col = 'nodes'                
+                entity = setsystem.copy()
                 default_wt = cell_weights
-                if cell_weight_col in entity:
-                    entity = entity.fillna({cell_weight_col: default_wt})
-                else:
-                    entity[cell_weight_col] = cell_weights
-
+                if cell_weight_col is not None:
+                    if cell_weight_col in entity:
+                        entity = entity.fillna({cell_weight_col: default_wt})
+                    else:
+                        entity[cell_weight_col] = cell_weights
             else:
-                raise HyperNetX('setsystem is not supported or is in the wrong format.')
+                edge_col = 'edges'
+                node_col = 'nodes'
+                if isinstance(setsystem,np.ndarray):
+                    if setsystem.shape[1] != 2:
+                        raise HNXError('Numpy array must have exactly 2 columns.')
+                    entity = pd.DataFrame(setsystem, 
+                        columns = [edge_col, node_col])
+                    entity['cell_weights'] = cell_weights
+                    cell_weight_col = 'cell_weights'
+
+                elif isinstance(setsystem, list):
+                    entity = pd.Series(setsystem).explode()
+                    entity = pd.DataFrame(
+                        {edge_col: entity.index.to_list(), node_col: entity.values}
+                    )
+                    entity['cell_weights'] = cell_weights
+                    cell_weight_col = 'cell_weights'
+
+                elif isinstance(setsystem, dict):
+                    ## check if it is a dict of iterables or a nested dict. if the latter then pull
+                    ## out the nested dicts as cell properties.
+
+                    entity = pd.Series(setsystem).explode()
+                    entity = pd.DataFrame(
+                        {edge_col: entity.index.to_list(), node_col: entity.values}
+                    )
+                    
+
+                    if dict_depth(setsystem) > 2:
+                        cell_props = dict(setsystem)
+                        if isinstance(cell_properties,dict):
+                            cell_properties = merge_nested_dicts(cell_props, cell_properties)
+                        else:
+                            cell_properties = cell_props
+
+                        default_wt = cell_weights
+                        if cell_weight_col is not None:
+                            entity[cell_weight_col] = [setsystem[row[0]].setdefault(row[1],{}).setdefault(
+                                cell_weight_col,default_wt) 
+                                for row in entity.itertuples() ] 
+                    else:
+                        cell_weight_col = 'cell_weights'
+                        entity['cell_weights'] = cell_weights                               
+
+                else:
+                    raise HyperNetX('setsystem is not supported or is in the wrong format.')
 
 
             def props2dict(df = None):
@@ -360,7 +375,7 @@ class Hypergraph:
             else:
                 if isinstance(properties, pd.DataFrame):
                     if weight_prop_col in properties.columns:
-                        properties.fillna({weight_prop_col:default_weight},axis=1,inplace=True)
+                        properties = properties.fillna({weight_prop_col:default_weight})
                     else:
                         properties[weight_prop_col] = default_weight
                 elif isinstance(properties, dict):
@@ -368,26 +383,22 @@ class Hypergraph:
                                 v.setdefault(weight_prop_col,default_weight)
 
 
-
-
             E = EntitySet(
                     entity = entity,
                     level1 = edge_col,
                     level2 = node_col,
-                    weights_col = cell_weight_col or None,
+                    weight_col = cell_weight_col or None,
                     weights = cell_weights,
-                    cell_properties=cell_properties or None,
+                    cell_properties=cell_properties,
                     misc_cell_props_col=misc_cell_properties_col or 'cell_properties',
                     aggregateby = aggregateby or "sum",
-                    properties = properties or None,
+                    properties = properties,
                     misc_props_col = misc_properties_col or 'properties',
                     uid = 'Edges'
                 )
 
             self._edges = E
-            self._nodes = E.restrict_to_levels(
-                [1], uid = 'Nodes', weights=False)
-
+            self._nodes = E.restrict_to_levels([1] , uid = 'Nodes')
 
         self.state_dict = {}
         self.update_state()
@@ -422,7 +433,7 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        return self._edges._dataframe
+        return self._edges.cell_properties
 
     @property
     def properties(self):
@@ -1242,13 +1253,24 @@ class Hypergraph:
         -------
         : hypergraph
         """
-        dfp = pd.DataFrame(self.properties.reset_index())
-        dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
-        df = pd.DataFrame(self.dataframe)
-        df = df[[df.columns[1], df.columns[0]] + list(df.columns[2:])].rename(
-            columns={1: 0, 0: 1}
-        )
-        return Hypergraph(df, properties=dfp, name=name)
+        dfp = pd.DataFrame(self.edges.properties).reset_index()
+        dfp.level = dfp.level.apply(lambda x : 1*(x==0))
+        dfp = dfp.set_index(['level','id'])   
+
+        df = pd.DataFrame(self.dataframe).reset_index()
+        edge,node = df.columns[0],df.columns[1]
+        df = df.rename(columns={edge: node, node: edge})
+        cols = list(df.columns)[2:]
+        df = df[[edge,node] + list(cols)]
+        return Hypergraph(df,
+                edge_col = edge,
+                node_col = node,
+                cell_weight_col = self._cell_weight_col,
+                cell_properties = cols or None,
+                edge_properties = dfp.loc[0],
+                node_properties = dfp.loc[1],
+                name = name
+                  )
 
     def collapse_edges(
         self,

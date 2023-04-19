@@ -115,21 +115,21 @@ class Entity:
         entity: Optional[
             pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
         ] = None,
+        data_cols:Sequence[T] = [0,1],
         data: Optional[np.ndarray] = None,
         static: bool = False,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         uid: Optional[Hashable] = None,
-        weights_col: Optional[str | int] = None,
-        weights: Optional[Sequence[float] | float] = None,
-        aggregateby: Optional[str] = "sum",
+        weight_col: Optional[str | int] = 'cell_weights',
+        weights: Optional[Sequence[float] | float | int | str] = 1,
+        aggregateby: Optional[str | dict] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
         misc_props_col: str = "properties",
         level_col: str = "level",
         id_col: str = "id",
     ):
-
         # set unique identifier
-        self._uid = uid
+        self._uid = uid or None
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated
@@ -178,11 +178,18 @@ class Entity:
 
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
-            self._dataframe, weights=weights
+            self._dataframe, weights=weights, weight_col=weight_col
         )
+        # import ipdb; ipdb.set_trace()
         # store a list of columns that hold entity data (not properties or
         # weights)
-        self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+        # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+        self._data_cols = []
+        for col in data_cols:
+            if isinstance(col, int):
+                self._data_cols.append(self._dataframe.columns[col])
+            else:
+                self._data_cols.append(col)
 
         # each entity data column represents one dimension of the data
         # (data updates can only add or remove rows, so this isn't stored in
@@ -190,10 +197,11 @@ class Entity:
         self._dimsize = len(self._data_cols)
 
         # remove duplicate rows and aggregate cell weights as needed
+        # import ipdb; ipdb.set_trace()
         self._dataframe, _ = remove_row_duplicates(
             self._dataframe,
             self._data_cols,
-            weights=self._cell_weight_col,
+            weight_col=self._cell_weight_col,
             aggregateby=aggregateby,
         )
 
