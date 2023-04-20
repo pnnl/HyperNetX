@@ -6,16 +6,16 @@
   <title>algorithms.homology_mod2 &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
         <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">algorithms.homology_mod2</li>
       <li class="wy-breadcrumbs-aside">
@@ -122,7 +126,7 @@
 
 
 <div class="viewcode-block" id="kchainbasis"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.kchainbasis">[docs]</a><span class="k">def</span> <span class="nf">kchainbasis</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the set of k dimensional cells in the abstract simplicial</span>
 <span class="sd">    complex associated with the hypergraph.</span>
 
@@ -161,7 +165,7 @@
 
 
 <div class="viewcode-block" id="bkMatrix"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.bkMatrix">[docs]</a><span class="k">def</span> <span class="nf">bkMatrix</span><span class="p">(</span><span class="n">km1basis</span><span class="p">,</span> <span class="n">kbasis</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the boundary map from $C_{k-1}$-basis to $C_k$ basis with</span>
 <span class="sd">    respect to $Z_2$</span>
 
@@ -189,7 +193,7 @@
 
 
 <span class="k">def</span> <span class="nf">_rswap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swaps ith and jth row of copy of S</span>
 
 <span class="sd">    Parameters</span>
@@ -210,7 +214,7 @@
 
 
 <span class="k">def</span> <span class="nf">_cswap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swaps ith and jth column of copy of S</span>
 
 <span class="sd">    Parameters</span>
@@ -229,7 +233,7 @@
 
 
 <div class="viewcode-block" id="swap_rows"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.swap_rows">[docs]</a><span class="k">def</span> <span class="nf">swap_rows</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swaps ith and jth row of each matrix in args</span>
 <span class="sd">    Returns a list of new matrices</span>
 
@@ -251,7 +255,7 @@
 
 
 <div class="viewcode-block" id="swap_columns"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.swap_columns">[docs]</a><span class="k">def</span> <span class="nf">swap_columns</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swaps ith and jth column of each matrix in args</span>
 <span class="sd">    Returns a list of new matrices</span>
 
@@ -273,7 +277,7 @@
 
 
 <div class="viewcode-block" id="add_to_row"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.add_to_row">[docs]</a><span class="k">def</span> <span class="nf">add_to_row</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Replaces row i with logical xor between row i and j</span>
 
 <span class="sd">    Parameters</span>
@@ -294,7 +298,7 @@
 
 
 <div class="viewcode-block" id="add_to_column"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.add_to_column">[docs]</a><span class="k">def</span> <span class="nf">add_to_column</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Replaces column i (of M) with logical xor between column i and j</span>
 
 <span class="sd">    Parameters</span>
@@ -315,7 +319,7 @@
 
 
 <div class="viewcode-block" id="logical_dot"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.logical_dot">[docs]</a><span class="k">def</span> <span class="nf">logical_dot</span><span class="p">(</span><span class="n">ar1</span><span class="p">,</span> <span class="n">ar2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the boolean equivalent of the dot product mod 2 on two 1-d arrays of</span>
 <span class="sd">    the same length.</span>
 
@@ -343,7 +347,7 @@
 
 
 <div class="viewcode-block" id="logical_matmul"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.logical_matmul">[docs]</a><span class="k">def</span> <span class="nf">logical_matmul</span><span class="p">(</span><span class="n">mat1</span><span class="p">,</span> <span class="n">mat2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the boolean equivalent of matrix multiplication mod 2 on two</span>
 <span class="sd">    binary arrays stored as type boolean</span>
 
@@ -385,7 +389,7 @@
 
 
 <div class="viewcode-block" id="matmulreduce"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.matmulreduce">[docs]</a><span class="k">def</span> <span class="nf">matmulreduce</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively applies a &#39;logical multiplication&#39; to a list of boolean arrays.</span>
 
 <span class="sd">    For arr = [arr[0],arr[1],arr[2]...arr[n]] returns product arr[0]arr[1]...arr[n]</span>
@@ -414,7 +418,7 @@
 
 
 <div class="viewcode-block" id="logical_matadd"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.logical_matadd">[docs]</a><span class="k">def</span> <span class="nf">logical_matadd</span><span class="p">(</span><span class="n">mat1</span><span class="p">,</span> <span class="n">mat2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the boolean equivalent of matrix addition mod 2 on two</span>
 <span class="sd">    binary arrays stored as type boolean</span>
 
@@ -475,7 +479,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_next_pivot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determines the first r,c indices in the submatrix of M starting</span>
 <span class="sd">    with row s1 and column s2 index (row,col) that is nonzero,</span>
 <span class="sd">    if it exists.</span>
@@ -510,7 +514,7 @@
 
 
 <div class="viewcode-block" id="smith_normal_form_mod2"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.smith_normal_form_mod2">[docs]</a><span class="k">def</span> <span class="nf">smith_normal_form_mod2</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the invertible transformation matrices needed to compute the</span>
 <span class="sd">    Smith Normal Form of M modulo 2</span>
 
@@ -572,7 +576,7 @@
 
 
 <div class="viewcode-block" id="reduced_row_echelon_form_mod2"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.reduced_row_echelon_form_mod2">[docs]</a><span class="k">def</span> <span class="nf">reduced_row_echelon_form_mod2</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the invertible transformation matrices needed to compute</span>
 <span class="sd">    the reduced row echelon form of M modulo 2</span>
 
@@ -622,7 +626,7 @@
 
 
 <div class="viewcode-block" id="boundary_group"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.boundary_group">[docs]</a><span class="k">def</span> <span class="nf">boundary_group</span><span class="p">(</span><span class="n">image_basis</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a csr_matrix with rows corresponding to the elements of the</span>
 <span class="sd">    group  generated by image basis over $\mathbb{Z}_2$</span>
 
@@ -648,7 +652,7 @@
 
 
 <span class="k">def</span> <span class="nf">_compute_matrices_for_snf</span><span class="p">(</span><span class="n">bd</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper method for smith normal form decomposition for boundary maps</span>
 <span class="sd">    associated to chain complex</span>
 
@@ -671,7 +675,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_krange</span><span class="p">(</span><span class="n">max_dim</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper method to compute range of appropriate k dimensions for homology</span>
 <span class="sd">    computations given k and the max dimension of a simplicial complex</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -715,7 +719,7 @@
 
 
 <div class="viewcode-block" id="chain_complex"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.chain_complex">[docs]</a><span class="k">def</span> <span class="nf">chain_complex</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the k-chains and k-boundary maps required to compute homology</span>
 <span class="sd">    for all values in k</span>
 
@@ -751,7 +755,7 @@
 
 
 <div class="viewcode-block" id="betti"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.betti">[docs]</a><span class="k">def</span> <span class="nf">betti</span><span class="p">(</span><span class="n">bd</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the kth-betti numbers for a chain complex with boundary</span>
 <span class="sd">    matrices given by bd</span>
 
@@ -792,7 +796,7 @@
 
 
 <div class="viewcode-block" id="betti_numbers"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.betti_numbers">[docs]</a><span class="k">def</span> <span class="nf">betti_numbers</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the kth betti numbers for the simplicial homology of the ASC</span>
 <span class="sd">    associated to h</span>
 
@@ -815,7 +819,7 @@
 
 
 <div class="viewcode-block" id="homology_basis"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.homology_basis">[docs]</a><span class="k">def</span> <span class="nf">homology_basis</span><span class="p">(</span><span class="n">bd</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a basis for the kth-simplicial homology group, $H_k$, defined by a</span>
 <span class="sd">    chain complex $C$ with boundary maps given by bd $= \{k:\partial_k \}$</span>
 
@@ -885,7 +889,7 @@
 
 
 <div class="viewcode-block" id="hypergraph_homology_basis"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.hypergraph_homology_basis">[docs]</a><span class="k">def</span> <span class="nf">hypergraph_homology_basis</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shortest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpreted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the kth-homology groups mod 2 for the ASC</span>
 <span class="sd">    associated with the hypergraph h for k in krange inclusive</span>
 
@@ -940,7 +944,7 @@
 
 
 <div class="viewcode-block" id="interpret"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.homology_mod2.interpret">[docs]</a><span class="k">def</span> <span class="nf">interpret</span><span class="p">(</span><span class="n">Ck</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the data as represented in Ck associated with the arr</span>
 
 <span class="sd">    Parameters</span>
