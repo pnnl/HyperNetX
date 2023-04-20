@@ -6,16 +6,16 @@
   <title>hypernetx.algorithms.hypergraph_modularity &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
         <script src="../../../_static/copybutton.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">hypernetx.algorithms.hypergraph_modularity</li>
       <li class="wy-breadcrumbs-aside">
@@ -111,7 +115,7 @@
 
 
 <div class="viewcode-block" id="dict2part"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.dict2part">[docs]</a><span class="k">def</span> <span class="nf">dict2part</span><span class="p">(</span><span class="n">D</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a dictionary mapping the part for each vertex, return a partition as a list of sets; inverse function to part2dict</span>
 
 <span class="sd">    Parameters</span>
@@ -134,7 +138,7 @@
 
 
 <div class="viewcode-block" id="part2dict"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.part2dict">[docs]</a><span class="k">def</span> <span class="nf">part2dict</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a partition (list of sets), returns a dictionary mapping the part for each vertex; inverse function</span>
 <span class="sd">    to dict2part</span>
 
@@ -158,7 +162,7 @@
 
 
 <div class="viewcode-block" id="precompute_attributes"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.precompute_attributes">[docs]</a><span class="k">def</span> <span class="nf">precompute_attributes</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Precompute some values on hypergraph HG for faster computing of hypergraph modularity.</span>
 <span class="sd">    This needs to be run before calling either modularity() or last_step().</span>
 
@@ -215,7 +219,7 @@
 
 
 <div class="viewcode-block" id="linear"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.linear">[docs]</a><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
 <span class="sd">    This is the default choice for modularity() and last_step() functions.</span>
 
@@ -238,7 +242,7 @@
 
 
 <div class="viewcode-block" id="majority"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.majority">[docs]</a><span class="k">def</span> <span class="nf">majority</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
 <span class="sd">    This corresponds to the majority rule [3]_</span>
 
@@ -262,7 +266,7 @@
 
 
 <div class="viewcode-block" id="strict"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.strict">[docs]</a><span class="k">def</span> <span class="nf">strict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.</span>
 <span class="sd">    This corresponds to the strict rule [3]_</span>
 
@@ -285,7 +289,7 @@
 
 
 <span class="k">def</span> <span class="nf">_compute_partition_probas</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute vol(A_i)/vol(V) for each part A_i in A (list of sets)</span>
 
 <span class="sd">    Parameters</span>
@@ -309,7 +313,7 @@
 
 
 <span class="k">def</span> <span class="nf">_degree_tax</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">Pr</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the expected fraction of edges falling in</span>
 <span class="sd">    the partition as per [2]_</span>
 
@@ -340,7 +344,7 @@
 
 
 <span class="k">def</span> <span class="nf">_edge_contribution</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Edge contribution from hypergraph with respect</span>
 <span class="sd">    to partion A.</span>
 
@@ -374,7 +378,7 @@
 
 
 <div class="viewcode-block" id="modularity"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.modularity">[docs]</a><span class="k">def</span> <span class="nf">modularity</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes modularity of hypergraph HG with respect to partition A.</span>
 
 <span class="sd">    Parameters</span>
@@ -404,7 +408,7 @@
 
 
 <div class="viewcode-block" id="two_section"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.two_section">[docs]</a><span class="k">def</span> <span class="nf">two_section</span><span class="p">(</span><span class="n">HG</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a random walk based [1]_ 2-section igraph Graph with transition weights defined by the</span>
 <span class="sd">    weights of the hyperedges.</span>
 
@@ -435,7 +439,7 @@
 
 
 <div class="viewcode-block" id="kumar"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.kumar">[docs]</a><span class="k">def</span> <span class="nf">kumar</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a partition of the vertices in hypergraph HG as per Kumar&#39;s algorithm [1]_</span>
 
 <span class="sd">    Parameters</span>
@@ -499,7 +503,7 @@
 
 
 <span class="k">def</span> <span class="nf">_delta_ec</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes change in edge contribution --</span>
 <span class="sd">    partition P, node v going from P[a] to P[b]</span>
 
@@ -538,7 +542,7 @@
 
 
 <span class="k">def</span> <span class="nf">_bin_ppmf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    exponential part of the binomial pmf</span>
 
 <span class="sd">    Parameters</span>
@@ -559,7 +563,7 @@
 
 
 <span class="k">def</span> <span class="nf">_delta_dt</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">wdc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute change in degree tax --</span>
 <span class="sd">    partition P (list), node v going from P[a] to P[b]</span>
 
@@ -611,7 +615,7 @@
 
 
 <div class="viewcode-block" id="last_step"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.last_step">[docs]</a><span class="k">def</span> <span class="nf">last_step</span><span class="p">(</span><span class="n">HG</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">wdc</span><span class="o">=</span><span class="n">linear</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm [2]_</span>
 
 <span class="sd">    Note</span>

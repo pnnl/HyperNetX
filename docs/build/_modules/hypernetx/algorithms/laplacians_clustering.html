@@ -6,16 +6,16 @@
   <title>hypernetx.algorithms.laplacians_clustering &mdash; HyperNetX 1.2.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
         <script src="../../../_static/copybutton.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -27,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> HyperNetX
-            <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -67,7 +71,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">hypernetx.algorithms.laplacians_clustering</li>
       <li class="wy-breadcrumbs-aside">
@@ -120,7 +124,7 @@
 
 
 <div class="viewcode-block" id="prob_trans"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.prob_trans">[docs]</a><span class="k">def</span> <span class="nf">prob_trans</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_connected</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The probability transition matrix of a random walk on the vertices of a hypergraph.</span>
 <span class="sd">    At each step in the walk, the next vertex is chosen by:</span>
 
@@ -192,7 +196,7 @@
 
 
 <div class="viewcode-block" id="get_pi"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.get_pi">[docs]</a><span class="k">def</span> <span class="nf">get_pi</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the eigenvector corresponding to the largest eigenvalue (in magnitude),</span>
 <span class="sd">    normalized so its entries sum to 1. Intended for the probability transition matrix</span>
 <span class="sd">    of a random walk on a (connected) hypergraph, in which case the output can</span>
@@ -216,7 +220,7 @@
 
 
 <div class="viewcode-block" id="norm_lap"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.norm_lap">[docs]</a><span class="k">def</span> <span class="nf">norm_lap</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Normalized Laplacian matrix of the hypergraph. Symmetrizes the probability transition</span>
 <span class="sd">    matrix of a hypergraph random walk using the stationary distribution, using the digraph</span>
 <span class="sd">    Laplacian defined in:</span>
@@ -262,7 +266,7 @@
 
 
 <div class="viewcode-block" id="spec_clus"><a class="viewcode-back" href="../../../algorithms/algorithms.html#algorithms.spec_clus">[docs]</a><span class="k">def</span> <span class="nf">spec_clus</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">existing_lap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hypergraph spectral clustering of the vertex set into k disjoint clusters</span>
 <span class="sd">    using the normalized hypergraph Laplacian. Equivalent to the &quot;RDC-Spec&quot;</span>
 <span class="sd">    Algorithm 1 in:</span>
