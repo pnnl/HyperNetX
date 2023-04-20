@@ -22,6 +22,7 @@ def test_from_bipartite():
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 @pytest.mark.parametrize("static", [(True), (False)])
 def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(sbs, static):
     edgedict = OrderedDict(sbs.edgedict)
@@ -72,6 +73,7 @@ def test_from_numpy_array_with_key():
     assert "C" not in h.edges["a"]
 
 
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_from_dataframe():
     M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
     index = ["A", "B", "C"]
@@ -83,6 +85,7 @@ def test_from_dataframe():
     assert "C" in h.edges["a"]
 
 
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_from_dataframe_with_key():
     M = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
     index = ["A", "B", "C"]
@@ -93,6 +96,7 @@ def test_from_dataframe_with_key():
     assert "C" not in h.edges["a"]
 
 
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_from_dataframe_with_transforms_and_fillna(dataframe):
     df = dataframe.df
 
