@@ -224,6 +224,7 @@ def remove_row_duplicates(df,
                                     weight_col=weight_col) ### reconcile this with defaults weights.
     if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
+        df[data_cols] = df[data_cols].astype("category") 
         return df, weight_col
         
     else:
@@ -235,10 +236,11 @@ def remove_row_duplicates(df,
         # import ipdb; ipdb.set_trace(context=8)
         df = df.groupby(data_cols, as_index=False, sort=False).agg(aggby)
 
-        for col in categories:
-            df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        # for col in categories:
+            # df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        df[data_cols] = df[data_cols].astype("category")    
 
-        return df, weight_col
+    return df, weight_col
 
 
 # https://stackoverflow.com/a/7205107
@@ -248,7 +250,7 @@ def merge_nested_dicts(a, b, path=None):
     for key in b:
         if key in a:
             if isinstance(a[key], dict) and isinstance(b[key], dict):
-                merge(a[key], b[key], path + [str(key)])
+                merge_nested_dicts(a[key], b[key], path + [str(key)])
             elif a[key] == b[key]:
                 pass # same leaf value
             else:
@@ -262,7 +264,7 @@ def merge_nested_dicts(a, b, path=None):
 def dict_depth(dic, level = 1):
     ### checks if there is a nested dict, quits once level > 2
     if level>2:
-        return level
+        return 2
     if not isinstance(dic, dict) or not dic:
-        return level
-    return max(dict_depth(dic[key], level + 1) for key in dic)
+        return level - 1
+    return min(dict_depth(dic[key], level + 1) for key in dic)

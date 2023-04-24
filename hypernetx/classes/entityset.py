@@ -140,7 +140,7 @@ class EntitySet(Entity):
         level2: str | int = 1,
         weight_col: str | int = 'cell_weights',
         weights: Sequence[float] | float | int | str = 1,
-        keep_weights: bool = True,
+        # keep_weights: bool = True,
         cell_properties: Optional[
              Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
@@ -157,12 +157,12 @@ class EntitySet(Entity):
 
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
-        if isinstance(entity, Entity):
-            _log.info(f"Changing entity from type {Entity} to {type(entity.dataframe)}")
-            if keep_weights:
-                # preserve original weights
-                weights = entity._cell_weight_col
-            entity = entity.dataframe
+        # if isinstance(entity, Entity):
+        #     _log.info(f"Changing entity from type {Entity} to {type(entity.dataframe)}")
+        #     if keep_weights:
+        #         # preserve original weights
+        #         weights = entity._cell_weight_col
+        #     entity = entity.dataframe
 
         # if the entity data is passed as a DataFrame, restrict to two columns if needed
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
@@ -194,7 +194,7 @@ class EntitySet(Entity):
             if isinstance(level2, int):
                 level2 = entity.columns[level2]
             # if isinstance(level1, str) and isinstance(level2, str):
-            columns = [level1, level2,weight_col] + prop_cols
+            columns = [level1, level2, weight_col] + prop_cols
             # if one or both of the levels are given by index, get column name
             # else:
             #     all_columns = entity.columns.drop(meta_cols)
@@ -460,11 +460,12 @@ class EntitySet(Entity):
                 warnings.warn("parsed cell property dict column from string literal")
 
         cell_properties = cell_props.combine_first(self.cell_properties)
-        cell_properties[misc_col] = self.cell_properties[misc_col].combine(
-            cell_properties[misc_col],
-            lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
-            fill_value={},
-        )
+        # import ipdb; ipdb.set_trace()
+        # cell_properties[misc_col] = self.cell_properties[misc_col].combine(
+        #     cell_properties[misc_col],
+        #     lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
+        #     fill_value={},
+        # )
 
         self._cell_properties = cell_properties.sort_index()
 

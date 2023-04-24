@@ -152,7 +152,7 @@ class Entity:
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
             self._dataframe = pd.DataFrame(
-                {0: entity.index.to_list(), 1: entity.values}
+                {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
             )
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
@@ -207,9 +207,10 @@ class Entity:
 
         # set the dtype of entity data columns to categorical (simplifies
         # encoding, etc.)
-        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-            "category"
-        )
+        ### This is automatically done in remove_row_duplicates
+        # self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+        #     "category"
+        # )
 
         # create properties
         item_levels = [
@@ -1275,9 +1276,9 @@ class Entity:
     def assign_properties(
         self,
         props: pd.DataFrame | dict[int, dict[T, dict[Any, Any]]],
-        level_col: Optional[str] = None,
-        id_col: Optional[str] = None,
         misc_col: Optional[str] = None,
+        level_col = 0,
+        id_col = 1
     ) -> None:
         """Assign new properties to items in the data table, update :attr:`properties`
 
@@ -1295,23 +1296,28 @@ class Entity:
         properties
         """
         # mapping from user-specified level, id, misc column names to internal names
-        column_map = {
-            old: new
-            for old, new in zip(
-                (level_col, id_col, misc_col),
-                (*self.properties.index.names, self._misc_props_col),
-            )
-            if old is not None
-        }
-
-        try:  # rename columns according to mapping
+        ### This will fail if there isn't a level column
+        
+        if isinstance(props,pd.DataFrame):
+            ### Fix to check the shape of properties or redo properties format
+            column_map = {
+                old: new
+                for old, new in zip(
+                    (level_col, id_col, misc_col),
+                    (*self.properties.index.names, self._misc_props_col),
+                )
+                if old is not None
+                }
             props = props.rename(columns=column_map)
-        except AttributeError:  # handle props in nested dict format
-            self._properties_from_dict(props)
-        else:  # handle props in DataFrame format
-            # rename any index levels matching user-specified column names
             props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
+
+        if isinstance(props,dict):
+            if dict_depth(props) > 1:  # handle props in nested dict format
+                self._properties_from_dict(props)
+            else:
+                self._properties_from_dict({0:props, 1:props})   
+            
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
         """Private handler for updating :attr:`properties` from a DataFrame
