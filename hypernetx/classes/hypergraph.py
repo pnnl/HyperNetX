@@ -279,11 +279,11 @@ class Hypergraph:
 
         ### cell properties 
 
-        if setsystem is None:
+        if setsystem is None:   #### Empty Case
             self._edges = EntitySet(data=np.empty((0, 2), dtype=int), uid='Edges')
             self._nodes = EntitySet(data=np.empty((0, 1), dtype=int), uid="Nodes")
 
-        else:
+        else: #### DataFrame case
             if isinstance(setsystem,pd.DataFrame):
                 if isinstance(edge_col,int):
                     self._edge_col = edge_col = setsystem.columns[edge_col]
@@ -324,7 +324,7 @@ class Hypergraph:
                         entity['cell_properties'] = cp
 
 
-            else:
+            else:  ### Cases Other than DataFrame
                 self._edge_col = edge_col = edge_col or 'edges'
                 if node_col == 1:
                     self._node_col = node_col = 'nodes'

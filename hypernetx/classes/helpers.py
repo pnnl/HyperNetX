@@ -261,10 +261,10 @@ def merge_nested_dicts(a, b, path=None):
 
 
 ## https://www.geeksforgeeks.org/python-find-depth-of-a-dictionary/
-def dict_depth(dic, level = 1):
+def dict_depth(dic, level = 0):
     ### checks if there is a nested dict, quits once level > 2
     if level>2:
-        return 2
+        return level
     if not isinstance(dic, dict) or not dic:
-        return level - 1
+        return level
     return min(dict_depth(dic[key], level + 1) for key in dic)

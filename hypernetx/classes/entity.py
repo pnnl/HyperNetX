@@ -1162,6 +1162,7 @@ class Entity:
         df, weight_col = remove_row_duplicates(
             self._dataframe,
             data_cols,
+            weight_col=weight_col,
             weights=weights,
             aggregateby=aggregateby,
         )
