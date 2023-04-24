@@ -14,6 +14,7 @@ from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
     remove_row_duplicates,
+    dict_depth
 )
 
 T = TypeVar("T", bound=Union[str, int])

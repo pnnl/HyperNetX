@@ -397,10 +397,14 @@ class Hypergraph:
                 if edge_properties is not None or node_properties is not None:
                     if edge_properties is not None:
                         edge_properties = props2dict(edge_properties)
+                        for e in entity[edge_col].unique():
+                            edge_properties.setdefault(e,{})
                         for v in edge_properties.values():
                             v.setdefault(edge_weight_prop_col,default_edge_weight)
                     if node_properties is not None:
                         node_properties = props2dict(node_properties)
+                        for nd in entity[node_col].unique():
+                            node_properties.setdefault(nd,{})
                         for v in node_properties.values():
                             v.setdefault(node_weight_prop_col,default_node_weight)
                     properties = {0 : edge_properties, 1 : node_properties}
@@ -418,7 +422,6 @@ class Hypergraph:
                         for k,v in properties.items():
                             for vv in v.values():
                                 vv.setdefault(weight_prop_col,default_weight)
-
             self.E = EntitySet(
                     entity = entity,
                     level1 = edge_col,
@@ -482,7 +485,29 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        return self._edges.properties
+        return self.E.properties
+
+    @property
+    def edge_props(self):
+        """Summary
+        
+        Returns
+        -------
+        TYPE
+            Description
+        """
+        return self.E.properties.loc[0]
+
+    @property
+    def node_props(self):
+        """Summary
+        
+        Returns
+        -------
+        TYPE
+            Description
+        """
+        return self.E.properties.loc[1]
 
     @property
     def incidence_dict(self):
@@ -495,7 +520,7 @@ class Hypergraph:
         dict
 
         """
-        return self._edges.incidence_dict
+        return self.E.incidence_dict
 
     @property
     def shape(self):
@@ -581,7 +606,9 @@ class Hypergraph:
         return self.neighbors(node)
 
     def get_cell_properties(
-        self, edge: str, node: str, prop_name: Optional[str] = None
+        self, edge: str, 
+        node: str, 
+        prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
         """Get cell properties on a specified edge and node
 
