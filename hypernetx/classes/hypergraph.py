@@ -1421,9 +1421,9 @@ class Hypergraph:
         )
 
         if return_equivalence_classes:
-            return Hypergraph(temp[0], name), temp[1]
+            return Hypergraph(temp[0].incidence_dict, name), temp[1]
 
-        return Hypergraph(temp, name)
+        return Hypergraph(temp.incidence_dict, name)
 
     def collapse_nodes(
         self,
@@ -1492,9 +1492,9 @@ class Hypergraph:
         )
 
         if return_equivalence_classes:
-            return Hypergraph(temp[0], name).dual(), temp[1]
+            return Hypergraph(temp[0].incidence_dict).dual(), temp[1]
 
-        return Hypergraph(temp, name).dual()
+        return Hypergraph(temp.incidence_dict, name).dual()
 
     def collapse_nodes_and_edges(
         self,
