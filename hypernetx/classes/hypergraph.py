@@ -440,7 +440,8 @@ class Hypergraph:
             self._nodes = self.E.restrict_to_levels([1] , uid = 'Nodes')
 
         self.state_dict = {}
-        self.update_state()
+        self.set_default_state()
+
 
     @property
     def edges(self):
@@ -464,6 +465,7 @@ class Hypergraph:
         """
         return self._nodes
 
+    
     @property
     def dataframe(self):
         """Returns dataframe of incidence pairs and their properties.
@@ -472,11 +474,16 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        df = self._edges.cell_properties.reset_index()
-        data_cols = [self._edge_col, self._node_col]
-        df[data_cols] = df[data_cols].astype('category')
+        try:
+            return self.state_dict['dataframe']
+        except:
+            df = self._edges.cell_properties.reset_index()
+            data_cols = [self._edge_col, self._node_col]
+            df[data_cols] = df[data_cols].astype('category')
+            self.state_dict['dataframe'] = df
         return df
 
+    
     @property
     def properties(self):
         """Returns dataframe of edge and node properties.
@@ -487,6 +494,7 @@ class Hypergraph:
         """
         return self.E.properties
 
+    
     @property
     def edge_props(self):
         """Summary
@@ -534,27 +542,27 @@ class Hypergraph:
         """
         return len(self._nodes.elements), len(self._edges.elements)
 
-    def __str__(self):
-        """
-        String representation of hypergraph
+    # def __str__(self):
+    #     """
+    #     String representation of hypergraph
 
-        Returns
-        -------
-        str
+    #     Returns
+    #     -------
+    #     str
 
-        """
-        return f"Hypergraph({self.edges.elements},name={self.name})"
+    #     """
+    #     return "<class 'hypernetx.classes.hypergraph.Hypergraph'>"
 
-    def __repr__(self):
-        """
-        String representation of hypergraph
+    # def __repr__(self):
+    #     """
+    #     String representation of hypergraph
 
-        Returns
-        -------
-        str
+    #     Returns
+    #     -------
+    #     str
 
-        """
-        return f"Hypergraph({self.edges.elements},name={self.name})"
+    #     """
+    #     return "hypernetx.classes.hypergraph.Hypergraph"
 
     def __len__(self):
         """
@@ -685,18 +693,20 @@ class Hypergraph:
             key=value pairs to save in state dictionary
         """
         self.state_dict.update(kwargs)
-        if self.filepath is not None:
-            self.save_state(fpath=self.filepath)
 
-    def update_state(self):
+    def set_default_state(self):
         """Populate state_dict with default values"""
-        temprows, tempcols = self.edges.data.T
-        tempdata = np.ones(len(temprows), dtype=int)
-        self.state_dict["data"] = (temprows, tempcols, tempdata)
-        self.state_dict["snodelg"] = {}
+        self.state_dict = {}
+
+        self.state_dict["dataframe"] = df = self.dataframe
+        self.state_dict["labels"] = {'edges': np.array(df[self._edge_col].cat.categories),
+                        'nodes': np.array(df[self._node_col].cat.categories)}
+        self.state_dict["data"] = np.array([df[self._edge_col].cat.codes,df[self._node_col].cat.codes],dtype=int).T
+        self.state_dict["snodelg"] = {}  ### s: nx.graph
         self.state_dict["sedgelg"] = {}
-        for sdkey in set(self.state_dict) - {"data", "snodelg", "sedgelg"}:
-            self.state_dict.pop(sdkey)
+        self.state_dict["neighbors"] = defaultdict(dict) ### s: {node: neighbors}
+        self.state_dict["edge_neighbors"] = defaultdict(dict) ### s: {edge: edge_neighbors}
+
 
     def save_state(self, fpath=None):
         """
@@ -761,6 +771,7 @@ class Hypergraph:
         if "edge_size_dist" not in self.state_dict:
             dist = np.array(np.sum(self.incidence_matrix(), axis=0))[0].tolist()
             self.set_state(edge_size_dist=dist)
+            return dist
 
         return self.state_dict["edge_size_dist"]
 
@@ -885,14 +896,19 @@ class Hypergraph:
         if node not in self.nodes:
             print(f"{node} is not in hypergraph {self.name}.")
             return None
-
-        M,rdx,_ = self.incidence_matrix(index=True)
-        jdx = list(rdx).index(node)
-        idx = (M[jdx].dot(M.T).todense()>=s)*1
-        idx = np.nonzero(idx)[1]
-        neighbors = list(rdx[idx])
-        if len(neighbors) > 0:
-            neighbors.remove(node)
+        try:
+            return self.state_dict['neighbors'][s][node]
+        except:
+            M = self.incidence_matrix()
+            rdx = self.state_dict['labels']['nodes']
+            jdx = np.where(rdx == node)
+            idx = (M.T[jdx].dot(M)>=s)*1
+            idx = np.nonzero(idx)[1]
+            neighbors = list(rdx[idx])
+            if len(neighbors) > 0:
+                neighbors.remove(node)
+                self.state_dict['neighbors'][s][node] = neighbors
+            self.state_dict['neighbors'][s][node] = []
         return neighbors
 
     def edge_neighbors(self, edge, s=1):
@@ -913,22 +929,27 @@ class Hypergraph:
             List of edge neighbors
 
         """
+
         if edge not in self.edges:
             print(f"Edge is not in hypergraph {self.name}.")
             return None
+        try:
+            return self.state_dict['edge_neighbors'][s][edge]
+        except:
+            M = self.incidence_matrix()
+            cdx = self.state_dict['labels']['edges']
+            jdx = np.where(cdx == edge)
+            idx = (M[jdx].dot(M.T)>=s)*1
+            idx = np.nonzero(idx)[1]
+            edge_neighbors = list(cdx[idx])
+            if len(edge_neighbors) > 0:
+                edge_neighbors.remove(edge)
+                self.state_dict['edge_neighbors'][s][edge] = edge_neighbors
+            self.state_dict['edge_neighbors'][s][edge] = []            
+            return edge_neighbors
 
-        M,_,cdx = self.incidence_matrix(index=True)
 
-        jdx = list(cdx).index(edge)
-        idx = (M.T[jdx].dot(M).todense()>=s)*1
-        idx = np.nonzero(idx)[1]
-        edge_neighbors = list(cdx[idx])
-        if len(edge_neighbors) > 0:
-            edge_neighbors.remove(edge)
-        return edge_neighbors
-
-
-    def remove_node(self, node, update_state=True):
+    def remove_node(self, node, set_default_state=True):
         """
         Removes node from edges and deletes reference in hypergraph nodes
 
@@ -949,8 +970,8 @@ class Hypergraph:
                     self._edges.remove(node)
             self._nodes.remove(node)
 
-            if update_state:
-                self.update_state()
+            if set_default_state:
+                self.set_default_state()
 
         return self
 
@@ -969,8 +990,8 @@ class Hypergraph:
 
         """
         for node in node_set:
-            self.remove_node(node, update_state=False)
-        self.update_state()
+            self.remove_node(node, set_default_state=False)
+        self.set_default_state()
         return self
 
     def _add_nodes_from(self, nodes):
@@ -985,7 +1006,7 @@ class Hypergraph:
         """
         self._nodes.add(nodes)
 
-    def add_edge(self, edge, update_state=True):
+    def add_edge(self, edge, set_default_state=True):
         """
 
         Adds a single edge to hypergraph.
@@ -1026,8 +1047,8 @@ class Hypergraph:
             self._nodes.add(edge)
             self._edges.add(edge)
 
-        if update_state:
-            self.update_state()
+        if set_default_state:
+            self.set_default_state()
 
     def add_edges_from(self, edge_set):
         """
@@ -1044,12 +1065,12 @@ class Hypergraph:
 
         """
         for edge in edge_set:
-            self.add_edge(edge, update_state=False)
+            self.add_edge(edge, set_default_state=False)
 
-        self.update_state()
+        self.set_default_state()
         return self
 
-    def add_node_to_edge(self, node, edge, update_state=True):
+    def add_node_to_edge(self, node, edge, set_default_state=True):
         """
 
         Adds node to an edge in hypergraph edges
@@ -1073,11 +1094,11 @@ class Hypergraph:
                 warnings.filterwarnings(
                     "ignore", message="Cannot add edge. Edge already in hypergraph"
                 )
-                self.add_edge({edge: [node]}, update_state)
+                self.add_edge({edge: [node]}, set_default_state)
 
         return self
 
-    def remove_edge(self, edge, update_state=True):
+    def remove_edge(self, edge, set_default_state=True):
         """
         Removes a single edge from hypergraph.
 
@@ -1103,8 +1124,8 @@ class Hypergraph:
                     self.remove_node(node)
             self._edges.remove(edge)
 
-        if update_state:
-            self.update_state()
+        if set_default_state:
+            self.set_default_state()
         return self
 
     def remove_edges(self, edge_set):
@@ -1121,9 +1142,9 @@ class Hypergraph:
 
         """
         for edge in edge_set:
-            self.remove_edge(edge, update_state=False)
+            self.remove_edge(edge, set_default_state=False)
 
-        self.update_state()
+        self.set_default_state()
         return self
 
     def incidence_matrix(self, weights=False, index=False):
@@ -1163,9 +1184,9 @@ class Hypergraph:
             data_cols = [self._node_col, self._edge_col]
             if weights == True:
                 data = df[self._cell_weight_col].values
-                M = csr_matrix((data, tuple(df[col].cat.codes for col in data_cols)))
+                M = csr_matrix((data, tuple(np.array(df[col].cat.codes) for col in data_cols)))
             else:
-                M = csr_matrix(([1]*len(df),tuple(df[col].cat.codes for col in data_cols)))
+                M = csr_matrix(([1]*len(df),tuple(np.array(df[col].cat.codes) for col in data_cols)))
             self.state_dict[sdkey] = M
 
         if index == True:
@@ -1176,38 +1197,38 @@ class Hypergraph:
         else:
             return M
 
-    @staticmethod
-    def _incidence_to_adjacency(M, s=1, weights=False):
-        """
-        Helper method to obtain adjacency matrix from
-        boolean incidence matrix for s-metrics.
-        Self loops are not supported.
-        The adjacency matrix will define an s-linegraph.
+    # @staticmethod
+    # def _incidence_to_adjacency(M, s=1, weights=False):
+    #     """
+    #     Helper method to obtain adjacency matrix from
+    #     boolean incidence matrix for s-metrics.
+    #     Self loops are not supported.
+    #     The adjacency matrix will define an s-linegraph.
 
-        Parameters
-        ----------
-        M : scipy.sparse.csr.csr_matrix
-            incidence matrix of 0's and 1's
+    #     Parameters
+    #     ----------
+    #     M : scipy.sparse.csr.csr_matrix
+    #         incidence matrix of 0's and 1's
 
-        s : int, optional, default 1
+    #     s : int, optional, default 1
 
-        # weights : bool, dict optional, default =True
-        #     If False all nonzero entries are 1.
-        #     Otherwise, weights will be as in product.
+    #     # weights : bool, dict optional, default =True
+    #     #     If False all nonzero entries are 1.
+    #     #     Otherwise, weights will be as in product.
 
-        Returns
-        -------
-        a matrix : scipy.sparse.csr.csr_matrix
+    #     Returns
+    #     -------
+    #     a matrix : scipy.sparse.csr.csr_matrix
 
-        """
-        M = csr_matrix(M)
-        weights = False  # currently weighting is not supported
+    #     """
+    #     M = csr_matrix(M)
+    #     weights = False  # currently weighting is not supported
 
-        if weights is False:
-            A = M.dot(M.transpose())
-            A.setdiag(0)
-            A = (A >= s) * 1
-        return A
+    #     if weights is False:
+    #         A = M.dot(M.transpose())
+    #         A.setdiag(0)
+    #         A = (A >= s) * 1
+    #     return A
 
     def adjacency_matrix(self, s=1, index=False, remove_empty_rows = False):
         """

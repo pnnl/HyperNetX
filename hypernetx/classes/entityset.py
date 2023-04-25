@@ -295,6 +295,20 @@ class EntitySet(Entity):
 
         return super().memberships
 
+    # def __repr__(self):
+    #     """String representation of the Entity
+
+    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
+
+    #     Returns
+    #     -------
+    #     str
+    #     """
+    #     return "hypernetx.classes.entityset.EntitySet"
+
+    # def __str__(self):
+    #     return "<class 'hypernetx.classes.entityset.EntitySet'>"
+
     def restrict_to_levels(
         self,
         levels: int | Iterable[int],

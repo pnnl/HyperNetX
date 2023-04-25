@@ -730,16 +730,19 @@ class Entity:
         """
         return iter(self.labels[self._data_cols[label_index]])
 
-    def __repr__(self):
-        """String representation of the Entity
+    # def __repr__(self):
+    #     """String representation of the Entity
 
-        e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
+    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
 
-        Returns
-        -------
-        str
-        """
-        return self.__class__.__name__ + f"({self._uid}, {list(self.uidset)})"
+    #     Returns
+    #     -------
+    #     str
+    #     """
+    #     return "hypernetx.classes.entity.Entity"
+
+    # def __str__(self):
+    #     return "<class 'hypernetx.classes.entity.Entity'>"
 
     def index(self, column, value=None):
         """Get level index corresponding to a column and (optionally) the index of a value in that column
