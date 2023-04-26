@@ -1318,7 +1318,7 @@ class Entity:
             self._properties_from_dataframe(props)
 
         if isinstance(props,dict):
-            if dict_depth(props) > 1:  # handle props in nested dict format
+            if set([0,1]) == set(props.keys()):
                 self._properties_from_dict(props)
             else:
                 self._properties_from_dict({0:props, 1:props})   
