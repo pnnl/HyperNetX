@@ -985,203 +985,203 @@ class Hypergraph:
             return edge_neighbors
 
 
-    def remove_node(self, node, _set_default_state=True):
-        """
-        Removes node from edges and deletes reference in hypergraph nodes
+    # def remove_node(self, node, _set_default_state=True):
+    #     """
+    #     Removes node from edges and deletes reference in hypergraph nodes
 
-        Parameters
-        ----------
-        node : hashable or Entity
-            a node in hypergraph
+    #     Parameters
+    #     ----------
+    #     node : hashable or Entity
+    #         a node in hypergraph
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        """
+    #     """
 
-        if node in self._nodes:
-            for edge in self._edges.memberships[node]:
-                if node in self._edges[edge]:
-                    self._edges.remove(node)
-            self._nodes.remove(node)
+    #     if node in self._nodes:
+    #         for edge in self._edges.memberships[node]:
+    #             if node in self._edges[edge]:
+    #                 self._edges.remove(node)
+    #         self._nodes.remove(node)
 
-            if _set_default_state:
-                self._set_default_state()
+    #         if _set_default_state:
+    #             self._set_default_state()
 
-        return self
+    #     return self
 
-    def remove_nodes(self, node_set):
-        """
-        Removes nodes from edges and deletes references in hypergraph nodes
+    # def remove_nodes(self, node_set):
+    #     """
+    #     Removes nodes from edges and deletes references in hypergraph nodes
 
-        Parameters
-        ----------
-        node_set : an iterable of hashables or Entities
-            Nodes in hypergraph
+    #     Parameters
+    #     ----------
+    #     node_set : an iterable of hashables or Entities
+    #         Nodes in hypergraph
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        """
-        for node in node_set:
-            self.remove_node(node, _set_default_state=False)
-        self._set_default_state()
-        return self
+    #     """
+    #     for node in node_set:
+    #         self.remove_node(node, _set_default_state=False)
+    #     self._set_default_state()
+    #     return self
 
-    def _add_nodes_from(self, nodes):
-        """
-        Private helper method instantiates new nodes when edges added to
-        hypergraph.
+    # def _add_nodes_from(self, nodes):
+    #     """
+    #     Private helper method instantiates new nodes when edges added to
+    #     hypergraph.
 
-        Parameters
-        ----------
-        nodes : iterable of hashables or Entities
+    #     Parameters
+    #     ----------
+    #     nodes : iterable of hashables or Entities
 
-        """
-        self._nodes.add(nodes)
+    #     """
+    #     self._nodes.add(nodes)
 
-    def add_edge(self, edge, _set_default_state=True):
-        """
+    # def add_edge(self, edge, _set_default_state=True):
+    #     """
 
-        Adds a single edge to hypergraph.
+    #     Adds a single edge to hypergraph.
 
-        Parameters
-        ----------
-        edge : hashable or Entity
-            If hashable the edge returned will be empty.
+    #     Parameters
+    #     ----------
+    #     edge : hashable or Entity
+    #         If hashable the edge returned will be empty.
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        Notes
-        -----
-        When adding an edge to a hypergraph children must be removed
-        so that nodes do not have elements.
-        Each node (element of edge) must be instantiated as a node,
-        making sure its uid isn't already present in the self.
-        If an added edge contains nodes that cannot be added to hypergraph
-        then an error will be raised.
+    #     Notes
+    #     -----
+    #     When adding an edge to a hypergraph children must be removed
+    #     so that nodes do not have elements.
+    #     Each node (element of edge) must be instantiated as a node,
+    #     making sure its uid isn't already present in the self.
+    #     If an added edge contains nodes that cannot be added to hypergraph
+    #     then an error will be raised.
 
-        """
-        # This piece of code is to allow a user to pass in a dictionary
-        # Of the format {'New_edge': ['Node1', 'Node2']}.
-        # TODO: type check to correctly handle other valid input types
-        cols = list(self._edges.labels.keys())
-        edge = {cols[0]: list(edge.keys())[0], cols[1]: list(edge.values())[0]}
+    #     """
+    #     # This piece of code is to allow a user to pass in a dictionary
+    #     # Of the format {'New_edge': ['Node1', 'Node2']}.
+    #     # TODO: type check to correctly handle other valid input types
+    #     cols = list(self._edges.labels.keys())
+    #     edge = {cols[0]: list(edge.keys())[0], cols[1]: list(edge.values())[0]}
 
-        key = edge[cols[0]]
+    #     key = edge[cols[0]]
 
-        if key in self._edges.elements:
-            warnings.warn("Cannot add edge. Edge already in hypergraph")
-        elif key in self._nodes.elements:
-            warnings.warn("Cannot add edge. Edge is already a Node")
-        if len(edge) > 0:
-            # TODO: this isn't right
-            self._nodes.add(edge)
-            self._edges.add(edge)
+    #     if key in self._edges.elements:
+    #         warnings.warn("Cannot add edge. Edge already in hypergraph")
+    #     elif key in self._nodes.elements:
+    #         warnings.warn("Cannot add edge. Edge is already a Node")
+    #     if len(edge) > 0:
+    #         # TODO: this isn't right
+    #         self._nodes.add(edge)
+    #         self._edges.add(edge)
 
-        if _set_default_state:
-            self._set_default_state()
+    #     if _set_default_state:
+    #         self._set_default_state()
 
-    def add_edges_from(self, edge_set):
-        """
-        Add edges to hypergraph.
+    # def add_edges_from(self, edge_set):
+    #     """
+    #     Add edges to hypergraph.
 
-        Parameters
-        ----------
-        edge_set : iterable of hashables or Entities
-            For hashables the edges returned will be empty.
+    #     Parameters
+    #     ----------
+    #     edge_set : iterable of hashables or Entities
+    #         For hashables the edges returned will be empty.
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        """
-        for edge in edge_set:
-            self.add_edge(edge, _set_default_state=False)
+    #     """
+    #     for edge in edge_set:
+    #         self.add_edge(edge, _set_default_state=False)
 
-        self._set_default_state()
-        return self
+    #     self._set_default_state()
+    #     return self
 
-    def add_node_to_edge(self, node, edge, _set_default_state=True):
-        """
+    # def add_node_to_edge(self, node, edge, _set_default_state=True):
+    #     """
 
-        Adds node to an edge in hypergraph edges
+    #     Adds node to an edge in hypergraph edges
 
-        Parameters
-        ----------
-        node: hashable or Entity
-            If Entity, only uid and properties will be used.
-            If uid is already in nodes then the known node will
-            be used
+    #     Parameters
+    #     ----------
+    #     node: hashable or Entity
+    #         If Entity, only uid and properties will be used.
+    #         If uid is already in nodes then the known node will
+    #         be used
 
-        edge: uid of edge or edge, must belong to self.edges
+    #     edge: uid of edge or edge, must belong to self.edges
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        """
-        if edge in self._edges:
-            with warnings.catch_warnings():
-                warnings.filterwarnings(
-                    "ignore", message="Cannot add edge. Edge already in hypergraph"
-                )
-                self.add_edge({edge: [node]}, _set_default_state)
+    #     """
+    #     if edge in self._edges:
+    #         with warnings.catch_warnings():
+    #             warnings.filterwarnings(
+    #                 "ignore", message="Cannot add edge. Edge already in hypergraph"
+    #             )
+    #             self.add_edge({edge: [node]}, _set_default_state)
 
-        return self
+    #     return self
 
-    def remove_edge(self, edge, _set_default_state=True):
-        """
-        Removes a single edge from hypergraph.
+    # def remove_edge(self, edge, _set_default_state=True):
+    #     """
+    #     Removes a single edge from hypergraph.
 
-        Parameters
-        ----------
-        edge : hashable or Entity
+    #     Parameters
+    #     ----------
+    #     edge : hashable or Entity
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        Notes
-        -----
+    #     Notes
+    #     -----
 
-        Deletes reference to edge from all of its nodes.
-        If any of its nodes do not belong to any other edges
-        the node is dropped from self.
+    #     Deletes reference to edge from all of its nodes.
+    #     If any of its nodes do not belong to any other edges
+    #     the node is dropped from self.
 
-        """
-        if edge in self.edges:
-            for node in self.edges[edge]:
-                if len(self.edges.memberships[node]) == 1:
-                    self.remove_node(node)
-            self._edges.remove(edge)
+    #     """
+    #     if edge in self.edges:
+    #         for node in self.edges[edge]:
+    #             if len(self.edges.memberships[node]) == 1:
+    #                 self.remove_node(node)
+    #         self._edges.remove(edge)
 
-        if _set_default_state:
-            self._set_default_state()
-        return self
+    #     if _set_default_state:
+    #         self._set_default_state()
+    #     return self
 
-    def remove_edges(self, edge_set):
-        """
-        Removes edges from hypergraph.
+    # def remove_edges(self, edge_set):
+    #     """
+    #     Removes edges from hypergraph.
 
-        Parameters
-        ----------
-        edge_set : iterable of hashables or Entities
+    #     Parameters
+    #     ----------
+    #     edge_set : iterable of hashables or Entities
 
-        Returns
-        -------
-        hypergraph : Hypergraph
+    #     Returns
+    #     -------
+    #     hypergraph : Hypergraph
 
-        """
-        for edge in edge_set:
-            self.remove_edge(edge, _set_default_state=False)
+    #     """
+    #     for edge in edge_set:
+    #         self.remove_edge(edge, _set_default_state=False)
 
-        self._set_default_state()
-        return self
+    #     self._set_default_state()
+    #     return self
 
     def incidence_matrix(self, weights=False, index=False):
         """
@@ -1601,86 +1601,87 @@ class Hypergraph:
         temp = self.collapse_nodes(name="temp")
         return temp.collapse_edges(name=name)
 
-def restrict_to_nodes(self,nodes):
-    """New hypergraph gotten by restricting to nodes
-    
-    Parameters
-    ----------
-    nodes : Iterable
-        nodeids to restrict to
-    
-    Returns
-    -------
-    : hnx. Hypergraph
+    def restrict_to_nodes(self,nodes):
+        """New hypergraph gotten by restricting to nodes
+        
+        Parameters
+        ----------
+        nodes : Iterable
+            nodeids to restrict to
+        
+        Returns
+        -------
+        : hnx. Hypergraph
 
-    """
-    keys = set(self._state_dict['labels']['nodes']).difference(nodes)
-    return remove(self,keys,level=1)
+        """
+        keys = set(self._state_dict['labels']['nodes']).difference(nodes)
+        return self.remove(keys,level=1)
 
-def restrict_to_edges(self,edges):
-    """New hypergraph gotten by restricting to edges
-    
-    Parameters
-    ----------
-    edges : Iterable
-        edgeids to restrict to
-    
-    Returns
-    -------
-    hnx.Hypergraph
+    def restrict_to_edges(self,edges):
+        """New hypergraph gotten by restricting to edges
+        
+        Parameters
+        ----------
+        edges : Iterable
+            edgeids to restrict to
+        
+        Returns
+        -------
+        hnx.Hypergraph
 
-    """
-    keys = set(self._state_dict['labels']['edges']).difference(edges)
-    return remove(self,keys,level=0)
+        """
+        keys = set(self._state_dict['labels']['edges']).difference(edges)
+        return self.remove(keys,level=0)
 
-def remove(self,keys,level=None):
-    """Creates a new hypergraph with nodes and/or edges indexed by keys
-    removed. More efficient for creating a restricted hypergraph if the
-    restricted set is greater than what is being removed.
-    
-    Parameters
-    ----------
-    keys : Iterable
-        node and/or edge id to restrict to
-    level : None, optional
-        Enter 0 to remove edges with ids in keys.  
-        Enter 1 to remove nodes with ids in keys.  
-        If None then all objects in nodes and edges with the id will 
-        be removed.
-    
-    Returns
-    -------
-    : hnx.Hypergraph
+    def remove(self,keys,level=None):
+        """Creates a new hypergraph with nodes and/or edges indexed by keys
+        removed. More efficient for creating a restricted hypergraph if the
+        restricted set is greater than what is being removed.
+        
+        Parameters
+        ----------
+        keys : Iterable
+            node and/or edge id to restrict to
+        level : None, optional
+            Enter 0 to remove edges with ids in keys.  
+            Enter 1 to remove nodes with ids in keys.  
+            If None then all objects in nodes and edges with the id will 
+            be removed.
+        
+        Returns
+        -------
+        : hnx.Hypergraph
 
-    """
-    rdfprop = self.properties.copy()
-    rdf = self.dataframe.copy()
-    if level == 0:
-        kdx = set(keys).intersection(set(self._state_dict['labels']['edges']))
-        for k in kdx:
-            rdfprop = rdfprop.drop((0,k))
-        rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
-    elif level == 1:
-        kdx = set(keys).intersection(set(self._state_dict['labels']['nodes']))
-        for k in kdx:
-            rdfprop = rdfprop.drop((1,k))
-        rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
-    else:
-        rdfprop.reset_index().set_index('id')
-        kdx = set(keys).intersection(rdfprop.id.unique())
-        rdfprop = rdfprop.drop(index=kdx)
-        rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
-        rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]  
-                    
-    return hnx.Hypergraph(
-                setsystem = rdf,
-                edge_col = self._edge_col,
-                node_col = self._node_col,
-                cell_weight_col = self._cell_weight_col,
-                misc_cell_properties_col = self.edges._misc_cell_props_col,
-                properties = rdfprop,
-                misc_properties_col = self.edges._misc_props_col
-                )                        
+        """
+        rdfprop = self.properties.copy()
+        rdf = self.dataframe.copy()
+        if level == 0:
+            kdx = set(keys).intersection(set(self._state_dict['labels']['edges']))
+            for k in kdx:
+                rdfprop = rdfprop.drop((0,k))
+            rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
+        elif level == 1:
+            kdx = set(keys).intersection(set(self._state_dict['labels']['nodes']))
+            for k in kdx:
+                rdfprop = rdfprop.drop((1,k))
+            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
+        else:
+            rdfprop = rdfprop.reset_index()
+            kdx = set(keys).intersection(rdfprop.id.unique())
+            rdfprop = rdfprop.set_index('id')
+            rdfprop = rdfprop.drop(index=kdx)
+            rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
+            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]  
+                        
+        return Hypergraph(
+                    setsystem = rdf,
+                    edge_col = self._edge_col,
+                    node_col = self._node_col,
+                    cell_weight_col = self._cell_weight_col,
+                    misc_cell_properties_col = self.edges._misc_cell_props_col,
+                    properties = rdfprop,
+                    misc_properties_col = self.edges._misc_props_col
+                    )                        
                 
 
 
