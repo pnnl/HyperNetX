@@ -444,7 +444,7 @@ class Hypergraph:
             self._nodes = self.E.restrict_to_levels([1])
 
         self.__dict__.update(locals())
-        self.set_default_state()
+        self._set_default_state()
 
 
     @property
@@ -479,12 +479,12 @@ class Hypergraph:
         pd.DataFrame
         """
         try:
-            return self.state_dict['dataframe']
+            return self._state_dict['dataframe']
         except:
             df = self._edges.cell_properties.reset_index()
             data_cols = [self._edge_col, self._node_col]
             df[data_cols] = df[data_cols].astype('category')
-            self.state_dict['dataframe'] = df
+            self._state_dict['dataframe'] = df
         return df
 
     
@@ -693,7 +693,7 @@ class Hypergraph:
         nx.Graph
             A NetworkX graph.
         """
-        d = self.state_dict
+        d = self._state_dict
         key = "sedgelg" if edges else "snodelg"
         if s in d[key]:
             return d[key][s]
@@ -723,22 +723,22 @@ class Hypergraph:
         **kwargs
             key=value pairs to save in state dictionary
         """
-        self.state_dict.update(kwargs)
+        self._state_dict.update(kwargs)
 
-    def set_default_state(self):
+    def _set_default_state(self):
         """Populate state_dict with default values"""
-        self.state_dict = {}
+        self._state_dict = {}
 
-        self.state_dict["dataframe"] = df = self.dataframe
-        self.state_dict["labels"] = {'edges': np.array(df[self._edge_col].cat.categories),
+        self._state_dict["dataframe"] = df = self.dataframe
+        self._state_dict["labels"] = {'edges': np.array(df[self._edge_col].cat.categories),
                         'nodes': np.array(df[self._node_col].cat.categories)}
-        self.state_dict["data"] = np.array([df[self._edge_col].cat.codes,df[self._node_col].cat.codes],dtype=int).T
-        self.state_dict["snodelg"] = dict()  ### s: nx.graph
-        self.state_dict["sedgelg"] = dict()
-        self.state_dict["neighbors"] = defaultdict(dict) ### s: {node: neighbors}
-        self.state_dict["edge_neighbors"] = defaultdict(dict) ### s: {edge: edge_neighbors}
-        self.state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
-        self.state_dict["edge_adjacency_matrix"] = dict()
+        self._state_dict["data"] = np.array([df[self._edge_col].cat.codes,df[self._node_col].cat.codes],dtype=int).T
+        self._state_dict["snodelg"] = dict()  ### s: nx.graph
+        self._state_dict["sedgelg"] = dict()
+        self._state_dict["neighbors"] = defaultdict(dict) ### s: {node: neighbors}
+        self._state_dict["edge_neighbors"] = defaultdict(dict) ### s: {edge: edge_neighbors}
+        self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
+        self._state_dict["edge_adjacency_matrix"] = dict()
 
     def save_state(self, fpath=None):
         """
@@ -753,7 +753,7 @@ class Hypergraph:
         """
         fpath = fpath or self.filepath or "current_state.p"
         with open(fpath, "wb") as f:
-            pickle.dump([self.state_dict, self.edges.labels], f)
+            pickle.dump([self._state_dict, self.edges.labels], f)
 
     @classmethod
     @warn_nwhy
@@ -800,12 +800,12 @@ class Hypergraph:
 
         """
 
-        if "edge_size_dist" not in self.state_dict:
+        if "edge_size_dist" not in self._state_dict:
             dist = np.array(np.sum(self.incidence_matrix(), axis=0))[0].tolist()
             self.set_state(edge_size_dist=dist)
             return dist
         else:
-            return self.state_dict["edge_size_dist"]
+            return self._state_dict["edge_size_dist"]
 
     def degree(self, node, s=1, max_size=None):
         """
@@ -930,20 +930,20 @@ class Hypergraph:
         if node not in self.nodes:
             print(f"{node} is not in hypergraph {self.name}.")
             return None
-        if node in self.state_dict['neighbors'][s]:
-            return self.state_dict['neighbors'][s][node]
+        if node in self._state_dict['neighbors'][s]:
+            return self._state_dict['neighbors'][s][node]
         else:
             M = self.incidence_matrix()
-            rdx = self.state_dict['labels']['nodes']
+            rdx = self._state_dict['labels']['nodes']
             jdx = np.where(rdx == node)
             idx = (M[jdx].dot(M.T)>=s)*1
             idx = np.nonzero(idx)[1]
             neighbors = list(rdx[idx])
             if len(neighbors) > 0:
                 neighbors.remove(node)
-                self.state_dict['neighbors'][s][node] = neighbors
+                self._state_dict['neighbors'][s][node] = neighbors
             else:
-                self.state_dict['neighbors'][s][node] = []
+                self._state_dict['neighbors'][s][node] = []
         return neighbors
 
     def edge_neighbors(self, edge, s=1):
@@ -968,24 +968,24 @@ class Hypergraph:
         if edge not in self.edges:
             print(f"Edge is not in hypergraph {self.name}.")
             return None
-        if edge in self.state_dict['edge_neighbors'][s]:
-            return self.state_dict['edge_neighbors'][s][edge]
+        if edge in self._state_dict['edge_neighbors'][s]:
+            return self._state_dict['edge_neighbors'][s][edge]
         else:
             M = self.incidence_matrix()
-            cdx = self.state_dict['labels']['edges']
+            cdx = self._state_dict['labels']['edges']
             jdx = np.where(cdx == edge)
             idx = (M.T[jdx].dot(M)>=s)*1
             idx = np.nonzero(idx)[1]
             edge_neighbors = list(cdx[idx])
             if len(edge_neighbors) > 0:
                 edge_neighbors.remove(edge)
-                self.state_dict['edge_neighbors'][s][edge] = edge_neighbors
+                self._state_dict['edge_neighbors'][s][edge] = edge_neighbors
             else:
-                self.state_dict['edge_neighbors'][s][edge] = []            
+                self._state_dict['edge_neighbors'][s][edge] = []            
             return edge_neighbors
 
 
-    def remove_node(self, node, set_default_state=True):
+    def remove_node(self, node, _set_default_state=True):
         """
         Removes node from edges and deletes reference in hypergraph nodes
 
@@ -1006,8 +1006,8 @@ class Hypergraph:
                     self._edges.remove(node)
             self._nodes.remove(node)
 
-            if set_default_state:
-                self.set_default_state()
+            if _set_default_state:
+                self._set_default_state()
 
         return self
 
@@ -1026,8 +1026,8 @@ class Hypergraph:
 
         """
         for node in node_set:
-            self.remove_node(node, set_default_state=False)
-        self.set_default_state()
+            self.remove_node(node, _set_default_state=False)
+        self._set_default_state()
         return self
 
     def _add_nodes_from(self, nodes):
@@ -1042,7 +1042,7 @@ class Hypergraph:
         """
         self._nodes.add(nodes)
 
-    def add_edge(self, edge, set_default_state=True):
+    def add_edge(self, edge, _set_default_state=True):
         """
 
         Adds a single edge to hypergraph.
@@ -1083,8 +1083,8 @@ class Hypergraph:
             self._nodes.add(edge)
             self._edges.add(edge)
 
-        if set_default_state:
-            self.set_default_state()
+        if _set_default_state:
+            self._set_default_state()
 
     def add_edges_from(self, edge_set):
         """
@@ -1101,12 +1101,12 @@ class Hypergraph:
 
         """
         for edge in edge_set:
-            self.add_edge(edge, set_default_state=False)
+            self.add_edge(edge, _set_default_state=False)
 
-        self.set_default_state()
+        self._set_default_state()
         return self
 
-    def add_node_to_edge(self, node, edge, set_default_state=True):
+    def add_node_to_edge(self, node, edge, _set_default_state=True):
         """
 
         Adds node to an edge in hypergraph edges
@@ -1130,11 +1130,11 @@ class Hypergraph:
                 warnings.filterwarnings(
                     "ignore", message="Cannot add edge. Edge already in hypergraph"
                 )
-                self.add_edge({edge: [node]}, set_default_state)
+                self.add_edge({edge: [node]}, _set_default_state)
 
         return self
 
-    def remove_edge(self, edge, set_default_state=True):
+    def remove_edge(self, edge, _set_default_state=True):
         """
         Removes a single edge from hypergraph.
 
@@ -1160,8 +1160,8 @@ class Hypergraph:
                     self.remove_node(node)
             self._edges.remove(edge)
 
-        if set_default_state:
-            self.set_default_state()
+        if _set_default_state:
+            self._set_default_state()
         return self
 
     def remove_edges(self, edge_set):
@@ -1178,9 +1178,9 @@ class Hypergraph:
 
         """
         for edge in edge_set:
-            self.remove_edge(edge, set_default_state=False)
+            self.remove_edge(edge, _set_default_state=False)
 
-        self.set_default_state()
+        self._set_default_state()
         return self
 
     def incidence_matrix(self, weights=False, index=False):
@@ -1213,8 +1213,8 @@ class Hypergraph:
         if weights:
             sdkey = "weighted_" + sdkey
 
-        if sdkey in self.state_dict:
-            M = self.state_dict[sdkey]
+        if sdkey in self._state_dict:
+            M = self._state_dict[sdkey]
         else:
             df = self.dataframe
             data_cols = [self._node_col, self._edge_col]
@@ -1223,7 +1223,7 @@ class Hypergraph:
                 M = csr_matrix((data, tuple(np.array(df[col].cat.codes) for col in data_cols)))
             else:
                 M = csr_matrix(([1]*len(df),tuple(np.array(df[col].cat.codes) for col in data_cols)))
-            self.state_dict[sdkey] = M
+            self._state_dict[sdkey] = M
 
         if index == True:
             rdx = self.dataframe[self._node_col].cat.categories
@@ -1232,39 +1232,6 @@ class Hypergraph:
             return M, rdx, cdx
         else:
             return M
-
-    # @staticmethod
-    # def _incidence_to_adjacency(M, s=1, weights=False):
-    #     """
-    #     Helper method to obtain adjacency matrix from
-    #     boolean incidence matrix for s-metrics.
-    #     Self loops are not supported.
-    #     The adjacency matrix will define an s-linegraph.
-
-    #     Parameters
-    #     ----------
-    #     M : scipy.sparse.csr.csr_matrix
-    #         incidence matrix of 0's and 1's
-
-    #     s : int, optional, default 1
-
-    #     # weights : bool, dict optional, default =True
-    #     #     If False all nonzero entries are 1.
-    #     #     Otherwise, weights will be as in product.
-
-    #     Returns
-    #     -------
-    #     a matrix : scipy.sparse.csr.csr_matrix
-
-    #     """
-    #     M = csr_matrix(M)
-    #     weights = False  # currently weighting is not supported
-
-    #     if weights is False:
-    #         A = M.dot(M.transpose())
-    #         A.setdiag(0)
-    #         A = (A >= s) * 1
-    #     return A
 
     def adjacency_matrix(self, s=1, index=False, remove_empty_rows = False):
         """
@@ -1288,15 +1255,15 @@ class Hypergraph:
 
         """
         try:
-            A = self.state_dict['adjacency_matrix'][s]
+            A = self._state_dict['adjacency_matrix'][s]
         except:
             M = self.incidence_matrix()
             A = M@(M.T)
             A.setdiag(0)
             A = (A >= s) * 1 
-            self.state_dict['adjacency_matrix'][s] = A
+            self._state_dict['adjacency_matrix'][s] = A
         if index == True:
-            return A, self.state_dict['labels']['nodes']
+            return A, self._state_dict['labels']['nodes']
         else:
             return A
 
@@ -1326,15 +1293,15 @@ class Hypergraph:
 
         """
         try:
-            A = self.state_dict['edge_adjacency_matrix'][s]
+            A = self._state_dict['edge_adjacency_matrix'][s]
         except:
             M = self.incidence_matrix()
             A = (M.T)@(M)
             A.setdiag(0)
             A = (A >= s) * 1 
-            self.state_dict['edge_adjacency_matrix'][s] = A
+            self._state_dict['edge_adjacency_matrix'][s] = A
         if index == True:
-            return A, self.state_dict['labels']['edges']
+            return A, self._state_dict['labels']['edges']
         else:
             return A      
 
@@ -1382,8 +1349,8 @@ class Hypergraph:
 
         """
         B = nx.Graph()
-        nodes = self.state_dict['labels']['nodes']
-        edges = self.state_dict['labels']['edges']
+        nodes = self._state_dict['labels']['nodes']
+        edges = self._state_dict['labels']['edges']
         B.add_nodes_from(self.edges, bipartite=0)
         B.add_nodes_from(self.nodes, bipartite=1)
         B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
@@ -1617,7 +1584,7 @@ class Hypergraph:
         """
         if use_reps is not None or return_counts is not None:
             msg = """
-            use_reps ane return_counts are no longer supported keyword
+            use_reps and return_counts are no longer supported keyword
             arguments and will throw an error in the next release.
             collapsed hypergraph automatically names collapsed objects by a
             string "rep:count"
@@ -1634,45 +1601,88 @@ class Hypergraph:
         temp = self.collapse_nodes(name="temp")
         return temp.collapse_edges(name=name)
 
-    def restrict_to_edges(self, edgeset, name=None):
-        """
-        Constructs a hypergraph using a subset of the edges in hypergraph
+def restrict_to_nodes(self,nodes):
+    """New hypergraph gotten by restricting to nodes
+    
+    Parameters
+    ----------
+    nodes : Iterable
+        nodeids to restrict to
+    
+    Returns
+    -------
+    : hnx. Hypergraph
 
-        Parameters
-        ----------
-        edgeset: iterable of hashables or Entities
-            A subset of elements of the hypergraph edges
+    """
+    keys = set(self._state_dict['labels']['nodes']).difference(nodes)
+    return remove(self,keys,level=1)
 
-        name: str, optional
+def restrict_to_edges(self,edges):
+    """New hypergraph gotten by restricting to edges
+    
+    Parameters
+    ----------
+    edges : Iterable
+        edgeids to restrict to
+    
+    Returns
+    -------
+    hnx.Hypergraph
 
-        Returns
-        -------
-        new hypergraph : Hypergraph
-        """
+    """
+    keys = set(self._state_dict['labels']['edges']).difference(edges)
+    return remove(self,keys,level=0)
 
-        indices = self.edges.indices(self.edges._data_cols[0], list(edgeset))
-        setsystem = self.edges.restrict_to(sorted(indices))
-        return Hypergraph(setsystem, name=name)
+def remove(self,keys,level=None):
+    """Creates a new hypergraph with nodes and/or edges indexed by keys
+    removed. More efficient for creating a restricted hypergraph if the
+    restricted set is greater than what is being removed.
+    
+    Parameters
+    ----------
+    keys : Iterable
+        node and/or edge id to restrict to
+    level : None, optional
+        Enter 0 to remove edges with ids in keys.  
+        Enter 1 to remove nodes with ids in keys.  
+        If None then all objects in nodes and edges with the id will 
+        be removed.
+    
+    Returns
+    -------
+    : hnx.Hypergraph
 
-    def restrict_to_nodes(self, nodeset, name=None):
-        """
-        Constructs a new hypergraph by restricting the edges in the hypergraph
-        to the nodes referenced by nodeset.
+    """
+    rdfprop = self.properties.copy()
+    rdf = self.dataframe.copy()
+    if level == 0:
+        kdx = set(keys).intersection(set(self._state_dict['labels']['edges']))
+        for k in kdx:
+            rdfprop = rdfprop.drop((0,k))
+        rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
+    elif level == 1:
+        kdx = set(keys).intersection(set(self._state_dict['labels']['nodes']))
+        for k in kdx:
+            rdfprop = rdfprop.drop((1,k))
+        rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
+    else:
+        rdfprop.reset_index().set_index('id')
+        kdx = set(keys).intersection(rdfprop.id.unique())
+        rdfprop = rdfprop.drop(index=kdx)
+        rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
+        rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]  
+                    
+    return hnx.Hypergraph(
+                setsystem = rdf,
+                edge_col = self._edge_col,
+                node_col = self._node_col,
+                cell_weight_col = self._cell_weight_col,
+                misc_cell_properties_col = self.edges._misc_cell_props_col,
+                properties = rdfprop,
+                misc_properties_col = self.edges._misc_props_col
+                )                        
+                
 
-        Parameters
-        ----------
-        nodeset: iterable of hashables
-            References a subset of elements of self.nodes
-
-        name: string, optional, default = None
-
-        Returns
-        -------
-        new hypergraph : Hypergraph
-        """
-        indices = self.edges.indices(self.edges._data_cols[1], list(nodeset))
-        setsystem = self.edges.restrict_to_indices(sorted(indices), level=1)
-        return Hypergraph(setsystem, name=name)
 
     def toplexes(self, name=None, collapse=False, use_reps=False, return_counts=True):
         """
@@ -1705,17 +1715,17 @@ class Hypergraph:
 
         """
         # TODO: There is a better way to do this....need to refactor
-        if collapse:
-            if len(self.edges) > 20:  # TODO: Determine how big is too big.
-                msg = """
-                Collapsing a hypergraph can take a long time. It may be preferable to
-                collapse the graph first and pickle it then apply the toplex method
-                separately.
-                """
-                warnings.warn(msg)
-            temp = self.collapse_edges()
-        else:
-            temp = self
+        # if collapse:
+        #     if len(self.edges) > 20:  # TODO: Determine how big is too big.
+        #         msg = """
+        #         Collapsing a hypergraph can take a long time. It may be preferable to
+        #         collapse the graph first and pickle it then apply the toplex method
+        #         separately.
+        #         """
+        #         warnings.warn(msg)
+        #     temp = self.collapse_edges()
+        # else:
+        #     temp = self
 
         if collapse:
             msg = """
