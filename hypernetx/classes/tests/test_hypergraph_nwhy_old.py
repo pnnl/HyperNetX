@@ -31,13 +31,12 @@ def test_convert_to_static_warn_nwhy(sbs):
     assert H_static.incidence_dict == H_static_nwhy.incidence_dict
 
 
+@pytest.mark.skip(reason="Deprecated")
 @pytest.mark.parametrize(
     "constructor, example",
     [
         (Hypergraph, "sbs_edgedict"),
         (Hypergraph.from_bipartite, "complete_bipartite_example"),
-        (Hypergraph.from_numpy_array, "array_example"),
-      #  (Hypergraph.from_dataframe, "dataframe_example"),
     ],
 )
 def test_constructors_warn_nwhy(constructor, example, request):
