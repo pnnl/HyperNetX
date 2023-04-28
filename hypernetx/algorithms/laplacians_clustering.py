@@ -67,19 +67,17 @@ def prob_trans(H, weights=False, index=True, check_connected=True):
     -------
      P : scipy.sparse.csr.csr_matrix
          Probability transition matrix of the random walk on the hypergraph
-     index: dict
-         mapping from row and column indices to corresponding vertex label
+     index: list
+         contains list of index of node ids for rows
     """
     # hypergraph must be connected
     if check_connected:
         if not H.is_connected():
             raise HyperNetXError("hypergraph must be connected")
 
-    # if no weighting function, each step in the random walk is chosen uniformly at random.
-    if weights == False:
-        R, index, _ = H.incidence_matrix(index=True)
-    else:
-        R, index, _ = H.incidence_matrix(index=True, weights=True)
+    R = H.incidence_matrix(index=index, weights=weights)
+    if index:
+        R, rdx, _ = R
 
     # transpose incidence matrix for notational convenience
     R = R.transpose()
@@ -104,10 +102,9 @@ def prob_trans(H, weights=False, index=True, check_connected=True):
     # probability transition matrix P
     P = D_V * W * D_E * R
 
-    if index == False:
-        return P
-    else:
-        return P, index
+    if index:
+        return P, rdx
+    return P
 
 
 def get_pi(P):
@@ -163,21 +160,20 @@ def norm_lap(H, weights=False, index=True):
     -------
      P : scipy.sparse.csr.csr_matrix
          Probability transition matrix of the random walk on the hypergraph
-     index: dict
-         mapping from row and column indices to corresponding vertex label
+     id: list
+         contains list of index of node ids for rows
     """
-    if weights == None:
-        P, index = prob_trans(H)
-    else:
-        P, index = prob_trans(H, weights=weights)
+    P = prob_trans(H, weights=weights, index=index)
+    if index:
+        P, idx = P
+
     pi = get_pi(P)
     gamma = diags(np.power(pi, 1 / 2)) * P * diags(np.power(pi, -1 / 2))
-    L = identity(gamma.shape[0]) - (1 / 2) * gamma + gamma.transpose()
+    L = identity(gamma.shape[0]) - (1 / 2) * (gamma + gamma.transpose())
 
     if index:
-        return L, index
-    else:
-        return L
+        return L, idx
+    return L
 
 
 def spec_clus(H, k, existing_lap=None, weights=False):

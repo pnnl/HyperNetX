@@ -444,6 +444,8 @@ def _delta_ec(HG, P, v, a, b, wdc):
     Pm = P[a] - {v}
     Pn = P[b].union({v})
     ec = 0
+
+    # TODO: Verify the data shape of `memberships` (ie. what are the keys and values)
     for e in list(HG.nodes.memberships[v]):
         d = HG.size(e)
         w = HG.edges[e].weight

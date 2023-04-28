@@ -621,6 +621,8 @@ class Entity:
         --------
         dimensions
         """
+        # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
+        # TODO: Currently failing test test_entity::test_Entity_property
         return self.dimensions[level]
 
     @property
@@ -1166,7 +1168,6 @@ class Entity:
         df, weight_col = remove_row_duplicates(
             self._dataframe,
             data_cols,
-            weight_col=weight_col,
             weights=weights,
             aggregateby=aggregateby,
         )

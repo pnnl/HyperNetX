@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pickle
 import warnings
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from collections.abc import Sequence, Iterable
-from typing import Optional, Any, TypeVar, Union
+from typing import Optional, Any, TypeVar, Union, Mapping
 
 import networkx as nx
 import numpy as np
@@ -15,7 +15,7 @@ from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
 from hypernetx.classes import Entity, EntitySet
-from hypernetx.exception import HyperNetXError, NWHY_WARNING
+from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 
@@ -222,7 +222,7 @@ class Hypergraph:
 
     properties : (optional) pd.DataFrame | dict, default = None
         Concatenation/union of edge_properties and node_properties.
-        By default the object id is used and should be the first column of
+        By default, the object id is used and should be the first column of
         the dataframe, or key in the dict. If there are nodes and edges
         with the same ids and different properties then use the edge_properties 
         and node_properties keywords.
@@ -309,7 +309,7 @@ class Hypergraph:
                 entity = setsystem.copy()
 
                 if isinstance(cell_weight_col, int):
-                    self._cell_weight_col = setsytem.columns[cell_weight_col]
+                    self._cell_weight_col = setsystem.columns[cell_weight_col]
                 else: 
                     self._cell_weight_col = cell_weight_col
 
@@ -339,7 +339,7 @@ class Hypergraph:
 
                 if isinstance(setsystem,np.ndarray):
                     if setsystem.shape[1] != 2:
-                        raise HNXError('Numpy array must have exactly 2 columns.')
+                        raise HyperNetXError('Numpy array must have exactly 2 columns.')
                     entity = pd.DataFrame(setsystem, 
                         columns = [edge_col, node_col])
                     entity[cell_weight_col] = cell_weights
@@ -383,9 +383,8 @@ class Hypergraph:
                     )
                     entity['cell_weights'] = cell_weights
 
-
                 else:
-                    raise HyperNetX('setsystem is not supported or is in the wrong format.')
+                    raise HyperNetXError('setsystem is not supported or is in the wrong format.')
 
 
             def props2dict(df = None):
@@ -1356,7 +1355,7 @@ class Hypergraph:
         B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
         return B
 
-    def dual(self, name = None, switch_names = True):
+    def dual(self, name=None, switch_names=True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -1617,7 +1616,7 @@ class Hypergraph:
         keys = set(self._state_dict['labels']['nodes']).difference(nodes)
         return self.remove(keys,level=1)
 
-    def restrict_to_edges(self,edges):
+    def restrict_to_edges(self, edges):
         """New hypergraph gotten by restricting to edges
         
         Parameters
@@ -1828,13 +1827,9 @@ class Hypergraph:
                         singles.append(cdict[r])
         return singles
 
-    def remove_singletons(self, name=None):
+    def remove_singletons(self):
         """
         Constructs clone of hypergraph with singleton edges removed.
-
-        Parameters
-        ----------
-        name: str, optional, default = None
 
         Returns
         -------
@@ -1843,7 +1838,7 @@ class Hypergraph:
         """
         singletons = self.singletons()
         E = [e for e in self.edges if e not in singletons]
-        return self.restrict_to_edges(E, name=name)
+        return self.restrict_to_edges(E)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
