@@ -89,9 +89,8 @@
 
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -102,15 +101,15 @@
 <span class="kn">from</span> <span class="nn">hypernetx.classes</span> <span class="kn">import</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">EntitySet</span>
 <span class="kn">from</span> <span class="nn">hypernetx.exception</span> <span class="kn">import</span> <span class="n">HyperNetXError</span><span class="p">,</span> <span class="n">NWHY_WARNING</span>
 <span class="kn">from</span> <span class="nn">hypernetx.utils.decorators</span> <span class="kn">import</span> <span class="n">warn_nwhy</span>
-<span class="kn">from</span> <span class="nn">hypernetx.classes.helpers</span> <span class="kn">import</span> <span class="n">merge_nested_dicts</span><span class="p">,</span> <span class="n">dict_depth</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Hypergraph&quot;</span><span class="p">]</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span>
 
 <div class="viewcode-block" id="Hypergraph"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph">[docs]</a><span class="k">class</span> <span class="nc">Hypergraph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Hypergraphs in HNX 2.0  </span>
+<span class="sd">    ======================</span>
+<span class="sd">    Hypergraphs in HNX 2.0</span>
+<span class="sd">    ======================</span>
 
 <span class="sd">    An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:</span>
 <span class="sd">    V = nodes (vertices) and E = (hyper)edges.</span>
@@ -173,6 +172,7 @@
 <span class="sd">        particular to only some of the incidence pairs may be placed in a single</span>
 <span class="sd">        column of the dataframe. Representing the data above as a dataframe df:</span>
 
+
 <span class="sd">        +-----------+-----------+-----------+-----------------------------------+</span>
 <span class="sd">        |   col1    |   col2    |   w       |  col3                             |</span>
 <span class="sd">        +-----------+-----------+-----------+-----------------------------------+</span>
@@ -196,25 +196,25 @@
 <span class="sd">    5.  **numpy.ndarray** For homogeneous datasets given in an ndarray a</span>
 <span class="sd">        pandas dataframe is generated and column names are added from the</span>
 <span class="sd">        column_names keyword argument. Cell properties containing multiple data</span>
-<span class="sd">        types are added with a separate dataframe or dict and passed through the</span>
-<span class="sd">        cell_properties keyword. ::</span>
+<span class="sd">        types can be added with a separate dataframe or dict. ::</span>
 
 <span class="sd">        &gt;&gt;&gt; arr = np.array([[&#39;e1&#39;,&#39;1&#39;],[&#39;e1&#39;,&#39;2&#39;],</span>
 <span class="sd">        &gt;&gt;&gt;                 [&#39;e2&#39;,&#39;1&#39;],[&#39;e2&#39;,&#39;2&#39;],</span>
 <span class="sd">        &gt;&gt;&gt;                 [&#39;e3&#39;,&#39;1&#39;],[&#39;e3&#39;,&#39;2&#39;],[&#39;e3&#39;,&#39;3&#39;]])</span>
-<span class="sd">        &gt;&gt;&gt; H = hnx.Hypergraph(arr, column_names=[&#39;col1&#39;,&#39;col2&#39;])</span>
-
+<span class="sd">        &gt;&gt;&gt; H = hnx.Hoypergraph(arr, column_names=[&#39;col1&#39;,&#39;col2&#39;])</span>
 
 <span class="sd">    Edge and Node Properties</span>
 <span class="sd">    ~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="sd">    Properties specific to a single edge or node are passed through the</span>
 <span class="sd">    keywords: **edge_properties, node_properties, properties**.</span>
 <span class="sd">    Properties may be passed as dataframes or dicts.</span>
-<span class="sd">    The first column or index of the dataframe or keys of the dict keys </span>
-<span class="sd">    correspond to the edge and/or node identifiers.</span>
-<span class="sd">    If identifiers are shared among edges and nodes, or are distinct</span>
-<span class="sd">    for edges and nodes, properties may be combined into a single</span>
-<span class="sd">    object and passed to the **properties** keyword. For example:</span>
+<span class="sd">    When a dataframe is passed to the edge_properties or node_properties,</span>
+<span class="sd">    the value assigned to edge_col and node_col is used to index the</span>
+<span class="sd">    properties. If a dataframe is passed as the properties keyword</span>
+<span class="sd">    argument, then the first column must contain identifiers. This is useful</span>
+<span class="sd">    if all nodes and edges have distinct uids or an object is used as both an</span>
+<span class="sd">    edge and a node in the hypergraph and uses the same set of properties in</span>
+<span class="sd">    both roles. Define the properties dataframe dfp:</span>
 
 <span class="sd">    +-----------+-----------+---------------------------------------+</span>
 <span class="sd">    |   id      |   weight  |   properties                          |</span>
@@ -230,41 +230,63 @@
 <span class="sd">    |   ...     |   ...     |   {...}                               |</span>
 <span class="sd">    +-----------+-----------+---------------------------------------+</span>
 
-<span class="sd">    A properties dictionary should have the format: ::</span>
+<span class="sd">    OR with levels:</span>
+
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    | level |   id      |   weight  |   properties                          |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    |   1   |   1       |   1.2     |   {&#39;color&#39;:&#39;red&#39;}                     |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    |   1   |   2       |   .003    |   {&#39;name&#39;:&#39;Fido&#39;,&#39;color&#39;:&#39;brown&#39;}     |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    |   1   |   3       |   1.0     |                                       |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    |   0   |   e1      |   5.0     |   {&#39;type&#39;:&#39;event&#39;}                    |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+<span class="sd">    |   0   |   ...     |   ...     |   {...}                               |</span>
+<span class="sd">    +-------+-----------+-----------+---------------------------------------+</span>
+
+<span class="sd">    Then we pass it to the constructor as properties: ::</span>
+
+<span class="sd">        &gt;&gt;&gt; H = hnx.Hypergraph(df,properties=dfp)</span>
+
+<span class="sd">    Similarly, a properties dictionary with the format: ::</span>
 
 <span class="sd">        dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }</span>
 
+<span class="sd">    may be passed:</span>
+<span class="sd">    ::</span>
+<span class="sd">        &gt;&gt;&gt; H = hnx.Hypergraph(d,properties=dp)</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ---- </span>
+
+<span class="sd">    Weights</span>
+<span class="sd">    ~~~~~~~</span>
 <span class="sd">    The default key for cell and object weights is &quot;weight&quot;. The default value</span>
 <span class="sd">    is 1. Weights may be assigned and/or a new default prescribed in the</span>
-<span class="sd">    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop,</span>
-<span class="sd">    default_edge_weight,** and **default_node_weight**. See parameters below </span>
-<span class="sd">    for details.</span>
-<span class="sd">    </span>
+<span class="sd">    constructor using **cell_weight_col** and **cell_weights** for incidence pairs,</span>
+<span class="sd">    and using **edge_weight_prop, node_weight_prop, weight_prop,</span>
+<span class="sd">    default_edge_weight,** and **default_node_weight**. See parameters below for</span>
+<span class="sd">    details.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,</span>
-<span class="sd">        pandas.DataFrame, numpy.ndarray, default = None</span>
+<span class="sd">        pandas.DataFrame, numpy.ndarray, default: None</span>
 <span class="sd">        See SetSystem above for additional setsystem requirements.</span>
-
-<span class="sd">    edge_col : (optional) str | int, default = 0</span>
+<span class="sd">    column_names : (optional) : Sequence[str], default : None</span>
+<span class="sd">        used to assign as column names when setsystem is an ndarray or empty,</span>
+<span class="sd">        otherwise ignored.</span>
+<span class="sd">    edge_col : (optional) int | str, default : 0</span>
 <span class="sd">        column index (or name) in pandas.dataframe or numpy.ndarray,</span>
 <span class="sd">        used for (hyper)edge ids</span>
-
-<span class="sd">    node_col : (optional) str | int, default = 1</span>
+<span class="sd">    node_col : (optional) int | str, default : 1</span>
 <span class="sd">        column index (or name) in pandas.dataframe or numpy.ndarray,</span>
 <span class="sd">        used for node ids</span>
-
-<span class="sd">    cell_weight_col : (optional) str | int, default = None</span>
+<span class="sd">    cell_weight_col : (optional) int | str, default = None</span>
 <span class="sd">        column index (or name) in pandas.dataframe or numpy.ndarray used for</span>
 <span class="sd">        referencing cell weights. For a dict of dicts references key in cell</span>
 <span class="sd">        property dicts.</span>
-
-<span class="sd">    cell_weights : (optional) Sequence[float,int] | int |  float , default = 1</span>
+<span class="sd">    cell_weights : (optional) Sequence[float,int] | int |  float , default : 1</span>
 <span class="sd">        User specified cell_weights or default weight.</span>
 <span class="sd">        Sequential values are only used if setsystem is a</span>
 <span class="sd">        dataframe or ndarray in which case the sequence must</span>
@@ -273,200 +295,114 @@
 <span class="sd">        If cell_weights is assigned a single value</span>
 <span class="sd">        then it will be used as default when no cell_weight_col</span>
 <span class="sd">        is given or if cell weight is missing from the cell_weight_col</span>
-
-<span class="sd">    cell_properties : (optional) Sequence[int | str] | Mapping[T,Mapping[T,Mapping[str,Any]]],</span>
-<span class="sd">        default = None</span>
+<span class="sd">    cell_properties : (optional) Sequence[int | str] | Map[int | str , str],</span>
+<span class="sd">        default : None</span>
 <span class="sd">        Indices or names of columns from set system to use as properties</span>
-<span class="sd">        or a dict assigning cell_property to incidence pairs of edges and </span>
-<span class="sd">        nodes. Will generate misc_cell_properties column if setsystem is dict of dicts.</span>
-
-<span class="sd">    misc_cell_properties : (optional) str | int, default = None</span>
+<span class="sd">        or a dict assigning cell_property to incidence pairs of edges and nodes.</span>
+<span class="sd">        Will update properties if setsystem is dict of dicts.</span>
+<span class="sd">    misc_cell_properties : (optional) int | str, default=&quot;cell_properties&quot;</span>
 <span class="sd">        Column index or name of dataframe corresponding to a column of variable</span>
 <span class="sd">        length property dictionaries for the cell. Ignored for other setsystem</span>
 <span class="sd">        types.</span>
-
-<span class="sd">    aggregateby : (optional) str, dict optional, default = &#39;first&#39;</span>
+<span class="sd">    aggregateby : (optional) str, dict optional, default : &#39;first&#39;</span>
 <span class="sd">        By default duplicate edge,node incidences will be dropped unless</span>
 <span class="sd">        specified with `aggregateby`.</span>
 <span class="sd">        See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for</span>
 <span class="sd">        additional syntax and usage information.</span>
 
-<span class="sd">    edge_properties : (optional) pd.DataFrame | dict, default = None</span>
+<span class="sd">    edge_properties : (optional) pd.DataFrame | dict, default : None</span>
 <span class="sd">        Properties associated with edge ids.</span>
 <span class="sd">        First column of dataframe or keys of dict link to object ids in</span>
 <span class="sd">        setsystem.</span>
-
-<span class="sd">    node_properties : (optional) pd.DataFrame | dict, default = None</span>
+<span class="sd">    node_properties : (optional) pd.DataFrame | dict, default : None</span>
 <span class="sd">        Properties associated with node ids.</span>
 <span class="sd">        First column of dataframe or keys of dict link to object ids in</span>
 <span class="sd">        setsystem.</span>
-
 <span class="sd">    properties : (optional) pd.DataFrame | dict, default = None</span>
 <span class="sd">        Concatenation/union of edge_properties and node_properties.</span>
 <span class="sd">        By default the object id is used and should be the first column of</span>
 <span class="sd">        the dataframe, or key in the dict. If there are nodes and edges</span>
-<span class="sd">        with the same ids and different properties then use the edge_properties </span>
-<span class="sd">        and node_properties keywords.</span>
-
-<span class="sd">    misc_properties : (optional) int | str, default = None</span>
+<span class="sd">        with the same ids and different properties then the first column of the</span>
+<span class="sd">        dataframe is binary indicator of 0 or edge_col_name and 1 or</span>
+<span class="sd">        node_col_name and the second column should reference object id. If a dict</span>
+<span class="sd">        then nest the edge and node dictionaries with keys 0/edge_col_name</span>
+<span class="sd">        and 1/node_col_name. See notes for example.</span>
+<span class="sd">    misc_properties : (optional) int | str, default = &quot;properties&quot;</span>
 <span class="sd">        Column of property dataframes with dtype=dict. Intended for variable</span>
 <span class="sd">        length property dictionaries for the objects.</span>
-
-<span class="sd">    edge_weight_prop : (optional) str, default = None,</span>
+<span class="sd">    edge_weight_prop : (optional) str, default : &#39;weight&#39;,</span>
 <span class="sd">        Name of property in edge_properties to use for weight.</span>
-
-<span class="sd">    node_weight_prop : (optional) str, default = None,</span>
+<span class="sd">    node_weight_prop : (optional) str, default : &#39;weight&#39;,</span>
 <span class="sd">        Name of property in node_properties to use for weight.</span>
-
-<span class="sd">    weight_prop : (optional) str, default = None</span>
+<span class="sd">    weight_prop : (optional) str, default : &#39;weight&#39;</span>
 <span class="sd">        Name of property in properties to use for &#39;weight&#39;</span>
-
-<span class="sd">    default_edge_weight : (optional) int | float, default = 1</span>
+<span class="sd">    default_edge_weight : (optional) int | float, default : 1</span>
 <span class="sd">        Used when edge weight property is missing or undefined.</span>
-
-<span class="sd">    default_node_weight : (optional) int | float, default = 1</span>
+<span class="sd">    default_node_weight : (optional) int | float, default : 1</span>
 <span class="sd">        Used when node weight property is missing or undefined</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-
-
     <span class="nd">@warn_nwhy</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">setsystem</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span><span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="n">Any</span><span class="p">]]]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">edge_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">node_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">cell_weight_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s1">&#39;cell_weight&#39;</span><span class="p">,</span>
-        <span class="n">cell_weights</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">cell_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span><span class="n">Mapping</span><span class="p">[</span><span class="n">T</span><span class="p">,</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="n">Any</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">misc_cell_properties</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s1">&#39;misc_cell_properties&#39;</span><span class="p">,</span>
-        <span class="n">aggregateby</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">,</span>
-        <span class="n">edge_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">node_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">misc_properties</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s1">&#39;misc_properties&#39;</span><span class="p">,</span>
-        <span class="n">edge_weight_prop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span><span class="p">,</span>
-        <span class="n">node_weight_prop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span><span class="p">,</span>
-        <span class="n">weight_prop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span><span class="p">,</span>
-        <span class="n">default_edge_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">default_node_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">default_weight</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">setsystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregateby</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+        <span class="n">use_nwhy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
+        <span class="k">if</span> <span class="n">use_nwhy</span><span class="p">:</span>
+            <span class="n">static</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nwhy</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="c1">### cell properties </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_static</span> <span class="o">=</span> <span class="n">static</span>
 
         <span class="k">if</span> <span class="n">setsystem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;Edges&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;Nodes&quot;</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> 
-                    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge_col</span><span class="p">,</span> <span class="n">node_col</span><span class="p">])</span>
-                <span class="n">entity</span><span class="p">[</span><span class="s1">&#39;cell_weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_weights</span>
-                <span class="n">cell_weights_col</span> <span class="o">=</span> <span class="s1">&#39;cell_weights&#39;</span>
-
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">setsystem</span><span class="p">)</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                    <span class="p">{</span><span class="n">edge_col</span><span class="p">:</span> <span class="n">entity</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">node_col</span><span class="p">:</span> <span class="n">entity</span><span class="o">.</span><span class="n">values</span><span class="p">}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">properties</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span>
+                    <span class="n">misc_props_col</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">_misc_props_col</span><span class="p">,</span>
+                    <span class="n">level_col</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">id_col</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                 <span class="p">)</span>
-                <span class="n">entity</span><span class="p">[</span><span class="n">cell_weight_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_weights</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
 
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="c1">## check if it is a dict of iterables or a nested dict. if the latter then pull</span>
-                <span class="c1">## out the nested dicts as cell properties.</span>
-
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">setsystem</span><span class="p">)</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                    <span class="p">{</span><span class="n">edge_col</span><span class="p">:</span> <span class="n">entity</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">node_col</span><span class="p">:</span> <span class="n">entity</span><span class="o">.</span><span class="n">values</span><span class="p">}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">cell_properties</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">cell_properties</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span>
+                    <span class="n">misc_cell_props_col</span><span class="o">=</span><span class="n">setsystem</span><span class="o">.</span><span class="n">_misc_cell_props_col</span><span class="p">,</span>
                 <span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">dict_depth</span><span class="p">(</span><span class="n">setsystem</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">cell_props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">setsystem</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_properties</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
-                        <span class="n">cell_properties</span> <span class="o">=</span> <span class="n">merge_nested_dicts</span><span class="p">(</span><span class="n">cell_props</span><span class="p">,</span> <span class="n">cell_properties</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">cell_properties</span> <span class="o">=</span> <span class="n">cell_props</span>
-
-                    <span class="n">default_wt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cell_weights</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">entity</span><span class="p">[</span><span class="n">cell_weight_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">setsystem</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                        <span class="n">cell_weight_col</span><span class="p">,</span><span class="n">default_wt</span><span class="p">)</span> 
-                        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span> <span class="p">]</span>                                
-
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">setsystem</span><span class="p">,</span><span class="n">pdDataFrame</span><span class="p">):</span>
-                <span class="n">entity</span> <span class="o">=</span> <span class="n">setsystem</span>
-                <span class="n">default_wt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cell_weights</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">cell_weight_col</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
-                    <span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">fillna</span><span class="p">({</span><span class="n">cell_weight_col</span><span class="p">:</span> <span class="n">default_wt</span><span class="p">})</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">entity</span><span class="p">[</span><span class="n">cell_weight_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_weights</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">HyperNetX</span><span class="p">(</span><span class="s1">&#39;setsystem is not supported or is of the wrong format.&#39;</span><span class="p">)</span>
-
-
-            <span class="k">def</span> <span class="nf">props2dict</span><span class="p">(</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="p">{}</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
-                <span class="k">else</span> <span class="p">:</span>
-                    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-            <span class="c1">### edge and node properties this may fail later if not all nodes and edges are present</span>
- 
-            <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">edge_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">node_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">edge_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">edge_properties</span> <span class="o">=</span> <span class="n">props2dict</span><span class="p">(</span><span class="n">edge_properties</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">edge_properties</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                            <span class="n">v</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">edge_weight_prop</span><span class="p">,</span><span class="n">default_edge_weight</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">node_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">node_properties</span> <span class="o">=</span> <span class="n">props2dict</span><span class="p">(</span><span class="n">node_properties</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">node_properties</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                            <span class="n">v</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node_weight_prop</span><span class="p">,</span><span class="n">default_node_weight</span><span class="p">)</span>
-                    <span class="n">properties</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="n">edge_properties</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">node_properties</span><span class="p">}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">weight_prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                        <span class="n">properties</span><span class="o">.</span><span class="n">fillna</span><span class="p">({</span><span class="n">weight_prop</span><span class="p">:</span><span class="n">default_weight</span><span class="p">},</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">properties</span><span class="p">[</span><span class="n">weight_prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_weight</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                                <span class="n">v</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">weight_prop</span><span class="p">,</span><span class="n">default_weight</span><span class="p">)</span>
-
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
 
             <span class="n">E</span> <span class="o">=</span> <span class="n">EntitySet</span><span class="p">(</span>
-                    <span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span><span class="p">,</span>
-                    <span class="n">level1</span> <span class="o">=</span> <span class="n">edge_col</span><span class="p">,</span>
-                    <span class="n">level2</span> <span class="o">=</span> <span class="n">node_col</span><span class="p">,</span>
-                    <span class="n">weights_col</span> <span class="o">=</span> <span class="n">cell_weight_col</span><span class="p">,</span>
-                    <span class="n">weights</span> <span class="o">=</span> <span class="n">cell_weights</span><span class="p">,</span>
-                    <span class="n">cell_properties</span><span class="o">=</span><span class="n">cell_properties</span><span class="p">,</span>
-                    <span class="n">misc_cell_props_col</span><span class="o">=</span><span class="n">misc_cell_properties</span><span class="p">,</span>
-                    <span class="n">aggregateby</span> <span class="o">=</span> <span class="n">aggregateby</span><span class="p">,</span>
-                    <span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span><span class="p">,</span>
-                    <span class="n">misc_props_col</span> <span class="o">=</span> <span class="n">misc_properties</span><span class="p">,</span>
-                    <span class="n">uid</span> <span class="o">=</span> <span class="n">name</span>
-                <span class="p">)</span>
-
+                <span class="n">entity</span><span class="o">=</span><span class="n">setsystem</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                <span class="n">aggregateby</span><span class="o">=</span><span class="n">aggregateby</span><span class="p">,</span>
+                <span class="n">static</span><span class="o">=</span><span class="n">static</span><span class="p">,</span>
+                <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;Edges&quot;</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">E</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">(</span>
-                <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;Nodes&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
+                <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;Nodes&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aggregateby</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">state_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_state</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_state</span><span class="p">(</span><span class="n">fpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -771,9 +707,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        node : hashable</span>
 <span class="sd">            identifier for the node.</span>
-<span class="sd">        s : positive integer, optional, default 1</span>
+<span class="sd">        s : positive integer, optional, default: 1</span>
 <span class="sd">            smallest size of edge to consider in degree</span>
-<span class="sd">        max_size : positive integer or None, optional, default = None</span>
+<span class="sd">        max_size : positive integer or None, optional, default: None</span>
 <span class="sd">            largest size of edge to consider in degree</span>
 
 <span class="sd">        Returns</span>
@@ -816,7 +752,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        nodeset : an interable of Entities, optional, default = None</span>
+<span class="sd">        nodeset : an interable of Entities, optional, default: None</span>
 <span class="sd">            If None, then return the number of nodes in hypergraph.</span>
 
 <span class="sd">        Returns</span>
@@ -835,7 +771,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        edgeset : an iterable of Entities, optional, default = None</span>
+<span class="sd">        edgeset : an iterable of Entities, optional, default: None</span>
 <span class="sd">            If None, then return the number of edges in hypergraph.</span>
 
 <span class="sd">        Returns</span>
@@ -872,7 +808,7 @@
 <span class="sd">        node : hashable or Entity</span>
 <span class="sd">            uid for a node in hypergraph or the node Entity</span>
 
-<span class="sd">        s : int, list, optional, default = 1</span>
+<span class="sd">        s : int, list, optional, default : 1</span>
 <span class="sd">            Minimum number of edges shared by neighbors with node.</span>
 
 <span class="sd">        Returns</span>
@@ -896,7 +832,7 @@
 <span class="sd">        edge : hashable or Entity</span>
 <span class="sd">            uid for a edge in hypergraph or the edge Entity</span>
 
-<span class="sd">        s : int, list, optional, default = 1</span>
+<span class="sd">        s : int, list, optional, default : 1</span>
 <span class="sd">            Minimum number of nodes shared by neighbors edge node.</span>
 
 <span class="sd">        Returns</span>
@@ -1116,12 +1052,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        weights : bool, default =False</span>
+<span class="sd">        weights : bool, default=False</span>
 <span class="sd">            If False all nonzero entries are 1.</span>
 <span class="sd">            If True and self.static all nonzero entries are filled by</span>
 <span class="sd">            self.edges.cell_weights dictionary values.</span>
 
-<span class="sd">        index : boolean, optional, default = False</span>
+<span class="sd">        index : boolean, optional, default False</span>
 <span class="sd">            If True return will include a dictionary of node uid : row number</span>
 <span class="sd">            and edge uid : column number</span>
 
@@ -1165,9 +1101,9 @@
 <span class="sd">        M : scipy.sparse.csr.csr_matrix</span>
 <span class="sd">            incidence matrix of 0&#39;s and 1&#39;s</span>
 
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
-<span class="sd">        # weights : bool, dict optional, default =True</span>
+<span class="sd">        # weights : bool, dict optional, default=True</span>
 <span class="sd">        #     If False all nonzero entries are 1.</span>
 <span class="sd">        #     Otherwise, weights will be as in product.</span>
 
@@ -1191,12 +1127,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
-<span class="sd">        index: boolean, optional, default = False</span>
+<span class="sd">        index: boolean, optional, default: False</span>
 <span class="sd">            if True, will return a rowdict of row to node uid</span>
 
-<span class="sd">        weights: bool, default =True</span>
+<span class="sd">        weights: bool, default=True</span>
 <span class="sd">            If False all nonzero entries are 1.</span>
 <span class="sd">            If True adjacency matrix will depend on weighted incidence matrix,</span>
 
@@ -1221,14 +1157,14 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
-<span class="sd">        index: boolean, optional, default = False</span>
+<span class="sd">        index: boolean, optional, default: False</span>
 <span class="sd">            if True, will return a coldict of column to edge uid</span>
 
-<span class="sd">        sparse: boolean, optional, default = True</span>
+<span class="sd">        sparse: boolean, optional, default: True</span>
 
-<span class="sd">        weighted: boolean, optional, default = True</span>
+<span class="sd">        weighted: boolean, optional, default: True</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1263,7 +1199,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        s : int</span>
-<span class="sd">        index : bool, optional, default = False</span>
+<span class="sd">        index : bool, optional, default: False</span>
 <span class="sd">            return a dictionary of labels for the rows of the matrix</span>
 
 
@@ -1316,14 +1252,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        : hypergraph</span>
+<span class="sd">        dual : hypergraph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dfp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
-        <span class="n">dfp</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">dfp</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataframe</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span>
-            <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:])]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
-        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">properties</span><span class="o">=</span><span class="n">dfp</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+        <span class="n">E</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">restrict_to_levels</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Hypergraph.collapse_edges"><a class="viewcode-back" href="../../classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges">[docs]</a>    <span class="k">def</span> <span class="nf">collapse_edges</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1338,9 +1270,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name : hashable, optional, default = None</span>
+<span class="sd">        name : hashable, optional, default: None</span>
 
-<span class="sd">        return_equivalence_classes: boolean, optional, default = False</span>
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
 <span class="sd">            Returns a dictionary of edge equivalence classes keyed by frozen</span>
 <span class="sd">            sets of nodes</span>
 
@@ -1397,13 +1329,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name: str, optional, default = None</span>
+<span class="sd">        name: str, optional, default: None</span>
 
-<span class="sd">        return_equivalence_classes: boolean, optional, default = False</span>
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
 <span class="sd">            Returns a dictionary of node equivalence classes keyed by frozen</span>
 <span class="sd">            sets of edges</span>
 
-<span class="sd">        use_reps : boolean, optional, default = False - Deprecated, this no</span>
+<span class="sd">        use_reps : boolean, optional, default: False - Deprecated, this no</span>
 <span class="sd">            longer works and will be removed. Choose a single element from the</span>
 <span class="sd">            collapsed nodes as uid for the new node, otherwise uses a frozen</span>
 <span class="sd">            set of the uids of nodes in the equivalence class</span>
@@ -1468,17 +1400,17 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 
-<span class="sd">        name: str, optional, default = None</span>
+<span class="sd">        name: str, optional, default: None</span>
 
-<span class="sd">        use_reps: boolean, optional, default = False</span>
+<span class="sd">        use_reps: boolean, optional, default: False</span>
 <span class="sd">            Choose a single element from the collapsed elements as a</span>
 <span class="sd">            representative</span>
 
-<span class="sd">        return_counts: boolean, optional, default = True</span>
+<span class="sd">        return_counts: boolean, optional, default: True</span>
 <span class="sd">            if use_reps is True the new elements are keyed by a tuple of the</span>
 <span class="sd">            rep and the count</span>
 
-<span class="sd">        return_equivalence_classes: boolean, optional, default = False</span>
+<span class="sd">        return_equivalence_classes: boolean, optional, default: False</span>
 <span class="sd">            Returns a dictionary of edge equivalence classes keyed by frozen</span>
 <span class="sd">            sets of nodes</span>
 
@@ -1555,7 +1487,7 @@
 <span class="sd">        nodeset: iterable of hashables</span>
 <span class="sd">            References a subset of elements of self.nodes</span>
 
-<span class="sd">        name: string, optional, default = None</span>
+<span class="sd">        name: string, optional, default: None</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1577,20 +1509,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name: str, optional, default = None</span>
+<span class="sd">        name: str, optional, default: None</span>
 
-<span class="sd">        # collapse: boolean, optional, default = False</span>
+<span class="sd">        # collapse: boolean, optional, default: False</span>
 <span class="sd">        #     Should the hypergraph be collapsed? This would preserve a link</span>
 <span class="sd">        #     between duplicate maximal sets. If False then only one of these</span>
 <span class="sd">        #     sets will be used and uniqueness will be up to sets of equal</span>
 <span class="sd">        #     size.</span>
 
-<span class="sd">        # use_reps: boolean, optional, default = False</span>
+<span class="sd">        # use_reps: boolean, optional, default: False</span>
 <span class="sd">        #     If collapse=True then each toplex will be named by a</span>
 <span class="sd">        #     representative of the set of equivalent edges, default is False</span>
 <span class="sd">        #     (see collapse_edges).</span>
 
-<span class="sd">        return_counts: boolean, optional, default = True</span>
+<span class="sd">        return_counts: boolean, optional, default: True</span>
 <span class="sd">            # If collapse=True then each toplex will be named by a tuple of</span>
 <span class="sd">            # the representative of the set of equivalent edges and their count</span>
 
@@ -1641,9 +1573,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s: int, optional, default 1</span>
+<span class="sd">        s: int, optional, default: 1</span>
 
-<span class="sd">        edges: boolean, optional, default = False</span>
+<span class="sd">        edges: boolean, optional, default: False</span>
 <span class="sd">            If True, will determine if s-edge-connected.</span>
 <span class="sd">            For s=1 s-edge-connected is the same as s-connected.</span>
 
@@ -1714,7 +1646,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name: str, optional, default = None</span>
+<span class="sd">        name: str, optional, default: None</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1734,12 +1666,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
-<span class="sd">        edges : boolean, optional, default = True</span>
+<span class="sd">        edges : boolean, optional, default: True</span>
 <span class="sd">            If True will return edge components, if False will return node</span>
 <span class="sd">            components</span>
-<span class="sd">        return_singletons : bool, optional, default = False</span>
+<span class="sd">        return_singletons : bool, optional, default : False</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -1790,7 +1722,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
 <span class="sd">        edges : boolean, optional, edges=False</span>
 <span class="sd">            Determines if edge or node components are desired. Returns</span>
@@ -1898,7 +1830,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1932,7 +1864,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1966,7 +1898,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        s : int, optional, default 1</span>
+<span class="sd">        s : int, optional, default: 1</span>
 
 <span class="sd">        Return</span>
 <span class="sd">        ------</span>
@@ -2054,7 +1986,7 @@
 <span class="sd">            the number of intersections between pairwise consecutive edges</span>
 
 <span class="sd">        TODO: add edge weights</span>
-<span class="sd">        weight : None or string, optional, default = None</span>
+<span class="sd">        weight : None or string, optional, default: None</span>
 <span class="sd">            if None then all edges have weight 1. If string then edge attribute</span>
 <span class="sd">            string is used if available.</span>
 
@@ -2100,11 +2032,11 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sort_rows : bool, optional, default =True</span>
+<span class="sd">        sort_rows : bool, optional, default=True</span>
 <span class="sd">            sort rows based on hashable node names</span>
-<span class="sd">        sort_columns : bool, optional, default =True</span>
+<span class="sd">        sort_columns : bool, optional, default=True</span>
 <span class="sd">            sort columns based on hashable edge names</span>
-<span class="sd">        cell_weights : bool, optional, default =True</span>
+<span class="sd">        cell_weights : bool, optional, default=True</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2219,12 +2151,12 @@
 <span class="sd">            representing a real valued matrix with rows corresponding to nodes</span>
 <span class="sd">            and columns to edges</span>
 
-<span class="sd">        node_names : object, array-like, default =None</span>
+<span class="sd">        node_names : object, array-like, default=None</span>
 <span class="sd">            List of node names must be the same length as M.shape[0].</span>
 <span class="sd">            If None then the node names correspond to row indices with &#39;v&#39;</span>
 <span class="sd">            prepended.</span>
 
-<span class="sd">        edge_names : object, array-like, default =None</span>
+<span class="sd">        edge_names : object, array-like, default=None</span>
 <span class="sd">            List of edge names must have the same length as M.shape[1].</span>
 <span class="sd">            If None then the edge names correspond to column indices with &#39;e&#39;</span>
 <span class="sd">            prepended.</span>
