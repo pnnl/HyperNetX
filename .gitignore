@@ -35,3 +35,4 @@ pylint-results.txt
 *pytest.xml
 *_alt*
 docs/docs
+docs/build
