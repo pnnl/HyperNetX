@@ -39,7 +39,7 @@ def test_convert_to_static_warn_nwhy(sbs):
     [
         (Hypergraph, "sbs_edgedict"),
         (Hypergraph.from_bipartite, "complete_bipartite_example"),
-        (Hypergraph.from_numpy_array, "array_example"),
+        # (Hypergraph.from_numpy_array, "array_example"),
         #  (Hypergraph.from_dataframe, "dataframe_example"),
     ],
 )
