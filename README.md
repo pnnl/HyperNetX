@@ -189,10 +189,10 @@ To install with the tutorials:
 To install with the documentation:
 
     >>> pip install -e .['documentation']
-    >>> chmod 755 build_docs.sh
-    >>> sh build_docs.sh
+    >>> cd docs
+    >>> make html
     ## This will generate the documentation in /docs/build/
-    ## Open them in your browser with /docs/index.html
+    ## Open them in your browser with docs/build/html/index.html
 
 To install and test using pytest:
 
@@ -324,13 +324,14 @@ black hypernetx
 ## Build and view docs locally
 
 ```
-make build-docs
-open docs/build/index.html
+cd docs
+make html
+open docs/build/html/index.html
 ```
 
 ## Develop documentation
 
-NOTE: make sure you install the required dependencies using: `pip install -e .['documentation']`
+NOTE: make sure you install the required dependencies using: `make docs-deps`
 
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
 live on the browser without having to rebuild every time you have a change.
