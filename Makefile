@@ -57,34 +57,18 @@ bump-version-patch: version-deps
 	bump2version --dry-run --verbose patch
 	bump2version --verbose patch
 
-#### Documentation
+.PHONY: version-deps bump-version-major bump-version-minor bump-version-patch
 
-clean-docs:
-	rm -rf docs/build
-	rm -rf docs/source/classes
-	rm -rf docs/source/algorithms
-	rm -rf docs/source/drawing
-	rm -rf docs/source/reports
+#### Documentation
 
 docs-deps:
 	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
 
-build-docs: clean-docs all-deps docs-deps
-	sphinx-apidoc -o docs/source/classes hypernetx/classes
-	sphinx-apidoc -o docs/source/algorithms hypernetx/algorithms
-	sphinx-apidoc -o docs/source/drawing hypernetx/drawing
-	sphinx-apidoc -o docs/source/reports hypernetx/reports
-	sphinx-build -b html docs/source docs/build
-
-livehtml: all-deps docs-deps
-	sphinx-autobuild docs/source docs/build
-
-commit-docs: build-docs
+commit-docs:
 	git add -A
 	git commit -m "Bump version in docs"
 
-.PHONY: clean-docs update-docs commit-docs version-deps bump-version-major bump-version-minor bump-version-patch
-
+.PHONY: commit-docs docs-deps
 
 ## Environment
 
