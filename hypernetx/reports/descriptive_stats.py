@@ -344,10 +344,9 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
-    if H.isstatic:
-        stats = H.state_dict.get("dist_stats", None)
-        if stats is not None:
-            return H.state_dict["dist_stats"]
+    stats = H.state_dict.get("dist_stats", None)
+    if stats is not None:
+        return H.state_dict["dist_stats"]
 
     cstats = ["min", "max", "mean", "median", "std"]
     basic = dict()
@@ -398,6 +397,5 @@ def dist_stats(H):
     # # Diameters
     # basic['s edge diam list'] = s_edge_diameter_dist(H)
     # basic['s node diam list'] = s_node_diameter_dist(H)
-    if H.isstatic:
-        H.set_state(dist_stats=basic)
+    H.set_state(dist_stats=basic)
     return basic

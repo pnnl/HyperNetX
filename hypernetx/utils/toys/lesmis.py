@@ -13,7 +13,13 @@ class LesMis(object):
     def __init__(self):
         self.volumes = pd.DataFrame.from_dict(volume_names, orient="index")
 
-        accents = {r"\`e": "è", "\\`e": "è", "'e": "é", "\\c{c}": "ç", r"\^o": "ô"}
+        accents = { r"\`e": "è", 
+                    r"\\'e": "è",
+                    r"\\`e": "è", 
+                    r"'e": "é", 
+                    r"\\c{c}": "ç", 
+                    r"\^o": "ô"
+                    }
         for k, v in accents.items():
             self.names = names.replace(k, v)
 
@@ -27,9 +33,9 @@ class LesMis(object):
             columns=["Volume", "Book", "Chapter", "Scene", "Step", "Characters"],
         )
 
-        self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(
-            lesmis_hypergraph_from_df, by="Chapter"
-        )
+        # self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(
+        #     lesmis_hypergraph_from_df, by="Chapter"
+        # )
 
     @property
     def dnames(self):

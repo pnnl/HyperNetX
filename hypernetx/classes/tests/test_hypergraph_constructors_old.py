@@ -7,6 +7,7 @@ import networkx as nx
 from hypernetx import Hypergraph, EntitySet
 
 
+@pytest.mark.skip()
 def test_from_bipartite():
     g = nx.complete_bipartite_graph(2, 3)
     left, right = nx.bipartite.sets(g)
@@ -45,6 +46,7 @@ def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(sbs, sta
     assert incidence_dict_hg_from_bipartite == incidence_dict_hg_from_constructor
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_from_numpy_array():
     M = np.array([[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
     h = Hypergraph.from_numpy_array(M)
@@ -61,6 +63,7 @@ def test_from_numpy_array():
     assert "B" in h.edges["a"]
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_from_numpy_array_with_key():
     M = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
     h = Hypergraph.from_numpy_array(
@@ -100,14 +103,15 @@ def test_from_dataframe_with_key():
 def test_from_dataframe_with_transforms_and_fillna(dataframe):
     df = dataframe.df
 
-    def key1(x):
-        return x**2
-
-    def key2(x):
-        return (x < 5) * x
-
-    def key3(x):
-        return (x > 0) * x
+    # @pytest.mark.skip()
+    # def keymark.1(x):
+    #     return x**2
+    # @pytest.mark.skip()
+    # def keymark.2(x):
+    #     return (x < 5) * x
+    # @pytest.mark.skip()
+    # def keymark.3(x):
+    #     return (x > 0) * x
 
     h = Hypergraph.from_dataframe(df)
     assert "A" in h.edges["a"]

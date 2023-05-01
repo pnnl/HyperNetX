@@ -14,6 +14,7 @@ from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
     remove_row_duplicates,
+    dict_depth
 )
 
 T = TypeVar("T", bound=Union[str, int])
@@ -115,20 +116,21 @@ class Entity:
         entity: Optional[
             pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
         ] = None,
+        data_cols:Sequence[T] = [0,1],
         data: Optional[np.ndarray] = None,
         static: bool = False,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         uid: Optional[Hashable] = None,
-        weights: Optional[Sequence[float] | str] = None,
-        aggregateby: Optional[str] = "sum",
+        weight_col: Optional[str | int] = 'cell_weights',
+        weights: Optional[Sequence[float] | float | int | str] = 1,
+        aggregateby: Optional[str | dict] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
         misc_props_col: str = "properties",
         level_col: str = "level",
         id_col: str = "id",
     ):
-
         # set unique identifier
-        self._uid = uid
+        self._uid = uid or None
 
         # if static, the original data cannot be altered
         # the state dict stores all computed values that may need to be updated
@@ -151,7 +153,7 @@ class Entity:
             # convert dict of lists to 2-column dataframe
             entity = pd.Series(entity).explode()
             self._dataframe = pd.DataFrame(
-                {0: entity.index.to_list(), 1: entity.values}
+                {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
             )
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
@@ -177,11 +179,18 @@ class Entity:
 
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
-            self._dataframe, weights=weights
+            self._dataframe, weights=weights, weight_col=weight_col
         )
+        # import ipdb; ipdb.set_trace()
         # store a list of columns that hold entity data (not properties or
         # weights)
-        self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+        # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+        self._data_cols = []
+        for col in data_cols:
+            if isinstance(col, int):
+                self._data_cols.append(self._dataframe.columns[col])
+            else:
+                self._data_cols.append(col)
 
         # each entity data column represents one dimension of the data
         # (data updates can only add or remove rows, so this isn't stored in
@@ -189,18 +198,20 @@ class Entity:
         self._dimsize = len(self._data_cols)
 
         # remove duplicate rows and aggregate cell weights as needed
+        # import ipdb; ipdb.set_trace()
         self._dataframe, _ = remove_row_duplicates(
             self._dataframe,
             self._data_cols,
-            weights=self._cell_weight_col,
+            weight_col=self._cell_weight_col,
             aggregateby=aggregateby,
         )
 
         # set the dtype of entity data columns to categorical (simplifies
         # encoding, etc.)
-        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-            "category"
-        )
+        ### This is automatically done in remove_row_duplicates
+        # self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+        #     "category"
+        # )
 
         # create properties
         item_levels = [
@@ -610,6 +621,8 @@ class Entity:
         --------
         dimensions
         """
+        # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
+        # TODO: Currently failing test test_entity::test_Entity_property
         return self.dimensions[level]
 
     @property
@@ -719,16 +732,19 @@ class Entity:
         """
         return iter(self.labels[self._data_cols[label_index]])
 
-    def __repr__(self):
-        """String representation of the Entity
+    # def __repr__(self):
+    #     """String representation of the Entity
 
-        e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
+    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
 
-        Returns
-        -------
-        str
-        """
-        return self.__class__.__name__ + f"({self._uid}, {list(self.uidset)})"
+    #     Returns
+    #     -------
+    #     str
+    #     """
+    #     return "hypernetx.classes.entity.Entity"
+
+    # def __str__(self):
+    #     return "<class 'hypernetx.classes.entity.Entity'>"
 
     def index(self, column, value=None):
         """Get level index corresponding to a column and (optionally) the index of a value in that column
@@ -1266,9 +1282,9 @@ class Entity:
     def assign_properties(
         self,
         props: pd.DataFrame | dict[int, dict[T, dict[Any, Any]]],
-        level_col: Optional[str] = None,
-        id_col: Optional[str] = None,
         misc_col: Optional[str] = None,
+        level_col = 0,
+        id_col = 1
     ) -> None:
         """Assign new properties to items in the data table, update :attr:`properties`
 
@@ -1286,23 +1302,28 @@ class Entity:
         properties
         """
         # mapping from user-specified level, id, misc column names to internal names
-        column_map = {
-            old: new
-            for old, new in zip(
-                (level_col, id_col, misc_col),
-                (*self.properties.index.names, self._misc_props_col),
-            )
-            if old is not None
-        }
-
-        try:  # rename columns according to mapping
+        ### This will fail if there isn't a level column
+        
+        if isinstance(props,pd.DataFrame):
+            ### Fix to check the shape of properties or redo properties format
+            column_map = {
+                old: new
+                for old, new in zip(
+                    (level_col, id_col, misc_col),
+                    (*self.properties.index.names, self._misc_props_col),
+                )
+                if old is not None
+                }
             props = props.rename(columns=column_map)
-        except AttributeError:  # handle props in nested dict format
-            self._properties_from_dict(props)
-        else:  # handle props in DataFrame format
-            # rename any index levels matching user-specified column names
             props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
+
+        if isinstance(props,dict):
+            if set([0,1]) == set(props.keys()):
+                self._properties_from_dict(props)
+            else:
+                self._properties_from_dict({0:props, 1:props})   
+            
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
         """Private handler for updating :attr:`properties` from a DataFrame

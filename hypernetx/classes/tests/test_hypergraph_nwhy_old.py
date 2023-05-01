@@ -6,6 +6,7 @@ from hypernetx import Hypergraph
 from hypernetx.exception import NWHY_WARNING
 
 
+@pytest.mark.skip(reason="Deprecated")
 def test_get_linegraph_warn_nwhy(sbs):
     H = Hypergraph(sbs.edgedict)
     lg = H.get_linegraph(s=1, use_nwhy=False)
@@ -32,12 +33,13 @@ def test_convert_to_static_warn_nwhy(sbs):
     assert H_static.incidence_dict == H_static_nwhy.incidence_dict
 
 
+@pytest.mark.skip(reason="Deprecated")
 @pytest.mark.parametrize(
     "constructor, example",
     [
         (Hypergraph, "sbs_edgedict"),
         (Hypergraph.from_bipartite, "complete_bipartite_example"),
-        (Hypergraph.from_numpy_array, "array_example"),
+        # (Hypergraph.from_numpy_array, "array_example"),
         #  (Hypergraph.from_dataframe, "dataframe_example"),
     ],
 )

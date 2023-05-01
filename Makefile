@@ -1,7 +1,7 @@
 
 SHELL = /bin/bash
 
-VENV = .venv_auto
+VENV = venv-hnx
 PYTHON_VENV = $(VENV)/bin/python3
 PYTHON3 = python3
 

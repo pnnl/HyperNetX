@@ -11,6 +11,7 @@ from ast import literal_eval
 from hypernetx.classes.entity import *
 
 
+
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
 
@@ -82,7 +83,7 @@ def encode(data: pd.DataFrame):
     return encoded_array
 
 
-def assign_weights(df, weights=None, weight_col="cell_weights"):
+def assign_weights(df, weights=1, weight_col="cell_weights"):
     """
     Parameters
     ----------
@@ -103,14 +104,18 @@ def assign_weights(df, weights=None, weight_col="cell_weights"):
         The original DataFrame with a new column added if needed
     weight_col : str
         Name of the column assigned to hold weights
-    """
-    if isinstance(weights, (list, np.ndarray)) and len(weights) == len(df):
-        df[weight_col] = weights
-    elif isinstance(weights, Hashable) and weights in df:
-        weight_col = weights
-    else:
-        df[weight_col] = np.ones(len(df), dtype=int)
 
+    Note
+    ----
+    TODO: move logic for default weights inside this method
+    """
+
+    if isinstance(weights, (list, np.ndarray)) :
+        df[weight_col] = weights
+    else:
+        if not weight_col in df:
+            df[weight_col] = weights
+    # import ipdb; ipdb.set_trace()
     return df, weight_col
 
 
@@ -181,7 +186,11 @@ def create_properties(
     return pd.DataFrame({misc_col: data}, index=index).sort_index()
 
 
-def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
+def remove_row_duplicates(df, 
+                          data_cols, 
+                          weights=1, 
+                          weight_col='cell_weights',
+                          aggregateby=None):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
 
@@ -210,18 +219,52 @@ def remove_row_duplicates(df, data_cols, weights=None, aggregateby="sum"):
         if df[col].dtype.name == "category":
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
-
+    df, weight_col = assign_weights(df, 
+                                    weights=weights,
+                                    weight_col=weight_col) ### reconcile this with defaults weights.
     if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
+        df[data_cols] = df[data_cols].astype("category") 
+        return df, weight_col
+        
+    else:
+        aggby = {col:'first' for col in df.columns}
+        if isinstance(aggregateby, str):        
+            aggby[weight_col] = aggregateby
+        else:
+            aggby.update(aggregateby)
+        # import ipdb; ipdb.set_trace(context=8)
+        df = df.groupby(data_cols, as_index=False, sort=False).agg(aggby)
 
-    df, weight_col = assign_weights(df, weights=weights)
-
-    if aggregateby:
-        df = df.groupby(data_cols, as_index=False, sort=False).agg(
-            {weight_col: aggregateby}
-        )
-
-    for col in categories:
-        df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        # for col in categories:
+            # df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        df[data_cols] = df[data_cols].astype("category")    
 
     return df, weight_col
+
+
+# https://stackoverflow.com/a/7205107
+def merge_nested_dicts(a, b, path=None):
+    "merges b into a"
+    if path is None: path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge_nested_dicts(a[key], b[key], path + [str(key)])
+            elif a[key] == b[key]:
+                pass # same leaf value
+            else:
+                warnings.warn(f'Conflict at {",".join(path + [str(key)])}, keys ignored')
+        else:
+            a[key] = b[key]
+    return a
+
+
+## https://www.geeksforgeeks.org/python-find-depth-of-a-dictionary/
+def dict_depth(dic, level = 0):
+    ### checks if there is a nested dict, quits once level > 2
+    if level>2:
+        return level
+    if not isinstance(dic, dict) or not dic:
+        return level
+    return min(dict_depth(dic[key], level + 1) for key in dic)

@@ -76,7 +76,7 @@ def part2dict(A):
 ################################################################################
 
 
-def precompute_attributes(HG):
+def precompute_attributes(H):
     """
     Precompute some values on hypergraph HG for faster computing of hypergraph modularity.
     This needs to be run before calling either modularity() or last_step().
@@ -100,7 +100,6 @@ def precompute_attributes(HG):
       New hypergraph with added attributes
 
     """
-    H = HG.remove_singletons()
     # 1. compute node strenghts (weighted degrees)
     for v in H.nodes:
         H.nodes[v].strength = 0
@@ -281,8 +280,10 @@ def _edge_contribution(HG, A, wdc):
     for e in HG.edges:
         d = HG.size(e)
         for part in A:
-            if HG.size(e, part) > d / 2:
-                EC += wdc(d, HG.size(e, part)) * HG.edges[e].weight
+            hgs = HG.size(e, part)
+            if hgs > d / 2:
+                EC += wdc(d, hgs) * HG.edges[e].weight
+                break
     EC /= HG.total_weight
     return EC
 
@@ -444,6 +445,8 @@ def _delta_ec(HG, P, v, a, b, wdc):
     Pm = P[a] - {v}
     Pn = P[b].union({v})
     ec = 0
+
+    # TODO: Verify the data shape of `memberships` (ie. what are the keys and values)
     for e in list(HG.nodes.memberships[v]):
         d = HG.size(e)
         w = HG.edges[e].weight
