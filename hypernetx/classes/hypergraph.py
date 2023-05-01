@@ -739,55 +739,55 @@ class Hypergraph:
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
 
-    def save_state(self, fpath=None):
-        """
-        Save the hypergraph as an ordered pair: [state_dict,labels]
-        The hypergraph can be recovered using the command:
+    # def save_state(self, fpath=None):
+    #     """
+    #     Save the hypergraph as an ordered pair: [state_dict,labels]
+    #     The hypergraph can be recovered using the command:
 
-            >>> H = hnx.Hypergraph.recover_from_state(fpath)
+    #         >>> H = hnx.Hypergraph.recover_from_state(fpath)
 
-        Parameters
-        ----------
-        fpath : str, optional
-        """
-        fpath = fpath or self.filepath or "current_state.p"
-        with open(fpath, "wb") as f:
-            pickle.dump([self._state_dict, self.edges.labels], f)
+    #     Parameters
+    #     ----------
+    #     fpath : str, optional
+    #     """
+    #     fpath = fpath or self.filepath or "current_state.p"
+    #     with open(fpath, "wb") as f:
+    #         pickle.dump([self._state_dict, self.edges.labels], f)
 
-    @classmethod
-    @warn_nwhy
-    def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True):
-        """
-        Recover a static hypergraph pickled using save_state.
+    # @classmethod
+    # @warn_nwhy
+    # def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True, name=None):
+    #     """
+    #     Recover a static hypergraph pickled using save_state.
 
-        Parameters
-        ----------
-        fpath : str
-            Full path to pickle file containing state_dict and labels
-            of hypergraph
+    #     Parameters
+    #     ----------
+    #     fpath : str
+    #         Full path to pickle file containing state_dict and labels
+    #         of hypergraph
 
-        Returns
-        -------
-        H : Hypergraph
-            static hypergraph with state dictionary prefilled
-        """
-        with open(fpath, "rb") as f:
-            temp, labels = pickle.load(f)
-        # need to save counts as well
-        recovered_data = np.array(temp["data"])[[0, 1]].T
-        recovered_counts = np.array(temp["data"])[
-            [2]
-        ]  # ammend this to store cell weights
-        E = EntitySet(data=recovered_data, labels=labels)
-        E.properties["counts"] = recovered_counts
-        H = Hypergraph(E)
-        H.state_dict.update(temp)
-        if newfpath == "same":
-            newfpath = fpath
-        if newfpath is not None:
-            H.filepath = newfpath
-            H.save_state()
-        return H
+    #     Returns
+    #     -------
+    #     H : Hypergraph
+    #         static hypergraph with state dictionary prefilled
+    #     """
+    #     with open(fpath, "rb") as f:
+    #         temp, labels = pickle.load(f)
+    #     # need to save counts as well
+    #     recovered_data = np.array(temp["data"])[[0, 1]].T
+    #     recovered_counts = np.array(temp["data"])[
+    #         [2]
+    #     ]  # ammend this to store cell weights
+    #     E = EntitySet(data=recovered_data, labels=labels)
+    #     E.properties["counts"] = recovered_counts
+    #     H = Hypergraph(E)
+    #     H.state_dict.update(temp)
+    #     if newfpath == "same":
+    #         newfpath = fpath
+    #     if newfpath is not None:
+    #         H.filepath = newfpath
+    #         H.save_state()
+    #     return H
 
     def edge_size_dist(self):
         """
@@ -1600,7 +1600,7 @@ class Hypergraph:
         temp = self.collapse_nodes(name="temp")
         return temp.collapse_edges(name=name)
 
-    def restrict_to_nodes(self,nodes):
+    def restrict_to_nodes(self,nodes, name=None):
         """New hypergraph gotten by restricting to nodes
         
         Parameters
@@ -1616,7 +1616,7 @@ class Hypergraph:
         keys = set(self._state_dict['labels']['nodes']).difference(nodes)
         return self.remove(keys,level=1)
 
-    def restrict_to_edges(self, edges):
+    def restrict_to_edges(self, edges, name=None):
         """New hypergraph gotten by restricting to edges
         
         Parameters
@@ -1632,7 +1632,7 @@ class Hypergraph:
         keys = set(self._state_dict['labels']['edges']).difference(edges)
         return self.remove(keys,level=0)
 
-    def remove(self,keys,level=None):
+    def remove(self,keys,level=None, name=None):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
@@ -1827,7 +1827,7 @@ class Hypergraph:
                         singles.append(cdict[r])
         return singles
 
-    def remove_singletons(self):
+    def remove_singletons(self, name=None):
         """
         Constructs clone of hypergraph with singleton edges removed.
 
@@ -1895,7 +1895,7 @@ class Hypergraph:
                 continue
             yield c
 
-    def s_component_subgraphs(self, s=1, edges=True, return_singletons=False):
+    def s_component_subgraphs(self, s=1, edges=True, return_singletons=False, name=None):
         """
 
         Returns a generator for the induced subgraphs of s_connected
@@ -1925,9 +1925,9 @@ class Hypergraph:
             self.s_components(s=s, edges=edges, return_singletons=return_singletons)
         ):
             if edges:
-                yield self.restrict_to_edges(c, name=f"{self.name}:{idx}")
+                yield self.restrict_to_edges(c, name=f"{name or self.name}:{idx}")
             else:
-                yield self.restrict_to_nodes(c, name=f"{self.name}:{idx}")
+                yield self.restrict_to_nodes(c, name=f"{name or self.name}:{idx}")
 
     def s_components(self, s=1, edges=True, return_singletons=True):
         """
@@ -1952,7 +1952,7 @@ class Hypergraph:
         """
         return self.s_connected_components(edges=edges, return_singletons=True)
 
-    def connected_component_subgraphs(self, return_singletons=True):
+    def connected_component_subgraphs(self, return_singletons=True,name=None):
         """
         Same as :meth:`s_component_subgraphs` with s=1. Returns iterator
 
@@ -1960,7 +1960,7 @@ class Hypergraph:
         --------
         s_component_subgraphs
         """
-        return self.s_component_subgraphs(return_singletons=return_singletons)
+        return self.s_component_subgraphs(return_singletons=return_singletons, name=name)
 
     def components(self, edges=False):
         """
@@ -1973,7 +1973,7 @@ class Hypergraph:
         """
         return self.s_connected_components(s=1, edges=edges)
 
-    def component_subgraphs(self, return_singletons=False):
+    def component_subgraphs(self, return_singletons=False, name=None):
         """
         Same as :meth:`s_components_subgraphs` with s=1. Returns iterator.
 
@@ -1981,7 +1981,7 @@ class Hypergraph:
         --------
         s_component_subgraphs
         """
-        return self.s_component_subgraphs(return_singletons=return_singletons)
+        return self.s_component_subgraphs(return_singletons=return_singletons, name=name)
 
     def node_diameters(self, s=1):
         """
@@ -2406,4 +2406,4 @@ class Hypergraph:
         if return_only_dataframe == True:
             return dfnew
         else:
-            return Hypergraph(dfnew, weights="cell_weights")
+            return Hypergraph(dfnew, weights="cell_weights", name=None)
