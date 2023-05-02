@@ -36,3 +36,5 @@ pylint-results.txt
 *_alt*
 docs/docs
 docs/build
+coverage.xml
+cov.syspath.txt

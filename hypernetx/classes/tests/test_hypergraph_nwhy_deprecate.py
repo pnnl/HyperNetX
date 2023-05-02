@@ -5,8 +5,9 @@ import pytest
 from hypernetx import Hypergraph
 from hypernetx.exception import NWHY_WARNING
 
+pytestmark = pytest.mark.skip(reason="Deprecated attribute and/or method")
 
-@pytest.mark.skip(reason="Deprecated")
+
 def test_get_linegraph_warn_nwhy(sbs):
     H = Hypergraph(sbs.edgedict)
     lg = H.get_linegraph(s=1, use_nwhy=False)
@@ -21,7 +22,6 @@ def test_recover_from_state_warn_nwhy():
             Hypergraph.recover_from_state(use_nwhy=True)
 
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_convert_to_static_warn_nwhy(sbs):
     H = Hypergraph(sbs.edgedict, static=False)
     H_static = H.convert_to_static(use_nwhy=False)
@@ -33,7 +33,6 @@ def test_convert_to_static_warn_nwhy(sbs):
     assert H_static.incidence_dict == H_static_nwhy.incidence_dict
 
 
-@pytest.mark.skip(reason="Deprecated")
 @pytest.mark.parametrize(
     "constructor, example",
     [
@@ -52,7 +51,6 @@ def test_constructors_warn_nwhy(constructor, example, request):
     assert H.incidence_dict == H_nwhy.incidence_dict
 
 
-@pytest.mark.skip(reason="Deprecated attribute.")
 def test_add_nwhy_deprecated(sbs_hypergraph):
     with pytest.deprecated_call():
         Hypergraph.add_nwhy(sbs_hypergraph)

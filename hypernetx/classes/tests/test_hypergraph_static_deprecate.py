@@ -2,8 +2,9 @@ import pytest
 
 from hypernetx import Hypergraph, Entity, EntitySet
 
+pytestmark = pytest.mark.skip(reason="Deprecated attribute and/or method")
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
+
 def test_static_hypergraph_constructor_setsystem(sbs):
     H = Hypergraph(sbs.edgedict, static=True)
     assert isinstance(H.edges, EntitySet)
@@ -12,7 +13,6 @@ def test_static_hypergraph_constructor_setsystem(sbs):
     assert H.shape == (7, 6)
 
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_static_hypergraph_constructor_entity(sbs):
     E = Entity(data=sbs.data, labels=sbs.labels)
     H = Hypergraph(E, static=True)
@@ -20,14 +20,12 @@ def test_static_hypergraph_constructor_entity(sbs):
     assert "A" in H.edges.incidence_dict["P"]
 
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_static_hypergraph_get_id(sbs):
     H = Hypergraph(Entity(data=sbs.data, labels=sbs.labels))
     assert H.get_id("V") == 6
     assert H.get_id("S", edges=True) == 2
 
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_static_hypergraph_get_name(sbs):
     H = Hypergraph(Entity(data=sbs.data, labels=sbs.labels))
     assert H.get_name(1) == "C"
