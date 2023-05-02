@@ -25,7 +25,7 @@ def test_modularity(modularityexample):
     assert np.abs(modularity(HG, A1, majority) - 0.39379753) < 10e-5
 
 
-@pytest.mark.skip(reason="TODO: fix test and/or source code")
+# @pytest.mark.skip(reason="TODO: fix test and/or source code")
 def test_clustering(modularityexample):
     HG = modularityexample.HG
     A1, A2, A3, A4 = modularityexample.partitions
