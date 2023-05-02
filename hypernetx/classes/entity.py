@@ -1236,6 +1236,7 @@ class Entity:
 
         return self.__class__(
             entity=self.dataframe[cols],
+            data_cols=cols,
             aggregateby=aggregateby,
             properties=properties,
             misc_props_col=self._misc_props_col,
