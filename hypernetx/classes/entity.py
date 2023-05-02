@@ -541,8 +541,7 @@ class Entity:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
-        # Dev Note: This threw an error when trying it on the harry potter dataset,
-        # when trying 0, or 1 for column. I'm not sure how this should be used
+
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items

@@ -142,7 +142,7 @@ class ModularityExample:
             {"E", "F"},
         ]
         self.E = E
-        self.HG = hnx.Hypergraph(E, static=True)
+        self.HG = hnx.Hypergraph(E)
         A1 = [{"A", "B", "C"}, {"D", "E", "F"}]
         A2 = [{"B", "C"}, {"A", "D", "E", "F"}]
         A3 = [{"A", "B", "C", "D", "E", "F"}]
