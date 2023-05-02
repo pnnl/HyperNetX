@@ -1754,8 +1754,15 @@ class Hypergraph:
         """
 
         g = self.get_linegraph(s=s, edges=edges)
-        return nx.is_connected(g)
+        is_connected = None
 
+        try:
+            is_connected = nx.is_connected(g)
+        except nx.NetworkXPointlessConcept:
+            warnings.warn("Graph is null; ")
+            is_connected = False
+
+        return is_connected
     def singletons(self):
         """
         Returns a list of singleton edges. A singleton edge is an edge of
@@ -2116,7 +2123,7 @@ class Hypergraph:
         g = self.get_linegraph(s=s, edges=False)
         try:
             dist = nx.shortest_path_length(g, source, target)
-        except nx.NetworkXNoPath:
+        except (nx.NetworkXNoPath, nx.NodeNotFound):
             warnings.warn(f"No {s}-path between {source} and {target}")
             dist = np.inf
 
