@@ -319,7 +319,8 @@ class Hypergraph:
                     entity[cell_weight_col] = cell_weights
 
                 if isinstance(cell_properties,Sequence):
-                    cols = [edge_col,node_col,cell_weight_col] + list(cell_properties)
+                    cell_properties = [c for c in cell_properties if not c in [edge_col,node_col,cell_weight_col]]
+                    cols = [edge_col,node_col,cell_weight_col] + cell_properties
                     entity = entity[cols]
                 elif isinstance(cell_properties, dict):
                         cp = []
@@ -1805,26 +1806,25 @@ class Hypergraph:
         # we add down the row index if there are fewer columns
         cols = M.sum(idx)
         singles = []
-        # index along opposite axis
-        for c in range(cols.shape[(idx + 1) % 2]):
-            if cols[idx * c, c * ((idx + 1) % 2)] == 1:
-                # then see if the singleton entry in that column is also
-                # singleton in its row find the entry
-                if idx == 0:
-                    r = np.argmax(M.getcol(c))
-                    # and get its sum
-                    s = np.sum(M.getrow(r))
-                    # if this is also 1 then the entry in r,c represents a
-                    # singleton so we want to change that entry to 0 and
-                    # remove the row. this means we want to remove the
-                    # edge corresponding to c
-                    if s == 1:
-                        singles.append(cdict[c])
-                else:  # switch the role of r and c
-                    r = np.argmax(M.getrow(c))
-                    s = np.sum(M.getcol(r))
-                    if s == 1:
-                        singles.append(cdict[r])
+        # index along opposite axis with one entry each
+        for c in np.nonzero((cols - 1 == 0))[(idx+1)%2]:
+            # if the singleton entry in that column is also
+            # singleton in its row find the entry
+            if idx == 0:
+                r = np.argmax(M.getcol(c))
+                # and get its sum
+                s = np.sum(M.getrow(r))
+                # if this is also 1 then the entry in r,c represents a
+                # singleton so we want to change that entry to 0 and
+                # remove the row. this means we want to remove the
+                # edge corresponding to c
+                if s == 1:
+                    singles.append(cdict[c])
+            else:  # switch the role of r and c
+                r = np.argmax(M.getrow(c))
+                s = np.sum(M.getcol(r))
+                if s == 1:
+                    singles.append(cdict[r])
         return singles
 
     def remove_singletons(self, name=None):
@@ -1837,8 +1837,11 @@ class Hypergraph:
 
         """
         singletons = self.singletons()
-        E = [e for e in self.edges if e not in singletons]
-        return self.restrict_to_edges(E)
+        if len(singletons) > len(self.edges):
+            E = [e for e in self.edges if e not in singletons]
+            return self.restrict_to_edges(E,name=name)
+        else:
+            return self.remove(singletons, level=0, name=name)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
