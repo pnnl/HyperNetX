@@ -285,8 +285,10 @@ class Hypergraph:
         ### cell properties 
 
         if setsystem is None:   #### Empty Case
-            self._edges = EntitySet(data=np.empty((0, 2), dtype=int), uid='Edges')
-            self._nodes = EntitySet(data=np.empty((0, 1), dtype=int), uid="Nodes")
+
+            self._edges = EntitySet({})
+            self._nodes = EntitySet({})
+            self._state_dict = {}
 
         else: #### DataFrame case
             if isinstance(setsystem,pd.DataFrame):
@@ -443,8 +445,8 @@ class Hypergraph:
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
 
-        self.__dict__.update(locals())
-        self._set_default_state()
+            self.__dict__.update(locals())
+            self._set_default_state()
 
 
     @property
