@@ -7,7 +7,6 @@ import networkx as nx
 from hypernetx import Hypergraph, EntitySet
 
 
-@pytest.mark.skip()
 def test_from_bipartite():
     g = nx.complete_bipartite_graph(2, 3)
     left, right = nx.bipartite.sets(g)
@@ -46,7 +45,7 @@ def test_hypergraph_from_bipartite_and_from_constructor_should_be_equal(sbs, sta
     assert incidence_dict_hg_from_bipartite == incidence_dict_hg_from_constructor
 
 
-@pytest.mark.skip(reason="Deprecated")
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_from_numpy_array():
     M = np.array([[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
     h = Hypergraph.from_numpy_array(M)
@@ -63,7 +62,7 @@ def test_from_numpy_array():
     assert "B" in h.edges["a"]
 
 
-@pytest.mark.skip(reason="Deprecated")
+@pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_from_numpy_array_with_key():
     M = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
     h = Hypergraph.from_numpy_array(
