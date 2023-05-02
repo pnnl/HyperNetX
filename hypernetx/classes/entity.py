@@ -187,6 +187,7 @@ class Entity:
         # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
         self._data_cols = []
         for col in data_cols:
+            # TODO: default arguments fail for empty Entity
             if isinstance(col, int):
                 self._data_cols.append(self._dataframe.columns[col])
             else:
@@ -1234,6 +1235,7 @@ class Entity:
 
         return self.__class__(
             entity=self.dataframe[cols],
+            data_cols=cols,
             aggregateby=aggregateby,
             properties=properties,
             misc_props_col=self._misc_props_col,
