@@ -4,7 +4,7 @@ from hypernetx.classes.entityset import EntitySet
 from hypernetx.classes.hypergraph import Hypergraph
 
 
-# @pytest.mark.skip()
+
 def test_hypergraph_from_iterable_of_sets(sbs):
     H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
@@ -14,7 +14,7 @@ def test_hypergraph_from_iterable_of_sets(sbs):
     assert H.number_of_nodes() == 7
 
 
-# @pytest.mark.skip()
+
 def test_hypergraph_from_dict(sbs):
     H = Hypergraph(sbs.edgedict)
     assert len(H.edges) == 6
@@ -24,7 +24,6 @@ def test_hypergraph_from_dict(sbs):
     assert H.order() == 7
 
 
-# @pytest.mark.skip()
 def test_hypergraph_custom_attributes(sbs):
     H = Hypergraph(sbs.edges)
     assert isinstance(H.__str__(), str)
@@ -65,7 +64,6 @@ def test_hypergraph_from_numpy_array(sbs):
     assert set(H.neighbors("v2")) == {"v0", "v5"}
 
 
-# @pytest.mark.skip()
 def test_hypergraph_from_bipartite(sbsd_hypergraph):
     H = sbsd_hypergraph
     HB = Hypergraph.from_bipartite(H.bipartite())
@@ -130,16 +128,14 @@ def test_remove_node():
     assert a not in hbug.edges[2]
 
 
-# @pytest.mark.skip()
+
 def test_matrix(sbs_hypergraph):
     H = sbs_hypergraph
     assert H.incidence_matrix().todense().shape == (7, 6)
     assert H.adjacency_matrix(s=2).todense().shape == (7, 7)
     assert H.edge_adjacency_matrix().todense().shape == (6, 6)
-    # TODO: verify if this is a test writing error
-    thing = H.auxiliary_matrix()
-    print(type(thing))
-    assert H.auxiliary_matrix().todense().shape == (6, 6)
+    aux_matrix, arr = H.auxiliary_matrix()
+    assert aux_matrix.todense().shape == (6, 6)
 
 
 def test_collapse_edges(sbsd_hypergraph):
@@ -188,12 +184,11 @@ def test_remove_from_restriction(triloop):
     h = triloop.hypergraph
     h1 = h.restrict_to_nodes(h.neighbors("A")).remove_node(
         "A"
-    )  # Hypergrtaph does not have a remove_node method
+    )  # Hypergraph does not have a remove_node method
     assert "A" not in h1
     assert "A" not in h1.edges["ACD"]
 
 
-# @pytest.mark.skip()
 def test_toplexes(sbsd_hypergraph):
     H = sbsd_hypergraph
     T = H.toplexes()
@@ -203,13 +198,14 @@ def test_toplexes(sbsd_hypergraph):
     assert len(T.nodes) == 7
 
 
-# @pytest.mark.skip()
+
 def test_is_connected():
     setsystem = [{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
     assert h.is_connected() is True
     assert h.is_connected(s=2) is False
     assert h.is_connected(s=2, edges=True) is True
+    # test case below will raise nx.NetworkXPointlessConcept
     assert h.is_connected(s=3, edges=True) is False
 
 
@@ -330,7 +326,6 @@ def test_distance(lesmis):
     h = lesmis.hypergraph
     assert h.distance("ME", "FN") == 2
     assert h.distance("ME", "FN", s=2) == 3
-    # TODO: raises Exception instead returning gracefully when source or target are not in in graph
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
