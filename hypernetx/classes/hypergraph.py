@@ -700,7 +700,7 @@ class Hypergraph:
         if s in d[key]:
             return d[key][s]
 
-        if edges == True:
+        if edges:
             A, Amap = self.edge_adjacency_matrix(s=s, index=True)
         else:
             A, Amap = self.adjacency_matrix(s=s, index=True)
@@ -710,9 +710,10 @@ class Hypergraph:
         A = np.array(np.nonzero(A))
         e1 = np.array([Amap[idx] for idx in A[0]])
         e2 = np.array([Amap[idx] for idx in A[1]])
-        A = np.array([e1,e2]).T
+        A = np.array([e1, e2]).T
         g = nx.Graph()
         g.add_edges_from(A)
+        g.add_nodes_from(Amap)
         d[key][s] = g
         return g
 
