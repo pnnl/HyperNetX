@@ -35,14 +35,14 @@ def test_hypergraph_custom_attributes(sbs):
     assert sorted(H.__getitem__("C")) == ["A", "E", "K"]
 
 
-@pytest.mark.skip(reason="Deprecated attribute and/or method")
+@pytest.mark.skip("reason=fix implementation")
 def test_hypergraph_static(sbs):
-    H = Hypergraph(sbs.edges, static=True)
+    H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
-    assert H.get_id("E") == 2
     assert list(H.get_linegraph(s=1)) == [0, 1, 2, 3, 4, 5]
-    # H.get_name
+
+    # sH.get_name
     # H.translate
 
 
@@ -128,13 +128,13 @@ def test_remove_node():
     assert a not in hbug.edges[2]
 
 
-
+# TODO:  add test for node=True
 def test_matrix(sbs_hypergraph):
     H = sbs_hypergraph
     assert H.incidence_matrix().todense().shape == (7, 6)
     assert H.adjacency_matrix(s=2).todense().shape == (7, 7)
     assert H.edge_adjacency_matrix().todense().shape == (6, 6)
-    aux_matrix, arr = H.auxiliary_matrix()
+    aux_matrix, arr = H.auxiliary_matrix(node=False)
     assert aux_matrix.todense().shape == (6, 6)
 
 
@@ -329,13 +329,14 @@ def test_distance(lesmis):
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
+# TODO: fix test once get_linegraph is fully tested
 @pytest.mark.filterwarnings("ignore:No 2-path between 1 and 4")
 def test_edge_distance(lesmis):
     h = lesmis.hypergraph
     assert h.edge_distance(1, 4) == 2
-    h.remove_edge(5)
-    assert h.edge_distance(1, 4) == 3
-    assert h.edge_distance(1, 4, s=2) == np.inf
+    h2 = h.remove([5], 0)
+    assert h2.edge_distance(1, 4) == 3
+    assert h2.edge_distance(1, 4, s=2) == np.inf
 
 
 def test_dataframe(lesmis):
