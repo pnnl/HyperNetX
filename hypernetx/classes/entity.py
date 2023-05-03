@@ -1320,10 +1320,8 @@ class Entity:
             self._properties_from_dataframe(props)
 
         if isinstance(props,dict):
-            if set([0,1]) == set(props.keys()):
-                self._properties_from_dict(props)
-            else:
-                self._properties_from_dict({0:props, 1:props})   
+            ### Expects nested dictionary with keys corresponding to level and id
+            self._properties_from_dict(props)
             
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:

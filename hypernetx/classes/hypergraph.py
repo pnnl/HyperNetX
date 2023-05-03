@@ -273,15 +273,17 @@ class Hypergraph:
         edge_weight_prop_col: str | int = "weight",
         node_weight_prop_col: str | int = "weight",
         weight_prop_col: str | int = "weight",
-        default_edge_weight: float = 1.0,
-        default_node_weight: float = 1.0,
+        default_edge_weight: Optional[float | None] = None,
+        default_node_weight: Optional[float | None] = None,
         default_weight: float = 1.0,
         name: Optional[str] = None,
         **kwargs,
     ):
         self.name = name or ""  
-        self.misc_cell_properties_col = misc_cell_properties_col or 'cell_properties'    
-
+        self.misc_cell_properties_col = misc_cell_properties = misc_cell_properties_col or 'cell_properties'
+        self.misc_properties_col = misc_properties_col = misc_properties_col or 'properties' 
+        self.default_edge_weight = default_edge_weight = default_edge_weight or default_weight
+        self.default_node_weight = default_node_weight = default_node_weight or default_weight
         ### cell properties 
 
         if setsystem is None:   #### Empty Case
@@ -325,11 +327,11 @@ class Hypergraph:
                     cols = [edge_col,node_col,cell_weight_col] + cell_properties
                     entity = entity[cols]
                 elif isinstance(cell_properties, dict):
-                        cp = []
-                        for idx in entity.index:
-                            edge,node = entity.iloc[idx][[edge_col,node_col]].values
-                            cp.append(cell_properties[edge][node])
-                        entity['cell_properties'] = cp
+                    cp = []
+                    for idx in entity.index:
+                        edge,node = entity.iloc[idx][[edge_col,node_col]].values
+                        cp.append(cell_properties[edge][node])
+                    entity['cell_properties'] = cp
 
 
             else:  ### Cases Other than DataFrame
@@ -405,13 +407,15 @@ class Hypergraph:
                     if edge_properties is not None:
                         edge_properties = props2dict(edge_properties)
                         for e in entity[edge_col].unique():
-                            edge_properties.setdefault(e,{})
+                            if not e in edge_properties:
+                                edge_properties[e] = {}
                         for v in edge_properties.values():
                             v.setdefault(edge_weight_prop_col,default_edge_weight)
                     if node_properties is not None:
                         node_properties = props2dict(node_properties)
                         for nd in entity[node_col].unique():
-                            node_properties.setdefault(nd,{})
+                             if not nd in node_properties:
+                                node_properties[nd] = {}
                         for v in node_properties.values():
                             v.setdefault(node_weight_prop_col,default_node_weight)
                     properties = {0 : edge_properties, 1 : node_properties}
@@ -420,13 +424,39 @@ class Hypergraph:
                     if weight_prop_col in properties.columns:
                         properties = properties.fillna({weight_prop_col:default_weight})
                     elif misc_properties_col in properties.columns:
-                        for rdx in range(len(properties)):
-                            properties.iloc[rdx][misc_properties_col].setdefault(weight_prop_col,default_weight)
+                        for idx in properties.index:
+                            if not isinstance(properties[misc_properties_col][idx],dict):
+                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
+                            else:
+                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
                     else:
                         properties[weight_prop_col] = default_weight
-                elif isinstance(properties, dict):
-                    for k,v in properties.items():
-                        v.setdefault(weight_prop_col,default_weight)
+                if isinstance(properties, dict):
+                    if dict_depth(properties)<=2:
+                        properties = pd.DataFrame([{'id':k, misc_properties_col:v} for k,v in properties.items()])
+                        for idx in properties.index:
+                            if isinstance(properties[misc_properties_col][idx],dict):
+                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
+                            else:
+                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
+                    elif set(properties.keys()) == {0,1}:
+                        edge_properties = properties[0]
+                        for e in entity[edge_col].unique():
+                            if not e in edge_properties:
+                                edge_properties[e] = {edge_weight_prop_col: default_edge_weight}
+                            else:
+                                edge_properties[e].setdefault(edge_weight_prop_col,default_edge_weight)
+                        node_properties = properties[1]
+                        for nd in entity[node_col].unique():
+                            if not nd in node_properties:
+                                node_properties[nd] = {node_weight_prop_col: default_node_weight}
+                            else:
+                                node_properties[nd].setdefault(node_weight_prop_col,default_node_weight)                    
+                        for idx in properties.index:
+                            if not isinstance(properties[misc_properties_col][idx],dict):
+                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
+                            else:
+                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
 
 
             self.E = EntitySet(
@@ -439,7 +469,7 @@ class Hypergraph:
                     misc_cell_props_col=misc_cell_properties_col or 'cell_properties',
                     aggregateby = aggregateby or "sum",
                     properties = properties,
-                    misc_props_col = misc_properties_col or 'properties',
+                    misc_props_col = misc_properties_col,
                 )
 
             self._edges = self.E
@@ -1069,7 +1099,7 @@ class Hypergraph:
 
     #     """
     #     # This piece of code is to allow a user to pass in a dictionary
-    #     # Of the format {'New_edge': ['Node1', 'Node2']}.
+    #     # Of the format {'edge': ['Node1', 'Node2']}.
     #     # TODO: type check to correctly handle other valid input types
     #     cols = list(self._edges.labels.keys())
     #     edge = {cols[0]: list(edge.keys())[0], cols[1]: list(edge.values())[0]}
@@ -1817,7 +1847,7 @@ class Hypergraph:
         else:
             return self.remove(singletons, level=0, name=name)
 
-    def s_connected_components(self, s=1, edges=True, return_singletons=True):
+    def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
         Returns a generator for the :term:`s-edge-connected components
         <s-edge-connected component>`
@@ -1831,7 +1861,7 @@ class Hypergraph:
         edges : boolean, optional, default = True
             If True will return edge components, if False will return node
             components
-        return_singletons : bool, optional, default = True
+        return_singletons : bool, optional, default = False
 
         Notes
         -----
