@@ -1665,6 +1665,12 @@ class Hypergraph:
         keys = set(self._state_dict['labels']['edges']).difference(edges)
         return self.remove(keys,level=0)
 
+    def remove_edges(self,keys,name=None):
+        return self.remove(keys,level=0,name=name)
+
+    def remove_nodes(self,keys,name=None):
+        return self.remove(keys,level=1,name=name)
+
     def remove(self,keys,level=None, name=None):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
@@ -1672,7 +1678,7 @@ class Hypergraph:
         
         Parameters
         ----------
-        keys : Iterable
+        keys : list | tuple | set
             node and/or edge id to restrict to
         level : None, optional
             Enter 0 to remove edges with ids in keys.  
@@ -1687,6 +1693,8 @@ class Hypergraph:
         """
         rdfprop = self.properties.copy()
         rdf = self.dataframe.copy()
+        if not isinstance(keys,(list,tuple,set)):
+            keys = list(keys)
         if level == 0:
             kdx = set(keys).intersection(set(self._state_dict['labels']['edges']))
             for k in kdx:
