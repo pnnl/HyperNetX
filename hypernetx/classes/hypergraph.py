@@ -1817,7 +1817,7 @@ class Hypergraph:
         else:
             return self.remove(singletons, level=0, name=name)
 
-    def s_connected_components(self, s=1, edges=True, return_singletons=False):
+    def s_connected_components(self, s=1, edges=True, return_singletons=True):
         """
         Returns a generator for the :term:`s-edge-connected components
         <s-edge-connected component>`
@@ -1831,7 +1831,7 @@ class Hypergraph:
         edges : boolean, optional, default = True
             If True will return edge components, if False will return node
             components
-        return_singletons : bool, optional, default = False
+        return_singletons : bool, optional, default = True
 
         Notes
         -----
