@@ -2323,6 +2323,99 @@ class Hypergraph:
 
     @classmethod
     @warn_nwhy
+    def from_numpy_array(
+        cls,
+        M,
+        node_names=None,
+        edge_names=None,
+        node_label="nodes",
+        edge_label="edges",
+        name=None,
+        key=None,
+        **kwargs,
+    ):
+        """
+        Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
+        The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
+        all others to 0's.
+
+        Parameters
+        ----------
+        M : real valued array-like object, 2 dimensions
+            representing a real valued matrix with rows corresponding to nodes and columns to edges
+
+        node_names : object, array-like, default=None
+            List of node names must be the same length as M.shape[0].
+            If None then the node names correspond to row indices with 'v' prepended.
+
+        edge_names : object, array-like, default=None
+            List of edge names must have the same length as M.shape[1].
+            If None then the edge names correspond to column indices with 'e' prepended.
+
+        name : hashable
+
+        key : (optional) function
+            boolean function to be evaluated on each cell of the array,
+            must be applicable to numpy.array
+
+        Returns
+        -------
+         : Hypergraph
+
+        Note
+        ----
+        The constructor does not generate empty edges.
+        All zero columns in M are removed and the names corresponding to these
+        edges are discarded.
+
+
+        """
+        # Create names for nodes and edges
+        # Validate the size of the node and edge arrays
+
+        M = np.array(M)
+        if len(M.shape) != (2):
+            raise HyperNetXError("Input requires a 2 dimensional numpy array")
+        # apply boolean key if available
+        if key:
+            M = key(M)
+
+        if node_names is not None:
+            nodenames = np.array(node_names)
+            if len(nodenames) != M.shape[0]:
+                raise HyperNetXError(
+                    "Number of node names does not match number of rows."
+                )
+        else:
+            nodenames = np.array([f"v{idx}" for idx in range(M.shape[0])])
+
+        if edge_names is not None:
+            edgenames = np.array(edge_names)
+            if len(edgenames) != M.shape[1]:
+                raise HyperNetXError(
+                    "Number of edge_names does not match number of columns."
+                )
+        else:
+            edgenames = np.array([f"e{jdx}" for jdx in range(M.shape[1])])
+
+        # Remove empty column indices from M columns and edgenames
+        colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:, jdx])])
+        colidxsum = np.sum(colidx)
+        if not colidxsum:
+            return Hypergraph()
+        else:
+            M = M[:, colidx]
+            edgenames = edgenames[colidx]
+            edict = dict()
+            # Create an EntitySet of edges from M
+            for jdx, e in enumerate(edgenames):
+                edict[e] = nodenames[
+                    [idx for idx in range(M.shape[0]) if M[idx, jdx]]
+                ]
+            return Hypergraph(edict, name=name)
+
+    @classmethod
+    @warn_nwhy
     def from_incidence_dataframe(
         cls,
         df,
