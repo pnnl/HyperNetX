@@ -13,9 +13,8 @@ def test_from_bipartite():
     h = Hypergraph.from_bipartite(g)
     nodes = {*h.nodes}
     edges = {*h.edges}
-
-    assert left.issubset(nodes)
-    assert right.issubset(edges)
+    assert left.issubset(edges)
+    assert right.issubset(nodes)
 
     with pytest.raises(Exception) as excinfo:
         h.edge_diameter(s=4)
