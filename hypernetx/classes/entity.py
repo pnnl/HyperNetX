@@ -187,7 +187,7 @@ class Entity:
         # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
         self._data_cols = []
         for col in data_cols:
-            # TODO: default arguments fail for empty Entity
+            # TODO: default arguments fail for empty Entity; data_cols has two elements but _dataframe has only one element
             if isinstance(col, int):
                 self._data_cols.append(self._dataframe.columns[col])
             else:
@@ -622,7 +622,6 @@ class Entity:
         dimensions
         """
         # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
-        # TODO: Currently failing test test_entity::test_Entity_property
         return self.dimensions[level]
 
     @property
