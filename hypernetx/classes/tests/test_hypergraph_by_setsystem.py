@@ -1,4 +1,6 @@
 import pytest
+from pytest_lazyfixture import lazy_fixture as lf
+
 from hypernetx import Hypergraph
 
 """
@@ -23,10 +25,10 @@ from hypernetx import Hypergraph
 @pytest.mark.parametrize(
     "hyp, expected",
     [
-        (pytest.lazy_fixture("hyp_no_props"), None),
-        (pytest.lazy_fixture("hyp_df_with_props"), None),
-        (pytest.lazy_fixture("hyp_dict_with_props"), None),
-        (pytest.lazy_fixture("hyp_props_on_edges_nodes"), None),
+        (lf("hyp_no_props"), None),
+        (lf("hyp_df_with_props"), None),
+        (lf("hyp_dict_with_props"), None),
+        (lf("hyp_props_on_edges_nodes"), None),
     ],
 )
 def test_dual(hyp: Hypergraph, expected):
