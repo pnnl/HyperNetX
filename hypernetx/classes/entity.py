@@ -187,6 +187,7 @@ class Entity:
         # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
         self._data_cols = []
         for col in data_cols:
+            # TODO: default arguments fail for empty Entity
             if isinstance(col, int):
                 self._data_cols.append(self._dataframe.columns[col])
             else:
@@ -541,8 +542,7 @@ class Entity:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
-        # Dev Note: This threw an error when trying it on the harry potter dataset,
-        # when trying 0, or 1 for column. I'm not sure how this should be used
+
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items
@@ -1235,6 +1235,7 @@ class Entity:
 
         return self.__class__(
             entity=self.dataframe[cols],
+            data_cols=cols,
             aggregateby=aggregateby,
             properties=properties,
             misc_props_col=self._misc_props_col,
@@ -1319,10 +1320,8 @@ class Entity:
             self._properties_from_dataframe(props)
 
         if isinstance(props,dict):
-            if set([0,1]) == set(props.keys()):
-                self._properties_from_dict(props)
-            else:
-                self._properties_from_dict({0:props, 1:props})   
+            ### Expects nested dictionary with keys corresponding to level and id
+            self._properties_from_dict(props)
             
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:

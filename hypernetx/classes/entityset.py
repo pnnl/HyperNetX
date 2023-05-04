@@ -234,7 +234,6 @@ class EntitySet(Entity):
         _log.debug(f"data: {pformat(data)}")
         super().__init__(
             entity=entity,
-            data_cols = [level1,level2],
             data=data,
             labels=labels,
             uid=uid,

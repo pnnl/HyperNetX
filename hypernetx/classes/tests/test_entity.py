@@ -18,18 +18,21 @@ def test_Entity_property(ent_hp):
     assert len(ent_hp.uidset) == 7
     assert len(ent_hp.elements) == 7
     assert isinstance(ent_hp.elements["Hufflepuff"], UserList)
-    assert ent_hp.is_empty(2) is False
+    # TODO: Entity defaults to first two cols as data cols
+    assert ent_hp.is_empty(2) is False  # fails
     assert len(ent_hp.incidence_dict["Gryffindor"]) == 6
 
 
 def test_Entity_attributes(ent_hp):
     assert isinstance(ent_hp.data, np.ndarray)
-    assert ent_hp.data.shape == ent_hp.dataframe[ent_hp._data_cols].shape
+    # TODO: Entity does not remove row duplicates from self._data if constructed from np.ndarray
+    assert ent_hp.data.shape == ent_hp.dataframe[ent_hp._data_cols].shape  # fails
     assert isinstance(ent_hp.labels, dict)
-    assert ent_hp.dimensions == (7, 11, 10, 36, 26)
-    assert ent_hp.dimsize == 5
+    # TODO: Entity defaults to first two cols as data cols
+    assert ent_hp.dimensions == (7, 11, 10, 36, 26)  # fails
+    assert ent_hp.dimsize == 5  # fails
     df = ent_hp.dataframe[ent_hp._data_cols]
-    assert list(df.columns) == [
+    assert list(df.columns) == [  # fails
         "House",
         "Blood status",
         "Species",
@@ -57,7 +60,9 @@ def test_Entity_custom_attributes(ent_hp):
 
 
 def test_Entity_level(ent_sbs):
-    assert ent_sbs.level("I") == (0, 5)
+    # TODO: at some point we are casting out and back to categorical dtype without
+    #  preserving categories ordering from `labels` provided to constructor
+    assert ent_sbs.level("I") == (0, 5)  # fails
     assert ent_sbs.level("K") == (1, 3)
     assert ent_sbs.level("K", max_level=0) is None
 

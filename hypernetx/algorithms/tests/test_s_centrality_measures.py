@@ -6,7 +6,7 @@ from hypernetx.algorithms.s_centrality_measures import *
 warnings.simplefilter("ignore")
 
 
-@pytest.mark.skip(reason="fix test")
+# @pytest.mark.skip(reason="fix test")
 def test_s_betweenness_centrality(fish):
     h = fish.hypergraph
     bc = s_betweenness_centrality(h)
@@ -19,7 +19,7 @@ def test_s_betweenness_centrality(fish):
     assert bcd["F"] == 0
 
 
-@pytest.mark.skip(reason="need to verify correctness of function being tested")
+# @pytest.mark.skip(reason="need to verify correctness of function being tested")
 def test_s_harmonic_centrality(sixbyfive):
     h = sixbyfive.hypergraph
     shcc = s_harmonic_centrality(h, s=1, normalized=True)
@@ -36,7 +36,7 @@ def test_s_harmonic_centrality(sixbyfive):
         assert shcc[e] - s3[e] < 10e-5
 
 
-@pytest.mark.skip(reason="need to verify correctness of function being tested")
+# @pytest.mark.skip(reason="need to verify correctness of function being tested")
 def test_s_eccentricity(sixbyfive):
     h = sixbyfive.hypergraph
     shcc = s_eccentricity(h, s=1)
