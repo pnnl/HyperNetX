@@ -377,6 +377,6 @@ epub_exclude_files = ["search.html"]
 # If false, no index is generated.
 # epub_use_index = True
 
-
-def setup(app):
-    app.add_js_file("copybutton.js")
+# Remove the command prompts such as >>> when copying code snippets from copybutton
+# see https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_exclude = '.linenos, .gp'
