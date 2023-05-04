@@ -380,3 +380,7 @@ epub_exclude_files = ["search.html"]
 # Remove the command prompts such as >>> when copying code snippets from copybutton
 # see https://sphinx-copybutton.readthedocs.io/en/latest/use.html
 copybutton_exclude = '.linenos, .gp'
+
+#  tables and code-blocks are automatically numbered if they have a caption.
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-numfig
+numfig = True
