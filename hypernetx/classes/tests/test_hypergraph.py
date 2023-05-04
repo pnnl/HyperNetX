@@ -36,26 +36,22 @@ def test_hypergraph_custom_attributes(sbs):
 
 
 # @pytest.mark.skip("reason=fix implementation")
-def test_hypergraph_static(sbs):
+def test_get_linegraph(sbs):
     H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
     assert len(set(H.get_linegraph(s=1)).difference(set([0, 1, 2, 3, 4, 5])))==0
 
-    # sH.get_name
-    # H.translate
 
 
-# @pytest.mark.skip(reason="Deprecated attribute and/or method")
 def test_hypergraph_from_incidence_dataframe(lesmis):
-    df = lesmis.hypergraph.dataframe
+    df = lesmis.hypergraph.incidence_dataframe()
     H = Hypergraph.from_incidence_dataframe(df)
     assert H.shape == (40, 8)
     assert H.size(3) == 8
     assert H.degree("JA") == 3
 
 
-# @pytest.mark.skip()
 def test_hypergraph_from_numpy_array(sbs):
     H = Hypergraph.from_numpy_array(sbs.arr)
     assert len(H.nodes) == 6
@@ -70,18 +66,6 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     assert len(HB.edges) == 7
     assert len(HB.nodes) == 8
 
-
-# TODO: confirm that we no longer test allowing EntitySet as input to constructor
-@pytest.mark.skip("Deprecated methods")
-def test_hypergraph_from_entity_set(sbs):
-    entityset = EntitySet(sbs.edgedict)
-    H = Hypergraph(entityset)
-    assert set(H.edges.incidence_dict.keys()) == set(sbs.edgedict.keys())
-    assert all(set(v) == sbs.edgedict[k] for k, v in H.edges.incidence_dict.items())
-    assert H.degree("A") == 3
-    assert H.dim("O") == 1
-    assert len(H.edge_size_dist()) == 6
-    assert len(H.edge_neighbors("S")) == 4
 
 
 @pytest.mark.skip("Deprecated methods")
@@ -102,19 +86,17 @@ def test_add_node_to_edge(sbs):
     assert H.shape == (10, 8)
 
 
-# @pytest.mark.skip("Deprecated methods")
 def test_remove_edges(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
     # remove an edge without removing any nodes
-    H.remove_edges("P")
+    H = H.remove_edges("P")
     assert H.shape == (7, 5)
     # remove an edge containing a singleton ear
-    H.remove_edges("O")
+    H = H.remove_edges("O")
     assert H.shape == (6, 4)
 
 
-# @pytest.mark.skip("Deprecated methods")
 def test_remove_nodes():
     a, b, c, d = "a", "b", "c", "d"
     hbug = Hypergraph({0: [a, b], 1: [a, c], 2: [a, d]})
@@ -122,14 +104,13 @@ def test_remove_nodes():
     assert a in hbug.edges[0]
     assert a in hbug.edges[1]
     assert a in hbug.edges[2]
-    hbug.remove_nodes(a)
+    hbug = hbug.remove_nodes(a)
     assert a not in hbug.nodes
     assert a not in hbug.edges[0]
     assert a not in hbug.edges[1]
     assert a not in hbug.edges[2]
 
 
-# TODO:  add test for node=True
 def test_matrix(sbs_hypergraph):
     H = sbs_hypergraph
     assert H.incidence_matrix().todense().shape == (7, 6)
@@ -149,13 +130,13 @@ def test_collapse_edges(sbsd_hypergraph):
 def test_collapse_nodes(sbsd_hypergraph):
     H = sbsd_hypergraph
     assert len(H.nodes) == 8
-    HC = H.collapse_nodes(use_reps=None, return_counts=None)
+    HC = H.collapse_nodes()
     assert len(HC.nodes) == 7
 
 
 def test_collapse_nodes_and_edges(sbsd_hypergraph):
     H = sbsd_hypergraph
-    HC2 = H.collapse_nodes_and_edges(use_reps=None, return_counts=None)
+    HC2 = H.collapse_nodes_and_edges()
     assert len(H.edges) == 7
     assert len(HC2.edges) == 6
     assert len(H.nodes) == 8
@@ -180,10 +161,10 @@ def test_restrict_to_nodes(sbs_hypergraph):
     assert "C" not in H1.edges["P"]
 
 
-@pytest.mark.skip("reason=Deprecated method")
+# @pytest.mark.skip("reason=Deprecated method")
 def test_remove_from_restriction(triloop):
     h = triloop.hypergraph
-    h1 = h.restrict_to_nodes(h.neighbors("A")).remove_node(
+    h1 = h.restrict_to_nodes(h.neighbors("A")).remove_nodes(
         "A"
     )  # Hypergraph does not have a remove_node method
     assert "A" not in h1
@@ -195,7 +176,7 @@ def test_toplexes(sbsd_hypergraph):
     T = H.toplexes()
     assert len(T.nodes) == 8
     assert len(T.edges) == 5
-    T = T.collapse_nodes(use_reps=None, return_counts=None)
+    T = T.collapse_nodes()
     assert len(T.nodes) == 7
 
 
@@ -210,14 +191,14 @@ def test_is_connected():
     assert h.is_connected(s=3, edges=True) is False
 
 
-@pytest.mark.skip("Deprecated methods")
+# @pytest.mark.skip("Deprecated methods")
 def test_singletons():
     E = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
     h = Hypergraph(E)
     assert h.shape == (9, 5)
     singles = h.singletons()
     assert len(singles) == 2
-    h.remove_edges(singles)
+    h = h.remove_edges(singles)
     assert h.shape == (7, 3)
 
 
@@ -342,7 +323,7 @@ def test_edge_distance(lesmis):
 
 def test_dataframe(lesmis):
     h = lesmis.hypergraph
-    df = h.dataframe
+    df = h.incidence_dataframe()
     assert np.allclose(np.array(np.sum(df)), np.array([10, 9, 8, 4, 8, 3, 12, 6]))
 
 
@@ -351,13 +332,6 @@ def test_construct_empty_hypergraph():
     assert h.shape == (0, 0)
     assert h.edges.is_empty()
     assert h.nodes.is_empty()
-
-
-def test_static_hypergraph_get_linegraph(lesmis):
-    H = Hypergraph(lesmis.edgedict)
-    assert H.shape == (40, 8)
-    G = H.get_linegraph(edges=True, s=2)
-    assert G.number_of_edges, G.number_of_nodes == (8, 8)
 
 
 def test_static_hypergraph_s_connected_components(lesmis):

@@ -16,37 +16,49 @@ For questions and comments you may contact the developers directly at: hypernetx
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
-* Principle Developer and Designer: Brenda Praggastis
+* Principal Developer and Designer: Brenda Praggastis
+* Development Team: Madelyn Shapiro, Mark Bonicillo
 * Visualization: Dustin Arendt, Ji Young Yun
-* High Performance Computing: Tony Liu, Andrew Lumsdaine
 * Principal Investigator: Cliff Joslyn
 * Program Manager: Brian Kritzstein
-* Mathematics, methods, and algorithms: Sinan Aksoy, Dustin Arendt, Cliff Joslyn, Nicholas Landry, Tony Liu, Andrew Lumsdaine, Brenda Praggastis, and Emilie Purvine, François Théberge
+* Principal Contributors (Design, Theory, Code): Sinan Aksoy, Dustin Arendt, Mark Bonicillo, Helen Jenne, Cliff Joslyn, Nicholas Landry, Audun Myers, Christopher Potvin, Brenda Praggastis, Emilie Purvine, Greg Roek, Madelyn Shapiro, Mirah Shi, Francois Theberge, Ji Young Yun
 
 
 
-New Features in Version 1.0
+New Features in Version 2.0
 ---------------------------
 
-#. Hypergraph construction can be sped up by reading in all of the data at once. In particular the hypergraph constructor may read a Pandas dataframe object and create edges and nodes based on column headers. 
-#. The C++ addon :ref:`nwhy` can be used in Linux environments to support optimized hypergraph methods such as s-centrality measures.
-#. The JavaScript addon :ref:`widget` can be used to interactively inspect hypergraphs in a Jupyter Notebook.
-#. We've added four new tutorials highlighting the s-centrality metrics, static Hypergraphs, :ref:`nwhy`, and :ref:`widget`.
+HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a
+hypergraph. While the library continues to accept lists, dictionaries and
+dataframes as basic inputs for hypergraph constructions, both cell
+properties and edge and node properties can now be easily added for
+retrieval as object attributes. The core library has been rebuilt to take
+advantage of the flexibility and speed of Pandas Dataframes.
+Dataframes offer the ability to store and easily access hypergraph metadata.
+Metadata can be used for filtering objects, and characterize their
+distributions by their attributes.
+**Version 2.0 is not backwards compatible. Objects constructed using version
+1.x can be imported from their incidence dictionaries.**
 
-New Features in Version 1.1
----------------------------
+New features to look for:
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Cell weights for incidence matrices.
-#. Support for edge and node properties in static hypergraphs.
-#. Three new algorithms modules and their corresponding tutorials
-
-   #. Contagion module for studying SIS and SIR contagion networks using hypergraphs.
-   #. Clustering module for clustering vertices based on hyperedge incidence and weighting.
-   #. Generator module for synthetic generation of ChungLu and DCSBM hypergraphs.
-   
-New Features in Version 1.2
----------------------------
-#. Added algorithm module and tutorial for Modularity and Clustering
+#. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
+#. Additional constructors accept incidence matrices and incidence dataframes.
+#. Hypergraph constructors accept cell, edge, and node metadata. 
+#. Metadata available as attributes on the cells, edges, and nodes. 
+#. User defined cell weights and default weights available to incidence matrix.
+#. Meta data persists with restrictions and removals.
+#. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
+#. New modules and tutorials:
+   * Barycentric homology
+   * Zig Zag homology
+#. New hnxwidget available using  `pipinstall hnxwidget`.
+#. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
+#. Methods for adding nodes and hyperedges are currently not supported. 
+#. Methods for removing nodes return new hypergraph.
+#. The `nwhy` optimizations are no longer supported.
+#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either. 
 
 
 .. _colab:

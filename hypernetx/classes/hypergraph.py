@@ -25,6 +25,95 @@ T = TypeVar("T", bound=Union[str, int])
 
 class Hypergraph:
     """
+    Parameters
+    ----------
+
+    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,
+        pandas.DataFrame, numpy.ndarray, default = None
+        See SetSystem above for additional setsystem requirements.
+
+    edge_col : (optional) str | int, default = 0
+        column index (or name) in pandas.dataframe or numpy.ndarray,
+        used for (hyper)edge ids. Will be used to reference edgeids for 
+        all set systems.
+
+    node_col : (optional) str | int, default = 1
+        column index (or name) in pandas.dataframe or numpy.ndarray,
+        used for node ids. Will be used to reference nodeids for all set systems.
+
+    cell_weight_col : (optional) str | int, default = None
+        column index (or name) in pandas.dataframe or numpy.ndarray used for
+        referencing cell weights. For a dict of dicts references key in cell
+        property dicts. 
+
+    cell_weights : (optional) Sequence[float,int] | int |  float , default = 1.0
+        User specified cell_weights or default cell weight.
+        Sequential values are only used if setsystem is a
+        dataframe or ndarray in which case the sequence must
+        have the same length and order as these objects.
+        Sequential values are ignored for dataframes if cell_weight_col is already
+        a column in the data frame.
+        If cell_weights is assigned a single value
+        then it will be used as default for missing values or when no cell_weight_col
+        is given.
+
+    cell_properties : (optional) Sequence[int | str] | Mapping[T,Mapping[T,Mapping[str,Any]]],
+        default = None
+        Column names from pd.DataFrame to use as cell properties
+        or a dict assigning cell_property to incidence pairs of edges and 
+        nodes. Will generate a misc_cell_properties, which may have variable lengths per cell.
+
+    misc_cell_properties : (optional) str | int, default = None
+        Column name of dataframe corresponding to a column of variable
+        length property dictionaries for the cell. Ignored for other setsystem
+        types.
+
+    aggregateby : (optional) str, dict, default = 'first'
+        By default duplicate edge,node incidences will be dropped unless
+        specified with `aggregateby`.
+        See pandas.DataFrame.agg() methods for additional syntax and usage 
+        information.
+
+    edge_properties : (optional) pd.DataFrame | dict, default = None
+        Properties associated with edge ids.
+        First column of dataframe or keys of dict link to edge ids in
+        setsystem.
+
+    node_properties : (optional) pd.DataFrame | dict, default = None
+        Properties associated with node ids.
+        First column of dataframe or keys of dict link to node ids in
+        setsystem.
+
+    properties : (optional) pd.DataFrame | dict, default = None
+        Concatenation/union of edge_properties and node_properties.
+        By default, the object id is used and should be the first column of
+        the dataframe, or key in the dict. If there are nodes and edges
+        with the same ids and different properties then use the edge_properties 
+        and node_properties keywords.
+
+    misc_properties : (optional) int | str, default = None
+        Column of property dataframes with dtype=dict. Intended for variable
+        length property dictionaries for the objects.
+
+    edge_weight_prop : (optional) str, default = None,
+        Name of property in edge_properties to use for weight.
+
+    node_weight_prop : (optional) str, default = None,
+        Name of property in node_properties to use for weight.
+
+    weight_prop : (optional) str, default = None
+        Name of property in properties to use for 'weight'
+
+    default_edge_weight : (optional) int | float, default = 1
+        Used when edge weight property is missing or undefined.
+
+    default_node_weight : (optional) int | float, default = 1
+        Used when node weight property is missing or undefined
+
+    name : (optional) str, default = None
+        Name assigned to hypergraph
+
+
     ======================
     Hypergraphs in HNX 2.0
     ======================  
@@ -33,10 +122,10 @@ class Hypergraph:
     V = nodes (vertices) and E = (hyper)edges.
 
     HNX allows for multi-edges by distinguishing edges by
-    their identifiers instead of their contents. For example let
+    their identifiers instead of their contents. For example, if
     V = {1,2,3} and E = {e1,e2,e3},
-    where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3}.
-    The edges e1 and e2 contain the same set of nodes and yet
+    where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3},
+    the edges e1 and e2 contain the same set of nodes and yet
     are distinct and are distinguishable within H = (V,E).
 
     New as of version 2.0, HNX provides methods to easily store and
@@ -112,7 +201,7 @@ class Hypergraph:
 
     5.  **numpy.ndarray** For homogeneous datasets given in an ndarray a
         pandas dataframe is generated and column names are added from the
-        column_names keyword argument. Cell properties containing multiple data
+        edge_col and node_col arguments. Cell properties containing multiple data
         types are added with a separate dataframe or dict and passed through the
         cell_properties keyword. ::
 
@@ -123,7 +212,7 @@ class Hypergraph:
 
 
     Edge and Node Properties
-    ~~~~~~~~~~~~~~~~~~~~~~~~
+    ------------------------
     Properties specific to a single edge or node are passed through the
     keywords: **edge_properties, node_properties, properties**.
     Properties may be passed as dataframes or dicts.
@@ -136,119 +225,53 @@ class Hypergraph:
     +-----------+-----------+---------------------------------------+
     |   id      |   weight  |   properties                          |
     +-----------+-----------+---------------------------------------+
+    |   e1      |   5.0     |   {'type':'event'}                    |
+    +-----------+-----------+---------------------------------------+
+    |   e2      |   0.52    |   {"name":"owned_by"}                 |
+    +-----------+-----------+---------------------------------------+
+    |   ...     |   ...     |   {...}                               |
+    +-----------+-----------+---------------------------------------+
     |   1       |   1.2     |   {'color':'red'}                     |
     +-----------+-----------+---------------------------------------+
     |   2       |   .003    |   {'name':'Fido','color':'brown'}     |
     +-----------+-----------+---------------------------------------+
-    |   3       |   1.0     |                                       |
-    +-----------+-----------+---------------------------------------+
-    |   e1      |   5.0     |   {'type':'event'}                    |
-    +-----------+-----------+---------------------------------------+
-    |   ...     |   ...     |   {...}                               |
+    |   3       |   1.0     |    {}                                   |
     +-----------+-----------+---------------------------------------+
 
     A properties dictionary should have the format: ::
 
         dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
 
+    A properties dataframe may be used for nodes and edges sharing ids
+    but differing in cell properties by adding a level index using 0 
+    for edges and 1 for nodes: 
 
-    Note
-    ---- 
+    +-----------+-----------+-----------+---------------------------+
+    |  level    |   id      |   weight  |       properties          |
+    +-----------+-----------+-----------+---------------------------+
+    |   0       |   e1      |   5.0     |   {'type':'event'}        |
+    +-----------+-----------+-----------+---------------------------+
+    |   0       |   e2      |    0.52   |   {"name":"owned_by"}     |
+    +-----------+-----------+-----------+---------------------------+   
+    |   ...     |   ...     |    ...    |          {...}            |
+    +-----------+-----------+-----------+---------------------------+
+    |   1       |   1.2     |   {'color':'red'}                     |
+    +-----------+-----------+-----------+---------------------------+
+    |   2       |   .003    |   {'name':'Fido','color':'brown'}     |
+    +-----------+-----------+-----------+---------------------------+
+    |   ...     |   ...     |    ...    |          {...}            |
+    +-----------+-----------+-----------+---------------------------+
+
+
+
+    Weights
+    -------
     The default key for cell and object weights is "weight". The default value
     is 1. Weights may be assigned and/or a new default prescribed in the
-    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, and using **edge_weight_prop, node_weight_prop, weight_prop,
-    default_edge_weight,** and **default_node_weight**. See parameters below 
-    for details.
+    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, 
+    and using **edge_weight_prop, node_weight_prop, weight_prop,
+    default_edge_weight,** and **default_node_weight** for node and edge weights. 
     
-
-    Parameters
-    ----------
-
-    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,
-        pandas.DataFrame, numpy.ndarray, default = None
-        See SetSystem above for additional setsystem requirements.
-
-    edge_col : (optional) str | int, default = 0
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for (hyper)edge ids. Will be used to reference edgeids for 
-        all set systems.
-
-    node_col : (optional) str | int, default = 1
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for node ids. Will be used to reference nodeids for all set systems.
-
-    cell_weight_col : (optional) str | int, default = None
-        column index (or name) in pandas.dataframe or numpy.ndarray used for
-        referencing cell weights. For a dict of dicts references key in cell
-        property dicts.
-
-    cell_weights : (optional) Sequence[float,int] | int |  float , default = 1
-        User specified cell_weights or default weight.
-        Sequential values are only used if setsystem is a
-        dataframe or ndarray in which case the sequence must
-        have the same length and order as these objects.
-        Sequential values are ignored for dataframes if cell_weight_col is already
-        a column in the data frame.
-        If cell_weights is assigned a single value
-        then it will be used as default for missing values or when no cell_weight_col
-        is given.
-
-    cell_properties : (optional) Sequence[int | str] | Mapping[T,Mapping[T,Mapping[str,Any]]],
-        default = None
-        Indices or names of columns from set system to use as cell properties
-        or a dict assigning cell_property to incidence pairs of edges and 
-        nodes. Will generate misc_cell_properties column if setsystem is dict of dicts.
-
-    misc_cell_properties : (optional) str | int, default = None
-        Column index or name of dataframe corresponding to a column of variable
-        length property dictionaries for the cell. Ignored for other setsystem
-        types.
-
-    aggregateby : (optional) str, dict, default = 'first'
-        By default duplicate edge,node incidences will be dropped unless
-        specified with `aggregateby`.
-        See pandas.DataFrame.groupby() and pandas.DataFrame.agg() methods for
-        additional syntax and usage information.
-
-    edge_properties : (optional) pd.DataFrame | dict, default = None
-        Properties associated with edge ids.
-        First column of dataframe or keys of dict link to object ids in
-        setsystem.
-
-    node_properties : (optional) pd.DataFrame | dict, default = None
-        Properties associated with node ids.
-        First column of dataframe or keys of dict link to object ids in
-        setsystem.
-
-    properties : (optional) pd.DataFrame | dict, default = None
-        Concatenation/union of edge_properties and node_properties.
-        By default, the object id is used and should be the first column of
-        the dataframe, or key in the dict. If there are nodes and edges
-        with the same ids and different properties then use the edge_properties 
-        and node_properties keywords.
-
-    misc_properties : (optional) int | str, default = None
-        Column of property dataframes with dtype=dict. Intended for variable
-        length property dictionaries for the objects.
-
-    edge_weight_prop : (optional) str, default = None,
-        Name of property in edge_properties to use for weight.
-
-    node_weight_prop : (optional) str, default = None,
-        Name of property in node_properties to use for weight.
-
-    weight_prop : (optional) str, default = None
-        Name of property in properties to use for 'weight'
-
-    default_edge_weight : (optional) int | float, default = 1
-        Used when edge weight property is missing or undefined.
-
-    default_node_weight : (optional) int | float, default = 1
-        Used when node weight property is missing or undefined
-
-    name : (optional) str, default = None
-        Name assigned to hypergraph
-
     """
 
 
@@ -399,8 +422,6 @@ class Hypergraph:
                     return df.reset_index().set_index(df.columns[0]).to_dict(orient='index')
                 else :
                     return dict(df)
-
-            ### edge and node properties this may fail later if not all nodes and edges are present
  
             if properties is None:
                 if edge_properties is not None or node_properties is not None:
@@ -474,6 +495,9 @@ class Hypergraph:
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
+            self._dataframe = self.E.cell_properties.reset_index()
+            self._data_cols = data_cols = [self._edge_col, self._node_col]
+            self._dataframe[data_cols] = self._dataframe[data_cols].astype('category')
 
             self.__dict__.update(locals())
             self._set_default_state()
@@ -510,14 +534,7 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        try:
-            return self._state_dict['dataframe']
-        except:
-            df = self._edges.cell_properties.reset_index()
-            data_cols = [self._edge_col, self._node_col]
-            df[data_cols] = df[data_cols].astype('category')
-            self._state_dict['dataframe'] = df
-        return df
+        return self._dataframe
 
     
     @property
@@ -533,23 +550,23 @@ class Hypergraph:
     
     @property
     def edge_props(self):
-        """Summary
+        """Dataframe of edge properties
+        indexed on edge ids
         
         Returns
         -------
-        TYPE
-            Description
+        pd.DataFrame
         """
         return self.E.properties.loc[0]
 
     @property
     def node_props(self):
-        """Summary
+        """Dataframe of node properties
+        indexed on node ids
         
         Returns
         -------
-        TYPE
-            Description
+        pd.DataFrame
         """
         return self.E.properties.loc[1]
 
@@ -732,8 +749,10 @@ class Hypergraph:
 
         if edges:
             A, Amap = self.edge_adjacency_matrix(s=s, index=True)
+            Amaplst = [(k,self.edge_props.loc[k].to_dict()) for k in Amap]
         else:
             A, Amap = self.adjacency_matrix(s=s, index=True)
+            Amaplst = [(k,self.node_props.loc[k].to_dict()) for k in Amap]
 
         ### TODO: add key function to compute weights lambda x,y : funcval
 
@@ -743,7 +762,7 @@ class Hypergraph:
         A = np.array([e1, e2]).T
         g = nx.Graph()
         g.add_edges_from(A)
-        g.add_nodes_from(Amap)
+        g.add_nodes_from(Amaplst)
         d[key][s] = g
         return g
 
@@ -772,56 +791,6 @@ class Hypergraph:
         self._state_dict["edge_neighbors"] = defaultdict(dict) ### s: {edge: edge_neighbors}
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
-
-    # def save_state(self, fpath=None):
-    #     """
-    #     Save the hypergraph as an ordered pair: [state_dict,labels]
-    #     The hypergraph can be recovered using the command:
-
-    #         >>> H = hnx.Hypergraph.recover_from_state(fpath)
-
-    #     Parameters
-    #     ----------
-    #     fpath : str, optional
-    #     """
-    #     fpath = fpath or self.filepath or "current_state.p"
-    #     with open(fpath, "wb") as f:
-    #         pickle.dump([self._state_dict, self.edges.labels], f)
-
-    # @classmethod
-    # @warn_nwhy
-    # def recover_from_state(cls, fpath="current_state.p", newfpath=None, use_nwhy=True, name=None):
-    #     """
-    #     Recover a static hypergraph pickled using save_state.
-
-    #     Parameters
-    #     ----------
-    #     fpath : str
-    #         Full path to pickle file containing state_dict and labels
-    #         of hypergraph
-
-    #     Returns
-    #     -------
-    #     H : Hypergraph
-    #         static hypergraph with state dictionary prefilled
-    #     """
-    #     with open(fpath, "rb") as f:
-    #         temp, labels = pickle.load(f)
-    #     # need to save counts as well
-    #     recovered_data = np.array(temp["data"])[[0, 1]].T
-    #     recovered_counts = np.array(temp["data"])[
-    #         [2]
-    #     ]  # ammend this to store cell weights
-    #     E = EntitySet(data=recovered_data, labels=labels)
-    #     E.properties["counts"] = recovered_counts
-    #     H = Hypergraph(E)
-    #     H.state_dict.update(temp)
-    #     if newfpath == "same":
-    #         newfpath = fpath
-    #     if newfpath is not None:
-    #         H.filepath = newfpath
-    #         H.save_state()
-    #     return H
 
     def edge_size_dist(self):
         """
@@ -1018,204 +987,6 @@ class Hypergraph:
             return edge_neighbors
 
 
-    # def remove_node(self, node, _set_default_state=True):
-    #     """
-    #     Removes node from edges and deletes reference in hypergraph nodes
-
-    #     Parameters
-    #     ----------
-    #     node : hashable or Entity
-    #         a node in hypergraph
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     """
-
-    #     if node in self._nodes:
-    #         for edge in self._edges.memberships[node]:
-    #             if node in self._edges[edge]:
-    #                 self._edges.remove(node)
-    #         self._nodes.remove(node)
-
-    #         if _set_default_state:
-    #             self._set_default_state()
-
-    #     return self
-
-    # def remove_nodes(self, node_set):
-    #     """
-    #     Removes nodes from edges and deletes references in hypergraph nodes
-
-    #     Parameters
-    #     ----------
-    #     node_set : an iterable of hashables or Entities
-    #         Nodes in hypergraph
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     """
-    #     for node in node_set:
-    #         self.remove_node(node, _set_default_state=False)
-    #     self._set_default_state()
-    #     return self
-
-    # def _add_nodes_from(self, nodes):
-    #     """
-    #     Private helper method instantiates new nodes when edges added to
-    #     hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     nodes : iterable of hashables or Entities
-
-    #     """
-    #     self._nodes.add(nodes)
-
-    # def add_edge(self, edge, _set_default_state=True):
-    #     """
-
-    #     Adds a single edge to hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     edge : hashable or Entity
-    #         If hashable the edge returned will be empty.
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     Notes
-    #     -----
-    #     When adding an edge to a hypergraph children must be removed
-    #     so that nodes do not have elements.
-    #     Each node (element of edge) must be instantiated as a node,
-    #     making sure its uid isn't already present in the self.
-    #     If an added edge contains nodes that cannot be added to hypergraph
-    #     then an error will be raised.
-
-    #     """
-    #     # This piece of code is to allow a user to pass in a dictionary
-    #     # Of the format {'edge': ['Node1', 'Node2']}.
-    #     # TODO: type check to correctly handle other valid input types
-    #     cols = list(self._edges.labels.keys())
-    #     edge = {cols[0]: list(edge.keys())[0], cols[1]: list(edge.values())[0]}
-
-    #     key = edge[cols[0]]
-
-    #     if key in self._edges.elements:
-    #         warnings.warn("Cannot add edge. Edge already in hypergraph")
-    #     elif key in self._nodes.elements:
-    #         warnings.warn("Cannot add edge. Edge is already a Node")
-    #     if len(edge) > 0:
-    #         # TODO: this isn't right
-    #         self._nodes.add(edge)
-    #         self._edges.add(edge)
-
-    #     if _set_default_state:
-    #         self._set_default_state()
-
-    # def add_edges_from(self, edge_set):
-    #     """
-    #     Add edges to hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     edge_set : iterable of hashables or Entities
-    #         For hashables the edges returned will be empty.
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     """
-    #     for edge in edge_set:
-    #         self.add_edge(edge, _set_default_state=False)
-
-    #     self._set_default_state()
-    #     return self
-
-    # def add_node_to_edge(self, node, edge, _set_default_state=True):
-    #     """
-
-    #     Adds node to an edge in hypergraph edges
-
-    #     Parameters
-    #     ----------
-    #     node: hashable or Entity
-    #         If Entity, only uid and properties will be used.
-    #         If uid is already in nodes then the known node will
-    #         be used
-
-    #     edge: uid of edge or edge, must belong to self.edges
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     """
-    #     if edge in self._edges:
-    #         with warnings.catch_warnings():
-    #             warnings.filterwarnings(
-    #                 "ignore", message="Cannot add edge. Edge already in hypergraph"
-    #             )
-    #             self.add_edge({edge: [node]}, _set_default_state)
-
-    #     return self
-
-    # def remove_edge(self, edge, _set_default_state=True):
-    #     """
-    #     Removes a single edge from hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     edge : hashable or Entity
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     Notes
-    #     -----
-
-    #     Deletes reference to edge from all of its nodes.
-    #     If any of its nodes do not belong to any other edges
-    #     the node is dropped from self.
-
-    #     """
-    #     if edge in self.edges:
-    #         for node in self.edges[edge]:
-    #             if len(self.edges.memberships[node]) == 1:
-    #                 self.remove_node(node)
-    #         self._edges.remove(edge)
-
-    #     if _set_default_state:
-    #         self._set_default_state()
-    #     return self
-
-    # def remove_edges(self, edge_set):
-    #     """
-    #     Removes edges from hypergraph.
-
-    #     Parameters
-    #     ----------
-    #     edge_set : iterable of hashables or Entities
-
-    #     Returns
-    #     -------
-    #     hypergraph : Hypergraph
-
-    #     """
-    #     for edge in edge_set:
-    #         self.remove_edge(edge, _set_default_state=False)
-
-    #     self._set_default_state()
-    #     return self
-
     def incidence_matrix(self, weights=False, index=False):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
@@ -1347,6 +1118,7 @@ class Hypergraph:
         ----------
         s : int, optional, default = 1
         node : bool, optional, default = True
+            whether to return based on node or edge adjacencies
 
         Returns
         -------
@@ -1424,7 +1196,6 @@ class Hypergraph:
             node = self._edge_col
             edge = self._node_col
 
-        # import ipdb;ipdb.set_trace()    
         return Hypergraph(df,
                 edge_col = edge,
                 node_col = node,
@@ -1437,9 +1208,9 @@ class Hypergraph:
     def collapse_edges(
         self,
         name=None,
+        return_equivalence_classes=False,
         use_reps=None,
         return_counts=None,
-        return_equivalence_classes=False,
     ):
         """
         Constructs a new hypergraph gotten by identifying edges containing the
@@ -1496,10 +1267,10 @@ class Hypergraph:
     def collapse_nodes(
         self,
         name=None,
-        use_reps=True,
-        return_counts=True,
         return_equivalence_classes=False,
-    ):
+        use_reps=None,
+        return_counts=None,    
+        ):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by
         the same edges
@@ -1567,9 +1338,9 @@ class Hypergraph:
     def collapse_nodes_and_edges(
         self,
         name=None,
-        use_reps=True,
-        return_counts=True,
         return_equivalence_classes=False,
+        use_reps=None,
+        return_counts=None,
     ):
         """
         Returns a new hypergraph by collapsing nodes and edges.
@@ -1802,6 +1573,7 @@ class Hypergraph:
             is_connected = False
 
         return is_connected
+
     def singletons(self):
         """
         Returns a list of singleton edges. A singleton edge is an edge of
@@ -2216,7 +1988,7 @@ class Hypergraph:
         g = self.get_linegraph(s=s, edges=True)
         try:
             edge_dist = nx.shortest_path_length(g, source, target)
-        except nx.NetworkXNoPath:
+        except (nx.NetworkXNoPath, nx.NodeNotFound):
             warnings.warn(f"No {s}-path between {source} and {target}")
             edge_dist = np.inf
 
@@ -2322,6 +2094,25 @@ class Hypergraph:
 
 
     @classmethod
+    def from_incidence_matrix(
+        cls,
+        M,
+        node_names=None,
+        edge_names=None,
+        node_label="nodes",
+        edge_label="edges",
+        name=None,
+        key=None,
+        **kwargs,    
+    ):
+        """
+        Same as from_numpy_array.
+        """
+        return Hypergraph.from_numpy_array(M,node_names=node_names,
+            edge_names=edge_names, node_label=node_label, edge_label=edge_label,
+            name=name,key=key)
+
+    @classmethod
     @warn_nwhy
     def from_numpy_array(
         cls,
@@ -2377,7 +2168,7 @@ class Hypergraph:
         if len(M.shape) != (2):
             raise HyperNetXError("Input requires a 2 dimensional numpy array")
         # apply boolean key if available
-        if key:
+        if key is not None:
             M = key(M)
 
         if node_names is not None:
@@ -2398,21 +2189,8 @@ class Hypergraph:
         else:
             edgenames = np.array([f"e{jdx}" for jdx in range(M.shape[1])])
 
-        # Remove empty column indices from M columns and edgenames
-        colidx = np.array([jdx for jdx in range(M.shape[1]) if any(M[:, jdx])])
-        colidxsum = np.sum(colidx)
-        if not colidxsum:
-            return Hypergraph()
-        else:
-            M = M[:, colidx]
-            edgenames = edgenames[colidx]
-            edict = dict()
-            # Create an EntitySet of edges from M
-            for jdx, e in enumerate(edgenames):
-                edict[e] = nodenames[
-                    [idx for idx in range(M.shape[0]) if M[idx, jdx]]
-                ]
-            return Hypergraph(edict, name=name)
+        df = pd.DataFrame(M,columns=edgenames,index=nodenames)
+        return Hypergraph.from_incidence_dataframe(df,name=name)
 
     @classmethod
     @warn_nwhy
@@ -2421,6 +2199,8 @@ class Hypergraph:
         df,
         columns=None,
         rows=None,
+        edge_col: str = 'edges',
+        node_col: str = 'nodes',
         name=None,
         fillna=0,
         transpose=False,
@@ -2511,8 +2291,8 @@ class Hypergraph:
         c2 = [cols[c2[idx]] for idx in range(len(c2))]
         c3 = CM.data
 
-        dfnew = pd.DataFrame({cols.name: c2, rows.name: c1, "cell_weights": c3})
+        dfnew = pd.DataFrame({edge_col: c2, node_col: c1, "cell_weights": c3})
         if return_only_dataframe == True:
             return dfnew
         else:
-            return Hypergraph(dfnew, weights="cell_weights", name=None)
+            return Hypergraph(dfnew, edge_col=edge_col, node_col=node_col, weights="cell_weights", name=None)

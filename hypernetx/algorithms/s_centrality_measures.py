@@ -246,27 +246,42 @@ def s_harmonic_centrality(
 
     """
 
-    func = partial(nx.harmonic_centrality)
-    result = _s_centrality(
-        func,
-        H,
-        s=s,
-        edges=edges,
-        return_singletons=return_singletons,
-        f=source,
-    )
+    # func = partial(nx.harmonic_centrality)
+    # result = _s_centrality(
+    #     func,
+    #     H,
+    #     s=s,
+    #     edges=edges,
+    #     return_singletons=return_singletons,
+    #     f=source,
+    # )
+    g = H.get_linegraph(s=s,edges=edges)
+    result = nx.harmonic_centrality(g)
 
     if normalized and H.shape[edges * 1] > 2:
         n = H.shape[edges * 1]
-        return {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
+        factor = 2 / ((n - 1) * (n - 2))
     else:
-        return result
+        factor = 1
+
+    if source:
+        return result[source]*factor
+    else:
+        return {k:v*factor for k,v in result.items()}
+
+
+    # if normalized and H.shape[edges * 1] > 2:
+    #     n = H.shape[edges * 1]
+    #     result = {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}
+    # else:
+    #     return result
 
 
 def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True):
     r"""
-    The length of the longest shortest path from a vertex $u$ to every other vertex in the linegraph.
-    $V$ = set of vertices in the linegraph
+    The length of the longest shortest path from a vertex $u$ to every other vertex in 
+    the s-linegraph.
+    $V$ = set of vertices in the s-linegraph
     $d$ = shortest path distance
 
     .. math::
@@ -292,25 +307,34 @@ def s_eccentricity(H, s=1, edges=True, source=None, return_singletons=True):
         returns the s-eccentricity value of the edges(nodes).
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.
+        If the s-linegraph is disconnected, np.inf is returned.
 
     """
 
-    func = nx.eccentricity
-
-    if source is not None:
-        return _s_centrality(
-            func,
-            H,
-            s=s,
-            edges=edges,
-            f=source,
-            return_singletons=return_singletons,
-        )
+    g = H.get_linegraph(s=s,edges=edges)
+    result =  nx.eccentricity(g)
+    if source:
+        return result[source]
     else:
-        return _s_centrality(
-            func,
-            H,
-            s=s,
-            edges=edges,
-            return_singletons=return_singletons,
-        )
+        return result
+
+
+    # func = nx.eccentricity
+
+    # if source is not None:
+    #     return _s_centrality(
+    #         func,
+    #         H,
+    #         s=s,
+    #         edges=edges,
+    #         f=source,
+    #         return_singletons=return_singletons,
+    #     )
+    # else:
+    #     return _s_centrality(
+    #         func,
+    #         H,
+    #         s=s,
+    #         edges=edges,
+    #         return_singletons=return_singletons,
+    #     )

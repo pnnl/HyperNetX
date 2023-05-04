@@ -19,7 +19,7 @@ import sys
 import os
 
 
-__version__ = "1.2.5"
+__version__ = "2.0.0"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -31,8 +31,8 @@ sys.path.insert(0 , os.path.abspath("../../hypernetx"))
 # -- Project information -----------------------------------------------------
 
 project = "HyperNetX"
-copyright = "2021 Battelle Memorial Institute"
-author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy, Tony Liu, Andrew Lumsdaine, Nicholas Landry"
+copyright = "2023 Battelle Memorial Institute"
+author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy"
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])
