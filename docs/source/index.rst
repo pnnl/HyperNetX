@@ -50,6 +50,7 @@ Contents
 --------
 
 .. toctree::
+   :maxdepth: 1
 
    Home <self>
    overview/index
@@ -61,6 +62,7 @@ Contents
    Algorithms: Modularity and Clustering <modularity>
    Publications <publications>
    license
+   long_description
 
 
 Indices and tables
