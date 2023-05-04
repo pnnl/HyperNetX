@@ -44,7 +44,7 @@ if the vertex :math:`v_i` is in edge :math:`e_j`.
     :width: 300
     :align: center
 
-    Caption
+    An example graph, where the numbers are edge IDs.
 
 .. _t1:
 .. list-table:: Adjacency matrix :math:`A` of a graph.
@@ -120,7 +120,7 @@ if the vertex :math:`v_i` is in edge :math:`e_j`.
     :width: 400
     :align: center
 
-    Caption
+    An example hypergraph, where similarly now the hyperedges are shown with numeric IDs.
 
 .. _t3:
 .. list-table:: Incidence matrix I of a hypergraph.
@@ -218,7 +218,7 @@ are swapped: we now have :math:`H^* = \langle E, V \rangle` where it’s
     :width: 400
     :align: center
 
-    Caption
+    The dual hypergraph :math:`H^*`.
 
 
 Just like the “primal” hypergraph :math:`H` has a 2-section, so does the
@@ -242,7 +242,7 @@ hypergraph :math:`G^*`.
     :width: 400
     :align: center
 
-    Caption
+    The line graph of :math:`H`, which is the 2-section of the dual :math:`H^*`.
 
 
 
@@ -308,7 +308,7 @@ right width 3.
     :width: 600
     :align: center
 
-    Caption
+    Two hypergraph walks of length 2: (Left) A 1-walk. (Right) A 3-walk.
 
 
 Towards Less Gentle Things
@@ -353,7 +353,7 @@ their bipartite versions.
     :width: 200
     :align: center
 
-    Caption
+    Bipartite graph.
 
 
 Even more generally, the Boolean incidence matrix :math:`I` of a
@@ -378,7 +378,7 @@ of these structures, determined by our example.
     :width: 450
     :align: center
 
-    Caption
+    The concept lattice of the example hypergraph :math:`H`.
 
 
 Finally, the strength of hypergraphs is their ability to model multi-way
@@ -404,7 +404,7 @@ general.
     :width: 400
     :align: center
 
-    Caption
+    A diagram of the ASC implied by our example. Numbers here indicate the actual hyper-edges in the original hypergraph :math:`H`, where now additionally all sub-edges, including singletons, are in the ASC.
 
 
 Non-Gentle Graphs and Hypergraphs
@@ -446,13 +446,13 @@ Attributes:
    particular appearnace of a particular vertex in a particular edge
    (cells of :math:`I`).
 
-| [1] Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE;
-  Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi,
-  Ignacio J: (2021) “Hypernetwork Science: From Multidimensional
-  Networks to Computational Topology”, in: *Unifying Themes in Complex
-  systems X: Proc. 10th Int. Conf. Complex Systems*, ed. D. Braha et
-  al., pp. 377-392, Springer,
-| ``https://doi.org/10.1007/978-3-030-67318-5_25``
+[1] Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE;
+Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi,
+Ignacio J: (2021) “Hypernetwork Science: From Multidimensional
+Networks to Computational Topology”, in: *Unifying Themes in Complex
+systems X: Proc. 10th Int. Conf. Complex Systems*, ed. D. Braha et
+al., pp. 377-392, Springer,
+``https://doi.org/10.1007/978-3-030-67318-5_25``
 
 [2] Aksoy, Sinan G; Joslyn, Cliff A; Marrero, Carlos O; Praggastis, B;
 Purvine, Emilie AH: (2020) “Hypernetwork Science via High-Order
