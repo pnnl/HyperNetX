@@ -38,58 +38,127 @@ matrix** :math:`A_{n \times n}` where :math:`n=|V|`, where an
 now also :math:`m=|E|`, and an :math:`i,j` entry in :math:`I` is now 1
 if the vertex :math:`v_i` is in edge :math:`e_j`.
 
-.. container:: float
-   :name: exgraph
+.. _f1:
+.. figure:: images/exgraph.png
+    :class: with-border
+    :width: 300
+    :align: center
 
-   .. container:: center
+    Caption
 
-      |image1|
+.. _t1:
+.. list-table:: Adjacency matrix :math:`A` of a graph.
+   :header-rows: 1
+   :align: center
 
-.. container:: center
+   * -
+     - Andrews
+     - Bailey
+     - Carter
+     - Davis
+   * - Andrews
+     - 0
+     - 1
+     - 1
+     - 1
+   * - Bailey
+     - 1
+     - 0
+     - 1
+     - 0
+   * - Carter
+     - 1
+     - 1
+     - 0
+     - 1
+   * - Davis
+     - 1
+     - 0
+     - 1
+     - 1
 
-   .. table:: Adjacency matrix :math:`A` of a graph.
+.. _t2:
+.. list-table:: Incidence matrix :math:`I` of a graph.
+   :header-rows: 1
+   :align: center
 
-      ======= ======= ====== ====== =====
-      \       Andrews Bailey Carter Davis
-      ======= ======= ====== ====== =====
-      Andrews 0       1      1      1
-      Bailey  1       0      1      0
-      Carter  1       1      0      1
-      Davis   1       0      1      0
-      ======= ======= ====== ====== =====
+   * -
+     - 1
+     - 2
+     - 3
+     - 4
+     - 5
+   * - Andrews
+     - 1
+     - 1
+     - 0
+     - 1
+     - 0
+   * - Bailey
+     - 0
+     - 0
+     - 0
+     - 1
+     - 1
+   * - Carter
+     - 0
+     - 1
+     - 1
+     - 0
+     - 1
+   * - Davis
+     - 1
+     - 0
+     - 1
+     - 0
+     - 0
 
-.. container:: center
 
-   .. table:: Incidence matrix :math:`I` of a graph.
+.. _label3:
+.. figure:: images/biblio_hg.png
+    :class: with-border
+    :width: 400
+    :align: center
 
-      ======= = = = = =
-      \       1 2 3 4 5
-      ======= = = = = =
-      Andrews 1 1 0 1 0
-      Bailey  0 0 0 1 1
-      Carter  0 1 1 0 1
-      Davis   1 0 1 0 0
-      ======= = = = = =
+    Caption
 
-.. container:: float
-   :name: biblio_hg
+.. _t3:
+.. list-table:: Incidence matrix I of a hypergraph.
+   :header-rows: 1
+   :align: center
 
-   .. container:: center
+   * -
+     - 1
+     - 2
+     - 3
+     - 4
+     - 5
+   * - Andrews
+     - 1
+     - 1
+     - 0
+     - 1
+     - 0
+   * - Bailey
+     - 0
+     - 0
+     - 0
+     - 1
+     - 1
+   * - Carter
+     - 0
+     - 1
+     - 0
+     - 0
+     - 1
+   * - Davis
+     - 1
+     - 1
+     - 1
+     - 0
+     - 0
 
-      |image2|
 
-.. container:: center
-
-   .. table:: Incidence matrix :math:`I` of a hypergraph.
-
-      ======= = = = = =
-      \       1 2 3 4 5
-      ======= = = = = =
-      Andrews 1 1 0 1 0
-      Bailey  0 0 0 1 1
-      Carter  0 1 0 0 1
-      Davis   1 1 1 0 0
-      ======= = = = = =
 
 Notice that in the incidence matrix :math:`I` of a gentle graph
 :math:`G`, it is necessarily the case that every column must have
@@ -142,12 +211,15 @@ are swapped: we now have :math:`H^* = \langle E, V \rangle` where it’s
 :math:`E` that is a set of vertices, and the now edges
 :math:`v \in V, v \subseteq E` are subsets of those vertices.
 
-.. container:: float
-   :name: dual
 
-   .. container:: center
+.. _f3:
+.. figure:: images/dual.png
+    :class: with-border
+    :width: 400
+    :align: center
 
-      |image3|
+    Caption
+
 
 Just like the “primal” hypergraph :math:`H` has a 2-section, so does the
 dual. This is called the **line graph**, and it is an important
@@ -163,12 +235,16 @@ union of cycles would that be true. Also note that in order to calculate
 the line graph of a graph :math:`G`, one needs to work through its dual
 hypergraph :math:`G^*`.
 
-.. container:: float
-   :name: dual2
 
-   .. container:: center
+.. _f4:
+.. figure:: images/dual2.png
+    :class: with-border
+    :width: 400
+    :align: center
 
-      |image4|
+    Caption
+
+
 
 Edge Intersections Have Size
 ----------------------------
@@ -225,12 +301,15 @@ walks in a hypergraph. While both have length 2 (counting edgewise, and
 recalling origin zero), the one on the left has width 1, and that on the
 right width 3.
 
-.. container:: float
-   :name: swalks
 
-   .. container:: center
+.. _f5:
+.. figure:: images/swalks.png
+    :class: with-border
+    :width: 600
+    :align: center
 
-      |image5|
+    Caption
+
 
 Towards Less Gentle Things
 ==========================
@@ -268,12 +347,14 @@ hypergraph :math:`H` for every bipartite graph :math:`G` is evident, but
 not all operations carry over unambiguously between hypergraphs and
 their bipartite versions.
 
-.. container:: float
-   :name: bicolored1
+.. _f6:
+.. figure:: images/bicolored1.png
+    :class: with-border
+    :width: 200
+    :align: center
 
-   .. container:: center
+    Caption
 
-      |image6|
 
 Even more generally, the Boolean incidence matrix :math:`I` of a
 hypergraph :math:`H` can be taken as the characteristic matrix of a
@@ -291,12 +372,14 @@ how groups of vertices are included in groups of edges, and vice versa.
 Fig. refex shows the **concept lattice** [3], perhaps the most important
 of these structures, determined by our example.
 
-.. container:: float
-   :name: ex
+.. _f7:
+.. figure:: images/ex.png
+    :class: with-border
+    :width: 450
+    :align: center
 
-   .. container:: center
+    Caption
 
-      |image7|
 
 Finally, the strength of hypergraphs is their ability to model multi-way
 interactions. Similarly, mathematical topology is concerned with how
@@ -315,12 +398,14 @@ topological methods such as persistent homology. In this way hypergraphs
 form a perfect bridge from network science to computational topology in
 general.
 
-.. container:: float
-   :name: simplicial
+.. _f8:
+.. figure:: images/simplicial.png
+    :class: with-border
+    :width: 400
+    :align: center
 
-   .. container:: center
+    Caption
 
-      |image8|
 
 Non-Gentle Graphs and Hypergraphs
 ---------------------------------
@@ -377,19 +462,4 @@ Hypergraph Walks”, *EPJ Data Science*, v. **9**:16,
 [3] Ganter, Bernhard and Wille, Rudolf: (1999) *Formal Concept
 Analysis*, Springer-Verlag
 
-.. |image1| image:: images/exgraph.png
-		:width: 300
-.. |image2| image:: images/biblio_hg.png
-		:width: 400
-.. |image3| image:: images/dual.png
-		:width: 400
-.. |image4| image:: images/dual2.png
-		:width: 400
-.. |image5| image:: images/swalks.png
-		:width: 600
-.. |image6| image:: images/bicolored1.png
-		:width: 200
-.. |image7| image:: images/ex.png
-		:width: 450
-.. |image8| image:: images/simplicial.png
-		:width: 400
+

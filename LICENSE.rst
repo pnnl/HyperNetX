@@ -5,7 +5,7 @@ License
 
 HyperNetX
 
-Copyright © 2018, Battelle Memorial Institute
+Copyright © 2023, Battelle Memorial Institute
 
 Battelle Memorial Institute (hereinafter Battelle) hereby grants permission
 to any person or entity lawfully obtaining a copy of this software and associated

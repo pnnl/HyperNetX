@@ -377,6 +377,10 @@ epub_exclude_files = ["search.html"]
 # If false, no index is generated.
 # epub_use_index = True
 
+# Remove the command prompts such as >>> when copying code snippets from copybutton
+# see https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_exclude = '.linenos, .gp'
 
-def setup(app):
-    app.add_js_file("copybutton.js")
+#  tables and code-blocks are automatically numbered if they have a caption.
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-numfig
+numfig = True
