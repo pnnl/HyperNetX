@@ -42,8 +42,8 @@ New features to look for:
 
 #. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
 #. Additional constructors accept incidence matrices and incidence dataframes.
-#. Hypergraph constructors accept cell, edge, and node metadata. 
-#. Metadata available as attributes on the cells, edges, and nodes. 
+#. Hypergraph constructors accept cell, edge, and node metadata.
+#. Metadata available as attributes on the cells, edges, and nodes.
 #. User defined cell weights and default weights available to incidence matrix.
 #. Meta data persists with restrictions and removals.
 #. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
@@ -52,7 +52,7 @@ New features to look for:
    * Zig Zag homology
 #. New hnxwidget available using  `pipinstall hnxwidget`.
 #. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
-#. Methods for adding nodes and hyperedges are currently not supported. 
+#. Methods for adding nodes and hyperedges are currently not supported.
 #. Methods for removing nodes return new hypergraph.
 #. The `nwhy` optimizations are no longer supported.
-#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either. 
+#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.

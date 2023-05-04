@@ -312,7 +312,7 @@ def hyp_no_props():
                 np.random.choice(list("ABCD"), 50),
                 np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
             ]
-        ).T, # creates a transposed ndarray
+        ).T,  # creates a transposed ndarray
         edge_col="Club",
         node_col="Member",
     )
