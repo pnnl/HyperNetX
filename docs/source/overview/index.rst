@@ -50,9 +50,7 @@ New features to look for:
 #. User defined cell weights and default weights available to incidence matrix.
 #. Meta data persists with restrictions and removals.
 #. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-#. New modules and tutorials:
-   * Barycentric homology
-   * Zig Zag homology
+#. New module and tutorial for *Barycentric homology*
 #. New hnxwidget available using  `pipinstall hnxwidget`.
 #. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
 #. Methods for adding nodes and hyperedges are currently not supported. 

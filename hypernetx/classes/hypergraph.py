@@ -438,11 +438,7 @@ class Hypergraph:
                 if df is None:
                     return {}
                 elif isinstance(df, pd.DataFrame):
-                    return (
-                        df.reset_index()
-                        .set_index(df.columns[0])
-                        .to_dict(orient="index")
-                    )
+                    return df.set_index(df.columns[0]).to_dict(orient="index")
                 else:
                     return dict(df)
 
@@ -455,6 +451,8 @@ class Hypergraph:
                                 edge_properties[e] = {}
                         for v in edge_properties.values():
                             v.setdefault(edge_weight_prop_col, default_edge_weight)
+                    else:
+                        edge_properties = {}
                     if node_properties is not None:
                         node_properties = props2dict(node_properties)
                         for nd in entity[node_col].unique():
@@ -462,6 +460,8 @@ class Hypergraph:
                                 node_properties[nd] = {}
                         for v in node_properties.values():
                             v.setdefault(node_weight_prop_col, default_node_weight)
+                    else:
+                        node_properties = {}
                     properties = {0: edge_properties, 1: node_properties}
             else:
                 if isinstance(properties, pd.DataFrame):

@@ -34,9 +34,9 @@ class LesMis(object):
             columns=["Volume", "Book", "Chapter", "Scene", "Step", "Characters"],
         )
 
-        # self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(
-        #     lesmis_hypergraph_from_df, by="Chapter"
-        # )
+        self.book_tour_data = self.df_scenes.groupby(["Volume", "Book"]).apply(
+            lesmis_hypergraph_from_df, by="Chapter"
+        )
 
     @property
     def dnames(self):
