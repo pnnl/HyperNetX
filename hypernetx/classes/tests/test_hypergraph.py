@@ -1,8 +1,6 @@
 import pytest
 import numpy as np
-from hypernetx.classes.entityset import EntitySet
 from hypernetx.classes.hypergraph import Hypergraph
-
 
 
 def test_hypergraph_from_iterable_of_sets(sbs):
@@ -12,7 +10,6 @@ def test_hypergraph_from_iterable_of_sets(sbs):
     assert H.degree("A") == 3
     assert H.number_of_edges() == 6
     assert H.number_of_nodes() == 7
-
 
 
 def test_hypergraph_from_dict(sbs):
@@ -35,13 +32,11 @@ def test_hypergraph_custom_attributes(sbs):
     assert sorted(H.__getitem__("C")) == ["A", "E", "K"]
 
 
-# @pytest.mark.skip("reason=fix implementation")
 def test_get_linegraph(sbs):
     H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
-    assert len(set(H.get_linegraph(s=1)).difference(set([0, 1, 2, 3, 4, 5])))==0
-
+    assert len(set(H.get_linegraph(s=1)).difference(set([0, 1, 2, 3, 4, 5]))) == 0
 
 
 def test_hypergraph_from_incidence_dataframe(lesmis):
@@ -67,13 +62,10 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     assert len(HB.nodes) == 8
 
 
-
-@pytest.mark.skip("Deprecated methods")
+@pytest.mark.skip("Deprecated method; will support in later release")
 def test_add_node_to_edge(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
-    # add node not already in hypergraph to edge
-    # alreadyin hypergraph
     node = "B"
     edge = "P"
     H.add_node_to_edge(node, edge)
@@ -116,7 +108,7 @@ def test_matrix(sbs_hypergraph):
     assert H.incidence_matrix().todense().shape == (7, 6)
     assert H.adjacency_matrix(s=2).todense().shape == (7, 7)
     assert H.edge_adjacency_matrix().todense().shape == (6, 6)
-    aux_matrix, arr = H.auxiliary_matrix(node=False)
+    aux_matrix = H.auxiliary_matrix(node=False)
     assert aux_matrix.todense().shape == (6, 6)
 
 
@@ -178,7 +170,6 @@ def test_toplexes(sbsd_hypergraph):
     assert len(T.edges) == 5
     T = T.collapse_nodes()
     assert len(T.nodes) == 7
-
 
 
 def test_is_connected():
