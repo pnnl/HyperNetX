@@ -11,7 +11,6 @@ from ast import literal_eval
 from hypernetx.classes.entity import *
 
 
-
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
 
@@ -110,7 +109,7 @@ def assign_weights(df, weights=1, weight_col="cell_weights"):
     TODO: move logic for default weights inside this method
     """
 
-    if isinstance(weights, (list, np.ndarray)) :
+    if isinstance(weights, (list, np.ndarray)):
         df[weight_col] = weights
     else:
         if not weight_col in df:
@@ -186,11 +185,9 @@ def create_properties(
     return pd.DataFrame({misc_col: data}, index=index).sort_index()
 
 
-def remove_row_duplicates(df, 
-                          data_cols, 
-                          weights=1, 
-                          weight_col='cell_weights',
-                          aggregateby=None):
+def remove_row_duplicates(
+    df, data_cols, weights=1, weight_col="cell_weights", aggregateby=None
+):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
 
@@ -219,17 +216,17 @@ def remove_row_duplicates(df,
         if df[col].dtype.name == "category":
             categories[col] = df[col].cat.categories
             df[col] = df[col].astype(categories[col].dtype)
-    df, weight_col = assign_weights(df, 
-                                    weights=weights,
-                                    weight_col=weight_col) ### reconcile this with defaults weights.
+    df, weight_col = assign_weights(
+        df, weights=weights, weight_col=weight_col
+    )  ### reconcile this with defaults weights.
     if not aggregateby:
         df = df.drop_duplicates(subset=data_cols)
-        df[data_cols] = df[data_cols].astype("category") 
+        df[data_cols] = df[data_cols].astype("category")
         return df, weight_col
-        
+
     else:
-        aggby = {col:'first' for col in df.columns}
-        if isinstance(aggregateby, str):        
+        aggby = {col: "first" for col in df.columns}
+        if isinstance(aggregateby, str):
             aggby[weight_col] = aggregateby
         else:
             aggby.update(aggregateby)
@@ -237,8 +234,8 @@ def remove_row_duplicates(df,
         df = df.groupby(data_cols, as_index=False, sort=False).agg(aggby)
 
         # for col in categories:
-            # df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
-        df[data_cols] = df[data_cols].astype("category")    
+        # df[col] = df[col].astype(CategoricalDtype(categories=categories[col]))
+        df[data_cols] = df[data_cols].astype("category")
 
     return df, weight_col
 
@@ -246,24 +243,27 @@ def remove_row_duplicates(df,
 # https://stackoverflow.com/a/7205107
 def merge_nested_dicts(a, b, path=None):
     "merges b into a"
-    if path is None: path = []
+    if path is None:
+        path = []
     for key in b:
         if key in a:
             if isinstance(a[key], dict) and isinstance(b[key], dict):
                 merge_nested_dicts(a[key], b[key], path + [str(key)])
             elif a[key] == b[key]:
-                pass # same leaf value
+                pass  # same leaf value
             else:
-                warnings.warn(f'Conflict at {",".join(path + [str(key)])}, keys ignored')
+                warnings.warn(
+                    f'Conflict at {",".join(path + [str(key)])}, keys ignored'
+                )
         else:
             a[key] = b[key]
     return a
 
 
 ## https://www.geeksforgeeks.org/python-find-depth-of-a-dictionary/
-def dict_depth(dic, level = 0):
+def dict_depth(dic, level=0):
     ### checks if there is a nested dict, quits once level > 2
-    if level>2:
+    if level > 2:
         return level
     if not isinstance(dic, dict) or not dic:
         return level

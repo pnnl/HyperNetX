@@ -14,7 +14,7 @@ from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
     remove_row_duplicates,
-    dict_depth
+    dict_depth,
 )
 
 T = TypeVar("T", bound=Union[str, int])
@@ -116,12 +116,12 @@ class Entity:
         entity: Optional[
             pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
         ] = None,
-        data_cols:Sequence[T] = [0,1],
+        data_cols: Sequence[T] = [0, 1],
         data: Optional[np.ndarray] = None,
         static: bool = False,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         uid: Optional[Hashable] = None,
-        weight_col: Optional[str | int] = 'cell_weights',
+        weight_col: Optional[str | int] = "cell_weights",
         weights: Optional[Sequence[float] | float | int | str] = 1,
         aggregateby: Optional[str | dict] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
@@ -1283,8 +1283,8 @@ class Entity:
         self,
         props: pd.DataFrame | dict[int, dict[T, dict[Any, Any]]],
         misc_col: Optional[str] = None,
-        level_col = 0,
-        id_col = 1
+        level_col=0,
+        id_col=1,
     ) -> None:
         """Assign new properties to items in the data table, update :attr:`properties`
 
@@ -1303,8 +1303,8 @@ class Entity:
         """
         # mapping from user-specified level, id, misc column names to internal names
         ### This will fail if there isn't a level column
-        
-        if isinstance(props,pd.DataFrame):
+
+        if isinstance(props, pd.DataFrame):
             ### Fix to check the shape of properties or redo properties format
             column_map = {
                 old: new
@@ -1313,15 +1313,14 @@ class Entity:
                     (*self.properties.index.names, self._misc_props_col),
                 )
                 if old is not None
-                }
+            }
             props = props.rename(columns=column_map)
             props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
 
-        if isinstance(props,dict):
+        if isinstance(props, dict):
             ### Expects nested dictionary with keys corresponding to level and id
             self._properties_from_dict(props)
-            
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
         """Private handler for updating :attr:`properties` from a DataFrame

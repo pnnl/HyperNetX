@@ -23,6 +23,7 @@ __all__ = ["Hypergraph"]
 
 T = TypeVar("T", bound=Union[str, int])
 
+
 class Hypergraph:
     """
     Parameters
@@ -34,7 +35,7 @@ class Hypergraph:
 
     edge_col : (optional) str | int, default = 0
         column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for (hyper)edge ids. Will be used to reference edgeids for 
+        used for (hyper)edge ids. Will be used to reference edgeids for
         all set systems.
 
     node_col : (optional) str | int, default = 1
@@ -44,7 +45,7 @@ class Hypergraph:
     cell_weight_col : (optional) str | int, default = None
         column index (or name) in pandas.dataframe or numpy.ndarray used for
         referencing cell weights. For a dict of dicts references key in cell
-        property dicts. 
+        property dicts.
 
     cell_weights : (optional) Sequence[float,int] | int |  float , default = 1.0
         User specified cell_weights or default cell weight.
@@ -60,7 +61,7 @@ class Hypergraph:
     cell_properties : (optional) Sequence[int | str] | Mapping[T,Mapping[T,Mapping[str,Any]]],
         default = None
         Column names from pd.DataFrame to use as cell properties
-        or a dict assigning cell_property to incidence pairs of edges and 
+        or a dict assigning cell_property to incidence pairs of edges and
         nodes. Will generate a misc_cell_properties, which may have variable lengths per cell.
 
     misc_cell_properties : (optional) str | int, default = None
@@ -71,7 +72,7 @@ class Hypergraph:
     aggregateby : (optional) str, dict, default = 'first'
         By default duplicate edge,node incidences will be dropped unless
         specified with `aggregateby`.
-        See pandas.DataFrame.agg() methods for additional syntax and usage 
+        See pandas.DataFrame.agg() methods for additional syntax and usage
         information.
 
     edge_properties : (optional) pd.DataFrame | dict, default = None
@@ -88,7 +89,7 @@ class Hypergraph:
         Concatenation/union of edge_properties and node_properties.
         By default, the object id is used and should be the first column of
         the dataframe, or key in the dict. If there are nodes and edges
-        with the same ids and different properties then use the edge_properties 
+        with the same ids and different properties then use the edge_properties
         and node_properties keywords.
 
     misc_properties : (optional) int | str, default = None
@@ -116,7 +117,7 @@ class Hypergraph:
 
     ======================
     Hypergraphs in HNX 2.0
-    ======================  
+    ======================
 
     An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
     V = nodes (vertices) and E = (hyper)edges.
@@ -216,7 +217,7 @@ class Hypergraph:
     Properties specific to a single edge or node are passed through the
     keywords: **edge_properties, node_properties, properties**.
     Properties may be passed as dataframes or dicts.
-    The first column or index of the dataframe or keys of the dict keys 
+    The first column or index of the dataframe or keys of the dict keys
     correspond to the edge and/or node identifiers.
     If identifiers are shared among edges and nodes, or are distinct
     for edges and nodes, properties may be combined into a single
@@ -243,8 +244,8 @@ class Hypergraph:
         dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
 
     A properties dataframe may be used for nodes and edges sharing ids
-    but differing in cell properties by adding a level index using 0 
-    for edges and 1 for nodes: 
+    but differing in cell properties by adding a level index using 0
+    for edges and 1 for nodes:
 
     +-----------+-----------+-----------+---------------------------+
     |  level    |   id      |   weight  |       properties          |
@@ -252,7 +253,7 @@ class Hypergraph:
     |   0       |   e1      |   5.0     |   {'type':'event'}        |
     +-----------+-----------+-----------+---------------------------+
     |   0       |   e2      |    0.52   |   {"name":"owned_by"}     |
-    +-----------+-----------+-----------+---------------------------+   
+    +-----------+-----------+-----------+---------------------------+
     |   ...     |   ...     |    ...    |          {...}            |
     +-----------+-----------+-----------+---------------------------+
     |   1       |   1.2     |   {'color':'red'}                     |
@@ -268,31 +269,37 @@ class Hypergraph:
     -------
     The default key for cell and object weights is "weight". The default value
     is 1. Weights may be assigned and/or a new default prescribed in the
-    constructor using **cell_weight_col** and **cell_weights** for incidence pairs, 
+    constructor using **cell_weight_col** and **cell_weights** for incidence pairs,
     and using **edge_weight_prop, node_weight_prop, weight_prop,
-    default_edge_weight,** and **default_node_weight** for node and edge weights. 
-    
+    default_edge_weight,** and **default_node_weight** for node and edge weights.
+
     """
-
-
 
     @warn_nwhy
     def __init__(
         self,
         setsystem: Optional[
-            pd.DataFrame | np.ndarray | Mapping[T, Iterable[T]] | Iterable[Iterable[T]] | Mapping[T,Mapping[T,Mapping[str,Any]]]
+            pd.DataFrame
+            | np.ndarray
+            | Mapping[T, Iterable[T]]
+            | Iterable[Iterable[T]]
+            | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
         edge_col: str | int = 0,
         node_col: str | int = 1,
-        cell_weight_col: Optional[ str | int ] = 'cell_weights',
+        cell_weight_col: Optional[str | int] = "cell_weights",
         cell_weights: Sequence[float] | float = 1.0,
-        cell_properties: Optional[Sequence[str | int] |  Mapping[T,Mapping[T,Mapping[str,Any]]]] = None,
-        misc_cell_properties_col: Optional[ str | int ] = None,
-        aggregateby: str | dict[str,str] = 'first',
+        cell_properties: Optional[
+            Sequence[str | int] | Mapping[T, Mapping[T, Mapping[str, Any]]]
+        ] = None,
+        misc_cell_properties_col: Optional[str | int] = None,
+        aggregateby: str | dict[str, str] = "first",
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]] | dict[T, dict[T, dict[Any, Any]]]] = None,
-        misc_properties_col: Optional[ str | int ] = None,
+        properties: Optional[
+            pd.DataFrame | dict[T, dict[Any, Any]] | dict[T, dict[T, dict[Any, Any]]]
+        ] = None,
+        misc_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
         node_weight_prop_col: str | int = "weight",
         weight_prop_col: str | int = "weight",
@@ -302,42 +309,50 @@ class Hypergraph:
         name: Optional[str] = None,
         **kwargs,
     ):
-        self.name = name or ""  
-        self.misc_cell_properties_col = misc_cell_properties = misc_cell_properties_col or 'cell_properties'
-        self.misc_properties_col = misc_properties_col = misc_properties_col or 'properties' 
-        self.default_edge_weight = default_edge_weight = default_edge_weight or default_weight
-        self.default_node_weight = default_node_weight = default_node_weight or default_weight
-        ### cell properties 
+        self.name = name or ""
+        self.misc_cell_properties_col = misc_cell_properties = (
+            misc_cell_properties_col or "cell_properties"
+        )
+        self.misc_properties_col = misc_properties_col = (
+            misc_properties_col or "properties"
+        )
+        self.default_edge_weight = default_edge_weight = (
+            default_edge_weight or default_weight
+        )
+        self.default_node_weight = default_node_weight = (
+            default_node_weight or default_weight
+        )
+        ### cell properties
 
-        if setsystem is None:   #### Empty Case
+        if setsystem is None:  #### Empty Case
 
             self._edges = EntitySet({})
             self._nodes = EntitySet({})
             self._state_dict = {}
 
-        else: #### DataFrame case
-            if isinstance(setsystem,pd.DataFrame):
-                if isinstance(edge_col,int):
+        else:  #### DataFrame case
+            if isinstance(setsystem, pd.DataFrame):
+                if isinstance(edge_col, int):
                     self._edge_col = edge_col = setsystem.columns[edge_col]
-                    if isinstance(edge_col,int):
-                        setsystem = setsystem.rename(columns={edge_col:'edges'})
-                        self._edge_col = edge_col = 'edges' 
+                    if isinstance(edge_col, int):
+                        setsystem = setsystem.rename(columns={edge_col: "edges"})
+                        self._edge_col = edge_col = "edges"
                 else:
                     self._edge_col = edge_col
 
-                if isinstance(node_col,int):
+                if isinstance(node_col, int):
                     self._node_col = node_col = setsystem.columns[node_col]
-                    if isinstance(node_col,int):
-                        setsystem = setsystem.rename(columns={node_col:'nodes'})
-                        self._node_col = node_col = 'nodes' 
+                    if isinstance(node_col, int):
+                        setsystem = setsystem.rename(columns={node_col: "nodes"})
+                        self._node_col = node_col = "nodes"
                 else:
-                    self._node_col = node_col   
+                    self._node_col = node_col
 
                 entity = setsystem.copy()
 
                 if isinstance(cell_weight_col, int):
                     self._cell_weight_col = setsystem.columns[cell_weight_col]
-                else: 
+                else:
                     self._cell_weight_col = cell_weight_col
 
                 if cell_weight_col in entity:
@@ -345,31 +360,33 @@ class Hypergraph:
                 else:
                     entity[cell_weight_col] = cell_weights
 
-                if isinstance(cell_properties,Sequence):
-                    cell_properties = [c for c in cell_properties if not c in [edge_col,node_col,cell_weight_col]]
-                    cols = [edge_col,node_col,cell_weight_col] + cell_properties
+                if isinstance(cell_properties, Sequence):
+                    cell_properties = [
+                        c
+                        for c in cell_properties
+                        if not c in [edge_col, node_col, cell_weight_col]
+                    ]
+                    cols = [edge_col, node_col, cell_weight_col] + cell_properties
                     entity = entity[cols]
                 elif isinstance(cell_properties, dict):
                     cp = []
                     for idx in entity.index:
-                        edge,node = entity.iloc[idx][[edge_col,node_col]].values
+                        edge, node = entity.iloc[idx][[edge_col, node_col]].values
                         cp.append(cell_properties[edge][node])
-                    entity['cell_properties'] = cp
-
+                    entity["cell_properties"] = cp
 
             else:  ### Cases Other than DataFrame
-                self._edge_col = edge_col = edge_col or 'edges'
+                self._edge_col = edge_col = edge_col or "edges"
                 if node_col == 1:
-                    self._node_col = node_col = 'nodes'
+                    self._node_col = node_col = "nodes"
                 else:
                     self._node_col = node_col
                 self._cell_weight_col = cell_weight_col
 
-                if isinstance(setsystem,np.ndarray):
+                if isinstance(setsystem, np.ndarray):
                     if setsystem.shape[1] != 2:
-                        raise HyperNetXError('Numpy array must have exactly 2 columns.')
-                    entity = pd.DataFrame(setsystem, 
-                        columns = [edge_col, node_col])
+                        raise HyperNetXError("Numpy array must have exactly 2 columns.")
+                    entity = pd.DataFrame(setsystem, columns=[edge_col, node_col])
                     entity[cell_weight_col] = cell_weights
 
                 elif isinstance(setsystem, dict):
@@ -381,12 +398,14 @@ class Hypergraph:
                     entity = pd.DataFrame(
                         {edge_col: entity.index.to_list(), node_col: entity.values}
                     )
-                    
-                    if dict_depth(setsystem) >2:
+
+                    if dict_depth(setsystem) > 2:
                         cell_props = dict(setsystem)
-                        if isinstance(cell_properties,dict):
+                        if isinstance(cell_properties, dict):
                             ## if setsystem is a dict then cell properties must be a dict
-                            cell_properties = merge_nested_dicts(cell_props, cell_properties)
+                            cell_properties = merge_nested_dicts(
+                                cell_props, cell_properties
+                            )
                         else:
                             cell_properties = cell_props
 
@@ -394,35 +413,39 @@ class Hypergraph:
                         cp = []
                         wt = []
                         for idx in entity.index:
-                            edge,node = entity.values[idx][[0,1]]
-                            wt.append(df[edge][node].get(cell_weight_col,cell_weights))
+                            edge, node = entity.values[idx][[0, 1]]
+                            wt.append(df[edge][node].get(cell_weight_col, cell_weights))
                             cp.append(df[edge][node])
                         entity[self._cell_weight_col] = wt
-                        entity['cell_properties'] = cp
+                        entity["cell_properties"] = cp
 
-                    
                     else:
-                        entity[self._cell_weight_col] = cell_weights                               
+                        entity[self._cell_weight_col] = cell_weights
 
                 elif isinstance(setsystem, Iterable):
                     entity = pd.Series(setsystem).explode()
                     entity = pd.DataFrame(
                         {edge_col: entity.index.to_list(), node_col: entity.values}
                     )
-                    entity['cell_weights'] = cell_weights
+                    entity["cell_weights"] = cell_weights
 
                 else:
-                    raise HyperNetXError('setsystem is not supported or is in the wrong format.')
+                    raise HyperNetXError(
+                        "setsystem is not supported or is in the wrong format."
+                    )
 
-
-            def props2dict(df = None):
+            def props2dict(df=None):
                 if df is None:
                     return {}
                 elif isinstance(df, pd.DataFrame):
-                    return df.reset_index().set_index(df.columns[0]).to_dict(orient='index')
-                else :
+                    return (
+                        df.reset_index()
+                        .set_index(df.columns[0])
+                        .to_dict(orient="index")
+                    )
+                else:
                     return dict(df)
- 
+
             if properties is None:
                 if edge_properties is not None or node_properties is not None:
                     if edge_properties is not None:
@@ -431,77 +454,106 @@ class Hypergraph:
                             if not e in edge_properties:
                                 edge_properties[e] = {}
                         for v in edge_properties.values():
-                            v.setdefault(edge_weight_prop_col,default_edge_weight)
+                            v.setdefault(edge_weight_prop_col, default_edge_weight)
                     if node_properties is not None:
                         node_properties = props2dict(node_properties)
                         for nd in entity[node_col].unique():
-                             if not nd in node_properties:
+                            if not nd in node_properties:
                                 node_properties[nd] = {}
                         for v in node_properties.values():
-                            v.setdefault(node_weight_prop_col,default_node_weight)
-                    properties = {0 : edge_properties, 1 : node_properties}
+                            v.setdefault(node_weight_prop_col, default_node_weight)
+                    properties = {0: edge_properties, 1: node_properties}
             else:
                 if isinstance(properties, pd.DataFrame):
                     if weight_prop_col in properties.columns:
-                        properties = properties.fillna({weight_prop_col:default_weight})
+                        properties = properties.fillna(
+                            {weight_prop_col: default_weight}
+                        )
                     elif misc_properties_col in properties.columns:
                         for idx in properties.index:
-                            if not isinstance(properties[misc_properties_col][idx],dict):
-                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
+                            if not isinstance(
+                                properties[misc_properties_col][idx], dict
+                            ):
+                                properties[misc_properties_col][idx] = {
+                                    weight_prop_col: default_weight
+                                }
                             else:
-                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
+                                properties[misc_properties_col][idx].setdefault(
+                                    weight_prop_col, default_weight
+                                )
                     else:
                         properties[weight_prop_col] = default_weight
                 if isinstance(properties, dict):
-                    if dict_depth(properties)<=2:
-                        properties = pd.DataFrame([{'id':k, misc_properties_col:v} for k,v in properties.items()])
+                    if dict_depth(properties) <= 2:
+                        properties = pd.DataFrame(
+                            [
+                                {"id": k, misc_properties_col: v}
+                                for k, v in properties.items()
+                            ]
+                        )
                         for idx in properties.index:
-                            if isinstance(properties[misc_properties_col][idx],dict):
-                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
+                            if isinstance(properties[misc_properties_col][idx], dict):
+                                properties[misc_properties_col][idx].setdefault(
+                                    weight_prop_col, default_weight
+                                )
                             else:
-                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
-                    elif set(properties.keys()) == {0,1}:
+                                properties[misc_properties_col][idx] = {
+                                    weight_prop_col: default_weight
+                                }
+                    elif set(properties.keys()) == {0, 1}:
                         edge_properties = properties[0]
                         for e in entity[edge_col].unique():
                             if not e in edge_properties:
-                                edge_properties[e] = {edge_weight_prop_col: default_edge_weight}
+                                edge_properties[e] = {
+                                    edge_weight_prop_col: default_edge_weight
+                                }
                             else:
-                                edge_properties[e].setdefault(edge_weight_prop_col,default_edge_weight)
+                                edge_properties[e].setdefault(
+                                    edge_weight_prop_col, default_edge_weight
+                                )
                         node_properties = properties[1]
                         for nd in entity[node_col].unique():
                             if not nd in node_properties:
-                                node_properties[nd] = {node_weight_prop_col: default_node_weight}
+                                node_properties[nd] = {
+                                    node_weight_prop_col: default_node_weight
+                                }
                             else:
-                                node_properties[nd].setdefault(node_weight_prop_col,default_node_weight)                    
+                                node_properties[nd].setdefault(
+                                    node_weight_prop_col, default_node_weight
+                                )
                         for idx in properties.index:
-                            if not isinstance(properties[misc_properties_col][idx],dict):
-                                properties[misc_properties_col][idx] = {weight_prop_col: default_weight}
+                            if not isinstance(
+                                properties[misc_properties_col][idx], dict
+                            ):
+                                properties[misc_properties_col][idx] = {
+                                    weight_prop_col: default_weight
+                                }
                             else:
-                                properties[misc_properties_col][idx].setdefault(weight_prop_col,default_weight)
-
+                                properties[misc_properties_col][idx].setdefault(
+                                    weight_prop_col, default_weight
+                                )
 
             self.E = EntitySet(
-                    entity = entity,
-                    level1 = edge_col,
-                    level2 = node_col,
-                    weight_col = cell_weight_col,
-                    weights = cell_weights,
-                    cell_properties=cell_properties,
-                    misc_cell_props_col=misc_cell_properties_col or 'cell_properties',
-                    aggregateby = aggregateby or "sum",
-                    properties = properties,
-                    misc_props_col = misc_properties_col,
-                )
+                entity=entity,
+                level1=edge_col,
+                level2=node_col,
+                weight_col=cell_weight_col,
+                weights=cell_weights,
+                cell_properties=cell_properties,
+                misc_cell_props_col=misc_cell_properties_col or "cell_properties",
+                aggregateby=aggregateby or "sum",
+                properties=properties,
+                misc_props_col=misc_properties_col,
+            )
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
             self._dataframe = self.E.cell_properties.reset_index()
             self._data_cols = data_cols = [self._edge_col, self._node_col]
-            self._dataframe[data_cols] = self._dataframe[data_cols].astype('category')
+            self._dataframe[data_cols] = self._dataframe[data_cols].astype("category")
 
             self.__dict__.update(locals())
             self._set_default_state()
-
 
     @property
     def edges(self):
@@ -525,7 +577,6 @@ class Hypergraph:
         """
         return self._nodes
 
-    
     @property
     def dataframe(self):
         """Returns dataframe of incidence pairs and their properties.
@@ -536,7 +587,6 @@ class Hypergraph:
         """
         return self._dataframe
 
-    
     @property
     def properties(self):
         """Returns dataframe of edge and node properties.
@@ -547,12 +597,11 @@ class Hypergraph:
         """
         return self.E.properties
 
-    
     @property
     def edge_props(self):
         """Dataframe of edge properties
         indexed on edge ids
-        
+
         Returns
         -------
         pd.DataFrame
@@ -563,7 +612,7 @@ class Hypergraph:
     def node_props(self):
         """Dataframe of node properties
         indexed on node ids
-        
+
         Returns
         -------
         pd.DataFrame
@@ -667,10 +716,7 @@ class Hypergraph:
         return self.neighbors(node)
 
     def get_cell_properties(
-        self, 
-        edge: str, 
-        node: str, 
-        prop_name: Optional[str] = None
+        self, edge: str, node: str, prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
         """Get cell properties on a specified edge and node
 
@@ -694,9 +740,9 @@ class Hypergraph:
 
         return self.edges.get_cell_property(edge, node, prop_name)
 
-    def get_properties(self,id,level=None,prop_name=None):
+    def get_properties(self, id, level=None, prop_name=None):
         """Returns an object's specific property or all properties
-        
+
         Parameters
         ----------
         id : hashable
@@ -707,17 +753,16 @@ class Hypergraph:
         prop_name : str | None, optional, default = None
             if None then all properties associated with the object will  be
             returned.
-        
+
         Returns
         -------
         : str or dict
             single property or dictionary of properties
         """
         if prop_name == None:
-            return self.E.get_properties(id,level=level)
+            return self.E.get_properties(id, level=level)
         else:
-            return self.E.get_property(id,prop_name,level=level)
-
+            return self.E.get_property(id, prop_name, level=level)
 
     @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
@@ -749,10 +794,10 @@ class Hypergraph:
 
         if edges:
             A, Amap = self.edge_adjacency_matrix(s=s, index=True)
-            Amaplst = [(k,self.edge_props.loc[k].to_dict()) for k in Amap]
+            Amaplst = [(k, self.edge_props.loc[k].to_dict()) for k in Amap]
         else:
             A, Amap = self.adjacency_matrix(s=s, index=True)
-            Amaplst = [(k,self.node_props.loc[k].to_dict()) for k in Amap]
+            Amaplst = [(k, self.node_props.loc[k].to_dict()) for k in Amap]
 
         ### TODO: add key function to compute weights lambda x,y : funcval
 
@@ -782,13 +827,19 @@ class Hypergraph:
         self._state_dict = {}
 
         self._state_dict["dataframe"] = df = self.dataframe
-        self._state_dict["labels"] = {'edges': np.array(df[self._edge_col].cat.categories),
-                        'nodes': np.array(df[self._node_col].cat.categories)}
-        self._state_dict["data"] = np.array([df[self._edge_col].cat.codes,df[self._node_col].cat.codes],dtype=int).T
+        self._state_dict["labels"] = {
+            "edges": np.array(df[self._edge_col].cat.categories),
+            "nodes": np.array(df[self._node_col].cat.categories),
+        }
+        self._state_dict["data"] = np.array(
+            [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
+        ).T
         self._state_dict["snodelg"] = dict()  ### s: nx.graph
         self._state_dict["sedgelg"] = dict()
-        self._state_dict["neighbors"] = defaultdict(dict) ### s: {node: neighbors}
-        self._state_dict["edge_neighbors"] = defaultdict(dict) ### s: {edge: edge_neighbors}
+        self._state_dict["neighbors"] = defaultdict(dict)  ### s: {node: neighbors}
+        self._state_dict["edge_neighbors"] = defaultdict(
+            dict
+        )  ### s: {edge: edge_neighbors}
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
 
@@ -827,7 +878,7 @@ class Hypergraph:
          : int
 
         """
-        if s==1 and max_size==None:
+        if s == 1 and max_size == None:
             return len(self.E.memberships[node])
         else:
             memberships = set()
@@ -932,20 +983,20 @@ class Hypergraph:
         if node not in self.nodes:
             print(f"{node} is not in hypergraph {self.name}.")
             return None
-        if node in self._state_dict['neighbors'][s]:
-            return self._state_dict['neighbors'][s][node]
+        if node in self._state_dict["neighbors"][s]:
+            return self._state_dict["neighbors"][s][node]
         else:
             M = self.incidence_matrix()
-            rdx = self._state_dict['labels']['nodes']
+            rdx = self._state_dict["labels"]["nodes"]
             jdx = np.where(rdx == node)
-            idx = (M[jdx].dot(M.T)>=s)*1
+            idx = (M[jdx].dot(M.T) >= s) * 1
             idx = np.nonzero(idx)[1]
             neighbors = list(rdx[idx])
             if len(neighbors) > 0:
                 neighbors.remove(node)
-                self._state_dict['neighbors'][s][node] = neighbors
+                self._state_dict["neighbors"][s][node] = neighbors
             else:
-                self._state_dict['neighbors'][s][node] = []
+                self._state_dict["neighbors"][s][node] = []
         return neighbors
 
     def edge_neighbors(self, edge, s=1):
@@ -970,22 +1021,21 @@ class Hypergraph:
         if edge not in self.edges:
             print(f"Edge is not in hypergraph {self.name}.")
             return None
-        if edge in self._state_dict['edge_neighbors'][s]:
-            return self._state_dict['edge_neighbors'][s][edge]
+        if edge in self._state_dict["edge_neighbors"][s]:
+            return self._state_dict["edge_neighbors"][s][edge]
         else:
             M = self.incidence_matrix()
-            cdx = self._state_dict['labels']['edges']
+            cdx = self._state_dict["labels"]["edges"]
             jdx = np.where(cdx == edge)
-            idx = (M.T[jdx].dot(M)>=s)*1
+            idx = (M.T[jdx].dot(M) >= s) * 1
             idx = np.nonzero(idx)[1]
             edge_neighbors = list(cdx[idx])
             if len(edge_neighbors) > 0:
                 edge_neighbors.remove(edge)
-                self._state_dict['edge_neighbors'][s][edge] = edge_neighbors
+                self._state_dict["edge_neighbors"][s][edge] = edge_neighbors
             else:
-                self._state_dict['edge_neighbors'][s][edge] = []            
+                self._state_dict["edge_neighbors"][s][edge] = []
             return edge_neighbors
-
 
     def incidence_matrix(self, weights=False, index=False):
         """
@@ -1007,7 +1057,7 @@ class Hypergraph:
         incidence_matrix : scipy.sparse.csr.csr_matrix or np.ndarray
 
         row_index : list
-            index of node ids for rows 
+            index of node ids for rows
 
         col_index : list
             index of edge ids for columns
@@ -1024,20 +1074,27 @@ class Hypergraph:
             data_cols = [self._node_col, self._edge_col]
             if weights == True:
                 data = df[self._cell_weight_col].values
-                M = csr_matrix((data, tuple(np.array(df[col].cat.codes) for col in data_cols)))
+                M = csr_matrix(
+                    (data, tuple(np.array(df[col].cat.codes) for col in data_cols))
+                )
             else:
-                M = csr_matrix(([1]*len(df),tuple(np.array(df[col].cat.codes) for col in data_cols)))
+                M = csr_matrix(
+                    (
+                        [1] * len(df),
+                        tuple(np.array(df[col].cat.codes) for col in data_cols),
+                    )
+                )
             self._state_dict[sdkey] = M
 
         if index == True:
             rdx = self.dataframe[self._node_col].cat.categories
             cdx = self.dataframe[self._edge_col].cat.categories
-            
+
             return M, rdx, cdx
         else:
             return M
 
-    def adjacency_matrix(self, s=1, index=False, remove_empty_rows = False):
+    def adjacency_matrix(self, s=1, index=False, remove_empty_rows=False):
         """
         The :term:`s-adjacency matrix` for the hypergraph.
 
@@ -1055,19 +1112,19 @@ class Hypergraph:
         adjacency_matrix : scipy.sparse.csr.csr_matrix
 
         node_index : list
-            index of ids for rows and columns 
+            index of ids for rows and columns
 
         """
         try:
-            A = self._state_dict['adjacency_matrix'][s]
+            A = self._state_dict["adjacency_matrix"][s]
         except:
             M = self.incidence_matrix()
-            A = M@(M.T)
+            A = M @ (M.T)
             A.setdiag(0)
-            A = (A >= s) * 1 
-            self._state_dict['adjacency_matrix'][s] = A
+            A = (A >= s) * 1
+            self._state_dict["adjacency_matrix"][s] = A
         if index == True:
-            return A, self._state_dict['labels']['nodes']
+            return A, self._state_dict["labels"]["nodes"]
         else:
             return A
 
@@ -1097,18 +1154,17 @@ class Hypergraph:
 
         """
         try:
-            A = self._state_dict['edge_adjacency_matrix'][s]
+            A = self._state_dict["edge_adjacency_matrix"][s]
         except:
             M = self.incidence_matrix()
-            A = (M.T)@(M)
+            A = (M.T) @ (M)
             A.setdiag(0)
-            A = (A >= s) * 1 
-            self._state_dict['edge_adjacency_matrix'][s] = A
+            A = (A >= s) * 1
+            self._state_dict["edge_adjacency_matrix"][s] = A
         if index == True:
-            return A, self._state_dict['labels']['edges']
+            return A, self._state_dict["labels"]["edges"]
         else:
-            return A      
-
+            return A
 
     def auxiliary_matrix(self, s=1, node=True, index=False):
         """
@@ -1122,7 +1178,7 @@ class Hypergraph:
 
         Returns
         -------
-        auxiliary_matrix : scipy.sparse.csr.csr_matrix 
+        auxiliary_matrix : scipy.sparse.csr.csr_matrix
             Node/Edge adjacency matrix with empty rows and columns
             removed
         index : np.array
@@ -1130,20 +1186,19 @@ class Hypergraph:
 
         """
         if node == True:
-            A,Amap = self.adjacency_matrix(s,index=True)
+            A, Amap = self.adjacency_matrix(s, index=True)
         else:
-            A,Amap = self.edge_adjacency_matrix(s,index=True)
+            A, Amap = self.edge_adjacency_matrix(s, index=True)
 
-        idx = np.nonzero(np.sum(A,axis=1))[0]
+        idx = np.nonzero(np.sum(A, axis=1))[0]
         if len(idx) < A.shape[0]:
-            B = A[idx][:,idx]
+            B = A[idx][:, idx]
         else:
             B = A
         if index:
-            return B,Amap[idx]
+            return B, Amap[idx]
         else:
             return B
-
 
     def bipartite(self):
         """
@@ -1162,8 +1217,8 @@ class Hypergraph:
 
         """
         B = nx.Graph()
-        nodes = self._state_dict['labels']['nodes']
-        edges = self._state_dict['labels']['edges']
+        nodes = self._state_dict["labels"]["nodes"]
+        edges = self._state_dict["labels"]["edges"]
         B.add_nodes_from(self.edges, bipartite=0)
         B.add_nodes_from(self.nodes, bipartite=1)
         B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
@@ -1179,7 +1234,7 @@ class Hypergraph:
         name : hashable, optional
 
         switch_names : bool, optional, default = True
-            reverses edge_col and node_col names 
+            reverses edge_col and node_col names
             unless edge_col = 'edges' and node_col = 'nodes'
 
         Returns
@@ -1188,30 +1243,30 @@ class Hypergraph:
 
         """
         dfp = self.edges.properties.copy()
-        if 'level' in dfp.columns:
+        if "level" in dfp.columns:
             dfp = dfp.reset_index()
-            dfp.level = dfp.level.apply(lambda x : 1*(x==0))
-            dfp = dfp.set_index(['level','id']) 
+            dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
+            dfp = dfp.set_index(["level", "id"])
 
-        edge,node,wt = self._edge_col, self._node_col, self._cell_weight_col
+        edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
         df = self.dataframe.copy()
-        cprops = [col for col in df.columns if not col in [edge,node,wt]]
+        cprops = [col for col in df.columns if not col in [edge, node, wt]]
 
-        df[[edge,node]] = df[[node,edge]]
-        if edge != 'edges' or node != 'nodes':
-            df = df.rename(columns={edge: self._node_col, 
-                                    node: self._edge_col})
+        df[[edge, node]] = df[[node, edge]]
+        if edge != "edges" or node != "nodes":
+            df = df.rename(columns={edge: self._node_col, node: self._edge_col})
             node = self._edge_col
             edge = self._node_col
 
-        return Hypergraph(df,
-                edge_col = edge,
-                node_col = node,
-                cell_weight_col = wt,
-                cell_properties = cprops,
-                properties = dfp,
-                name = name
-                  )
+        return Hypergraph(
+            df,
+            edge_col=edge,
+            node_col=node,
+            cell_weight_col=wt,
+            cell_properties=cprops,
+            properties=dfp,
+            name=name,
+        )
 
     def collapse_edges(
         self,
@@ -1277,8 +1332,8 @@ class Hypergraph:
         name=None,
         return_equivalence_classes=False,
         use_reps=None,
-        return_counts=None,    
-        ):
+        return_counts=None,
+    ):
         """
         Constructs a new hypergraph gotten by identifying nodes contained by
         the same edges
@@ -1413,59 +1468,59 @@ class Hypergraph:
         temp = self.collapse_nodes(name="temp")
         return temp.collapse_edges(name=name)
 
-    def restrict_to_nodes(self,nodes, name=None):
+    def restrict_to_nodes(self, nodes, name=None):
         """New hypergraph gotten by restricting to nodes
-        
+
         Parameters
         ----------
         nodes : Iterable
             nodeids to restrict to
-        
+
         Returns
         -------
         : hnx. Hypergraph
 
         """
-        keys = set(self._state_dict['labels']['nodes']).difference(nodes)
-        return self.remove(keys,level=1)
+        keys = set(self._state_dict["labels"]["nodes"]).difference(nodes)
+        return self.remove(keys, level=1)
 
     def restrict_to_edges(self, edges, name=None):
         """New hypergraph gotten by restricting to edges
-        
+
         Parameters
         ----------
         edges : Iterable
             edgeids to restrict to
-        
+
         Returns
         -------
         hnx.Hypergraph
 
         """
-        keys = set(self._state_dict['labels']['edges']).difference(edges)
-        return self.remove(keys,level=0)
+        keys = set(self._state_dict["labels"]["edges"]).difference(edges)
+        return self.remove(keys, level=0)
 
-    def remove_edges(self,keys,name=None):
-        return self.remove(keys,level=0,name=name)
+    def remove_edges(self, keys, name=None):
+        return self.remove(keys, level=0, name=name)
 
-    def remove_nodes(self,keys,name=None):
-        return self.remove(keys,level=1,name=name)
+    def remove_nodes(self, keys, name=None):
+        return self.remove(keys, level=1, name=name)
 
-    def remove(self,keys,level=None, name=None):
+    def remove(self, keys, level=None, name=None):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
-        
+
         Parameters
         ----------
         keys : list | tuple | set
             node and/or edge id to restrict to
         level : None, optional
-            Enter 0 to remove edges with ids in keys.  
-            Enter 1 to remove nodes with ids in keys.  
-            If None then all objects in nodes and edges with the id will 
+            Enter 0 to remove edges with ids in keys.
+            Enter 1 to remove nodes with ids in keys.
+            If None then all objects in nodes and edges with the id will
             be removed.
-        
+
         Returns
         -------
         : hnx.Hypergraph
@@ -1473,37 +1528,35 @@ class Hypergraph:
         """
         rdfprop = self.properties.copy()
         rdf = self.dataframe.copy()
-        if not isinstance(keys,(list,tuple,set)):
+        if not isinstance(keys, (list, tuple, set)):
             keys = list(keys)
         if level == 0:
-            kdx = set(keys).intersection(set(self._state_dict['labels']['edges']))
+            kdx = set(keys).intersection(set(self._state_dict["labels"]["edges"]))
             for k in kdx:
-                rdfprop = rdfprop.drop((0,k))
+                rdfprop = rdfprop.drop((0, k))
             rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
         elif level == 1:
-            kdx = set(keys).intersection(set(self._state_dict['labels']['nodes']))
+            kdx = set(keys).intersection(set(self._state_dict["labels"]["nodes"]))
             for k in kdx:
-                rdfprop = rdfprop.drop((1,k))
+                rdfprop = rdfprop.drop((1, k))
             rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
         else:
             rdfprop = rdfprop.reset_index()
             kdx = set(keys).intersection(rdfprop.id.unique())
-            rdfprop = rdfprop.set_index('id')
+            rdfprop = rdfprop.set_index("id")
             rdfprop = rdfprop.drop(index=kdx)
             rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
-            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]  
-                        
-        return Hypergraph(
-                    setsystem = rdf,
-                    edge_col = self._edge_col,
-                    node_col = self._node_col,
-                    cell_weight_col = self._cell_weight_col,
-                    misc_cell_properties_col = self.edges._misc_cell_props_col,
-                    properties = rdfprop,
-                    misc_properties_col = self.edges._misc_props_col
-                    )                        
-                
+            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
 
+        return Hypergraph(
+            setsystem=rdf,
+            edge_col=self._edge_col,
+            node_col=self._node_col,
+            cell_weight_col=self._cell_weight_col,
+            misc_cell_properties_col=self.edges._misc_cell_props_col,
+            properties=rdfprop,
+            misc_properties_col=self.edges._misc_props_col,
+        )
 
     def toplexes(self, name=None):
         """
@@ -1600,7 +1653,7 @@ class Hypergraph:
         cols = M.sum(idx)
         singles = []
         # index along opposite axis with one entry each
-        for c in np.nonzero((cols - 1 == 0))[(idx+1)%2]:
+        for c in np.nonzero((cols - 1 == 0))[(idx + 1) % 2]:
             # if the singleton entry in that column is also
             # singleton in its row find the entry
             if idx == 0:
@@ -1632,7 +1685,7 @@ class Hypergraph:
         singletons = self.singletons()
         if len(singletons) > len(self.edges):
             E = [e for e in self.edges if e not in singletons]
-            return self.restrict_to_edges(E,name=name)
+            return self.restrict_to_edges(E, name=name)
         else:
             return self.remove(singletons, level=0, name=name)
 
@@ -1691,7 +1744,9 @@ class Hypergraph:
                 continue
             yield c
 
-    def s_component_subgraphs(self, s=1, edges=True, return_singletons=False, name=None):
+    def s_component_subgraphs(
+        self, s=1, edges=True, return_singletons=False, name=None
+    ):
         """
 
         Returns a generator for the induced subgraphs of s_connected
@@ -1748,7 +1803,7 @@ class Hypergraph:
         """
         return self.s_connected_components(edges=edges, return_singletons=True)
 
-    def connected_component_subgraphs(self, return_singletons=True,name=None):
+    def connected_component_subgraphs(self, return_singletons=True, name=None):
         """
         Same as :meth:`s_component_subgraphs` with s=1. Returns iterator
 
@@ -1756,7 +1811,9 @@ class Hypergraph:
         --------
         s_component_subgraphs
         """
-        return self.s_component_subgraphs(return_singletons=return_singletons, name=name)
+        return self.s_component_subgraphs(
+            return_singletons=return_singletons, name=name
+        )
 
     def components(self, edges=False):
         """
@@ -1777,7 +1834,9 @@ class Hypergraph:
         --------
         s_component_subgraphs
         """
-        return self.s_component_subgraphs(return_singletons=return_singletons, name=name)
+        return self.s_component_subgraphs(
+            return_singletons=return_singletons, name=name
+        )
 
     def node_diameters(self, s=1):
         """
@@ -2037,9 +2096,7 @@ class Hypergraph:
 
     @classmethod
     @warn_nwhy
-    def from_bipartite(
-        cls, B, set_names=("edges", "nodes"), name=None, **kwargs
-    ):
+    def from_bipartite(cls, B, set_names=("edges", "nodes"), name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
 
@@ -2100,7 +2157,6 @@ class Hypergraph:
         df = pd.DataFrame(elist, columns=set_names)
         return Hypergraph(df, name=name, **kwargs)
 
-
     @classmethod
     def from_incidence_matrix(
         cls,
@@ -2111,14 +2167,20 @@ class Hypergraph:
         edge_label="edges",
         name=None,
         key=None,
-        **kwargs,    
+        **kwargs,
     ):
         """
         Same as from_numpy_array.
         """
-        return Hypergraph.from_numpy_array(M,node_names=node_names,
-            edge_names=edge_names, node_label=node_label, edge_label=edge_label,
-            name=name,key=key)
+        return Hypergraph.from_numpy_array(
+            M,
+            node_names=node_names,
+            edge_names=edge_names,
+            node_label=node_label,
+            edge_label=edge_label,
+            name=name,
+            key=key,
+        )
 
     @classmethod
     @warn_nwhy
@@ -2197,8 +2259,8 @@ class Hypergraph:
         else:
             edgenames = np.array([f"e{jdx}" for jdx in range(M.shape[1])])
 
-        df = pd.DataFrame(M,columns=edgenames,index=nodenames)
-        return Hypergraph.from_incidence_dataframe(df,name=name)
+        df = pd.DataFrame(M, columns=edgenames, index=nodenames)
+        return Hypergraph.from_incidence_dataframe(df, name=name)
 
     @classmethod
     @warn_nwhy
@@ -2207,8 +2269,8 @@ class Hypergraph:
         df,
         columns=None,
         rows=None,
-        edge_col: str = 'edges',
-        node_col: str = 'nodes',
+        edge_col: str = "edges",
+        node_col: str = "nodes",
         name=None,
         fillna=0,
         transpose=False,
@@ -2303,4 +2365,10 @@ class Hypergraph:
         if return_only_dataframe == True:
             return dfnew
         else:
-            return Hypergraph(dfnew, edge_col=edge_col, node_col=node_col, weights="cell_weights", name=None)
+            return Hypergraph(
+                dfnew,
+                edge_col=edge_col,
+                node_col=node_col,
+                weights="cell_weights",
+                name=None,
+            )

@@ -22,7 +22,10 @@ def test_property(ent_hp):
     assert not ent_hp.is_empty()
     assert len(ent_hp.incidence_dict["Gryffindor"]) == 6
 
-@pytest.mark.xfail(reason="Entity does not remove row duplicates from self._data if constructed from np.ndarray, defaults to first two cols as data cols")
+
+@pytest.mark.xfail(
+    reason="Entity does not remove row duplicates from self._data if constructed from np.ndarray, defaults to first two cols as data cols"
+)
 def test_attributes(ent_hp):
     assert isinstance(ent_hp.data, np.ndarray)
     # TODO: Entity does not remove row duplicates from self._data if constructed from np.ndarray
@@ -58,7 +61,10 @@ def test_custom_attributes(ent_hp):
     assert isinstance(ent_hp.__call__(), Iterable)
     assert ent_hp.__call__().__next__() == "Unknown House"
 
-@pytest.mark.xfail(reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor")
+
+@pytest.mark.xfail(
+    reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor"
+)
 def test_level(ent_sbs):
     # TODO: at some point we are casting out and back to categorical dtype without
     #  preserving categories ordering from `labels` provided to constructor

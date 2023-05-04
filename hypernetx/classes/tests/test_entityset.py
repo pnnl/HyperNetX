@@ -3,6 +3,7 @@ import pytest
 
 from hypernetx import Entity, EntitySet
 
+
 @pytest.mark.xfail(reason="default arguments fail for empty Entity")
 def test_construct_empty_entityset():
     es = EntitySet()
@@ -10,7 +11,10 @@ def test_construct_empty_entityset():
     assert len(es.elements) == 0
     assert es.dimsize == 0
 
-@pytest.mark.xfail(reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor")
+
+@pytest.mark.xfail(
+    reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor"
+)
 def test_construct_entityset_from_data(harry_potter):
     es = EntitySet(
         data=np.asarray(harry_potter.data),

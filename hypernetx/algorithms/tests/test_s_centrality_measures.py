@@ -47,4 +47,3 @@ def test_s_eccentricity(sixbyfive):
     with pytest.raises(Exception) as excinfo:
         s_eccentricity(h, s=3)
     assert "Found infinite path" in str(excinfo.value)
-
