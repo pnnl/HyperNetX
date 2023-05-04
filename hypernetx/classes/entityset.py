@@ -13,9 +13,9 @@ import pandas as pd
 
 from hypernetx.classes import Entity
 from hypernetx.classes.helpers import AttrList
-from hypernetx.utils.log import get_logger
+#from hypernetx.utils.log import get_logger
 
-_log = get_logger("entity_set")
+#_log = get_logger("entity_set")
 
 T = TypeVar("T", bound=Union[str, int])
 
@@ -158,7 +158,7 @@ class EntitySet(Entity):
         # if the entity data is passed as an Entity, get its underlying data table and
         # proceed to the case for entity data passed as a DataFrame
         # if isinstance(entity, Entity):
-        #     _log.info(f"Changing entity from type {Entity} to {type(entity.dataframe)}")
+#        #     _log.info(f"Changing entity from type {Entity} to {type(entity.dataframe)}")
         #     if keep_weights:
         #         # preserve original weights
         #         weights = entity._cell_weight_col
@@ -166,7 +166,7 @@ class EntitySet(Entity):
 
         # if the entity data is passed as a DataFrame, restrict to two columns if needed
         if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
-            _log.info(f"Processing parameter of 'entity' of type {type(entity)}...")
+#            _log.info(f"Processing parameter of 'entity' of type {type(entity)}...")
             # metadata columns are not considered levels of data,
             # remove them before indexing by level
             # if isinstance(cell_properties, str):
@@ -176,13 +176,13 @@ class EntitySet(Entity):
             if isinstance(cell_properties, Sequence):
                 for col in {*cell_properties, self._misc_cell_props_col}:
                     if col in entity:
-                        _log.debug(f"Adding column to prop_cols: {col}")
+#                        _log.debug(f"Adding column to prop_cols: {col}")
                         prop_cols.append(col)
 
             # meta_cols = prop_cols
             # if weights in entity and weights not in meta_cols:
             #     meta_cols.append(weights)
-            # _log.debug(f"meta_cols: {meta_cols}")
+#            # _log.debug(f"meta_cols: {meta_cols}")
             if weight_col in prop_cols:
                 prop_cols.remove(weight_col)
             if not weight_col in entity:
@@ -210,14 +210,14 @@ class EntitySet(Entity):
             # if there is a column for weights, preserve it
             # if weights in entity and weights not in prop_cols:
             #     columns.append(weights)
-            _log.debug(f"columns: {columns}")
+#            _log.debug(f"columns: {columns}")
 
             # pass level1, level2, and weights (optional) to Entity constructor
             entity = entity[columns]
 
         # if a 2D ndarray is passed, restrict to two columns if needed
         elif isinstance(data, np.ndarray) and data.ndim == 2 and data.shape[1] > 2:
-            _log.info(f"Processing parameter 'data' of type {type(data)}...")
+#            _log.info(f"Processing parameter 'data' of type {type(data)}...")
             data = data[:, (level1, level2)]
 
         # if a dict of labels is provided, restrict to labels for two columns if needed
@@ -225,13 +225,13 @@ class EntitySet(Entity):
             label_keys = list(labels)
             columns = (label_keys[level1], label_keys[level2])
             labels = {col: labels[col] for col in columns}
-            _log.debug(f"Restricted labels to columns:\n{pformat(labels)}")
+#            _log.debug(f"Restricted labels to columns:\n{pformat(labels)}")
 
-        _log.info(
-            f"Creating instance of {Entity} using reformatted params: \n\tentity: {type(entity)} \n\tdata: {type(data)} \n\tlabels: {type(labels)}, \n\tweights: {weights}, \n\tkwargs: {kwargs}"
-        )
-        _log.debug(f"entity:\n{pformat(entity)}")
-        _log.debug(f"data: {pformat(data)}")
+#        _log.info(
+        #     f"Creating instance of {Entity} using reformatted params: \n\tentity: {type(entity)} \n\tdata: {type(data)} \n\tlabels: {type(labels)}, \n\tweights: {weights}, \n\tkwargs: {kwargs}"
+        # )
+#        _log.debug(f"entity:\n{pformat(entity)}")
+#        _log.debug(f"data: {pformat(data)}")
         super().__init__(
             entity=entity,
             data=data,
@@ -293,20 +293,6 @@ class EntitySet(Entity):
             return self._state_dict.get("memberships")
 
         return super().memberships
-
-    # def __repr__(self):
-    #     """String representation of the Entity
-
-    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
-
-    #     Returns
-    #     -------
-    #     str
-    #     """
-    #     return "hypernetx.classes.entityset.EntitySet"
-
-    # def __str__(self):
-    #     return "<class 'hypernetx.classes.entityset.EntitySet'>"
 
     def restrict_to_levels(
         self,

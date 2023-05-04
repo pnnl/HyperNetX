@@ -1110,7 +1110,7 @@ class Hypergraph:
             return A      
 
 
-    def auxiliary_matrix(self, s=1, node=True):
+    def auxiliary_matrix(self, s=1, node=True, index=False):
         """
         The unweighted :term:`s-edge or node auxiliary matrix` for hypergraph
 
@@ -1135,7 +1135,15 @@ class Hypergraph:
             A,Amap = self.edge_adjacency_matrix(s,index=True)
 
         idx = np.nonzero(np.sum(A,axis=1))[0]
-        return A[idx][:,idx],Amap[idx]
+        if len(idx) < A.shape[0]:
+            B = A[idx][:,idx]
+        else:
+            B = A
+        if index:
+            return B,Amap[idx]
+        else:
+            return B
+
 
     def bipartite(self):
         """

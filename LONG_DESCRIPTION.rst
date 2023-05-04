@@ -9,7 +9,6 @@ HypernetX was developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
-
 * Principal Developer and Designer: Brenda Praggastis
 * Development Team: Madelyn Shapiro, Mark Bonicillo
 * Visualization: Dustin Arendt, Ji Young Yun
