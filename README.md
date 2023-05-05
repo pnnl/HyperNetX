@@ -55,7 +55,6 @@ What's New
 #. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
 #. New module and tutorial for *Barycentric homology*.
 #. New hnxwidget available using  `pip install hnxwidget`.
-#. Methods for removing nodes return new hypergraphs.
 
 
 What's Changed
