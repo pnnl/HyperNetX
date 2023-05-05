@@ -5,7 +5,7 @@ Glossary of HNX terms
 =====================
 
 
-HNX is all about :term:`hypergraphs`
+The HNX library centers around the idea of a :term:`hypergraph`.  This glossary provides a few key terms and definitions.
 
 
 .. glossary::
@@ -14,19 +14,20 @@ HNX is all about :term:`hypergraphs`
 
 	.. // scan hypergraph.py
 
-	Entity
-		.. Class in entity.py. 
+	Entity and Entity set
+		Class in entity.py. 
 		HNX stores many of its data structures inside objects of type Entity.  Entities help to insure safe behavior, but their use is primarily technical, not mathematical.
 
 	hypergraph
-		A tuple (Nodes, Edges, Incidence), where Nodes and Edges are sets, and Incidence is a function that assigns a value of True or False to every pair (n,e) in the Cartesian product Nodes x Edges.  We call 
+		The term *hypergraph* can have many different meanings.  In HNX, it means a tuple (Nodes, Edges, Incidence), where Nodes and Edges are sets, and Incidence is a function that assigns a value of True or False to every pair (n,e) in the Cartesian product Nodes x Edges.  We call 
 		- Nodes the set of nodes
 		- Edges the set of edges
 		- Incidence the incidence function
-		*Note* There are many different ways to define a hypergraph, which are all equivalent.  For example, the information contained in Incidence is the "same" as the information contained in an  :term:`incidence matrix`. 
+		*Note* Another term for this type of object is a *multihypergraph*.  The ability to work with multihypergraphs efficiently is a distinguishing feature of HNX!
 
 	incidence
 		A node n is incident to an edge e in a hypergraph (Nodes, Edges, Incidence) if Incidence(n,e) = True.	
+		!!! -- give the line of code that would allow you to evaluate 
 
 	incidence matrix
 		A rectangular matrix constructed from a hypergraph (Nodes, Edges, Incidence) where the elements of Nodes index the matrix rows, and the elements of Edges index the matrix columns. Entry (n,e) in the incidence matrix is 1 if n and e are incident, and is 0 otherwise.			

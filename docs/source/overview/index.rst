@@ -8,61 +8,12 @@ Overview
    :width: 300px
    :align: right
 
-The `HyperNetX`_ (`HNX`_) library was developed to support researchers modeling data
-as hypergraphs. We have a growing community of users and contributors.
-For questions and comments you may contact the developers directly at: hypernetx@pnnl.gov
-
-`HyperNetX`_ was developed by the `Pacific Northwest National Laboratory <https://www.pnnl.gov/>`_ for the
-Hypernets project as part of its High Performance Data Analytics (HPDA) program.
-PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
-
-* Principal Developer and Designer: Brenda Praggastis
-* Development Team: Madelyn Shapiro, Mark Bonicillo
-* Visualization: Dustin Arendt, Ji Young Yun
-* Principal Investigator: Cliff Joslyn
-* Program Manager: Brian Kritzstein
-* Principal Contributors (Design, Theory, Code): Sinan Aksoy, Dustin Arendt, Mark Bonicillo, Helen Jenne, Cliff Joslyn, Nicholas Landry, Audun Myers, Christopher Potvin, Brenda Praggastis, Emilie Purvine, Greg Roek, Madelyn Shapiro, Mirah Shi, Francois Theberge, Ji Young Yun
-
-
-
-New Features in Version 2.0
----------------------------
-
-HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a
-hypergraph. While the library continues to accept lists, dictionaries and
-dataframes as basic inputs for hypergraph constructions, both cell
-properties and edge and node properties can now be easily added for
-retrieval as object attributes. The core library has been rebuilt to take
-advantage of the flexibility and speed of Pandas Dataframes.
-Dataframes offer the ability to store and easily access hypergraph metadata.
-Metadata can be used for filtering objects, and characterize their
-distributions by their attributes.
-**Version 2.0 is not backwards compatible. Objects constructed using version
-1.x can be imported from their incidence dictionaries.**
-
-New features to look for:
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
-#. Additional constructors accept incidence matrices and incidence dataframes.
-#. Hypergraph constructors accept cell, edge, and node metadata. 
-#. Metadata available as attributes on the cells, edges, and nodes. 
-#. User defined cell weights and default weights available to incidence matrix.
-#. Meta data persists with restrictions and removals.
-#. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-#. New module and tutorial for *Barycentric homology*
-#. New hnxwidget available using  `pipinstall hnxwidget`.
-#. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
-#. Methods for adding nodes and hyperedges are currently not supported. 
-#. Methods for removing nodes return new hypergraph.
-#. The `nwhy` optimizations are no longer supported.
-#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either. 
-
+.. include:: ../../../LONG_DESCRIPTION.rst
 
 .. _colab:
 
 COLAB Tutorials
----------------
+================
 The following tutorials may be run in your browser using Google Colab. Additional tutorials are
 available on `GitHub <https://github.com/pnnl/HyperNetX>`_.
 
@@ -138,6 +89,8 @@ those of the United States Government or any agency thereof.
 License
 -------
 HyperNetX is released under the 3-Clause BSD license (see :ref:`license`)
+
+
 
 .. toctree::
    :maxdepth: 2

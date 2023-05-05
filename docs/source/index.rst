@@ -14,8 +14,7 @@ To get started, try the  `interactive COLAB tutorials <https://pnnl.github.io/Hy
 Why hypergraphs?
 ----------------
 
-Like graphs, hypergraphs capture important information about networks and relationships.  But hypergraphs do more -- they model *multi-way* relationships, where ordinary graphs only capture two-way relationships. This library serves as a repository of the methods and algorithms we find most useful
-as we explore what hypergraphs can tell us. 
+Like graphs, hypergraphs capture important information about networks and relationships.  But hypergraphs do more -- they model *multi-way* relationships, where ordinary graphs only capture two-way relationships. This library serves as a repository of methods and algorithms that have proven useful over years of exploration into what hypergraphs can tell us. 
 
 .. As both vertex adjacency and edge
 .. incidence are generalized to be quantities,
@@ -28,20 +27,30 @@ as we explore what hypergraphs can tell us.
 Our community
 -------------
 
-We have a growing community of users and contributors. For the latest software updates, and to learn about the development team, see the library :ref:`overview<overview>`.  
+..
+    TODO: Link to CONTRIBUTING is broken.
+
+We have a growing community of users and contributors. For the latest software updates, and to learn about the development team, see the  :ref:`library overview<overview>`.   Have ideas to share?  We'd love to hear from you!  Our `orientation for contributors <https://github.com/pnnl/HyperNetX/blob/master/CONTRIBUTING.md>`_ can help you get started.
+
+Our values
+-------------
+
+..
+    TODO: Link to CODE_OF_CONDUCT is broken.
+
+Our shared values as software developers guide us in our day-to-day interactions and decision-making. Our open source projects are no exception. Trust, respect, collaboration and transparency are core values we believe should live and breathe within our projects. Our community welcomes participants from around the world with different experiences, unique perspectives, and great ideas to share.  See our `code of conduct <https://github.com/pnnl/HyperNetX/blob/master/CODE_OF_CONDUCT.md>`_ to learn more.
+
+Contact us
+----------
 
 Questions and comments are welcome! Contact us at
 	hypernetx@pnnl.gov
-
-
-
-
-
 
 Contents
 --------
 
 .. toctree::
+   :maxdepth: 1
 
    Home <self>
    overview/index
@@ -53,6 +62,7 @@ Contents
    Algorithms: Modularity and Clustering <modularity>
    Publications <publications>
    license
+   long_description
 
 
 Indices and tables

@@ -1,5 +1,7 @@
 # Contributor Covenant Code of Conduct
 
+Our shared values as software developers guide us in our day-to-day interactions and decision-making. Our open source projects are no exception. Trust, respect, collaboration and transparency are core values we believe should live and breathe within our projects. Our community welcomes participants from around the world with different experiences, unique perspectives, and great ideas to share.
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
@@ -126,3 +128,7 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/),
+version 2.1, available at
+https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.

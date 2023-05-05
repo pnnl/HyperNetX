@@ -38,3 +38,4 @@ docs/docs
 docs/build
 coverage.xml
 cov.syspath.txt
+*.whl

@@ -2,42 +2,16 @@
 
 HyperNetX
 =========
-![Passing?](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)
+[![Pytest](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 
-The HNX library provides classes and methods for modeling the entities and relationships
-found in complex networks as hypergraphs, the natural models for multi-dimensional network data.
-As strict generalizations of graphs, hyperedges can represent arbitrary multi-way relations
-among entities, and in particular can distinguish cliques and simplices, and admit singleton edges.
-As both vertex adjacency and edge
-incidence are generalized to be quantities,
-hypergraph paths and walks thereby have both length and *width* because of these multiway connections.
-Most graph metrics have natural generalizations to hypergraphs, but since
-hypergraphs are basically set systems, they also admit to the powerful tools of algebraic topology,
-including simplicial complexes and simplicial homology, to study their structure.
 
-This library serves as a repository of the methods and algorithms we find most useful
-as we explore what hypergraphs can tell us. We have a growing community of users and contributors.
-To learn more about some of our research check out our publications below:
+The HyperNetX library provides classes and methods for the analysis
+and visualization of complex network data modeled as hypergraphs.
+The library generalizes traditional graph metrics.
 
-Publications
-------------
-Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE; Jefferson, Brett ; Praggastis, Brenda ; Purvine, Emilie AH ; Tripodi, Ignacio J: (2020) "Hypernetwork Science: From Multidimensional Networks to Computational Topology", in: Int. Conf. Complex Systems (ICCS 2020), https://arxiv.org/abs/2003.11782, (in press)
-
-Feng, Song; Heath, Emily; Jefferson, Brett; Joslyn, CA; Kvinge, Henry; McDermott, Jason E ; Mitchell, Hugh D ; Praggastis, Brenda ; Eisfeld, Amie J; Sims, Amy C ; Thackray, Larissa B ; Fan, Shufang ; Walters, Kevin B; Halfmann, Peter J ; Westhoff-Smith, Danielle ; Tan, Qing ; Menachery, Vineet D ; Sheahan, Timothy P ; Cockrell,
-Adam S ; Kocher, Jacob F ; Stratton, Kelly G ; Heller, Natalie C ; Bramer, Lisa M ; Diamond, Michael S ; Baric, Ralph S ; Waters, Katrina M ; Kawaoka, Yoshihiro ; Purvine, Emilie: (2020) "Hypergraph Models of Biological Networks to Identify Genes Critical to Pathogenic Viral Response", in: https://arxiv.org/abs/2010.03068, BMC Bioinformatics, 22:287, doi: 10.1186/s12859-021-04197-2
-
-Aksoy, Sinan G; Joslyn, Cliff A; Marrero, Carlos O; Praggastis, B; Purvine, Emilie AH: (2020) "Hypernetwork Science via High-Order Hypergraph Walks", EPJ Data Science, v. 9:16, https://doi.org/10.1140/epjds/s13688-020-00231-0
-
-Joslyn, Cliff A; Aksoy, Sinan; Arendt, Dustin; Firoz, J; Jenkins, Louis ; Praggastis, Brenda ; Purvine, Emilie AH ; Zalewski, Marcin: (2020) "Hypergraph Analytics of Domain Name System Relationships", in: 17th Wshop. on Algorithms and Models for the Web Graph (WAW 2020), Lecture Notes in Computer Science, v. 12901, ed. Kaminski, B et al., pp. 1-15, Springer, https://doi.org/10.1007/978-3-030-48478-1_1
-
-Joslyn, Cliff A; Aksoy, Sinan; Arendt, Dustin; Jenkins, L; Praggastis, Brenda; Purvine, Emilie; Zalewski, Marcin: (2019) "High Performance Hypergraph Analytics of Domain Name System Relationships", in: Proc. HICSS Symp. on Cybersecurity Big Data Analytics, http://www.azsecure-hicss.org/
-
-Notes
------
-
-HNX was developed by the Pacific Northwest National Laboratory for the
+HypernetX was developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
@@ -50,41 +24,47 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
-Documentation is available at: <https://pnnl.github.io/HyperNetX/>
-For questions and comments contact the developers directly at: <hypernetx@pnnl.gov>
+Documentation is available at: https://pnnl.github.io/HyperNetX
+
+For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
 New Features in Version 2.0
----------------------------
+===========================
 
 HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a
 hypergraph. While the library continues to accept lists, dictionaries and
 dataframes as basic inputs for hypergraph constructions, both cell
 properties and edge and node properties can now be easily added for
-retrieval as object attributes. The core library has been rebuilt to take
-advantage of the flexibility and speed of Pandas Dataframes.
-Dataframes offer the ability to store and easily access hypergraph metadata.
-Metadata can be used for filtering objects, and characterize their
+retrieval as object attributes.
+
+The core library has been rebuilt to take advantage of the flexibility and speed of Pandas Dataframes.
+Dataframes offer the ability to store and easily access hypergraph metadata. Metadata can be used for filtering objects, and characterize their
 distributions by their attributes.
+
 **Version 2.0 is not backwards compatible. Objects constructed using version
 1.x can be imported from their incidence dictionaries.**
 
-New features to look for:
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
+What's New
+----------
 #. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
 #. Additional constructors accept incidence matrices and incidence dataframes.
 #. Hypergraph constructors accept cell, edge, and node metadata.
 #. Metadata available as attributes on the cells, edges, and nodes.
-#. User defined cell weights and default weights available to incidence matrix.
+#. User-defined cell weights and default weights available to incidence matrix.
 #. Meta data persists with restrictions and removals.
 #. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-#. New module and tutorial for *Barycentric homology*
-#. New hnxwidget available using  `pipinstall hnxwidget`.
+#. New module and tutorial for *Barycentric homology*.
+#. New hnxwidget available using  `pip install hnxwidget`.
+#. Methods for removing nodes return new hypergraphs.
+
+
+What's Changed
+--------------
 #. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
 #. Methods for adding nodes and hyperedges are currently not supported.
-#. Methods for removing nodes return new hypergraph.
 #. The `nwhy` optimizations are no longer supported.
 #. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.
+
 
 
 Tutorials may be run in your browser using Google Colab
