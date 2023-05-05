@@ -46,23 +46,23 @@ distributions by their attributes.
 
 What's New
 ----------
-#. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
-#. Additional constructors accept incidence matrices and incidence dataframes.
-#. Hypergraph constructors accept cell, edge, and node metadata.
-#. Metadata available as attributes on the cells, edges, and nodes.
-#. User-defined cell weights and default weights available to incidence matrix.
-#. Meta data persists with restrictions and removals.
-#. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-#. New module and tutorial for *Barycentric homology*.
-#. New hnxwidget available using  `pip install hnxwidget`.
+1. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
+1. Additional constructors accept incidence matrices and incidence dataframes.
+1. Hypergraph constructors accept cell, edge, and node metadata.
+1. Metadata available as attributes on the cells, edges, and nodes.
+1. User-defined cell weights and default weights available to incidence matrix.
+1. Meta data persists with restrictions and removals.
+1. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
+1. New module and tutorial for *Barycentric homology*.
+1. New hnxwidget available using  `pip install hnxwidget`.
 
 
 What's Changed
 --------------
-#. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
-#. Methods for adding nodes and hyperedges are currently not supported.
-#. The `nwhy` optimizations are no longer supported.
-#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.
+1. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
+1. Methods for adding nodes and hyperedges are currently not supported.
+1. The `nwhy` optimizations are no longer supported.
+1. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.
 
 
 
@@ -118,14 +118,14 @@ HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX>
 To install in an Anaconda environment
 -------------------------------------
 
-    >>> conda create -n <env name> python=3.7
+    >>> conda create -n <env name> python=3.8
     >>> source activate <env name>
     >>> pip install hypernetx
 
 Mac Users: If you wish to build the documentation you will need
 the conda version of matplotlib:
 
-    >>> conda create -n <env name> python=3.7 matplotlib
+    >>> conda create -n <env name> python=3.8 matplotlib
     >>> source activate <env name>
     >>> pip install hypernetx
 
@@ -140,7 +140,7 @@ To use [NWHy](docs/build/nwhy.html) use python=3.9 and the conda version of tbb 
 To install in a virtualenv environment
 --------------------------------------
 
-    >>> virtualenv --python=<path to python 3.7 executable> <path to env name>
+    >>> virtualenv --python=<path to python 3.8 executable> <path to env name>
 
 This will create a virtual environment in the specified location using
 the specified python executable. For example:
@@ -171,11 +171,12 @@ For an editable installation with access to jupyter notebooks:
 
     >>> pip install [-e] .
 
-> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter the
-> following error:
+> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter an error; for example:
 >>**zsh: no matches found: .[tutorials]**
 >
-> To successfully run the below installation commands, put the single quote around the square brackets. For example:
+> This error occurs because ZSH uses square brackets for globbing and pattern matching, which means that ZSH will not respect the square brackets as string literals when running commands such as pip install -e .[tutorials].
+> To successfully run the following installation commands, put single quotes around the square brackets.
+> For example:
 > >pip install -e .'[tutorials]'
 >
 > For more information on this ZSH-related issue, see this [StackOverflow post](https://stackoverflow.com/a/68888466/11145086).
@@ -212,60 +213,6 @@ To install the whole shabang:
 
     >>> pip install -e .['all']
 
-Notice
-------
-This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
-Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
-
-   <div align=center>
-   <pre style="align-text:center;font-size:10pt">
-   PACIFIC NORTHWEST NATIONAL LABORATORY
-   operated by
-   BATTELLE
-   for the
-   UNITED STATES DEPARTMENT OF ENERGY
-   under Contract DE-AC05-76RL01830
-   </pre>
-   </div>
-
-
-License
--------
-
-Released under the 3-Clause BSD license (see License.rst)
-
-
-Continuous Integration
-----------------------
-
-This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
-on pull requests, pushes to certain branches, and other events.
-
-Maintainers of the GitHub repository can manually trigger CI using [GitHub CLI](https://cli.github.com/). See instructions below on how to manually trigger CI on GitHub Actions:
-
-```commandline
-# login to Github
-gh auth login --with-token <  ~/.ssh/tokens/<path to my personal access token>
-
-# Trigger CI
-gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want CI to run on> --field triggeredBy="<Your name>"
-
-# Get the status of the workflow
-gh run list --workflow=ci.yml --repo pnnl/HyperNetX
-```
-
-Versioning
-----------
-
-Versioning is automated using [bump2version](https://pypi.org/project/bump2version/).
-To automatically update the version when preparing a release, run the following commands:
-
-```
-# part is one of "major", "minor", or "patch"
-make bump-version-<part>
-make commit-docs
-```
-
 
 # Development
 
@@ -276,17 +223,19 @@ HyperNetX uses a number of tools to maintain code quality:
 * Pylint
 * Black
 
+Before using these tools, ensure that you install Pylint in your environment:
+
+```commandline
+pip install -e .['linting']
+```
+
+
 ### Pylint
 
 [Pylint](https://pylint.pycqa.org/en/latest/index.html) is a static code analyzer for Python-based projects. From the [Pylint docs](https://pylint.pycqa.org/en/latest/index.html#what-is-pylint):
 
 > Pylint analyses your code without actually running it. It checks for errors, enforces a coding standard, looks for code smells, and can make suggestions about how the code could be refactored. Pylint can infer actual values from your code using its internal code representation (astroid). If your code is import logging as argparse, Pylint will know that argparse.error(...) is in fact a logging call and not an argparse call.
 
-Before using this tool, ensure that you install Pylint in your environment:
-
-```commandline
-pip install -e .['auto-testing']
-```
 
 We have a Pylint configuration file, `.pylintrc`, located at the root of this project.
 To run Pylint and view the results of Pylint, run the following command:
@@ -307,11 +256,6 @@ For more information on configuration, see https://pylint.pycqa.org/en/latest/us
 
 [Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
 
-Before using this tool, ensure that you install Pylint in your environment:
-
-```commandline
-pip install -e .['auto-testing']
-```
 
 ```commandline
 black hypernetx
@@ -352,3 +296,47 @@ The HTML pages are in docs/html.
 
 Click on `http://127.0.0.1:8000/install.html` to open the docs on your browser. Since this will auto-rebuild, every time
 you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
+
+
+Continuous Integration
+----------------------
+
+This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
+on pull requests, pushes to certain branches, and other events.
+
+Maintainers of the GitHub repository can manually trigger CI using [GitHub CLI](https://cli.github.com/). See instructions below on how to manually trigger CI on GitHub Actions:
+
+```commandline
+# login to Github
+gh auth login --with-token <  ~/.ssh/tokens/<path to my personal access token>
+
+# Trigger CI
+gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want CI to run on> --field triggeredBy="<Your name>"
+
+# Get the status of the workflow
+gh run list --workflow=ci.yml --repo pnnl/HyperNetX
+```
+
+
+
+Notice
+------
+This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
+Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
+
+   <div align=center>
+   <pre style="align-text:center;font-size:10pt">
+   PACIFIC NORTHWEST NATIONAL LABORATORY
+   operated by
+   BATTELLE
+   for the
+   UNITED STATES DEPARTMENT OF ENERGY
+   under Contract DE-AC05-76RL01830
+   </pre>
+   </div>
+
+
+License
+-------
+
+Released under the 3-Clause BSD license (see License.rst)
