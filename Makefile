@@ -1,4 +1,3 @@
-
 SHELL = /bin/bash
 
 VENV = venv-hnx
@@ -8,16 +7,15 @@ PYTHON3 = python3
 
 ## Test
 
-test: clean venv
-	@$(PYTHON_VENV) -m pip install -e .'[auto-testing]' --use-pep517
-	@$(PYTHON_VENV) -m tox -e py38 -e py311
+test: test-deps
+	@$(PYTHON3) -m tox
 
-test-ci:
-	@$(PYTHON3) -m pip install -e .'[auto-testing]' --use-pep517
+test-ci: test-deps
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	pre-commit install
 	pre-commit run --all-files
 	@$(PYTHON3) -m tox -e py38 -r
+	@$(PYTHON3) -m tox -e py38-notebooks -r
 
 .PHONY: test, test-ci
 
@@ -38,26 +36,14 @@ publish-to-pypi: publish-deps build-dist
 	@echo "Publishing to PyPi"
 	$(PYTHON3) -m twine upload dist/*
 
-.PHONY: build-dist publish-to-test-pypi publish-to-pypi publish-deps
+.PHONY: build-dist publish-to-pypi publish-deps
 
 ### Update version
 
-version-deps: clean-venv venv
-	@$(PYTHON_VENV) -m pip install .'[releases]'
+version-deps:
+	@$(PYTHON3) -m pip install .'[releases]'
 
-bump-version-major: version-deps
-	bump2version --dry-run --verbose major
-	bump2version --verbose major
-
-bump-version-minor: version-deps
-	bump2version --dry-run --verbose minor
-	bump2version --verbose minor
-
-bump-version-patch: version-deps
-	bump2version --dry-run --verbose patch
-	bump2version --verbose patch
-
-.PHONY: version-deps bump-version-major bump-version-minor bump-version-patch
+.PHONY: version-deps
 
 #### Documentation
 
@@ -75,15 +61,16 @@ commit-docs:
 clean-venv:
 	rm -rf $(VENV)
 
-clean: clean-venv
+clean:
 	rm -rf .out .pytest_cache .tox *.egg-info dist build
 
-venv:
+venv: clean-venv
 	@$(PYTHON3) -m venv $(VENV);
+
+test-deps:
+	@$(PYTHON3) -m pip install -e .'[testing]' --use-pep517
 
 all-deps:
 	@$(PYTHON3) -m pip install -e .'[all]' --use-pep517
 
-.PHONY: venv
-
-.PHONY: clean clean-venv venv all-deps
+.PHONY: clean clean-venv venv all-deps test-deps
