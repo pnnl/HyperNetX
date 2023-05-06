@@ -11,13 +11,13 @@ The world of open source is wide; it can be a lot to take in!  If this is your f
 Here are the [steps to creating an issue on github](https://docs.github.com/en/issues/tracking-your-work-with-issues/quickstart).  When reporting a bug,
 
 - search for related issues on Github. You might be able to get answer without the hassle of creating an issue
-- describe the current behavior and explain which behavior you expected to see instead and why. At this point you can also tell which alternatives do not work for you.  
+- describe the current behavior and explain which behavior you expected to see instead and why. At this point you can also tell which alternatives do not work for you.
   - (if applicable) provide error messages
   - (if applicable) provide a step by step description of the problem; if possible include code that others can use to reproduce it
   - You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux.
   - provide clear, specific title
   - include details on your setup (operating system, python version, etc.)
-- use the most recent version of this library and the source language (e.g. Rust); that fixes a lot of problems  
+- use the most recent version of this library and the source language (e.g. Rust); that fixes a lot of problems
 - here are [more details on getting the most out of issue reporting!](https://marker.io/blog/how-to-write-bug-report)
 
 ## Contribute new code
