@@ -66,8 +66,10 @@ What's Changed
 
 
 
-Tutorials may be run in your browser using Google Colab
+Tutorials may be run in your browser using Google Colab 
 -------------------------------------------------------
+
+**Additional Tutorials may be found on in the Tutorials Folder.**
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
@@ -93,23 +95,18 @@ Tutorials may be run in your browser using Google Colab
 </a>
 </br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20s-Centrality.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 5 - Homology mod2 for TriLoop Example</span>
+    <span >Tutorial 5 - s-Centrality</span>
 </a>
 </br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Static%20Hypergraphs%20and%20Entities.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 6 - Static Hypergraphs and Entities</span>
+    <span >Tutorial 6 - Homology mod2 for TriLoop Example</span>
 </a>
 </br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%207%20-%20s-centrality.ipynb" target="_blank">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 7 - s-Centrality</span>
-</a>
-</br>
 
 Installing HyperNetX
 ====================
@@ -178,12 +175,14 @@ For an editable installation with access to jupyter notebooks:
 > To successfully run the following installation commands, put single quotes around the square brackets.
 > For example:
 > >pip install -e .'[tutorials]'
+> or
+>>pip install -e .\['tutorials'\]
 >
 > For more information on this ZSH-related issue, see this [StackOverflow post](https://stackoverflow.com/a/68888466/11145086).
 
 To install with the tutorials:
 
-    >>> pip install -e .['tutorials']
+    >>> pip install -e .['tutorials'] 
 
 To install with the documentation:
 
