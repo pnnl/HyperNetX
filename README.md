@@ -66,7 +66,7 @@ What's Changed
 
 
 
-Tutorials may be run in your browser using Google Colab 
+Tutorials may be run in your browser using Google Colab
 -------------------------------------------------------
 
 **Additional Tutorials may be found on in the Tutorials Folder.**
@@ -182,7 +182,7 @@ For an editable installation with access to jupyter notebooks:
 
 To install with the tutorials:
 
-    >>> pip install -e .['tutorials'] 
+    >>> pip install -e .['tutorials']
 
 To install with the documentation:
 
@@ -317,6 +317,22 @@ gh run list --workflow=ci.yml --repo pnnl/HyperNetX
 ```
 
 
+Versioning
+----------------------
+
+This project uses [`commitizen`](https://github.com/commitizen-tools/commitizen) to manage versioning.
+The files where "version" will be updated are listed in the '.cz.toml' file. To create a new version and the associated tag,
+run the following commands:
+
+```shell
+# Install commitizen tool to environment
+make releases
+
+# Updates version; values for '--increment' can be MAJOR, MINOR, or PATCH
+# Autocreates a tag and commit for the updated version
+cz bump  --increment MAJOR  --dry-run
+cz bump  --increment MAJOR
+```
 
 Notice
 ------
