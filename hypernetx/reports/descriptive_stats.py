@@ -77,10 +77,7 @@ def degree_dist(H, aggregated=False):
      degree_dist : list or dict
         List of degrees or dictionary of degree distribution
     """
-    if H.nwhy:
-        distr = H.g.node_size_dist()
-    else:
-        distr = [H.degree(n) for n in H.nodes]
+    distr = [H.degree(n) for n in H.nodes]
     if aggregated:
         return Counter(distr)
     else:
@@ -344,9 +341,9 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
-    stats = H.state_dict.get("dist_stats", None)
+    stats = H._state_dict.get("dist_stats", None)
     if stats is not None:
-        return H.state_dict["dist_stats"]
+        return H._state_dict["dist_stats"]
 
     cstats = ["min", "max", "mean", "median", "std"]
     basic = dict()
