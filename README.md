@@ -108,115 +108,153 @@ Tutorials may be run in your browser using Google Colab
 </br>
 
 
+Installation
+====================
+
+The recommended installation method for most users is to create a virtual environment and install HyperNetX from PyPi.
+
+HyperNetX may be cloned or forked from [Github](https://github.com/pnnl/HyperNetX).
+
+Prerequisites
+-------------
+HyperNetX officially supports Python 3.8, 3.9, 3.10 and 3.11.
+
+Create a virtual environment
+----------------------------
+
+### Using venv
+
+
+```shell
+python -m venv venv-hnx
+source venv-hnx/bin/activate
+```
+
+
+### Using Anaconda
+
+
+```shell
+conda create -n venv-hnx python=3.11 -y
+conda activate venv-hnx
+```
+
+
+### Using virtualenv
+
+
+```shell
+virtualenv env-hnx
+source env-hnx/bin/activate
+```
+
+
+### For Windows Users
+
+On both Windows PowerShell or Command Prompt, you can use the following command to activate your virtual environment:
+
+```shell
+.\env-hnx\Scripts\activate
+```
+
+To deactivate your environment, use:
+
+```shell
+.\env-hnx\Scripts\deactivate
+```
+
 Installing HyperNetX
 ====================
-HyperNetX may be cloned or forked from: <https://github.com/pnnl/HyperNetX>
 
-To install in an Anaconda environment
--------------------------------------
-
-    >>> conda create -n <env name> python=3.8
-    >>> source activate <env name>
-    >>> pip install hypernetx
-
-Mac Users: If you wish to build the documentation you will need
-the conda version of matplotlib:
-
-    >>> conda create -n <env name> python=3.8 matplotlib
-    >>> source activate <env name>
-    >>> pip install hypernetx
-
-To use [NWHy](docs/build/nwhy.html) use python=3.9 and the conda version of tbb in your environment.
-**Note** that [NWHy](docs/build/nwhy.html) only works on Linux and some OSX systems. See [NWHy documentation](docs/build/nwhy.html) for more.:
-
-    >>> conda create -n <env name> python=3.9 tbb
-    >>> source activate <env name>
-    >>> pip install hypernetx
-    >>> pip install nwhy
-
-To install in a virtualenv environment
---------------------------------------
-
-    >>> virtualenv --python=<path to python 3.8 executable> <path to env name>
-
-This will create a virtual environment in the specified location using
-the specified python executable. For example:
-
-    >>> virtualenv --python=C:\Anaconda3\python.exe hnx
-
-This will create a virtual environment in .\hnx using the python
-that comes with Anaconda3.
-
-    >>> <path to env name>\Scripts\activate<file extension>
-
-If you are running in Windows PowerShell use <file extension>=.ps1
-
-If you are running in Windows Command Prompt use <file extension>=.bat
-
-Otherwise use <file extension>=NULL (no file extension).
-
-Once activated continue to follow the installation instructions below.
+Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.8.
 
 
-Install using Pip options
--------------------------
-For a minimal installation:
+Installing from PyPi
+--------------------
 
-    >>> pip install hypernetx
+```shell
+pip install hypernetx
+```
 
-For an editable installation with access to jupyter notebooks:
+Installing from Source
+----------------------
 
-    >>> pip install [-e] .
+Ensure that you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed.
 
-> ℹ️ **TIP:**  For the following installation commands, if you are using ZSH as your shell, you might encounter an error; for example:
->>**zsh: no matches found: .[tutorials]**
->
-> This error occurs because ZSH uses square brackets for globbing and pattern matching, which means that ZSH will not respect the square brackets as string literals when running commands such as pip install -e .[tutorials].
-> To successfully run the following installation commands, put single quotes around the square brackets.
-> For example:
-> >pip install -e .'[tutorials]'
-> or
->>pip install -e .\['tutorials'\]
->
-> For more information on this ZSH-related issue, see this [StackOverflow post](https://stackoverflow.com/a/68888466/11145086).
+```shell
+git clone https://github.com/pnnl/HyperNetX.git
+cd HyperNetX
+pip install .
+```
 
-To install with the tutorials:
+Post-Installation Actions
+=========================
 
-    >>> pip install -e .['tutorials']
+Running Tests
+-------------
 
-To install with the documentation:
+```shell
+python -m pytest
+```
 
-    >>> pip install -e .['documentation']
-    >>> cd docs
-    >>> make html
-    ## This will generate the documentation in /docs/build/
-    ## Open them in your browser with docs/build/html/index.html
+Development
+===========
 
-To install and test using pytest:
+Install an editable version
+---------------------------
+
+```
+pip install -e .
+```
+
+Install an editable version with access to jupyter notebooks
+------------------------------------------------------------
+
+```shell
+pip install -e .'[all]'
+```
+
+Install support for testing
+-----------------------------
 
 > ℹ️ **NOTE:** This project has a pytest configuration file named 'pytest.ini'. By default, pytest will use those configuration settings to run tests.
 
-    >>> pip install -e .['testing']
+```shell
+pip install .'[testing]'
 
-    # run tests
-    >>> python -m pytest
+# run tests
+python -m pytest
 
-    # run tests and show coverage report
-    >>> python -m pytest --cov=hypernetx
+# run tests and show coverage report
+python -m pytest --cov=hypernetx
 
-    # Generate an HTML code coverage report and view it on a browser
-    >>> coverage html
-    >>> open htmlcov/index.html
+# Generate an HTML code coverage report and view it on a browser
+coverage html
+open htmlcov/index.html
+```
 
-To install the whole shabang:
+Install support for tutorials
+-----------------------------
 
-    >>> pip install -e .['all']
+``` shell
+pip install .'[tutorials]'
+```
+
+Install support for documentation
+---------------------------------
+
+```shell
+pip install .'[documentation]'
+cd docs
+
+## This will generate the documentation in /docs/build/
+## Open them in your browser with docs/build/html/index.html
+make html
+```
 
 
-# Development
-
-## Code Quality
-
+Code Quality
+------------
 HyperNetX uses a number of tools to maintain code quality:
 
 * Pylint
@@ -224,8 +262,8 @@ HyperNetX uses a number of tools to maintain code quality:
 
 Before using these tools, ensure that you install Pylint in your environment:
 
-```commandline
-pip install -e .['linting']
+```shell
+pip install .'[linting]'
 ```
 
 
@@ -239,13 +277,13 @@ pip install -e .['linting']
 We have a Pylint configuration file, `.pylintrc`, located at the root of this project.
 To run Pylint and view the results of Pylint, run the following command:
 
-```commandline
+```shell
 pylint hypernetx --rcfile=.pylintrc
 ```
 
 You can also run Pylint on the command line to generate a report on the quality of the codebase and save it to a file named "pylint-results.txt":
 
-```commandline
+```shell
 pylint hypernetx --output=pylint-results.txt
 ```
 
@@ -256,13 +294,15 @@ For more information on configuration, see https://pylint.pycqa.org/en/latest/us
 [Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
 
 
-```commandline
+```shell
 black hypernetx
 ```
 
-# Documentation
+Documentation
+===============
 
-## Build and view docs locally
+Build and view documentation locally
+---------------------------
 
 ```
 cd docs
@@ -270,8 +310,8 @@ make html
 open docs/build/html/index.html
 ```
 
-## Develop documentation
-
+Editing documentation
+----------------------
 NOTE: make sure you install the required dependencies using: `make docs-deps`
 
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
@@ -298,7 +338,7 @@ you change a document file, it will automatically render on your browser, allowi
 
 
 Continuous Integration
-----------------------
+======================
 
 This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
 on pull requests, pushes to certain branches, and other events.
@@ -318,7 +358,7 @@ gh run list --workflow=ci.yml --repo pnnl/HyperNetX
 
 
 Versioning
-----------------------
+----------
 
 This project uses [`commitizen`](https://github.com/commitizen-tools/commitizen) to manage versioning.
 The files where "version" will be updated are listed in the '.cz.toml' file. To create a new version and the associated tag,
@@ -335,7 +375,7 @@ cz bump  --increment MAJOR
 ```
 
 Notice
-------
+======
 This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
 Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
 
@@ -352,6 +392,6 @@ Reference herein to any specific commercial product, process, or service by trad
 
 
 License
--------
+=======
 
 Released under the 3-Clause BSD license (see License.rst)

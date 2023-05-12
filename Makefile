@@ -17,7 +17,11 @@ test-ci: test-deps
 	@$(PYTHON3) -m tox -e py38 -r
 	@$(PYTHON3) -m tox -e py38-notebooks -r
 
-.PHONY: test, test-ci
+test-ci-github: test-deps
+	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
+	@$(PYTHON3) -m tox
+
+.PHONY: test, test-ci, test-ci-github
 
 ## Continuous Deployment
 ## Assumes that scripts are run on a container or test server VM

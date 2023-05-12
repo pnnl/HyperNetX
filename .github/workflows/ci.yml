@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
-        python: ['3.7', '3.8', '3.9', '3.10']
+        python: ['3.8', '3.9', '3.10', '3.11']
 
     runs-on: ${{ matrix.os }}
 
@@ -58,4 +58,4 @@ jobs:
 
     - name: Run tests
       run: |
-        make test-ci
+        make test-ci-github
