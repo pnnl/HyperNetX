@@ -53,7 +53,6 @@ What's New
 1. User-defined cell weights and default weights available to incidence matrix.
 1. Meta data persists with restrictions and removals.
 1. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-1. New module and tutorial for *Barycentric homology*.
 1. New hnxwidget available using  `pip install hnxwidget`.
 
 

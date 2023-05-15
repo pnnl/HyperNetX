@@ -4,14 +4,6 @@ algorithms package
 Submodules
 ----------
 
-algorithms.barycentric\_subdivisions module
--------------------------------------------
-
-.. automodule:: algorithms.barycentric_subdivisions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 algorithms.contagion module
 ---------------------------
 
