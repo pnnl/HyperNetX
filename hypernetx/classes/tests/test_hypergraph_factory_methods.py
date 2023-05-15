@@ -80,7 +80,7 @@ def test_from_dataframe():
     index = ["A", "B", "C"]
     columns = ["a", "b", "c", "d"]
     df = pd.DataFrame(M, index=index, columns=columns)
-    h = Hypergraph.from_dataframe(df)
+    h = Hypergraph.from_incidence_dataframe(df)
     assert "b" in h.edges()
     # assert "d" not in h.edges()
     assert "C" in h.edges["a"]
@@ -92,7 +92,7 @@ def test_from_dataframe_with_key():
     index = ["A", "B", "C"]
     columns = ["a", "b", "c", "d"]
     df = pd.DataFrame(M, index=index, columns=columns)
-    h = Hypergraph.from_dataframe(df, key=lambda x: x > 4)
+    h = Hypergraph.from_incidence_dataframe(df, key=lambda x: x > 4)
     assert "A" in h.edges["a"]
     assert "C" not in h.edges["a"]
 
@@ -111,17 +111,17 @@ def test_from_dataframe_with_transforms_and_fillna(dataframe):
     # def keymark.3(x):
     #     return (x > 0) * x
 
-    h = Hypergraph.from_dataframe(df)
+    h = Hypergraph.from_incidence_dataframe(df)
     assert "A" in h.edges["a"]
     assert "A" not in h.edges["b"]
-    h = Hypergraph.from_dataframe(df, fillna=1)
+    h = Hypergraph.from_incidence_dataframe(df, fillna=1)
     assert "A" in h.edges["b"]
-    h = Hypergraph.from_dataframe(df, transforms=[key1, key2])
+    h = Hypergraph.from_incidence_dataframe(df, transforms=[key1, key2])
     assert "A" in h.edges["c"]
     assert "C" not in h.edges["b"]
-    h = Hypergraph.from_dataframe(df, transforms=[key2, key3])
+    h = Hypergraph.from_incidence_dataframe(df, transforms=[key2, key3])
     assert "C" in h.edges["b"]
-    h = Hypergraph.from_dataframe(df, transforms=[key3, key1], key=key2)
+    h = Hypergraph.from_incidence_dataframe(df, transforms=[key3, key1], key=key2)
     assert "A" not in h.edges["a"]
     assert "B" in h.edges["b"]
     assert "C" not in h.edges["c"]
