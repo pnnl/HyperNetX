@@ -13,8 +13,6 @@ repos:
   - id: trailing-whitespace
     exclude: ^(docs/|hypernetx.egg-info/|setup.cfg)
   - id: check-merge-conflict
-  - id: no-commit-to-branch
-    args: ['--branch', 'master'] # blocks master commits.  To bypass do git commit --allow-empty
 
 -   repo: https://github.com/psf/black
     rev: 22.6.0
