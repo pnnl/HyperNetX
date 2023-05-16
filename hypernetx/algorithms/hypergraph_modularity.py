@@ -2,11 +2,11 @@
 Hypergraph_Modularity
 ---------------------
 Modularity and clustering for hypergraphs using HyperNetX.
-Adapted from F. Théberge's GitHub repository: `Hypergraph Clustering <https://github.com/ftheberge/Hypergraph_Clustering>`_ 
+Adapted from F. Théberge's GitHub repository: `Hypergraph Clustering <https://github.com/ftheberge/Hypergraph_Clustering>`_
 See Tutorial 13 in the tutorials folder for library usage.
 
 References
----------- 
+----------
 .. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. "A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering". In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
 .. [2] Kamiński  B., Prałat  P. and Théberge  F. "Community Detection Algorithm Using Hypergraph Modularity". In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks & Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13
 .. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. "Clustering via hypergraph modularity", Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307
@@ -14,11 +14,15 @@ References
 
 from collections import Counter
 import numpy as np
-from functools import reduce
-import igraph as ig
 import itertools
 from scipy.special import comb
 
+try:
+    import igraph as ig
+except Exception as e:
+    print(
+        f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
+    )
 ################################################################################
 
 # we use 2 representations for partitions (0-based part ids):
@@ -68,18 +72,19 @@ def part2dict(A):
         x.extend([(a, i) for a in A[i]])
     return {k: v for k, v in x}
 
+
 ################################################################################
 
 
-def precompute_attributes(HG):
+def precompute_attributes(H):
     """
-    Precompute some values on hypergraph HG for faster computing of hypergraph modularity. 
+    Precompute some values on hypergraph HG for faster computing of hypergraph modularity.
     This needs to be run before calling either modularity() or last_step().
 
     Note
     ----
 
-    If HG is unweighted, v.weight is set to 1 for each vertex v in HG. 
+    If HG is unweighted, v.weight is set to 1 for each vertex v in HG.
     The weighted degree for each vertex v is stored in v.strength.
     The total edge weigths for each edge cardinality is stored in HG.d_weights.
     Binomial coefficients to speed-up modularity computation are stored in HG.bin_coef.
@@ -92,10 +97,9 @@ def precompute_attributes(HG):
     Returns
     -------
     H : Hypergraph
-      New hypergraph with added attributes 
+      New hypergraph with added attributes
 
     """
-    H = HG.remove_singletons()
     # 1. compute node strenghts (weighted degrees)
     for v in H.nodes:
         H.nodes[v].strength = 0
@@ -124,6 +128,7 @@ def precompute_attributes(HG):
     H.bin_coef = bin_coef
     return H
 
+
 ################################################################################
 
 
@@ -146,11 +151,12 @@ def linear(d, c):
     """
     return c / d if c > d / 2 else 0
 
+
 # majority
 
 
 def majority(d, c):
-    """    
+    """
     Hyperparameter for hypergraph modularity [2]_ for d-edge with c vertices in the majority class.
     This corresponds to the majority rule [3]_
 
@@ -168,6 +174,7 @@ def majority(d, c):
 
     """
     return 1 if c > d / 2 else 0
+
 
 # strict
 
@@ -190,6 +197,7 @@ def strict(d, c):
       1 if c==d else 0
     """
     return 1 if c == d else 0
+
 
 #########################################
 
@@ -220,7 +228,7 @@ def _compute_partition_probas(HG, A):
 
 def _degree_tax(HG, Pr, wdc):
     """
-    Computes the expected fraction of edges falling in 
+    Computes the expected fraction of edges falling in
     the partition as per [2]_
 
     Parameters
@@ -242,7 +250,7 @@ def _degree_tax(HG, Pr, wdc):
         tax = 0
         for c in np.arange(d // 2 + 1, d + 1):
             for p in Pr:
-                tax += p**c * (1 - p)**(d - c) * HG.bin_coef[(d, c)] * wdc(d, c)
+                tax += p**c * (1 - p) ** (d - c) * HG.bin_coef[(d, c)] * wdc(d, c)
         tax *= HG.d_weights[d]
         DT += tax
     DT /= HG.total_weight
@@ -272,10 +280,13 @@ def _edge_contribution(HG, A, wdc):
     for e in HG.edges:
         d = HG.size(e)
         for part in A:
-            if HG.size(e, part) > d / 2:
-                EC += wdc(d, HG.size(e, part)) * HG.edges[e].weight
+            hgs = HG.size(e, part)
+            if hgs > d / 2:
+                EC += wdc(d, hgs) * HG.edges[e].weight
+                break
     EC /= HG.total_weight
     return EC
+
 
 # HG: HNX hypergraph
 # A: partition (list of sets)
@@ -293,7 +304,7 @@ def modularity(HG, A, wdc=linear):
     A : list of sets
         Partition of the vertices in HG
     wdc : func, optional
-        Hyperparameter for hypergraph modularity [2]_ 
+        Hyperparameter for hypergraph modularity [2]_
 
     Note
     ----
@@ -307,6 +318,7 @@ def modularity(HG, A, wdc=linear):
     """
     Pr = _compute_partition_probas(HG, A)
     return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
+
 
 ################################################################################
 
@@ -335,13 +347,14 @@ def two_section(HG):
             except:
                 w = 1 / (len(E) - 1)
             s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
-    G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges='sum')
+    G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges="sum")
     return G
+
 
 ################################################################################
 
 
-def kumar(HG, delta=.01):
+def kumar(HG, delta=0.01):
     """
     Compute a partition of the vertices in hypergraph HG as per Kumar's algorithm [1]_
 
@@ -359,14 +372,16 @@ def kumar(HG, delta=.01):
 
     """
     # weights will be modified -- store initial weights
-    W = {e: HG.edges[e].weight for e in HG.edges}  # uses edge id for reference instead of int
+    W = {
+        e: HG.edges[e].weight for e in HG.edges
+    }  # uses edge id for reference instead of int
     # build graph
     G = two_section(HG)
     # apply clustering
-    CG = G.community_multilevel(weights='weight')
+    CG = G.community_multilevel(weights="weight")
     CH = []
     for comm in CG.as_cover():
-        CH.append(set([G.vs[x]['name'] for x in comm]))
+        CH.append(set([G.vs[x]["name"] for x in comm]))
 
     # LOOP
     diff = 1
@@ -376,24 +391,29 @@ def kumar(HG, delta=.01):
         diff = 0
         for e in HG.edges:
             edge = HG.edges[e]
-            reweight = sum([1 / (1 + HG.size(e, c)) for c in CH]) * (HG.size(e) + len(CH)) / HG.number_of_edges()
+            reweight = (
+                sum([1 / (1 + HG.size(e, c)) for c in CH])
+                * (HG.size(e) + len(CH))
+                / HG.number_of_edges()
+            )
             diff = max(diff, 0.5 * abs(edge.weight - reweight))
             edge.weight = 0.5 * edge.weight + 0.5 * reweight
         # re-run louvain
         # build graph
         G = two_section(HG)
         # apply clustering
-        CG = G.community_multilevel(weights='weight')
+        CG = G.community_multilevel(weights="weight")
         CH = []
         for comm in CG.as_cover():
-            CH.append(set([G.vs[x]['name'] for x in comm]))
+            CH.append(set([G.vs[x]["name"] for x in comm]))
         ctr += 1
         if ctr > 50:  # this process sometimes gets stuck -- set limit
             break
-    G.vs['part'] = CG.membership
+    G.vs["part"] = CG.membership
     for e in HG.edges:
         HG.edges[e].weight = W[e]
-    return dict2part({v['name']: v['part'] for v in G.vs})
+    return dict2part({v["name"]: v["part"] for v in G.vs})
+
 
 ################################################################################
 
@@ -425,11 +445,17 @@ def _delta_ec(HG, P, v, a, b, wdc):
     Pm = P[a] - {v}
     Pn = P[b].union({v})
     ec = 0
-    for e in list(HG.nodes[v].memberships):
+
+    # TODO: Verify the data shape of `memberships` (ie. what are the keys and values)
+    for e in list(HG.nodes.memberships[v]):
         d = HG.size(e)
         w = HG.edges[e].weight
-        ec += w * (wdc(d, HG.size(e, Pm)) + wdc(d, HG.size(e, Pn))
-                   - wdc(d, HG.size(e, P[a])) - wdc(d, HG.size(e, P[b])))
+        ec += w * (
+            wdc(d, HG.size(e, Pm))
+            + wdc(d, HG.size(e, Pn))
+            - wdc(d, HG.size(e, P[a]))
+            - wdc(d, HG.size(e, P[b]))
+        )
     return ec / HG.total_weight
 
 
@@ -451,7 +477,7 @@ def _bin_ppmf(d, c, p):
     : float
 
     """
-    return p**c * (1 - p)**(d - c)
+    return p**c * (1 - p) ** (d - c)
 
 
 def _delta_dt(HG, P, v, a, b, wdc):
@@ -492,13 +518,21 @@ def _delta_dt(HG, P, v, a, b, wdc):
     for d in HG.d_weights.keys():
         x = 0
         for c in np.arange(int(np.floor(d / 2)) + 1, d + 1):
-            x += HG.bin_coef[(d, c)] * wdc(d, c) * (_bin_ppmf(d, c, voln) + _bin_ppmf(d, c, volm)
-                                                    - _bin_ppmf(d, c, vola) - _bin_ppmf(d, c, volb))
+            x += (
+                HG.bin_coef[(d, c)]
+                * wdc(d, c)
+                * (
+                    _bin_ppmf(d, c, voln)
+                    + _bin_ppmf(d, c, volm)
+                    - _bin_ppmf(d, c, vola)
+                    - _bin_ppmf(d, c, volb)
+                )
+            )
         DT += x * HG.d_weights[d]
     return DT / HG.total_weight
 
 
-def last_step(HG, L, wdc=linear, delta=.01):
+def last_step(HG, L, wdc=linear, delta=0.01):
     """
     Given some initial partition L, compute a new partition of the vertices in HG as per Last-Step algorithm [2]_
 
@@ -516,10 +550,10 @@ def last_step(HG, L, wdc=linear, delta=.01):
       some initial partition of the vertices in HG
 
     wdc : func, optional
-        Hyperparameter for hypergraph modularity [2]_ 
+        Hyperparameter for hypergraph modularity [2]_
 
     delta : float, optional
-            convergence stopping criterion    
+            convergence stopping criterion
 
     Returns
     -------
@@ -539,7 +573,10 @@ def last_step(HG, L, wdc=linear, delta=.01):
                     if c == i:
                         M.append(0)
                     else:
-                        M.append(_delta_ec(HG, A, v, c, i, wdc) - _delta_dt(HG, A, v, c, i, wdc))
+                        M.append(
+                            _delta_ec(HG, A, v, c, i, wdc)
+                            - _delta_dt(HG, A, v, c, i, wdc)
+                        )
                 i = s[np.argmax(M)]
                 if c != i:
                     A[c] = A[c] - {v}
@@ -551,5 +588,6 @@ def last_step(HG, L, wdc=linear, delta=.01):
             break
         qH = q2
     return [a for a in A if len(a) > 0]
+
 
 ################################################################################

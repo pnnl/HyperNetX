@@ -17,22 +17,22 @@
 
 import sys
 import os
-import shlex
 
-__version__ = "1.2.5"
+
+__version__ = "2.0.0.post1"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath("."))
-sys.path.append(os.path.join(os.path.dirname(__name__), "hypernetx"))
+sys.path.insert(0 , os.path.abspath("../../hypernetx"))
+
 
 # -- Project information -----------------------------------------------------
 
 project = "HyperNetX"
-copyright = "2021 Battelle Memorial Institute"
-author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy, Tony Liu, Andrew Lumsdaine, Nicholas Landry"
+copyright = "2023 Battelle Memorial Institute"
+author = "Brenda Praggastis, Dustin Arendt, Emilie Purvine, Cliff Joslyn, Sinan Aksoy"
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])
@@ -59,6 +59,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "nb2plots",
     "texext",
+    'sphinx_copybutton',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -80,7 +81,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -134,7 +135,7 @@ html_theme = "sphinx_rtd_theme"
 # html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = ["_static"]
+# html_theme_path = ["_static"]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -155,7 +156,7 @@ html_logo = "images/hnx_logo_smaller.png"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -376,6 +377,10 @@ epub_exclude_files = ["search.html"]
 # If false, no index is generated.
 # epub_use_index = True
 
+# Remove the command prompts such as >>> when copying code snippets from copybutton
+# see https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+copybutton_exclude = '.linenos, .gp'
 
-def setup(app):
-    app.add_js_file("copybutton.js")
+#  tables and code-blocks are automatically numbered if they have a caption.
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-numfig
+numfig = True

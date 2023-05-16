@@ -133,13 +133,20 @@ class ModularityExample:
     """
 
     def __init__(self):
-        E = [{'A', 'B'}, {'A', 'C'}, {'A', 'B', 'C'}, {'A', 'D', 'E', 'F'}, {'D', 'F'}, {'E', 'F'}]
+        E = [
+            {"A", "B"},
+            {"A", "C"},
+            {"A", "B", "C"},
+            {"A", "D", "E", "F"},
+            {"D", "F"},
+            {"E", "F"},
+        ]
         self.E = E
-        self.HG = hnx.Hypergraph(E, static=True)
-        A1 = [{'A', 'B', 'C'}, {'D', 'E', 'F'}]
-        A2 = [{'B', 'C'}, {'A', 'D', 'E', 'F'}]
-        A3 = [{'A', 'B', 'C', 'D', 'E', 'F'}]
-        A4 = [{'A'}, {'B'}, {'C'}, {'D'}, {'E'}, {'F'}]
+        self.HG = hnx.Hypergraph(E)
+        A1 = [{"A", "B", "C"}, {"D", "E", "F"}]
+        A2 = [{"B", "C"}, {"A", "D", "E", "F"}]
+        A3 = [{"A", "B", "C", "D", "E", "F"}]
+        A4 = [{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"F"}]
         self.partitions = [A1, A2, A3, A4]
 
 

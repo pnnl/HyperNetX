@@ -12,18 +12,26 @@ classes.entity module
    :undoc-members:
    :show-inheritance:
 
-classes.hypergraph module
--------------------------
+classes.entityset module
+------------------------
 
-.. automodule:: classes.hypergraph
+.. automodule:: classes.entityset
    :members:
    :undoc-members:
    :show-inheritance:
 
-classes.staticentity module
----------------------------
+classes.helpers module
+----------------------
 
-.. automodule:: classes.staticentity
+.. automodule:: classes.helpers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.hypergraph module
+-------------------------
+
+.. automodule:: classes.hypergraph
    :members:
    :undoc-members:
    :show-inheritance:

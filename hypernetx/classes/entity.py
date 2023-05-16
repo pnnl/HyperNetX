@@ -1,1053 +1,1622 @@
-# Copyright © 2018 Battelle Memorial Institute
-# All rights reserved.
+from __future__ import annotations
 
-from collections import defaultdict
 import warnings
-from copy import copy
+from ast import literal_eval
+from collections import OrderedDict, defaultdict
+from collections.abc import Hashable, Mapping, Sequence, Iterable
+from typing import Union, TypeVar, Optional, Any
+
 import numpy as np
-import networkx as nx
-from hypernetx import HyperNetXError
+import pandas as pd
+from scipy.sparse import csr_matrix
 
-__all__ = ["Entity", "EntitySet"]
+from hypernetx.classes.helpers import (
+    AttrList,
+    assign_weights,
+    remove_row_duplicates,
+    dict_depth,
+)
+
+T = TypeVar("T", bound=Union[str, int])
 
 
-class Entity(object):
-    """
-    Base class for objects used in building network-like objects including
-    Hypergraphs, Posets, Cell Complexes.
+class Entity:
+    """Base class for handling N-dimensional data when building network-like models,
+    i.e., :class:`Hypergraph`
 
     Parameters
     ----------
-    uid : hashable
-        a unique identifier
-
-    elements : list or dict, optional, default: None
-        a list of entities with identifiers different than uid and/or
-        hashables different than uid, see `Honor System`_
-
-    entity : Entity
-        an Entity object to be cloned into a new Entity with uid. If the uid is the same as
-        Entity.uid then the entities will not be distinguishable and error will be raised.
-        The `elements` in the signature will be added to the cloned entity.
-
-    weight : float, optional, default : 1
-    props : keyword arguments, optional, default: {}
-        properties belonging to the entity added as key=value pairs.
-        Both key and value must be hashable.
+    entity : pandas.DataFrame, dict of lists or sets, list of lists or sets, optional
+        If a ``DataFrame`` with N columns,
+        represents N-dimensional entity data (data table).
+        Otherwise, represents 2-dimensional entity data (system of sets).
+        TODO: Test for compatibility with list of Entities and update docs
+    data : numpy.ndarray, optional
+        2D M x N ``ndarray`` of ``ints`` (data table);
+        sparse representation of an N-dimensional incidence tensor with M nonzero cells.
+        Ignored if `entity` is provided.
+    static : bool, default=True
+        If ``True``, entity data may not be altered,
+        and the :attr:`state_dict <_state_dict>` will never be cleared.
+        Otherwise, rows may be added to and removed from the data table,
+        and updates will clear the :attr:`state_dict <_state_dict>`.
+    labels : collections.OrderedDict of lists, optional
+        User-specified labels in corresponding order to ``ints`` in `data`.
+        Ignored if `entity` is provided or `data` is not provided.
+    uid : hashable, optional
+        A unique identifier for the object
+    weights : str or sequence of float, optional
+        User-specified cell weights corresponding to entity data.
+        If sequence of ``floats`` and `entity` or `data` defines a data table,
+            length must equal the number of rows.
+        If sequence of ``floats`` and `entity` defines a system of sets,
+            length must equal the total sum of the sizes of all sets.
+        If ``str`` and `entity` is a ``DataFrame``,
+            must be the name of a column in `entity`.
+        Otherwise, weight for all cells is assumed to be 1.
+    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}
+        Name of function to use for aggregating cell weights of duplicate rows when
+        `entity` or `data` defines a data table, default is "sum".
+        If None, duplicate rows will be dropped without aggregating cell weights.
+        Effectively ignored if `entity` defines a system of sets.
+    properties : pandas.DataFrame or doubly-nested dict, optional
+        User-specified properties to be assigned to individual items in the data, i.e.,
+        cell entries in a data table; sets or set elements in a system of sets.
+        See Notes for detailed explanation.
+        If ``DataFrame``, each row gives
+        ``[optional item level, item label, optional named properties,
+        {property name: property value}]``
+        (order of columns does not matter; see note for an example).
+        If doubly-nested dict,
+        ``{item level: {item label: {property name: property value}}}``.
+    misc_props_col, level_col, id_col : str, default="properties", "level, "id"
+        Column names for miscellaneous properties, level index, and item name in
+        :attr:`properties`; see Notes for explanation.
 
     Notes
     -----
+    A property is a named attribute assigned to a single item in the data.
 
-    An Entity is a container-like object, which has a unique identifier and
-    may contain elements and have properties.
-    The Entity class was created as a generic object providing structure for
-    Hypergraph nodes and edges.
+    You can pass a **table of properties** to `properties` as a ``DataFrame``:
 
-    - An Entity is distinguished by its identifier (sortable,hashable) :func:`Entity.uid`
-    - An Entity is a container for other entities but may not contain itself, :func:`Entity.elements`
-    - An Entity has properties :func:`Entity.properties`
-    - An Entity has memberships to other entities, :func:`Entity.memberships`.
-    - An Entity has children, :func:`Entity.children`, which are the elements of its elements.
-    - :func:`Entity.children` are registered in the :func:`Entity.registry`.
-    - All descendents of Entity are registered in :func:`Entity.fullregistry()`.
+    +------------+---------+----------------+-------+------------------+
+    | Level      | ID      | [explicit      | [...] | misc. properties |
+    | (optional) |         | property type] |       |                  |
+    +============+=========+================+=======+==================+
+    | 0          | level 0 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | 1          | level 1 | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
+    | ...        | ...     | ...            | ...   | ...              |
+    +------------+---------+----------------+-------+------------------+
+    | N          | level N | property value | ...   | {property name:  |
+    |            | item    |                |       | property value}  |
+    +------------+---------+----------------+-------+------------------+
 
-    .. _Honor System:
+    The Level column is optional. If not provided, properties will be assigned by ID
+    (i.e., if an ID appears at multiple levels, the same properties will be assigned to
+    all occurrences).
 
-    **Honor System**
+    The names of the Level (if provided) and ID columns must be specified by `level_col`
+    and `id_col`. `misc_props_col` can be used to specify the name of the column to be used
+    for miscellaneous properties; if no column by that name is found,
+    a new column will be created and populated with empty ``dicts``.
+    All other columns will be considered explicit property types.
+    The order of the columns does not matter.
 
-    HyperNetX has an Honor System that applies to Entity uid values.
-    Two entities are equal if their __dict__ objects match.
-    For performance reasons many methods distinguish entities by their uids.
-    It is, therefore, up to the user to ensure entities with the same uids are indeed the same.
-    Not doing so may cause undesirable side effects.
-    In particular, the methods in the Hypergraph class assume distinct nodes and edges
-    have distinct uids.
-
-    Examples
-    --------
-
-        >>> x = Entity('x')
-        >>> y = Entity('y',[x])
-        >>> z = Entity('z',[x,y],weight=1)
-        >>> z
-        Entity(z,['y', 'x'],{'weight': 1})
-        >>> z.uid
-        'z'
-        >>> z.elements
-        {'x': Entity(x,[],{}), 'y': Entity(y,['x'],{})}
-        >>> z.properties
-        {'weight': 1}
-        >>> z.children
-        {'x'}
-        >>> x.memberships
-        {'y': Entity(y,['x'],{}), 'z': Entity(z,['y', 'x'],{'weight': 1})}
-        >>> z.fullregistry()
-        {'x': Entity(x,[],{}), 'y': Entity(y,['x'],{})}
-
-
-    See Also
-    --------
-    EntitySet
+    This method assumes that there are no rows with the same (Level, ID);
+    if duplicates are found, all but the first occurrence will be dropped.
 
     """
 
-    def __init__(self, uid, elements=[], entity=None, weight=1.0, **props):
-        super().__init__()
+    def __init__(
+        self,
+        entity: Optional[
+            pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
+        ] = None,
+        data_cols: Sequence[T] = [0, 1],
+        data: Optional[np.ndarray] = None,
+        static: bool = False,
+        labels: Optional[OrderedDict[T, Sequence[T]]] = None,
+        uid: Optional[Hashable] = None,
+        weight_col: Optional[str | int] = "cell_weights",
+        weights: Optional[Sequence[float] | float | int | str] = 1,
+        aggregateby: Optional[str | dict] = "sum",
+        properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
+        misc_props_col: str = "properties",
+        level_col: str = "level",
+        id_col: str = "id",
+    ):
+        # set unique identifier
+        self._uid = uid or None
 
-        self._uid = uid
-        self.weight = weight
+        # if static, the original data cannot be altered
+        # the state dict stores all computed values that may need to be updated
+        # if the data is altered - the dict will be cleared when data is added
+        # or removed
+        self._static = static
+        self._state_dict = {}
 
-        if entity is not None:
-            if isinstance(entity, Entity):
-                if uid == entity.uid:
-                    raise HyperNetXError(
-                        "The new entity will be indistinguishable from the original with the same uid. Use a differen uid."
+        # entity data is stored in a DataFrame for basic access without the
+        # need for any label encoding lookups
+        if isinstance(entity, pd.DataFrame):
+            self._dataframe = entity.copy()
+
+        # if the entity data is passed as a dict of lists or a list of lists,
+        # we convert it to a 2-column dataframe by exploding each list to cover
+        # one row per element for a dict of lists, the first level/column will
+        # be filled in with dict keys for a list of N lists, 0,1,...,N will be
+        # used to fill the first level/column
+        elif isinstance(entity, (dict, list)):
+            # convert dict of lists to 2-column dataframe
+            entity = pd.Series(entity).explode()
+            self._dataframe = pd.DataFrame(
+                {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
+            )
+
+        # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
+        # ndarray in the state dict
+        elif isinstance(data, np.ndarray) and data.ndim == 2:
+            self._state_dict["data"] = data
+            self._dataframe = pd.DataFrame(data)
+            # if a dict of labels was passed, use keys as column names in the
+            # DataFrame, translate the dataframe, and store the dict of labels
+            # in the state dict
+            if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
+                self._dataframe.columns = labels.keys()
+                self._state_dict["labels"] = labels
+
+                for col in self._dataframe:
+                    self._dataframe[col] = pd.Categorical.from_codes(
+                        self._dataframe[col], categories=labels[col]
                     )
-                self._elements = entity.elements
-                self._memberships = entity.memberships
-                self.__dict__.update(entity.properties)
+
+        # create an empty Entity
         else:
-            self._elements = dict()
-            self._memberships = dict()
-            self._registry = dict()
+            self._dataframe = pd.DataFrame()
 
-        self.__dict__.update(props)
-        self._registry = self.registry
+        # assign a new or existing column of the dataframe to hold cell weights
+        self._dataframe, self._cell_weight_col = assign_weights(
+            self._dataframe, weights=weights, weight_col=weight_col
+        )
+        # import ipdb; ipdb.set_trace()
+        # store a list of columns that hold entity data (not properties or
+        # weights)
+        # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+        self._data_cols = []
+        for col in data_cols:
+            # TODO: default arguments fail for empty Entity; data_cols has two elements but _dataframe has only one element
+            if isinstance(col, int):
+                self._data_cols.append(self._dataframe.columns[col])
+            else:
+                self._data_cols.append(col)
 
-        if isinstance(elements, dict):
-            for k, v in elements.items():
-                if isinstance(v, Entity):
-                    self.add_element(v)
-                else:
-                    self.add_element(Entity(k, v))
-        elif elements is not None:
-            self.add(*elements)
+        # each entity data column represents one dimension of the data
+        # (data updates can only add or remove rows, so this isn't stored in
+        # state dict)
+        self._dimsize = len(self._data_cols)
+
+        # remove duplicate rows and aggregate cell weights as needed
+        # import ipdb; ipdb.set_trace()
+        self._dataframe, _ = remove_row_duplicates(
+            self._dataframe,
+            self._data_cols,
+            weight_col=self._cell_weight_col,
+            aggregateby=aggregateby,
+        )
+
+        # set the dtype of entity data columns to categorical (simplifies
+        # encoding, etc.)
+        ### This is automatically done in remove_row_duplicates
+        # self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+        #     "category"
+        # )
+
+        # create properties
+        item_levels = [
+            (level, item)
+            for level, col in enumerate(self._data_cols)
+            for item in self.dataframe[col].cat.categories
+        ]
+        index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
+        data = [(i, 1, {}) for i in range(len(index))]
+        self._properties = pd.DataFrame(
+            data=data, index=index, columns=["uid", "weight", misc_props_col]
+        ).sort_index()
+        self._misc_props_col = misc_props_col
+        if properties is not None:
+            self.assign_properties(properties)
 
     @property
-    def properties(self):
-        """Dictionary of properties of entity"""
-        temp = self.__dict__.copy()
-        del temp["_elements"]
-        del temp["_memberships"]
-        del temp["_registry"]
-        del temp["_uid"]
-        return temp
+    def data(self):
+        """Sparse representation of the data table as an incidence tensor
+
+        This can also be thought of as an encoding of `dataframe`, where items in each column of
+        the data table are translated to their int position in the `self.labels[column]` list
+        Returns
+        -------
+        numpy.ndarray
+            2D array of ints representing rows of the underlying data table as indices in an incidence tensor
+
+        See Also
+        --------
+        labels, dataframe
+
+        """
+        # generate if not already stored in state dict
+        if "data" not in self._state_dict:
+            if self.empty:
+                self._state_dict["data"] = np.zeros((0, 0), dtype=int)
+            else:
+                # assumes dtype of data cols is already converted to categorical
+                # and state dict has been properly cleared after updates
+                self._state_dict["data"] = (
+                    self._dataframe[self._data_cols]
+                    .apply(lambda x: x.cat.codes)
+                    .to_numpy()
+                )
+
+        return self._state_dict["data"]
+
+    @property
+    def labels(self):
+        """Labels of all items in each column of the underlying data table
+
+        Returns
+        -------
+        dict of lists
+            dict of {column name: [item labels]}
+            The order of [item labels] corresponds to the int encoding of each item in `self.data`.
+
+        See Also
+        --------
+        data, dataframe
+        """
+        # generate if not already stored in state dict
+        if "labels" not in self._state_dict:
+            # assumes dtype of data cols is already converted to categorical
+            # and state dict has been properly cleared after updates
+            self._state_dict["labels"] = {
+                col: self._dataframe[col].cat.categories.to_list()
+                for col in self._data_cols
+            }
+
+        return self._state_dict["labels"]
+
+    @property
+    def cell_weights(self):
+        """Cell weights corresponding to each row of the underlying data table
+
+        Returns
+        -------
+        dict of {tuple: int or float}
+            Keyed by row of data table (as a tuple)
+        """
+        # generate if not already stored in state dict
+        if "cell_weights" not in self._state_dict:
+            if self.empty:
+                self._state_dict["cell_weights"] = {}
+            else:
+                self._state_dict["cell_weights"] = self._dataframe.set_index(
+                    self._data_cols
+                )[self._cell_weight_col].to_dict()
+
+        return self._state_dict["cell_weights"]
+
+    @property
+    def dimensions(self):
+        """Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table
+
+        Returns
+        -------
+        tuple of ints
+            Length and order corresponds to columns of `self.dataframe` (excluding cell weight column)
+        """
+        # generate if not already stored in state dict
+        if "dimensions" not in self._state_dict:
+            if self.empty:
+                self._state_dict["dimensions"] = tuple()
+            else:
+                self._state_dict["dimensions"] = tuple(
+                    self._dataframe[self._data_cols].nunique()
+                )
+
+        return self._state_dict["dimensions"]
+
+    @property
+    def dimsize(self):
+        """Number of levels (columns) in the underlying data table
+
+        Returns
+        -------
+        int
+            Equal to length of `self.dimensions`
+        """
+        return self._dimsize
+
+    @property
+    def properties(self) -> pd.DataFrame:
+        # Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
+        """Properties assigned to items in the underlying data table
+
+        Returns
+        -------
+        pandas.DataFrame
+        """
+
+        return self._properties
 
     @property
     def uid(self):
-        """String identifier for entity"""
+        # Dev Note: This also returned nothing in my harry potter dataset, not sure if it was supposed to contain anything
+        """User-defined unique identifier for the `Entity`
+
+        Returns
+        -------
+        hashable
+        """
         return self._uid
 
     @property
-    def elements(self):
-        """
-        Dictionary of elements belonging to entity.
-        """
-        return dict(self._elements)
+    def uidset(self):
+        """Labels of all items in level 0 (first column) of the underlying data table
 
-    @property
-    def memberships(self):
-        """
-        Dictionary of elements to which entity belongs.
+        Returns
+        -------
+        frozenset
 
-        This assignment is done on construction and controlled by
-        :func:`Entity.add_element()`
-        and :func:`Entity.remove_element()` methods.
+        See Also
+        --------
+        children : Labels of all items in level 1 (second column)
+        uidset_by_level, uidset_by_column :
+            Labels of all items in any level (column); specified by level index or column name
         """
-
-        return {
-            k: self._memberships[k]
-            for k in self._memberships
-            if not isinstance(self._memberships[k], EntitySet)
-        }
+        return self.uidset_by_level(0)
 
     @property
     def children(self):
-        """
-        Set of uids of the elements of elements of entity.
+        """Labels of all items in level 1 (second column) of the underlying data table
 
-        To return set of ids for deeper level use:
-        :code:`Entity.levelset(level).keys()`
-        see: :func:`Entity.levelset`
+        Returns
+        -------
+        frozenset
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        uidset_by_level, uidset_by_column :
+            Labels of all items in any level (column); specified by level index or column name
         """
-        return set(self.levelset(2).keys())
+        return self.uidset_by_level(1)
+
+    def uidset_by_level(self, level):
+        """Labels of all items in a particular level (column) of the underlying data table
+
+        Parameters
+        ----------
+        level : int
+
+        Returns
+        -------
+        frozenset
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        children : Labels of all items in level 1 (second column)
+        uidset_by_column : Same functionality, takes the column name instead of level index
+        """
+        if self.is_empty(level):
+            return {}
+        col = self._data_cols[level]
+        return self.uidset_by_column(col)
+
+    def uidset_by_column(self, column):
+        # Dev Note: This threw an error when trying it on the harry potter dataset,
+        # when trying 0, or 1 for column. I'm not sure how this should be used
+        """Labels of all items in a particular column (level) of the underlying data table
+
+        Parameters
+        ----------
+        column : Hashable
+            Name of a column in `self.dataframe`
+
+        Returns
+        -------
+        frozenset
+
+        See Also
+        --------
+        uidset : Labels of all items in level 0 (first column)
+        children : Labels of all items in level 1 (second column)
+        uidset_by_level : Same functionality, takes the level index instead of column name
+        """
+        # generate if not already stored in state dict
+        if "uidset" not in self._state_dict:
+            self._state_dict["uidset"] = {}
+        if column not in self._state_dict["uidset"]:
+            self._state_dict["uidset"][column] = set(
+                self._dataframe[column].dropna().unique()
+            )
+
+        return self._state_dict["uidset"][column]
 
     @property
-    def registry(self):
-        """
-        Dictionary of uid:Entity pairs for children entity.
+    def elements(self):
+        """System of sets representation of the first two levels (columns) of the underlying data table
 
-        To return a dictionary of all entities at all depths
-        :func:`Entity.complete_registry()`
+        Each item in level 0 (first column) defines a set containing all the level 1
+        (second column) items with which it appears in the same row of the underlying
+        data table
+
+        Returns
+        -------
+        dict of `AttrList`
+            System of sets representation as dict of {level 0 item : AttrList(level 1 items)}
+
+        See Also
+        --------
+        incidence_dict : same data as dict of list
+        memberships :
+            dual of this representation,
+            i.e., each item in level 1 (second column) defines a set
+        elements_by_level, elements_by_column :
+            system of sets representation of any two levels (columns); specified by level index or column name
+
         """
-        return self.levelset(2)
+        if self._dimsize < 2:
+            return {k: AttrList(entity=self, key=(0, k)) for k in self.uidset}
+
+        return self.elements_by_level(0, 1)
 
     @property
-    def uidset(self):
+    def incidence_dict(self) -> dict[T, list[T]]:
+        """System of sets representation of the first two levels (columns) of the underlying data table
+
+        Returns
+        -------
+        dict of list
+            System of sets representation as dict of {level 0 item : AttrList(level 1 items)}
+
+        See Also
+        --------
+        elements : same data as dict of AttrList
+
         """
-        Set of uids of elements of entity.
-        """
-        return frozenset(self._elements.keys())
+        return {item: elements.data for item, elements in self.elements.items()}
 
     @property
-    def incidence_dict(self):
-        """
-        Dictionary of element.uid:element.uidset for each element in entity
+    def memberships(self):
+        """System of sets representation of the first two levels (columns) of the
+        underlying data table
 
-        To return an incidence dictionary of all nested entities in entity
-        use nested_incidence_dict
+        Each item in level 1 (second column) defines a set containing all the level 0
+        (first column) items with which it appears in the same row of the underlying
+        data table
+
+        Returns
+        -------
+        dict of `AttrList`
+            System of sets representation as dict of {level 1 item : AttrList(level 0 items)}
+
+        See Also
+        --------
+        elements : dual of this representation i.e., each item in level 0 (first column) defines a set
+        elements_by_level, elements_by_column :
+            system of sets representation of any two levels (columns); specified by level index or column name
+
         """
-        temp = dict()
-        for ent in self.elements.values():
-            temp[ent.uid] = {item for item in ent.elements}
-        return temp
+
+        return self.elements_by_level(1, 0)
+
+    def elements_by_level(self, level1, level2):
+        """System of sets representation of two levels (columns) of the underlying data table
+
+        Each item in level1 defines a set containing all the level2 items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in level1
+
+        Parameters
+        ----------
+        level1 : int
+            index of level whose items define sets
+        level2 : int
+            index of level whose items are elements in the system of sets
+
+        Returns
+        -------
+        dict of `AttrList`
+            System of sets representation as dict of {level1 item : AttrList(level2 items)}
+
+        See Also
+        --------
+        elements, memberships : dual system of sets representations of the first two levels (columns)
+        elements_by_column : same functionality, takes column names instead of level indices
+
+        """
+        col1 = self._data_cols[level1]
+        col2 = self._data_cols[level2]
+        return self.elements_by_column(col1, col2)
+
+    def elements_by_column(self, col1, col2):
+
+        """System of sets representation of two columns (levels) of the underlying data table
+
+        Each item in col1 defines a set containing all the col2 items
+        with which it appears in the same row of the underlying data table
+
+        Properties can be accessed and assigned to items in col1
+
+        Parameters
+        ----------
+        col1 : Hashable
+            name of column whose items define sets
+        col2 : Hashable
+            name of column whose items are elements in the system of sets
+
+        Returns
+        -------
+        dict of `AttrList`
+            System of sets representation as dict of {col1 item : AttrList(col2 items)}
+
+        See Also
+        --------
+        elements, memberships : dual system of sets representations of the first two columns (levels)
+        elements_by_level : same functionality, takes level indices instead of column names
+
+        """
+        if "elements" not in self._state_dict:
+            self._state_dict["elements"] = defaultdict(dict)
+        if col2 not in self._state_dict["elements"][col1]:
+            level = self.index(col1)
+            elements = self._dataframe.groupby(col1)[col2].unique().to_dict()
+            self._state_dict["elements"][col1][col2] = {
+                item: AttrList(entity=self, key=(level, item), initlist=elem)
+                for item, elem in elements.items()
+            }
+
+        return self._state_dict["elements"][col1][col2]
 
     @property
-    def is_empty(self):
-        """Boolean indicating if entity.elements is empty"""
-        return len(self) == 0
+    def dataframe(self):
+        """The underlying data table stored by the Entity
+
+        Returns
+        -------
+        pandas.DataFrame
+        """
+        return self._dataframe
 
     @property
-    def is_bipartite(self):
+    def isstatic(self):
+        # Dev Note: I'm guessing this is no longer necessary?
+        """Whether to treat the underlying data as static or not
+
+        If True, the underlying data may not be altered, and the state_dict will never be cleared
+        Otherwise, rows may be added to and removed from the data table, and updates will clear the state_dict
+
+        Returns
+        -------
+        bool
         """
-        Returns boolean indicating if the entity satisfies the `Bipartite Condition`_
+        return self._static
+
+    def size(self, level=0):
+        """The number of items in a level of the underlying data table
+
+        Equivalent to ``self.dimensions[level]``
+
+        Parameters
+        ----------
+        level : int, default=0
+
+        Returns
+        -------
+        int
+
+        See Also
+        --------
+        dimensions
         """
-        if self.uidset.isdisjoint(self.children):
-            return True
-        else:
-            return False
+        # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
+        return self.dimensions[level]
 
-    def __eq__(self, other):
+    @property
+    def empty(self):
+        """Whether the underlying data table is empty or not
+
+        Returns
+        -------
+        bool
+
+        See Also
+        --------
+        is_empty : for checking whether a specified level (column) is empty
+        dimsize : 0 if empty
         """
-        Defines equality for Entities based on equivalence of their __dict__ objects.
+        return self._dimsize == 0
 
-        Checks all levels of self and other to verify they are
-        referencing the same uids and that they have the same set of properties.
-        If at any point we get duplicate addresses we stop checking that branch
-        because we are guaranteed equality from there on.
+    def is_empty(self, level=0):
+        """Whether a specified level (column) of the underlying data table is empty or not
 
-        May cause a recursion error if depth is too great.
+        Returns
+        -------
+        bool
+
+        See Also
+        --------
+        empty : for checking whether the underlying data table is empty
+        size : number of items in a level (columns); 0 if level is empty
         """
-        seen = set()
-        # Define a compare method to call recursively on each level of self and other
-
-        def _comp(a, b, seen):
-            # Compare top level properties: same class? same ids? same children? same parents? same attributes?
-            if (
-                (a.__class__ != b.__class__)
-                or (a.uid != b.uid)
-                or (a.uidset != b.uidset)
-                or (a.properties != b.properties)
-                or (a.memberships != b.memberships)
-            ):
-                return False
-            # If all agree then look at the next level down since a and b share uidsets.
-            for uid, elt in a.elements.items():
-                if isinstance(elt, Entity):
-                    if uid in seen:
-                        continue
-                    seen.add(uid)
-                    if not _comp(elt, b[uid], seen):
-                        return False
-                # if not an Entity then elt is hashable so we usual equality
-                elif elt != b[uid]:
-                    return False
-            return True
-
-        return _comp(self, other, seen)
+        return self.empty or self.size(level) == 0
 
     def __len__(self):
-        """Returns the number of elements in entity"""
-        return len(self._elements)
+        """Number of items in level 0 (first column)
 
-    def __str__(self):
-        """Return the entity uid."""
-        return f"{self.uid}"
-
-    def __repr__(self):
-        """Returns a string resembling the constructor for entity without any
-        children"""
-        return f"Entity({self._uid},{list(self.uidset)},{self.properties})"
+        Returns
+        -------
+        int
+        """
+        return self.dimensions[0]
 
     def __contains__(self, item):
-        """
-        Defines containment for Entities.
+        """Whether an item is contained within any level of the data
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : str
 
         Returns
         -------
-        Boolean
-
-        Depends on the `Honor System`_ . Allows for uids to be used as shorthand for their entity.
-        This is done for performance reasons, but will fail if uids are
-        not unique to their entities.
-        Is not transitive.
+        bool
         """
-        if isinstance(item, Entity):
-            return item.uid in self._elements
-        else:
-            return item in self._elements
+        for labels in self.labels.values():
+            if item in labels:
+                return True
+        return False
 
     def __getitem__(self, item):
-        """
-        Returns Entity element by uid. Use :func:`E[uid]`.
+        """Access into the system of sets representation of the first two levels (columns) given by `elements`
+
+        Can be used to access and assign properties to an ``item`` in level 0 (first column)
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : str
+            label of an item in level 0 (first column)
 
         Returns
         -------
-        Entity or None
+        AttrList :
+            list of level 1 items in the set defined by ``item``
 
-        If item not in entity, returns None.
+        See Also
+        --------
+        uidset, elements
         """
-        if isinstance(item, Entity):
-            return self._elements.get(item.uid, "")
-        else:
-            return self._elements.get(item)
+        return self.elements[item]
 
     def __iter__(self):
-        """Returns iterator on element ids."""
+        """Iterates over items in level 0 (first column) of the underlying data table
+
+        Returns
+        -------
+        Iterator
+
+        See Also
+        --------
+        uidset, elements
+        """
         return iter(self.elements)
 
-    def __call__(self):
-        """Returns an iterator on elements"""
-        for e in self.elements.values():
-            yield e
-
-    def __setattr__(self, k, v):
-        """Sets entity property.
+    def __call__(self, label_index=0):
+        # Dev Note (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
+        """Iterates over items labels in a specified level (column) of the underlying data table
 
         Parameters
         ----------
-        k : hashable, property key
-        v : hashable, property value
-            Will not set uid or change elements or memberships.
+        label_index : int
+            level index
 
         Returns
         -------
-        None
+        Iterator
+
+        See Also
+        --------
+        labels
+        """
+        return iter(self.labels[self._data_cols[label_index]])
+
+    # def __repr__(self):
+    #     """String representation of the Entity
+
+    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
+
+    #     Returns
+    #     -------
+    #     str
+    #     """
+    #     return "hypernetx.classes.entity.Entity"
+
+    # def __str__(self):
+    #     return "<class 'hypernetx.classes.entity.Entity'>"
+
+    def index(self, column, value=None):
+        """Get level index corresponding to a column and (optionally) the index of a value in that column
+
+        The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used
+        in the integer encoding of the data table ``self.data``
+
+        Parameters
+        ----------
+        column: str
+            name of a column in self.dataframe
+        value : str, optional
+            label of an item in the specified column
+
+        Returns
+        -------
+        int or (int, int)
+            level index corresponding to column, index of value if provided
+
+        See Also
+        --------
+        indices : for finding indices of multiple values in a column
+        level : same functionality, search for the value without specifying column
+        """
+        if "keyindex" not in self._state_dict:
+            self._state_dict["keyindex"] = {}
+        if column not in self._state_dict["keyindex"]:
+            self._state_dict["keyindex"][column] = self._dataframe[
+                self._data_cols
+            ].columns.get_loc(column)
+
+        if value is None:
+            return self._state_dict["keyindex"][column]
+
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        if value not in self._state_dict["index"][column]:
+            self._state_dict["index"][column][value] = self._dataframe[
+                column
+            ].cat.categories.get_loc(value)
+
+        return (
+            self._state_dict["keyindex"][column],
+            self._state_dict["index"][column][value],
+        )
+
+    def indices(self, column, values):
+        """Get indices of one or more value(s) in a column
+
+        Parameters
+        ----------
+        column : str
+        values : str or iterable of str
+
+        Returns
+        -------
+        list of int
+            indices of values
+
+        See Also
+        --------
+        index : for finding level index of a column and index of a single value
+        """
+        if isinstance(values, Hashable):
+            values = [values]
+
+        if "index" not in self._state_dict:
+            self._state_dict["index"] = defaultdict(dict)
+        for v in values:
+            if v not in self._state_dict["index"][column]:
+                self._state_dict["index"][column][v] = self._dataframe[
+                    column
+                ].cat.categories.get_loc(v)
+
+        return [self._state_dict["index"][column][v] for v in values]
+
+    def translate(self, level, index):
+        """Given indices of a level and value(s), return the corresponding value label(s)
+
+        Parameters
+        ----------
+        level : int
+            level index
+        index : int or list of int
+            value index or indices
+
+        Returns
+        -------
+        str or list of str
+            label(s) corresponding to value index or indices
+
+        See Also
+        --------
+        translate_arr : translate a full row of value indices across all levels (columns)
+        """
+        column = self._data_cols[level]
+
+        if isinstance(index, (int, np.integer)):
+            return self.labels[column][index]
+
+        return [self.labels[column][i] for i in index]
+
+    def translate_arr(self, coords):
+        """Translate a full encoded row of the data table e.g., a row of ``self.data``
+
+        Parameters
+        ----------
+        coords : tuple of ints
+            encoded value indices, with one value index for each level of the data
+
+        Returns
+        -------
+        list of str
+            full row of translated value labels
+        """
+        assert len(coords) == self._dimsize
+        translation = []
+        for level, index in enumerate(coords):
+            translation.append(self.translate(level, index))
+
+        return translation
+
+    def level(self, item, min_level=0, max_level=None, return_index=True):
+        """First level containing the given item label
+
+        Order of levels corresponds to order of columns in `self.dataframe`
+
+        Parameters
+        ----------
+        item : str
+        min_level, max_level : int, optional
+            inclusive bounds on range of levels to search for item
+        return_index : bool, default=True
+            If True, return index of item within the level
+
+        Returns
+        -------
+        int, (int, int), or None
+            index of first level containing the item, index of item if `return_index=True`
+            returns None if item is not found
+
+        See Also
+        --------
+        index, indices : for finding level and/or value indices when the column is known
+        """
+        if max_level is None or max_level >= self._dimsize:
+            max_level = self._dimsize - 1
+
+        columns = self._data_cols[min_level : max_level + 1]
+        levels = range(min_level, max_level + 1)
+
+        for col, lev in zip(columns, levels):
+            if item in self.labels[col]:
+                if return_index:
+                    return self.index(col, item)
+
+                return lev
+
+        print(f'"{item}" not found.')
+        return None
+
+    def add(self, *args):
+        """Updates the underlying data table with new entity data from multiple sources
+
+        Parameters
+        ----------
+        *args
+            variable length argument list of Entity and/or representations of entity data
+
+        Returns
+        -------
+        self : Entity
+
+        Warnings
+        --------
+        Adding an element directly to an Entity will not add the
+        element to any Hypergraphs constructed from that Entity, and will cause an error. Use
+        :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>` or
+        :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph \
+            .add_node_to_edge>` instead.
+
+        See Also
+        --------
+        add_element : update from a single source
+        Hypergraph.add_edge, Hypergraph.add_node_to_edge : for adding elements to a Hypergraph
 
         """
-        if k == "uid":
-            raise HyperNetXError(
-                "Cannot reassign uid to Entity once it"
-                " has been created. Create a clone instead."
+        for item in args:
+            self.add_element(item)
+        return self
+
+    def add_elements_from(self, arg_set):
+        """Adds arguments from an iterable to the data table one at a time
+
+        ..deprecated:: 2.0.0
+            Duplicates `add`
+
+        Parameters
+        ----------
+        arg_set : iterable
+            list of Entity and/or representations of entity data
+
+        Returns
+        -------
+        self : Entity
+
+        """
+        for item in arg_set:
+            self.add_element(item)
+        return self
+
+    def add_element(self, data):
+        """Updates the underlying data table with new entity data
+
+        Supports adding from either an existing Entity or a representation of entity
+        (data table or labeled system of sets are both supported representations)
+
+        Parameters
+        ----------
+        data : Entity, `pandas.DataFrame`, or dict of lists or sets
+            new entity data
+
+        Returns
+        -------
+        self : Entity
+
+        Warnings
+        --------
+        Adding an element directly to an Entity will not add the
+        element to any Hypergraphs constructed from that Entity, and will cause an error. Use
+        `Hypergraph.add_edge` or `Hypergraph.add_node_to_edge` instead.
+
+        See Also
+        --------
+        add : takes multiple sources of new entity data as variable length argument list
+        Hypergraph.add_edge, Hypergraph.add_node_to_edge : for adding elements to a Hypergraph
+
+        """
+        if isinstance(data, Entity):
+            df = data.dataframe
+            self.__add_from_dataframe(df)
+
+        if isinstance(data, dict):
+            df = pd.DataFrame.from_dict(data)
+            self.__add_from_dataframe(df)
+
+        if isinstance(data, pd.DataFrame):
+            self.__add_from_dataframe(data)
+
+        return self
+
+    def __add_from_dataframe(self, df):
+        """Helper function to append rows to `self.dataframe`
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+
+        Returns
+        -------
+        self : Entity
+
+        """
+        if all(col in df for col in self._data_cols):
+            new_data = pd.concat((self._dataframe, df), ignore_index=True)
+            new_data[self._cell_weight_col] = new_data[self._cell_weight_col].fillna(1)
+
+            self._dataframe, _ = remove_row_duplicates(
+                new_data,
+                self._data_cols,
+                weights=self._cell_weight_col,
             )
-        elif k == "elements":
-            raise HyperNetXError("To add elements to Entity use self.add().")
-        elif k == "memberships":
-            raise HyperNetXError(
-                "Can't choose your own memberships, " "they are like parents!"
+
+            self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                "category"
             )
+
+            self._state_dict.clear()
+
+    def remove(self, *args):
+        """Removes all rows containing specified item(s) from the underlying data table
+
+        Parameters
+        ----------
+        *args
+            variable length argument list of item labels
+
+        Returns
+        -------
+        self : Entity
+
+        See Also
+        --------
+        remove_element : remove all rows containing a single specified item
+
+        """
+        for item in args:
+            self.remove_element(item)
+        return self
+
+    def remove_elements_from(self, arg_set):
+        """Removes all rows containing specified item(s) from the underlying data table
+
+        ..deprecated: 2.0.0
+            Duplicates `remove`
+
+        Parameters
+        ----------
+        arg_set : iterable
+            list of item labels
+
+        Returns
+        -------
+        self : Entity
+
+        """
+        for item in arg_set:
+            self.remove_element(item)
+        return self
+
+    def remove_element(self, item):
+        """Removes all rows containing a specified item from the underlying data table
+
+        Parameters
+        ----------
+        item
+            item label
+
+        Returns
+        -------
+        self : Entity
+
+        See Also
+        --------
+        remove : same functionality, accepts variable length argument list of item labels
+
+        """
+        updated_dataframe = self._dataframe
+
+        for column in self._dataframe:
+            updated_dataframe = updated_dataframe[updated_dataframe[column] != item]
+
+        self._dataframe, _ = remove_row_duplicates(
+            updated_dataframe,
+            self._data_cols,
+            weights=self._cell_weight_col,
+        )
+        self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+            "category"
+        )
+
+        self._state_dict.clear()
+        for col in self._data_cols:
+            self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
+
+    def encode(self, data):
+        """
+        Encode dataframe to numpy array
+
+        Parameters
+        ----------
+        data : dataframe
+
+        Returns
+        -------
+        numpy.array
+
+        """
+        encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
+        return encoded_array
+
+    def incidence_matrix(
+        self, level1=0, level2=1, weights=False, aggregateby=None, index=False
+    ) -> csr_matrix | None:
+        """Incidence matrix representation for two levels (columns) of the underlying data table
+
+        If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
+        In other words, the items in `level1` and `level2` correspond to the columns and rows of the incidence matrix,
+        respectively, in the order in which they appear in `self.labels[column1]` and `self.labels[column2]`
+        (`column1` and `column2` are the column labels of `level1` and `level2`)
+
+        Parameters
+        ----------
+        level1 : int, default=0
+            index of first level (column)
+        level2 : int, default=1
+            index of second level
+        weights : bool or dict, default=False
+            If False all nonzero entries are 1.
+            If True all nonzero entries are filled by self.cell_weight
+            dictionary values, use :code:`aggregateby` to specify how duplicate
+            entries should have weights aggregated.
+            If dict of {(level1 item, level2 item): weight value} form;
+            only nonzero cells in the incidence matrix will be updated by dictionary,
+            i.e., `level1 item` and `level2 item` must appear in the same row at least once in the underlying data table
+        aggregateby : {'last', count', 'sum', 'mean','median', max', 'min', 'first', 'last', None}, default='count'
+            Method to aggregate weights of duplicate rows in data table.
+             If None, then all cell weights will be set to 1.
+
+        Returns
+        -------
+        scipy.sparse.csr.csr_matrix
+            sparse representation of incidence matrix (i.e. Compressed Sparse Row matrix)
+
+        Other Parameters
+        ----------------
+        index : bool, optional
+            Not used
+
+        Note
+        ----
+        In the context of Hypergraphs, think `level1 = edges, level2 = nodes`
+        """
+        if self.dimsize < 2:
+            warnings.warn("Incidence matrix requires two levels of data.")
+            return None
+
+        data_cols = [self._data_cols[level2], self._data_cols[level1]]
+        weights = self._cell_weight_col if weights else None
+
+        df, weight_col = remove_row_duplicates(
+            self._dataframe,
+            data_cols,
+            weights=weights,
+            aggregateby=aggregateby,
+        )
+
+        return csr_matrix(
+            (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
+        )
+
+    def restrict_to_levels(
+        self,
+        levels: int | Iterable[int],
+        weights: bool = False,
+        aggregateby: str | None = "sum",
+        **kwargs,
+    ) -> Entity:
+        """Create a new Entity by restricting to a subset of levels (columns) in the
+        underlying data table
+
+        Parameters
+        ----------
+        levels : array-like of int
+            indices of a subset of levels (columns) of data
+        weights : bool, default=False
+            If True, aggregate existing cell weights to get new cell weights
+            Otherwise, all new cell weights will be 1
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
+    'min', None}, optional
+            Method to aggregate weights of duplicate rows in data table
+            If None or `weights`=False then all new cell weights will be 1
+        **kwargs
+            Extra arguments to `Entity` constructor
+
+        Returns
+        -------
+        Entity
+
+        Raises
+        ------
+        KeyError
+            If `levels` contains any invalid values
+
+        See Also
+        --------
+        EntitySet
+        """
+
+        levels = np.asarray(levels)
+        invalid_levels = (levels < 0) | (levels >= self.dimsize)
+        if invalid_levels.any():
+            raise KeyError(f"Invalid levels: {levels[invalid_levels]}")
+
+        cols = [self._data_cols[lev] for lev in levels]
+
+        if weights:
+            weights = self._cell_weight_col
+            cols.append(weights)
+            kwargs.update(weights=weights)
+
+        properties = self.properties.loc[levels]
+        properties.index = properties.index.remove_unused_levels()
+        level_map = {old: new for new, old in enumerate(levels)}
+        new_levels = properties.index.levels[0].map(level_map)
+        properties.index = properties.index.set_levels(new_levels, level=0)
+        level_col, id_col = properties.index.names
+
+        return self.__class__(
+            entity=self.dataframe[cols],
+            data_cols=cols,
+            aggregateby=aggregateby,
+            properties=properties,
+            misc_props_col=self._misc_props_col,
+            level_col=level_col,
+            id_col=id_col,
+            **kwargs,
+        )
+
+    def restrict_to_indices(self, indices, level=0, **kwargs):
+        """Create a new Entity by restricting the data table to rows containing specific items in a given level
+
+        Parameters
+        ----------
+        indices : int or iterable of int
+            indices of item label(s) in `level` to restrict to
+        level : int, default=0
+            level index
+        **kwargs
+            Extra arguments to `Entity` constructor
+
+        Returns
+        -------
+        Entity
+        """
+        column = self._dataframe[self._data_cols[level]]
+        values = self.translate(level, indices)
+        entity = self._dataframe.loc[column.isin(values)].copy()
+
+        for col in self._data_cols:
+            entity[col] = entity[col].cat.remove_unused_categories()
+        restricted = self.__class__(
+            entity=entity, misc_props_col=self._misc_props_col, **kwargs
+        )
+
+        if not self.properties.empty:
+            prop_idx = [
+                (lv, uid)
+                for lv in range(restricted.dimsize)
+                for uid in restricted.uidset_by_level(lv)
+            ]
+            properties = self.properties.loc[prop_idx]
+            restricted.assign_properties(properties)
+        return restricted
+
+    def assign_properties(
+        self,
+        props: pd.DataFrame | dict[int, dict[T, dict[Any, Any]]],
+        misc_col: Optional[str] = None,
+        level_col=0,
+        id_col=1,
+    ) -> None:
+        """Assign new properties to items in the data table, update :attr:`properties`
+
+        Parameters
+        ----------
+        props : pandas.DataFrame or doubly-nested dict
+            See documentation of the `properties` parameter in :class:`Entity`
+        level_col, id_col, misc_col : str, optional
+            column names corresponding to the levels, items, and misc. properties;
+            if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_misc_props_col`,
+            respectively.
+
+        See Also
+        --------
+        properties
+        """
+        # mapping from user-specified level, id, misc column names to internal names
+        ### This will fail if there isn't a level column
+
+        if isinstance(props, pd.DataFrame):
+            ### Fix to check the shape of properties or redo properties format
+            column_map = {
+                old: new
+                for old, new in zip(
+                    (level_col, id_col, misc_col),
+                    (*self.properties.index.names, self._misc_props_col),
+                )
+                if old is not None
+            }
+            props = props.rename(columns=column_map)
+            props = props.rename_axis(index=column_map)
+            self._properties_from_dataframe(props)
+
+        if isinstance(props, dict):
+            ### Expects nested dictionary with keys corresponding to level and id
+            self._properties_from_dict(props)
+
+    def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
+        """Private handler for updating :attr:`properties` from a DataFrame
+
+        Parameters
+        ----------
+        props
+
+        Notes
+        -----
+        For clarity in in-line developer comments:
+
+        idx-level
+            refers generally to a level of a MultiIndex
+        level
+            refers specifically to the idx-level in the MultiIndex of :attr:`properties`
+            that stores the level/column id for the item
+        """
+        # names of property table idx-levels for level and item id, respectively
+        # ``item`` used instead of ``id`` to avoid redefining python built-in func `id`
+        level, item = self.properties.index.names
+        if props.index.nlevels > 1:  # props has MultiIndex
+            # drop all idx-levels from props other than level and id (if present)
+            extra_levels = [
+                idx_lev for idx_lev in props.index.names if idx_lev not in (level, item)
+            ]
+            props = props.reset_index(level=extra_levels)
+
+        try:
+            # if props index is already in the correct format,
+            # enforce the correct idx-level ordering
+            props.index = props.index.reorder_levels((level, item))
+        except AttributeError:  # props is not in (level, id) MultiIndex format
+            # if the index matches level or id, drop index to column
+            if props.index.name in (level, item):
+                props = props.reset_index()
+            index_cols = [item]
+            if level in props:
+                index_cols.insert(0, level)
+            try:
+                props = props.set_index(index_cols, verify_integrity=True)
+            except ValueError:
+                warnings.warn(
+                    "duplicate (level, ID) rows will be dropped after first occurrence"
+                )
+                props = props.drop_duplicates(index_cols)
+                props = props.set_index(index_cols)
+
+        if self._misc_props_col in props:
+            try:
+                props[self._misc_props_col] = props[self._misc_props_col].apply(
+                    literal_eval
+                )
+            except ValueError:
+                pass  # data already parsed, no literal eval needed
+            else:
+                warnings.warn("parsed property dict column from string literal")
+
+        if props.index.nlevels == 1:
+            props = props.reindex(self.properties.index, level=1)
+
+        # combine with existing properties
+        # non-null values in new props override existing value
+        properties = props.combine_first(self.properties)
+        # update misc. column to combine existing and new misc. property dicts
+        # new props override existing value for overlapping misc. property dict keys
+        properties[self._misc_props_col] = self.properties[
+            self._misc_props_col
+        ].combine(
+            properties[self._misc_props_col],
+            lambda x, y: {**(x if pd.notna(x) else {}), **(y if pd.notna(y) else {})},
+            fill_value={},
+        )
+        self._properties = properties.sort_index()
+
+    def _properties_from_dict(self, props: dict[int, dict[T, dict[Any, Any]]]) -> None:
+        """Private handler for updating :attr:`properties` from a doubly-nested dict
+
+        Parameters
+        ----------
+        props
+        """
+        # TODO: there may be a more efficient way to convert this to a dataframe instead
+        #  of updating one-by-one via nested loop, but checking whether each prop_name
+        #  belongs in a designated existing column or the misc. property dict column
+        #  makes it more challenging
+        #  For now: only use nested loop update if non-misc. columns currently exist
+        if len(self.properties.columns) > 1:
+            for level in props:
+                for item in props[level]:
+                    for prop_name, prop_val in props[level][item].items():
+                        self.set_property(item, prop_name, prop_val, level)
         else:
-            self.__dict__[k] = v
+            item_keys = pd.MultiIndex.from_tuples(
+                [(level, item) for level in props for item in props[level]],
+                names=self.properties.index.names,
+            )
+            props_data = [props[level][item] for level, item in item_keys]
+            props = pd.DataFrame({self._misc_props_col: props_data}, index=item_keys)
+            self._properties_from_dataframe(props)
 
-    def _depth_finder(self, entset=None):
-        """
-        Helper method when working with levels.
-
-        Parameters
-        ----------
-        entset : dict, optional
-            a dictionary of entities keyed by uid
-
-        Returns
-        -------
-        Dictionary extending entset
-        """
-        temp = dict()
-        for uid, item in entset.items():
-            temp.update(item.elements)
-        return temp
-
-    def level(self, item, max_depth=10):
-        """
-        The first level where item appears in self.
+    def _property_loc(self, item: T) -> tuple[int, T]:
+        """Get index in :attr:`properties` of an item of unspecified level
 
         Parameters
         ----------
         item : hashable
-            uid for an entity
-
-        max_depth : int, default: 10
-            last level to check for entity
+            name of an item
 
         Returns
         -------
-        level : int
+        item_key : tuple of (int, hashable)
+            ``(level, item)``
 
-        Note
-        ----
-        Item must be the uid of an entity listed
-        in :func:`fullregistry()`
-        """
-        d = 1
-        currentlevel = self.levelset(1)
-        while d <= max_depth + 1:
-            if item in currentlevel:
-                return d
-            else:
-                d += 1
-                currentlevel = self._depth_finder(currentlevel)
-        return None
+        Raises
+        ------
+        KeyError
+            If `item` is not in :attr:`properties`
 
-    def levelset(self, k=1):
-        """
-        A dictionary of level k of self.
-
-        Parameters
-        ----------
-        k : int, optional, default: 1
-
-        Returns
-        -------
-        levelset : dict
-
-        Note
-        ----
-        An Entity contains other entities, hence the relationships between entities
-        and their elements may be represented in a directed graph with entity as root.
-        The levelsets are sets of entities which make up the elements appearing at
-        a certain level.
-        """
-        if k <= 0:
-            return None
-        currentlevel = self.elements
-        if k > 1:
-            for idx in range(k - 1):
-                currentlevel = self._depth_finder(currentlevel)
-        return currentlevel
-
-    def depth(self, max_depth=10):
-        """
-        Returns the number of nonempty level sets of level <= max_depth
-
-        Parameters
-        ----------
-        max_depth : int, optional, default: 10
-            If full depth is desired set max_depth to number of entities in
-            system + 1.
-
-        Returns
-        -------
-        depth : int
-            If max_depth is exceeded output will be numpy infinity.
-            If there is a cycle output will be numpy infinity.
-
-        """
-        if max_depth < 0:
-            return 0
-        currentlevel = self.elements
-        if not currentlevel:
-            return 0
-        else:
-            depth = 1
-        while depth < max_depth + 1:
-            currentlevel = self._depth_finder(currentlevel)
-            if not currentlevel:
-                return depth
-            depth += 1
-        return np.inf
-
-    def fullregistry(self, lastlevel=10, firstlevel=1):
-        """
-        A dictionary of all entities appearing in levels firstlevel
-        to lastlevel.
-
-        Parameters
-        ----------
-        lastlevel : int, optional, default: 10
-
-        firstlevel : int, optional, default: 1
-
-        Returns
-        -------
-        fullregistry : dict
-
-        """
-        currentlevel = self.levelset(firstlevel)
-        accumulater = dict(currentlevel)
-        for idx in range(firstlevel, lastlevel):
-            currentlevel = self._depth_finder(currentlevel)
-            accumulater.update(currentlevel)
-        return accumulater
-
-    def complete_registry(self):
-        """
-        A dictionary of all entities appearing in any level of
-        entity
-
-        Returns
-        -------
-        complete_registry : dict
-        """
-        results = dict()
-        Entity._complete_registry(self, results)
-        return results
-
-    @staticmethod
-    def _complete_registry(entity, results):
-        """
-        Helper method for complete_registry
-        """
-        for uid, e in entity.elements.items():
-            if uid not in results:
-                results[uid] = e
-                Entity._complete_registry(e, results)
-
-    def nested_incidence_dict(self, level=10):
-        """
-        Returns a nested dictionary with keys up to level
-
-        Parameters
-        ----------
-        level : int, optional, default: 10
-            If level<=1, returns the incidence_dict.
-
-        Returns
-        -------
-        nested_incidence_dict : dict
-
-        """
-        if level > 1:
-            return {ent.uid: ent.nested_incidence_dict(level - 1) for ent in self()}
-        else:
-            return self.incidence_dict
-
-    def size(self):
-        """
-        Returns the number of elements in entity
-        """
-        return len(self)
-
-    def clone(self, newuid):
-        """
-        Returns shallow copy of entity with newuid. Entity's elements will
-        belong to two distinct Entities.
-
-        Parameters
-        ----------
-        newuid : hashable
-            Name of the new entity
-
-        Returns
-        -------
-        clone : Entity
-
-        """
-        return Entity(newuid, entity=self)
-
-    def intersection(self, other):
-        """
-        A dictionary of elements belonging to entity and other.
-
-        Parameters
-        ----------
-        other : Entity
-
-        Returns
-        -------
-        Dictionary of elements : dict
-
-        """
-        return {e: self[e] for e in self if e in other}
-
-    def restrict_to(self, element_subset, name=None):
-        """
-        Shallow copy of entity removing elements not in element_subset.
-
-        Parameters
-        ----------
-        element_subset : iterable
-            A subset of entities elements
-
-        name: hashable, optional
-            If not given, a name is generated to reflect entity uid
-
-        Returns
-        -------
-        New Entity : Entity
-            Could be empty.
-
-        """
-        newelements = [self[e] for e in element_subset if e in self]
-        name = name or f"{self.uid}_r"
-        return Entity(name, newelements, **self.properties)
-
-    def add(self, *args):
-        """
-        Adds unpacked args to entity elements. Depends on add_element()
-
-        Parameters
-        ----------
-        args : One or more entities or hashables
-
-        Returns
-        -------
-        self : Entity
-
-        Note
-        ----
-        Adding an element to an object in a hypergraph will not add the
-        element to the hypergraph and will cause an error. Use :func:`Hypergraph.add_edge <classes.hypergraph.Hypergraph.add_edge>`
-        or :func:`Hypergraph.add_node_to_edge <classes.hypergraph.Hypergraph.add_node_to_edge>` instead.
-
-        """
-        for item in args:
-            self.add_element(item)
-
-        return self
-
-    def add_elements_from(self, arg_set):
-        """
-        Similar to :func:`add()` it allows for adding from an interable.
-
-        Parameters
-        ----------
-        arg_set : Iterable of hashables or entities
-
-        Returns
-        -------
-        self : Entity
-
-        """
-        for item in arg_set:
-            self.add_element(item)
-
-        return self
-
-    def add_element(self, item):
-        """
-        Adds item to entity elements and adds entity to item.memberships.
-
-        Parameters
-        ----------
-        item : hashable or Entity
-            If hashable, will be replaced with empty Entity using hashable as uid
-
-        Returns
-        -------
-        self : Entity
-
-        Notes
+        Warns
         -----
-        If item is in entity elements, no new element is added but properties
-        will be updated.
-        If item is in complete_registry(), only the item already known to self will be added.
-        This method employs the `Honor System`_ since membership in complete_registry is checked
-        using the item's uid. It is assumed that the user will only use the same uid
-        for identical instances within the entities registry.
+        UserWarning
+            If `item` appears in multiple levels, returns the first (closest to 0)
 
         """
-        checkelts = self.complete_registry()
-        if isinstance(item, Entity):
-            # if item is an Entity, descendents will be compared to avoid collisions
-            if item.uid == self.uid:
-                raise HyperNetXError(
-                    f"Error: Self reference in submitted elements."
-                    f" Entity {self.uid} may not contain itself. "
-                )
-            elif item in self:
-                # item is already an element so only the properties will be updated
-                checkelts[item.uid].__dict__.update(item.properties)
-            elif item.uid in checkelts:
-                # if item belongs to an element or a descendent of an element
-                # then the existing descendent becomes an element
-                # and properties are updated.
-                checkelts[item.uid]._memberships[self.uid] = self
-                checkelts[item.uid].__dict__.update(item.properties)
-                self._elements[item.uid] = checkelts[item.uid]
-            else:
-                # if item's uid doesn't appear in complete_registry
-                # then it is added as something new
-                item._memberships[self.uid] = self
-                self._elements[item.uid] = item
-        else:
-            # item must be a hashable.
-            # if it appears as a uid in checkelts then
-            # the corresponding Entity will become an element of entity.
-            # Otherwise, at most it will be added as an empty Entity.
-            if self.uid == item:
-                raise HyperNetXError(
-                    f"Error: Self reference in submitted elements."
-                    f" Entity {self.uid} may not contain itself."
-                )
-            elif item not in self._elements:
-                if item in checkelts:
-                    self._elements[item] = checkelts[item]
-                    checkelts[item]._memberships[self.uid] = self
-                else:
-                    self._elements[item] = Entity(item, _memberships={self.uid: self})
+        try:
+            item_loc = self.properties.xs(item, level=1, drop_level=False).index
+        except KeyError as ex:  # item not in df
+            raise KeyError(f"no properties initialized for 'item': {item}") from ex
 
-        return self
+        try:
+            item_key = item_loc.item()
+        except ValueError:
+            item_loc, _ = item_loc.sortlevel(sort_remaining=False)
+            item_key = item_loc[0]
+            warnings.warn(f"item found in multiple levels: {tuple(item_loc)}")
+        return item_key
 
-    def remove(self, *args):
-        """
-        Removes args from entitie's elements if they belong.
-        Does nothing with args not in entity.
+    def set_property(
+        self,
+        item: T,
+        prop_name: Any,
+        prop_val: Any,
+        level: Optional[int] = None,
+    ) -> None:
+        """Set a property of an item
 
         Parameters
         ----------
-        args : One or more hashables or entities
+        item : hashable
+            name of an item
+        prop_name : hashable
+            name of the property to set
+        prop_val : any
+            value of the property to set
+        level : int, optional
+            level index of the item;
+            required if `item` is not already in :attr:`properties`
 
-        Returns
-        -------
-        self : Entity
+        Raises
+        ------
+        ValueError
+            If `level` is not provided and `item` is not in :attr:`properties`
 
-
-        """
-        for item in args:
-            Entity.remove_element(self, item)
-        return self
-
-    def remove_elements_from(self, arg_set):
-        """
-        Similar to :func:`remove()`. Removes elements in arg_set.
-
-        Parameters
-        ----------
-        arg_set : Iterable of hashables or entities
-
-        Returns
-        -------
-        self : Entity
-
-        """
-        for item in arg_set:
-            Entity.remove_element(self, item)
-        return self
-
-    def remove_element(self, item):
-        """
-        Removes item from entity and reference to entity from
-        item.memberships
-
-        Parameters
-        ----------
-        item : Hashable or Entity
-
-        Returns
-        -------
-        self : Entity
-
-
-        """
-        if isinstance(item, Entity):
-            del item._memberships[self.uid]
-            del self._elements[item.uid]
-        else:
-            del self[item]._memberships[self.uid]
-            del self._elements[item]
-
-        return self
-
-    @staticmethod
-    def merge_entities(name, ent1, ent2):
-        """
-        Merge two entities making sure they do not conflict.
-
-        Parameters
-        ----------
-        name : hashable
-
-        ent1 : Entity
-            First entity to have elements and properties added to new
-            entity
-
-        ent2 : Entity
-            elements of ent2 will be checked against ent1.complete_registry()
-            and only nonexisting elements will be added using add() method.
-            Properties of ent2 will update properties of ent1 in new entity.
-
-        Returns
-        -------
-        a new entity : Entity
-
-        """
-        newent = ent1.clone(name)
-        newent.add_elements_from(ent2.elements.values())
-        for k, v in ent2.properties.items():
-            newent.__setattr__(k, v)
-        return newent
-
-
-class EntitySet(Entity):
-    """
-    .. _entityset:
-
-    Parameters
-    ----------
-    uid : hashable
-        a unique identifier
-
-    elements : list or dict, optional, default: None
-        a list of entities with identifiers different than uid and/or
-        hashables different than uid, see `Honor System`_
-
-    props : keyword arguments, optional, default: {}
-        properties belonging to the entity added as key=value pairs.
-        Both key and value must be hashable.
-
-    Notes
-    -----
-    The EntitySet class was created to distinguish Entities satifying the Bipartite Condition.
-
-    .. _Bipartite Condition:
-
-    **Bipartite Condition**
-
-    *Entities that are elements of the same EntitySet, may not contain each other as elements.*
-    The elements and children of an EntitySet generate a specific partition for a bipartite graph.
-    The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
-    the children correspond to the nodes. EntitySets are the basic objects used to construct hypergraphs
-    in HNX.
-
-    Example: ::
-
-        >>> y = Entity('y')
-        >>> x = Entity('x')
-        >>> x.add(y)
-        >>> y.add(x)
-        >>> w = EntitySet('w',[x,y])
-        HyperNetXError: Error: Fails the Bipartite Condition for EntitySet.
-        y references a child of an existing Entity in the EntitySet.
-
-    """
-
-    def __init__(self, uid, elements=[], **props):
-        super().__init__(uid, elements, **props)
-        if not self.is_bipartite:
-            raise HyperNetXError(
-                "Entity does not satisfy the Bipartite Condition, elements and children are not disjoint."
-            )
-
-    def __str__(self):
-        """Return the entityset uid."""
-        return f"{self.uid}"
-
-    def __repr__(self):
-        """Returns a string resembling the constructor for entityset without any
-        children"""
-        return f"EntitySet({self._uid},{list(self.uidset)},{self.properties})"
-
-    def add(self, *args):
-        """
-        Adds args to entityset's elements, checking to make sure no self references are
-        made to element ids.
-        Ensures Bipartite Condition of EntitySet.
-
-        Parameters
-        ----------
-        args : One or more entities or hashables
-
-        Returns
-        -------
-        self : EntitySet
-
-        """
-        for item in args:
-            if isinstance(item, Entity):
-                if item.uid in self.children:
-                    raise HyperNetXError(
-                        f"Error: Fails the Bipartite Condition for EntitySet. {item.uid} references a child of an existing Entity in the EntitySet."
-                    )
-                elif not self.uidset.isdisjoint(item.uidset):
-                    raise HyperNetXError(
-                        f"Error: Fails the bipartite condition for EntitySet."
-                    )
-                else:
-                    Entity.add_element(self, item)
-            else:
-                if not item in self.children:
-                    Entity.add_element(self, item)
-                else:
-                    raise HyperNetXError(
-                        f"Error: {item} references a child of an existing Entity in the EntitySet."
-                    )
-        return self
-
-    def clone(self, newuid):
-        """
-        Returns shallow copy of entityset with newuid. Entityset's
-        elements will belong to two distinct entitysets.
-
-
-        Parameters
-        ----------
-        newuid : hashable
-            Name of the new entityset
-
-        Returns
-        -------
-        clone : EntitySet
-
-        """
-        return EntitySet(newuid, elements=self.elements.values(), **self.properties)
-
-    def collapse_identical_elements(self, newuid, return_equivalence_classes=False):
-        """
-        Returns a deduped copy of the entityset, using representatives of equivalence classes as element keys.
-        Two elements of an EntitySet are collapsed if they share the same children.
-
-        Parameters
-        ----------
-        newuid : hashable
-
-        return_equivalence_classes : boolean, default=False
-            If True, return a dictionary of equivalence classes keyed by new edge names
-
-        Returns
-        -------
-         : EntitySet
-        eq_classes : dict
-            if return_equivalence_classes = True
-
-        Notes
+        Warns
         -----
-        Treats elements of the entityset as equal if they have the same uidsets. Using this
-        as an equivalence relation, the entityset's uidset is partitioned into equivalence classes.
-        The equivalent elements are identified using a single entity by using the
-        frozenset of uids associated to these elements as the uid for the new element
-        and dropping the properties.
-        If use_reps is set to True a representative element of the equivalence class is
-        used as identifier instead of the frozenset.
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
 
-        Example: ::
-
-            >>> E = EntitySet('E',elements=[Entity('E1', ['a','b']),Entity('E2',['a','b'])])
-            >>> E.incidence_dict
-            {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> E.collapse_identical_elements('_',).incidence_dict
-            {'E2': {'a', 'b'}}
-
-        """
-
-        shared_children = defaultdict(set)
-        for e in self.__call__():
-            shared_children[frozenset(e.uidset)].add(e.uid)
-        new_entity_dict = {
-            f"{next(iter(v))}:{len(v)}": set(k) for k, v in shared_children.items()
-        }
-        if return_equivalence_classes:
-            eq_classes = {
-                f"{next(iter(v))}:{len(v)}": v for k, v in shared_children.items()
-            }
-            return EntitySet(newuid, new_entity_dict), dict(eq_classes)
-        else:
-            return EntitySet(newuid, new_entity_dict)
-
-    def incidence_matrix(self, sparse=True, index=False, weights=None):
-        """
-        An incidence matrix for the EntitySet indexed by children x uidset.
-
-        Parameters
-        ----------
-        sparse : boolean, optional, default: True
-
-        index : boolean, optional, default : False
-            If True return will include a dictionary of children uid : row number
-            and element uid : column number
-
-        weights : bdict, optional, default : None
-            cell weight dictionary keyed by (edge.uid, node.uid)
-
-        Returns
-        -------
-        incidence_matrix : scipy.sparse.csr.csr_matrix or np.ndarray
-
-        row dictionary : dict
-            Dictionary identifying row with item in entityset's children
-
-        column dictionary : dict
-            Dictionary identifying column with item in entityset's uidset
-
-        Notes
-        -----
-
-        Example: ::
-
-            >>> E = EntitySet('E',{'a':{1,2,3},'b':{2,3},'c':{1,4}})
-            >>> E.incidence_matrix(sparse=False, index=True)
-            (array([[0, 1, 1],
-                    [1, 1, 0],
-                    [1, 1, 0],
-                    [0, 0, 1]]), {0: 1, 1: 2, 2: 3, 3: 4}, {0: 'b', 1: 'a', 2: 'c'})
-        """
-        if sparse:
-            from scipy.sparse import csr_matrix
-
-        nchildren = len(self.children)
-        nuidset = len(self.uidset)
-
-        ndict = dict(zip(self.children, range(nchildren)))
-        edict = dict(zip(self.uidset, range(nuidset)))
-
-        if len(ndict) != 0:
-
-            if index:
-                rowdict = {v: k for k, v in ndict.items()}
-                coldict = {v: k for k, v in edict.items()}
-
-            if sparse:
-                # Create csr sparse matrix
-                rows = list()
-                cols = list()
-                data = list()
-                for e in self:
-                    for n in self[e].elements:
-                        if weights is not None:
-                            try:
-                                data.append(weights[(e, n)])
-                            except:
-                                data.append(1)
-                        else:
-                            data.append(1)
-                        rows.append(ndict[n])
-                        cols.append(edict[e])
-                MP = csr_matrix((data, (rows, cols)))
-            else:
-                # Create an np.matrix
-                MP = np.zeros((nchildren, nuidset), dtype=int)
-                for e in self:
-                    for n in self[e].elements:
-                        MP[ndict[n], edict[e]] = 1
-            if index:
-                return MP, rowdict, coldict
-            else:
-                return MP
-        else:
-            if index:
-                return np.zeros(1), {}, {}
-            else:
-                return np.zeros(1)
-
-    def restrict_to(self, element_subset, name=None):
-        """
-        Shallow copy of entityset removing elements not in element_subset.
-
-        Parameters
-        ----------
-        element_subset : iterable
-            A subset of the entityset's elements
-
-        name: hashable, optional
-            If not given, a name is generated to reflect entity uid
-
-        Returns
-        -------
-        new entityset : EntitySet
-            Could be empty.
-
-        See also
+        See Also
         --------
-        Entity.restrict_to
-
+        get_property, get_properties
         """
-        newelements = [self[e] for e in element_subset if e in self]
-        name = name or f"{self.uid}_r"
-        return EntitySet(name, newelements, **self.properties)
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self._property_loc(item)
+            except KeyError as ex:
+                raise ValueError(
+                    "cannot infer 'level' when initializing 'item' properties"
+                ) from ex
+
+        if prop_name in self.properties:
+            self._properties.loc[item_key, prop_name] = prop_val
+        else:
+            try:
+                self._properties.loc[item_key, self._misc_props_col].update(
+                    {prop_name: prop_val}
+                )
+            except KeyError:
+                self._properties.loc[item_key, :] = {
+                    self._misc_props_col: {prop_name: prop_val}
+                }
+
+    def get_property(self, item: T, prop_name: Any, level: Optional[int] = None) -> Any:
+        """Get a property of an item
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+        prop_name : hashable
+            name of the property to get
+        level : int, optional
+            level index of the item
+
+        Returns
+        -------
+        prop_val : any
+            value of the property
+
+        Raises
+        ------
+        KeyError
+            if (`level`, `item`) is not in :attr:`properties`,
+            or if `level` is not provided and `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
+
+        See Also
+        --------
+        get_properties, set_property
+        """
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self._property_loc(item)
+            except KeyError:
+                raise  # item not in properties
+
+        try:
+            prop_val = self.properties.loc[item_key, prop_name]
+        except KeyError as ex:
+            if ex.args[0] == prop_name:
+                prop_val = self.properties.loc[item_key, self._misc_props_col].get(
+                    prop_name
+                )
+            else:
+                raise KeyError(
+                    f"no properties initialized for ('level','item'): {item_key}"
+                ) from ex
+
+        return prop_val
+
+    def get_properties(self, item: T, level: Optional[int] = None) -> dict[Any, Any]:
+        """Get all properties of an item
+
+        Parameters
+        ----------
+        item : hashable
+            name of an item
+        level : int, optional
+            level index of the item
+
+        Returns
+        -------
+        prop_vals : dict
+            ``{named property: property value, ...,
+            misc. property column name: {property name: property value}}``
+
+        Raises
+        ------
+        KeyError
+            if (`level`, `item`) is not in :attr:`properties`,
+            or if `level` is not provided and `item` is not in :attr:`properties`
+
+        Warns
+        -----
+        UserWarning
+            If `level` is not provided and `item` appears in multiple levels,
+            assumes the first (closest to 0)
+
+        See Also
+        --------
+        get_property, set_property
+        """
+        if level is not None:
+            item_key = (level, item)
+        else:
+            try:
+                item_key = self._property_loc(item)
+            except KeyError:
+                raise
+
+        try:
+            prop_vals = self.properties.loc[item_key].to_dict()
+        except KeyError as ex:
+            raise KeyError(
+                f"no properties initialized for ('level','item'): {item_key}"
+            ) from ex
+
+        return prop_vals

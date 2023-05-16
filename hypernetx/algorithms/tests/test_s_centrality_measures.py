@@ -44,7 +44,6 @@ def test_s_eccentricity(sixbyfive):
     s2 = {"e0": 1, "e1": 2, "e2": 2, "e3": 2, "e4": 1}
     for e in h.edges:
         assert shcc[e] == s2[e]
-    shcc = s_eccentricity(h, s=3)
-    s3 = {"e0": 2, "e1": 0, "e2": 0, "e3": 2, "e4": 1}
-    for e in h.edges:
-        assert shcc[e] == s3[e]
+    with pytest.raises(Exception) as excinfo:
+        s_eccentricity(h, s=3)
+    assert "Found infinite path" in str(excinfo.value)

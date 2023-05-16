@@ -1,12 +1,9 @@
 import pytest
 import numpy as np
-import networkx as nx
-from hypernetx import Hypergraph, Entity, EntitySet
-from hypernetx import HyperNetXError
+from hypernetx.classes.hypergraph import Hypergraph
 
 
-def test_hypergraph_from_iterable_of_sets(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_iterable_of_sets(sbs):
     H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
@@ -15,8 +12,7 @@ def test_hypergraph_from_iterable_of_sets(seven_by_six):
     assert H.number_of_nodes() == 7
 
 
-def test_hypergraph_from_dict(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_dict(sbs):
     H = Hypergraph(sbs.edgedict)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
@@ -25,8 +21,7 @@ def test_hypergraph_from_dict(seven_by_six):
     assert H.order() == 7
 
 
-def test_hypergraph_custom_attributes(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_custom_attributes(sbs):
     H = Hypergraph(sbs.edges)
     assert isinstance(H.__str__(), str)
     assert isinstance(H.__repr__(), str)
@@ -37,27 +32,22 @@ def test_hypergraph_custom_attributes(seven_by_six):
     assert sorted(H.__getitem__("C")) == ["A", "E", "K"]
 
 
-def test_hypergraph_static(seven_by_six):
-    sbs = seven_by_six
-    H = Hypergraph(sbs.edges, static=True)
+def test_get_linegraph(sbs):
+    H = Hypergraph(sbs.edges)
     assert len(H.edges) == 6
     assert len(H.nodes) == 7
-    assert H.get_id("E") == 3
-    assert list(H.get_linegraph(s=1)) == [0, 1, 2, 3, 4, 5]
-    # H.get_name
-    # H.translate
+    assert len(set(H.get_linegraph(s=1)).difference(set([0, 1, 2, 3, 4, 5]))) == 0
 
 
-def test_hypergraph_from_dataframe(lesmis):
-    df = lesmis.hypergraph.dataframe()
-    H = Hypergraph.from_dataframe(df)
+def test_hypergraph_from_incidence_dataframe(lesmis):
+    df = lesmis.hypergraph.incidence_dataframe()
+    H = Hypergraph.from_incidence_dataframe(df)
     assert H.shape == (40, 8)
     assert H.size(3) == 8
     assert H.degree("JA") == 3
 
 
-def test_hypergraph_from_numpy_array(seven_by_six):
-    sbs = seven_by_six
+def test_hypergraph_from_numpy_array(sbs):
     H = Hypergraph.from_numpy_array(sbs.arr)
     assert len(H.nodes) == 6
     assert len(H.edges) == 7
@@ -70,58 +60,43 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     HB = Hypergraph.from_bipartite(H.bipartite())
     assert len(HB.edges) == 7
     assert len(HB.nodes) == 8
-    assert HB.s_degree("T1") == 1
 
 
-def test_hypergraph_from_entity_set(seven_by_six):
-    sbs = seven_by_six
-    entityset = EntitySet("_", sbs.edgedict)
-    H = Hypergraph(entityset)
-    assert H.edges.incidence_dict == sbs.edgedict
-    assert H.s_degree("A") == 3
-    assert H.dim("O") == 1
-    assert len(H.edge_size_dist()) == 6
-    assert len(H.edge_neighbors("S")) == 4
-
-
-def test_add_node_to_edge(seven_by_six):
-    sbs = seven_by_six
+@pytest.mark.skip("Deprecated method; will support in later release")
+def test_add_node_to_edge(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
-    # add node not already in hypergraph to edge
-    # alreadyin hypergraph
-    node = Entity("B")
-    edge = H.edges["P"]
+    node = "B"
+    edge = "P"
     H.add_node_to_edge(node, edge)
     assert H.shape == (8, 6)
     # add edge with nodes already in hypergraph
-    H.add_edge(Entity("Z", ["A", "B"]))
+    H.add_edge({"Z": ["A", "B"]})
     assert H.shape == (8, 7)
     # add edge not in hypergraph with nodes not in hypergraph
-    H.add_edge(Entity("Y", ["M", "N"]))
+    H.add_edge({"Y": ["M", "N"]})
     assert H.shape == (10, 8)
 
 
-def test_remove_edge(seven_by_six):
-    sbs = seven_by_six
+def test_remove_edges(sbs):
     H = Hypergraph(sbs.edgedict)
     assert H.shape == (7, 6)
     # remove an edge without removing any nodes
-    H.remove_edge("P")
+    H = H.remove_edges("P")
     assert H.shape == (7, 5)
     # remove an edge containing a singleton ear
-    H.remove_edge("O")
+    H = H.remove_edges("O")
     assert H.shape == (6, 4)
 
 
-def test_remove_node():
+def test_remove_nodes():
     a, b, c, d = "a", "b", "c", "d"
     hbug = Hypergraph({0: [a, b], 1: [a, c], 2: [a, d]})
     assert a in hbug.nodes
     assert a in hbug.edges[0]
     assert a in hbug.edges[1]
     assert a in hbug.edges[2]
-    hbug.remove_node(a)
+    hbug = hbug.remove_nodes(a)
     assert a not in hbug.nodes
     assert a not in hbug.edges[0]
     assert a not in hbug.edges[1]
@@ -133,7 +108,8 @@ def test_matrix(sbs_hypergraph):
     assert H.incidence_matrix().todense().shape == (7, 6)
     assert H.adjacency_matrix(s=2).todense().shape == (7, 7)
     assert H.edge_adjacency_matrix().todense().shape == (6, 6)
-    assert H.auxiliary_matrix().todense().shape == (6, 6)
+    aux_matrix = H.auxiliary_matrix(node=False)
+    assert aux_matrix.todense().shape == (6, 6)
 
 
 def test_collapse_edges(sbsd_hypergraph):
@@ -174,12 +150,15 @@ def test_restrict_to_nodes(sbs_hypergraph):
     assert len(H1.nodes) == 3
     assert len(H1.edges) == 5
     assert "C" in H.edges["P"]
-    assert not "C" in H1.edges["P"]
+    assert "C" not in H1.edges["P"]
 
 
+# @pytest.mark.skip("reason=Deprecated method")
 def test_remove_from_restriction(triloop):
     h = triloop.hypergraph
-    h1 = h.restrict_to_nodes(h.neighbors("A")).remove_node("A")
+    h1 = h.restrict_to_nodes(h.neighbors("A")).remove_nodes(
+        "A"
+    )  # Hypergraph does not have a remove_node method
     assert "A" not in h1
     assert "A" not in h1.edges["ACD"]
 
@@ -196,19 +175,21 @@ def test_toplexes(sbsd_hypergraph):
 def test_is_connected():
     setsystem = [{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
-    assert h.is_connected() == True
-    assert h.is_connected(s=2) == False
-    assert h.is_connected(s=2, edges=True) == True
-    assert h.is_connected(s=3, edges=True) == False
+    assert h.is_connected() is True
+    assert h.is_connected(s=2) is False
+    assert h.is_connected(s=2, edges=True) is True
+    # test case below will raise nx.NetworkXPointlessConcept
+    assert h.is_connected(s=3, edges=True) is False
 
 
+# @pytest.mark.skip("Deprecated methods")
 def test_singletons():
     E = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
     h = Hypergraph(E)
     assert h.shape == (9, 5)
     singles = h.singletons()
     assert len(singles) == 2
-    h.remove_edges(singles)
+    h = h.remove_edges(singles)
     assert h.shape == (7, 3)
 
 
@@ -232,7 +213,7 @@ def test_connected_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
     assert len(list(h.connected_components())) == 1
-    assert list(h.connected_components(edges=True)) == [{"0", "1", "2", "3"}]
+    assert list(h.connected_components(edges=True)) == [{0, 1, 2, 3}]
     assert [len(g) for g in h.connected_component_subgraphs()] == [8]
 
 
@@ -249,8 +230,8 @@ def test_s_components():
 def test_s_connected_components():
     setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
     h = Hypergraph(setsystem)
-    assert list(h.s_connected_components()) == [{"0", "1", "2", "3"}]
-    assert list(h.s_connected_components(s=2)) == [{"1", "2", "3"}]
+    assert list(h.s_connected_components()) == [{0, 1, 2, 3}]
+    assert list(h.s_connected_components(s=2)) == [{1, 2, 3}]
     assert list(h.s_connected_components(s=2, edges=False)) == [{5, 6}]
 
 
@@ -264,18 +245,18 @@ def test_s_component_subgraphs():
         [len(g) for g in h.s_component_subgraphs(s=3, return_singletons=True)]
     )
 
-def test_size(seven_by_six):
-    sbs = seven_by_six
-    h = Hypergraph(sbs.edgedict)
-    assert h.size('S') == 4
-    assert h.size('S',{'T2','V'}) == 2
-    assert h.size('S',{'T1','T2'}) == 1
-    assert h.size('S',{'T2'}) == 1
-    assert h.size('S',{'T1'}) == 0
-    assert h.size('S',{}) == 0
 
-def test_diameter(seven_by_six):
-    sbs = seven_by_six
+def test_size(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.size("S") == 4
+    assert h.size("S", {"T2", "V"}) == 2
+    assert h.size("S", {"T1", "T2"}) == 1
+    assert h.size("S", {"T2"}) == 1
+    assert h.size("S", {"T1"}) == 0
+    assert h.size("S", {}) == 0
+
+
+def test_diameter(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.diameter() == 3
     with pytest.raises(Exception) as excinfo:
@@ -283,15 +264,13 @@ def test_diameter(seven_by_six):
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
-def test_node_diameters(seven_by_six):
-    sbs = seven_by_six
+def test_node_diameters(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.node_diameters()[0] == 3
     assert h.node_diameters()[2] == [{"A", "C", "E", "K", "T1", "T2", "V"}]
 
 
-def test_edge_diameter(seven_by_six):
-    sbs = seven_by_six
+def test_edge_diameter(sbs):
     h = Hypergraph(sbs.edgedict)
     assert h.edge_diameter() == 3
     assert h.edge_diameters()[2] == [{"I", "L", "O", "P", "R", "S"}]
@@ -315,6 +294,7 @@ def test_dual(sbs_hypergraph):
     assert set(H.edges) == set(HD.nodes)
 
 
+@pytest.mark.filterwarnings("ignore:No 3-path between ME and FN")
 def test_distance(lesmis):
     h = lesmis.hypergraph
     assert h.distance("ME", "FN") == 2
@@ -322,15 +302,29 @@ def test_distance(lesmis):
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
+# TODO: fix test once get_linegraph is fully tested
+@pytest.mark.filterwarnings("ignore:No 2-path between 1 and 4")
 def test_edge_distance(lesmis):
     h = lesmis.hypergraph
     assert h.edge_distance(1, 4) == 2
-    h.remove_edge(5)
-    assert h.edge_distance(1, 4) == 3
-    assert h.edge_distance(1, 4, s=2) == np.inf
+    h2 = h.remove([5], 0)
+    assert h2.edge_distance(1, 4) == 3
+    assert h2.edge_distance(1, 4, s=2) == np.inf
 
 
 def test_dataframe(lesmis):
     h = lesmis.hypergraph
-    df = h.dataframe()
+    df = h.incidence_dataframe()
     assert np.allclose(np.array(np.sum(df)), np.array([10, 9, 8, 4, 8, 3, 12, 6]))
+
+
+def test_construct_empty_hypergraph():
+    h = Hypergraph()
+    assert h.shape == (0, 0)
+    assert h.edges.is_empty()
+    assert h.nodes.is_empty()
+
+
+def test_static_hypergraph_s_connected_components(lesmis):
+    H = Hypergraph(lesmis.edgedict)
+    assert {7, 8} in list(H.s_connected_components(edges=True, s=4))

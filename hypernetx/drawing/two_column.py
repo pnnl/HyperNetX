@@ -6,7 +6,7 @@ from matplotlib.collections import LineCollection
 
 import networkx as nx
 
-from .util import get_frozenset_label
+from hypernetx.drawing.util import get_frozenset_label
 
 
 def layout_two_column(H, spacing=2):
@@ -79,7 +79,7 @@ def draw_hyper_edges(H, pos, ax=None, **kwargs):
     """
     ax = ax or plt.gca()
 
-    pairs = [(v, e.uid) for e in H.edges() for v in e]
+    pairs = [(v, e) for e in H.edges() for v in H.edges[e]]
 
     kwargs = {
         k: v if type(v) != dict else [v.get(e) for _, e in pairs]
@@ -120,18 +120,16 @@ def draw_hyper_labels(
 
     ax = ax or plt.gca()
 
-    edges = [e.uid for e in H.edges()]
-
     to_draw = []
     if with_node_labels:
-        to_draw.append((H.nodes(), "right"))
+        to_draw.append((list(H.nodes()), "right"))
 
     if with_edge_labels:
-        to_draw.append((H.edges(), "left"))
+        to_draw.append((list(H.edges()), "left"))
 
     for points, ha in to_draw:
         for p in points:
-            ax.annotate(labels.get(p.uid, p.uid), pos[p.uid], ha=ha, va="center")
+            ax.annotate(labels.get(p, p), pos[p], ha=ha, va="center")
 
 
 def draw(
@@ -183,8 +181,8 @@ def draw(
 
     pos = layout_two_column(H)
 
-    V = [v.uid for v in H.nodes()]
-    E = [e.uid for e in H.edges()]
+    V = [v for v in H.nodes()]
+    E = [e for e in H.edges()]
 
     labels = {}
     labels.update(get_frozenset_label(V, count=with_node_counts))
@@ -192,7 +190,7 @@ def draw(
 
     if with_color:
         edge_kwargs["color"] = {
-            e.uid: plt.cm.tab10(i % 10) for i, e in enumerate(H.edges())
+            e: plt.cm.tab10(i % 10) for i, e in enumerate(H.edges())
         }
 
     draw_hyper_edges(H, pos, ax=ax, **edge_kwargs)

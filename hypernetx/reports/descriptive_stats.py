@@ -10,23 +10,7 @@ Also computes general hypergraph information: number of nodes, edges, cells, asp
 """
 from collections import Counter
 import numpy as np
-import networkx as nx
-from hypernetx import *
 from hypernetx.utils.decorators import not_implemented_for
-
-__all__ = [
-    "centrality_stats",
-    "edge_size_dist",
-    "degree_dist",
-    "comp_dist",
-    "s_comp_dist",
-    "toplex_dist",
-    "s_node_diameter_dist",
-    "s_edge_diameter_dist",
-    "info",
-    "info_dict",
-    "dist_stats",
-]
 
 
 def centrality_stats(X):
@@ -43,7 +27,13 @@ def centrality_stats(X):
     [min, max, mean, median, standard deviation] : list
         List of centrality statistics for X
     """
-    return [min(X), max(X), np.mean(X), np.median(X), np.std(X)]
+    return [
+        min(X),
+        max(X),
+        np.mean(X).tolist(),
+        np.median(X).tolist(),
+        np.std(X).tolist(),
+    ]
 
 
 def edge_size_dist(H, aggregated=False):
@@ -87,10 +77,7 @@ def degree_dist(H, aggregated=False):
      degree_dist : list or dict
         List of degrees or dictionary of degree distribution
     """
-    if H.nwhy:
-        distr = H.g.node_size_dist()
-    else:
-        distr = [H.degree(n) for n in H.nodes]
+    distr = [H.degree(n) for n in H.nodes]
     if aggregated:
         return Counter(distr)
     else:
@@ -354,10 +341,9 @@ def dist_stats(H):
      dist_stats : dict
         Dictionary which keeps track of each of the above items (e.g., basic['nrows'] = the number of nodes in H)
     """
-    if H.isstatic:
-        stats = H.state_dict.get("dist_stats", None)
-        if stats is not None:
-            return H.state_dict["dist_stats"]
+    stats = H._state_dict.get("dist_stats", None)
+    if stats is not None:
+        return H._state_dict["dist_stats"]
 
     cstats = ["min", "max", "mean", "median", "std"]
     basic = dict()
@@ -408,6 +394,5 @@ def dist_stats(H):
     # # Diameters
     # basic['s edge diam list'] = s_edge_diameter_dist(H)
     # basic['s node diam list'] = s_node_diameter_dist(H)
-    if H.isstatic:
-        H.set_state(dist_stats=basic)
+    H.set_state(dist_stats=basic)
     return basic

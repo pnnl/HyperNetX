@@ -182,7 +182,7 @@ def create_labels(
     Returns
     -------
     OrderedDict
-        used for labels in constructing a StaticEntitySet
+        used for labels in constructing a EntitySet
     """
     enames = np.array([f"{edgeprefix}{idx}" for idx in range(num_edges)])
     nnames = np.array([f"{nodeprefix}{jdx}" for jdx in range(num_nodes)])
