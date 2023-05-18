@@ -1,2 +1,0 @@
-nb2plots==0.6.1
-texext==0.6.7
