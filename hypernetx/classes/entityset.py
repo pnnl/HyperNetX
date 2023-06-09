@@ -4,7 +4,7 @@ import warnings
 from ast import literal_eval
 from collections import OrderedDict
 from collections.abc import Iterable, Sequence
-from typing import Mapping
+from typing import Mapping, Hashable
 from typing import Optional, Any, TypeVar, Union
 from pprint import pformat
 
