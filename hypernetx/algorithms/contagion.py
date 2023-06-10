@@ -6,7 +6,7 @@ import hypernetx as hnx
 
 try:
     from celluloid import Camera
-except Exception as e:
+except ModuleNotFoundError as e:
     print(
         f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
     )
