@@ -62,7 +62,7 @@ available on `GitHub <https://github.com/pnnl/HyperNetX>`_.
 
 
 Notice
-------
+======
 This material was prepared as an account of work sponsored by an agency of the United States Government.  
 Neither the United States Government nor the United States Department of Energy, nor Battelle, 
 nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of 
@@ -90,7 +90,7 @@ those of the United States Government or any agency thereof.
    </div>
 
 License
--------
+=======
 HyperNetX is released under the 3-Clause BSD license (see :ref:`license`)
 
 
