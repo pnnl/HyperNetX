@@ -365,7 +365,7 @@ run the following commands:
 
 ```shell
 # Install commitizen tool to environment
-make releases
+make version-deps
 
 # Updates version; values for '--increment' can be MAJOR, MINOR, or PATCH
 # Autocreates a tag and commit for the updated version
