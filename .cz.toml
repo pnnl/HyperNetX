@@ -1,6 +1,6 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.0.0.post1"
+version = "2.0.1"
 version_files = [
     "setup.py",
     "docs/source/conf.py",
