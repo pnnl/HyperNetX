@@ -4,13 +4,6 @@ from collections import defaultdict
 from collections import Counter
 import hypernetx as hnx
 
-try:
-    from celluloid import Camera
-except ModuleNotFoundError as e:
-    print(
-        f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
-    )
-
 
 def contagion_animation(
     fig,
@@ -71,6 +64,14 @@ def contagion_animation(
         >>> animation = contagion.contagion_animation(fig, H, transition_events, node_state_color_dict, edge_state_color_dict, node_radius=1, fps=fps)
         >>> HTML(animation.to_jshtml())
     """
+
+    try:
+        from celluloid import Camera
+    except ModuleNotFoundError as e:
+        print(
+            f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
+        )
+        raise
 
     nodeState = defaultdict(lambda: "S")
 
