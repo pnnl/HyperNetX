@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import pandas as pd
 from hypernetx.classes.hypergraph import Hypergraph
 
 
@@ -323,6 +324,7 @@ def test_construct_empty_hypergraph():
     assert h.shape == (0, 0)
     assert h.edges.is_empty()
     assert h.nodes.is_empty()
+    assert isinstance(h.dataframe, pd.DataFrame)
 
 
 def test_construct_hypergraph_from_empty_dict():
