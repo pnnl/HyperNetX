@@ -9,7 +9,7 @@ HyperNetX (HNX)
 
 `HNX`_ is a Python library for hypergraphs, the natural models for multi-dimensional network data.  
 
-To get started, try the  `interactive COLAB tutorials <https://pnnl.github.io/HyperNetX/build/overview/index.html#colab-tutorials>`_.  For a primer on hypergraphs, try this :ref:`gentle introduction<hypergraph101>`.  To see hypergraphs at work in cutting-edge research, see our list of recent :ref:`publications<publications>`.
+To get started, try the  :ref:`interactive COLAB tutorials<colab>`.  For a primer on hypergraphs, try this :ref:`gentle introduction<hypergraph101>`.  To see hypergraphs at work in cutting-edge research, see our list of recent :ref:`publications<publications>`.
 
 Why hypergraphs?
 ----------------

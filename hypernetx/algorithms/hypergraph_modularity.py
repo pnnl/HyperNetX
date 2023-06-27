@@ -19,7 +19,7 @@ from scipy.special import comb
 
 try:
     import igraph as ig
-except Exception as e:
+except ModuleNotFoundError as e:
     print(
         f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
     )

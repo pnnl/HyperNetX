@@ -1,11 +1,12 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.0.0.post1"
+version = "2.0.1"
 version_files = [
     "setup.py",
     "docs/source/conf.py",
     "hypernetx/__init__.py"
 ]
+tag_format = "v$major.$minor.$patch$prerelease"
 update_changelog_on_bump = false
 style = [
     ["qmark", "fg:#ff9d00 bold"],

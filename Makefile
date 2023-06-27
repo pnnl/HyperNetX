@@ -54,11 +54,7 @@ version-deps:
 docs-deps:
 	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
 
-commit-docs:
-	git add -A
-	git commit -m "Bump version in docs"
-
-.PHONY: commit-docs docs-deps
+.PHONY: docs-deps
 
 ## Environment
 

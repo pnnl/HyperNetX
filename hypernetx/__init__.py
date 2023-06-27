@@ -11,4 +11,4 @@ from hypernetx.algorithms import *
 from hypernetx.utils import *
 from hypernetx.utils.toys import *
 
-__version__ = "2.0.0.post1"
+__version__ = "2.0.1"
