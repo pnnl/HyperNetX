@@ -1529,20 +1529,23 @@ class Hypergraph:
         rdfprop = self.properties.copy()
         rdf = self.dataframe.copy()
         if not isinstance(keys, (list, tuple, set)):
-            keys = list(keys)
+            nkeys = list()
+            nkeys.append(keys)
+        else:
+            nkeys = keys
         if level == 0:
-            kdx = set(keys).intersection(set(self._state_dict["labels"]["edges"]))
+            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["edges"]))
             for k in kdx:
                 rdfprop = rdfprop.drop((0, k))
             rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
         elif level == 1:
-            kdx = set(keys).intersection(set(self._state_dict["labels"]["nodes"]))
+            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["nodes"]))
             for k in kdx:
                 rdfprop = rdfprop.drop((1, k))
             rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
         else:
             rdfprop = rdfprop.reset_index()
-            kdx = set(keys).intersection(rdfprop.id.unique())
+            kdx = set(nkeys).intersection(rdfprop.id.unique())
             rdfprop = rdfprop.set_index("id")
             rdfprop = rdfprop.drop(index=kdx)
             rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
