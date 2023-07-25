@@ -4,6 +4,12 @@ import pytest
 from hypernetx import Entity, EntitySet
 
 
+def test_construct_entityset_from_empty_dict():
+    es = EntitySet({})
+    assert len(es.elements) == 0
+    assert es.dimsize == 1
+
+
 @pytest.mark.xfail(reason="default arguments fail for empty Entity")
 def test_construct_empty_entityset():
     es = EntitySet()

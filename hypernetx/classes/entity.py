@@ -150,11 +150,17 @@ class Entity:
         # be filled in with dict keys for a list of N lists, 0,1,...,N will be
         # used to fill the first level/column
         elif isinstance(entity, (dict, list)):
+            # convert dict of lists to 1-column dataframe
+            if not entity:
+                entity = pd.Series(entity).explode()
+                self._dataframe = pd.DataFrame({data_cols[0]: entity.index.to_list()})
+                data_cols = [0]
             # convert dict of lists to 2-column dataframe
-            entity = pd.Series(entity).explode()
-            self._dataframe = pd.DataFrame(
-                {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
-            )
+            else:
+                entity = pd.Series(entity).explode()
+                self._dataframe = pd.DataFrame(
+                    {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
+                )
 
         # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
         # ndarray in the state dict

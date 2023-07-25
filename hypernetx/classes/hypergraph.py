@@ -324,8 +324,9 @@ class Hypergraph:
         )
         ### cell properties
 
-        if setsystem is None:  #### Empty Case
-
+        if setsystem is None or (
+            isinstance(setsystem, dict) and not setsystem
+        ):  #### Empty Case
             self._edges = EntitySet({})
             self._nodes = EntitySet({})
             self._state_dict = {}
