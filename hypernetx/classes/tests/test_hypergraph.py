@@ -88,17 +88,20 @@ def test_remove_edges(sbs):
     H = H.remove_edges("O")
     assert H.shape == (6, 4)
 
-def test_remove_edges(triloop2):
+def test_remove(triloop2):
     H = triloop2.hypergraph
     k = "ACD2"
+    assert H.shape == (5,4)
     newH = H.remove(k)
     assert newH.shape == (5,3)
-    newH = H.remove_nodes('E')
+    newH = H.remove('E',level=1)
     assert newH.shape == (4,4)
-    newH = H.remove_edges('ACD')
+    newH = H.remove('ACD',level=0)
     assert newH.shape == (5,3)
     newH = H.remove(['ACD','E'])
     assert newH.shape == (4,3)
+    with pytest.raises(TypeError):
+        H.remove({'ACD':'edge'})
 
 
 def test_remove_nodes():
