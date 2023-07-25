@@ -6,7 +6,7 @@ import pickle
 import warnings
 from collections import defaultdict
 from collections.abc import Sequence, Iterable
-from typing import Optional, Any, TypeVar, Union, Mapping
+from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
 
 import networkx as nx
 import numpy as np
@@ -1513,13 +1513,15 @@ class Hypergraph:
 
         Parameters
         ----------
-        keys : list | tuple | set
-            node and/or edge id to restrict to
+        keys : list | tuple | set | Hashable
+            node and/or edge id(s) to restrict to
         level : None, optional
             Enter 0 to remove edges with ids in keys.
             Enter 1 to remove nodes with ids in keys.
             If None then all objects in nodes and edges with the id will
             be removed.
+        name : str, optional
+            Name of new hypergraph
 
         Returns
         -------
@@ -1528,25 +1530,30 @@ class Hypergraph:
         """
         rdfprop = self.properties.copy()
         rdf = self.dataframe.copy()
-        if not isinstance(keys, (list, tuple, set)):
-            keys = list(keys)
+        if isinstance(keys, (list, tuple, set)):
+            nkeys = keys
+        elif isinstance(keys, Hashable):
+            nkeys = list()
+            nkeys.append(keys)
+        else:
+            raise TypeError("`keys` parameter must be list | tuple | set | Hashable")
         if level == 0:
-            kdx = set(keys).intersection(set(self._state_dict["labels"]["edges"]))
+            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["edges"]))
             for k in kdx:
                 rdfprop = rdfprop.drop((0, k))
-            rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
+            rdf = rdf.loc[~(rdf[self._edge_col].isin(kdx))]
         elif level == 1:
-            kdx = set(keys).intersection(set(self._state_dict["labels"]["nodes"]))
+            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["nodes"]))
             for k in kdx:
                 rdfprop = rdfprop.drop((1, k))
-            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
+            rdf = rdf.loc[~(rdf[self._node_col].isin(kdx))]
         else:
             rdfprop = rdfprop.reset_index()
-            kdx = set(keys).intersection(rdfprop.id.unique())
+            kdx = set(nkeys).intersection(rdfprop.id.unique())
             rdfprop = rdfprop.set_index("id")
             rdfprop = rdfprop.drop(index=kdx)
-            rdf = rdf.loc[~rdf[self._edge_col].isin(kdx)]
-            rdf = rdf.loc[~rdf[self._node_col].isin(kdx)]
+            rdf = rdf.loc[~(rdf[self._edge_col].isin(kdx))]
+            rdf = rdf.loc[~(rdf[self._node_col].isin(kdx))]
 
         return Hypergraph(
             setsystem=rdf,
@@ -1556,6 +1563,7 @@ class Hypergraph:
             misc_cell_properties_col=self.edges._misc_cell_props_col,
             properties=rdfprop,
             misc_properties_col=self.edges._misc_props_col,
+            name=name
         )
 
     def toplexes(self, name=None):
