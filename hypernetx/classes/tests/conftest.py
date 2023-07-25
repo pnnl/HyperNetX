@@ -75,6 +75,7 @@ class TriLoop:
         self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D}}
         self.hypergraph = Hypergraph(self.edgedict, name="TriLoop")
 
+
 class TriLoop2:
     """Triloop example with redundant node and edge"""
 

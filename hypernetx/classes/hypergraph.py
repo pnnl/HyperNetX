@@ -1563,7 +1563,7 @@ class Hypergraph:
             misc_cell_properties_col=self.edges._misc_cell_props_col,
             properties=rdfprop,
             misc_properties_col=self.edges._misc_props_col,
-            name=name
+            name=name,
         )
 
     def toplexes(self, name=None):
