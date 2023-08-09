@@ -76,6 +76,16 @@ class TriLoop:
         self.hypergraph = Hypergraph(self.edgedict, name="TriLoop")
 
 
+class TriLoop2:
+    """Triloop example with redundant node and edge"""
+
+    def __init__(self):
+        A, B, C, D, E = "A", "B", "C", "D", "E"
+        AB, BC, ACD, ACD2 = "AB", "BC", "ACD", "ACD2"
+        self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D, E}, ACD2: {A, C, D, E}}
+        self.hypergraph = Hypergraph(self.edgedict, name="TriLoop2")
+
+
 class SBSDupes:
     def __init__(self):
         self.edgedict = OrderedDict(
@@ -154,6 +164,11 @@ def sbs_edgedict(sbs):
 @pytest.fixture
 def triloop():
     return TriLoop()
+
+
+@pytest.fixture
+def triloop2():
+    return TriLoop2()
 
 
 @pytest.fixture
