@@ -185,13 +185,15 @@ class EntitySet:
         # store a list of columns that hold entity data (not properties or
         # weights)
         # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
+
         self._data_cols = []
-        for col in data_cols:
-            # TODO: default arguments fail for empty Entity; data_cols has two elements but _dataframe has only one element
-            if isinstance(col, int):
-                self._data_cols.append(self._dataframe.columns[col])
-            else:
-                self._data_cols.append(col)
+        if not self._dataframe.empty:
+            for col in data_cols:
+                # TODO: default arguments fail for empty Entity; data_cols has two elements but _dataframe has only one element
+                if isinstance(col, int):
+                    self._data_cols.append(self._dataframe.columns[col])
+                else:
+                    self._data_cols.append(col)
 
         # each entity data column represents one dimension of the data
         # (data updates can only add or remove rows, so this isn't stored in

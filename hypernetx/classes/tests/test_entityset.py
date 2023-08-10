@@ -6,6 +6,14 @@ from collections import UserList
 from hypernetx.classes import EntitySet
 
 
+def test_entityset_empty():
+    es = EntitySet()
+    assert es.empty
+    assert len(es.elements) == 0
+    assert es.elements == {}
+    assert es.dimsize == 0
+
+
 def test_constructor(ent_sbs):
     assert ent_sbs.size() == 6
     assert len(ent_sbs.uidset) == 6
