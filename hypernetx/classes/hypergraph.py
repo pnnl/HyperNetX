@@ -14,7 +14,7 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import Entity, EntitySet
+from hypernetx.classes import EntitySet, EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
@@ -694,7 +694,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : hashable or EntitySet
 
         """
         return item in self.nodes
@@ -705,7 +705,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : Entity or hashable
+        node : EntitySet or hashable
             If hashable, then must be uid of node in hypergraph
 
         Returns
@@ -968,7 +968,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : hashable or Entity
+        node : hashable or EntitySet
             uid for a node in hypergraph or the node Entity
 
         s : int, list, optional, default = 1
@@ -1005,7 +1005,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : hashable or Entity
+        edge : hashable or EntitySet
             uid for a edge in hypergraph or the edge Entity
 
         s : int, list, optional, default = 1
@@ -1370,7 +1370,7 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', /
+            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
                                         ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
@@ -1441,7 +1441,7 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', /
+            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
                                            ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}

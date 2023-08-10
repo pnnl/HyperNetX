@@ -8,7 +8,7 @@ from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
 
-from hypernetx.classes.entity import *
+from hypernetx.classes.entityset import *
 
 
 class AttrList(UserList):
@@ -16,7 +16,7 @@ class AttrList(UserList):
 
     Parameters
     ----------
-    entity : hypernetx.Entity
+    entity : hypernetx.EntitySet
     key : tuple of (int, str or int)
         ``(level, item)``
     initlist : list, optional
@@ -25,7 +25,7 @@ class AttrList(UserList):
 
     def __init__(
         self,
-        entity: Entity,
+        entity: EntitySet,
         key: tuple[int, str | int],
         initlist: Optional[list] = None,
     ):
