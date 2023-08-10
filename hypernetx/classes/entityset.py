@@ -14,8 +14,12 @@ from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
     remove_row_duplicates,
-    dict_depth,
 )
+
+from hypernetx.utils.log import get_logger
+
+_log = get_logger("entity_set")
+
 
 T = TypeVar("T", bound=Union[str, int])
 
@@ -139,43 +143,11 @@ class EntitySet:
         self._static = static
         self._state_dict = {}
 
-        # entity data is stored in a DataFrame for basic access without the
-        # need for any label encoding lookups
-        if isinstance(entity, pd.DataFrame):
-            self._dataframe = entity.copy()
-
-        # if the entity data is passed as a dict of lists or a list of lists,
-        # we convert it to a 2-column dataframe by exploding each list to cover
-        # one row per element for a dict of lists, the first level/column will
-        # be filled in with dict keys for a list of N lists, 0,1,...,N will be
-        # used to fill the first level/column
-        elif isinstance(entity, (dict, list)):
-            # convert dict of lists to 2-column dataframe
-            entity = pd.Series(entity).explode()
-            self._dataframe = pd.DataFrame(
-                {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
-            )
-
-        # if a 2d numpy ndarray is passed, store it as both a DataFrame and an
-        # ndarray in the state dict
-        elif isinstance(data, np.ndarray) and data.ndim == 2:
-            self._state_dict["data"] = data
-            self._dataframe = pd.DataFrame(data)
-            # if a dict of labels was passed, use keys as column names in the
-            # DataFrame, translate the dataframe, and store the dict of labels
-            # in the state dict
-            if isinstance(labels, dict) and len(labels) == len(self._dataframe.columns):
-                self._dataframe.columns = labels.keys()
-                self._state_dict["labels"] = labels
-
-                for col in self._dataframe:
-                    self._dataframe[col] = pd.Categorical.from_codes(
-                        self._dataframe[col], categories=labels[col]
-                    )
-
-        # create an empty Entity
+        if isinstance(data, np.ndarray) and entity is None:
+            self._build_dataframe_from_ndarray(data, labels)
         else:
-            self._dataframe = pd.DataFrame()
+            _log.debug("Ignoring 'data' since 'entity' is given.")
+            self._dataframe = build_dataframe_from_entity(entity, data_cols)
 
         # assign a new or existing column of the dataframe to hold cell weights
         self._dataframe, self._cell_weight_col = assign_weights(
@@ -230,6 +202,33 @@ class EntitySet:
         self._misc_props_col = misc_props_col
         if properties is not None:
             self.assign_properties(properties)
+
+    def _build_dataframe_from_ndarray(
+        self,
+        data: pd.ndarray,
+        labels: Optional[OrderedDict[Union[str, int], Sequence[Union[str, int]]]],
+    ) -> None:
+        self._state_dict["data"] = data
+        self._dataframe = pd.DataFrame(data)
+        # if a dict of labels was passed, use keys as column names in the
+        # DataFrame, translate the dataframe, and store the dict of labels in the state dict
+
+        if not isinstance(labels, dict):
+            raise ValueError(
+                f"Labels must be of type Dictionary. Labels is of type: {type(labels)}; labels: {labels}"
+            )
+        if len(labels) != len(self._dataframe.columns):
+            raise ValueError(
+                f"The length of labels must equal the length of columns in the dataframe. Labels is of length: {len(labels)}; dataframe is of length: {len(self._dataframe.columns)}"
+            )
+
+        self._dataframe.columns = labels.keys()
+        self._state_dict["labels"] = labels
+
+        for col in self._dataframe:
+            self._dataframe[col] = pd.Categorical.from_codes(
+                self._dataframe[col], categories=labels[col]
+            )
 
     @property
     def data(self):
@@ -1622,3 +1621,32 @@ class EntitySet:
             ) from ex
 
         return prop_vals
+
+
+def build_dataframe_from_entity(
+    entity: pd.DataFrame
+    | Mapping[Union[str, int], Iterable[Union[str, int]]]
+    | Iterable[Iterable[Union[str, int]]]
+    | Mapping[T, Mapping[T, Mapping[T, Any]]],
+    data_cols: Sequence[Union[str, int]],
+) -> pd.DataFrame:
+    ##### build dataframe
+    # entity data is stored in a DataFrame for basic access without the
+    # need for any label encoding lookups
+    if isinstance(entity, pd.DataFrame):
+        return entity.copy()
+
+    # if the entity data is passed as a dict of lists or a list of lists,
+    # we convert it to a 2-column dataframe by exploding each list to cover
+    # one row per element for a dict of lists, the first level/column will
+    # be filled in with dict keys for a list of N lists, 0,1,...,N will be
+    # used to fill the first level/column
+    if isinstance(entity, (dict, list)):
+        # convert dict of lists to 2-column dataframe
+        entity = pd.Series(entity).explode()
+        return pd.DataFrame(
+            {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
+        )
+
+    # create an empty dataframe
+    return pd.DataFrame()

@@ -152,16 +152,6 @@ def sbs():
 
 
 @pytest.fixture
-def ent_sbs(sbs):
-    return EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-
-
-@pytest.fixture
-def sbs_edgedict(sbs):
-    return sbs.edgedict
-
-
-@pytest.fixture
 def triloop():
     return TriLoop()
 
@@ -243,11 +233,6 @@ def array_example():
     return np.array(
         [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
     )
-
-
-@pytest.fixture
-def ent_hp(harry_potter):
-    return EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
 
 
 ####################Fixtures suite for test_hypergraph.py####################
