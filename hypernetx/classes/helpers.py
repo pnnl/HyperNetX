@@ -193,6 +193,7 @@ def remove_row_duplicates(
 ):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
+    Also sets the dtype of entity data columns to categorical (simplifies encoding, etc.)
 
     Parameters
     ----------

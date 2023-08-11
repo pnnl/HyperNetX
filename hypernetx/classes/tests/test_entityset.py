@@ -39,8 +39,7 @@ def test_entityset_from_dataframe():
     assert es.uid is None
 
 
-class TestEntitySetOnSBSHypergraph:
-    ## Tests using Seven By Six hypergraphs
+class TestEntitySetOnSevenBySixDataset:
     def test_entityset_from_dictionary(self, sbs):
         ent = EntitySet(entity=sbs.edgedict)
         assert len(ent.elements) == 6
@@ -54,6 +53,10 @@ class TestEntitySetOnSBSHypergraph:
         assert isinstance(ent_sbs.incidence_dict["I"], list)
         assert "I" in ent_sbs
         assert "K" in ent_sbs
+
+    def test_dimensions_equal_dimsize(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.dimsize == len(ent_sbs.dimensions)
 
     def test_uidset_by_level(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
@@ -101,44 +104,49 @@ def test_level(sbs):
     assert ent_sbs.level("K", max_level=0) is None
 
 
-## Tests using Harry Potter hypergraph
-def test_entityset_from_ndarray_harry_potter(harry_potter):
-    ent_hp = EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
-    assert len(ent_hp.uidset) == 7
-    assert len(ent_hp.elements) == 7
-    assert isinstance(ent_hp.elements["Hufflepuff"], UserList)
-    assert not ent_hp.is_empty()
-    assert len(ent_hp.incidence_dict["Gryffindor"]) == 6
+class TestEntitySetOnHarryPotterDataSet:
+    def test_entityset_from_ndarray(self, harry_potter):
+        ent_hp = EntitySet(
+            data=np.asarray(harry_potter.data), labels=harry_potter.labels
+        )
+        assert len(ent_hp.uidset) == 7
+        assert len(ent_hp.elements) == 7
+        assert isinstance(ent_hp.elements["Hufflepuff"], UserList)
+        assert not ent_hp.is_empty()
+        assert len(ent_hp.incidence_dict["Gryffindor"]) == 6
 
+    def test_custom_attributes(self, harry_potter):
+        ent_hp = EntitySet(
+            data=np.asarray(harry_potter.data), labels=harry_potter.labels
+        )
+        assert ent_hp.__len__() == 7
+        assert isinstance(ent_hp.__str__(), str)
+        assert isinstance(ent_hp.__repr__(), str)
+        assert isinstance(ent_hp.__contains__("Muggle"), bool)
+        assert ent_hp.__contains__("Muggle") is True
+        assert ent_hp.__getitem__("Slytherin") == [
+            "Half-blood",
+            "Pure-blood",
+            "Pure-blood or half-blood",
+        ]
+        assert isinstance(ent_hp.__iter__(), Iterable)
+        assert isinstance(ent_hp.__call__(), Iterable)
+        assert ent_hp.__call__().__next__() == "Unknown House"
 
-def test_custom_attributes(harry_potter):
-    ent_hp = EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
-    assert ent_hp.__len__() == 7
-    assert isinstance(ent_hp.__str__(), str)
-    assert isinstance(ent_hp.__repr__(), str)
-    assert isinstance(ent_hp.__contains__("Muggle"), bool)
-    assert ent_hp.__contains__("Muggle") is True
-    assert ent_hp.__getitem__("Slytherin") == [
-        "Half-blood",
-        "Pure-blood",
-        "Pure-blood or half-blood",
-    ]
-    assert isinstance(ent_hp.__iter__(), Iterable)
-    assert isinstance(ent_hp.__call__(), Iterable)
-    assert ent_hp.__call__().__next__() == "Unknown House"
+    def test_restrict_to_levels(self, harry_potter):
+        ent_hp = EntitySet(
+            data=np.asarray(harry_potter.data), labels=harry_potter.labels
+        )
+        assert len(ent_hp.restrict_to_levels([0]).uidset) == 7
 
-
-def test_restrict_to_levels(harry_potter):
-    ent_hp = EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
-    assert len(ent_hp.restrict_to_levels([0]).uidset) == 7
-
-
-def test_restrict_to_indices(harry_potter):
-    ent_hp = EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
-    assert ent_hp.restrict_to_indices([1, 2]).uidset == {
-        "Gryffindor",
-        "Ravenclaw",
-    }
+    def test_restrict_to_indices(self, harry_potter):
+        ent_hp = EntitySet(
+            data=np.asarray(harry_potter.data), labels=harry_potter.labels
+        )
+        assert ent_hp.restrict_to_indices([1, 2]).uidset == {
+            "Gryffindor",
+            "Ravenclaw",
+        }
 
 
 @pytest.mark.xfail(

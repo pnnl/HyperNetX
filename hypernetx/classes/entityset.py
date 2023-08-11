@@ -118,11 +118,14 @@ class EntitySet:
     def __init__(
         self,
         entity: Optional[
-            pd.DataFrame | Mapping[T, Iterable[T]] | Iterable[Iterable[T]]
+            pd.DataFrame
+            | Mapping[T, Iterable[T]]
+            | Iterable[Iterable[T]]
+            | Mapping[T, Mapping[T, Any]]
         ] = None,
-        data_cols: Sequence[T] = [0, 1],
+        data_cols: Sequence[T] = (0, 1),
         data: Optional[np.ndarray] = None,
-        static: bool = False,
+        static: bool = True,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
         uid: Optional[Hashable] = None,
         weight_col: Optional[str | int] = "cell_weights",
@@ -133,13 +136,7 @@ class EntitySet:
         level_col: str = "level",
         id_col: str = "id",
     ):
-        # set unique identifier
-        self._uid = uid or None
-
-        # if static, the original data cannot be altered
-        # the state dict stores all computed values that may need to be updated
-        # if the data is altered - the dict will be cleared when data is added
-        # or removed
+        self._uid = uid
         self._static = static
         self._state_dict = {}
 
@@ -153,20 +150,13 @@ class EntitySet:
         self._dataframe, self._cell_weight_col = assign_weights(
             self._dataframe, weights=weights, weight_col=weight_col
         )
-        # import ipdb; ipdb.set_trace()
-        # store a list of columns that hold entity data (not properties or
-        # weights)
-        # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
 
         self._data_cols = []
         self._init_data_cols(data_cols)
-
         # each entity data column represents one dimension of the data
-        # (data updates can only add or remove rows, so this isn't stored in
-        # state dict)
+        # (data updates can only add or remove rows, so this isn't stored in state dict)
         self._dimsize = len(self._data_cols)
 
-        # remove duplicate rows and aggregate cell weights as needed
         # import ipdb; ipdb.set_trace()
         self._dataframe, _ = remove_row_duplicates(
             self._dataframe,
@@ -175,27 +165,9 @@ class EntitySet:
             aggregateby=aggregateby,
         )
 
-        # set the dtype of entity data columns to categorical (simplifies
-        # encoding, etc.)
-        ### This is automatically done in remove_row_duplicates
-        # self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-        #     "category"
-        # )
-
-        # create properties
-        item_levels = [
-            (level, item)
-            for level, col in enumerate(self._data_cols)
-            for item in self.dataframe[col].cat.categories
-        ]
-        index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
-        data = [(i, 1, {}) for i in range(len(index))]
-        self._properties = pd.DataFrame(
-            data=data, index=index, columns=["uid", "weight", misc_props_col]
-        ).sort_index()
         self._misc_props_col = misc_props_col
-        if properties is not None:
-            self.assign_properties(properties)
+        self._init_properties(level_col, id_col, misc_props_col)
+        self.assign_properties(properties)
 
     def _build_dataframe_from_ndarray(
         self,
@@ -224,7 +196,9 @@ class EntitySet:
                 self._dataframe[col], categories=labels[col]
             )
 
-    def _init_data_cols(self, data_cols):
+    def _init_data_cols(self, data_cols: Sequence[T]) -> None:
+        """store a list of columns that hold entity data (not properties or weights)"""
+        # import ipdb; ipdb.set_trace()
         if not self._dataframe.empty:
             for col in data_cols:
                 if isinstance(col, int):
@@ -232,8 +206,22 @@ class EntitySet:
                 else:
                     self._data_cols.append(col)
 
+    def _init_properties(
+        self, level_col: str, id_col: str, misc_props_col: str
+    ) -> None:
+        item_levels = [
+            (level, item)
+            for level, col in enumerate(self._data_cols)
+            for item in self.dataframe[col].cat.categories
+        ]
+        index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
+        data = [(i, 1, {}) for i in range(len(index))]
+        self._properties = pd.DataFrame(
+            data=data, index=index, columns=["uid", "weight", misc_props_col]
+        ).sort_index()
+
     @property
-    def data(self):
+    def data(self) -> np.ndarray:
         """Sparse representation of the data table as an incidence tensor
 
         This can also be thought of as an encoding of `dataframe`, where items in each column of
@@ -264,7 +252,7 @@ class EntitySet:
         return self._state_dict["data"]
 
     @property
-    def labels(self):
+    def labels(self) -> dict[str, list]:
         """Labels of all items in each column of the underlying data table
 
         Returns
@@ -289,7 +277,7 @@ class EntitySet:
         return self._state_dict["labels"]
 
     @property
-    def cell_weights(self):
+    def cell_weights(self) -> dict[str, tuple[T]]:
         """Cell weights corresponding to each row of the underlying data table
 
         Returns
@@ -309,7 +297,7 @@ class EntitySet:
         return self._state_dict["cell_weights"]
 
     @property
-    def dimensions(self):
+    def dimensions(self) -> tuple[int]:
         """Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table
 
         Returns
@@ -329,7 +317,7 @@ class EntitySet:
         return self._state_dict["dimensions"]
 
     @property
-    def dimsize(self):
+    def dimsize(self) -> int:
         """Number of levels (columns) in the underlying data table
 
         Returns
@@ -352,23 +340,22 @@ class EntitySet:
         return self._properties
 
     @property
-    def uid(self):
-        # Dev Note: This also returned nothing in my harry potter dataset, not sure if it was supposed to contain anything
+    def uid(self) -> Hashable:
         """User-defined unique identifier for the `Entity`
 
         Returns
         -------
-        hashable
+        Hashable
         """
         return self._uid
 
     @property
-    def uidset(self):
+    def uidset(self) -> set:
         """Labels of all items in level 0 (first column) of the underlying data table
 
         Returns
         -------
-        frozenset
+        set
 
         See Also
         --------
@@ -379,12 +366,12 @@ class EntitySet:
         return self.uidset_by_level(0)
 
     @property
-    def children(self):
+    def children(self) -> set:
         """Labels of all items in level 1 (second column) of the underlying data table
 
         Returns
         -------
-        frozenset
+        set
 
         See Also
         --------
@@ -394,7 +381,7 @@ class EntitySet:
         """
         return self.uidset_by_level(1)
 
-    def uidset_by_level(self, level):
+    def uidset_by_level(self, level: int) -> set:
         """Labels of all items in a particular level (column) of the underlying data table
 
         Parameters
@@ -403,7 +390,7 @@ class EntitySet:
 
         Returns
         -------
-        frozenset
+        set
 
         See Also
         --------
@@ -412,11 +399,11 @@ class EntitySet:
         uidset_by_column : Same functionality, takes the column name instead of level index
         """
         if self.is_empty(level):
-            return {}
+            return set()
         col = self._data_cols[level]
         return self.uidset_by_column(col)
 
-    def uidset_by_column(self, column):
+    def uidset_by_column(self, column: Hashable) -> set:
         # Dev Note: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
         """Labels of all items in a particular column (level) of the underlying data table
@@ -428,7 +415,7 @@ class EntitySet:
 
         Returns
         -------
-        frozenset
+        set
 
         See Also
         --------
@@ -447,7 +434,7 @@ class EntitySet:
         return self._state_dict["uidset"][column]
 
     @property
-    def elements(self):
+    def elements(self) -> dict[Any, AttrList]:
         """System of sets representation of the first two levels (columns) of the underlying data table
 
         Each item in level 0 (first column) defines a set containing all the level 1
@@ -491,7 +478,7 @@ class EntitySet:
         return {item: elements.data for item, elements in self.elements.items()}
 
     @property
-    def memberships(self):
+    def memberships(self) -> dict[Any, AttrList]:
         """System of sets representation of the first two levels (columns) of the
         underlying data table
 
@@ -514,7 +501,7 @@ class EntitySet:
 
         return self.elements_by_level(1, 0)
 
-    def elements_by_level(self, level1, level2):
+    def elements_by_level(self, level1: int, level2: int) -> dict[Any, AttrList]:
         """System of sets representation of two levels (columns) of the underlying data table
 
         Each item in level1 defines a set containing all the level2 items
@@ -544,7 +531,7 @@ class EntitySet:
         col2 = self._data_cols[level2]
         return self.elements_by_column(col1, col2)
 
-    def elements_by_column(self, col1, col2):
+    def elements_by_column(self, col1: Hashable, col2: Hashable) -> dict[Any, AttrList]:
 
         """System of sets representation of two columns (levels) of the underlying data table
 
@@ -584,7 +571,7 @@ class EntitySet:
         return self._state_dict["elements"][col1][col2]
 
     @property
-    def dataframe(self):
+    def dataframe(self) -> pd.DataFrame:
         """The underlying data table stored by the Entity
 
         Returns
@@ -594,7 +581,7 @@ class EntitySet:
         return self._dataframe
 
     @property
-    def isstatic(self):
+    def isstatic(self) -> bool:
         # Dev Note: I'm guessing this is no longer necessary?
         """Whether to treat the underlying data as static or not
 
@@ -607,7 +594,7 @@ class EntitySet:
         """
         return self._static
 
-    def size(self, level=0):
+    def size(self, level: int = 0) -> int:
         """The number of items in a level of the underlying data table
 
         Equivalent to ``self.dimensions[level]``
@@ -628,7 +615,7 @@ class EntitySet:
         return self.dimensions[level]
 
     @property
-    def empty(self):
+    def empty(self) -> bool:
         """Whether the underlying data table is empty or not
 
         Returns
@@ -642,9 +629,13 @@ class EntitySet:
         """
         return self._dimsize == 0
 
-    def is_empty(self, level=0):
+    def is_empty(self, level: int = 0) -> bool:
         """Whether a specified level (column) of the underlying data table is empty or not
 
+        Parameters
+        ----------
+        level: int
+            the level of a column in the underlying data table
         Returns
         -------
         bool
@@ -734,21 +725,7 @@ class EntitySet:
         """
         return iter(self.labels[self._data_cols[label_index]])
 
-    # def __repr__(self):
-    #     """String representation of the Entity
-
-    #     e.g., "Entity(uid, [level 0 items], {item: {property name: property value}})"
-
-    #     Returns
-    #     -------
-    #     str
-    #     """
-    #     return "hypernetx.classes.entity.Entity"
-
-    # def __str__(self):
-    #     return "<class 'hypernetx.classes.entity.Entity'>"
-
-    def index(self, column, value=None):
+    def index(self, column: str, value: Optional[str] = None) -> int | tuple(int, int):
         """Get level index corresponding to a column and (optionally) the index of a value in that column
 
         The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used
@@ -793,7 +770,7 @@ class EntitySet:
             self._state_dict["index"][column][value],
         )
 
-    def indices(self, column, values):
+    def indices(self, column: str, values: str | Iterable[str]) -> list[int]:
         """Get indices of one or more value(s) in a column
 
         Parameters
@@ -823,13 +800,13 @@ class EntitySet:
 
         return [self._state_dict["index"][column][v] for v in values]
 
-    def translate(self, level, index):
+    def translate(self, level: int, index: int | list[int]) -> str | list[str]:
         """Given indices of a level and value(s), return the corresponding value label(s)
 
         Parameters
         ----------
         level : int
-            level index
+            the index of the level
         index : int or list of int
             value index or indices
 
@@ -849,7 +826,7 @@ class EntitySet:
 
         return [self.labels[column][i] for i in index]
 
-    def translate_arr(self, coords):
+    def translate_arr(self, coords: tuple[int]) -> list[str]:
         """Translate a full encoded row of the data table e.g., a row of ``self.data``
 
         Parameters
@@ -869,7 +846,13 @@ class EntitySet:
 
         return translation
 
-    def level(self, item, min_level=0, max_level=None, return_index=True):
+    def level(
+        self,
+        item: str,
+        min_level: int = 0,
+        max_level: Optional[int] = None,
+        return_index: bool = True,
+    ) -> Optional[int, tuple(int, int)]:
         """First level containing the given item label
 
         Order of levels corresponds to order of columns in `self.dataframe`
@@ -877,8 +860,10 @@ class EntitySet:
         Parameters
         ----------
         item : str
-        min_level, max_level : int, optional
-            inclusive bounds on range of levels to search for item
+        min_level : int, default=0
+            minimum inclusive bound on range of levels to search for item
+        max_level : int, optional
+            maximum inclusive bound on range of levels to search for item
         return_index : bool, default=True
             If True, return index of item within the level
 
@@ -908,7 +893,7 @@ class EntitySet:
         print(f'"{item}" not found.')
         return None
 
-    def add(self, *args):
+    def add(self, *args) -> EntitySet:
         """Updates the underlying data table with new entity data from multiple sources
 
         Parameters
@@ -938,7 +923,7 @@ class EntitySet:
             self.add_element(item)
         return self
 
-    def add_elements_from(self, arg_set):
+    def add_elements_from(self, arg_set) -> EntitySet:
         """Adds arguments from an iterable to the data table one at a time
 
         ..deprecated:: 2.0.0
@@ -958,7 +943,13 @@ class EntitySet:
             self.add_element(item)
         return self
 
-    def add_element(self, data):
+    def add_element(
+        self,
+        data: pd.DataFrame
+        | Mapping[T, Iterable[T]]
+        | Iterable[Iterable[T]]
+        | Mapping[T, Mapping[T, Any]],
+    ) -> EntitySet:
         """Updates the underlying data table with new entity data
 
         Supports adding from either an existing Entity or a representation of entity
@@ -966,7 +957,7 @@ class EntitySet:
 
         Parameters
         ----------
-        data : Entity, `pandas.DataFrame`, or dict of lists or sets
+        data : `pandas.DataFrame`, dict of lists or sets, lists of lists or sets
             new entity data
 
         Returns
@@ -998,12 +989,12 @@ class EntitySet:
 
         return self
 
-    def __add_from_dataframe(self, df):
+    def __add_from_dataframe(self, df: pd.DataFrame) -> EntitySet:
         """Helper function to append rows to `self.dataframe`
 
         Parameters
         ----------
-        data : pd.DataFrame
+        df : pd.DataFrame
 
         Returns
         -------
@@ -1026,7 +1017,7 @@ class EntitySet:
 
             self._state_dict.clear()
 
-    def remove(self, *args):
+    def remove(self, *args) -> EntitySet:
         """Removes all rows containing specified item(s) from the underlying data table
 
         Parameters
@@ -1067,7 +1058,7 @@ class EntitySet:
             self.remove_element(item)
         return self
 
-    def remove_element(self, item):
+    def remove_element(self, item) -> EntitySet:
         """Removes all rows containing a specified item from the underlying data table
 
         Parameters
@@ -1102,7 +1093,7 @@ class EntitySet:
         for col in self._data_cols:
             self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
-    def encode(self, data):
+    def encode(self, data: pd.DataFrame) -> np.array:
         """
         Encode dataframe to numpy array
 
@@ -1119,8 +1110,12 @@ class EntitySet:
         return encoded_array
 
     def incidence_matrix(
-        self, level1=0, level2=1, weights=False, aggregateby=None, index=False
-    ) -> csr_matrix | None:
+        self,
+        level1: int = 0,
+        level2: int = 1,
+        weights: bool | dict = False,
+        aggregateby: str = "count",
+    ) -> Optional[csr_matrix]:
         """Incidence matrix representation for two levels (columns) of the underlying data table
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
@@ -1182,7 +1177,7 @@ class EntitySet:
         self,
         levels: int | Iterable[int],
         weights: bool = False,
-        aggregateby: str | None = "sum",
+        aggregateby: Optional[str] = "sum",
         **kwargs,
     ) -> EntitySet:
         """Create a new Entity by restricting to a subset of levels (columns) in the
@@ -1200,7 +1195,7 @@ class EntitySet:
             Method to aggregate weights of duplicate rows in data table
             If None or `weights`=False then all new cell weights will be 1
         **kwargs
-            Extra arguments to `Entity` constructor
+            Extra arguments to `EntitySet` constructor
 
         Returns
         -------
@@ -1246,7 +1241,9 @@ class EntitySet:
             **kwargs,
         )
 
-    def restrict_to_indices(self, indices, level=0, **kwargs):
+    def restrict_to_indices(
+        self, indices: int | Iterable[int], level: int = 0, **kwargs
+    ) -> EntitySet:
         """Create a new Entity by restricting the data table to rows containing specific items in a given level
 
         Parameters
@@ -1256,7 +1253,7 @@ class EntitySet:
         level : int, default=0
             level index
         **kwargs
-            Extra arguments to `Entity` constructor
+            Extra arguments to `EntitySet` constructor
 
         Returns
         -------
@@ -1305,10 +1302,13 @@ class EntitySet:
         properties
         """
         # mapping from user-specified level, id, misc column names to internal names
-        ### This will fail if there isn't a level column
+        # This will fail if there isn't a level column
+
+        if props is None:
+            return
 
         if isinstance(props, pd.DataFrame):
-            ### Fix to check the shape of properties or redo properties format
+            # TODO: Fix to check the shape of properties or redo properties format
             column_map = {
                 old: new
                 for old, new in zip(
@@ -1322,7 +1322,7 @@ class EntitySet:
             self._properties_from_dataframe(props)
 
         if isinstance(props, dict):
-            ### Expects nested dictionary with keys corresponding to level and id
+            # Expects nested dictionary with keys corresponding to level and id
             self._properties_from_dict(props)
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
@@ -1330,7 +1330,7 @@ class EntitySet:
 
         Parameters
         ----------
-        props
+        props: pd.Dataframe
 
         Notes
         -----
@@ -1404,7 +1404,7 @@ class EntitySet:
 
         Parameters
         ----------
-        props
+        props: dict[int, dict[T, dict[Any, Any]]]
         """
         # TODO: there may be a more efficient way to convert this to a dataframe instead
         #  of updating one-by-one via nested loop, but checking whether each prop_name
