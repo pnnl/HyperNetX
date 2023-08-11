@@ -159,13 +159,7 @@ class EntitySet:
         # self._data_cols = list(self._dataframe.columns.drop(self._cell_weight_col))
 
         self._data_cols = []
-        if not self._dataframe.empty:
-            for col in data_cols:
-                # TODO: default arguments fail for empty Entity; data_cols has two elements but _dataframe has only one element
-                if isinstance(col, int):
-                    self._data_cols.append(self._dataframe.columns[col])
-                else:
-                    self._data_cols.append(col)
+        self._init_data_cols(data_cols)
 
         # each entity data column represents one dimension of the data
         # (data updates can only add or remove rows, so this isn't stored in
@@ -229,6 +223,14 @@ class EntitySet:
             self._dataframe[col] = pd.Categorical.from_codes(
                 self._dataframe[col], categories=labels[col]
             )
+
+    def _init_data_cols(self, data_cols):
+        if not self._dataframe.empty:
+            for col in data_cols:
+                if isinstance(col, int):
+                    self._data_cols.append(self._dataframe.columns[col])
+                else:
+                    self._data_cols.append(col)
 
     @property
     def data(self):

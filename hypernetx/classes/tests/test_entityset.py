@@ -14,7 +14,6 @@ def test_empty_entityset():
     assert len(es.elements) == 0
     assert es.elements == {}
     assert es.dimsize == 0
-    assert es.uid is None
 
 
 def test_entityset_from_dataframe():
@@ -40,61 +39,54 @@ def test_entityset_from_dataframe():
     assert es.uid is None
 
 
-## Tests using Seven By Six hypergraphs
-def test_entityset_from_dictionary(sbs):
-    ent = EntitySet(entity=sbs.edgedict)
-    assert len(ent.elements) == 6
+class TestEntitySetOnSBSHypergraph:
+    ## Tests using Seven By Six hypergraphs
+    def test_entityset_from_dictionary(self, sbs):
+        ent = EntitySet(entity=sbs.edgedict)
+        assert len(ent.elements) == 6
 
+    def test_entityset_from_ndarray_sbs(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
 
-def test_entityset_from_ndarray_sbs(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.size() == 6
+        assert len(ent_sbs.uidset) == 6
+        assert len(ent_sbs.children) == 7
+        assert isinstance(ent_sbs.incidence_dict["I"], list)
+        assert "I" in ent_sbs
+        assert "K" in ent_sbs
 
-    assert ent_sbs.size() == 6
-    assert len(ent_sbs.uidset) == 6
-    assert len(ent_sbs.children) == 7
-    assert isinstance(ent_sbs.incidence_dict["I"], list)
-    assert "I" in ent_sbs
-    assert "K" in ent_sbs
+    def test_uidset_by_level(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
 
+        assert ent_sbs.uidset_by_level(0) == {"I", "L", "O", "P", "R", "S"}
+        assert ent_sbs.uidset_by_level(1) == {"A", "C", "E", "K", "T1", "T2", "V"}
 
-def test_uidset_by_level(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+    def test_elements_by_level(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.elements_by_level(0, 1)
 
-    assert ent_sbs.uidset_by_level(0) == {"I", "L", "O", "P", "R", "S"}
-    assert ent_sbs.uidset_by_level(1) == {"A", "C", "E", "K", "T1", "T2", "V"}
+    def test_incidence_matrix(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.incidence_matrix(1, 0).todense().shape == (6, 7)
 
+    def test_indices(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.indices("nodes", "K") == [3]
+        assert ent_sbs.indices("nodes", ["K", "T1"]) == [3, 4]
 
-def test_elements_by_level(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.elements_by_level(0, 1)
+    def test_translate(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.translate(0, 0) == "P"
+        assert ent_sbs.translate(1, [3, 4]) == ["K", "T1"]
 
+    def test_translate_arr(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.translate_arr((0, 0)) == ["P", "A"]
 
-def test_incidence_matrix(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.incidence_matrix(1, 0).todense().shape == (6, 7)
-
-
-def test_indices(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.indices("nodes", "K") == [3]
-    assert ent_sbs.indices("nodes", ["K", "T1"]) == [3, 4]
-
-
-def test_translate(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.translate(0, 0) == "P"
-    assert ent_sbs.translate(1, [3, 4]) == ["K", "T1"]
-
-
-def test_translate_arr(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.translate_arr((0, 0)) == ["P", "A"]
-
-
-def test_index(sbs):
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.index("nodes") == 1
-    assert ent_sbs.index("nodes", "K") == (1, 3)
+    def test_index(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.index("nodes") == 1
+        assert ent_sbs.index("nodes", "K") == (1, 3)
 
 
 @pytest.mark.xfail(

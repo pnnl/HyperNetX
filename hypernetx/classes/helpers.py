@@ -82,7 +82,11 @@ def encode(data: pd.DataFrame):
     return encoded_array
 
 
-def assign_weights(df, weights=1, weight_col="cell_weights"):
+def assign_weights(
+    df: pd.DataFrame,
+    weights: list | tuple | np.ndarray | Hashable = 1,
+    weight_col: Hashable = "cell_weights",
+):
     """
     Parameters
     ----------
@@ -111,9 +115,8 @@ def assign_weights(df, weights=1, weight_col="cell_weights"):
 
     if isinstance(weights, (list, np.ndarray)):
         df[weight_col] = weights
-    else:
-        if not weight_col in df:
-            df[weight_col] = weights
+    elif not weight_col in df:
+        df[weight_col] = weights
     # import ipdb; ipdb.set_trace()
     return df, weight_col
 
