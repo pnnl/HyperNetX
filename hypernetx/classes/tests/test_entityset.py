@@ -4,6 +4,7 @@ import pytest
 from collections.abc import Iterable
 from collections import UserList
 from hypernetx.classes import EntitySet
+from hypernetx.classes.entityset import restrict_to_two_columns
 
 from pandas import DataFrame, Series
 
@@ -92,18 +93,6 @@ class TestEntitySetOnSevenBySixDataset:
         assert ent_sbs.index("nodes", "K") == (1, 3)
 
 
-@pytest.mark.xfail(
-    reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor"
-)
-def test_level(sbs):
-    # TODO: at some point we are casting out and back to categorical dtype without
-    #  preserving categories ordering from `labels` provided to constructor
-    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-    assert ent_sbs.level("I") == (0, 5)  # fails
-    assert ent_sbs.level("K") == (1, 3)
-    assert ent_sbs.level("K", max_level=0) is None
-
-
 class TestEntitySetOnHarryPotterDataSet:
     def test_entityset_from_ndarray(self, harry_potter):
         ent_hp = EntitySet(
@@ -147,6 +136,61 @@ class TestEntitySetOnHarryPotterDataSet:
             "Gryffindor",
             "Ravenclaw",
         }
+
+
+#### testing entityset helpers
+
+
+def test_restrict_to_two_columns_on_ndarray(harry_potter):
+    data = np.asarray(harry_potter.data)
+    labels = harry_potter.labels
+    expected_num_cols = 2
+    expected_ndarray_first_row = np.array([1, 1])
+
+    entity, data, labels = restrict_to_two_columns(
+        entity=None,
+        data=data,
+        labels=labels,
+        cell_properties=None,
+        weight_col="cell_weights",
+        weights=1,
+        level1=0,
+        level2=1,
+        misc_cell_props_col="properties",
+    )
+
+    assert entity is None
+    assert len(labels) == 2
+    assert 0 in labels
+    assert 1 in labels
+
+    print(data)
+    print(type(data[0]))
+
+    assert data.shape[1] == expected_num_cols
+    assert np.array_equal(data[0], expected_ndarray_first_row)
+
+
+@pytest.mark.skip(reason="TODO: implement")
+def test_restrict_to_two_columns_on_dataframe(sbs):
+    pass
+
+
+@pytest.mark.skip(reason="TODO: implement")
+def build_dataframe_from_entity_on_dataframe(sbs):
+    pass
+
+
+@pytest.mark.xfail(
+    reason="at some point we are casting out and back to categorical dtype without preserving categories ordering from `labels` provided to constructor"
+)
+def test_level(sbs):
+    # TODO: at some point we are casting out and back to categorical dtype without
+    #  preserving categories ordering from `labels` provided to constructor
+    ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+    assert ent_sbs.level("I") == (0, 5)  # fails
+    assert ent_sbs.level("K") == (1, 3)
+    assert ent_sbs.level("K", max_level=0) is None
 
 
 @pytest.mark.xfail(
