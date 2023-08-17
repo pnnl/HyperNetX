@@ -123,9 +123,7 @@ class EntitySet:
             | Iterable[Iterable[T]]
             | Mapping[T, Mapping[T, Any]]
         ] = None,
-        # data_cols: Sequence[T] = (0, 1),
-        level1: int = 0,
-        level2: int = 1,
+        data_cols: Sequence[T] = (0, 1),
         data: Optional[np.ndarray] = None,
         static: bool = True,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
@@ -142,7 +140,6 @@ class EntitySet:
         self._static = static
         self._state_dict = {}
 
-        data_cols = (level1, level2)
         if isinstance(data, np.ndarray) and entity is None:
             self._build_dataframe_from_ndarray(data, labels)
         else:

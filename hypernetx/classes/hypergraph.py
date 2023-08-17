@@ -539,8 +539,8 @@ class Hypergraph:
                 level2=node_col,
                 weight_col=cell_weight_col,
                 weights=cell_weights,
-                # cell_properties=cell_properties,
-                # misc_cell_props_col=misc_cell_properties_col or "cell_properties",
+                cell_properties=cell_properties,
+                misc_cell_props_col=misc_cell_properties_col or "cell_properties",
                 aggregateby=aggregateby or "sum",
                 properties=properties,
                 misc_props_col=misc_properties_col,
@@ -548,7 +548,7 @@ class Hypergraph:
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
-            # self._dataframe = self.E.cell_properties.reset_index()
+            self._dataframe = self.E.cell_properties.reset_index()
             self._data_cols = data_cols = [self._edge_col, self._node_col]
             self._dataframe[data_cols] = self._dataframe[data_cols].astype("category")
 
