@@ -1924,6 +1924,60 @@ class EntitySet:
 
         return restricted
 
+    def collapse_identical_elements(
+        self, return_equivalence_classes: bool = False, **kwargs
+    ) -> EntitySet | tuple[EntitySet, dict[str, list[str]]]:
+        """Create a new :class:`EntitySet` by collapsing sets with the same set elements
+
+        Each item in level 0 (first column) defines a set containing all the level 1
+        (second column) items with which it appears in the same row of the underlying
+        data table.
+
+        Parameters
+        ----------
+        return_equivalence_classes : bool, default=False
+            If True, return a dictionary of equivalence classes keyed by new edge names
+        **kwargs
+            Extra arguments to :class:`EntitySet` constructor
+
+        Returns
+        -------
+        new_entity : EntitySet
+            new :class:`EntitySet` with identical sets collapsed;
+            if all sets are unique, the system of sets will be the same as the original.
+        equivalence_classes : dict of lists, optional
+            if `return_equivalence_classes`=True,
+            ``{collapsed set label: [level 0 item labels]}``.
+        """
+        # group by level 0 (set), aggregate level 1 (set elements) as frozenset
+        collapse = (
+            self._dataframe[self._data_cols]
+            .groupby(self._data_cols[0], as_index=False)
+            .agg(frozenset)
+        )
+
+        # aggregation method to rename equivalence classes as [first item]: [# items]
+        agg_kwargs = {"name": (self._data_cols[0], lambda x: f"{x.iloc[0]}: {len(x)}")}
+        if return_equivalence_classes:
+            # aggregation method to list all items in each equivalence class
+            agg_kwargs.update(equivalence_class=(self._data_cols[0], list))
+        # group by frozenset of level 1 items (set elements), aggregate to get names of
+        # equivalence classes and (optionally) list of level 0 items (sets) in each
+        collapse = collapse.groupby(self._data_cols[1], as_index=False).agg(
+            **agg_kwargs
+        )
+        # convert to nested dict representation of collapsed system of sets
+        collapse = collapse.set_index("name")
+        new_entity_dict = collapse[self._data_cols[1]].to_dict()
+        # construct new EntitySet from system of sets
+        new_entity = EntitySet(new_entity_dict, **kwargs)
+
+        if return_equivalence_classes:
+            # lists of equivalent sets, keyed by equivalence class name
+            equivalence_classes = collapse.equivalence_class.to_dict()
+            return new_entity, equivalence_classes
+        return new_entity
+
 
 def build_dataframe_from_entity(
     entity: pd.DataFrame
