@@ -147,8 +147,7 @@ class EntitySet:
         self._state_dict = {}
         self._misc_cell_props_col = misc_cell_props_col
 
-        # process certain parameters
-        ## Restrict to two columns on entity, data, labels
+        # Restrict to two columns on entity, data, labels
         entity, data, labels = restrict_to_two_columns(
             entity,
             data,
@@ -161,6 +160,7 @@ class EntitySet:
             misc_cell_props_col,
         )
 
+        # build initial dataframe
         if isinstance(data, np.ndarray) and entity is None:
             self._build_dataframe_from_ndarray(data, labels)
         else:
@@ -172,12 +172,13 @@ class EntitySet:
             self._dataframe, weights=weights, weight_col=weight_col
         )
 
-        self._data_cols = []
-        self._init_data_cols(data_cols)
+        # create data_cols
+        self._create_data_cols(data_cols)
         # each entity data column represents one dimension of the data
         # (data updates can only add or remove rows, so this isn't stored in state dict)
         self._dimsize = len(self._data_cols)
 
+        # remove any row dupes
         # import ipdb; ipdb.set_trace()
         self._dataframe, _ = remove_row_duplicates(
             self._dataframe,
@@ -186,11 +187,11 @@ class EntitySet:
             aggregateby=aggregateby,
         )
 
-        self._misc_props_col = misc_props_col
-        self._init_properties(level_col, id_col, misc_props_col)
-        self.assign_properties(properties)
+        # create properties
+        self._create_properties(level_col, id_col, misc_props_col, properties)
 
-        self._assign_cell_properties(cell_properties)
+        # create cell properties (From old EntitySet)
+        self._create_assign_cell_properties(cell_properties)
 
     def _build_dataframe_from_ndarray(
         self,
@@ -219,9 +220,10 @@ class EntitySet:
                 self._dataframe[col], categories=labels[col]
             )
 
-    def _init_data_cols(self, data_cols: Sequence[T]) -> None:
+    def _create_data_cols(self, data_cols: Sequence[T]) -> None:
         """store a list of columns that hold entity data (not properties or weights)"""
         # import ipdb; ipdb.set_trace()
+        self._data_cols = []
         if not self._dataframe.empty:
             for col in data_cols:
                 if isinstance(col, int):
@@ -229,8 +231,12 @@ class EntitySet:
                 else:
                     self._data_cols.append(col)
 
-    def _init_properties(
-        self, level_col: str, id_col: str, misc_props_col: str
+    def _create_properties(
+        self,
+        level_col: str,
+        id_col: str,
+        misc_props_col: str,
+        properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]],
     ) -> None:
         item_levels = [
             (level, item)
@@ -242,8 +248,10 @@ class EntitySet:
         self._properties = pd.DataFrame(
             data=data, index=index, columns=["uid", "weight", misc_props_col]
         ).sort_index()
+        self._misc_props_col = misc_props_col
+        self.assign_properties(properties)
 
-    def _assign_cell_properties(
+    def _create_assign_cell_properties(
         self,
         cell_properties: Optional[
             Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]

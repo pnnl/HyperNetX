@@ -138,7 +138,7 @@ class TestEntitySetOnHarryPotterDataSet:
         }
 
 
-#### testing entityset helpers
+# testing entityset helpers
 
 
 def test_restrict_to_two_columns_on_ndarray(harry_potter):
