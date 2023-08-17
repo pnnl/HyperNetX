@@ -16,11 +16,6 @@ from hypernetx.classes.helpers import (
     remove_row_duplicates,
 )
 
-from hypernetx.utils.log import get_logger
-
-_log = get_logger("entity_set")
-
-
 T = TypeVar("T", bound=Union[str, int])
 
 
@@ -164,7 +159,6 @@ class EntitySet:
         if isinstance(data, np.ndarray) and entity is None:
             self._build_dataframe_from_ndarray(data, labels)
         else:
-            _log.debug("Ignoring 'data' since 'entity' is given.")
             self._dataframe = build_dataframe_from_entity(entity, data_cols)
 
         # assign a new or existing column of the dataframe to hold cell weights
@@ -785,7 +779,7 @@ class EntitySet:
         """
         return iter(self.labels[self._data_cols[label_index]])
 
-    def index(self, column: str, value: Optional[str] = None) -> int | tuple(int, int):
+    def index(self, column: str, value: Optional[str] = None) -> int | tuple[int, int]:
         """Get level index corresponding to a column and (optionally) the index of a value in that column
 
         The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used
@@ -912,7 +906,7 @@ class EntitySet:
         min_level: int = 0,
         max_level: Optional[int] = None,
         return_index: bool = True,
-    ) -> Optional[int, tuple(int, int)]:
+    ) -> Optional[int, tuple[int, int]]:
         """First level containing the given item label
 
         Order of levels corresponds to order of columns in `self.dataframe`
@@ -1049,16 +1043,12 @@ class EntitySet:
 
         return self
 
-    def __add_from_dataframe(self, df: pd.DataFrame) -> EntitySet:
+    def __add_from_dataframe(self, df: pd.DataFrame) -> None:
         """Helper function to append rows to `self.dataframe`
 
         Parameters
         ----------
         df : pd.DataFrame
-
-        Returns
-        -------
-        self : EntitySet
 
         """
         if all(col in df for col in self._data_cols):
@@ -1118,17 +1108,13 @@ class EntitySet:
             self.remove_element(item)
         return self
 
-    def remove_element(self, item) -> EntitySet:
+    def remove_element(self, item) -> None:
         """Removes all rows containing a specified item from the underlying data table
 
         Parameters
         ----------
         item
             item label
-
-        Returns
-        -------
-        self : EntitySet
 
         See Also
         --------
@@ -2008,6 +1994,7 @@ def build_dataframe_from_entity(
     return pd.DataFrame()
 
 
+# TODO: Consider refactoring for simplicity; SonarLint states this function has a  Cognitive Complexity of 26; recommends lowering to 15
 def restrict_to_two_columns(
     entity: Optional[
         pd.DataFrame
@@ -2028,7 +2015,6 @@ def restrict_to_two_columns(
 ):
     """Restrict columns on entity or data as needed; if data is restricted, also restrict labels"""
     if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
-        _log.info(f"Processing parameter of 'entity' of type {type(entity)}...")
         # metadata columns are not considered levels of data,
         # remove them before indexing by level
         # if isinstance(cell_properties, str):
@@ -2038,13 +2024,11 @@ def restrict_to_two_columns(
         if isinstance(cell_properties, Sequence):
             for col in {*cell_properties, misc_cell_props_col}:
                 if col in entity:
-                    _log.debug(f"Adding column to prop_cols: {col}")
                     prop_cols.append(col)
 
         # meta_cols = prop_cols
         # if weights in entity and weights not in meta_cols:
         #     meta_cols.append(weights)
-        #            # _log.debug(f"meta_cols: {meta_cols}")
         if weight_col in prop_cols:
             prop_cols.remove(weight_col)
         if weight_col not in entity:
@@ -2072,7 +2056,6 @@ def restrict_to_two_columns(
         # if there is a column for weights, preserve it
         # if weights in entity and weights not in prop_cols:
         #     columns.append(weights)
-        #            _log.debug(f"columns: {columns}")
 
         # pass level1, level2, and weights (optional) to Entity constructor
         entity = entity[columns]
