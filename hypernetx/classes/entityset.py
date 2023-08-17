@@ -1829,6 +1829,67 @@ class EntitySet:
                         self._misc_cell_props_col: {prop_name: prop_val}
                     }
 
+    def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
+        """Get a property of a cell i.e., incidence between items of different levels
+
+        Parameters
+        ----------
+        item1 : hashable
+            name of an item in level 0
+        item2 : hashable
+            name of an item in level 1
+        prop_name : hashable
+            name of the cell property to get
+
+        Returns
+        -------
+        prop_val : any
+            value of the cell property
+
+        See Also
+        --------
+        get_cell_properties, set_cell_property
+        """
+        try:
+            cell_props = self.cell_properties.loc[(item1, item2)]
+        except KeyError:
+            raise
+            # TODO: raise informative exception
+
+        try:
+            prop_val = cell_props.loc[prop_name]
+        except KeyError:
+            prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
+
+        return prop_val
+
+    def get_cell_properties(self, item1: T, item2: T) -> dict[Any, Any]:
+        """Get all properties of a cell, i.e., incidence between items of different
+        levels
+
+        Parameters
+        ----------
+        item1 : hashable
+            name of an item in level 0
+        item2 : hashable
+            name of an item in level 1
+
+        Returns
+        -------
+        dict
+            ``{named cell property: cell property value, ..., misc. cell property column
+            name: {cell property name: cell property value}}``
+
+        See Also
+        --------
+        get_cell_property, set_cell_property
+        """
+        try:
+            cell_props = self.cell_properties.loc[(item1, item2)]
+        except KeyError:
+            raise
+            # TODO: raise informative exception
+
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of :meth:`restrict_to_indices` with default parameter `level`=0
 
