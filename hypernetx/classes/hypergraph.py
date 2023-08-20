@@ -19,6 +19,8 @@ from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 
+import juliacall
+
 __all__ = ["Hypergraph"]
 
 T = TypeVar("T", bound=Union[str, int])
@@ -2380,3 +2382,73 @@ class Hypergraph:
                 weights="cell_weights",
                 name=None,
             )
+
+
+    @classmethod
+    def from_abcdh(cls, n, dss, css, x, q, ws, seed, m=False, stats=False, prefix=None, name=None, **kwargs):
+        """
+        Artificial Benchmark for Hypergraphs Community Detection (ABCDH) - 
+        A Random Hypergraph Model with Community Structure
+
+        Authors: Bogumił Kamiński, Paweł Prałat, François Théberge
+
+        Parameters
+        ----------
+        n (required)        number of vertices
+        d (required)        either a tuple γ,δ,D
+        c (required)        either a tuple β,s,S
+        x (required)        mixing parameter ξ
+        q (required)        either a sequence q₁,q₂,...,qₖ of weights of hyperedges 
+                            of sizes from 1 to k
+        w (required)        either one of values: ':strict', ':linear', ':majority'.
+                            the :strict value assumes that only c=d weight is non zero, 
+                            the :linear value assumes weight equal to c, 
+                            the :majority value assumes all weights are 1
+        s (required)        seed value for generator
+
+        o (optional)        prefix for output file names; the generated file names
+                            are [prefix]_deg.txt for degree sequence,
+                            [prefix]_comm.txt for community size sequence,
+                            [prefix]_assign.txt for assignment of vertices to
+                            communities, [prefix]_he.txt for hyperedges
+        m (optional)        if this flag is True a multi-hypergraph is generated; by
+                            default (False) a simple hypergraph is generated
+        stats (optional)    if this flag is True  - print generated hypergraph statistics
+
+        name (optional)     hashable
+
+        Returns
+        -------
+         : Hypergraph
+            nodes are assigned to clusters via "node_properties" parameter, 
+            as {node_id: {'cluster': cluster_id}}
+        
+        
+        Example
+        -------
+
+            from hypernetx import Hypergraph
+
+            n = 100
+            dss = [2.5, 5, 10]
+            css = [1.5, 10, 30]
+            ws = ":linear"
+            x = 0.5
+            q = [0, 0.4, 0.3, 0.2, 0.1]
+            seed = 1234
+            stats = True
+            prefix = "Hyper"
+
+            H = Hypergraph.from_abcdh(n, dss, css, x, q, ws, seed, stats=stats, prefix=prefix)
+            print(H.node_props)
+
+        """
+        
+        jl = juliacall.newmodule("ABCDHModule")
+        jl.include("./hypernetx/utils/ABCDHypergraphGenerator/utils/abcdh.jl")
+
+        abcdh_he, abcdh_cl = jl.main(n, dss, css, x, q, ws, seed, m=m, stats=stats, prefix=prefix)       
+
+        node_props = {id + 1: {"cluster": cluster} for id, cluster in enumerate(abcdh_cl)}
+
+        return Hypergraph(abcdh_he, name=name, node_properties=node_props, **kwargs)
