@@ -2243,7 +2243,7 @@ class Hypergraph:
         # Validate the size of the node and edge arrays
 
         M = np.array(M)
-        if len(M.shape) != (2):
+        if len(M.shape) != 2:
             raise HyperNetXError("Input requires a 2 dimensional numpy array")
         # apply boolean key if available
         if key is not None:

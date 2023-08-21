@@ -19,7 +19,6 @@ def test_from_bipartite():
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
-# TODO: Fails when Hypergraph calls entitySet.elements_by_level
 def test_from_numpy_array():
     M = np.array([[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
     h = Hypergraph.from_numpy_array(M)

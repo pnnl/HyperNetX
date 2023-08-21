@@ -581,6 +581,8 @@ class EntitySet:
         elements_by_column : same functionality, takes column names instead of level indices
 
         """
+        if len(self._data_cols) == 1:
+            return self._state_dict["memberships"]
         col1 = self._data_cols[level1]
         col2 = self._data_cols[level2]
         return self.elements_by_column(col1, col2)
@@ -906,7 +908,7 @@ class EntitySet:
         min_level: int = 0,
         max_level: Optional[int] = None,
         return_index: bool = True,
-    ) -> int | tuple[int, int] | None :
+    ) -> int | tuple[int, int] | None:
         """First level containing the given item label
 
         Order of levels corresponds to order of columns in `self.dataframe`

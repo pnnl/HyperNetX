@@ -54,9 +54,7 @@ def test_neighbors(G, H):
         assert_are_same_sets(G[v], H[v])
 
 
-@pytest.mark.xfail(
-    reason="Confirm that the edges() function returns an iterator over the edges"
-)
+@pytest.mark.xfail(reason="Hypergraph edges do not match edges in nx graph")
 def test_edges_iter(G, H):
     # breakpoint()
     assert_are_same_set_of_sets(G.edges(), H.edges())
