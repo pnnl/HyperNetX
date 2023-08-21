@@ -906,7 +906,7 @@ class EntitySet:
         min_level: int = 0,
         max_level: Optional[int] = None,
         return_index: bool = True,
-    ) -> Optional[int, tuple[int, int]]:
+    ) -> int | tuple[int, int] | None :
         """First level containing the given item label
 
         Order of levels corresponds to order of columns in `self.dataframe`
