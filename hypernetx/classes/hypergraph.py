@@ -2445,7 +2445,7 @@ class Hypergraph:
         """
         
         jl = juliacall.newmodule("ABCDHModule")
-        jl.include("./hypernetx/utils/ABCDHypergraphGenerator/utils/abcdh.jl")
+        jl.include("./ABCDHypergraphGenerator/utils/abcdh.jl")
 
         abcdh_he, abcdh_cl = jl.main(n, dss, css, x, q, ws, seed, m=m, stats=stats, prefix=prefix)       
 

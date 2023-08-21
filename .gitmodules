@@ -1,3 +1,4 @@
 [submodule "hypernetx/utils/ABCDHypergraphGenerator"]
 	path = hypernetx/utils/ABCDHypergraphGenerator
 	url = https://github.com/roman-timo/ABCDHypergraphGenerator.jl.git
+	branch = adding-function-call-for-main
