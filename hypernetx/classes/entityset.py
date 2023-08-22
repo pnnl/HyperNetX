@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import warnings
 from ast import literal_eval
 from collections import OrderedDict, defaultdict
@@ -1259,6 +1260,9 @@ class EntitySet:
         """
 
         levels = np.asarray(levels)
+        # the following line of code returns an array of boolean values
+        # numpy compares arrays using element-wise operations, meaning that it will compare the value in each index
+        # in one array to the corresponding index in the other array and save the result in a numpy array
         invalid_levels = (levels < 0) | (levels >= self.dimsize)
         if invalid_levels.any():
             raise KeyError(f"Invalid levels: {levels[invalid_levels]}")
@@ -1958,6 +1962,10 @@ class EntitySet:
         KeyError
             If `levels` contains any invalid values
         """
+        # check for an empty EntitySet and return a copy
+        if self.empty:
+            return copy.deepcopy(self)
+
         restricted = self._restrict_to_levels(
             levels,
             weights,

@@ -548,12 +548,17 @@ class Hypergraph:
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
-            self._dataframe = self.E.cell_properties.reset_index()
             self._data_cols = data_cols = [self._edge_col, self._node_col]
-            self._dataframe[data_cols] = self._dataframe[data_cols].astype("category")
+
+            self._dataframe = self.E.cell_properties
+            if self._dataframe is not None:
+                self._dataframe = self._dataframe.reset_index()
+                self._dataframe[data_cols] = self._dataframe[data_cols].astype(
+                    "category"
+                )
+                self._set_default_state()
 
             self.__dict__.update(locals())
-            self._set_default_state()
 
     @property
     def edges(self):
