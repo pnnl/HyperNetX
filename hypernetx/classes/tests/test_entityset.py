@@ -41,6 +41,7 @@ def test_entityset_from_dataframe():
 
 
 class TestEntitySetOnSevenBySixDataset:
+    # Tests on different inputs for entity and data
     def test_entityset_from_dictionary(self, sbs):
         ent = EntitySet(entity=sbs.edgedict)
         assert len(ent.elements) == 6
@@ -55,28 +56,177 @@ class TestEntitySetOnSevenBySixDataset:
         assert "I" in ent_sbs
         assert "K" in ent_sbs
 
+    # Tests for properties
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_cell_properties(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_cell_weights(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_children(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_data(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_dataframe(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_dimensions(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_dimsize(self):
+        pass
+
     def test_dimensions_equal_dimsize(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.dimsize == len(ent_sbs.dimensions)
 
-    def test_uidset_by_level(self, sbs):
-        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_elements(self):
+        pass
 
-        assert ent_sbs.uidset_by_level(0) == {"I", "L", "O", "P", "R", "S"}
-        assert ent_sbs.uidset_by_level(1) == {"A", "C", "E", "K", "T1", "T2", "V"}
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_empty(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_incidence_dict(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_isstatic(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_labels(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_memberships(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_properties(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_uid(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_uidset(self):
+        pass
+
+    # Tests for methods
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_add(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_add_element(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_add_elements_from(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_assign_properties(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_collapse_identitical_elements(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_elements_by_column(self):
+        pass
 
     def test_elements_by_level(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.elements_by_level(0, 1)
 
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_encode(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_get_cell_properties(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_get_cell_property(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_get_properties(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_get_property(self):
+        pass
+
     def test_incidence_matrix(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.incidence_matrix(1, 0).todense().shape == (6, 7)
+
+    def test_index(self, sbs):
+        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert ent_sbs.index("nodes") == 1
+        assert ent_sbs.index("nodes", "K") == (1, 3)
 
     def test_indices(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.indices("nodes", "K") == [3]
         assert ent_sbs.indices("nodes", ["K", "T1"]) == [3, 4]
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_is_empty(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_level(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_remove(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_remove_elements(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_restrict_to(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_restrict_to_indices(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_restrict_to_levels(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_set_cell_property(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_set_property(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_size(self):
+        pass
 
     def test_translate(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
@@ -87,10 +237,15 @@ class TestEntitySetOnSevenBySixDataset:
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.translate_arr((0, 0)) == ["P", "A"]
 
-    def test_index(self, sbs):
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_uidset_by_column(self):
+        pass
+
+    def test_uidset_by_level(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
-        assert ent_sbs.index("nodes") == 1
-        assert ent_sbs.index("nodes", "K") == (1, 3)
+
+        assert ent_sbs.uidset_by_level(0) == {"I", "L", "O", "P", "R", "S"}
+        assert ent_sbs.uidset_by_level(1) == {"A", "C", "E", "K", "T1", "T2", "V"}
 
 
 class TestEntitySetOnHarryPotterDataSet:
