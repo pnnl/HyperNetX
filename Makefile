@@ -21,7 +21,11 @@ test-ci-github: test-deps
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	@$(PYTHON3) -m tox
 
-.PHONY: test, test-ci, test-ci-github
+test-coverage: test-deps
+	coverage run --source=hypernetx -m pytest
+	coverage html
+
+.PHONY: test, test-ci, test-ci-github, test-coverage
 
 ## Continuous Deployment
 ## Assumes that scripts are run on a container or test server VM

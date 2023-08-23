@@ -74,6 +74,6 @@ class HarryPotter(object):
         self.arr = imat
 
         slabels = OrderedDict()
-        for cdx, c in enumerate(list(ldict.keys())):
-            slabels.update({c: np.array(list(ldict[c].keys()))})
+        for col_idx, col in enumerate(list(ldict.keys())):
+            slabels.update({col_idx: np.array(list(ldict[col].keys()))})
         self.labels = slabels

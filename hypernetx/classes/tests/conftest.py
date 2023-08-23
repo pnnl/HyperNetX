@@ -5,7 +5,7 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 
-from hypernetx import Hypergraph, HarryPotter, Entity, LesMis as LM
+from hypernetx import Hypergraph, HarryPotter, EntitySet, LesMis as LM
 from collections import OrderedDict, defaultdict
 
 
@@ -152,16 +152,6 @@ def sbs():
 
 
 @pytest.fixture
-def ent_sbs(sbs):
-    return Entity(data=np.asarray(sbs.data), labels=sbs.labels)
-
-
-@pytest.fixture
-def sbs_edgedict(sbs):
-    return sbs.edgedict
-
-
-@pytest.fixture
 def triloop():
     return TriLoop()
 
@@ -243,11 +233,6 @@ def array_example():
     return np.array(
         [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
     )
-
-
-@pytest.fixture
-def ent_hp(harry_potter):
-    return Entity(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
 
 
 ####################Fixtures suite for test_hypergraph.py####################

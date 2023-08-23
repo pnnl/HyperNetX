@@ -341,6 +341,13 @@ def test_construct_empty_hypergraph():
     assert h.nodes.is_empty()
 
 
+def test_construct_hypergraph_empty_dict():
+    h = Hypergraph(dict())
+    assert h.shape == (0, 0)
+    assert h.edges.is_empty()
+    assert h.nodes.is_empty()
+
+
 def test_static_hypergraph_s_connected_components(lesmis):
     H = Hypergraph(lesmis.edgedict)
     assert {7, 8} in list(H.s_connected_components(edges=True, s=4))
