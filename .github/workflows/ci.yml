@@ -59,3 +59,10 @@ jobs:
     - name: Run tests
       run: |
         make test-ci-github
+    - name: Install documentation dependencies
+      run: |
+        pip install sphinx sphinx_rtd_theme
+        pip install .'[documentation]'
+    - name:  Check documentation build
+      run: |
+        sphinx-build docs/source _build
