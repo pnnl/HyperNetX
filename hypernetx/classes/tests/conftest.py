@@ -173,7 +173,7 @@ def triloop2():
 
 @pytest.fixture
 def sbs_hypergraph(sbs):
-    return Hypergraph(sbs.edgedict, name="sbsh")
+    return Hypergraph(sbs.edgedict, name="sbsh",edge_col='edges',node_col='nodes')
 
 
 @pytest.fixture
