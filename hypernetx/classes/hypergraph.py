@@ -1243,13 +1243,13 @@ class Hypergraph:
         : hypergraph
 
         """
-        dfp = deepcopy(self.edges.properties)
+        dfp = self.edges.properties.copy(deep=True)
         dfp = dfp.reset_index()
         dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
         dfp = dfp.set_index(["level", "id"])
 
         edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
-        df = deepcopy(self.dataframe)
+        df = self.dataframe.copy(deep=True)
         cprops = [col for col in df.columns if not col in [edge, node, wt]]
 
         df[[edge, node]] = df[[node, edge]]
