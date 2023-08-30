@@ -308,6 +308,17 @@ def test_dual(sbs_hypergraph):
     HD = H.dual()
     assert set(H.nodes) == set(HD.edges)
     assert set(H.edges) == set(HD.nodes)
+    assert list(H.dataframe.columns) == list(HD.dataframe.columns)
+
+
+def test_dual_again(sbs_edgedict):
+    H = Hypergraph(sbs_edgedict, edge_col="Types", node_col="Values")
+    assert list(H.dataframe.columns[0:2]) == ["Types", "Values"]
+    assert list(H.dual().dataframe.columns[0:2]) == ["Values", "Types"]
+    assert list(H.dual(switch_names=False).dataframe.columns[0:2]) == [
+        "Types",
+        "Values",
+    ]
 
 
 @pytest.mark.filterwarnings("ignore:No 3-path between ME and FN")

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pickle
 import warnings
+from copy import deepcopy
 from collections import defaultdict
 from collections.abc import Sequence, Iterable
 from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
@@ -1242,18 +1243,20 @@ class Hypergraph:
         : hypergraph
 
         """
-        dfp = self.edges.properties.copy()
-        if "level" in dfp.columns:
-            dfp = dfp.reset_index()
-            dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
-            dfp = dfp.set_index(["level", "id"])
+        dfp = deepcopy(self.edges.properties)
+        dfp = dfp.reset_index()
+        dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
+        dfp = dfp.set_index(["level", "id"])
 
         edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
-        df = self.dataframe.copy()
+        df = deepcopy(self.dataframe)
         cprops = [col for col in df.columns if not col in [edge, node, wt]]
 
         df[[edge, node]] = df[[node, edge]]
-        if edge != "edges" or node != "nodes":
+        if switch_names == True and not (
+            self._edge_col == "edges" and self._node_col == "nodes"
+        ):
+            # if switch_names == False or (self._edge_col == 'edges' and self._node_col == 'nodes'):
             df = df.rename(columns={edge: self._node_col, node: self._edge_col})
             node = self._edge_col
             edge = self._node_col
