@@ -7,6 +7,7 @@ from hypernetx.classes import EntitySet
 from hypernetx.classes.entityset import restrict_to_two_columns
 
 from pandas import DataFrame, Series
+import pandas as pd
 
 
 def test_empty_entityset():
@@ -16,37 +17,63 @@ def test_empty_entityset():
     assert es.elements == {}
     assert es.dimsize == 0
 
+    assert isinstance(es.data, np.ndarray)
+    assert es.data.shape == (0, 0)
 
-def test_entityset_from_dataframe():
-    data_dict = {
-        1: ["A", "D"],
-        2: ["A", "C", "D"],
-        3: ["D"],
-        4: ["A", "B"],
-        5: ["B", "C"],
-    }
+    assert es.labels == {}
+    assert es.cell_weights == {}
+    assert es.isstatic
+    assert es.incidence_dict == {}
+    assert "foo" not in es
+    assert es.incidence_matrix() is None
 
-    all_edge_pairs = Series(data_dict).explode()
+    # TODO: results in bound method issue
+    # assert es.size == 0
 
-    entity = DataFrame(
-        {"edges": all_edge_pairs.index.to_list(), "nodes": all_edge_pairs.values}
-    )
+    with (pytest.raises(AttributeError)):
+        es.get_cell_property("foo", "bar", "roma")
+    with (pytest.raises(AttributeError)):
+        es.get_cell_properties("foo", "bar")
+    with (pytest.raises(KeyError)):
+        es.set_cell_property("foo", "bar", "roma", "ff")
+    with (pytest.raises(KeyError)):
+        es.get_properties("foo")
+    # with(pytest.raises(KeyError)):
+    #     es.get_property("foo", "bar")
+    with (pytest.raises(ValueError)):
+        es.set_property("foo", "bar", "roma")
 
-    es = EntitySet(entity=entity)
 
-    assert not es.empty
-    assert len(es.elements) == 5
-    assert es.dimsize == 2
-    assert es.uid is None
+class TestEntitySetOnDataframe:
+    def test_cell_properties(self, dataframe_example):
+        es = EntitySet(entity=dataframe_example)
+
+        assert es.cell_properties.shape == (3, 1)
+
+    def test_data(self, dataframe_example):
+        es = EntitySet(entity=dataframe_example)
+
+        data = es.data
+
+        assert isinstance(data, np.ndarray)
+        assert data.shape == (3, 2)
+        assert not es.empty
+        assert len(es.elements) == 2
+        assert es.dimsize == 2
+        assert es.uid is None
 
 
 class TestEntitySetOnSevenBySixDataset:
     # Tests on different inputs for entity and data
-    def test_entityset_from_dictionary(self, sbs):
+    def test_entityset_with_dict(self, sbs):
         ent = EntitySet(entity=sbs.edgedict)
         assert len(ent.elements) == 6
 
-    def test_entityset_from_ndarray_sbs(self, sbs):
+    def test_entityset_with_dict_data_cols(self, sbs):
+        ent = EntitySet(entity=sbs.edgedict,  data_cols=["edges", "nodes"])
+        assert len(ent.elements) == 6
+
+    def test_entityset_with_ndarray(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
 
         assert ent_sbs.size() == 6
@@ -56,10 +83,16 @@ class TestEntitySetOnSevenBySixDataset:
         assert "I" in ent_sbs
         assert "K" in ent_sbs
 
+    def test_entityset_with_ndarray_fail_on_labels(self, sbs):
+        with (pytest.raises(ValueError, match="Labels must be of type Dictionary.")):
+            EntitySet(data=np.asarray(sbs.data), labels=[])
+
+    def test_entityset_with_ndarray_fail_on_length_labels(self, sbs):
+        with (pytest.raises(ValueError, match="The length of labels must equal the length of columns in the dataframe.")):
+            EntitySet(data=np.asarray(sbs.data), labels=dict())
+
+
     # Tests for properties
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_cell_properties(self):
-        pass
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_cell_weights(self):
@@ -67,10 +100,6 @@ class TestEntitySetOnSevenBySixDataset:
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_children(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_data(self):
         pass
 
     @pytest.mark.skip(reason="TODO: implement")
