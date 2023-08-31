@@ -26,11 +26,13 @@ class EntitySet:
 
     Parameters
     ----------
-    entity : pandas.DataFrame, dict of lists or sets, list of lists or sets, optional
+    entity : pandas.DataFrame, dict of lists or sets, dict of dicts, list of lists or sets, optional
         If a ``DataFrame`` with N columns,
         represents N-dimensional entity data (data table).
         Otherwise, represents 2-dimensional entity data (system of sets).
-        TODO: Test for compatibility with list of Entities and update docs
+    data_cols : sequence of ints or strings, default=(0,1)
+    level1: str or int, default = 0
+    level2: str or int, default = 1
     data : numpy.ndarray, optional
         2D M x N ``ndarray`` of ``ints`` (data table);
         sparse representation of an N-dimensional incidence tensor with M nonzero cells.
@@ -45,7 +47,8 @@ class EntitySet:
         Ignored if `entity` is provided or `data` is not provided.
     uid : hashable, optional
         A unique identifier for the object
-    weights : str or sequence of float, optional
+    weight_col: string or int, default="cell_weights"
+    weights : sequence of float, float, int, str,  default=1
         User-specified cell weights corresponding to entity data.
         If sequence of ``floats`` and `entity` or `data` defines a data table,
             length must equal the number of rows.
@@ -54,11 +57,11 @@ class EntitySet:
         If ``str`` and `entity` is a ``DataFrame``,
             must be the name of a column in `entity`.
         Otherwise, weight for all cells is assumed to be 1.
-    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}
+    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, default="sum"
         Name of function to use for aggregating cell weights of duplicate rows when
-        `entity` or `data` defines a data table, default is "sum".
+        `entity` or `data` defines a data table.
         If None, duplicate rows will be dropped without aggregating cell weights.
-        Effectively ignored if `entity` defines a system of sets.
+        Ignored if `entity` defines a system of sets.
     properties : pandas.DataFrame or doubly-nested dict, optional
         User-specified properties to be assigned to individual items in the data, i.e.,
         cell entries in a data table; sets or set elements in a system of sets.
@@ -69,9 +72,13 @@ class EntitySet:
         (order of columns does not matter; see note for an example).
         If doubly-nested dict,
         ``{item level: {item label: {property name: property value}}}``.
-    misc_props_col, level_col, id_col : str, default="properties", "level, "id"
+    misc_props_col: str, default="properties"
         Column names for miscellaneous properties, level index, and item name in
         :attr:`properties`; see Notes for explanation.
+    level_col: str, default="level"
+    id_col : str,  default="id"
+    cell_properties: sequence of int or str, pandas.DataFrame, or doubly-nested dict, optional
+    misc_cell_props_col: str, default="cell_properties"
 
     Notes
     -----
@@ -199,6 +206,9 @@ class EntitySet:
         # DataFrame, translate the dataframe, and store the dict of labels in the state dict
 
         if not isinstance(labels, dict):
+            print(
+                f"Labels must be of type Dictionary. Labels is of type: {type(labels)}; labels: {labels}"
+            )
             raise ValueError(
                 f"Labels must be of type Dictionary. Labels is of type: {type(labels)}; labels: {labels}"
             )
@@ -259,6 +269,7 @@ class EntitySet:
             # )
             self._cell_properties = pd.DataFrame(self._dataframe)
             self._cell_properties.set_index(self._data_cols, inplace=True)
+            # TODO: What about when cell_properties is a Sequence[T]?
             if isinstance(cell_properties, (dict, pd.DataFrame)):
                 self.assign_cell_properties(cell_properties)
         else:
@@ -270,7 +281,7 @@ class EntitySet:
 
         Returns
         -------
-        pandas.Series, optional
+        pandas.DataFrame, optional
             Returns None if :attr:`dimsize` < 2
         """
         return self._cell_properties
@@ -1358,15 +1369,14 @@ class EntitySet:
                 f"cell properties are not supported for 'dimsize'={self.dimsize}"
             )
 
-        misc_col = misc_col or self._misc_cell_props_col
-        try:
+        if isinstance(cell_props, pd.DataFrame):
+            misc_col = misc_col or self._misc_cell_props_col
             cell_props = cell_props.rename(
                 columns={misc_col: self._misc_cell_props_col}
             )
-        except AttributeError:  # handle cell props in nested dict format
-            self._cell_properties_from_dict(cell_props)
-        else:  # handle cell props in DataFrame format
             self._cell_properties_from_dataframe(cell_props)
+        elif isinstance(cell_props, dict):
+            self._cell_properties_from_dict(cell_props)
 
     def assign_properties(
         self,
