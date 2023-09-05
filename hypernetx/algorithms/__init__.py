@@ -51,7 +51,6 @@ from hypernetx.algorithms.generative_models import (
 from hypernetx.algorithms.hypergraph_modularity import (
     dict2part,
     part2dict,
-    precompute_attributes,
     linear,
     majority,
     strict,
@@ -110,7 +109,6 @@ __all__ = [
     # hypergraph_modularity API's
     "dict2part",
     "part2dict",
-    "precompute_attributes",
     "linear",
     "majority",
     "strict",
