@@ -8,7 +8,7 @@ from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
 
-from hypernetx.classes.entity import *
+from hypernetx.classes.entityset import *
 
 
 class AttrList(UserList):
@@ -16,7 +16,7 @@ class AttrList(UserList):
 
     Parameters
     ----------
-    entity : hypernetx.Entity
+    entity : hypernetx.EntitySet
     key : tuple of (int, str or int)
         ``(level, item)``
     initlist : list, optional
@@ -25,7 +25,7 @@ class AttrList(UserList):
 
     def __init__(
         self,
-        entity: Entity,
+        entity: EntitySet,
         key: tuple[int, str | int],
         initlist: Optional[list] = None,
     ):
@@ -82,7 +82,11 @@ def encode(data: pd.DataFrame):
     return encoded_array
 
 
-def assign_weights(df, weights=1, weight_col="cell_weights"):
+def assign_weights(
+    df: pd.DataFrame,
+    weights: list | tuple | np.ndarray | Hashable = 1,
+    weight_col: Hashable = "cell_weights",
+):
     """
     Parameters
     ----------
@@ -111,9 +115,8 @@ def assign_weights(df, weights=1, weight_col="cell_weights"):
 
     if isinstance(weights, (list, np.ndarray)):
         df[weight_col] = weights
-    else:
-        if not weight_col in df:
-            df[weight_col] = weights
+    elif not weight_col in df:
+        df[weight_col] = weights
     # import ipdb; ipdb.set_trace()
     return df, weight_col
 
@@ -190,6 +193,7 @@ def remove_row_duplicates(
 ):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
+    Also sets the dtype of entity data columns to categorical (simplifies encoding, etc.)
 
     Parameters
     ----------

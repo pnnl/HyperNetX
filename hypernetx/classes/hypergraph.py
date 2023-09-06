@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pickle
 import warnings
+from copy import deepcopy
 from collections import defaultdict
 from collections.abc import Sequence, Iterable
 from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
@@ -14,7 +15,7 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import Entity, EntitySet
+from hypernetx.classes import EntitySet, EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
@@ -549,12 +550,17 @@ class Hypergraph:
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
-            self._dataframe = self.E.cell_properties.reset_index()
             self._data_cols = data_cols = [self._edge_col, self._node_col]
-            self._dataframe[data_cols] = self._dataframe[data_cols].astype("category")
+
+            self._dataframe = self.E.cell_properties
+            if self._dataframe is not None:
+                self._dataframe = self._dataframe.reset_index()
+                self._dataframe[data_cols] = self._dataframe[data_cols].astype(
+                    "category"
+                )
+                self._set_default_state()
 
             self.__dict__.update(locals())
-            self._set_default_state()
 
     @property
     def edges(self):
@@ -695,7 +701,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : hashable or EntitySet
 
         """
         return item in self.nodes
@@ -706,7 +712,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : Entity or hashable
+        node : EntitySet or hashable
             If hashable, then must be uid of node in hypergraph
 
         Returns
@@ -969,7 +975,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : hashable or Entity
+        node : hashable or EntitySet
             uid for a node in hypergraph or the node Entity
 
         s : int, list, optional, default = 1
@@ -1006,7 +1012,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : hashable or Entity
+        edge : hashable or EntitySet
             uid for a edge in hypergraph or the edge Entity
 
         s : int, list, optional, default = 1
@@ -1243,18 +1249,20 @@ class Hypergraph:
         : hypergraph
 
         """
-        dfp = self.edges.properties.copy()
-        if "level" in dfp.columns:
-            dfp = dfp.reset_index()
-            dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
-            dfp = dfp.set_index(["level", "id"])
+        dfp = deepcopy(self.edges.properties)
+        dfp = dfp.reset_index()
+        dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
+        dfp = dfp.set_index(["level", "id"])
 
         edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
-        df = self.dataframe.copy()
+        df = deepcopy(self.dataframe)
         cprops = [col for col in df.columns if not col in [edge, node, wt]]
 
         df[[edge, node]] = df[[node, edge]]
-        if edge != "edges" or node != "nodes":
+        if switch_names == True and not (
+            self._edge_col == "edges" and self._node_col == "nodes"
+        ):
+            # if switch_names == False or (self._edge_col == 'edges' and self._node_col == 'nodes'):
             df = df.rename(columns={edge: self._node_col, node: self._edge_col})
             node = self._edge_col
             edge = self._node_col
@@ -1371,7 +1379,7 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', /
+            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
                                         ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
@@ -1442,7 +1450,7 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[Entity('E1', /
+            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
                                            ['a','b']),Entity('E2',['a','b'])]))
             >>> h.incidence_dict
             {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
@@ -2244,7 +2252,7 @@ class Hypergraph:
         # Validate the size of the node and edge arrays
 
         M = np.array(M)
-        if len(M.shape) != (2):
+        if len(M.shape) != 2:
             raise HyperNetXError("Input requires a 2 dimensional numpy array")
         # apply boolean key if available
         if key is not None:
