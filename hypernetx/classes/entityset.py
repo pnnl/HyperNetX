@@ -9,7 +9,7 @@ from typing import Union, TypeVar, Optional, Any
 
 import numpy as np
 import pandas as pd
-from scipy.sparse import csr_matrix
+import scipy.sparse as sp
 
 from hypernetx.classes.helpers import (
     AttrList,
@@ -198,17 +198,12 @@ class EntitySet:
     def _build_dataframe_from_ndarray(
         self,
         data: pd.ndarray,
-        labels: Optional[OrderedDict[Union[str, int], Sequence[Union[str, int]]]],
+        labels: Optional[OrderedDict[T, Sequence[T]]],
     ) -> None:
         self._state_dict["data"] = data
         self._dataframe = pd.DataFrame(data)
-        # if a dict of labels was passed, use keys as column names in the
-        # DataFrame, translate the dataframe, and store the dict of labels in the state dict
 
         if not isinstance(labels, dict):
-            print(
-                f"Labels must be of type Dictionary. Labels is of type: {type(labels)}; labels: {labels}"
-            )
             raise ValueError(
                 f"Labels must be of type Dictionary. Labels is of type: {type(labels)}; labels: {labels}"
             )
@@ -216,10 +211,11 @@ class EntitySet:
             raise ValueError(
                 f"The length of labels must equal the length of columns in the dataframe. Labels is of length: {len(labels)}; dataframe is of length: {len(self._dataframe.columns)}"
             )
-
+        # use dict keys of 'labels'  as column names in the DataFrame  and store the dict of labels in the state dict
         self._dataframe.columns = labels.keys()
         self._state_dict["labels"] = labels
 
+        # translate the dataframe
         for col in self._dataframe:
             self._dataframe[col] = pd.Categorical.from_codes(
                 self._dataframe[col], categories=labels[col]
@@ -264,9 +260,6 @@ class EntitySet:
     ):
         # if underlying data is 2D (system of sets), create and assign cell properties
         if self.dimsize == 2:
-            # self._cell_properties = pd.DataFrame(
-            #     columns=[*self._data_cols, self._misc_cell_props_col]
-            # )
             self._cell_properties = pd.DataFrame(self._dataframe)
             self._cell_properties.set_index(self._data_cols, inplace=True)
             # TODO: What about when cell_properties is a Sequence[T]?
@@ -678,7 +671,8 @@ class EntitySet:
         --------
         dimensions
         """
-        # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
+        if self.empty:
+            return 0
         return self.dimensions[level]
 
     @property
@@ -1174,7 +1168,7 @@ class EntitySet:
         level2: int = 1,
         weights: bool | dict = False,
         aggregateby: str = "count",
-    ) -> Optional[csr_matrix]:
+    ) -> Optional[sp.csr_matrix]:
         """Incidence matrix representation for two levels (columns) of the underlying data table
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
@@ -1228,7 +1222,7 @@ class EntitySet:
             aggregateby=aggregateby,
         )
 
-        return csr_matrix(
+        return sp.csr_matrix(
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
@@ -1728,10 +1722,6 @@ class EntitySet:
 
         Parameters
         ----------
-        props
-
-        Parameters
-        ----------
         cell_props : DataFrame
         """
         if cell_props.index.nlevels > 1:
@@ -1868,8 +1858,9 @@ class EntitySet:
         try:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
-            raise
-            # TODO: raise informative exception
+            raise KeyError(
+                f"cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
+            )
 
         try:
             prop_val = cell_props.loc[prop_name]
@@ -1902,8 +1893,11 @@ class EntitySet:
         try:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
-            raise
-            # TODO: raise informative exception
+            raise KeyError(
+                f"cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
+            )
+
+        return cell_props
 
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of :meth:`restrict_to_indices` with default parameter `level`=0
@@ -1952,8 +1946,7 @@ class EntitySet:
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights.
             Otherwise, all new cell weights will be 1.
-        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
-    'min', None}, optional
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', 'min', None}, optional
             Method to aggregate weights of duplicate rows in data table
             If None or `weights`=False then all new cell weights will be 1
         keep_memberships : bool, default=True
@@ -2070,7 +2063,6 @@ def build_dataframe_from_entity(
             {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
         )
 
-    # create an empty dataframe
     return pd.DataFrame()
 
 

@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 
 from hypernetx import Hypergraph, HarryPotter, EntitySet, LesMis as LM
+from hypernetx.classes.helpers import create_dataframe
+
 from collections import OrderedDict, defaultdict
 
 
@@ -64,6 +66,8 @@ class SevenBySix:
                 [5, 5],
             ]
         )
+
+        self.dataframe = create_dataframe(self.edgedict)
 
 
 class TriLoop:
@@ -152,6 +156,26 @@ def sbs():
 
 
 @pytest.fixture
+def sbs_dataframe(sbs):
+    return sbs.dataframe
+
+
+@pytest.fixture
+def sbs_dict(sbs):
+    return sbs.edgedict
+
+
+@pytest.fixture
+def sbs_data(sbs):
+    return np.asarray(sbs.data)
+
+
+@pytest.fixture
+def sbs_labels(sbs):
+    return sbs.labels
+
+
+@pytest.fixture
 def triloop():
     return TriLoop()
 
@@ -217,6 +241,7 @@ def dataframe():
 
 @pytest.fixture
 def dataframe_example():
+    """NOTE: Do not use this dataframe as an input for 'entity' when creating an EntitySet object"""
     M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
     index = ["A", "B", "C"]
     columns = ["a", "b", "c", "d"]

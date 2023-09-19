@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
 from collections.abc import Iterable
 from collections import UserList
@@ -7,7 +8,6 @@ from hypernetx.classes import EntitySet
 from hypernetx.classes.entityset import restrict_to_two_columns
 
 from pandas import DataFrame, Series
-import pandas as pd
 
 
 def test_empty_entityset():
@@ -27,8 +27,7 @@ def test_empty_entityset():
     assert "foo" not in es
     assert es.incidence_matrix() is None
 
-    # TODO: results in bound method issue
-    # assert es.size == 0
+    assert es.size() == 0
 
     with (pytest.raises(AttributeError)):
         es.get_cell_property("foo", "bar", "roma")
@@ -38,59 +37,74 @@ def test_empty_entityset():
         es.set_cell_property("foo", "bar", "roma", "ff")
     with (pytest.raises(KeyError)):
         es.get_properties("foo")
-    # with(pytest.raises(KeyError)):
-    #     es.get_property("foo", "bar")
+    with (pytest.raises(KeyError)):
+        es.get_property("foo", "bar")
     with (pytest.raises(ValueError)):
         es.set_property("foo", "bar", "roma")
 
 
-class TestEntitySetOnDataframe:
-    def test_cell_properties(self, dataframe_example):
-        es = EntitySet(entity=dataframe_example)
-
-        assert es.cell_properties.shape == (3, 1)
-
-    def test_data(self, dataframe_example):
-        es = EntitySet(entity=dataframe_example)
-
-        data = es.data
-
-        assert isinstance(data, np.ndarray)
-        assert data.shape == (3, 2)
-        assert not es.empty
-        assert len(es.elements) == 2
-        assert es.dimsize == 2
-        assert es.uid is None
-
-
 class TestEntitySetOnSevenBySixDataset:
-    # Tests on different inputs for entity and data
-    def test_entityset_with_dict(self, sbs):
-        ent = EntitySet(entity=sbs.edgedict)
-        assert len(ent.elements) == 6
+    # Tests on different use cases for combination of the following params: entity, data, data_cols, labels
 
-    def test_entityset_with_dict_data_cols(self, sbs):
-        ent = EntitySet(entity=sbs.edgedict,  data_cols=["edges", "nodes"])
-        assert len(ent.elements) == 6
+    @pytest.mark.parametrize(
+        "entity, data, data_cols, labels",
+        [
+            (lazy_fixture("sbs_dataframe"), None, (0, 1), None),
+            (lazy_fixture("sbs_dict"), None, (0, 1), None),
+            (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
+            (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
+        ],
+    )
+    def test_all_properties_on_entity_as_dataframe(
+        self, entity, data, data_cols, labels, sbs
+    ):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
 
-    def test_entityset_with_ndarray(self, sbs):
-        ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
+        assert len(es.elements) == 6
 
-        assert ent_sbs.size() == 6
-        assert len(ent_sbs.uidset) == 6
-        assert len(ent_sbs.children) == 7
-        assert isinstance(ent_sbs.incidence_dict["I"], list)
-        assert "I" in ent_sbs
-        assert "K" in ent_sbs
+        assert es.size() == len(sbs.edgedict)
+        assert len(es.uidset) == 6
+        assert len(es.children) == 7
+        assert isinstance(es.incidence_dict["I"], list)
+        assert "I" in es
+        assert "K" in es
 
-    def test_entityset_with_ndarray_fail_on_labels(self, sbs):
+        assert not es.empty
+
+        assert es.dimsize == 2
+        assert len(es.dimensions) == es.dimsize
+
+        assert es.isstatic
+
+        assert es.uid is None
+        assert es.uidset == {"I", "R", "S", "P", "O", "L"}
+        assert es.dimensions == (6, 7)
+
+        # cell_weights # dict of tuples, ints: pairs to weights # basically the simplest dataframe as a dictionary
+        # children # set of nodes
+        # dataframe # the pandas dataframe
+        # elements # dict of str to list that summarizes the edge node pairs
+        # incidence_dict # same as elements
+        # labels # the list of all unique elements in the first two columns of the dataframe, basically the edge, nodes
+        # memberships # the opposite of elements; it is the node to edges pairs
+        # properties: a pandas dataframe of all the nodes and edges. The index is fomratted as <col name>/<node, edge name>. The columns from left to right are uid, weight, and properties
+        # uidset: the set of all edges
+        # cell properties: a pandas dataframe of one column of all the cells. A cell is an edge-node pair. And we are saving the weight of each pair
+
+        # assert es.cell_properties.shape == (3, 1)
+
+    def test_ndarray_fail_on_labels(self, sbs):
         with (pytest.raises(ValueError, match="Labels must be of type Dictionary.")):
             EntitySet(data=np.asarray(sbs.data), labels=[])
 
-    def test_entityset_with_ndarray_fail_on_length_labels(self, sbs):
-        with (pytest.raises(ValueError, match="The length of labels must equal the length of columns in the dataframe.")):
+    def test_ndarray_fail_on_length_labels(self, sbs):
+        with (
+            pytest.raises(
+                ValueError,
+                match="The length of labels must equal the length of columns in the dataframe.",
+            )
+        ):
             EntitySet(data=np.asarray(sbs.data), labels=dict())
-
 
     # Tests for properties
 
@@ -342,22 +356,6 @@ def test_restrict_to_two_columns_on_ndarray(harry_potter):
         level2=1,
         misc_cell_props_col="properties",
     )
-
-    assert entity is None
-    assert len(labels) == 2
-    assert 0 in labels
-    assert 1 in labels
-
-    print(data)
-    print(type(data[0]))
-
-    assert data.shape[1] == expected_num_cols
-    assert np.array_equal(data[0], expected_ndarray_first_row)
-
-
-@pytest.mark.skip(reason="TODO: implement")
-def test_restrict_to_two_columns_on_dataframe(sbs):
-    pass
 
 
 @pytest.mark.skip(reason="TODO: implement")
