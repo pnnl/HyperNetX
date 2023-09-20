@@ -538,8 +538,7 @@ class Hypergraph:
 
             self.E = EntitySet(
                 entity=entity,
-                level1=edge_col,
-                level2=node_col,
+                data_cols=(edge_col, node_col),
                 weight_col=cell_weight_col,
                 weights=cell_weights,
                 cell_properties=cell_properties,

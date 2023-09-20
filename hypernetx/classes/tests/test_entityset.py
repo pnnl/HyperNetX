@@ -5,9 +5,6 @@ from pytest_lazyfixture import lazy_fixture
 from collections.abc import Iterable
 from collections import UserList
 from hypernetx.classes import EntitySet
-from hypernetx.classes.entityset import restrict_to_two_columns
-
-from pandas import DataFrame, Series
 
 
 def test_empty_entityset():
@@ -337,25 +334,6 @@ class TestEntitySetOnHarryPotterDataSet:
 
 
 # testing entityset helpers
-
-
-def test_restrict_to_two_columns_on_ndarray(harry_potter):
-    data = np.asarray(harry_potter.data)
-    labels = harry_potter.labels
-    expected_num_cols = 2
-    expected_ndarray_first_row = np.array([1, 1])
-
-    entity, data, labels = restrict_to_two_columns(
-        entity=None,
-        data=data,
-        labels=labels,
-        cell_properties=None,
-        weight_col="cell_weights",
-        weights=1,
-        level1=0,
-        level2=1,
-        misc_cell_props_col="properties",
-    )
 
 
 @pytest.mark.skip(reason="TODO: implement")

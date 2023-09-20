@@ -127,8 +127,6 @@ class EntitySet:
             | Mapping[T, Mapping[T, Any]]
         ] = None,
         data_cols: Sequence[T] = (0, 1),
-        level1: str | int = 0,
-        level2: str | int = 1,
         data: Optional[np.ndarray] = None,
         static: bool = True,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
@@ -149,19 +147,6 @@ class EntitySet:
         self._static = static
         self._state_dict = {}
         self._misc_cell_props_col = misc_cell_props_col
-
-        # Restrict to two columns on entity, data, labels
-        entity, data, labels = restrict_to_two_columns(
-            entity,
-            data,
-            labels,
-            cell_properties,
-            weight_col,
-            weights,
-            level1,
-            level2,
-            misc_cell_props_col,
-        )
 
         # build initial dataframe
         if isinstance(data, np.ndarray) and entity is None:
@@ -2064,84 +2049,3 @@ def build_dataframe_from_entity(
         )
 
     return pd.DataFrame()
-
-
-# TODO: Consider refactoring for simplicity; SonarLint states this function has a  Cognitive Complexity of 26; recommends lowering to 15
-def restrict_to_two_columns(
-    entity: Optional[
-        pd.DataFrame
-        | Mapping[T, Iterable[T]]
-        | Iterable[Iterable[T]]
-        | Mapping[T, Mapping[T, Any]]
-    ],
-    data: Optional[np.ndarray],
-    labels: Optional[OrderedDict[T, Sequence[T]]],
-    cell_properties: Optional[
-        Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
-    ],
-    weight_col: str | int,
-    weights: Optional[Sequence[float] | float | int | str],
-    level1: str | int,
-    level2: str | int,
-    misc_cell_props_col: str,
-):
-    """Restrict columns on entity or data as needed; if data is restricted, also restrict labels"""
-    if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
-        # metadata columns are not considered levels of data,
-        # remove them before indexing by level
-        # if isinstance(cell_properties, str):
-        #     cell_properties = [cell_properties]
-
-        prop_cols = []
-        if isinstance(cell_properties, Sequence):
-            for col in {*cell_properties, misc_cell_props_col}:
-                if col in entity:
-                    prop_cols.append(col)
-
-        # meta_cols = prop_cols
-        # if weights in entity and weights not in meta_cols:
-        #     meta_cols.append(weights)
-        if weight_col in prop_cols:
-            prop_cols.remove(weight_col)
-        if weight_col not in entity:
-            entity[weight_col] = weights
-
-        # if both levels are column names, no need to index by level
-        if isinstance(level1, int):
-            level1 = entity.columns[level1]
-        if isinstance(level2, int):
-            level2 = entity.columns[level2]
-        # if isinstance(level1, str) and isinstance(level2, str):
-        columns = [level1, level2, weight_col] + prop_cols
-        # if one or both of the levels are given by index, get column name
-        # else:
-        #     all_columns = entity.columns.drop(meta_cols)
-        #     columns = [
-        #         all_columns[lev] if isinstance(lev, int) else lev
-        #         for lev in (level1, level2)
-        #     ]
-
-        # if there is a column for cell properties, convert to separate DataFrame
-        # if len(prop_cols) > 0:
-        #     cell_properties = entity[[*columns, *prop_cols]]
-
-        # if there is a column for weights, preserve it
-        # if weights in entity and weights not in prop_cols:
-        #     columns.append(weights)
-
-        # pass level1, level2, and weights (optional) to Entity constructor
-        entity = entity[columns]
-
-    # if a 2D ndarray is passed, restrict to two columns if needed
-    elif isinstance(data, np.ndarray):
-        if data.ndim == 2 and data.shape[1] > 2:
-            data = data[:, (level1, level2)]
-
-        # should only change labels if 'data' is passed
-        # if a dict of labels is provided, restrict to labels for two columns if needed
-        if isinstance(labels, dict) and len(labels) > 2:
-            labels = {
-                col: labels[col] for col in [level1, level2]
-            }  # example: { 0: ['e1', 'e2', ...], 1: ['n1', ...] }
-
-    return entity, data, labels
