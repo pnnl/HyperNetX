@@ -1060,13 +1060,13 @@ class EntitySet:
 
             self._state_dict.clear()
 
-    def remove(self, *args) -> EntitySet:
+    def remove(self, *args: T) -> EntitySet:
         """Removes all rows containing specified item(s) from the underlying data table
 
         Parameters
         ----------
         *args
-            variable length argument list of item labels
+            variable length argument list of items which are of type string or int
 
         Returns
         -------
@@ -1101,13 +1101,13 @@ class EntitySet:
             self.remove_element(item)
         return self
 
-    def remove_element(self, item) -> None:
+    def remove_element(self, item: T) -> None:
         """Removes all rows containing a specified item from the underlying data table
 
         Parameters
         ----------
-        item
-            item label
+        item : Union[str, int]
+            the label of an edge
 
         See Also
         --------
@@ -1637,19 +1637,19 @@ class EntitySet:
             try:
                 item_key = self._property_loc(item)
             except KeyError:
-                raise  # item not in properties
+                raise KeyError(f"item does not exist: {item}")
 
         try:
             prop_val = self.properties.loc[item_key, prop_name]
-        except KeyError as ex:
-            if ex.args[0] == prop_name:
-                prop_val = self.properties.loc[item_key, self._misc_props_col].get(
+        except KeyError:
+            try:
+                prop_val = self.properties.loc[item_key, self._misc_props_col][
                     prop_name
-                )
-            else:
+                ]
+            except KeyError as e:
                 raise KeyError(
                     f"no properties initialized for ('level','item'): {item_key}"
-                ) from ex
+                ) from e
 
         return prop_val
 
@@ -1844,13 +1844,18 @@ class EntitySet:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
             raise KeyError(
-                f"cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
+                f"Item not exists. cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
             )
 
         try:
             prop_val = cell_props.loc[prop_name]
         except KeyError:
-            prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
+            try:
+                prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
+            except KeyError:
+                raise KeyError(
+                    f"Item exists but property does not exist. cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
+                )
 
         return prop_val
 
@@ -1882,7 +1887,7 @@ class EntitySet:
                 f"cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
             )
 
-        return cell_props
+        return cell_props.to_dict()
 
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of :meth:`restrict_to_indices` with default parameter `level`=0

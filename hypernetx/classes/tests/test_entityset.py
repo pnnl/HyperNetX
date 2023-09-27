@@ -244,21 +244,104 @@ class TestEntitySetOnSevenBySixDataset:
 
         assert np.array_equal(actual_arr, expected_arr)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_get_cell_properties(self):
-        pass
+    def test_get_cell_properties(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_get_cell_property(self):
-        pass
+        props = es.get_cell_properties("P", "A")
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_get_properties(self):
-        pass
+        assert props == {"cell_weights": 1}
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_get_property(self):
-        pass
+    def test_get_cell_properties_raises_keyerror(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+
+        with pytest.raises(KeyError, match="cell_properties:"):
+            es.get_cell_properties("P", "FOOBAR")
+
+    def test_get_cell_property(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+        props = es.get_cell_property("P", "A", "cell_weights")
+        assert props == 1
+
+    @pytest.mark.parametrize(
+        "item1, item2, prop_name, err_msg",
+        [
+            ("P", "FOO", "cell_weights", "Item not exists. cell_properties:"),
+            (
+                "P",
+                "A",
+                "Not a real property",
+                "Item exists but property does not exist. cell_properties:",
+            ),
+        ],
+    )
+    def test_get_cell_property_raises_keyerror(
+        self, sbs_dataframe, item1, item2, prop_name, err_msg
+    ):
+        es = EntitySet(entity=sbs_dataframe)
+
+        with pytest.raises(KeyError, match=err_msg):
+            es.get_cell_property(item1, item2, prop_name)
+
+    @pytest.mark.parametrize("item, level", [("P", 0), ("P", None), ("A", 1)])
+    def test_get_properties(self, sbs_dataframe, item, level):
+        es = EntitySet(entity=sbs_dataframe)
+
+        # to avoid duplicate test code, reuse 'level' to get the item_uid
+        # but if level is None, assume it to be 0 and that the item exists at level 0
+        if level is None:
+            item_uid = es.properties.loc[(0, item), "uid"]
+        else:
+            item_uid = es.properties.loc[(level, item), "uid"]
+
+        props = es.get_properties(item, level=level)
+
+        assert props == {"uid": item_uid, "weight": 1, "properties": {}}
+
+    @pytest.mark.parametrize(
+        "item, level, err_msg",
+        [
+            ("Not a valid item", None, ""),
+            ("Not a valid item", 0, "no properties initialized for"),
+        ],
+    )
+    def test_get_properties_raises_keyerror(self, sbs_dataframe, item, level, err_msg):
+        es = EntitySet(entity=sbs_dataframe)
+
+        with pytest.raises(KeyError, match=err_msg):
+            es.get_properties(item, level=level)
+
+    @pytest.mark.parametrize(
+        "item, prop_name, level, expected_prop",
+        [
+            ("P", "weight", 0, 1),
+            ("P", "properties", 0, {}),
+            ("P", "uid", 0, 3),
+            ("A", "weight", 1, 1),
+            ("A", "properties", 1, {}),
+            ("A", "uid", 1, 6),
+        ],
+    )
+    def test_get_property(self, sbs_dataframe, item, prop_name, level, expected_prop):
+        es = EntitySet(entity=sbs_dataframe)
+
+        prop = es.get_property(item, prop_name, level)
+
+        assert prop == expected_prop
+
+    @pytest.mark.parametrize(
+        "item, prop_name, err_msg",
+        [
+            ("XXX", "weight", "item does not exist:"),
+            ("P", "not a real prop name", "no properties initialized for"),
+        ],
+    )
+    def test_get_property_raises_keyerror(
+        self, sbs_dataframe, item, prop_name, err_msg
+    ):
+        es = EntitySet(entity=sbs_dataframe)
+
+        with pytest.raises(KeyError, match=err_msg):
+            es.get_property(item, prop_name)
 
     def test_incidence_matrix(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
