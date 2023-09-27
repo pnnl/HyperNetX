@@ -6,6 +6,7 @@ from ast import literal_eval
 from collections import OrderedDict, defaultdict
 from collections.abc import Hashable, Mapping, Sequence, Iterable
 from typing import Union, TypeVar, Optional, Any
+from typing_extensions import Self
 
 import numpy as np
 import pandas as pd
@@ -373,7 +374,8 @@ class EntitySet:
 
     @property
     def properties(self) -> pd.DataFrame:
-        # Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
+        # TODO: Not sure what this contains, when running tests it contained an empty pandas series
+        # Update: returns a dataframe columns: edge/node, a number, weight, misc attributes
         """Properties assigned to items in the underlying data table
 
         Returns
@@ -448,7 +450,7 @@ class EntitySet:
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column: Hashable) -> set:
-        # Dev Note: This threw an error when trying it on the harry potter dataset,
+        # TODO: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
         """Labels of all items in a particular column (level) of the underlying data table
 
@@ -627,7 +629,7 @@ class EntitySet:
 
     @property
     def isstatic(self) -> bool:
-        # Dev Note: I'm guessing this is no longer necessary?
+        # TODO: I'm guessing this is no longer necessary?
         """Whether to treat the underlying data as static or not
 
         If True, the underlying data may not be altered, and the state_dict will never be cleared
@@ -753,7 +755,7 @@ class EntitySet:
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        # Dev Note (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
+        # TODO: (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
         """Iterates over items labels in a specified level (column) of the underlying data table
 
         Parameters
@@ -939,7 +941,7 @@ class EntitySet:
         print(f'"{item}" not found.')
         return None
 
-    def add(self, *args) -> EntitySet:
+    def add(self, *args) -> Self:
         """Updates the underlying data table with new entity data from multiple sources
 
         Parameters
@@ -969,7 +971,7 @@ class EntitySet:
             self.add_element(item)
         return self
 
-    def add_elements_from(self, arg_set) -> EntitySet:
+    def add_elements_from(self, arg_set) -> Self:
         """Adds arguments from an iterable to the data table one at a time
 
         ..deprecated:: 2.0.0
@@ -995,16 +997,15 @@ class EntitySet:
         | Mapping[T, Iterable[T]]
         | Iterable[Iterable[T]]
         | Mapping[T, Mapping[T, Any]],
-    ) -> EntitySet:
+    ) -> Self:
         """Updates the underlying data table with new entity data
 
-        Supports adding from either an existing Entity or a representation of entity
+        Supports adding from either an existing EntitySet or a representation of entity
         (data table or labeled system of sets are both supported representations)
 
         Parameters
         ----------
-        data : `pandas.DataFrame`, dict of lists or sets, lists of lists or sets
-            new entity data
+        data : `pandas.DataFrame`, dict of lists or sets, lists of lists, or nested dict
 
         Returns
         -------
@@ -1137,15 +1138,14 @@ class EntitySet:
 
         Parameters
         ----------
-        data : dataframe
+        data : dataframe, dataframe columns must have dtype set to 'category'
 
         Returns
         -------
         numpy.array
 
         """
-        encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
-        return encoded_array
+        return data.apply(lambda x: x.cat.codes).to_numpy()
 
     def incidence_matrix(
         self,

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -26,17 +27,17 @@ def test_empty_entityset():
 
     assert es.size() == 0
 
-    with (pytest.raises(AttributeError)):
+    with pytest.raises(AttributeError):
         es.get_cell_property("foo", "bar", "roma")
-    with (pytest.raises(AttributeError)):
+    with pytest.raises(AttributeError):
         es.get_cell_properties("foo", "bar")
-    with (pytest.raises(KeyError)):
+    with pytest.raises(KeyError):
         es.set_cell_property("foo", "bar", "roma", "ff")
-    with (pytest.raises(KeyError)):
+    with pytest.raises(KeyError):
         es.get_properties("foo")
-    with (pytest.raises(KeyError)):
+    with pytest.raises(KeyError):
         es.get_property("foo", "bar")
-    with (pytest.raises(ValueError)):
+    with pytest.raises(ValueError):
         es.set_property("foo", "bar", "roma")
 
 
@@ -49,7 +50,7 @@ class TestEntitySetOnSevenBySixDataset:
             (lazy_fixture("sbs_dataframe"), None, (0, 1), None),
             (lazy_fixture("sbs_dict"), None, (0, 1), None),
             (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
-            (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
+            # (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
         ],
     )
     def test_all_properties_on_entity_as_dataframe(
@@ -57,126 +58,163 @@ class TestEntitySetOnSevenBySixDataset:
     ):
         es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
 
-        assert len(es.elements) == 6
+        assert es.isstatic
+        assert es.uid is None
+        assert not es.empty
 
+        assert es.uidset == {"I", "R", "S", "P", "O", "L"}
         assert es.size() == len(sbs.edgedict)
-        assert len(es.uidset) == 6
-        assert len(es.children) == 7
+        assert es.dimsize == 2
+        assert es.dimensions == (6, 7)
+        assert es.data.shape == (15, 2)
+        assert es.data.ndim == 2
+
+        assert len(es.elements) == 6
+        expected_elements = {
+            "I": ["K", "T2"],
+            "L": ["E", "C"],
+            "O": ["T1", "T2"],
+            "P": ["C", "K", "A"],
+            "R": ["E", "A"],
+            "S": ["K", "V", "A", "T2"],
+        }
+        for expected_edge, expected_nodes in expected_elements.items():
+            assert expected_edge in es.elements
+            assert es.elements[expected_edge].sort() == expected_nodes.sort()
+
+        expected_incident_dict = {
+            "I": ["K", "T2"],
+            "L": ["E", "C"],
+            "O": ["T1", "T2"],
+            "P": ["C", "K", "A"],
+            "R": ["E", "A"],
+            "S": ["K", "V", "A", "T2"],
+        }
+        for expected_edge, expected_nodes in expected_incident_dict.items():
+            assert expected_edge in es.incidence_dict
+            assert es.incidence_dict[expected_edge].sort() == expected_nodes.sort()
+
+        # check dunder methods
         assert isinstance(es.incidence_dict["I"], list)
         assert "I" in es
         assert "K" in es
 
-        assert not es.empty
+        assert es.children == {"C", "T1", "A", "K", "T2", "V", "E"}
+        assert es.memberships == {
+            "A": ["P", "R", "S"],
+            "C": ["P", "L"],
+            "E": ["R", "L"],
+            "K": ["P", "S", "I"],
+            "T1": ["O"],
+            "T2": ["S", "O", "I"],
+            "V": ["S"],
+        }
 
-        assert es.dimsize == 2
-        assert len(es.dimensions) == es.dimsize
+        assert es.cell_properties.shape == (
+            15,
+            1,
+        )  # cell properties: a pandas dataframe of one column of all the cells. A cell is an edge-node pair. And we are saving the weight of each pair
+        assert es.cell_weights == {
+            ("P", "C"): 1,
+            ("P", "K"): 1,
+            ("P", "A"): 1,
+            ("R", "E"): 1,
+            ("R", "A"): 1,
+            ("S", "K"): 1,
+            ("S", "V"): 1,
+            ("S", "A"): 1,
+            ("S", "T2"): 1,
+            ("L", "E"): 1,
+            ("L", "C"): 1,
+            ("O", "T1"): 1,
+            ("O", "T2"): 1,
+            ("I", "K"): 1,
+            ("I", "T2"): 1,
+        }
 
-        assert es.isstatic
+        # check labeling based on given attributes for EntitySet
+        if data_cols == [
+            "edges",
+            "nodes",
+        ]:  # labels should use the data_cols as keys for labels
+            assert es.labels == {
+                "edges": ["I", "L", "O", "P", "R", "S"],
+                "nodes": ["A", "C", "E", "K", "T1", "T2", "V"],
+            }
+        elif labels is not None:  # labels should match the labels explicity given
+            assert es.labels == labels
+        else:  # if data_cols or labels not given, labels should conform to default format
+            assert es.labels == {
+                0: ["I", "L", "O", "P", "R", "S"],
+                1: ["A", "C", "E", "K", "T1", "T2", "V"],
+            }
 
-        assert es.uid is None
-        assert es.uidset == {"I", "R", "S", "P", "O", "L"}
-        assert es.dimensions == (6, 7)
+        # check dataframe
+        # size should be the number of rows times the number of columns, i.e 15 x 3
+        assert es.dataframe.size == 45
 
-        # cell_weights # dict of tuples, ints: pairs to weights # basically the simplest dataframe as a dictionary
-        # children # set of nodes
-        # dataframe # the pandas dataframe
-        # elements # dict of str to list that summarizes the edge node pairs
-        # incidence_dict # same as elements
-        # labels # the list of all unique elements in the first two columns of the dataframe, basically the edge, nodes
-        # memberships # the opposite of elements; it is the node to edges pairs
-        # properties: a pandas dataframe of all the nodes and edges. The index is fomratted as <col name>/<node, edge name>. The columns from left to right are uid, weight, and properties
-        # uidset: the set of all edges
-        # cell properties: a pandas dataframe of one column of all the cells. A cell is an edge-node pair. And we are saving the weight of each pair
+        actual_edge_row0 = es.dataframe.iloc[0, 0]
+        actual_node_row0 = es.dataframe.iloc[0, 1]
+        actual_cell_weight_row0 = es.dataframe.loc[0, "cell_weights"]
 
-        # assert es.cell_properties.shape == (3, 1)
+        assert actual_edge_row0 == "P"
+        assert actual_node_row0 in ["A", "C", "K"]
+        assert actual_cell_weight_row0 == 1
+
+        # print(es.data)
+        # print(es.properties)
+        assert len(es.data) == 15  # TODO: validate state of 'data'
+
+        assert (
+            es.properties.size == 39
+        )  # Properties has three columns and 13 rows of data (i.e. edges + nodes)
+        assert list(es.properties.columns) == ["uid", "weight", "properties"]
 
     def test_ndarray_fail_on_labels(self, sbs):
-        with (pytest.raises(ValueError, match="Labels must be of type Dictionary.")):
+        with pytest.raises(ValueError, match="Labels must be of type Dictionary."):
             EntitySet(data=np.asarray(sbs.data), labels=[])
 
     def test_ndarray_fail_on_length_labels(self, sbs):
-        with (
-            pytest.raises(
-                ValueError,
-                match="The length of labels must equal the length of columns in the dataframe.",
-            )
+        with pytest.raises(
+            ValueError,
+            match="The length of labels must equal the length of columns in the dataframe.",
         ):
             EntitySet(data=np.asarray(sbs.data), labels=dict())
-
-    # Tests for properties
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_cell_weights(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_children(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_dataframe(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_dimensions(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_dimsize(self):
-        pass
 
     def test_dimensions_equal_dimsize(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.dimsize == len(ent_sbs.dimensions)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_elements(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_empty(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_incidence_dict(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_isstatic(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_labels(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_memberships(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_properties(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_uid(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_uidset(self):
-        pass
-
     # Tests for methods
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_add(self):
-        pass
+    @pytest.mark.parametrize(
+        "data",
+        [
+            pd.DataFrame({0: ["P"], 1: ["E"]}),
+            {0: ["P"], 1: ["E"]},
+            EntitySet(entity={"P": ["E"]}),
+        ],
+    )
+    def test_add(self, sbs_dataframe, data):
+        es = EntitySet(entity=sbs_dataframe)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_add_element(self):
-        pass
+        assert es.data.shape == (15, 2)
+        assert es.dataframe.size == 45
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_add_elements_from(self):
-        pass
+        es.add(data)
+
+        assert es.data.shape == (16, 2)
+        assert es.dataframe.size == 48
+
+    def test_remove(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+        assert es.data.shape == (15, 2)
+        assert es.dataframe.size == 45
+
+        es.remove("P")
+
+        assert es.data.shape == (12, 2)
+        assert es.dataframe.size == 36
+        assert "P" not in es.elements
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_assign_properties(self):
@@ -194,9 +232,17 @@ class TestEntitySetOnSevenBySixDataset:
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.elements_by_level(0, 1)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_encode(self):
-        pass
+    def test_encode(self, sbs_dataframe):
+        es = EntitySet()
+
+        df = pd.DataFrame({"Category": ["A", "B", "A", "C", "B"]})
+        # Convert 'Category' column to categorical
+        df["Category"] = df["Category"].astype("category")
+
+        expected_arr = np.array([[0], [1], [0], [2], [1]])
+        actual_arr = es.encode(df)
+
+        assert np.array_equal(actual_arr, expected_arr)
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_get_cell_properties(self):
@@ -228,20 +274,12 @@ class TestEntitySetOnSevenBySixDataset:
         assert ent_sbs.indices("nodes", "K") == [3]
         assert ent_sbs.indices("nodes", ["K", "T1"]) == [3, 4]
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_is_empty(self):
-        pass
+    def test_is_empty(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+        assert not es.is_empty()
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_level(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_remove(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_remove_elements(self):
         pass
 
     @pytest.mark.skip(reason="TODO: implement")
@@ -262,10 +300,6 @@ class TestEntitySetOnSevenBySixDataset:
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_set_property(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_size(self):
         pass
 
     def test_translate(self, sbs):
