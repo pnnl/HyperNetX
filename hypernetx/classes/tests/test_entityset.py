@@ -185,7 +185,6 @@ class TestEntitySetOnSevenBySixDataset:
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.dimsize == len(ent_sbs.dimensions)
 
-    # Tests for methods
     @pytest.mark.parametrize(
         "data",
         [
@@ -343,6 +342,50 @@ class TestEntitySetOnSevenBySixDataset:
         with pytest.raises(KeyError, match=err_msg):
             es.get_property(item, prop_name)
 
+    @pytest.mark.parametrize(
+        "item, prop_name, prop_val, level",
+        [
+            ("P", "weight", 42, 0),
+        ],
+    )
+    def test_set_property(self, sbs_dataframe, item, prop_name, prop_val, level):
+        es = EntitySet(entity=sbs_dataframe)
+
+        orig_prop_val = es.get_property(item, prop_name, level)
+
+        es.set_property(item, prop_name, prop_val, level)
+
+        new_prop_val = es.get_property(item, prop_name, level)
+
+        assert new_prop_val != orig_prop_val
+        assert new_prop_val == prop_val
+
+    @pytest.mark.parametrize(
+        "item, prop_name, prop_val, level, misc_props_col",
+        [
+            ("P", "new_prop", "foobar", 0, "properties"),
+            ("P", "new_prop", "foobar", 0, "some_new_miscellaneaus_col"),
+        ],
+    )
+    def test_set_property_on_non_existing_property(
+        self, sbs_dataframe, item, prop_name, prop_val, level, misc_props_col
+    ):
+        es = EntitySet(entity=sbs_dataframe, misc_props_col=misc_props_col)
+
+        es.set_property(item, prop_name, prop_val, level)
+
+        new_prop_val = es.get_property(item, prop_name, level)
+
+        assert new_prop_val == prop_val
+
+    def test_set_property_raises_keyerror(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+
+        with pytest.raises(
+            ValueError, match="cannot infer 'level' when initializing 'item' properties"
+        ):
+            es.set_property("XXXX", "weight", 42)
+
     def test_incidence_matrix(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.incidence_matrix(1, 0).todense().shape == (6, 7)
@@ -375,14 +418,6 @@ class TestEntitySetOnSevenBySixDataset:
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_restrict_to_levels(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_set_cell_property(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_set_property(self):
         pass
 
     def test_translate(self, sbs):

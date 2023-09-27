@@ -1593,6 +1593,7 @@ class EntitySet:
                 self._properties.loc[item_key, self._misc_props_col].update(
                     {prop_name: prop_val}
                 )
+            # TODO: Is it possible to ever hit this case given that misc_props_col will always be set in the dataframe?
             except KeyError:
                 self._properties.loc[item_key, :] = {
                     self._misc_props_col: {prop_name: prop_val}
