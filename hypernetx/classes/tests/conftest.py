@@ -160,6 +160,32 @@ def props_dataframe():
 
 
 @pytest.fixture
+def cell_props_dataframe_multidx():
+    multi_index = pd.MultiIndex.from_tuples([("P", "A"), ("P", "C")], names=[0, 1])
+    data = {
+        "cell_properties": [
+            {"prop1": "propval1", "prop2": "propval2"},
+            {"prop1": "propval1", "prop2": "propval2"},
+        ]
+    }
+
+    return pd.DataFrame(data, index=multi_index)
+
+
+@pytest.fixture
+def cell_props_dataframe():
+    data = {
+        0: ["P", "P"],
+        1: ["A", "C"],
+        "cell_properties": [
+            {"prop1": "propval1", "prop2": "propval2"},
+            {"prop1": "propval1", "prop2": "propval2"},
+        ],
+    }
+    return pd.DataFrame(data)
+
+
+@pytest.fixture
 def sbs():
     return SevenBySix()
 

@@ -237,7 +237,7 @@ class TestEntitySetOnSevenBySixDataset:
     )
     def test_assign_properties(self, sbs_dataframe, props, multidx, expected_props):
         es = EntitySet(entity=sbs_dataframe)
-        print(es.properties)
+
         original_prop = es.properties.loc[multidx]
         assert original_prop.properties == {}
 
@@ -246,9 +246,65 @@ class TestEntitySetOnSevenBySixDataset:
         updated_prop = es.properties.loc[multidx]
         assert updated_prop.properties == expected_props
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_assign_cell_properties(self):
-        pass
+    @pytest.mark.parametrize(
+        "cell_props, multidx, expected_cell_properties",
+        [
+            (
+                lazy_fixture("cell_props_dataframe"),
+                ("P", "A"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+            (
+                lazy_fixture("cell_props_dataframe_multidx"),
+                ("P", "A"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+            (
+                {"P": {"A": {"prop1": "propval1", "prop2": "propval2"}}},
+                ("P", "A"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+        ],
+    )
+    def test_assign_cell_properties_on_default_cell_properties(
+        self, sbs_dataframe, cell_props, multidx, expected_cell_properties
+    ):
+        es = EntitySet(entity=sbs_dataframe)
+
+        es.assign_cell_properties(cell_props=cell_props)
+
+        updated_cell_prop = es.cell_properties.loc[multidx]
+
+        assert updated_cell_prop.cell_properties == expected_cell_properties
+
+    def test_assign_cell_properties_on_multiple_properties(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+        multidx = ("P", "A")
+
+        es.assign_cell_properties(
+            cell_props={"P": {"A": {"prop1": "propval1", "prop2": "propval2"}}}
+        )
+
+        updated_cell_prop = es.cell_properties.loc[multidx]
+        assert updated_cell_prop.cell_properties == {
+            "prop1": "propval1",
+            "prop2": "propval2",
+        }
+
+        es.assign_cell_properties(
+            cell_props={
+                "P": {
+                    "A": {"prop1": "propval1", "prop2": "propval2", "prop3": "propval3"}
+                }
+            }
+        )
+
+        updated_cell_prop = es.cell_properties.loc[multidx]
+        assert updated_cell_prop.cell_properties == {
+            "prop1": "propval1",
+            "prop2": "propval2",
+            "prop3": "propval3",
+        }
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_collapse_identitical_elements(self):

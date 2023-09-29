@@ -1777,6 +1777,7 @@ class EntitySet:
                 [(item1, item2) for item1 in cell_props for item2 in cell_props[item1]],
                 names=self._data_cols,
             )
+            # This will create a MultiIndex dataframe with exactly one column named from _misc_cell_props_col (default is cell_properties)
             props_data = [cell_props[item1][item2] for item1, item2 in cells]
             cell_props = pd.DataFrame(
                 {self._misc_cell_props_col: props_data}, index=cells
