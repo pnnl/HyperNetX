@@ -306,6 +306,11 @@ class TestEntitySetOnSevenBySixDataset:
             "prop3": "propval3",
         }
 
+    def test_set_cell_property_from_existing_properties(self, sbs_dataframe):
+        es = EntitySet(entity=sbs_dataframe)
+        es.set_cell_property("P", "A", "cell_weights", 42)
+        assert es.cell_properties.loc[("P", "A")].cell_weights == 42.0
+
     @pytest.mark.skip(reason="TODO: implement")
     def test_collapse_identitical_elements(self):
         pass
@@ -316,26 +321,6 @@ class TestEntitySetOnSevenBySixDataset:
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_level(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_index(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_indices(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_translate(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_translate_arr(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_incidence_matrix(self):
         pass
 
     def test_elements_by_level(self, sbs):
