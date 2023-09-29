@@ -151,6 +151,15 @@ class CompleteBipartite:
 
 
 @pytest.fixture
+def props_dataframe():
+    multi_index = pd.MultiIndex.from_tuples([(0, "P")], names=["level", "id"])
+    data = {
+        "properties": [{"prop1": "propval1", "prop2": "propval2"}],
+    }
+    return pd.DataFrame(data, index=multi_index)
+
+
+@pytest.fixture
 def sbs():
     return SevenBySix()
 

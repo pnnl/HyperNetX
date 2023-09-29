@@ -53,7 +53,7 @@ class TestEntitySetOnSevenBySixDataset:
             # (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
         ],
     )
-    def test_all_properties_on_entity_as_dataframe(
+    def test_all_attribute_properties_on_common_entityset_instances(
         self, entity, data, data_cols, labels, sbs
     ):
         es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
@@ -215,8 +215,39 @@ class TestEntitySetOnSevenBySixDataset:
         assert es.dataframe.size == 36
         assert "P" not in es.elements
 
+    @pytest.mark.parametrize(
+        "props, multidx, expected_props",
+        [
+            (
+                lazy_fixture("props_dataframe"),
+                (0, "P"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+            (
+                {0: {"P": {"prop1": "propval1", "prop2": "propval2"}}},
+                (0, "P"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+            (
+                {1: {"A": {"prop1": "propval1", "prop2": "propval2"}}},
+                (1, "A"),
+                {"prop1": "propval1", "prop2": "propval2"},
+            ),
+        ],
+    )
+    def test_assign_properties(self, sbs_dataframe, props, multidx, expected_props):
+        es = EntitySet(entity=sbs_dataframe)
+        print(es.properties)
+        original_prop = es.properties.loc[multidx]
+        assert original_prop.properties == {}
+
+        es.assign_properties(props)
+
+        updated_prop = es.properties.loc[multidx]
+        assert updated_prop.properties == expected_props
+
     @pytest.mark.skip(reason="TODO: implement")
-    def test_assign_properties(self):
+    def test_assign_cell_properties(self):
         pass
 
     @pytest.mark.skip(reason="TODO: implement")
@@ -225,6 +256,30 @@ class TestEntitySetOnSevenBySixDataset:
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_elements_by_column(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_level(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_index(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_indices(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_translate(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_translate_arr(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: implement")
+    def test_incidence_matrix(self):
         pass
 
     def test_elements_by_level(self, sbs):
@@ -400,24 +455,13 @@ class TestEntitySetOnSevenBySixDataset:
         assert ent_sbs.indices("nodes", "K") == [3]
         assert ent_sbs.indices("nodes", ["K", "T1"]) == [3, 4]
 
-    def test_is_empty(self, sbs_dataframe):
+    @pytest.mark.parametrize("level", [0, 1])
+    def test_is_empty(self, sbs_dataframe, level):
         es = EntitySet(entity=sbs_dataframe)
-        assert not es.is_empty()
+        assert not es.is_empty(level)
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_level(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_restrict_to(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_restrict_to_indices(self):
-        pass
-
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_restrict_to_levels(self):
         pass
 
     def test_translate(self, sbs):
@@ -486,8 +530,6 @@ class TestEntitySetOnHarryPotterDataSet:
 
 
 # testing entityset helpers
-
-
 @pytest.mark.skip(reason="TODO: implement")
 def build_dataframe_from_entity_on_dataframe(sbs):
     pass

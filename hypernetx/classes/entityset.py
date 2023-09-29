@@ -70,7 +70,7 @@ class EntitySet:
         If ``DataFrame``, each row gives
         ``[optional item level, item label, optional named properties,
         {property name: property value}]``
-        (order of columns does not matter; see note for an example).
+        (order of columns does not matter; see Notes for an example).
         If doubly-nested dict,
         ``{item level: {item label: {property name: property value}}}``.
     misc_props_col: str, default="properties"
@@ -374,13 +374,11 @@ class EntitySet:
 
     @property
     def properties(self) -> pd.DataFrame:
-        # TODO: Not sure what this contains, when running tests it contained an empty pandas series
-        # Update: returns a dataframe columns: edge/node, a number, weight, misc attributes
         """Properties assigned to items in the underlying data table
 
         Returns
         -------
-        pandas.DataFrame
+        pandas.DataFrame a dataframe with the following columns: level/(edge|node), uid, weight, properties
         """
 
         return self._properties
@@ -1284,7 +1282,7 @@ class EntitySet:
     def restrict_to_indices(
         self, indices: int | Iterable[int], level: int = 0, **kwargs
     ) -> EntitySet:
-        """Create a new Entity by restricting the data table to rows containing specific items in a given level
+        """Create a new EntitySet by restricting the data table to rows containing specific items in a given level
 
         Parameters
         ----------
@@ -1369,7 +1367,7 @@ class EntitySet:
         Parameters
         ----------
         props : pandas.DataFrame or doubly-nested dict
-            See documentation of the `properties` parameter in :class:`Entity`
+            See documentation of the `properties` parameter in :class:`EntitySet`
         level_col, id_col, misc_col : str, optional
             column names corresponding to the levels, items, and misc. properties;
             if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_misc_props_col`,
