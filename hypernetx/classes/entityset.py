@@ -1396,8 +1396,7 @@ class EntitySet:
             props = props.rename(columns=column_map)
             props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
-
-        if isinstance(props, dict):
+        elif isinstance(props, dict):
             # Expects nested dictionary with keys corresponding to level and id
             self._properties_from_dict(props)
 
