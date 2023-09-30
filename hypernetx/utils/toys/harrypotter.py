@@ -11,7 +11,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class HarryPotter(object):
     def __init__(self, cols=None):
-
         # Read dataset in using pandas. Fix index column or use default pandas index.
 
         try:
@@ -21,7 +20,7 @@ class HarryPotter(object):
             fname = f"{current_dir}/HarryPotter_Characters.csv"
             harrydata = pd.read_csv(fname, encoding="unicode_escape")
 
-        self.harrydata = pd.DataFrame(harrydata)
+        self.harryxdata = pd.DataFrame(harrydata)
 
         # Choose string to fill NaN. These will be set to 0 in system id = sid
         columns = cols or [

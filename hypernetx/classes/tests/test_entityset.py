@@ -319,10 +319,6 @@ class TestEntitySetOnSevenBySixDataset:
     def test_elements_by_column(self):
         pass
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_level(self):
-        pass
-
     def test_elements_by_level(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
         assert ent_sbs.elements_by_level(0, 1)
@@ -501,9 +497,28 @@ class TestEntitySetOnSevenBySixDataset:
         es = EntitySet(entity=sbs_dataframe)
         assert not es.is_empty(level)
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_level(self):
-        pass
+    @pytest.mark.parametrize(
+        "item_level, item, min_level, max_level, expected_lidx",
+        [
+            (0, "P", 0, None, (0, 3)),
+            (0, "P", 0, 0, (0, 3)),
+            (0, "P", 1, 1, None),
+            (1, "A", 0, None, (1, 0)),
+            (1, "A", 0, 0, None),
+            (1, "K", 0, None, (1, 3)),
+        ],
+    )
+    def test_level(
+        self, sbs_dataframe, item_level, item, min_level, max_level, expected_lidx
+    ):
+        es = EntitySet(sbs_dataframe)
+
+        actual_lidx = es.level(item, min_level=min_level, max_level=max_level)
+
+        assert actual_lidx == expected_lidx
+
+        if actual_lidx is not None:
+            actual_lidx[0] == es.labels[item_level].index(item)
 
     def test_translate(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
@@ -571,9 +586,6 @@ class TestEntitySetOnHarryPotterDataSet:
 
 
 # testing entityset helpers
-@pytest.mark.skip(reason="TODO: implement")
-def build_dataframe_from_entity_on_dataframe(sbs):
-    pass
 
 
 @pytest.mark.xfail(
@@ -591,8 +603,9 @@ def test_level(sbs):
 @pytest.mark.xfail(
     reason="Entity does not remove row duplicates from self._data if constructed from np.ndarray, defaults to first two cols as data cols"
 )
-def test_attributes(ent_hp):
-    assert isinstance(ent_hp.data, np.ndarray)
+def test_attributes(harry_potter):
+    assert isinstance(harry_potter.data, np.ndarray)
+    ent_hp = EntitySet(data=np.asarray(harry_potter.data), labels=harry_potter.labels)
     # TODO: Entity does not remove row duplicates from self._data if constructed from np.ndarray
     assert ent_hp.data.shape == ent_hp.dataframe[ent_hp._data_cols].shape  # fails
     assert isinstance(ent_hp.labels, dict)
