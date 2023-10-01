@@ -11,27 +11,22 @@ test: test-deps
 	@$(PYTHON3) -m tox
 
 test-ci: test-deps
-	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	pre-commit install
 	pre-commit run --all-files
-	@$(PYTHON3) -m tox -e py38 -r
+	@$(PYTHON3) -m tox
 
 test-ci-github: test-deps
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 	@$(PYTHON3) -m tox
 
-test-coverage: test-deps
-	coverage run --source=hypernetx -m pytest
-	coverage html
-
-.PHONY: test, test-ci, test-ci-github, test-coverage
+.PHONY: test, test-ci, test-ci-github
 
 ## Continuous Deployment
 ## Assumes that scripts are run on a container or test server VM
 
 ### Publish to PyPi
 publish-deps:
-	@$(PYTHON3) -m pip install -e .'[packaging]'
+	@$(PYTHON3) -m pip install -e .'[packaging]' --use-pep517
 
 build-dist: publish-deps clean
 	@$(PYTHON3) -m build --wheel --sdist
@@ -48,7 +43,7 @@ publish-to-pypi: publish-deps build-dist
 ### Update version
 
 version-deps:
-	@$(PYTHON3) -m pip install .'[releases]'
+	@$(PYTHON3) -m pip install .'[releases]' --use-pep517
 
 .PHONY: version-deps
 
