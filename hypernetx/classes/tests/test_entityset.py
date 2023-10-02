@@ -311,9 +311,36 @@ class TestEntitySetOnSevenBySixDataset:
         es.set_cell_property("P", "A", "cell_weights", 42)
         assert es.cell_properties.loc[("P", "A")].cell_weights == 42.0
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_collapse_identitical_elements(self):
-        pass
+    @pytest.mark.parametrize("ret_ec", [True, False])
+    def test_collapse_identical_elements_on_duplicates(self, sbsd_dataframe, ret_ec):
+        # There are two edges that share the same set of 3 (three) nodes
+        es = EntitySet(entity=sbsd_dataframe)
+        new_es = es.collapse_identical_elements(return_equivalence_classes=ret_ec)
+
+        es_temp = new_es
+        if isinstance(new_es, tuple):
+            # reset variable for actual EntitySet
+            es_temp = new_es[0]
+
+            # check equiv classes
+            collapsed_edge_key = "L: 2"
+            assert "M: 2" not in es_temp.elements
+            assert collapsed_edge_key in es_temp.elements
+            assert set(es_temp.elements.get(collapsed_edge_key)) == {"F", "C", "E"}
+
+            equiv_classes = new_es[1]
+            assert equiv_classes == {
+                "I: 1": ["I"],
+                "L: 2": ["L", "M"],
+                "O: 1": ["O"],
+                "P: 1": ["P"],
+                "R: 1": ["R"],
+                "S: 1": ["S"],
+            }
+
+        # check dataframe
+        assert len(es_temp.dataframe) != len(es.dataframe)
+        assert len(es_temp.dataframe) == len(es.dataframe) - 3
 
     @pytest.mark.skip(reason="TODO: implement")
     def test_elements_by_column(self):

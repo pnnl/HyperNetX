@@ -104,6 +104,8 @@ class SBSDupes:
             ]
         )
 
+        self.dataframe = create_dataframe(self.edgedict)
+
 
 class LesMis:
     def __init__(self):
@@ -239,6 +241,11 @@ def sbs_graph(sbs):
 def sbsd_hypergraph():
     sbsd = SBSDupes()
     return Hypergraph(sbsd.edgedict)
+
+
+@pytest.fixture
+def sbsd_dataframe():
+    return SBSDupes().dataframe
 
 
 @pytest.fixture
