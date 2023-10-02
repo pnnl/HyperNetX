@@ -238,14 +238,14 @@ def sbs_graph(sbs):
 
 
 @pytest.fixture
-def sbsd_hypergraph():
-    sbsd = SBSDupes()
-    return Hypergraph(sbsd.edgedict)
+def sbsd():
+    return SBSDupes()
 
 
 @pytest.fixture
-def sbsd_dataframe():
-    return SBSDupes().dataframe
+def sbsd_hypergraph():
+    sbsd = SBSDupes()
+    return Hypergraph(sbsd.edgedict)
 
 
 @pytest.fixture
