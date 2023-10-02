@@ -342,9 +342,45 @@ class TestEntitySetOnSevenBySixDataset:
         assert len(es_temp.dataframe) != len(es.dataframe)
         assert len(es_temp.dataframe) == len(es.dataframe) - 3
 
-    @pytest.mark.skip(reason="TODO: implement")
-    def test_elements_by_column(self):
-        pass
+    @pytest.mark.parametrize(
+        "col1, col2, expected_elements",
+        [
+            (
+                0,
+                1,
+                {
+                    "I": {"K", "T2"},
+                    "L": {"C", "E"},
+                    "O": {"T1", "T2"},
+                    "P": {"K", "A", "C"},
+                    "R": {"A", "E"},
+                    "S": {"K", "A", "V", "T2"},
+                },
+            ),
+            (
+                1,
+                0,
+                {
+                    "A": {"P", "R", "S"},
+                    "C": {"P", "L"},
+                    "E": {"R", "L"},
+                    "K": {"P", "S", "I"},
+                    "T1": {"O"},
+                    "T2": {"S", "O", "I"},
+                    "V": {"S"},
+                },
+            ),
+        ],
+    )
+    def test_elements_by_column(self, sbs_dataframe, col1, col2, expected_elements):
+        es = EntitySet(entity=sbs_dataframe)
+
+        elements_temps = es.elements_by_column(col1, col2)
+        actual_elements = {
+            elements_temps[k]._key[1]: set(v) for k, v in elements_temps.items()
+        }
+
+        assert actual_elements == expected_elements
 
     def test_elements_by_level(self, sbs):
         ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
