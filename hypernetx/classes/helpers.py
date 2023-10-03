@@ -214,6 +214,9 @@ def remove_row_duplicates(
     weight_col : Hashable
         The name of the column holding aggregated weights, or None if aggregateby=None
     """
+    if df.empty:
+        return df, None
+
     df = df.copy()
     categories = {}
     for col in data_cols:
