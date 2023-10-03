@@ -872,7 +872,7 @@ class EntitySet:
 
         return [self.labels[column][i] for i in index]
 
-    def translate_arr(self, coords: tuple[int]) -> list[str]:
+    def translate_arr(self, coords: tuple[int, int]) -> list[str]:
         """Translate a full encoded row of the data table e.g., a row of ``self.data``
 
         Parameters

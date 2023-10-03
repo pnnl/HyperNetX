@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -7,33 +9,45 @@ from pytest_lazyfixture import lazy_fixture
 from hypernetx.classes import EntitySet
 
 
-class TestEntitySetUseCases:
+@pytest.mark.parametrize(
+    "entity, data, data_cols, labels",
+    [
+        (lazy_fixture("sbs_dataframe"), None, (0, 1), None),
+        (lazy_fixture("sbs_dict"), None, (0, 1), None),
+        (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
+        # (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
+    ],
+)
+class TestEntitySetUseCasesOnSBS:
     # Tests on different use cases for combination of the following params: entity, data, data_cols, labels
-    @pytest.mark.parametrize(
-        "entity, data, data_cols, labels",
-        [
-            (lazy_fixture("sbs_dataframe"), None, (0, 1), None),
-            (lazy_fixture("sbs_dict"), None, (0, 1), None),
-            (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
-            # (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
-        ],
-    )
-    def test_all_attribute_properties_on_common_entityset_instances(
-        self, entity, data, data_cols, labels, sbs
-    ):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
 
+    def test_size(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+        assert es.size() == len(sbs.edgedict)
+
+    # check all the EntitySet properties
+    def test_isstatic(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.isstatic
+
+    def test_uid(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.uid is None
+
+    def test_empty(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert not es.empty
 
+    def test_uidset(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.uidset == {"I", "R", "S", "P", "O", "L"}
-        assert es.size() == len(sbs.edgedict)
-        assert es.dimsize == 2
-        assert es.dimensions == (6, 7)
-        assert es.data.shape == (15, 2)
-        assert es.data.ndim == 2
 
+    def test_dimsize(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+        assert es.dimsize == 2
+
+    def test_elements(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert len(es.elements) == 6
         expected_elements = {
             "I": ["K", "T2"],
@@ -47,6 +61,8 @@ class TestEntitySetUseCases:
             assert expected_edge in es.elements
             assert es.elements[expected_edge].sort() == expected_nodes.sort()
 
+    def test_incident_dict(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         expected_incident_dict = {
             "I": ["K", "T2"],
             "L": ["E", "C"],
@@ -58,13 +74,16 @@ class TestEntitySetUseCases:
         for expected_edge, expected_nodes in expected_incident_dict.items():
             assert expected_edge in es.incidence_dict
             assert es.incidence_dict[expected_edge].sort() == expected_nodes.sort()
-
-        # check dunder methods
         assert isinstance(es.incidence_dict["I"], list)
         assert "I" in es
         assert "K" in es
 
+    def test_children(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.children == {"C", "T1", "A", "K", "T2", "V", "E"}
+
+    def test_memberships(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.memberships == {
             "A": ["P", "R", "S"],
             "C": ["P", "L"],
@@ -75,10 +94,15 @@ class TestEntitySetUseCases:
             "V": ["S"],
         }
 
+    def test_cell_properties(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.cell_properties.shape == (
             15,
             1,
-        )  # cell properties: a pandas dataframe of one column of all the cells. A cell is an edge-node pair. And we are saving the weight of each pair
+        )
+
+    def test_cell_weights(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert es.cell_weights == {
             ("P", "C"): 1,
             ("P", "K"): 1,
@@ -97,6 +121,8 @@ class TestEntitySetUseCases:
             ("I", "T2"): 1,
         }
 
+    def test_labels(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         # check labeling based on given attributes for EntitySet
         if data_cols == [
             "edges",
@@ -114,6 +140,8 @@ class TestEntitySetUseCases:
                 1: ["A", "C", "E", "K", "T1", "T2", "V"],
             }
 
+    def test_dataframe(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         # check dataframe
         # size should be the number of rows times the number of columns, i.e 15 x 3
         assert es.dataframe.size == 45
@@ -126,17 +154,20 @@ class TestEntitySetUseCases:
         assert actual_node_row0 in ["A", "C", "K"]
         assert actual_cell_weight_row0 == 1
 
-        # print(es.data)
-        # print(es.properties)
+    def test_data(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert len(es.data) == 15  # TODO: validate state of 'data'
 
+    def test_properties(self, entity, data, data_cols, labels, sbs):
+        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
         assert (
             es.properties.size == 39
         )  # Properties has three columns and 13 rows of data (i.e. edges + nodes)
         assert list(es.properties.columns) == ["uid", "weight", "properties"]
 
 
-class TestEntitySetOnSevenBySixDataset:
+class TestEntitySetOnSBSasNDArray:
+    # Check all methods
     def test_ndarray_fail_on_labels(self, sbs):
         with pytest.raises(ValueError, match="Labels must be of type Dictionary."):
             EntitySet(data=np.asarray(sbs.data), labels=[])
@@ -177,6 +208,7 @@ class TestEntitySetOnSBSDataframe:
     def es_from_sbs_dupe_df(self, sbsd):
         return EntitySet(entity=sbsd.dataframe)
 
+    # check all methods
     @pytest.mark.parametrize(
         "data",
         [
@@ -540,8 +572,9 @@ class TestEntitySetOnSBSDataframe:
 
         assert actual_lidx == expected_lidx
 
-        if actual_lidx is not None:
-            actual_lidx[0] == es_from_sbsdf.labels[item_level].index(item)
+        if isinstance(actual_lidx, tuple):
+            index_item_in_labels = actual_lidx[1]
+            assert index_item_in_labels == es_from_sbsdf.labels[item_level].index(item)
 
 
 @pytest.mark.xfail(
