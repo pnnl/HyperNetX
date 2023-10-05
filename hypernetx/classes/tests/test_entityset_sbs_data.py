@@ -450,8 +450,7 @@ class TestEntitySetOnSBSDataframe:
         assert props == {"cell_weights": 1}
 
     def test_get_cell_properties_raises_keyerror(self, es_from_sbsdf):
-        with pytest.raises(KeyError, match="cell_properties:"):
-            es_from_sbsdf.get_cell_properties("P", "FOOBAR")
+        assert es_from_sbsdf.get_cell_properties("P", "FOOBAR") is None
 
     def test_get_cell_property(self, es_from_sbsdf):
         props = es_from_sbsdf.get_cell_property("P", "A", "cell_weights")
@@ -461,12 +460,6 @@ class TestEntitySetOnSBSDataframe:
         "item1, item2, prop_name, err_msg",
         [
             ("P", "FOO", "cell_weights", "Item not exists. cell_properties:"),
-            (
-                "P",
-                "A",
-                "Not a real property",
-                "Item exists but property does not exist. cell_properties:",
-            ),
         ],
     )
     def test_get_cell_property_raises_keyerror(
@@ -474,6 +467,9 @@ class TestEntitySetOnSBSDataframe:
     ):
         with pytest.raises(KeyError, match=err_msg):
             es_from_sbsdf.get_cell_property(item1, item2, prop_name)
+
+    def test_get_cell_property_returns_none_on_prop(self, es_from_sbsdf):
+        assert es_from_sbsdf.get_cell_property("P", "A", "Not a real property") is None
 
     @pytest.mark.parametrize("item, level", [("P", 0), ("P", None), ("A", 1)])
     def test_get_properties(self, es_from_sbsdf, item, level):
@@ -519,7 +515,6 @@ class TestEntitySetOnSBSDataframe:
         "item, prop_name, err_msg",
         [
             ("XXX", "weight", "item does not exist:"),
-            ("P", "not a real prop name", "no properties initialized for"),
         ],
     )
     def test_get_property_raises_keyerror(
@@ -527,6 +522,9 @@ class TestEntitySetOnSBSDataframe:
     ):
         with pytest.raises(KeyError, match=err_msg):
             es_from_sbsdf.get_property(item, prop_name)
+
+    def test_get_property_returns_none_on_no_property(self, es_from_sbsdf):
+        assert es_from_sbsdf.get_property("P", "non-existing property") is None
 
     @pytest.mark.parametrize(
         "item, prop_name, prop_val, level",

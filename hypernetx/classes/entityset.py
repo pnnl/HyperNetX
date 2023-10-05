@@ -1613,6 +1613,9 @@ class EntitySet:
         prop_val : any
             value of the property
 
+        None
+            if property not found
+
         Raises
         ------
         KeyError
@@ -1644,10 +1647,10 @@ class EntitySet:
                 prop_val = self.properties.loc[item_key, self._misc_props_col][
                     prop_name
                 ]
-            except KeyError as e:
-                raise KeyError(
-                    f"no properties initialized for ('level','item'): {item_key}"
-                ) from e
+            except KeyError:
+                # prop_name is not a key in the dictionary in the _misc_props_col;
+                # in other words, property was not found
+                return None
 
         return prop_val
 
@@ -1842,6 +1845,14 @@ class EntitySet:
         prop_val : any
             value of the cell property
 
+        None
+            If prop_name not found
+
+        Raises
+        ------
+        KeyError
+            If `(item1, item2)` is not in :attr:`cell_properties`
+
         See Also
         --------
         get_cell_properties, set_cell_property
@@ -1859,13 +1870,13 @@ class EntitySet:
             try:
                 prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
             except KeyError:
-                raise KeyError(
-                    f"Item exists but property does not exist. cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
-                )
+                # prop_name is not a key in the dictionary in the _misc_cell_props_col;
+                # in other words, property was not found
+                return None
 
         return prop_val
 
-    def get_cell_properties(self, item1: T, item2: T) -> dict[Any, Any]:
+    def get_cell_properties(self, item1: T, item2: T) -> Optional[dict[Any, Any]]:
         """Get all properties of a cell, i.e., incidence between items of different
         levels
 
@@ -1882,6 +1893,9 @@ class EntitySet:
             ``{named cell property: cell property value, ..., misc. cell property column
             name: {cell property name: cell property value}}``
 
+        None
+            If properties do not exist
+
         See Also
         --------
         get_cell_property, set_cell_property
@@ -1889,9 +1903,7 @@ class EntitySet:
         try:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
-            raise KeyError(
-                f"cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
-            )
+            return None
 
         return cell_props.to_dict()
 
