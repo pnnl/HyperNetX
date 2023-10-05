@@ -1808,16 +1808,22 @@ class EntitySet:
 
         if prop_name in self._cell_properties:
             self._cell_properties.loc[(item1, item2), prop_name] = prop_val
-        else:
-            try:
-                self._cell_properties.loc[
-                    (item1, item2), self._misc_cell_props_col
-                ].update({prop_name: prop_val})
-            except KeyError:
-                # TODO: this will set the existing values in row's columns to Nan; the property name and value are not captured
-                self._cell_properties.loc[(item1, item2), :] = {
-                    self._misc_cell_props_col: {prop_name: prop_val}
-                }
+            return
+
+        try:
+            # assumes that _misc_cell_props already exists in cell_properties
+            self._cell_properties.loc[(item1, item2), self._misc_cell_props_col].update(
+                {prop_name: prop_val}
+            )
+        except KeyError:
+            # creates the _misc_cell_props with a defualt empty dict
+            self._cell_properties[self._misc_cell_props_col] = [
+                {} for _ in range(len(self._cell_properties))
+            ]
+            # insert the property name and value as a dictionary in _misc_cell_props for the target incident pair
+            self._cell_properties.loc[(item1, item2), self._misc_cell_props_col].update(
+                {prop_name: prop_val}
+            )
 
     def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
         """Get a property of a cell i.e., incidence between items of different levels

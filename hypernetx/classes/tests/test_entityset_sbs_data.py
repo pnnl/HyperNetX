@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -322,9 +320,43 @@ class TestEntitySetOnSBSDataframe:
             "prop3": "propval3",
         }
 
-    def test_set_cell_property_from_existing_properties(self, es_from_sbsdf):
-        es_from_sbsdf.set_cell_property("P", "A", "cell_weights", 42)
-        assert es_from_sbsdf.cell_properties.loc[("P", "A")].cell_weights == 42.0
+    def test_set_cell_property_on_cell_weights(self, es_from_sbsdf):
+        item1 = "P"
+        item2 = "A"
+        prop_name = "cell_weights"
+        prop_val = 42
+
+        es_from_sbsdf.set_cell_property(item1, item2, prop_name, prop_val)
+
+        assert es_from_sbsdf.cell_properties.loc[(item1, item2), prop_name] == 42.0
+
+        # Check that the other cell_weights were not changed and retained the default value of 1
+        for row in es_from_sbsdf.cell_properties.itertuples():
+            if row.Index != (item1, item2):
+                assert row.cell_weights == 1
+
+    def test_set_cell_property_on_non_exisiting_cell_property(self, es_from_sbsdf):
+        item1 = "P"
+        item2 = "A"
+        prop_name = "non_existing_cell_property"
+        prop_val = {"foo": "bar"}
+        es_from_sbsdf.set_cell_property(item1, item2, prop_name, prop_val)
+
+        assert es_from_sbsdf.cell_properties.loc[(item1, item2), "cell_properties"] == {
+            prop_name: prop_val
+        }
+
+        # Check that the other rows received the default empty dictionary
+        for row in es_from_sbsdf.cell_properties.itertuples():
+            if row.Index != (item1, item2):
+                assert row.cell_properties == {}
+
+        item2 = "K"
+        es_from_sbsdf.set_cell_property(item1, item2, prop_name, prop_val)
+
+        assert es_from_sbsdf.cell_properties.loc[(item1, item2), "cell_properties"] == {
+            prop_name: prop_val
+        }
 
     @pytest.mark.parametrize("ret_ec", [True, False])
     def test_collapse_identical_elements_on_duplicates(
