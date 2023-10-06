@@ -542,7 +542,6 @@ class Entity:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1, col2):
-
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items
@@ -572,7 +571,9 @@ class Entity:
             self._state_dict["elements"] = defaultdict(dict)
         if col2 not in self._state_dict["elements"][col1]:
             level = self.index(col1)
-            elements = self._dataframe.groupby(col1)[col2].unique().to_dict()
+            elements = (
+                self._dataframe.groupby(col1, observed=False)[col2].unique().to_dict()
+            )
             self._state_dict["elements"][col1][col2] = {
                 item: AttrList(entity=self, key=(level, item), initlist=elem)
                 for item, elem in elements.items()
@@ -1378,13 +1379,14 @@ class Entity:
                 pass  # data already parsed, no literal eval needed
             else:
                 warnings.warn("parsed property dict column from string literal")
-
         if props.index.nlevels == 1:
             props = props.reindex(self.properties.index, level=1)
 
         # combine with existing properties
         # non-null values in new props override existing value
+        warnings.simplefilter(action="ignore", category=RuntimeWarning)
         properties = props.combine_first(self.properties)
+        warnings.simplefilter(action="default", category=RuntimeWarning)
         # update misc. column to combine existing and new misc. property dicts
         # new props override existing value for overlapping misc. property dict keys
         properties[self._misc_props_col] = self.properties[
