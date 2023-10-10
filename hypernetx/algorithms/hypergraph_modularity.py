@@ -10,6 +10,7 @@ References
 .. [1] Kumar T., Vaidyanathan S., Ananthapadmanabhan H., Parthasarathy S. and Ravindran B. "A New Measure of Modularity in Hypergraphs: Theoretical Insights and Implications for Effective Clustering". In: Cherifi H., Gaito S., Mendes J., Moro E., Rocha L. (eds) Complex Networks and Their Applications VIII. COMPLEX NETWORKS 2019. Studies in Computational Intelligence, vol 881. Springer, Cham. https://doi.org/10.1007/978-3-030-36687-2_24
 .. [2] Kamiński  B., Prałat  P. and Théberge  F. "Community Detection Algorithm Using Hypergraph Modularity". In: Benito R.M., Cherifi C., Cherifi H., Moro E., Rocha L.M., Sales-Pardo M. (eds) Complex Networks & Their Applications IX. COMPLEX NETWORKS 2020. Studies in Computational Intelligence, vol 943. Springer, Cham. https://doi.org/10.1007/978-3-030-65347-7_13
 .. [3] Kamiński  B., Poulin V., Prałat  P., Szufel P. and Théberge  F. "Clustering via hypergraph modularity", Plos ONE 2019, https://doi.org/10.1371/journal.pone.0224307
+.. [4] T-H. Hubert Chan and Zhibin Liang "Generalizing the Hypergraph Laplacian via a Diffusion Process with Mediators", https://arxiv.org/abs/1804.11128
 """
 
 from collections import Counter
@@ -23,6 +24,8 @@ except ModuleNotFoundError as e:
     print(
         f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
     )
+
+
 ################################################################################
 
 # we use 2 representations for partitions (0-based part ids):
@@ -320,6 +323,37 @@ def modularity(HG, A, wdc=linear):
     return _edge_contribution(HG, A, wdc) - _degree_tax(HG, Pr, wdc)
 
 
+def conductance(H, A):
+    """
+    Computes conductance [4] of hypergraph HG with respect to partition A.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph
+    A : set
+        Partition of the vertices in H
+
+    Returns
+    -------
+    : float
+      The conductance function for partition A on H
+    """
+    subset2 = [n for n in H.nodes if n not in A]
+    if len(subset2) == 0:
+        raise Exception("True subset is not allowed")
+    ws = sum((H.degree(node) for node in A))
+    was = 0
+    for edge in H.edges:
+        he_vertices = H.edges[edge]
+        if len([n for n in he_vertices if n in A]) == 0:
+            continue
+        if len([n for n in he_vertices if n in subset2]) == 0:
+            continue
+        was += len(he_vertices)
+    return was / ws
+
+
 ################################################################################
 
 
@@ -392,9 +426,9 @@ def kumar(HG, delta=0.01):
         for e in HG.edges:
             edge = HG.edges[e]
             reweight = (
-                sum([1 / (1 + HG.size(e, c)) for c in CH])
-                * (HG.size(e) + len(CH))
-                / HG.number_of_edges()
+                    sum([1 / (1 + HG.size(e, c)) for c in CH])
+                    * (HG.size(e) + len(CH))
+                    / HG.number_of_edges()
             )
             diff = max(diff, 0.5 * abs(edge.weight - reweight))
             edge.weight = 0.5 * edge.weight + 0.5 * reweight
@@ -451,10 +485,10 @@ def _delta_ec(HG, P, v, a, b, wdc):
         d = HG.size(e)
         w = HG.edges[e].weight
         ec += w * (
-            wdc(d, HG.size(e, Pm))
-            + wdc(d, HG.size(e, Pn))
-            - wdc(d, HG.size(e, P[a]))
-            - wdc(d, HG.size(e, P[b]))
+                wdc(d, HG.size(e, Pm))
+                + wdc(d, HG.size(e, Pn))
+                - wdc(d, HG.size(e, P[a]))
+                - wdc(d, HG.size(e, P[b]))
         )
     return ec / HG.total_weight
 
@@ -519,14 +553,14 @@ def _delta_dt(HG, P, v, a, b, wdc):
         x = 0
         for c in np.arange(int(np.floor(d / 2)) + 1, d + 1):
             x += (
-                HG.bin_coef[(d, c)]
-                * wdc(d, c)
-                * (
-                    _bin_ppmf(d, c, voln)
-                    + _bin_ppmf(d, c, volm)
-                    - _bin_ppmf(d, c, vola)
-                    - _bin_ppmf(d, c, volb)
-                )
+                    HG.bin_coef[(d, c)]
+                    * wdc(d, c)
+                    * (
+                            _bin_ppmf(d, c, voln)
+                            + _bin_ppmf(d, c, volm)
+                            - _bin_ppmf(d, c, vola)
+                            - _bin_ppmf(d, c, volb)
+                    )
             )
         DT += x * HG.d_weights[d]
     return DT / HG.total_weight
@@ -588,6 +622,5 @@ def last_step(HG, L, wdc=linear, delta=0.01):
             break
         qH = q2
     return [a for a in A if len(a) > 0]
-
 
 ################################################################################
