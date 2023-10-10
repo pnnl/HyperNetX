@@ -589,7 +589,6 @@ class EntitySet:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1: Hashable, col2: Hashable) -> dict[Any, AttrList]:
-
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items
@@ -2009,7 +2008,7 @@ class EntitySet:
         # group by level 0 (set), aggregate level 1 (set elements) as frozenset
         collapse = (
             self._dataframe[self._data_cols]
-            .groupby(self._data_cols[0], as_index=False)
+            .groupby(self._data_cols[0], as_index=False, observed=False)
             .agg(frozenset)
         )
 
@@ -2133,7 +2132,6 @@ def restrict_to_two_columns(
 
     # if a 2D ndarray is passed, restrict to two columns if needed
     elif isinstance(data, np.ndarray):
-
         if data.ndim == 2 and data.shape[1] > 2:
             data = data[:, (level1, level2)]
 
