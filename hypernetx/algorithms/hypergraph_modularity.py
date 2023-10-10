@@ -230,6 +230,37 @@ def modularity(HG, A, wdc=linear):
         return (EC - DT) / S
 
 
+def conductance(H, A):
+    """
+    Computes conductance [4] of hypergraph HG with respect to partition A.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph
+    A : set
+        Partition of the vertices in H
+
+    Returns
+    -------
+    : float
+      The conductance function for partition A on H
+    """
+    subset2 = [n for n in H.nodes if n not in A]
+    if len(subset2) == 0:
+        raise Exception("True subset is not allowed")
+    ws = sum((H.degree(node) for node in A))
+    was = 0
+    for edge in H.edges:
+        he_vertices = H.edges[edge]
+        if len([n for n in he_vertices if n in A]) == 0:
+            continue
+        if len([n for n in he_vertices if n in subset2]) == 0:
+            continue
+        was += len(he_vertices)
+    return was / ws
+
+
 ################################################################################
 
 
