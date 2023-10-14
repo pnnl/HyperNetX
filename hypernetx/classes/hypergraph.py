@@ -541,7 +541,6 @@ class Hypergraph:
                 weight_col=cell_weight_col,
                 weights=cell_weights,
                 cell_properties=cell_properties,
-                misc_cell_props_col=misc_cell_properties_col or "cell_properties",
                 aggregateby=aggregateby or "sum",
                 properties=properties,
             )

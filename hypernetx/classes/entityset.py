@@ -76,7 +76,6 @@ class EntitySet:
     level_col: str, default="level"
     id_col : str,  default="id"
     cell_properties: sequence of int or str, pandas.DataFrame, or doubly-nested dict, optional
-    misc_cell_props_col: str, default="cell_properties"
 
     Notes
     -----
@@ -135,12 +134,11 @@ class EntitySet:
         cell_properties: Optional[
             Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
-        misc_cell_props_col: str = "cell_properties",
     ):
         self._uid = uid
         self._static = static
         self._state_dict = {}
-        self._misc_cell_props_col = misc_cell_props_col
+        self._misc_cell_props_col = "cell_properties"
         self._misc_props_col = "properties"
 
         # build initial dataframe
@@ -1998,7 +1996,6 @@ class EntitySet:
             levels,
             weights,
             aggregateby,
-            misc_cell_props_col=self._misc_cell_props_col,
             **kwargs,
         )
 
