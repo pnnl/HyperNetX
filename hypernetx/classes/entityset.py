@@ -34,8 +34,6 @@ class EntitySet:
         represents N-dimensional entity data (data table).
         Otherwise, represents 2-dimensional entity data (system of sets).
     data_cols : sequence of ints or strings, default=(0,1)
-    level1: str or int, default = 0
-    level2: str or int, default = 1
     data : numpy.ndarray, optional
         2D M x N ``ndarray`` of ``ints`` (data table);
         sparse representation of an N-dimensional incidence tensor with M nonzero cells.
@@ -75,9 +73,6 @@ class EntitySet:
         (order of columns does not matter; see Notes for an example).
         If doubly-nested dict,
         ``{item level: {item label: {property name: property value}}}``.
-    misc_props_col: str, default="properties"
-        Column names for miscellaneous properties, level index, and item name in
-        :attr:`properties`; see Notes for explanation.
     level_col: str, default="level"
     id_col : str,  default="id"
     cell_properties: sequence of int or str, pandas.DataFrame, or doubly-nested dict, optional
@@ -110,10 +105,7 @@ class EntitySet:
     all occurrences).
 
     The names of the Level (if provided) and ID columns must be specified by `level_col`
-    and `id_col`. `misc_props_col` can be used to specify the name of the column to be used
-    for miscellaneous properties; if no column by that name is found,
-    a new column will be created and populated with empty ``dicts``.
-    All other columns will be considered explicit property types.
+    and `id_col`. All other columns will be considered explicit property types.
     The order of the columns does not matter.
 
     This method assumes that there are no rows with the same (Level, ID);
@@ -138,7 +130,6 @@ class EntitySet:
         weights: Optional[Sequence[float] | float | int | str] = 1,
         aggregateby: Optional[str | dict] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
-        misc_props_col: str = "properties",
         level_col: str = "level",
         id_col: str = "id",
         cell_properties: Optional[
@@ -150,6 +141,7 @@ class EntitySet:
         self._static = static
         self._state_dict = {}
         self._misc_cell_props_col = misc_cell_props_col
+        self._misc_props_col = "properties"
 
         # build initial dataframe
         if isinstance(data, np.ndarray) and entity is None:
@@ -178,7 +170,7 @@ class EntitySet:
         )
 
         # create properties
-        self._create_properties(level_col, id_col, misc_props_col, properties)
+        self._create_properties(level_col, id_col, properties)
 
         # create cell properties (From old EntitySet)
         self._create_assign_cell_properties(cell_properties)
@@ -224,7 +216,6 @@ class EntitySet:
         self,
         level_col: str,
         id_col: str,
-        misc_props_col: str,
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]],
     ) -> None:
         item_levels = [
@@ -235,9 +226,8 @@ class EntitySet:
         index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
         data = [(i, 1, {}) for i in range(len(index))]
         self._properties = pd.DataFrame(
-            data=data, index=index, columns=["uid", "weight", misc_props_col]
+            data=data, index=index, columns=["uid", "weight", self._misc_props_col]
         ).sort_index()
-        self._misc_props_col = misc_props_col
         self.assign_properties(properties)
 
     def _create_assign_cell_properties(
@@ -1296,7 +1286,6 @@ class EntitySet:
             data_cols=cols,
             aggregateby=aggregateby,
             properties=properties,
-            misc_props_col=self._misc_props_col,
             level_col=level_col,
             id_col=id_col,
             **kwargs,
@@ -1329,9 +1318,7 @@ class EntitySet:
 
         for col in self._data_cols:
             entity[col] = entity[col].cat.remove_unused_categories()
-        restricted = self.__class__(
-            entity=entity, misc_props_col=self._misc_props_col, **kwargs
-        )
+        restricted = self.__class__(entity=entity, **kwargs)
 
         if not self.properties.empty:
             prop_idx = [

@@ -328,7 +328,6 @@ class Hypergraph:
         ### cell properties
 
         if setsystem is None:  #### Empty Case
-
             self._edges = EntitySet({})
             self._nodes = EntitySet({})
             self._state_dict = {}
@@ -545,7 +544,6 @@ class Hypergraph:
                 misc_cell_props_col=misc_cell_properties_col or "cell_properties",
                 aggregateby=aggregateby or "sum",
                 properties=properties,
-                misc_props_col=misc_properties_col,
             )
 
             self._edges = self.E
