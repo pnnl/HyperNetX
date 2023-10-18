@@ -328,7 +328,6 @@ class Hypergraph:
         ### cell properties
 
         if setsystem is None:  #### Empty Case
-
             self._edges = EntitySet({})
             self._nodes = EntitySet({})
             self._state_dict = {}
@@ -538,8 +537,7 @@ class Hypergraph:
 
             self.E = EntitySet(
                 entity=entity,
-                level1=edge_col,
-                level2=node_col,
+                data_cols=(edge_col, node_col),
                 weight_col=cell_weight_col,
                 weights=cell_weights,
                 cell_properties=cell_properties,
@@ -767,7 +765,7 @@ class Hypergraph:
         : str or dict
             single property or dictionary of properties
         """
-        if prop_name == None:
+        if prop_name is None:
             return self.E.get_properties(id, level=level)
         else:
             return self.E.get_property(id, prop_name, level=level)
