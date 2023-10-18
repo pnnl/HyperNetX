@@ -18,6 +18,8 @@ from hypernetx.classes.helpers import (
     remove_row_duplicates,
 )
 
+from hypernetx.utils.decorators import warn_to_be_deprecated
+
 T = TypeVar("T", bound=Union[str, int])
 
 
@@ -626,10 +628,11 @@ class EntitySet:
         return self._dataframe
 
     @property
+    @warn_to_be_deprecated
     def isstatic(self) -> bool:
-        # TODO: I'm guessing this is no longer necessary?
         """Whether to treat the underlying data as static or not
 
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
         If True, the underlying data may not be altered, and the state_dict will never be cleared
         Otherwise, rows may be added to and removed from the data table, and updates will clear the state_dict
 
@@ -637,6 +640,7 @@ class EntitySet:
         -------
         bool
         """
+
         return self._static
 
     def size(self, level: int = 0) -> int:
@@ -816,8 +820,11 @@ class EntitySet:
             self._state_dict["index"][column][value],
         )
 
+    @warn_to_be_deprecated
     def indices(self, column: str, values: str | Iterable[str]) -> list[int]:
         """Get indices of one or more value(s) in a column
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -846,8 +853,11 @@ class EntitySet:
 
         return [self._state_dict["index"][column][v] for v in values]
 
+    @warn_to_be_deprecated
     def translate(self, level: int, index: int | list[int]) -> str | list[str]:
         """Given indices of a level and value(s), return the corresponding value label(s)
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -872,8 +882,11 @@ class EntitySet:
 
         return [self.labels[column][i] for i in index]
 
+    @warn_to_be_deprecated
     def translate_arr(self, coords: tuple[int, int]) -> list[str]:
         """Translate a full encoded row of the data table e.g., a row of ``self.data``
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -892,6 +905,7 @@ class EntitySet:
 
         return translation
 
+    @warn_to_be_deprecated
     def level(
         self,
         item: str,
@@ -900,6 +914,8 @@ class EntitySet:
         return_index: bool = True,
     ) -> int | tuple[int, int] | None:
         """First level containing the given item label
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Order of levels corresponds to order of columns in `self.dataframe`
 
@@ -969,10 +985,11 @@ class EntitySet:
             self.add_element(item)
         return self
 
+    @warn_to_be_deprecated
     def add_elements_from(self, arg_set) -> Self:
         """Adds arguments from an iterable to the data table one at a time
 
-        ..deprecated:: 2.0.0
+        DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
             Duplicates `add`
 
         Parameters
@@ -1079,10 +1096,12 @@ class EntitySet:
             self.remove_element(item)
         return self
 
+    @warn_to_be_deprecated
     def remove_elements_from(self, arg_set):
         """Removes all rows containing specified item(s) from the underlying data table
 
-        ..deprecated: 2.0.0
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
+
             Duplicates `remove`
 
         Parameters
@@ -1130,6 +1149,7 @@ class EntitySet:
         for col in self._data_cols:
             self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
+    @warn_to_be_deprecated
     def encode(self, data: pd.DataFrame) -> np.array:
         """
         Encode dataframe to numpy array
@@ -1145,6 +1165,7 @@ class EntitySet:
         """
         return data.apply(lambda x: x.cat.codes).to_numpy()
 
+    @warn_to_be_deprecated
     def incidence_matrix(
         self,
         level1: int = 0,
@@ -1153,6 +1174,8 @@ class EntitySet:
         aggregateby: str = "count",
     ) -> Optional[sp.csr_matrix]:
         """Incidence matrix representation for two levels (columns) of the underlying data table
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
         In other words, the items in `level1` and `level2` correspond to the columns and rows of the incidence matrix,
@@ -1279,10 +1302,13 @@ class EntitySet:
             **kwargs,
         )
 
+    @warn_to_be_deprecated
     def restrict_to_indices(
         self, indices: int | Iterable[int], level: int = 0, **kwargs
     ) -> EntitySet:
         """Create a new EntitySet by restricting the data table to rows containing specific items in a given level
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -1907,8 +1933,11 @@ class EntitySet:
 
         return cell_props.to_dict()
 
+    @warn_to_be_deprecated
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of :meth:`restrict_to_indices` with default parameter `level`=0
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -1935,6 +1964,7 @@ class EntitySet:
             restricted.assign_cell_properties(cell_properties)
         return restricted
 
+    @warn_to_be_deprecated
     def restrict_to_levels(
         self,
         levels: int | Iterable[int],
@@ -1946,6 +1976,7 @@ class EntitySet:
         """Create a new EntitySet by restricting to a subset of levels (columns) in the
         underlying data table
 
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------

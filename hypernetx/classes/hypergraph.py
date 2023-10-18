@@ -766,7 +766,7 @@ class Hypergraph:
         : str or dict
             single property or dictionary of properties
         """
-        if prop_name == None:
+        if prop_name is None:
             return self.E.get_properties(id, level=level)
         else:
             return self.E.get_property(id, prop_name, level=level)
