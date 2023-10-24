@@ -15,7 +15,6 @@ test-ci: test-deps
 	pre-commit install
 	pre-commit run --all-files
 	@$(PYTHON3) -m tox -e py38 -r
-	@$(PYTHON3) -m tox -e py38-notebooks -r
 
 test-ci-github: test-deps
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
@@ -53,12 +52,24 @@ version-deps:
 
 .PHONY: version-deps
 
-#### Documentation
+### Documentation
 
 docs-deps:
 	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
 
 .PHONY: docs-deps
+
+## Tutorials
+
+.PHONY: tutorial-deps
+tutorial-deps:
+	@$(PYTHON3) -m pip install .'[tutorials]' .'[widget]' --use-pep517
+
+.PHONY: tutorials
+tutorials:
+	jupyter notebook tutorials
+
+
 
 ## Environment
 

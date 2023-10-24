@@ -6,16 +6,19 @@ from ast import literal_eval
 from collections import OrderedDict, defaultdict
 from collections.abc import Hashable, Mapping, Sequence, Iterable
 from typing import Union, TypeVar, Optional, Any
+from typing_extensions import Self
 
 import numpy as np
 import pandas as pd
-from scipy.sparse import csr_matrix
+import scipy.sparse as sp
 
 from hypernetx.classes.helpers import (
     AttrList,
     assign_weights,
     remove_row_duplicates,
 )
+
+from hypernetx.utils.decorators import warn_to_be_deprecated
 
 T = TypeVar("T", bound=Union[str, int])
 
@@ -26,11 +29,13 @@ class EntitySet:
 
     Parameters
     ----------
-    entity : pandas.DataFrame, dict of lists or sets, list of lists or sets, optional
+    entity : pandas.DataFrame, dict of lists or sets, dict of dicts, list of lists or sets, optional
         If a ``DataFrame`` with N columns,
         represents N-dimensional entity data (data table).
         Otherwise, represents 2-dimensional entity data (system of sets).
-        TODO: Test for compatibility with list of Entities and update docs
+    data_cols : sequence of ints or strings, default=(0,1)
+    level1: str or int, default = 0
+    level2: str or int, default = 1
     data : numpy.ndarray, optional
         2D M x N ``ndarray`` of ``ints`` (data table);
         sparse representation of an N-dimensional incidence tensor with M nonzero cells.
@@ -45,7 +50,8 @@ class EntitySet:
         Ignored if `entity` is provided or `data` is not provided.
     uid : hashable, optional
         A unique identifier for the object
-    weights : str or sequence of float, optional
+    weight_col: string or int, default="cell_weights"
+    weights : sequence of float, float, int, str,  default=1
         User-specified cell weights corresponding to entity data.
         If sequence of ``floats`` and `entity` or `data` defines a data table,
             length must equal the number of rows.
@@ -54,11 +60,11 @@ class EntitySet:
         If ``str`` and `entity` is a ``DataFrame``,
             must be the name of a column in `entity`.
         Otherwise, weight for all cells is assumed to be 1.
-    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}
+    aggregateby : {'sum', 'last', count', 'mean','median', max', 'min', 'first', None}, default="sum"
         Name of function to use for aggregating cell weights of duplicate rows when
-        `entity` or `data` defines a data table, default is "sum".
+        `entity` or `data` defines a data table.
         If None, duplicate rows will be dropped without aggregating cell weights.
-        Effectively ignored if `entity` defines a system of sets.
+        Ignored if `entity` defines a system of sets.
     properties : pandas.DataFrame or doubly-nested dict, optional
         User-specified properties to be assigned to individual items in the data, i.e.,
         cell entries in a data table; sets or set elements in a system of sets.
@@ -66,12 +72,16 @@ class EntitySet:
         If ``DataFrame``, each row gives
         ``[optional item level, item label, optional named properties,
         {property name: property value}]``
-        (order of columns does not matter; see note for an example).
+        (order of columns does not matter; see Notes for an example).
         If doubly-nested dict,
         ``{item level: {item label: {property name: property value}}}``.
-    misc_props_col, level_col, id_col : str, default="properties", "level, "id"
+    misc_props_col: str, default="properties"
         Column names for miscellaneous properties, level index, and item name in
         :attr:`properties`; see Notes for explanation.
+    level_col: str, default="level"
+    id_col : str,  default="id"
+    cell_properties: sequence of int or str, pandas.DataFrame, or doubly-nested dict, optional
+    misc_cell_props_col: str, default="cell_properties"
 
     Notes
     -----
@@ -120,8 +130,6 @@ class EntitySet:
             | Mapping[T, Mapping[T, Any]]
         ] = None,
         data_cols: Sequence[T] = (0, 1),
-        level1: str | int = 0,
-        level2: str | int = 1,
         data: Optional[np.ndarray] = None,
         static: bool = True,
         labels: Optional[OrderedDict[T, Sequence[T]]] = None,
@@ -130,31 +138,26 @@ class EntitySet:
         weights: Optional[Sequence[float] | float | int | str] = 1,
         aggregateby: Optional[str | dict] = "sum",
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]] = None,
-        misc_props_col: str = "properties",
+        misc_props_col: Optional[str] = None,
         level_col: str = "level",
         id_col: str = "id",
         cell_properties: Optional[
             Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
         ] = None,
-        misc_cell_props_col: str = "cell_properties",
+        misc_cell_props_col: Optional[str] = None,
     ):
+        if misc_props_col or misc_cell_props_col:
+            warnings.warn(
+                "misc_props_col and misc_cell_props_col will be deprecated; all public references to these "
+                "arguments will be removed in a future release.",
+                DeprecationWarning,
+            )
+
         self._uid = uid
         self._static = static
         self._state_dict = {}
-        self._misc_cell_props_col = misc_cell_props_col
-
-        # Restrict to two columns on entity, data, labels
-        entity, data, labels = restrict_to_two_columns(
-            entity,
-            data,
-            labels,
-            cell_properties,
-            weight_col,
-            weights,
-            level1,
-            level2,
-            misc_cell_props_col,
-        )
+        self._misc_cell_props_col = "cell_properties"
+        self._misc_props_col = "properties"
 
         # build initial dataframe
         if isinstance(data, np.ndarray) and entity is None:
@@ -183,7 +186,7 @@ class EntitySet:
         )
 
         # create properties
-        self._create_properties(level_col, id_col, misc_props_col, properties)
+        self._create_properties(level_col, id_col, properties)
 
         # create cell properties (From old EntitySet)
         self._create_assign_cell_properties(cell_properties)
@@ -191,12 +194,10 @@ class EntitySet:
     def _build_dataframe_from_ndarray(
         self,
         data: pd.ndarray,
-        labels: Optional[OrderedDict[Union[str, int], Sequence[Union[str, int]]]],
+        labels: Optional[OrderedDict[T, Sequence[T]]],
     ) -> None:
         self._state_dict["data"] = data
         self._dataframe = pd.DataFrame(data)
-        # if a dict of labels was passed, use keys as column names in the
-        # DataFrame, translate the dataframe, and store the dict of labels in the state dict
 
         if not isinstance(labels, dict):
             raise ValueError(
@@ -206,10 +207,11 @@ class EntitySet:
             raise ValueError(
                 f"The length of labels must equal the length of columns in the dataframe. Labels is of length: {len(labels)}; dataframe is of length: {len(self._dataframe.columns)}"
             )
-
+        # use dict keys of 'labels'  as column names in the DataFrame  and store the dict of labels in the state dict
         self._dataframe.columns = labels.keys()
         self._state_dict["labels"] = labels
 
+        # translate the dataframe
         for col in self._dataframe:
             self._dataframe[col] = pd.Categorical.from_codes(
                 self._dataframe[col], categories=labels[col]
@@ -230,7 +232,6 @@ class EntitySet:
         self,
         level_col: str,
         id_col: str,
-        misc_props_col: str,
         properties: Optional[pd.DataFrame | dict[int, dict[T, dict[Any, Any]]]],
     ) -> None:
         item_levels = [
@@ -241,9 +242,8 @@ class EntitySet:
         index = pd.MultiIndex.from_tuples(item_levels, names=[level_col, id_col])
         data = [(i, 1, {}) for i in range(len(index))]
         self._properties = pd.DataFrame(
-            data=data, index=index, columns=["uid", "weight", misc_props_col]
+            data=data, index=index, columns=["uid", "weight", self._misc_props_col]
         ).sort_index()
-        self._misc_props_col = misc_props_col
         self.assign_properties(properties)
 
     def _create_assign_cell_properties(
@@ -254,11 +254,9 @@ class EntitySet:
     ):
         # if underlying data is 2D (system of sets), create and assign cell properties
         if self.dimsize == 2:
-            # self._cell_properties = pd.DataFrame(
-            #     columns=[*self._data_cols, self._misc_cell_props_col]
-            # )
             self._cell_properties = pd.DataFrame(self._dataframe)
             self._cell_properties.set_index(self._data_cols, inplace=True)
+            # TODO: What about when cell_properties is a Sequence[T]?
             if isinstance(cell_properties, (dict, pd.DataFrame)):
                 self.assign_cell_properties(cell_properties)
         else:
@@ -270,7 +268,7 @@ class EntitySet:
 
         Returns
         -------
-        pandas.Series, optional
+        pandas.DataFrame, optional
             Returns None if :attr:`dimsize` < 2
         """
         return self._cell_properties
@@ -384,12 +382,11 @@ class EntitySet:
 
     @property
     def properties(self) -> pd.DataFrame:
-        # Dev Note: Not sure what this contains, when running tests it contained an empty pandas series
         """Properties assigned to items in the underlying data table
 
         Returns
         -------
-        pandas.DataFrame
+        pandas.DataFrame a dataframe with the following columns: level/(edge|node), uid, weight, properties
         """
 
         return self._properties
@@ -459,7 +456,7 @@ class EntitySet:
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column: Hashable) -> set:
-        # Dev Note: This threw an error when trying it on the harry potter dataset,
+        # TODO: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
         """Labels of all items in a particular column (level) of the underlying data table
 
@@ -589,7 +586,6 @@ class EntitySet:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1: Hashable, col2: Hashable) -> dict[Any, AttrList]:
-
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items
@@ -638,10 +634,11 @@ class EntitySet:
         return self._dataframe
 
     @property
+    @warn_to_be_deprecated
     def isstatic(self) -> bool:
-        # Dev Note: I'm guessing this is no longer necessary?
         """Whether to treat the underlying data as static or not
 
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
         If True, the underlying data may not be altered, and the state_dict will never be cleared
         Otherwise, rows may be added to and removed from the data table, and updates will clear the state_dict
 
@@ -649,6 +646,7 @@ class EntitySet:
         -------
         bool
         """
+
         return self._static
 
     def size(self, level: int = 0) -> int:
@@ -668,7 +666,8 @@ class EntitySet:
         --------
         dimensions
         """
-        # TODO: Since `level` is not validated, we assume that self.dimensions should be an array large enough to access index `level`
+        if self.empty:
+            return 0
         return self.dimensions[level]
 
     @property
@@ -764,7 +763,7 @@ class EntitySet:
         return iter(self.elements)
 
     def __call__(self, label_index=0):
-        # Dev Note (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
+        # TODO: (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
         """Iterates over items labels in a specified level (column) of the underlying data table
 
         Parameters
@@ -827,8 +826,11 @@ class EntitySet:
             self._state_dict["index"][column][value],
         )
 
+    @warn_to_be_deprecated
     def indices(self, column: str, values: str | Iterable[str]) -> list[int]:
         """Get indices of one or more value(s) in a column
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -857,8 +859,11 @@ class EntitySet:
 
         return [self._state_dict["index"][column][v] for v in values]
 
+    @warn_to_be_deprecated
     def translate(self, level: int, index: int | list[int]) -> str | list[str]:
         """Given indices of a level and value(s), return the corresponding value label(s)
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -883,8 +888,11 @@ class EntitySet:
 
         return [self.labels[column][i] for i in index]
 
-    def translate_arr(self, coords: tuple[int]) -> list[str]:
+    @warn_to_be_deprecated
+    def translate_arr(self, coords: tuple[int, int]) -> list[str]:
         """Translate a full encoded row of the data table e.g., a row of ``self.data``
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -903,6 +911,7 @@ class EntitySet:
 
         return translation
 
+    @warn_to_be_deprecated
     def level(
         self,
         item: str,
@@ -911,6 +920,8 @@ class EntitySet:
         return_index: bool = True,
     ) -> int | tuple[int, int] | None:
         """First level containing the given item label
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Order of levels corresponds to order of columns in `self.dataframe`
 
@@ -950,7 +961,7 @@ class EntitySet:
         print(f'"{item}" not found.')
         return None
 
-    def add(self, *args) -> EntitySet:
+    def add(self, *args) -> Self:
         """Updates the underlying data table with new entity data from multiple sources
 
         Parameters
@@ -980,10 +991,11 @@ class EntitySet:
             self.add_element(item)
         return self
 
-    def add_elements_from(self, arg_set) -> EntitySet:
+    @warn_to_be_deprecated
+    def add_elements_from(self, arg_set) -> Self:
         """Adds arguments from an iterable to the data table one at a time
 
-        ..deprecated:: 2.0.0
+        DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
             Duplicates `add`
 
         Parameters
@@ -1006,16 +1018,15 @@ class EntitySet:
         | Mapping[T, Iterable[T]]
         | Iterable[Iterable[T]]
         | Mapping[T, Mapping[T, Any]],
-    ) -> EntitySet:
+    ) -> Self:
         """Updates the underlying data table with new entity data
 
-        Supports adding from either an existing Entity or a representation of entity
+        Supports adding from either an existing EntitySet or a representation of entity
         (data table or labeled system of sets are both supported representations)
 
         Parameters
         ----------
-        data : `pandas.DataFrame`, dict of lists or sets, lists of lists or sets
-            new entity data
+        data : `pandas.DataFrame`, dict of lists or sets, lists of lists, or nested dict
 
         Returns
         -------
@@ -1070,13 +1081,13 @@ class EntitySet:
 
             self._state_dict.clear()
 
-    def remove(self, *args) -> EntitySet:
+    def remove(self, *args: T) -> EntitySet:
         """Removes all rows containing specified item(s) from the underlying data table
 
         Parameters
         ----------
         *args
-            variable length argument list of item labels
+            variable length argument list of items which are of type string or int
 
         Returns
         -------
@@ -1091,10 +1102,12 @@ class EntitySet:
             self.remove_element(item)
         return self
 
+    @warn_to_be_deprecated
     def remove_elements_from(self, arg_set):
         """Removes all rows containing specified item(s) from the underlying data table
 
-        ..deprecated: 2.0.0
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
+
             Duplicates `remove`
 
         Parameters
@@ -1111,13 +1124,13 @@ class EntitySet:
             self.remove_element(item)
         return self
 
-    def remove_element(self, item) -> None:
+    def remove_element(self, item: T) -> None:
         """Removes all rows containing a specified item from the underlying data table
 
         Parameters
         ----------
-        item
-            item label
+        item : Union[str, int]
+            the label of an edge
 
         See Also
         --------
@@ -1142,30 +1155,33 @@ class EntitySet:
         for col in self._data_cols:
             self._dataframe[col] = self._dataframe[col].cat.remove_unused_categories()
 
+    @warn_to_be_deprecated
     def encode(self, data: pd.DataFrame) -> np.array:
         """
         Encode dataframe to numpy array
 
         Parameters
         ----------
-        data : dataframe
+        data : dataframe, dataframe columns must have dtype set to 'category'
 
         Returns
         -------
         numpy.array
 
         """
-        encoded_array = data.apply(lambda x: x.cat.codes).to_numpy()
-        return encoded_array
+        return data.apply(lambda x: x.cat.codes).to_numpy()
 
+    @warn_to_be_deprecated
     def incidence_matrix(
         self,
         level1: int = 0,
         level2: int = 1,
         weights: bool | dict = False,
         aggregateby: str = "count",
-    ) -> Optional[csr_matrix]:
+    ) -> Optional[sp.csr_matrix]:
         """Incidence matrix representation for two levels (columns) of the underlying data table
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         If `level1` and `level2` contain N and M distinct items, respectively, the incidence matrix will be M x N.
         In other words, the items in `level1` and `level2` correspond to the columns and rows of the incidence matrix,
@@ -1218,7 +1234,7 @@ class EntitySet:
             aggregateby=aggregateby,
         )
 
-        return csr_matrix(
+        return sp.csr_matrix(
             (df[weight_col], tuple(df[col].cat.codes for col in data_cols))
         )
 
@@ -1286,16 +1302,18 @@ class EntitySet:
             data_cols=cols,
             aggregateby=aggregateby,
             properties=properties,
-            misc_props_col=self._misc_props_col,
             level_col=level_col,
             id_col=id_col,
             **kwargs,
         )
 
+    @warn_to_be_deprecated
     def restrict_to_indices(
         self, indices: int | Iterable[int], level: int = 0, **kwargs
     ) -> EntitySet:
-        """Create a new Entity by restricting the data table to rows containing specific items in a given level
+        """Create a new EntitySet by restricting the data table to rows containing specific items in a given level
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -1316,9 +1334,7 @@ class EntitySet:
 
         for col in self._data_cols:
             entity[col] = entity[col].cat.remove_unused_categories()
-        restricted = self.__class__(
-            entity=entity, misc_props_col=self._misc_props_col, **kwargs
-        )
+        restricted = self.__class__(entity=entity, **kwargs)
 
         if not self.properties.empty:
             prop_idx = [
@@ -1359,15 +1375,14 @@ class EntitySet:
                 f"cell properties are not supported for 'dimsize'={self.dimsize}"
             )
 
-        misc_col = misc_col or self._misc_cell_props_col
-        try:
+        if isinstance(cell_props, pd.DataFrame):
+            misc_col = misc_col or self._misc_cell_props_col
             cell_props = cell_props.rename(
                 columns={misc_col: self._misc_cell_props_col}
             )
-        except AttributeError:  # handle cell props in nested dict format
-            self._cell_properties_from_dict(cell_props)
-        else:  # handle cell props in DataFrame format
             self._cell_properties_from_dataframe(cell_props)
+        elif isinstance(cell_props, dict):
+            self._cell_properties_from_dict(cell_props)
 
     def assign_properties(
         self,
@@ -1381,7 +1396,7 @@ class EntitySet:
         Parameters
         ----------
         props : pandas.DataFrame or doubly-nested dict
-            See documentation of the `properties` parameter in :class:`Entity`
+            See documentation of the `properties` parameter in :class:`EntitySet`
         level_col, id_col, misc_col : str, optional
             column names corresponding to the levels, items, and misc. properties;
             if None, default to :attr:`_level_col`, :attr:`_id_col`, :attr:`_misc_props_col`,
@@ -1410,8 +1425,7 @@ class EntitySet:
             props = props.rename(columns=column_map)
             props = props.rename_axis(index=column_map)
             self._properties_from_dataframe(props)
-
-        if isinstance(props, dict):
+        elif isinstance(props, dict):
             # Expects nested dictionary with keys corresponding to level and id
             self._properties_from_dict(props)
 
@@ -1605,6 +1619,7 @@ class EntitySet:
                 self._properties.loc[item_key, self._misc_props_col].update(
                     {prop_name: prop_val}
                 )
+            # TODO: Is it possible to ever hit this case given that misc_props_col will always be set in the dataframe?
             except KeyError:
                 self._properties.loc[item_key, :] = {
                     self._misc_props_col: {prop_name: prop_val}
@@ -1626,6 +1641,9 @@ class EntitySet:
         -------
         prop_val : any
             value of the property
+
+        None
+            if property not found
 
         Raises
         ------
@@ -1649,19 +1667,19 @@ class EntitySet:
             try:
                 item_key = self._property_loc(item)
             except KeyError:
-                raise  # item not in properties
+                raise KeyError(f"item does not exist: {item}")
 
         try:
             prop_val = self.properties.loc[item_key, prop_name]
-        except KeyError as ex:
-            if ex.args[0] == prop_name:
-                prop_val = self.properties.loc[item_key, self._misc_props_col].get(
+        except KeyError:
+            try:
+                prop_val = self.properties.loc[item_key, self._misc_props_col][
                     prop_name
-                )
-            else:
-                raise KeyError(
-                    f"no properties initialized for ('level','item'): {item_key}"
-                ) from ex
+                ]
+            except KeyError:
+                # prop_name is not a key in the dictionary in the _misc_props_col;
+                # in other words, property was not found
+                return None
 
         return prop_val
 
@@ -1716,10 +1734,6 @@ class EntitySet:
 
     def _cell_properties_from_dataframe(self, cell_props: pd.DataFrame) -> None:
         """Private handler for updating :attr:`properties` from a DataFrame
-
-        Parameters
-        ----------
-        props
 
         Parameters
         ----------
@@ -1794,6 +1808,7 @@ class EntitySet:
                 [(item1, item2) for item1 in cell_props for item2 in cell_props[item1]],
                 names=self._data_cols,
             )
+            # This will create a MultiIndex dataframe with exactly one column named from _misc_cell_props_col (default is cell_properties)
             props_data = [cell_props[item1][item2] for item1, item2 in cells]
             cell_props = pd.DataFrame(
                 {self._misc_cell_props_col: props_data}, index=cells
@@ -1820,20 +1835,27 @@ class EntitySet:
         --------
         get_cell_property, get_cell_properties
         """
-        if item2 in self.elements[item1]:
-            if prop_name in self.properties:
-                self._cell_properties.loc[(item1, item2), prop_name] = pd.Series(
-                    [prop_val]
-                )
-            else:
-                try:
-                    self._cell_properties.loc[
-                        (item1, item2), self._misc_cell_props_col
-                    ].update({prop_name: prop_val})
-                except KeyError:
-                    self._cell_properties.loc[(item1, item2), :] = {
-                        self._misc_cell_props_col: {prop_name: prop_val}
-                    }
+        if item2 not in self.elements[item1]:
+            return
+
+        if prop_name in self._cell_properties:
+            self._cell_properties.loc[(item1, item2), prop_name] = prop_val
+            return
+
+        try:
+            # assumes that _misc_cell_props already exists in cell_properties
+            self._cell_properties.loc[(item1, item2), self._misc_cell_props_col].update(
+                {prop_name: prop_val}
+            )
+        except KeyError:
+            # creates the _misc_cell_props with a defualt empty dict
+            self._cell_properties[self._misc_cell_props_col] = [
+                {} for _ in range(len(self._cell_properties))
+            ]
+            # insert the property name and value as a dictionary in _misc_cell_props for the target incident pair
+            self._cell_properties.loc[(item1, item2), self._misc_cell_props_col].update(
+                {prop_name: prop_val}
+            )
 
     def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
         """Get a property of a cell i.e., incidence between items of different levels
@@ -1852,6 +1874,14 @@ class EntitySet:
         prop_val : any
             value of the cell property
 
+        None
+            If prop_name not found
+
+        Raises
+        ------
+        KeyError
+            If `(item1, item2)` is not in :attr:`cell_properties`
+
         See Also
         --------
         get_cell_properties, set_cell_property
@@ -1859,17 +1889,23 @@ class EntitySet:
         try:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
-            raise
-            # TODO: raise informative exception
+            raise KeyError(
+                f"Item not exists. cell_properties: {self.cell_properties}; item1: {item1}, item2: {item2}"
+            )
 
         try:
             prop_val = cell_props.loc[prop_name]
         except KeyError:
-            prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
+            try:
+                prop_val = cell_props.loc[self._misc_cell_props_col].get(prop_name)
+            except KeyError:
+                # prop_name is not a key in the dictionary in the _misc_cell_props_col;
+                # in other words, property was not found
+                return None
 
         return prop_val
 
-    def get_cell_properties(self, item1: T, item2: T) -> dict[Any, Any]:
+    def get_cell_properties(self, item1: T, item2: T) -> Optional[dict[Any, Any]]:
         """Get all properties of a cell, i.e., incidence between items of different
         levels
 
@@ -1886,6 +1922,9 @@ class EntitySet:
             ``{named cell property: cell property value, ..., misc. cell property column
             name: {cell property name: cell property value}}``
 
+        None
+            If properties do not exist
+
         See Also
         --------
         get_cell_property, set_cell_property
@@ -1893,11 +1932,15 @@ class EntitySet:
         try:
             cell_props = self.cell_properties.loc[(item1, item2)]
         except KeyError:
-            raise
-            # TODO: raise informative exception
+            return None
 
+        return cell_props.to_dict()
+
+    @warn_to_be_deprecated
     def restrict_to(self, indices: int | Iterable[int], **kwargs) -> EntitySet:
         """Alias of :meth:`restrict_to_indices` with default parameter `level`=0
+
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -1924,6 +1967,7 @@ class EntitySet:
             restricted.assign_cell_properties(cell_properties)
         return restricted
 
+    @warn_to_be_deprecated
     def restrict_to_levels(
         self,
         levels: int | Iterable[int],
@@ -1935,6 +1979,7 @@ class EntitySet:
         """Create a new EntitySet by restricting to a subset of levels (columns) in the
         underlying data table
 
+        [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Parameters
         ----------
@@ -1943,8 +1988,7 @@ class EntitySet:
         weights : bool, default=False
             If True, aggregate existing cell weights to get new cell weights.
             Otherwise, all new cell weights will be 1.
-        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', \
-    'min', None}, optional
+        aggregateby : {'sum', 'first', 'last', 'count', 'mean', 'median', 'max', 'min', None}, optional
             Method to aggregate weights of duplicate rows in data table
             If None or `weights`=False then all new cell weights will be 1
         keep_memberships : bool, default=True
@@ -1970,7 +2014,6 @@ class EntitySet:
             levels,
             weights,
             aggregateby,
-            misc_cell_props_col=self._misc_cell_props_col,
             **kwargs,
         )
 
@@ -2009,7 +2052,7 @@ class EntitySet:
         # group by level 0 (set), aggregate level 1 (set elements) as frozenset
         collapse = (
             self._dataframe[self._data_cols]
-            .groupby(self._data_cols[0], as_index=False)
+            .groupby(self._data_cols[0], as_index=False, observed=False)
             .agg(frozenset)
         )
 
@@ -2061,87 +2104,4 @@ def build_dataframe_from_entity(
             {data_cols[0]: entity.index.to_list(), data_cols[1]: entity.values}
         )
 
-    # create an empty dataframe
     return pd.DataFrame()
-
-
-# TODO: Consider refactoring for simplicity; SonarLint states this function has a  Cognitive Complexity of 26; recommends lowering to 15
-def restrict_to_two_columns(
-    entity: Optional[
-        pd.DataFrame
-        | Mapping[T, Iterable[T]]
-        | Iterable[Iterable[T]]
-        | Mapping[T, Mapping[T, Any]]
-    ],
-    data: Optional[np.ndarray],
-    labels: Optional[OrderedDict[T, Sequence[T]]],
-    cell_properties: Optional[
-        Sequence[T] | pd.DataFrame | dict[T, dict[T, dict[Any, Any]]]
-    ],
-    weight_col: str | int,
-    weights: Optional[Sequence[float] | float | int | str],
-    level1: str | int,
-    level2: str | int,
-    misc_cell_props_col: str,
-):
-    """Restrict columns on entity or data as needed; if data is restricted, also restrict labels"""
-    if isinstance(entity, pd.DataFrame) and len(entity.columns) > 2:
-        # metadata columns are not considered levels of data,
-        # remove them before indexing by level
-        # if isinstance(cell_properties, str):
-        #     cell_properties = [cell_properties]
-
-        prop_cols = []
-        if isinstance(cell_properties, Sequence):
-            for col in {*cell_properties, misc_cell_props_col}:
-                if col in entity:
-                    prop_cols.append(col)
-
-        # meta_cols = prop_cols
-        # if weights in entity and weights not in meta_cols:
-        #     meta_cols.append(weights)
-        if weight_col in prop_cols:
-            prop_cols.remove(weight_col)
-        if weight_col not in entity:
-            entity[weight_col] = weights
-
-        # if both levels are column names, no need to index by level
-        if isinstance(level1, int):
-            level1 = entity.columns[level1]
-        if isinstance(level2, int):
-            level2 = entity.columns[level2]
-        # if isinstance(level1, str) and isinstance(level2, str):
-        columns = [level1, level2, weight_col] + prop_cols
-        # if one or both of the levels are given by index, get column name
-        # else:
-        #     all_columns = entity.columns.drop(meta_cols)
-        #     columns = [
-        #         all_columns[lev] if isinstance(lev, int) else lev
-        #         for lev in (level1, level2)
-        #     ]
-
-        # if there is a column for cell properties, convert to separate DataFrame
-        # if len(prop_cols) > 0:
-        #     cell_properties = entity[[*columns, *prop_cols]]
-
-        # if there is a column for weights, preserve it
-        # if weights in entity and weights not in prop_cols:
-        #     columns.append(weights)
-
-        # pass level1, level2, and weights (optional) to Entity constructor
-        entity = entity[columns]
-
-    # if a 2D ndarray is passed, restrict to two columns if needed
-    elif isinstance(data, np.ndarray):
-
-        if data.ndim == 2 and data.shape[1] > 2:
-            data = data[:, (level1, level2)]
-
-        # should only change labels if 'data' is passed
-        # if a dict of labels is provided, restrict to labels for two columns if needed
-        if isinstance(labels, dict) and len(labels) > 2:
-            labels = {
-                col: labels[col] for col in [level1, level2]
-            }  # example: { 0: ['e1', 'e2', ...], 1: ['n1', ...] }
-
-    return entity, data, labels

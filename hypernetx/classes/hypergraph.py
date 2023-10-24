@@ -2,8 +2,10 @@
 # All rights reserved.
 from __future__ import annotations
 
-import pickle
 import warnings
+
+warnings.filterwarnings("default", category=DeprecationWarning)
+
 from copy import deepcopy
 from collections import defaultdict
 from collections.abc import Sequence, Iterable
@@ -15,7 +17,7 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import EntitySet, EntitySet
+from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
@@ -325,9 +327,7 @@ class Hypergraph:
         )
         ### cell properties
 
-        if setsystem is None or (
-            isinstance(setsystem, dict) and not setsystem
-        ):  #### Empty Case
+        if setsystem is None:  #### Empty Case
             self._edges = EntitySet({})
             self._nodes = EntitySet({})
             self._state_dict = {}
@@ -537,8 +537,7 @@ class Hypergraph:
 
             self.E = EntitySet(
                 entity=entity,
-                level1=edge_col,
-                level2=node_col,
+                data_cols=(edge_col, node_col),
                 weight_col=cell_weight_col,
                 weights=cell_weights,
                 cell_properties=cell_properties,
@@ -766,7 +765,7 @@ class Hypergraph:
         : str or dict
             single property or dictionary of properties
         """
-        if prop_name == None:
+        if prop_name is None:
             return self.E.get_properties(id, level=level)
         else:
             return self.E.get_property(id, prop_name, level=level)
@@ -1342,7 +1341,7 @@ class Hypergraph:
         return_equivalence_classes=False,
         use_reps=None,
         return_counts=None,
-    ):
+    ) -> Hypergraph:
         """
         Constructs a new hypergraph gotten by identifying nodes contained by
         the same edges
@@ -1355,14 +1354,14 @@ class Hypergraph:
             Returns a dictionary of node equivalence classes keyed by frozen
             sets of edges
 
-        use_reps : boolean, optional, default = False - Deprecated, this no
-            longer works and will be removed. Choose a single element from the
+        use_reps : boolean, optional, default = None
+            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE] Choose a single element from the
             collapsed nodes as uid for the new node, otherwise uses a frozen
-            set of the uids of nodes in the equivalence class
-
-        return_counts: boolean, - Deprecated, this no longer works and will be
-            removed if use_reps is True the new nodes have uids given by a
+            set of the uids of nodes in the equivalence class. If use_reps is True the new nodes have uids given by a
             tuple of the rep and the count
+
+        return_counts: boolean, optional, default = None
+            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Returns
         -------
@@ -1379,16 +1378,10 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
-                                        ['a','b']),Entity('E2',['a','b'])]))
-            >>> h.incidence_dict
-            {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
+            >>> data = {'E1': ('a', 'b'), 'E2': ('a', 'b')}))
+            >>> h = Hypergraph(data)
             >>> h.collapse_nodes().incidence_dict
-            {'E1': {frozenset({'a', 'b'})}, 'E2': {frozenset({'a', 'b'})}}
-            ### Fix this
-            >>> h.collapse_nodes(use_reps=True).incidence_dict
-            {'E1': {('a', 2)}, 'E2': {('a', 2)}}
-
+            {'E1': ['a: 2'], 'E2': ['a: 2']}
         """
         if use_reps is not None or return_counts is not None:
             msg = """
@@ -1422,17 +1415,17 @@ class Hypergraph:
 
         name: str, optional, default = None
 
-        use_reps: boolean, optional, default = False
-            Choose a single element from the collapsed elements as a
-            representative
-
-        return_counts: boolean, optional, default = True
-            if use_reps is True the new elements are keyed by a tuple of the
-            rep and the count
-
         return_equivalence_classes: boolean, optional, default = False
             Returns a dictionary of edge equivalence classes keyed by frozen
             sets of nodes
+
+        use_reps: boolean, optional, default = None
+            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE] Choose a single element from the collapsed elements as a
+            representative. If use_reps is True, the new elements are keyed by a tuple of the
+            rep and the count.
+
+        return_counts: boolean, optional, default = None
+            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
 
         Returns
         -------
@@ -1440,7 +1433,7 @@ class Hypergraph:
 
         Notes
         -----
-        Collapses the Nodes and Edges EntitySets. Two nodes(edges) are
+        Collapses the Nodes and Edges of EntitySets. Two nodes(edges) are
         duplicates if their respective memberships(elements) are the same.
         Using this as an equivalence relation, the uids of the nodes(edges)
         are partitioned into equivalence classes. A single member of the
@@ -1450,12 +1443,12 @@ class Hypergraph:
         Example
         -------
 
-            >>> h = Hypergraph(EntitySet('example',elements=[EntitySet('E1', /
-                                           ['a','b']),Entity('E2',['a','b'])]))
+            >>> data = {'E1': ('a', 'b'), 'E2': ('a', 'b')}
+            >>> h = Hypergraph(data)
             >>> h.incidence_dict
-            {'E1': {'a', 'b'}, 'E2': {'a', 'b'}}
-            >>> h.collapse_nodes_and_edges().incidence_dict   ### Fix this
-            {('E1', 2): {('a', 2)}}
+            {'E1': ['a', 'b'], 'E2': ['a', 'b']}
+            >>> h.collapse_nodes_and_edges().incidence_dict
+            {'E1: 2': ['a: 2']}
 
         """
         if use_reps is not None or return_counts is not None:
