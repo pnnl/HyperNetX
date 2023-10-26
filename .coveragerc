@@ -1,5 +1,9 @@
 [run]
-omit = */tests/*
+omit =
+    */tests/*
+    */utils/toys/*
+    */utils/log.py
+
 [report]
 exclude_lines =
     _log

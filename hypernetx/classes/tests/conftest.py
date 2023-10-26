@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 
 from hypernetx import Hypergraph, HarryPotter, EntitySet, LesMis as LM
+from hypernetx.classes.helpers import create_dataframe
+
 from collections import OrderedDict, defaultdict
 
 
@@ -40,8 +42,8 @@ class SevenBySix:
         )
         self.labels = OrderedDict(
             [
-                ("edges", ["P", "R", "S", "L", "O", "I"]),
-                ("nodes", ["A", "C", "E", "K", "T1", "T2", "V"]),
+                ("edges", [p, r, s, l, o, i]),
+                ("nodes", [a, c, e, k, t1, t2, v]),
             ]
         )
 
@@ -49,21 +51,23 @@ class SevenBySix:
             [
                 [0, 0],
                 [0, 1],
-                [0, 2],
+                [0, 3],
+                [1, 0],
                 [1, 2],
-                [1, 3],
                 [2, 0],
-                [2, 2],
-                [2, 4],
+                [2, 3],
                 [2, 5],
+                [2, 6],
                 [3, 1],
-                [3, 3],
+                [3, 2],
+                [4, 4],
                 [4, 5],
-                [4, 6],
-                [5, 0],
+                [5, 3],
                 [5, 5],
             ]
         )
+
+        self.dataframe = create_dataframe(self.edgedict)
 
 
 class TriLoop:
@@ -99,6 +103,8 @@ class SBSDupes:
                 ("S", {"A", "K", "T2", "V"}),
             ]
         )
+
+        self.dataframe = create_dataframe(self.edgedict)
 
 
 class LesMis:
@@ -147,8 +153,63 @@ class CompleteBipartite:
 
 
 @pytest.fixture
+def props_dataframe():
+    multi_index = pd.MultiIndex.from_tuples([(0, "P")], names=["level", "id"])
+    data = {
+        "properties": [{"prop1": "propval1", "prop2": "propval2"}],
+    }
+    return pd.DataFrame(data, index=multi_index)
+
+
+@pytest.fixture
+def cell_props_dataframe_multidx():
+    multi_index = pd.MultiIndex.from_tuples([("P", "A"), ("P", "C")], names=[0, 1])
+    data = {
+        "cell_properties": [
+            {"prop1": "propval1", "prop2": "propval2"},
+            {"prop1": "propval1", "prop2": "propval2"},
+        ]
+    }
+
+    return pd.DataFrame(data, index=multi_index)
+
+
+@pytest.fixture
+def cell_props_dataframe():
+    data = {
+        0: ["P", "P"],
+        1: ["A", "C"],
+        "cell_properties": [
+            {"prop1": "propval1", "prop2": "propval2"},
+            {"prop1": "propval1", "prop2": "propval2"},
+        ],
+    }
+    return pd.DataFrame(data)
+
+
+@pytest.fixture
 def sbs():
     return SevenBySix()
+
+
+@pytest.fixture
+def sbs_dataframe(sbs):
+    return sbs.dataframe
+
+
+@pytest.fixture
+def sbs_dict(sbs):
+    return sbs.edgedict
+
+
+@pytest.fixture
+def sbs_data(sbs):
+    return np.asarray(sbs.data)
+
+
+@pytest.fixture
+def sbs_labels(sbs):
+    return sbs.labels
 
 
 @pytest.fixture
@@ -174,6 +235,11 @@ def sbs_graph(sbs):
     G = nx.Graph(name="sbsg")
     G.add_edges_from(edges)
     return G
+
+
+@pytest.fixture
+def sbsd():
+    return SBSDupes()
 
 
 @pytest.fixture
@@ -217,6 +283,7 @@ def dataframe():
 
 @pytest.fixture
 def dataframe_example():
+    """NOTE: Do not use this dataframe as an input for 'entity' when creating an EntitySet object"""
     M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
     index = ["A", "B", "C"]
     columns = ["a", "b", "c", "d"]
