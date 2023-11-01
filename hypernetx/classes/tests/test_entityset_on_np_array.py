@@ -25,12 +25,12 @@ class TestEntitySetOnSBSasNDArray:
 
     def test_translate(self, sbs_data, sbs_labels):
         ent_sbs = EntitySet(data=np.asarray(sbs_data), labels=sbs_labels)
-        assert ent_sbs.translate(0, 0) == "P"
+        assert ent_sbs.translate(0, 0) == "I"
         assert ent_sbs.translate(1, [3, 4]) == ["K", "T1"]
 
     def test_translate_arr(self, sbs_data, sbs_labels):
         ent_sbs = EntitySet(data=np.asarray(sbs_data), labels=sbs_labels)
-        assert ent_sbs.translate_arr((0, 0)) == ["P", "A"]
+        assert ent_sbs.translate_arr((0, 0)) == ["I", "A"]
 
     def test_uidset_by_level(self, sbs_data, sbs_labels):
         ent_sbs = EntitySet(data=np.asarray(sbs_data), labels=sbs_labels)
