@@ -1,7 +1,6 @@
 SHELL = /bin/bash
 
 VENV = venv-hnx
-PYTHON_VENV = $(VENV)/bin/python3
 PYTHON3 = python3
 
 
@@ -50,7 +49,7 @@ version-deps:
 ### Documentation
 
 docs-deps:
-	@$(PYTHON3) -m pip install -e .'[documentation]' --use-pep517
+	@$(PYTHON3) -m pip install .'[documentation]' --use-pep517
 
 .PHONY: docs-deps
 
@@ -78,7 +77,7 @@ venv: clean-venv
 	@$(PYTHON3) -m venv $(VENV);
 
 test-deps:
-	@$(PYTHON3) -m pip install -e .'[testing]' --use-pep517
+	@$(PYTHON3) -m pip install .'[testing]' --use-pep517
 
 all-deps:
 	@$(PYTHON3) -m pip install -e .'[all]' --use-pep517
