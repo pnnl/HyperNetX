@@ -10,7 +10,12 @@ from hypernetx.classes import EntitySet
     "entity, data, data_cols, labels",
     [
         (lazy_fixture("sbs_dict"), None, (0, 1), None),
-        (lazy_fixture("sbs_dict"), None, (0, 1), lazy_fixture("sbs_labels")),
+        (
+            lazy_fixture("sbs_dict"),
+            None,
+            (0, 1),
+            lazy_fixture("sbs_labels"),
+        ),  # labels are ignored if entity is provided
         (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
         (lazy_fixture("sbs_dict"), lazy_fixture("sbs_data"), (0, 1), None),
         (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
@@ -154,10 +159,35 @@ class TestEntitySBSDict:
         assert actual_node_row0 in ["A", "C", "K"]
         assert actual_cell_weight_row0 == 1
 
-    # TODO: validate state of 'data'
     def test_data(self, entity, data, data_cols, labels, sbs):
         es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
-        assert len(es.data) == 15
+
+        actual_data = es.data
+
+        assert len(actual_data) == 15
+
+        expected_data = np.array(
+            [
+                [3, 0],
+                [3, 1],
+                [3, 3],
+                [4, 0],
+                [4, 2],
+                [5, 0],
+                [5, 3],
+                [5, 5],
+                [5, 6],
+                [1, 1],
+                [1, 2],
+                [2, 4],
+                [2, 5],
+                [0, 5],
+                [0, 3],
+            ]
+        )
+        assert np.array_equal(
+            np.sort(actual_data, axis=0), np.sort(expected_data, axis=0)
+        )
 
     def test_properties(self, entity, data, data_cols, labels, sbs):
         es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
