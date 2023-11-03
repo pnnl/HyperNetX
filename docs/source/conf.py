@@ -57,8 +57,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
-    "nb2plots",
-    "texext",
     'sphinx_copybutton',
 ]
 
