@@ -531,7 +531,7 @@ class EntitySet(Entity):
         # group by level 0 (set), aggregate level 1 (set elements) as frozenset
         collapse = (
             self._dataframe[self._data_cols]
-            .groupby(self._data_cols[0], as_index=False)
+            .groupby(self._data_cols[0], as_index=False, observed=False)
             .agg(frozenset)
         )
 
