@@ -16,8 +16,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import itertools
-from scipy.special import comb
-from scipy.stats import binom 
+from scipy.stats import binom
 
 try:
     import igraph as ig
@@ -76,6 +75,7 @@ def part2dict(A):
 
 
 ################################################################################
+
 
 def linear(d, c):
     """
@@ -172,60 +172,63 @@ def modularity(HG, A, wdc=linear):
       The modularity function for partition A on HG
     """
     ## all same edge weights?
-    uniq = (len(Counter(HG.edges.properties['weight']))==1)
-    
+    uniq = len(Counter(HG.edges.properties["weight"])) == 1
+
     ## Edge Contribution
     HG_id = HG.incidence_dict
     d = part2dict(A)
-    L = [ [d[i] for i in HG_id[x]] for x in HG_id ]
+    L = [[d[i] for i in HG_id[x]] for x in HG_id]
 
     ## all same weight
     if uniq:
-        _ctr = Counter([ (Counter(l).most_common(1)[0][1],len(l)) for l in L])
-        EC = sum([wdc(k[1],k[0])*_ctr[k] for k in _ctr.keys() if k[0] > k[1]/2])
+        _ctr = Counter([(Counter(l).most_common(1)[0][1], len(l)) for l in L])
+        EC = sum([wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2])
     else:
-        _keys = [ (Counter(l).most_common(1)[0][1],len(l)) for l in L]
-        _vals = list(HG.edge_props['weight']) ## Thanks Brenda!!
-        _df = pd.DataFrame(zip(_keys,_vals), columns=['key','val'])
-        _df = _df.groupby(by='key').sum()
-        EC = sum([ wdc(k[1],k[0])*v[0] for (k,v) in _df.iterrows() if k[0]>k[1]/2 ])
-        
+        _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
+        _vals = list(HG.edge_props["weight"])  ## Thanks Brenda!!
+        _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
+        _df = _df.groupby(by="key").sum()
+        EC = sum(
+            [wdc(k[1], k[0]) * v[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
+        )
+
     ## Degree Tax
-    if uniq:        
+    if uniq:
         VolA = [sum([HG.degree(i) for i in k]) for k in A]
         Ctr = Counter([HG.size(i) for i in HG.edges])
 
     else:
         ## this is the bottleneck
-        VolA = np.repeat(0,1+np.max(list(d.values())))
+        VolA = np.repeat(0, 1 + np.max(list(d.values())))
         m = np.max([HG.size(i) for i in HG.edges])
-        Ctr = np.repeat(0,1+m)
+        Ctr = np.repeat(0, 1 + m)
         S = 0
         for e in HG.edges:
             w = HG.edges[e].weight
-            Ctr[HG.size(e)] += w  
+            Ctr[HG.size(e)] += w
             S += w
             for v in HG.edges[e]:
-                VolA[d[v]] += w 
-                
+                VolA[d[v]] += w
+
     VolV = np.sum(VolA)
-    VolA = [x/VolV for x in VolA]
+    VolA = [x / VolV for x in VolA]
     DT = 0
-    
-    if uniq:        
+
+    if uniq:
         for d in Ctr.keys():
             Cnt = Ctr[d]
-            for c in np.arange(int(np.floor(d/2+1)),d+1):
+            for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
                 for Vol in VolA:
-                    DT += (Cnt*wdc(d,c)*binom.pmf(c,d,Vol))
-        return (EC-DT)/HG.number_of_edges()
+                    DT += Cnt * wdc(d, c) * binom.pmf(c, d, Vol)
+        return (EC - DT) / HG.number_of_edges()
     else:
         for d in range(len(Ctr)):
             Cnt = Ctr[d]
-            for c in np.arange(int(np.floor(d/2+1)),d+1):
+            for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
                 for Vol in VolA:
-                    DT += (Cnt*wdc(d,c)*binom.pmf(c,d,Vol))
-        return (EC-DT)/S
+                    DT += Cnt * wdc(d, c) * binom.pmf(c, d, Vol)
+        return (EC - DT) / S
+
 
 ################################################################################
 
@@ -306,8 +309,8 @@ def kumar(HG, delta=0.01, verbose=False):
             diff = max(diff, 0.5 * abs(edge.weight - reweight))
             edge.weight = 0.5 * edge.weight + 0.5 * reweight
         if verbose:
-            print('pass completed, max edge weight difference:',diff)
-            
+            print("pass completed, max edge weight difference:", diff)
+
         # re-run louvain
         # build graph
         G = two_section(HG)
@@ -327,84 +330,99 @@ def kumar(HG, delta=0.01, verbose=False):
 
 ################################################################################
 
+
 ## THIS ASSUMES WEIGHTED H
 def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
-
-    qH = modularity(H,A,wdc=wdc)
+    qH = modularity(H, A, wdc=wdc)
     if verbose:
-        print('initial qH:',qH)
+        print("initial qH:", qH)
     d = part2dict(A)
 
     ## initialize
     ## this is the bottleneck
-    VolA = np.repeat(0,1+np.max(list(d.values())))
+    VolA = np.repeat(0, 1 + np.max(list(d.values())))
     m = np.max([H.size(i) for i in H.edges])
-    ctr_sizes = np.repeat(0,1+m)
+    ctr_sizes = np.repeat(0, 1 + m)
     S = 0
     for e in H.edges:
         w = H.edges[e].weight
-        ctr_sizes[H.size(e)] += w  
+        ctr_sizes[H.size(e)] += w
         S += w
         for v in H.edges[e]:
-            VolA[d[v]] += w 
+            VolA[d[v]] += w
     VolV = np.sum(VolA)
     dct_A = part2dict(A)
 
     ## loop
-    while(True):
+    while True:
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
-
             dct_A_v = dct_A[v]
             H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
-            L = [ [dct_A[i] for i in x] for x in H_id ]
+            L = [[dct_A[i] for i in x] for x in H_id]
 
             ## ec portion before move
-            _keys = [ (Counter(l).most_common(1)[0][1],len(l)) for l in L]
-            _vals = [H.edge_props['weight'][x] for x in H.nodes[v].memberships]
-            _df = pd.DataFrame(zip(_keys,_vals), columns=['key','val'])
-            _df = _df.groupby(by='key').sum()
-            ec = sum([ wdc(k[1],k[0])*val[0] for (k,val) in _df.iterrows() if k[0]>k[1]/2 ])
-            str_v = np.sum(_vals) ## weighted degree
+            _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
+            _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+            _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
+            _df = _df.groupby(by="key").sum()
+            ec = sum(
+                [
+                    wdc(k[1], k[0]) * val[0]
+                    for (k, val) in _df.iterrows()
+                    if k[0] > k[1] / 2
+                ]
+            )
+            str_v = np.sum(_vals)  ## weighted degree
 
             ## DT portion before move
             dt = 0
             for d in range(len(ctr_sizes)):
                 Cnt = ctr_sizes[d]
-                for c in np.arange(int(np.floor(d/2+1)),d+1):
-                    dt += (Cnt*wdc(d,c)*binom.pmf(c,d,VolA[dct_A_v]/VolV)) 
-
+                for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
+                    dt += Cnt * wdc(d, c) * binom.pmf(c, d, VolA[dct_A_v] / VolV)
 
             ## move it?
             best = dct_A_v
             best_del_q = 0
             best_dt = 0
-            for m in set([i for x in L for i in x])-{dct_A_v}:
+            for m in set([i for x in L for i in x]) - {dct_A_v}:
                 dct_A[v] = m
-                L = [ [dct_A[i] for i in x] for x in H_id ]
+                L = [[dct_A[i] for i in x] for x in H_id]
                 ## EC
-                _keys = [ (Counter(l).most_common(1)[0][1],len(l)) for l in L]
-                _vals = [H.edge_props['weight'][x] for x in H.nodes[v].memberships]
-                _df = pd.DataFrame(zip(_keys,_vals), columns=['key','val'])
-                _df = _df.groupby(by='key').sum()
-                ecp = sum([ wdc(k[1],k[0])*val[0] for (k,val) in _df.iterrows() if k[0]>k[1]/2 ])    
-
+                _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
+                _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+                _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
+                _df = _df.groupby(by="key").sum()
+                ecp = sum(
+                    [
+                        wdc(k[1], k[0]) * val[0]
+                        for (k, val) in _df.iterrows()
+                        if k[0] > k[1] / 2
+                    ]
+                )
 
                 ## DT
                 del_dt = -dt
                 for d in range(len(ctr_sizes)):
                     Cnt = ctr_sizes[d]
-                    for c in np.arange(int(np.floor(d/2+1)),d+1):
-                        del_dt -= (Cnt*wdc(d,c)*binom.pmf(c,d,VolA[m]/VolV))
-                        del_dt += (Cnt*wdc(d,c)*binom.pmf(c,d,(VolA[m]+str_v)/VolV))
-                        del_dt += (Cnt*wdc(d,c)*binom.pmf(c,d,(VolA[dct_A_v]-str_v)/VolV))
-                del_q = ecp-ec-del_dt
+                    for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
+                        del_dt -= Cnt * wdc(d, c) * binom.pmf(c, d, VolA[m] / VolV)
+                        del_dt += (
+                            Cnt * wdc(d, c) * binom.pmf(c, d, (VolA[m] + str_v) / VolV)
+                        )
+                        del_dt += (
+                            Cnt
+                            * wdc(d, c)
+                            * binom.pmf(c, d, (VolA[dct_A_v] - str_v) / VolV)
+                        )
+                del_q = ecp - ec - del_dt
                 if del_q > best_del_q:
                     best_del_q = del_q
                     best = m
                     best_dt = del_dt
 
-            if best_del_q > 0.1: ## this avoids some precision issues
+            if best_del_q > 0.1:  ## this avoids some precision issues
                 n_moves += 1
                 dct_A[v] = best
                 VolA[m] += str_v
@@ -415,19 +433,19 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
 
         new_qH = modularity(H, dict2part(dct_A), wdc=wdc)
         if verbose:
-            print(n_moves,'moves, new qH:',new_qH)
-        if (new_qH-qH) < delta:
+            print(n_moves, "moves, new qH:", new_qH)
+        if (new_qH - qH) < delta:
             break
         else:
             qH = new_qH
     return dict2part(dct_A)
 
-## THIS ASSUMES UNWEIGHTED H 
-def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
 
-    qH = modularity(H,A,wdc=wdc)
+## THIS ASSUMES UNWEIGHTED H
+def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
+    qH = modularity(H, A, wdc=wdc)
     if verbose:
-        print('initial qH:',qH)
+        print("initial qH:", qH)
 
     ## initialize
     ctr_sizes = Counter([H.size(i) for i in H.edges])
@@ -435,51 +453,59 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
     VolV = np.sum(VolA)
     dct_A = part2dict(A)
 
-    while(True):
-        
+    while True:
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
-
             dct_A_v = dct_A[v]
             H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
-            L = [ [dct_A[i] for i in x] for x in H_id ]
+            L = [[dct_A[i] for i in x] for x in H_id]
             deg_v = H.degree(v)
 
             ## assume unweighted - EC portion before
-            _ctr = Counter([ (Counter(l).most_common(1)[0][1],len(l)) for l in L])
-            ec = sum([wdc(k[1],k[0])*_ctr[k] for k in _ctr.keys() if k[0] > k[1]/2])
+            _ctr = Counter([(Counter(l).most_common(1)[0][1], len(l)) for l in L])
+            ec = sum(
+                [wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2]
+            )
 
             ## DT portion before
             dt = 0
             for d in ctr_sizes.keys():
                 Cnt = ctr_sizes[d]
-                for c in np.arange(int(np.floor(d/2+1)),d+1):
-                    dt += (Cnt*wdc(d,c)*binom.pmf(c,d,VolA[dct_A_v]/VolV)) 
-            
+                for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
+                    dt += Cnt * wdc(d, c) * binom.pmf(c, d, VolA[dct_A_v] / VolV)
+
             ## move it?
             best = dct_A_v
             best_del_q = 0
             best_dt = 0
-            for m in set([i for x in L for i in x])-{dct_A_v}:
+            for m in set([i for x in L for i in x]) - {dct_A_v}:
                 dct_A[v] = m
-                L = [ [dct_A[i] for i in x] for x in H_id ]
+                L = [[dct_A[i] for i in x] for x in H_id]
                 ## assume unweighted - EC
-                _ctr = Counter([ (Counter(l).most_common(1)[0][1],len(l)) for l in L])
-                ecp = sum([wdc(k[1],k[0])*_ctr[k] for k in _ctr.keys() if k[0] > k[1]/2])
+                _ctr = Counter([(Counter(l).most_common(1)[0][1], len(l)) for l in L])
+                ecp = sum(
+                    [wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2]
+                )
                 ## DT
                 del_dt = -dt
                 for d in ctr_sizes.keys():
                     Cnt = ctr_sizes[d]
-                    for c in np.arange(int(np.floor(d/2+1)),d+1):
-                        del_dt -= (Cnt*wdc(d,c)*binom.pmf(c,d,VolA[m]/VolV))
-                        del_dt += (Cnt*wdc(d,c)*binom.pmf(c,d,(VolA[m]+deg_v)/VolV))
-                        del_dt += (Cnt*wdc(d,c)*binom.pmf(c,d,(VolA[dct_A_v]-deg_v)/VolV)) 
-                del_q = ecp-ec-del_dt
+                    for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
+                        del_dt -= Cnt * wdc(d, c) * binom.pmf(c, d, VolA[m] / VolV)
+                        del_dt += (
+                            Cnt * wdc(d, c) * binom.pmf(c, d, (VolA[m] + deg_v) / VolV)
+                        )
+                        del_dt += (
+                            Cnt
+                            * wdc(d, c)
+                            * binom.pmf(c, d, (VolA[dct_A_v] - deg_v) / VolV)
+                        )
+                del_q = ecp - ec - del_dt
                 if del_q > best_del_q:
                     best_del_q = del_q
                     best = m
                     best_dt = del_dt
-            if best_del_q > 0.1: ## this avoids some numerical precision issues
+            if best_del_q > 0.1:  ## this avoids some numerical precision issues
                 n_moves += 1
                 dct_A[v] = best
                 VolA[m] += deg_v
@@ -487,15 +513,14 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
                 VolV = np.sum(VolA)
             else:
                 dct_A[v] = dct_A_v
-        new_qH = modularity(H, dict2part(dct_A), wdc=wdc)    
+        new_qH = modularity(H, dict2part(dct_A), wdc=wdc)
         if verbose:
-            print(n_moves,'moves, new qH:',new_qH)
-        if (new_qH-qH) < delta:
+            print(n_moves, "moves, new qH:", new_qH)
+        if (new_qH - qH) < delta:
             break
         else:
             qH = new_qH
     return dict2part(dct_A)
-
 
 
 def last_step(HG, A, wdc=linear, delta=0.01, verbose=False):
@@ -529,7 +554,7 @@ def last_step(HG, A, wdc=linear, delta=0.01, verbose=False):
       A new partition for the vertices in HG
     """
     ## all same edge weights?
-    uniq = (len(Counter(HG.edges.properties['weight']))==1)
+    uniq = len(Counter(HG.edges.properties["weight"])) == 1
 
     if uniq:
         nls = _last_step_unweighted(HG, A, wdc=wdc, delta=delta, verbose=verbose)
