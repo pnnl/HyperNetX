@@ -16,7 +16,7 @@ given partition of the vertices in a hypergraph. In general, higher modularity i
 partitioning of the vertices into dense communities.
 
 Two functions to generate such hypergraph
-partitions are provided: **Kumar's** algorithm, and the simple **Last-Step** refinement algorithm.
+partitions are provided: **Kumar's** algorithm, and the simple **last-step** refinement algorithm.
 
 The submodule also provides a function to generate the **two-section graph** for a given hypergraph which can then be used to find
 vertex partitions via graph-based algorithms.
@@ -33,32 +33,22 @@ Using the Tool
 --------------
 
 
-Precomputation
-^^^^^^^^^^^^^^
-
-In order to make the computation of hypergraph modularity more efficient, some quantities need to be pre-computed.
-Given hypergraph H, calling::
-
-   HG = hmod.precompute_attributes(H)
-
-will pre-compute quantities such as node strength (weighted degree), d-weights (total weight for each edge cardinality) and binomial coefficients.
-
 Modularity
 ^^^^^^^^^^
 
 Given hypergraph HG and a partition A of its vertices, hypergraph modularity is a measure of the quality of this partition.
 Random partitions typically yield modularity near zero (it can be negative) while positive modularity is indicative of the presence
 of dense communities, or modules. There are several variations for the definition of hypergraph modularity, and the main difference lies in the
-weight given to different edges. Modularity is computed via::
+weight given to different edges given their size $d$ and purity $c$. Modularity is computed via::
 
-   q = hmod.modularity(HG, A, wdc=linear)
+   q = hmod.modularity(HG, A, wdc=hmod.linear)
+
+where the 'wdc' parameter points to a function that controls the weights (details below).
 
 In a graph, an edge only links 2 nodes, so given partition A, an edge is either within a community (which increases the modularity)
-or between communities.
-
-With hypergraphs, we consider edges of size *d=2* or more. Given some vertex partition A and some *d*-edge *e*, let *c* be the number of nodes
-that belong to the most represented part in *e*; if *c > d/2*, we consider this edge to be within the part.
-Hyper-parameters *0 <= w(d,c) <= 1* control the weight
+or between communities. With hypergraphs, we consider edges of size $d=2$ or more. Given some vertex partition A and some $d$-edge $e$, let $c$ be the number of nodes
+that belong to the most represented part in $e$; if $c > d/2$, we consider this edge to be within the part.
+Hyper-parameters $0 \le w(d,c) \le 1$ control the weight
 given to such edges. Three functions are supplied in this submodule, namely:
 
 **linear**
@@ -66,22 +56,23 @@ given to such edges. Three functions are supplied in this submodule, namely:
 **majority**
   $w(d,c) = 1$ if $c > d/2$, else $0$.
 **strict**
-  $w(d,c) = 1$ if $c == d$, else $0$.
+  $w(d,c) = 1$ iff $c = d$, else $0$.
 
-The 'linear' function is used by default. More details in [2].
+The 'linear' function is used by default. Other functions $w(d,c)$ can be supplied as long as $0 \le w(d,c) \le 1$ and $w(d,c)=0$ when $c \le d$.
+More details can be found in [2].
 
 Two-section graph
 ^^^^^^^^^^^^^^^^^
 
-There are several good partitioning algorithms for graphs such as the Louvain algorithm and ECG, a consensus clustering algorithm.
+There are several good partitioning algorithms for graphs such as the Louvain algorithm, Leiden and ECG, a consensus clustering algorithm.
 One way to obtain a partition for hypergraph HG is to build its corresponding two-section graph G and run a graph clustering algorithm.
-Code is provided to build such graph via::
+Code is provided to build such a graph via::
 
    G = hmod.two_section(HG)
 
-which returns an igraph.Graph object. 
+which returns an igraph.Graph object.
 
-   
+
 Clustering Algorithms
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -92,8 +83,8 @@ from each part inside each edge. Given hypergraph HG, this is called as::
    K = hmod.kumar(HG)
 
 The other supplied algorithm is a simple method to improve hypergraph modularity directely. Given some
-initial partition of the vertices (for example via Louvain on the two-section graph), move vertices between parts in order
-to improve hypergraph modularity. Given hypergraph HG and initial partition A, this is called as::
+initial partition of the vertices (for example via Louvain on the two-section graph), we move vertices between parts in order
+to improve hypergraph modularity. Given hypergraph HG and an initial partition A, it is called as follows::
 
    L = hmod.last_step(HG, A, wdc=linear)
 
@@ -103,8 +94,11 @@ where the 'wdc' parameter is the same as in the modularity function.
 Other Features
 ^^^^^^^^^^^^^^
 
-We represent a vertex partition A  as a list of sets, but another conveninent representation is via a dictionary.
-We provide two utility functions to switch representation, namely `A = dict2part(D)` and `D = part2dict(A)`.
+We represent a vertex partition A  as a list of sets, but another useful representation is via a dictionary.
+We provide two utility functions to switch representation, namely::
+
+   A = dict2part(D)
+   D = part2dict(A)
 
 References
 ^^^^^^^^^^
