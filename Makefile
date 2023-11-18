@@ -4,21 +4,41 @@ VENV = venv-hnx
 PYTHON3 = python3
 
 
+## Lint
+
+.PHONY: lint
+lint: pylint flake8 mypy
+
+.PHONY: pylint
+pylint:
+	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx
+
+.PHONY: mypy
+mypy:
+	@$(PYTHON3) -m mypy hypernetx || true
+
+.PHONY: flake8
+flake8:
+	@$(PYTHON3) -m flake8 hypernetx --exit-zero
+
+.PHONY: format
+format:
+	@$(PYTHON3) -m black hypernetx
+
 ## Test
 
-test: test-deps
-	@$(PYTHON3) -m tox
-
-test-ci: test-deps
+pre-commit:
 	pre-commit install
 	pre-commit run --all-files
+
+test:
 	@$(PYTHON3) -m tox
 
-test-ci-github: test-deps
-	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
-	@$(PYTHON3) -m tox
+test-ci: lint-deps lint pre-commit test-deps test
 
-.PHONY: test, test-ci, test-ci-github
+test-ci-github: lint-deps lint pre-commit ci-github-deps test-deps test
+
+.PHONY: test, test-ci, test-ci-github, pre-commit
 
 ## Continuous Deployment
 ## Assumes that scripts are run on a container or test server VM
@@ -75,6 +95,18 @@ clean:
 
 venv: clean-venv
 	@$(PYTHON3) -m venv $(VENV);
+
+.PHONY: github-ci-deps
+ci-github-deps:
+	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
+
+.PHONY: lint-deps
+lint-deps:
+	@$(PYTHON3) -m pip install .'[lint]' --use-pep517
+
+.PHONY: format-deps
+format-deps:
+	@$(PYTHON3) -m pip install .'[format]' --use-pep517
 
 test-deps:
 	@$(PYTHON3) -m pip install .'[testing]' --use-pep517
