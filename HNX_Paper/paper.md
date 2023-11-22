@@ -14,25 +14,23 @@ authors:
   orcid: 0000-0003-1344-0497
   affiliation: "1"
 - name: Sinan Aksoy
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0002-3466-3334
   affiliation: "1"
 - name: Dustin Arendt
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0003-2466-199X
   affiliation: "1"
 - name: Mark Bonicillo
-  orcid: 0000-0000-0000-0000
   affiliation: "1" 
 - name: Cliff Joslyn
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0002-5923-5547
   affiliation: "1"
 - name: Emilie Purvine
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0003-2069-5594
   affiliation: "1" 
 - name: Madelyn Shapiro
-  orcid: 0000-0000-0000-0000
+  orcid: 0000-0002-2786-7056
   affiliation: "1" 
 - name: Ji Young Yun
-  orcid: 0000-0000-0000-0000
   affiliation: "1"
 affiliations:
 - name: Pacific Northwest National Laboratory, USA
@@ -104,7 +102,7 @@ As a collaborative platform, HNX contains contributed modules
 and tutorials in the form of Jupyter notebooks
 for Laplacian clustering, clustering and modularity, synthetic
 generation of hypergraphs, and Contagion Theory.
-In its latest release, HNX 2.0 uses Pandas dataframes [@reback2020pandas;@mckinney-proc-scipy-2010] as its underlying data structure,
+In its latest release, HNX 2.0 uses Pandas dataframes[@reback2020pandas;@mckinney-proc-scipy-2010] as its underlying data structure,
 making the nodes and hyperedges of a hypergraph as accessible as the
 cells in a dataframe.
 This simple design allows HNX to import data from semantically
