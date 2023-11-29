@@ -55,7 +55,7 @@ def layout_node_link(H, G=None, layout=nx.spring_layout, **kwargs):
     """
 
     B = H.bipartite()
-    
+
     if G is not None:
         B.add_edges_from(G.edges())
 
@@ -90,7 +90,9 @@ def get_default_radius(H, pos):
     return 1
 
 
-def draw_hyper_edge_labels(H, pos, polys, labels={}, edge_labels_on_edge=True, ax=None, **kwargs):
+def draw_hyper_edge_labels(
+    H, pos, polys, labels={}, edge_labels_on_edge=True, ax=None, **kwargs
+):
     """
     Draws a label on the hyper edge boundary.
 
@@ -141,9 +143,7 @@ def draw_hyper_edge_labels(H, pos, polys, labels={}, edge_labels_on_edge=True, a
             xy = (x1 + x2) / 2
 
         # the string is a comma separated list of the edge uid
-        ax.annotate(
-            s, xy, rotation=theta, ha="center", va="center", **params
-        )
+        ax.annotate(s, xy, rotation=theta, ha="center", va="center", **params)
 
 
 def layout_hyper_edges(H, pos, node_radius={}, dr=None):
@@ -473,7 +473,8 @@ def draw(
     if with_additional_edges:
         nx.draw_networkx_edges(
             with_additional_edges,
-            pos=pos, ax=ax,
+            pos=pos,
+            ax=ax,
             **inflate_kwargs(with_additional_edges.edges(), additional_edges_kwargs)
         )
 
@@ -483,7 +484,8 @@ def draw(
         )
 
         draw_hyper_edge_labels(
-            H, pos,
+            H,
+            pos,
             polys,
             color=edges_kwargs["edgecolors"],
             backgroundcolor=(1, 1, 1, edge_label_alpha),
