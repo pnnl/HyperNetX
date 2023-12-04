@@ -269,7 +269,7 @@ HyperNetX uses a number of tools to maintain code quality:
 Before using these tools, ensure that you install Pylint in your environment:
 
 ```shell
-pip install .'[linting]'
+pip install .'[lint]'
 ```
 
 
@@ -279,12 +279,10 @@ pip install .'[linting]'
 
 > Pylint analyses your code without actually running it. It checks for errors, enforces a coding standard, looks for code smells, and can make suggestions about how the code could be refactored. Pylint can infer actual values from your code using its internal code representation (astroid). If your code is import logging as argparse, Pylint will know that argparse.error(...) is in fact a logging call and not an argparse call.
 
-
-We have a Pylint configuration file, `.pylintrc`, located at the root of this project.
 To run Pylint and view the results of Pylint, run the following command:
 
 ```shell
-pylint hypernetx --rcfile=.pylintrc
+pylint hypernetx
 ```
 
 You can also run Pylint on the command line to generate a report on the quality of the codebase and save it to a file named "pylint-results.txt":
