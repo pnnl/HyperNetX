@@ -39,7 +39,7 @@ sys.setrecursionlimit(10000)
 
 
 def prob_trans(H, weights=False, index=True, check_connected=True):
-    """
+    r"""
     The probability transition matrix of a random walk on the vertices of a hypergraph.
     At each step in the walk, the next vertex is chosen by:
 
