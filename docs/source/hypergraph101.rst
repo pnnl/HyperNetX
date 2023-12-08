@@ -295,7 +295,7 @@ can also measure the size of the intersection
 :math:`W` we can not only talk about its length :math:`N`, but also
 define its **width** :math:`s(W) = \min_{0 \le i \le N} s_i` as the size
 of the smallest such intersection. When a walk :math:`W` has width
-:math:`s`, we call it an **:math:`s`-walk**. It follows that all walks
+:math:`s`, we call it an :math:`s`-walk. It follows that all walks
 in a graph are 1-walks with width 1. In Fig. `5 <#swalks>`__ we see two
 walks in a hypergraph. While both have length 2 (counting edgewise, and
 recalling origin zero), the one on the left has width 1, and that on the
