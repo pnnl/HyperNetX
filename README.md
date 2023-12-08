@@ -72,25 +72,25 @@ Google Colab
 ------------
 
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Tutorial 1 - HNX Basics</span>
 </a>
 <br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Tutorial 2 - Visualization Methods</span>
 </a>
 <br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Tutorial 3 - LesMis Case Study</span>
 </a>
 <br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Tutorial 4 - LesMis Visualizations-Book Tour</span>
 </a>
@@ -102,7 +102,7 @@ Google Colab
 </a>
 <br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/advanced/Tutorial%206%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Tutorial 6 - Homology mod2 for TriLoop Example</span>
 </a>
@@ -112,7 +112,7 @@ Google Colab
 Jupyter Notebooks
 -----------------
 
-Additional tutorials that can be run as Jupyter Notebooks can be found in the 'tutorials-jupyter' folder.
+Additional tutorials that can be run as Jupyter Notebooks are found under [tutorials](./tutorials).
 
 Installation
 ====================
@@ -269,7 +269,7 @@ HyperNetX uses a number of tools to maintain code quality:
 Before using these tools, ensure that you install Pylint in your environment:
 
 ```shell
-pip install .'[linting]'
+pip install .'[lint]'
 ```
 
 
@@ -279,12 +279,10 @@ pip install .'[linting]'
 
 > Pylint analyses your code without actually running it. It checks for errors, enforces a coding standard, looks for code smells, and can make suggestions about how the code could be refactored. Pylint can infer actual values from your code using its internal code representation (astroid). If your code is import logging as argparse, Pylint will know that argparse.error(...) is in fact a logging call and not an argparse call.
 
-
-We have a Pylint configuration file, `.pylintrc`, located at the root of this project.
 To run Pylint and view the results of Pylint, run the following command:
 
 ```shell
-pylint hypernetx --rcfile=.pylintrc
+pylint hypernetx
 ```
 
 You can also run Pylint on the command line to generate a report on the quality of the codebase and save it to a file named "pylint-results.txt":

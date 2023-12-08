@@ -8,7 +8,7 @@ from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
 
-from hypernetx.classes.entity import *
+from hypernetx.classes.entityset import *
 
 
 class AttrList(UserList):
@@ -16,7 +16,7 @@ class AttrList(UserList):
 
     Parameters
     ----------
-    entity : hypernetx.Entity
+    entity : hypernetx.EntitySet
     key : tuple of (int, str or int)
         ``(level, item)``
     initlist : list, optional
@@ -25,7 +25,7 @@ class AttrList(UserList):
 
     def __init__(
         self,
-        entity: Entity,
+        entity: EntitySet,
         key: tuple[int, str | int],
         initlist: Optional[list] = None,
     ):
@@ -82,7 +82,11 @@ def encode(data: pd.DataFrame):
     return encoded_array
 
 
-def assign_weights(df, weights=1, weight_col="cell_weights"):
+def assign_weights(
+    df: pd.DataFrame,
+    weights: list | tuple | np.ndarray | Hashable = 1,
+    weight_col: Hashable = "cell_weights",
+):
     """
     Parameters
     ----------
@@ -111,9 +115,8 @@ def assign_weights(df, weights=1, weight_col="cell_weights"):
 
     if isinstance(weights, (list, np.ndarray)):
         df[weight_col] = weights
-    else:
-        if not weight_col in df:
-            df[weight_col] = weights
+    elif not weight_col in df:
+        df[weight_col] = weights
     # import ipdb; ipdb.set_trace()
     return df, weight_col
 
@@ -190,6 +193,7 @@ def remove_row_duplicates(
 ):
     """
     Removes and aggregates duplicate rows of a DataFrame using groupby
+    Also sets the dtype of entity data columns to categorical (simplifies encoding, etc.)
 
     Parameters
     ----------
@@ -210,6 +214,9 @@ def remove_row_duplicates(
     weight_col : Hashable
         The name of the column holding aggregated weights, or None if aggregateby=None
     """
+    if df.empty:
+        return df, None
+
     df = df.copy()
     categories = {}
     for col in data_cols:
@@ -268,3 +275,29 @@ def dict_depth(dic, level=0):
     if not isinstance(dic, dict) or not dic:
         return level
     return min(dict_depth(dic[key], level + 1) for key in dic)
+
+
+def create_dataframe(data: Mapping[str | int, Iterable[str | int]]) -> pd.DataFrame:
+    """Create a valid pandas Dataframe that can be used for the 'entity' param in EntitySet"""
+
+    validate_mapping_for_dataframe(data)
+
+    # creates a Series of all edge-node pairs (i.e. all the non-zero cells from an incidence matrix)
+    data_t = pd.Series(data=data).explode()
+    return pd.DataFrame(data={0: data_t.index.to_list(), 1: data_t.values})
+
+
+def validate_mapping_for_dataframe(
+    data: Mapping[str | int, Iterable[str | int]]
+) -> None:
+    if not isinstance(data, Mapping):
+        raise TypeError("data must be a Mapping type, i.e. dictionary")
+    key_types = set(type(key) for key in data.keys())
+    if key_types != {str} and key_types != {int}:
+        raise TypeError("keys must be a string or int")
+    for val in data.values():
+        if not isinstance(val, Iterable):
+            raise TypeError("The value of a key must be an Iterable type, i.e. list")
+        val_types = set(type(v) for v in val)
+        if val_types != {str} and val_types != {int}:
+            raise TypeError("The items in each value must be a string or int")

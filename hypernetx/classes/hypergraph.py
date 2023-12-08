@@ -17,7 +17,7 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import Entity, EntitySet
+from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
@@ -537,8 +537,7 @@ class Hypergraph:
 
             self.E = EntitySet(
                 entity=entity,
-                level1=edge_col,
-                level2=node_col,
+                data_cols=(edge_col, node_col),
                 weight_col=cell_weight_col,
                 weights=cell_weights,
                 cell_properties=cell_properties,
@@ -550,12 +549,17 @@ class Hypergraph:
 
             self._edges = self.E
             self._nodes = self.E.restrict_to_levels([1])
-            self._dataframe = self.E.cell_properties.reset_index()
             self._data_cols = data_cols = [self._edge_col, self._node_col]
-            self._dataframe[data_cols] = self._dataframe[data_cols].astype("category")
+
+            self._dataframe = self.E.cell_properties
+            if self._dataframe is not None:
+                self._dataframe = self._dataframe.reset_index()
+                self._dataframe[data_cols] = self._dataframe[data_cols].astype(
+                    "category"
+                )
+                self._set_default_state()
 
             self.__dict__.update(locals())
-            self._set_default_state()
 
     @property
     def edges(self):
@@ -696,7 +700,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        item : hashable or Entity
+        item : hashable or EntitySet
 
         """
         return item in self.nodes
@@ -707,7 +711,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : Entity or hashable
+        node : EntitySet or hashable
             If hashable, then must be uid of node in hypergraph
 
         Returns
@@ -761,7 +765,7 @@ class Hypergraph:
         : str or dict
             single property or dictionary of properties
         """
-        if prop_name == None:
+        if prop_name is None:
             return self.E.get_properties(id, level=level)
         else:
             return self.E.get_property(id, prop_name, level=level)
@@ -970,7 +974,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : hashable or Entity
+        node : hashable or EntitySet
             uid for a node in hypergraph or the node Entity
 
         s : int, list, optional, default = 1
@@ -1007,7 +1011,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : hashable or Entity
+        edge : hashable or EntitySet
             uid for a edge in hypergraph or the edge Entity
 
         s : int, list, optional, default = 1
@@ -2241,7 +2245,7 @@ class Hypergraph:
         # Validate the size of the node and edge arrays
 
         M = np.array(M)
-        if len(M.shape) != (2):
+        if len(M.shape) != 2:
             raise HyperNetXError("Input requires a 2 dimensional numpy array")
         # apply boolean key if available
         if key is not None:
