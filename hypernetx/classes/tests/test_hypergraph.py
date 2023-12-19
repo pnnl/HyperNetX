@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from hypernetx.classes.hypergraph import Hypergraph
 
+from networkx.algorithms import bipartite
+
 
 def test_hypergraph_from_iterable_of_sets(sbs):
     H = Hypergraph(sbs.edges)
@@ -297,11 +299,7 @@ def test_edge_diameter(sbs):
 
 
 def test_bipartite(sbs_hypergraph):
-    from networkx.algorithms import bipartite
-
-    h = sbs_hypergraph
-    b = h.bipartite()
-    assert bipartite.is_bipartite(b)
+    assert bipartite.is_bipartite(sbs_hypergraph.bipartite())
 
 
 def test_dual(sbs_hypergraph):

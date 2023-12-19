@@ -4,7 +4,7 @@ If you have ideas for improving this project, we would love to hear from you!
 
 ## Orientation
 
-The world of open source is wide; it can be a lot to take in!  If this is your first time working with an open source project, then welcome!    If you're an experienced contributor, then welcome back!  Either way, this online resource might help you [get oriented, or bursh up](https://opensource.guide/how-to-contribute/) on the process.
+The world of open source is wide; it can be a lot to take in!  If this is your first time working with an open source project, then welcome!    If you're an experienced contributor, then welcome back!  Either way, this online resource might help you [get oriented, or brush up](https://opensource.guide/how-to-contribute/) on the process.
 
 ## Report an issue, bug, or feature request
 
@@ -36,4 +36,4 @@ If you're stuck or don't know where to begin, then you're in good company -- we'
 
 # Code of conduct
 
-Our shared values as software developers guide us in our day-to-day interactions and decision-making. Our open source projects are no exception. Trust, respect, collaboration and transparency are core values we believe should live and breathe within our projects. Our community welcomes participants from around the world with different experiences, unique perspectives, and great ideas to share.  Our  [code of conduct](CODE_OF_CONDUCT) describes these values, and our standards for contributing.
+Our shared values as software developers guide us in our day-to-day interactions and decision-making. Our open source projects are no exception. Trust, respect, collaboration and transparency are core values we believe should live and breathe within our projects. Our community welcomes participants from around the world with different experiences, unique perspectives, and great ideas to share.  Our  [code of conduct](CODE_OF_CONDUCT.md) describes these values, and our standards for contributing.

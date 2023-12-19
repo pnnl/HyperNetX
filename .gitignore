@@ -27,7 +27,7 @@ dist/
 *.egg-info*
 .tox/
 venv*
-.coverage
+.coverage*
 .idea
 *env*
 .venv*

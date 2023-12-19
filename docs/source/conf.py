@@ -19,7 +19,7 @@ import sys
 import os
 
 
-__version__ = "2.0.5"
+__version__ = "2.1.3"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -57,8 +57,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
-    "nb2plots",
-    "texext",
     'sphinx_copybutton',
 ]
 

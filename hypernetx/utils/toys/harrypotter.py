@@ -11,9 +11,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class HarryPotter(object):
     def __init__(self, cols=None):
-
         # Read dataset in using pandas. Fix index column or use default pandas index.
-
         try:
             fname = "https://raw.githubusercontent.com/pnnl/HyperNetX/master/hypernetx/utils/toys/HarryPotter_Characters.csv"
             harrydata = pd.read_csv(fname, encoding="unicode_escape")
