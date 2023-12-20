@@ -327,10 +327,22 @@ class Hypergraph:
         )
         ### cell properties
 
-        if setsystem is None:  #### Empty Case
-            self._edges = EntitySet({})
-            self._nodes = EntitySet({})
-            self._state_dict = {}
+        #### Empty Case
+        if setsystem is None or (len(setsystem) == 0):
+            df = pd.DataFrame(columns=['edges','nodes'])
+            self.E = EntitySet(df)
+            self._edges = self.E ##Edges(self.E) ##
+            self._nodes = self.E.restrict_to_levels([1]) ##Nodes(self.E) ##
+            self._data_cols = data_cols = self.E._data_cols
+
+            self._dataframe = self.E._dataframe
+            self._set_default_state(empty=True)
+            if self._dataframe is not None:
+                self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
+                    "category"
+                )
+
+            self.__dict__.update(locals())
 
         else:  #### DataFrame case
             if isinstance(setsystem, pd.DataFrame):
@@ -828,26 +840,36 @@ class Hypergraph:
         """
         self._state_dict.update(kwargs)
 
-    def _set_default_state(self):
+    def _set_default_state(self,empty=False):
         """Populate state_dict with default values"""
         self._state_dict = {}
 
         self._state_dict["dataframe"] = df = self.dataframe
-        self._state_dict["labels"] = {
-            "edges": np.array(df[self._edge_col].cat.categories),
-            "nodes": np.array(df[self._node_col].cat.categories),
-        }
-        self._state_dict["data"] = np.array(
-            [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
-        ).T
+
+        if empty:
+            self._state_dict["labels"] = {
+                "edges": np.array([]),
+                "nodes": np.array([])
+                }
+            self._state_dict["data"] = np.array([[],[]])
+
+        else:
+            self._state_dict["labels"] = {
+                "edges": np.array(df[self._edge_col].cat.categories),
+                "nodes": np.array(df[self._node_col].cat.categories),
+            }
+            self._state_dict["data"] = np.array(
+                [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
+            ).T
+
+
         self._state_dict["snodelg"] = dict()  ### s: nx.graph
         self._state_dict["sedgelg"] = dict()
         self._state_dict["neighbors"] = defaultdict(dict)  ### s: {node: neighbors}
-        self._state_dict["edge_neighbors"] = defaultdict(
-            dict
-        )  ### s: {edge: edge_neighbors}
+        self._state_dict["edge_neighbors"] = defaultdict(dict)  ### s: {edge: edge_neighbors}
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
+
 
     def edge_size_dist(self):
         """
