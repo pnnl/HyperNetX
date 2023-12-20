@@ -328,7 +328,7 @@ class Hypergraph:
         ### cell properties
 
         #### Empty Case
-        if setsystem is None or (len(setsystem) == 0):  
+        if setsystem is None or (len(setsystem) == 0):
             df = pd.DataFrame(columns=['edges','nodes'])
             self.E = EntitySet(df)
             self._edges = self.E ##Edges(self.E) ##
@@ -340,8 +340,8 @@ class Hypergraph:
             if self._dataframe is not None:
                 self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
                     "category"
-                )            
-            
+                )
+
             self.__dict__.update(locals())
 
         else:  #### DataFrame case
@@ -845,14 +845,14 @@ class Hypergraph:
         self._state_dict = {}
 
         self._state_dict["dataframe"] = df = self.dataframe
-        
-        if empty:  
+
+        if empty:
             self._state_dict["labels"] = {
                 "edges": np.array([]),
                 "nodes": np.array([])
                 }
-            self._state_dict["data"] = np.array([[],[]])        
-        
+            self._state_dict["data"] = np.array([[],[]])
+
         else:
             self._state_dict["labels"] = {
                 "edges": np.array(df[self._edge_col].cat.categories),
@@ -860,8 +860,8 @@ class Hypergraph:
             }
             self._state_dict["data"] = np.array(
                 [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
-            ).T            
-            
+            ).T
+
 
         self._state_dict["snodelg"] = dict()  ### s: nx.graph
         self._state_dict["sedgelg"] = dict()
