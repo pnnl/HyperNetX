@@ -11,6 +11,9 @@ from ast import literal_eval
 from hypernetx.classes.entityset import *
 
 
+T = TypeVar("T", bound=Union[str, int])
+
+
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
 
