@@ -23,7 +23,6 @@ from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 
 __all__ = ["Hypergraph"]
-
 T = TypeVar("T", bound=Union[str, int])
 
 
