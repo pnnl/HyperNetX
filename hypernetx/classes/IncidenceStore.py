@@ -1,4 +1,3 @@
-import pandas as pd
 
 class IncidenceStore:
     """
@@ -25,7 +24,7 @@ class IncidenceStore:
     """
     
     def __init__(self, incidences):
-        self._incidences = incidences  # Dataframe of incidence pairs
+        self._incidences = incidences  # Dataframe of index, incidence pairs, and attributes
 
     def __iter__(self):
         """
@@ -72,59 +71,80 @@ class IncidenceStore:
 
     def __getitem__(self, incidence_key):
         """
-        key is incidence key (e.g., index) and returns incidence pair
+        key is incidence key (e.g., index) and returns incidence pair and attributes
 
         """
         
         return self._incidences[incidence_key]
 
+    def get_incidence_attributes(self, incidence_pair):
+        '''
+        Given an incidence pair return all instances of that incidence with incidence keys and attributes.
+
+        Parameters
+        ----------
+        incidence_pair : tuple
+            (edge, node) pair.
+
+        Returns
+        -------
+        dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and 
+        attributes as dictionary values.
+
+        '''
+        pass
+    
     def incidence_matrix(self):
         """
-        Implement incidence matrix creation logic here
+        Implement incidence matrix creation logic here from unique incidence pairs.
 
         """
-        # 
         pass
 
-    def aggregate(self, level):
+    def aggregate(self):
+        # Was collapse
         """
-        First aggregate the multi incidences
-
+        Collapse the multi-incidences and combine attributes of multi-incidences.
+        
+        Updates
+        -------
+        
         """
         pass
 
     def restrict_to(self, elements):
         """
-        Implement restriction logic here
+        Should this just be a restriction condition based on a row or 
 
         """
         pass
 
     def dimensions(self):
         """
-        Return the dimensions of the hypergraph
+        Same as entity set?
+        Dimensions of data i.e., the number of distinct items in each level (column) of the underlying dataframe of incidences.
+        Or is this just for the edge and node columns?
 
         """
         pass
 
     def membership(self, key):
         """
-        Return the incidences involving a key
+        Not sure here.
 
         """
         pass
 
     def elements(self, level):
         """
-        Return all elements at a given level
+        RNot sure here.
 
         """
         pass
 
     def dual(self):
         """
-        Return the dual hypergraph by flipping the incidence pairs. 
-        This returns a new dataframe with (index, edge, node) tuples removed 
+        create new dataframe by swapping the edge and row columns in the dataframe and remove incidence attributes.
 
         """
         pass
