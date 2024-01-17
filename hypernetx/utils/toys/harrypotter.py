@@ -75,3 +75,35 @@ class HarryPotter(object):
         for col_idx, col in enumerate(list(ldict.keys())):
             slabels.update({col_idx: np.array(list(ldict[col].keys()))})
         self.labels = slabels
+        self.cell_weight_col = "wandweight"
+
+    def set_random_wandweights(self) -> None:
+        self.dataframe[self.cell_weight_col] = [
+            np.random.rand() for _ in self.dataframe.index
+        ]
+
+    def get_edge_properties(self):
+        if self.cell_weight_col not in self.dataframe:
+            return
+
+        edgeprops = (
+            self.dataframe.groupby(["House"])
+            .agg({self.cell_weight_col: "sum"})
+            .reset_index()
+            .rename(columns={"House": "id"})
+        )
+        edgeprops["level"] = 0
+        return edgeprops
+
+    def get_node_properties(self):
+        if self.cell_weight_col not in self.dataframe:
+            return
+
+        nodeprops = (
+            self.dataframe.groupby(["Blood status"])
+            .agg({self.cell_weight_col: "sum"})
+            .reset_index()
+            .rename(columns={"Blood status": "id"})
+        )
+        nodeprops["level"] = 1
+        return nodeprops

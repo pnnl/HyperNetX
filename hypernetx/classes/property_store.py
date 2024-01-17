@@ -133,37 +133,40 @@ class DataFramePropertyStore(PropertyStore):
     # TODO: override magic methods defined in abstract class
 
 
-# use case: one big dataframe
-# types of dataframe
-# incidence dataframe, nodes are indexes, edges are column
+#####################################################################################################
+# Factory Methods
+#####################################################################################################
+
+# Notes
+# Hypergraph class allows 5 types of setsystems which are used to create the EntitySet
+# Eventually there five types will be used to create the PropertyStore
+# Iterable of Iterables, Dict of Iterables, Dict of Dict, pandas.Dataframe, numpy.ndarray
 
 
-def fromCombinedDataFrame(
-    df: DataFrame,
-) -> Tuple[PropertyStore, PropertyStore]:
-    """Parse dataframe and create PropertyStore instances
+class PropertyStoreFactory:
+    @staticmethod
+    def from_dataframe(
+        level: T, data: DataFrame | Mapping[T, Mapping[T, T]]
+    ) -> PropertyStore:
+        """Create a PropertyStore instance based on level and data
 
-    Returns:
+        Process dataframe into valid input which will be used to create a PropertyStore instance
 
-    PropertyStore: edgeids map to edge properties
-    PropertyStore: nodeids map to node properties
+        Ideally the dataframe should be an incident matrix of all the edge-node pairs of the hypergraph.
+        The first column should be the edges, second column should be the nodes
+        The properties column should be labeled 'properties'
+        All other columns are considered cell attributes
+        """
+        # do some processing on data
+        ...
+        return DataFramePropertyStore(0, data)
 
-    Example for edgeids:
+    @staticmethod
+    def from_dict(level: T, data: Mapping[T, Mapping[T, T]]) -> PropertyStore:
+        """Create a PropertyStore instance based on level and data
 
-    id: property
-    Hufflepuff: {housesize: 42}
-
-    example for nodeid
-
-    Half-Blood: {eye_color: variable, hair_color: variable}
-
-    example
-
-
-    Step 1: determine what type of dataframe (IP, node, edge)
-    copy the entityset helper method
-
-    Step2: create the PropertyStore based
-
-    """
-    ...
+        Process into valid input which will be used to create a PropertyStore instance
+        """
+        # do some processing on data
+        ...
+        return DictPropertyStore(0, data)
