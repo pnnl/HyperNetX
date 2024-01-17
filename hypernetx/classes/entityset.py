@@ -264,6 +264,7 @@ class EntitySet:
 
     @property
     def cell_properties(self) -> Optional[pd.DataFrame]:
+        # method on incidence stores
         """Properties assigned to cells of the incidence matrix
 
         Returns
@@ -275,6 +276,7 @@ class EntitySet:
 
     @property
     def data(self) -> np.ndarray:
+        # method on incidence store
         """Sparse representation of the data table as an incidence tensor
 
         This can also be thought of as an encoding of `dataframe`, where items in each column of
@@ -306,6 +308,7 @@ class EntitySet:
 
     @property
     def labels(self) -> dict[str, list]:
+        # method on incidence store
         """Labels of all items in each column of the underlying data table
 
         Returns
@@ -331,6 +334,7 @@ class EntitySet:
 
     @property
     def cell_weights(self) -> dict[str, tuple[T]]:
+        # method on incidence store
         """Cell weights corresponding to each row of the underlying data table
 
         Returns
@@ -351,6 +355,7 @@ class EntitySet:
 
     @property
     def dimensions(self) -> tuple[int]:
+        # method on incidence store
         """Dimensions of data i.e., the number of distinct items in each level (column) of the underlying data table
 
         Returns
@@ -371,6 +376,7 @@ class EntitySet:
 
     @property
     def dimsize(self) -> int:
+        # method on incidence store
         """Number of levels (columns) in the underlying data table
 
         Returns
@@ -382,6 +388,7 @@ class EntitySet:
 
     @property
     def properties(self) -> pd.DataFrame:
+        # method using incidence store and property stores
         """Properties assigned to items in the underlying data table
 
         Returns
@@ -393,6 +400,7 @@ class EntitySet:
 
     @property
     def uid(self) -> Hashable:
+        #?
         """User-defined unique identifier for the `Entity`
 
         Returns
@@ -403,6 +411,7 @@ class EntitySet:
 
     @property
     def uidset(self) -> set:
+        #?
         """Labels of all items in level 0 (first column) of the underlying data table
 
         Returns
@@ -419,6 +428,7 @@ class EntitySet:
 
     @property
     def children(self) -> set:
+        #method on incidence store?
         """Labels of all items in level 1 (second column) of the underlying data table
 
         Returns
@@ -434,6 +444,7 @@ class EntitySet:
         return self.uidset_by_level(1)
 
     def uidset_by_level(self, level: int) -> set:
+        #method on incidence store?
         """Labels of all items in a particular level (column) of the underlying data table
 
         Parameters
@@ -456,6 +467,7 @@ class EntitySet:
         return self.uidset_by_column(col)
 
     def uidset_by_column(self, column: Hashable) -> set:
+        #method on incidence store?
         # TODO: This threw an error when trying it on the harry potter dataset,
         # when trying 0, or 1 for column. I'm not sure how this should be used
         """Labels of all items in a particular column (level) of the underlying data table
@@ -487,6 +499,7 @@ class EntitySet:
 
     @property
     def elements(self) -> dict[Any, AttrList]:
+        #method on incidence store
         """System of sets representation of the first two levels (columns) of the underlying data table
 
         Each item in level 0 (first column) defines a set containing all the level 1
@@ -515,6 +528,7 @@ class EntitySet:
 
     @property
     def incidence_dict(self) -> dict[T, list[T]]:
+        #method on incidence store
         """System of sets representation of the first two levels (columns) of the underlying data table
 
         Returns
@@ -531,6 +545,7 @@ class EntitySet:
 
     @property
     def memberships(self) -> dict[Any, AttrList]:
+        #method on incidence store
         """System of sets representation of the first two levels (columns) of the
         underlying data table
 
@@ -554,6 +569,7 @@ class EntitySet:
         return self.elements_by_level(1, 0)
 
     def elements_by_level(self, level1: int, level2: int) -> dict[Any, AttrList]:
+        #method on incidence store
         """System of sets representation of two levels (columns) of the underlying data table
 
         Each item in level1 defines a set containing all the level2 items
@@ -586,6 +602,7 @@ class EntitySet:
         return self.elements_by_column(col1, col2)
 
     def elements_by_column(self, col1: Hashable, col2: Hashable) -> dict[Any, AttrList]:
+        #method on incidence store
         """System of sets representation of two columns (levels) of the underlying data table
 
         Each item in col1 defines a set containing all the col2 items
@@ -625,6 +642,7 @@ class EntitySet:
 
     @property
     def dataframe(self) -> pd.DataFrame:
+        #method on incidence store or property store
         """The underlying data table stored by the Entity
 
         Returns
@@ -636,6 +654,7 @@ class EntitySet:
     @property
     @warn_to_be_deprecated
     def isstatic(self) -> bool:
+        #?
         """Whether to treat the underlying data as static or not
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -650,6 +669,7 @@ class EntitySet:
         return self._static
 
     def size(self, level: int = 0) -> int:
+        #method on incidence store or property store
         """The number of items in a level of the underlying data table
 
         Equivalent to ``self.dimensions[level]``
@@ -672,6 +692,7 @@ class EntitySet:
 
     @property
     def empty(self) -> bool:
+        #method on incidence store or property store
         """Whether the underlying data table is empty or not
 
         Returns
@@ -686,6 +707,7 @@ class EntitySet:
         return self._dimsize == 0
 
     def is_empty(self, level: int = 0) -> bool:
+        #method on incidence store or property store
         """Whether a specified level (column) of the underlying data table is empty or not
 
         Parameters
@@ -704,6 +726,7 @@ class EntitySet:
         return self.empty or self.size(level) == 0
 
     def __len__(self):
+        #method on incidence store or property store
         """Number of items in level 0 (first column)
 
         Returns
@@ -713,6 +736,7 @@ class EntitySet:
         return self.dimensions[0]
 
     def __contains__(self, item):
+        #method on incidence store or property store
         """Whether an item is contained within any level of the data
 
         Parameters
@@ -729,6 +753,7 @@ class EntitySet:
         return False
 
     def __getitem__(self, item):
+        #method on incidence store or property store
         """Access into the system of sets representation of the first two levels (columns) given by `elements`
 
         Can be used to access and assign properties to an ``item`` in level 0 (first column)
@@ -750,6 +775,7 @@ class EntitySet:
         return self.elements[item]
 
     def __iter__(self):
+        #method on incidence store or property store
         """Iterates over items in level 0 (first column) of the underlying data table
 
         Returns
@@ -763,6 +789,7 @@ class EntitySet:
         return iter(self.elements)
 
     def __call__(self, label_index=0):
+        #method on incidence store or property store
         # TODO: (Madelyn) : I don't think this is the intended use of __call__, can we change/deprecate?
         """Iterates over items labels in a specified level (column) of the underlying data table
 
@@ -782,6 +809,7 @@ class EntitySet:
         return iter(self.labels[self._data_cols[label_index]])
 
     def index(self, column: str, value: Optional[str] = None) -> int | tuple[int, int]:
+        #method on incidence store or property store
         """Get level index corresponding to a column and (optionally) the index of a value in that column
 
         The index of ``value`` is its position in the list given by ``self.labels[column]``, which is used
@@ -828,6 +856,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def indices(self, column: str, values: str | Iterable[str]) -> list[int]:
+        #?
         """Get indices of one or more value(s) in a column
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -861,6 +890,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def translate(self, level: int, index: int | list[int]) -> str | list[str]:
+        #?
         """Given indices of a level and value(s), return the corresponding value label(s)
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -890,6 +920,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def translate_arr(self, coords: tuple[int, int]) -> list[str]:
+        #?
         """Translate a full encoded row of the data table e.g., a row of ``self.data``
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -919,6 +950,7 @@ class EntitySet:
         max_level: Optional[int] = None,
         return_index: bool = True,
     ) -> int | tuple[int, int] | None:
+        #?
         """First level containing the given item label
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -962,6 +994,7 @@ class EntitySet:
         return None
 
     def add(self, *args) -> Self:
+        #method on incidence store or property store
         """Updates the underlying data table with new entity data from multiple sources
 
         Parameters
@@ -993,6 +1026,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def add_elements_from(self, arg_set) -> Self:
+        #method on incidence store or property store
         """Adds arguments from an iterable to the data table one at a time
 
         DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -1019,6 +1053,7 @@ class EntitySet:
         | Iterable[Iterable[T]]
         | Mapping[T, Mapping[T, Any]],
     ) -> Self:
+        #method on incidence store or property store
         """Updates the underlying data table with new entity data
 
         Supports adding from either an existing EntitySet or a representation of entity
@@ -1058,6 +1093,7 @@ class EntitySet:
         return self
 
     def __add_from_dataframe(self, df: pd.DataFrame) -> None:
+        #method on incidence store or property store
         """Helper function to append rows to `self.dataframe`
 
         Parameters
@@ -1082,6 +1118,7 @@ class EntitySet:
             self._state_dict.clear()
 
     def remove(self, *args: T) -> EntitySet:
+        #method on incidence store or property store
         """Removes all rows containing specified item(s) from the underlying data table
 
         Parameters
@@ -1104,6 +1141,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def remove_elements_from(self, arg_set):
+        #method on incidence store or property store
         """Removes all rows containing specified item(s) from the underlying data table
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -1125,6 +1163,7 @@ class EntitySet:
         return self
 
     def remove_element(self, item: T) -> None:
+        #method on incidence store or property store
         """Removes all rows containing a specified item from the underlying data table
 
         Parameters
@@ -1157,6 +1196,7 @@ class EntitySet:
 
     @warn_to_be_deprecated
     def encode(self, data: pd.DataFrame) -> np.array:
+        #method on incidence store or property store
         """
         Encode dataframe to numpy array
 
@@ -1179,6 +1219,7 @@ class EntitySet:
         weights: bool | dict = False,
         aggregateby: str = "count",
     ) -> Optional[sp.csr_matrix]:
+        #method on incidence store
         """Incidence matrix representation for two levels (columns) of the underlying data table
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -1245,6 +1286,7 @@ class EntitySet:
         aggregateby: Optional[str] = "sum",
         **kwargs,
     ) -> EntitySet:
+        #method on incidence store or property stores
         """
 
         Parameters
@@ -1311,6 +1353,7 @@ class EntitySet:
     def restrict_to_indices(
         self, indices: int | Iterable[int], level: int = 0, **kwargs
     ) -> EntitySet:
+        #method on incidence store or property stores
         """Create a new EntitySet by restricting the data table to rows containing specific items in a given level
 
         [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
@@ -1352,6 +1395,7 @@ class EntitySet:
         misc_col: Optional[str] = None,
         replace: bool = False,
     ) -> None:
+        #method on incidence store 
         """Assign new properties to cells of the incidence matrix and update
         :attr:`properties`
 
@@ -1391,6 +1435,7 @@ class EntitySet:
         level_col=0,
         id_col=1,
     ) -> None:
+        #method on incidence store 
         """Assign new properties to items in the data table, update :attr:`properties`
 
         Parameters
@@ -1430,6 +1475,7 @@ class EntitySet:
             self._properties_from_dict(props)
 
     def _properties_from_dataframe(self, props: pd.DataFrame) -> None:
+        #method on incidence storeor property stores
         """Private handler for updating :attr:`properties` from a DataFrame
 
         Parameters
@@ -1530,6 +1576,7 @@ class EntitySet:
             self._properties_from_dataframe(props)
 
     def _property_loc(self, item: T) -> tuple[int, T]:
+        #method on incidence store or property stores
         """Get index in :attr:`properties` of an item of unspecified level
 
         Parameters
@@ -1573,6 +1620,7 @@ class EntitySet:
         prop_val: Any,
         level: Optional[int] = None,
     ) -> None:
+        #method on incidence store or property stores
         """Set a property of an item
 
         Parameters
@@ -1626,6 +1674,7 @@ class EntitySet:
                 }
 
     def get_property(self, item: T, prop_name: Any, level: Optional[int] = None) -> Any:
+        #method on incidence store or property stores
         """Get a property of an item
 
         Parameters
@@ -1684,6 +1733,7 @@ class EntitySet:
         return prop_val
 
     def get_properties(self, item: T, level: Optional[int] = None) -> dict[Any, Any]:
+        #method on incidence store or property stores
         """Get all properties of an item
 
         Parameters
@@ -1733,6 +1783,7 @@ class EntitySet:
         return prop_vals
 
     def _cell_properties_from_dataframe(self, cell_props: pd.DataFrame) -> None:
+        #method on incidence store
         """Private handler for updating :attr:`properties` from a DataFrame
 
         Parameters
@@ -1818,6 +1869,7 @@ class EntitySet:
     def set_cell_property(
         self, item1: T, item2: T, prop_name: Any, prop_val: Any
     ) -> None:
+        #method on incidence store 
         """Set a property of a cell i.e., incidence between items of different levels
 
         Parameters
@@ -1858,6 +1910,7 @@ class EntitySet:
             )
 
     def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
+        #method on incidence store 
         """Get a property of a cell i.e., incidence between items of different levels
 
         Parameters
@@ -1906,6 +1959,7 @@ class EntitySet:
         return prop_val
 
     def get_cell_properties(self, item1: T, item2: T) -> Optional[dict[Any, Any]]:
+        #method on incidence store 
         """Get all properties of a cell, i.e., incidence between items of different
         levels
 
@@ -2027,6 +2081,7 @@ class EntitySet:
     def collapse_identical_elements(
         self, return_equivalence_classes: bool = False, **kwargs
     ) -> EntitySet | tuple[EntitySet, dict[str, list[str]]]:
+        #method on incidence storeand property stores
         """Create a new :class:`EntitySet` by collapsing sets with the same set elements
 
         Each item in level 0 (first column) defines a set containing all the level 1

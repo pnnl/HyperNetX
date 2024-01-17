@@ -574,6 +574,7 @@ class Hypergraph:
 
     @property
     def edges(self):
+        # returns property store on edges
         """
         Object associated with self._edges.
 
@@ -585,6 +586,7 @@ class Hypergraph:
 
     @property
     def nodes(self):
+        # returns property store on nodes
         """
         Object associated with self._nodes.
 
@@ -596,6 +598,7 @@ class Hypergraph:
 
     @property
     def dataframe(self):
+        # returns incidence store 
         """Returns dataframe of incidence pairs and their properties.
 
         Returns
@@ -606,16 +609,18 @@ class Hypergraph:
 
     @property
     def properties(self):
+        # method on hypergraph class that concatenates the property stores on edges and nodes
         """Returns dataframe of edge and node properties.
 
         Returns
         -------
         pd.DataFrame
         """
-        return self.E.properties
+        return self.E.properties 
 
     @property
     def edge_props(self):
+        # Method on property store on edges
         """Dataframe of edge properties
         indexed on edge ids
 
@@ -627,6 +632,7 @@ class Hypergraph:
 
     @property
     def node_props(self):
+        # property store on nodes
         """Dataframe of node properties
         indexed on node ids
 
@@ -638,6 +644,7 @@ class Hypergraph:
 
     @property
     def incidence_dict(self):
+        # method on incidence store
         """
         Dictionary keyed by edge uids with values the uids of nodes in each
         edge
@@ -651,6 +658,7 @@ class Hypergraph:
 
     @property
     def shape(self):
+        # method on incidence store
         """
         (number of nodes, number of edges)
 
@@ -662,6 +670,7 @@ class Hypergraph:
         return len(self._nodes.elements), len(self._edges.elements)
 
     def __str__(self):
+        # method on incidence store
         """
         String representation of hypergraph
 
@@ -673,6 +682,7 @@ class Hypergraph:
         return f"{self.name}, <class 'hypernetx.classes.hypergraph.Hypergraph'>"
 
     def __repr__(self):
+        # method on incidence store
         """
         String representation of hypergraph
 
@@ -684,6 +694,7 @@ class Hypergraph:
         return f"{self.name}, hypernetx.classes.hypergraph.Hypergraph"
 
     def __len__(self):
+        # method on property store of nodes
         """
         Number of nodes
 
@@ -695,6 +706,7 @@ class Hypergraph:
         return len(self._nodes)
 
     def __iter__(self):
+        # method on property store of nodes
         """
         Iterate over the nodes of the hypergraph
 
@@ -706,6 +718,7 @@ class Hypergraph:
         return iter(self.nodes)
 
     def __contains__(self, item):
+        # method on property store of nodes
         """
         Returns boolean indicating if item is in self.nodes
 
@@ -717,6 +730,7 @@ class Hypergraph:
         return item in self.nodes
 
     def __getitem__(self, node):
+        # method on incidence store
         """
         Returns the neighbors of node
 
@@ -735,6 +749,7 @@ class Hypergraph:
     def get_cell_properties(
         self, edge: str, node: str, prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
+        # method on incidence store
         """Get cell properties on a specified edge and node
 
         Parameters
@@ -758,6 +773,7 @@ class Hypergraph:
         return self.edges.get_cell_property(edge, node, prop_name)
 
     def get_properties(self, id, level=None, prop_name=None):
+        # method on each property store and incidence store.
         """Returns an object's specific property or all properties
 
         Parameters
@@ -783,6 +799,7 @@ class Hypergraph:
 
     @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
+        # method on incidence store
         """
         Creates an ::term::s-linegraph for the Hypergraph.
         If edges=True (default)then the edges will be the vertices of the line
@@ -829,6 +846,7 @@ class Hypergraph:
         return g
 
     def set_state(self, **kwargs):
+        #?
         """
         Allow state_dict updates from outside of class. Use with caution.
 
@@ -840,6 +858,7 @@ class Hypergraph:
         self._state_dict.update(kwargs)
 
     def _set_default_state(self,empty=False):
+        #?
         """Populate state_dict with default values"""
         self._state_dict = {}
 
@@ -871,6 +890,7 @@ class Hypergraph:
 
 
     def edge_size_dist(self):
+        # method on incidence store
         """
         Returns the size for each edge
 
@@ -888,6 +908,7 @@ class Hypergraph:
             return self._state_dict["edge_size_dist"]
 
     def degree(self, node, s=1, max_size=None):
+        # method on incidence store
         """
         The number of edges of size s that contain node.
 
@@ -917,6 +938,7 @@ class Hypergraph:
             return len(memberships)
 
     def size(self, edge, nodeset=None):
+        # method on incidence store
         """
         The number of nodes in nodeset that belong to edge.
         If nodeset is None then returns the size of edge
@@ -937,6 +959,7 @@ class Hypergraph:
         return len(self.edges[edge])
 
     def number_of_nodes(self, nodeset=None):
+        # method on iproperty store of nodes
         """
         The number of nodes in nodeset belonging to hypergraph.
 
@@ -956,6 +979,7 @@ class Hypergraph:
         return len(self.nodes)
 
     def number_of_edges(self, edgeset=None):
+        # method on iproperty store of edges
         """
         The number of edges in edgeset belonging to hypergraph.
 
@@ -974,6 +998,7 @@ class Hypergraph:
         return len(self.edges)
 
     def order(self):
+        # method on property store of nodes
         """
         The number of nodes in hypergraph.
 
@@ -984,12 +1009,14 @@ class Hypergraph:
         return len(self.nodes)
 
     def dim(self, edge):
+        # method on incidence store
         """
         Same as size(edge)-1.
         """
         return self.size(edge) - 1
 
     def neighbors(self, node, s=1):
+        # method on incidence store
         """
         The nodes in hypergraph which share s edge(s) with node.
 
@@ -1027,6 +1054,7 @@ class Hypergraph:
         return neighbors
 
     def edge_neighbors(self, edge, s=1):
+        # method on incidence store
         """
         The edges in hypergraph which share s nodes(s) with edge.
 
@@ -1065,6 +1093,7 @@ class Hypergraph:
             return edge_neighbors
 
     def incidence_matrix(self, weights=False, index=False):
+        # method on incidence store
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
@@ -1122,6 +1151,7 @@ class Hypergraph:
             return M
 
     def adjacency_matrix(self, s=1, index=False, remove_empty_rows=False):
+        # method on incidence store
         """
         The :term:`s-adjacency matrix` for the hypergraph.
 
@@ -1156,6 +1186,7 @@ class Hypergraph:
             return A
 
     def edge_adjacency_matrix(self, s=1, index=False):
+        # method on incidence store
         """
         The :term:`s-adjacency matrix` for the dual hypergraph.
 
@@ -1194,6 +1225,7 @@ class Hypergraph:
             return A
 
     def auxiliary_matrix(self, s=1, node=True, index=False):
+        # method on incidence store
         """
         The unweighted :term:`s-edge or node auxiliary matrix` for hypergraph
 
@@ -1228,6 +1260,7 @@ class Hypergraph:
             return B
 
     def bipartite(self):
+        # method on hypergraph using methods on property and incidence stores
         """
         Constructs the networkX bipartite graph associated to hypergraph.
 
@@ -1252,6 +1285,7 @@ class Hypergraph:
         return B
 
     def dual(self, name=None, switch_names=True):
+        # method on hypergraph using methods on property and incidence stores
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -1304,6 +1338,7 @@ class Hypergraph:
         use_reps=None,
         return_counts=None,
     ):
+        # method on hypergraph using methods on property and incidence stores
         """
         Constructs a new hypergraph gotten by identifying edges containing the
         same nodes
@@ -1363,6 +1398,7 @@ class Hypergraph:
         use_reps=None,
         return_counts=None,
     ) -> Hypergraph:
+        # method on hypergraph using methods on property and incidence stores
         """
         Constructs a new hypergraph gotten by identifying nodes contained by
         the same edges
@@ -1428,6 +1464,7 @@ class Hypergraph:
         use_reps=None,
         return_counts=None,
     ):
+        # method on hypergraph using methods on property and incidence stores
         """
         Returns a new hypergraph by collapsing nodes and edges.
 
@@ -1492,6 +1529,7 @@ class Hypergraph:
         return temp.collapse_edges(name=name)
 
     def restrict_to_nodes(self, nodes, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """New hypergraph gotten by restricting to nodes
 
         Parameters
@@ -1508,6 +1546,7 @@ class Hypergraph:
         return self.remove(keys, level=1)
 
     def restrict_to_edges(self, edges, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """New hypergraph gotten by restricting to edges
 
         Parameters
@@ -1524,12 +1563,15 @@ class Hypergraph:
         return self.remove(keys, level=0)
 
     def remove_edges(self, keys, name=None):
+        # method on hypergraph using methods on property of edges and incidence store
         return self.remove(keys, level=0, name=name)
 
     def remove_nodes(self, keys, name=None):
+        # method on hypergraph using methods on property of nodes and incidence stores
         return self.remove(keys, level=1, name=name)
 
     def remove(self, keys, level=None, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
@@ -1590,6 +1632,7 @@ class Hypergraph:
         )
 
     def toplexes(self, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """
         Returns a :term:`simple hypergraph` corresponding to self.
 
@@ -1624,6 +1667,7 @@ class Hypergraph:
         return self.restrict_to_edges(tops, name=name)
 
     def is_connected(self, s=1, edges=False):
+        # method on incidence store
         """
         Determines if hypergraph is :term:`s-connected <s-connected,
         s-node-connected>`.
@@ -1667,6 +1711,7 @@ class Hypergraph:
         return is_connected
 
     def singletons(self):
+        # method on incidence store
         """
         Returns a list of singleton edges. A singleton edge is an edge of
         size 1 with a node of degree 1.
@@ -1705,6 +1750,7 @@ class Hypergraph:
         return singles
 
     def remove_singletons(self, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """
         Constructs clone of hypergraph with singleton edges removed.
 
@@ -1721,6 +1767,7 @@ class Hypergraph:
             return self.remove(singletons, level=0, name=name)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
+        # method on hypergraph using methods on property and incidence stores
         """
         Returns a generator for the :term:`s-edge-connected components
         <s-edge-connected component>`
@@ -1778,6 +1825,7 @@ class Hypergraph:
     def s_component_subgraphs(
         self, s=1, edges=True, return_singletons=False, name=None
     ):
+        # method on hypergraph using methods on property and incidence stores
         """
 
         Returns a generator for the induced subgraphs of s_connected
@@ -1812,6 +1860,7 @@ class Hypergraph:
                 yield self.restrict_to_nodes(c, name=f"{name or self.name}:{idx}")
 
     def s_components(self, s=1, edges=True, return_singletons=True):
+        # method on hypergraph using methods on property and incidence stores
         """
         Same as s_connected_components
 
@@ -1824,6 +1873,7 @@ class Hypergraph:
         )
 
     def connected_components(self, edges=False):
+        # method on hypergraph using methods on property and incidence stores
         """
         Same as :meth:`s_connected_components` with s=1, but nodes are returned
         by default. Return iterator.
@@ -1835,6 +1885,7 @@ class Hypergraph:
         return self.s_connected_components(edges=edges, return_singletons=True)
 
     def connected_component_subgraphs(self, return_singletons=True, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """
         Same as :meth:`s_component_subgraphs` with s=1. Returns iterator
 
@@ -1847,6 +1898,7 @@ class Hypergraph:
         )
 
     def components(self, edges=False):
+        # method on hypergraph using methods on property and incidence stores
         """
         Same as :meth:`s_connected_components` with s=1, but nodes are returned
         by default. Return iterator.
@@ -1858,6 +1910,7 @@ class Hypergraph:
         return self.s_connected_components(s=1, edges=edges)
 
     def component_subgraphs(self, return_singletons=False, name=None):
+        # method on hypergraph using methods on property and incidence stores
         """
         Same as :meth:`s_components_subgraphs` with s=1. Returns iterator.
 
@@ -1870,6 +1923,7 @@ class Hypergraph:
         )
 
     def node_diameters(self, s=1):
+        # method on incidence stores 
         """
         Returns the node diameters of the connected components in hypergraph.
 
@@ -1893,6 +1947,7 @@ class Hypergraph:
         return diams[loc], diams, comps
 
     def edge_diameters(self, s=1):
+        # method on incidence stores
         """
         Returns the edge diameters of the s_edge_connected component subgraphs
         in hypergraph.
@@ -1927,6 +1982,7 @@ class Hypergraph:
         return diams[loc], diams, comps
 
     def diameter(self, s=1):
+        # method on incidence stores
         """
         Returns the length of the longest shortest s-walk between nodes in
         hypergraph
@@ -1961,6 +2017,7 @@ class Hypergraph:
         raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
 
     def edge_diameter(self, s=1):
+        # method on incidence stores
         """
         Returns the length of the longest shortest s-walk between edges in
         hypergraph
@@ -1995,6 +2052,7 @@ class Hypergraph:
         raise HyperNetXError(f"Hypergraph is not s-connected. s={s}")
 
     def distance(self, source, target, s=1):
+        # method on incidence stores
         """
         Returns the shortest s-walk distance between two nodes in the
         hypergraph.
@@ -2039,6 +2097,7 @@ class Hypergraph:
         return dist
 
     def edge_distance(self, source, target, s=1):
+        # method on incidence stores
         """XX TODO: still need to return path and translate into user defined
         nodes and edges Returns the shortest s-walk distance between two edges
         in the hypergraph.
@@ -2095,6 +2154,7 @@ class Hypergraph:
     def incidence_dataframe(
         self, sort_rows=False, sort_columns=False, cell_weights=True
     ):
+        # method on incidence stores
         """
         Returns a pandas dataframe for hypergraph indexed by the nodes and
         with column headers given by the edge names.
