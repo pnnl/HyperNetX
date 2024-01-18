@@ -670,7 +670,7 @@ class Hypergraph:
         return len(self._nodes.elements), len(self._edges.elements)
 
     def __str__(self):
-        # method on incidence store
+        # method on hypergraph
         """
         String representation of hypergraph
 
@@ -682,7 +682,7 @@ class Hypergraph:
         return f"{self.name}, <class 'hypernetx.classes.hypergraph.Hypergraph'>"
 
     def __repr__(self):
-        # method on incidence store
+        #  method on hypergraph
         """
         String representation of hypergraph
 
@@ -773,7 +773,7 @@ class Hypergraph:
         return self.edges.get_cell_property(edge, node, prop_name)
 
     def get_properties(self, id, level=None, prop_name=None):
-        # method on each property store and incidence store.
+        # method on property stores.
         """Returns an object's specific property or all properties
 
         Parameters
@@ -799,7 +799,7 @@ class Hypergraph:
 
     @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
-        # method on incidence store
+        # method on hypergraph using incidence store and propertystore
         """
         Creates an ::term::s-linegraph for the Hypergraph.
         If edges=True (default)then the edges will be the vertices of the line
@@ -846,7 +846,7 @@ class Hypergraph:
         return g
 
     def set_state(self, **kwargs):
-        #?
+        # method on hypergraph use incidence and property stores
         """
         Allow state_dict updates from outside of class. Use with caution.
 
@@ -858,7 +858,7 @@ class Hypergraph:
         self._state_dict.update(kwargs)
 
     def _set_default_state(self,empty=False):
-        #?
+        # method on hypergraph use incidence and property stores
         """Populate state_dict with default values"""
         self._state_dict = {}
 
@@ -959,7 +959,7 @@ class Hypergraph:
         return len(self.edges[edge])
 
     def number_of_nodes(self, nodeset=None):
-        # method on iproperty store of nodes
+        # method on property store of nodes
         """
         The number of nodes in nodeset belonging to hypergraph.
 
@@ -979,7 +979,7 @@ class Hypergraph:
         return len(self.nodes)
 
     def number_of_edges(self, edgeset=None):
-        # method on iproperty store of edges
+        # method on property store of edges
         """
         The number of edges in edgeset belonging to hypergraph.
 
@@ -1630,6 +1630,9 @@ class Hypergraph:
             misc_properties_col=self.edges._misc_props_col,
             name=name,
         )
+    
+    def remove_incidence(self):
+        pass
 
     def toplexes(self, name=None):
         # method on hypergraph using methods on property and incidence stores

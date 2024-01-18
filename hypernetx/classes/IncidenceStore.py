@@ -144,14 +144,14 @@ class IncidenceStore:
 
     def membership(self, key):
         """
-        Not sure here.
+        move to HG vieew
 
         """
         pass
 
     def elements(self, level):
         """
-        Not sure here.
+        move to HG view
 
         """
         pass
