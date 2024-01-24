@@ -79,6 +79,7 @@ class HypergraphView(object):
         from AttrList 
         If level 0 - elements, if level 1 - memberships,
         if level 2 - TBD - uses getitem from stores and links to props
+        
 
         Parameters
         ----------
@@ -91,7 +92,7 @@ class HypergraphView(object):
         """
         Return dictionary of properties or single property for key
         Currently ties into AttrList object in utils.
-        Uses getitem from stores
+        Uses getitem from property stores
 
         Parameters
         ----------
@@ -114,6 +115,7 @@ class HypergraphView(object):
         """
         Iterator over keys in store -
         level 0 = edges, 1 = nodes, 2 = incidence pairs
+        Uses incidence store.
         """
         pass
     

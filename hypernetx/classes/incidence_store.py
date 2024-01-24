@@ -26,26 +26,17 @@ class IncidenceStore(ABC):
     dual
     """
     
-    def __init__(self, data, edge_level, node_level, aggregate_by = None):
+    def __init__(self, data, edge_level, node_level):
         """
-        _summary_
+        Multi index for (Incidence) Property Store with additional
+        functionality
 
         Parameters
         ----------
         data : _type_
-            _description_
-        edge_level : _type_
-            key in data to identify edge ids (column name, index etc.)
-        node_level : _type_
-            key in data to identify node ids
-        aggregate_by : _type_, optional
-            could be dictionary or str descriptor
+            collection of ordered pairs
         """
         self._data = incidence_data  # Data with incidence pairs and attributes
-        self.agg = aggregate_by or 'first'
-        self.edge_level = edge_level,
-        self.node_level = node_level, #### These references are reversed
-        ## for the dual making it unnecessary to reorder.
 
         ### class does not allow duplicate pairs so either the first pair
         # and its data will be used or the aggregate_by method will be
@@ -83,32 +74,32 @@ class IncidenceStore(ABC):
                 
         pass
     
-    #### Do we need both of these??? Or can we have a single getitem??
-    def __getitem__(self, incidence_key):
-        """
-        key is incidence key (e.g., index) and returns incidence pair and attributes
+    # #### Do we need both of these??? Or can we have a single getitem??
+    # def __getitem__(self, incidence_key):
+    #     """
+    #     key is incidence key (e.g., index) and returns incidence pair and attributes
 
-        """
-        ### let getitem retrieve single line or multiple lines depending on if 
-        ### incidence_key is a hashable key for the instance, or an ordered pair of an
-        ### incidence. Should replace get_incidence_attributes
-        return self._data[incidence_key]
-    def get_incidence_attributes(self, incidence_pair):
-        '''
-        Given an incidence pair return all instances of that incidence with incidence keys and attributes.
+    #     """
+    #     ### let getitem retrieve single line or multiple lines depending on if 
+    #     ### incidence_key is a hashable key for the instance, or an ordered pair of an
+    #     ### incidence. Should replace get_incidence_attributes
+    #     return self._data[incidence_key]
+    # def get_incidence_attributes(self, incidence_pair):
+    #     '''
+    #     Given an incidence pair return all instances of that incidence with incidence keys and attributes.
 
-        Parameters
-        ----------
-        incidence_pair : tuple
-            (edge, node) pair.
+    #     Parameters
+    #     ----------
+    #     incidence_pair : tuple
+    #         (edge, node) pair.
 
-        Returns
-        -------
-        dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and 
-        attributes as dictionary values.
+    #     Returns
+    #     -------
+    #     dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and 
+    #     attributes as dictionary values.
 
-        '''
-        pass
+    #     '''
+    #     pass
 
     def neighbors(self,level,key):
         """
@@ -124,24 +115,24 @@ class IncidenceStore(ABC):
             _description_
         """
     
-    def dataframe(self):
-        """
-        Dataframe format with columns edge,node,weight,<properties>
-        One column should handle variable length property dictionaries
-        """
-        pass
+    # def dataframe(self):
+    #     """
+    #     Dataframe format with columns edge,node,weight,<properties>
+    #     One column should handle variable length property dictionaries
+    #     """
+    #     pass
 
-    ### By passing dataframe we might handle these in the hypergraph class.
-    def incidence_dataframe(self,value=1):
-        ## if a dataframe then this could be a pivot table
-        ### with data dictated by the property, eg. weight
-    def incidence_matrix(self, value=1, index=False): 
-        ### incidence_dataframe values, currently sparse matrix and depends
-        ### on label encoding
-        """
-        Implement incidence matrix creation logic here from unique incidence pairs.
-        """
-        pass
+    # ### By passing dataframe we might handle these in the hypergraph class.
+    # def incidence_dataframe(self,value=1):
+    #     ## if a dataframe then this could be a pivot table
+    #     ### with data dictated by the property, eg. weight
+    # def incidence_matrix(self, value=1, index=False): 
+    #     ### incidence_dataframe values, currently sparse matrix and depends
+    #     ### on label encoding
+    #     """
+    #     Implement incidence matrix creation logic here from unique incidence pairs.
+    #     """
+    #     pass
 
 
     ### This can be replaced by shape since we only have 2 data columns
@@ -184,13 +175,14 @@ class IncidenceStore(ABC):
 
         Returns
         -------
-        _type_
-            _description_
+        IncidenceStore 
+            new instance with dual flag = True
         """
         if inplace: ### This should keep links to the same data
             return self.__class__(data,node_level,edge_level)
         else:
             return self.__class__(deepcopy(data),node_level,edge_level)
+        
 
     def collapse(self,level, return_equivalence_classes=False):
         """
