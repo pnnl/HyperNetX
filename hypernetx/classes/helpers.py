@@ -16,7 +16,7 @@ T = TypeVar("T", bound=Union[str, int])
 
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
-
+    Can these be stored in statedict until a change is made to the stores?
     Parameters
     ----------
     entity : hypernetx.EntitySet
@@ -24,13 +24,23 @@ class AttrList(UserList):
         ``(level, item)``
     initlist : list, optional
         list of elements, passed to ``UserList`` constructor
-    """
+    
+    # New Parameters
+    # --------------
+    # key :
+    # property_store :
+    # incidence_store :
+    
+    # methods return curren view of properties and 
+    # neighbors
+     """
 
     def __init__(
         self,
-        entity: EntitySet,
+        entity: EntitySet, ## Property Store
+        ## level: 0,1,2 will indicate where to look in inc. store
         key: tuple[int, str | int],
-        initlist: Optional[list] = None,
+        initlist: Optional[list] = None, ## Incidence Store - look up each time.
     ):
         self._entity = entity
         self._key = key
@@ -66,6 +76,12 @@ class AttrList(UserList):
             object.__setattr__(self, attr, val)
         else:
             self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+
+    def properties(self):
+        """
+        Return dict of properties associated with this AttrList as a dictionary.
+        """
+        pass
 
 
 def encode(data: pd.DataFrame):
