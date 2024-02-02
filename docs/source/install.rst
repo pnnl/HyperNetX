@@ -95,6 +95,22 @@ Then try running all the tests:
 
     >>> python -m pytest
 
+
+Dependencies for some Submodules
+********************************
+
+Two submodules in the library, ``hypernetx.algorithms.hypergraph_modularity`` and ``hypernetx.algorithms.contagion``,
+require some additional dependencies. If you want to use those submodules, you will need to install those dependencies.
+
+For ``hypernetx.algorithms.hypergraph_modularity``, install the following:
+
+    >>> pip install 'igraph>=0.10.4'
+
+For ``hypernetx.algorithms.contagion``, install the following:
+
+    >>> pip install 'celluloid>=0.2.0'
+
+
 Interact with HyperNetX in a REPL
 ********************************************
 
