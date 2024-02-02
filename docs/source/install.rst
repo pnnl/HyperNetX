@@ -87,6 +87,12 @@ Post-Installation Actions
 Running Tests
 **************
 
+To run all the tests, ensure that you first install the testing dependencies:
+
+    >>> pip install -e .['testing']
+
+Then try running all the tests:
+
     >>> python -m pytest
 
 Interact with HyperNetX in a REPL
