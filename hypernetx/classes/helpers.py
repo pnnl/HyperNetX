@@ -11,9 +11,6 @@ from ast import literal_eval
 from hypernetx.classes.entityset import *
 
 
-T = TypeVar("T", bound=Union[str, int])
-
-
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
     Can these be stored in statedict until a change is made to the stores?
@@ -24,23 +21,23 @@ class AttrList(UserList):
         ``(level, item)``
     initlist : list, optional
         list of elements, passed to ``UserList`` constructor
-    
+
     # New Parameters
     # --------------
     # key :
     # property_store :
     # incidence_store :
-    
-    # methods return curren view of properties and 
+
+    # methods return curren view of properties and
     # neighbors
-     """
+    """
 
     def __init__(
         self,
-        entity: EntitySet, ## Property Store
+        entity: EntitySet,  ## Property Store
         ## level: 0,1,2 will indicate where to look in inc. store
         key: tuple[int, str | int],
-        initlist: Optional[list] = None, ## Incidence Store - look up each time.
+        initlist: Optional[list] = None,  ## Incidence Store - look up each time.
     ):
         self._entity = entity
         self._key = key
@@ -141,10 +138,12 @@ def assign_weights(
 
 
 def create_properties(
-    props: pd.DataFrame
-    | dict[str | int, Iterable[str | int]]
-    | dict[str | int, dict[str | int, dict[Any, Any]]]
-    | None,
+    props: (
+        pd.DataFrame
+        | dict[str | int, Iterable[str | int]]
+        | dict[str | int, dict[str | int, dict[Any, Any]]]
+        | None
+    ),
     index_cols: list[str],
     misc_col: str,
 ) -> pd.DataFrame:

@@ -1,35 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from typing import Mapping, Iterable, Union
 
-from pandas import DataFrame
-
-from hypernetx.classes.helpers import T, AttrList
-from typing import Mapping, Iterable, Tuple
+import pandas as pd
 
 
 class PropertyStore(ABC):
-    def __init__(self, level: T):
+    def __init__(self, level: Union[str, int]):
         self.level = level
         super().__init__()
-
-    @abstractmethod
-    def uidset(self) -> set:
-        """Labels of all items in the underlying data table
-
-        Returns
-        -------
-        set
-        """
-        pass
-
-    @abstractmethod
-    def size(self) -> int:
-        """The number of items in the underlying data table
-
-        Returns
-        -------
-        int
-        """
-        pass
 
     def __iter__(self) -> iter:
         """Returns an iterator over items in the underlying data table
@@ -50,7 +28,7 @@ class PropertyStore(ABC):
         """
         ...
 
-    def __getitem__(self, key: T) -> dict:
+    def __getitem__(self, key: Union[str, int]) -> dict:
         """Returns the common attributes (e.g. weight) and properties of a key in the underlying data table
 
         Parameters
@@ -63,7 +41,20 @@ class PropertyStore(ABC):
         """
         ...
 
-    def __getattr__(self, key: T) -> dict:
+    def __contains__(self, key: Union[str, int]) -> bool:
+        """Returns true if key is in the underlying data table; false otherwise
+
+        Parameters
+        ----------
+        key : str | int
+
+        Returns
+        -------
+        bool
+        """
+        ...
+
+    def __getattr__(self, key: Union[str, int]) -> dict:
         """Returns the properties of a key in the underlying data table
 
         Parameters
@@ -77,7 +68,7 @@ class PropertyStore(ABC):
         """
         ...
 
-    def __setattr__(self, key: T, value: dict) -> None:
+    def __setattr__(self, key: Union[str, int], value: dict) -> None:
         """Sets the properties of a key in the underlying data table
 
         Parameters
@@ -91,82 +82,43 @@ class PropertyStore(ABC):
         """
         ...
 
-    def __contains__(self, key: T) -> bool:
-        """Returns true if key is in the underlying data table; false otherwise
 
-        Parameters
-        ----------
-        key : str | int
-
-        Returns
-        -------
-        bool
+class DataFramePropertyStore(PropertyStore):
+    def __init__(self, level: Union[str, int], data: pd.DataFrame):
         """
-        ...
+        :param level:
+        :param data: pd.DataFrame This dataframe must have the shape of the following:
+
+        id          | uid   | weight            | properties
+        int or str  | str    | int, default = 1 | dictionary
+        """
+        super.__init__(level)
+        self.data = data
+
+    def __iter__(self) -> iter:
+        return self.data.itertuples(name=self.level)
+
+    def __len__(self) -> int:
+        return len(self.data.index)
+
+    def __getitem__(self, key: Union[str, int]) -> dict:
+        return self.data.loc[key].to_dict()
+
+    def __contains__(self, key: Union[str, int]) -> bool:
+        return key in self.data.index
+
+    def __getattr__(self, key: Union[str, int]) -> dict:
+        return self.data.loc[key, "properties"].to_dict()
+
+    def __setattr__(self, key: Union[str, int], value: dict) -> None:
+        self.data.loc[key, "properties"] = value
 
 
 class DictPropertyStore(PropertyStore):
-    def __init__(self, level: T, data: Mapping[T, Iterable[T]]):
+    def __init__(
+        self,
+        level: Union[str, int],
+        data: Mapping[Union[str, int], Iterable[Union[str, int]]],
+    ):
         super.__init__(level)
         self.data = data
-
-    def uidset(self):
-        ...
-
-    def size(self):
-        ...
-
-    # TODO: override magic methods defined in abstract class
-
-
-class DataFramePropertyStore(PropertyStore):
-    def __init__(self, level: T, data: DataFrame):
-        super.__init__(level)
-        self.data = data
-
-    def uidset(self):
-        ...
-
-    def size(self):
-        ...
-
-    # TODO: override magic methods defined in abstract class
-
-
-#####################################################################################################
-# Factory Methods
-#####################################################################################################
-
-# Notes
-# Hypergraph class allows 5 types of setsystems which are used to create the EntitySet
-# Eventually there five types will be used to create the PropertyStore
-# Iterable of Iterables, Dict of Iterables, Dict of Dict, pandas.Dataframe, numpy.ndarray
-
-
-class PropertyStoreFactory:
-    @staticmethod
-    def from_dataframe(
-        level: T, data: DataFrame | Mapping[T, Mapping[T, T]]
-    ) -> PropertyStore:
-        """Create a PropertyStore instance based on level and data
-
-        Process dataframe into valid input which will be used to create a PropertyStore instance
-
-        Ideally the dataframe should be an incident matrix of all the edge-node pairs of the hypergraph.
-        The first column should be the edges, second column should be the nodes
-        The properties column should be labeled 'properties'
-        All other columns are considered cell attributes
-        """
-        # do some processing on data
-        ...
-        return DataFramePropertyStore(0, data)
-
-    @staticmethod
-    def from_dict(level: T, data: Mapping[T, Mapping[T, T]]) -> PropertyStore:
-        """Create a PropertyStore instance based on level and data
-
-        Process into valid input which will be used to create a PropertyStore instance
-        """
-        # do some processing on data
-        ...
-        return DictPropertyStore(0, data)
