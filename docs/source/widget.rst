@@ -20,11 +20,14 @@ The HypernetxWidget is open source and
 available on `GitHub <https://github.com/pnnl/hypernetx-widget>`_ It is also `published on PyPi
 <https://pypi.org/project/hnxwidget/>`_
 
+**The HyperNetX widget is currently in beta with limitations on the Jupyter environment in which it may be used.
+It is being actively worked on. Look for improvements and an expanded list of usable environments in a future release.**
+
 Installation
 ------------
 
-HyperNetXWidget is currently in beta and will only work on Jupyter Notebook 6.5.x. It is not supported on Jupyter Lab;
-support for Jupyter Lab are still in planning.
+HyperNetXWidget is currently in beta and will only work on Jupyter Notebook 6.5.x. It is not supported on Jupyter Lab,
+but support for Jupyter Lab is in planning.
 
 In addition, HyperNetXWidget must be installed using the `Anaconda platform <https://www.anaconda.com/>`_ so that the
 widget can render on Jupyter notebook. It is highly recommended to use the base environment provided by Anaconda because
@@ -73,14 +76,25 @@ Open a new shell and run the following commands::
     jupyter-notebook
 
 
-Gotchas
-^^^^^^^
+Conda Environment
+^^^^^^^^^^^^^^^^^
 
 If the notebook runs into a `ModuleNotFoundError` for the HyperNetX or HyperNetXWidget packages, ensure that you set
 your kernel to the conda base environment (i.e. `base`). This will ensure that your notebook has the right environment
-to run the widget. For more information on setting the environment in Jupyter notebook, see
-`How to add your Conda environment to your jupyter notebook in just 4 steps.
-<https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084>`_
+to run the widget.
+
+On the notebook, click the "New" drop-down button and select "base" as the environment for your notebook. See the
+following screenshot as an example:
+
+.. image:: images/notebook_ipykernel.png
+   :width: 300px
+   :align: center
+
+
+|
+| For more information on setting the environment in Jupyter notebook, see
+  `How to add your Conda environment to your jupyter notebook in just 4 steps.
+  <https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084>`_
 
 
 Using the Tool

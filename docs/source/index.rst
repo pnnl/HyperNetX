@@ -57,7 +57,6 @@ Contents
    Algorithms: Modularity and Clustering <modularity>
    Publications <publications>
    license
-   long_description
 
 
 Indices and tables
