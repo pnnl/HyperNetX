@@ -126,7 +126,7 @@ class IncidenceStore:
              Returns an array of edge names
         """
         df = self._data
-        return df['edges'].unique()
+        return list(df['edges'].unique())
     
     def nodes(self):
         """
@@ -138,7 +138,7 @@ class IncidenceStore:
              Returns an array of node names
         """
         df = self._data
-        return df['nodes'].unique()
+        return list(df['nodes'].unique())
     
     
     def dimensions(self):

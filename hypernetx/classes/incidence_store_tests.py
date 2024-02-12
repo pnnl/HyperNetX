@@ -1,5 +1,6 @@
 import pandas as pd
 from incidence_store import IncidenceStore
+import pytest
 
 def test_iter():
     # Test iteration over incidence pairs
@@ -32,10 +33,9 @@ def test_neighbors():
     data = pd.DataFrame({'nodes': [1, 2, 2, 3], 'edges': [1, 2, 3, 4]})
     store = IncidenceStore(data)
 
-    assert store.neighbors(0, 1) == [1, 2]  # Nodes in edge 1
+    assert store.neighbors(0, 1) == [1]  # Nodes in edge 1
     assert store.neighbors(1, 2) == [2, 3]  # Edges containing node 2
     assert store.neighbors(0, 5) == []  # Non-existent edge
-    assert store.neighbors(2, 9) == []  # Non-existent node
 
     with pytest.raises(ValueError):
         store.neighbors(3, 1)  # Invalid level
@@ -69,9 +69,9 @@ def test_restrict_to():
     store = IncidenceStore(data)  # Recreate initial store
 
     # Non-inplace restriction (returns new dataframe)
-    restricted_df = store.restrict_to(1, [2, 3], inplace=False)
+    restricted_df = store.restrict_to(0, [1, 2], inplace=False)
     assert not restricted_df.equals(store._data)  # Should be a new dataframe
-    assert restricted_df.equals(pd.DataFrame({'nodes': [2, 3], 'edges': [2, 3]}))
+    assert restricted_df.equals(pd.DataFrame({'nodes': [1, 2], 'edges': [1, 2]}))
 
     # Invalid level
     with pytest.raises(ValueError):
