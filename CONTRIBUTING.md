@@ -57,6 +57,13 @@ Here are the [steps to creating an issue on GitHub](https://docs.github.com/en/i
 - use the most recent version of this library and the source language (e.g. Python); that fixes a lot of problems
 - here are [more details on getting the most out of issue reporting!](https://marker.io/blog/how-to-write-bug-report)
 
+## Start a Discussion
+
+If you want a forum to collaborate and discuss topics or questions in more depth, feel free to start a discussion on our
+[Github Discussions page](https://github.com/pnnl/HyperNetX/discussions). GitHub Discussions is a collaborative
+communication forum for the community. Community members can ask and answer questions, share updates, have open-ended
+conversations, and follow along on decisions affecting the community's way of working.
+
 
 ## Where can I go for help?
 
