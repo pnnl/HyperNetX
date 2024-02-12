@@ -1,152 +1,160 @@
+import pandas as pd
 
-from copy import copy,deepcopy
-
-class IncidenceStore(ABC):
+class IncidenceStore:
     """
     Incidence store object that stores and accesses (multi) incidences with standard methods.
 
     Parameters
     ----------
-    data : Iterable mapping of ordered pairs (edge,node) to data properties
-    aggregate_by : method for handling properties associated with duplicate pairs,
-        may be given as a dictionary keyed on properties
-        
-    Methods
-    --------
-    __iter__
-    __len__
-    __contains__
-    __getitem__
-    incidence_matrix
-    collapseitem
-    restrict_to
-    dimensions
-    membership
-    elements
-    dual
+    data : Two column pandas dataframe of nodes and edges, respectively.
     """
     
-    def __init__(self, data, edge_level, node_level):
+    def __init__(self, data):
         """
-        Multi index for (Incidence) Property Store with additional
-        functionality
+        Initiate data in self as the two column pandas dataframe provided through factory method.
 
         Parameters
         ----------
         data : _type_
             collection of ordered pairs
         """
-        self._data = incidence_data  # Data with incidence pairs and attributes
-
-        ### class does not allow duplicate pairs so either the first pair
-        # and its data will be used or the aggregate_by method will be
-        # used. these should be documented for behavior 
+        # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
+        self._data = data.drop_duplicates()  
+        
         pass
-
     
     def __iter__(self):
         """
         Iterator over the incidence pairs of the hypergraph
-
-        """
         
-        return iter(self._data)
+        Returns
+        -------
+        iter of tuples
+            Iterator over incidence pairs (tuples) in the hypergraph.
+        """
+        #itertuples provides iterator over rows in a dataframe with index as false to not return index 
+        #and name as None to return a standard tuple.
+        return iter(self._data.itertuples(index=False, name=None))
 
     def __len__(self):
         """
         Total number of incidences
-
+        
         Returns
         -------
         int
-
+            Number of incidence pairs in the hypergraph.
         """
-        
-        # 
+
         return len(self._data)
     
     def __contains__(self, incidence_pair):
         """
-        First, check if the incidence pair is of length two.        
-        Then, checks if it exists in incidence pairs.
+        Checks if an incidence pair exists in the incidence pairs dataframe.
+        First, this checks if the incidence pair is of length two.        
+        Then, it checks if it exists in the incidence pairs.
+        
+        Parameters
+        ----------
+        incidence_pair : tuple
+           Incidence pair that is a tuple (or array-like object; e.g., list or array) of length two.
 
+        Returns
+        -------
+        bool
+            True if incidence pair exists in incidence store.
         """
-                
-        pass
+        df = self._data
+        
+        #verify the incidence pair is of length two. Otherwise, pair does not exist.
+        if len(incidence_pair) == 2:
+            node, edge = incidence_pair[0], incidence_pair[1]
+            # check if first element in pair (node) exists in 'nodes' column anywhere
+            # and check if second element of pair (edge) exists in 'edges' column anywhere.
+            does_contain = ((df['nodes'] == node) & (df['edges'] == edge)).any()
+            return does_contain
+        else:
+            return False
     
-    # #### Do we need both of these??? Or can we have a single getitem??
-    # def __getitem__(self, incidence_key):
-    #     """
-    #     key is incidence key (e.g., index) and returns incidence pair and attributes
-
-    #     """
-    #     ### let getitem retrieve single line or multiple lines depending on if 
-    #     ### incidence_key is a hashable key for the instance, or an ordered pair of an
-    #     ### incidence. Should replace get_incidence_attributes
-    #     return self._data[incidence_key]
-    # def get_incidence_attributes(self, incidence_pair):
-    #     '''
-    #     Given an incidence pair return all instances of that incidence with incidence keys and attributes.
-
-    #     Parameters
-    #     ----------
-    #     incidence_pair : tuple
-    #         (edge, node) pair.
-
-    #     Returns
-    #     -------
-    #     dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and 
-    #     attributes as dictionary values.
-
-    #     '''
-    #     pass
-
-    def neighbors(self,level,key):
+    
+    
+    def neighbors(self, level, key):
         """
-        Returns elements or memberships depending on level
-        level 0, key is edge, returns nodes in edge
-        level 1, key is node, returns edges containing node
+        Returns elements or memberships depending on level.
 
         Parameters
         ----------
-        level : _type_
-            _description_
-        key : _type_
-            _description_
+        level : int
+            Level indicator for finding either elements or memberships.
+            For level 0 (elements), returns nodes in the edge.
+            For level 1 (memberships), returns edges containing the node.
+        key : int or str
+            Name of node or edge depending on level.
+
+        Returns
+        -------
+        list
+            Elements or memberships (depending on level) of a given edge or node, respectively.
         """
+        df = self._data
+        
+        if level == 0: # if looking for elements
+            try:
+                # Group by 'edges' and get 'nodes' within each group where 'edges' matches the key
+                return df.groupby('edges')['nodes'].get_group(key).tolist()
+            except KeyError:
+                # Return empty list if key doesn't exist for level 0 (edge)
+                return []  
+        elif level == 1: # if looking for memberships
+            try:
+                # Group by 'nodes' and get 'edges' within each group where 'nodes' matches the key
+                return df.groupby('nodes')['edges'].get_group(key).tolist()
+            except KeyError:
+                # Return empty list if key doesn't exist for level 1 (node)
+                return []  
+        else:
+            raise ValueError("Invalid level provided. Must be 0 or 1.")
+
     
-    # def dataframe(self):
-    #     """
-    #     Dataframe format with columns edge,node,weight,<properties>
-    #     One column should handle variable length property dictionaries
-    #     """
-    #     pass
-
-    # ### By passing dataframe we might handle these in the hypergraph class.
-    # def incidence_dataframe(self,value=1):
-    #     ## if a dataframe then this could be a pivot table
-    #     ### with data dictated by the property, eg. weight
-    # def incidence_matrix(self, value=1, index=False): 
-    #     ### incidence_dataframe values, currently sparse matrix and depends
-    #     ### on label encoding
-    #     """
-    #     Implement incidence matrix creation logic here from unique incidence pairs.
-    #     """
-    #     pass
-
-
-    ### This can be replaced by shape since we only have 2 data columns
+    def edges(self):
+        """
+        Returns an array of edge names from the incidence pairs
+        
+        Returns
+        -------
+        array
+             Returns an array of edge names
+        """
+        df = self._data
+        return df['edges'].unique()
+    
+    def nodes(self):
+        """
+        Returns an array of node names from the incidence pairs
+        
+        Returns
+        -------
+        array
+             Returns an array of node names
+        """
+        df = self._data
+        return df['nodes'].unique()
+    
+    
     def dimensions(self):
         """
-        Same as entity set?
-        Dimensions of data i.e., the number of distinct items 
-        in each level (column) of the underlying dataframe of incidences.
-        Or is this just for the edge and node columns?
-
+        Dimensions of incidence pairs dataframe.
+        i.e., the number of distinct nodes and edges.
+        
+        Returns
+        -------
+        tuple of ints
+             Tuple of size two of (number of unique nodes, number of unique edges).
         """
-        pass
+        return (len(self.nodes()), len(self.edges()))
 
-    def restrict_to(self,level,items, inplace=True):
+    def restrict_to(self, level, items, inplace=True):
+        
         """
         returns IncidenceStore of subset of incidence store restricted 
         to pairs with items in the given level
@@ -154,54 +162,34 @@ class IncidenceStore(ABC):
 
         Parameters
         ----------
-        level : _type_
-            _description_
-        items : _type_
-            _description_
+        level : int
+            Level indicator for finding either elements or memberships.
+            For level 0 (elements), returns nodes in the edge.
+            For level 1 (memberships), returns edges containing the node.
+        key : int or str
+            Name of node or edge depending on level.
         inplace : bool, optional
             _description_, by default True
-        """
-        pass
-
-    def dual(self, inplace=True):
-        """
-        This shares the incidence data so any changes will be made to both
-        unless inplace==False, in which case the current store is deep copied
-
-        Parameters
-        ----------
-        inplace : bool, optional
-            _description_, by default True
-
+            
         Returns
         -------
-        IncidenceStore 
-            new instance with dual flag = True
+        list
+            subset of incidence store given a restriction.
         """
-        if inplace: ### This should keep links to the same data
-            return self.__class__(data,node_level,edge_level)
-        else:
-            return self.__class__(deepcopy(data),node_level,edge_level)
         
-
-    def collapse(self,level, return_equivalence_classes=False):
-        """
-        Collapse according to level:
-        edges - 0 - elements : equivalence_class
-        nodes - 1 - memberships : equivalence_class
-        both - 2 - first collapse on nodes then on edges
-
-        Parameters
-        ----------
-        level : _type_
-            _description_
-        return_equivalence_classes : bool, optional
-            _description_, by default False
-
-        Returns
-        -------
-        IncidenceStore without properties labeled by class rep and count
-        Equivalence Classes
-        """
-        pass
+        
+        if level == 0:
+            column = 'edges'
+        elif level == 1:
+            column = 'nodes'
+        else:
+            raise ValueError("Invalid level provided. Must be 0 or 1.")
+        
+        if inplace:
+            self._data.drop(self._data[~self._data[column].isin(items)].index, inplace=True)
+            return self._data
+            
+        else: #return a subset without editing the original dataframe.
+            df = self._data
+            return df[df[column].isin(items)]
 
