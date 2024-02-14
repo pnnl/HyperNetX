@@ -6,7 +6,7 @@ class IncidenceStore:
 
     Parameters
     ----------
-    data : Two column pandas dataframe of nodes and edges, respectively.
+    data : Two column pandas dataframe of edges and nodes, respectively.
     """
     
     def __init__(self, data):
@@ -19,7 +19,7 @@ class IncidenceStore:
             collection of ordered pairs
         """
         # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
-        self._data = data.drop_duplicates()  
+        self._data = data
         
         pass
     
