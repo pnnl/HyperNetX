@@ -1,4 +1,28 @@
+# Copyright © 2024 Battelle Memorial Institute
+# All rights reserved.
+from __future__ import annotations
 
+import warnings
+warnings.filterwarnings("default", category=DeprecationWarning)
+
+from copy import deepcopy
+from collections import defaultdict
+from collections.abc import Sequence, Iterable
+from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
+
+import networkx as nx
+import numpy as np
+import pandas as pd
+from networkx.algorithms import bipartite
+from scipy.sparse import coo_matrix, csr_matrix
+
+from hypernetx.classes import EntitySet
+from hypernetx.exception import HyperNetXError
+from hypernetx.utils.decorators import warn_nwhy
+from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
+
+__all__ = ["Hypergraph"]
+T = TypeVar("T", bound=Union[str, int])
 
 
 class HypergraphView(object):
@@ -7,7 +31,19 @@ class HypergraphView(object):
     meta data for hypergraph. Provides methods matching EntitySet 
     methods in previous versions.
     """
-    def __init__(incidence_store,level,property_store=None,l):
+    def __init__(incidence_store,level,property_store=None):
+        """
+        _summary_
+
+        Parameters
+        ----------
+        incidence_store : _type_
+            _description_
+        level : _type_
+            _description_
+        property_store : _type_, optional
+            _description_, by default None
+        """
 
         self._incidences = incidence_store
         ### incidence store needs index or columns
@@ -79,7 +115,8 @@ class HypergraphView(object):
         from AttrList 
         If level 0 - elements, if level 1 - memberships,
         if level 2 - TBD - uses getitem from stores and links to props
-        
+            if incidence store is a multi index then this could do look
+            ups in multiple ways.
 
         Parameters
         ----------
@@ -118,6 +155,15 @@ class HypergraphView(object):
         Uses incidence store.
         """
         pass
+
+    def __getattribute__(self, __name: str) -> Any:
+        pass
+
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        pass
+
+
+        
     
 
     def to_json(self):
