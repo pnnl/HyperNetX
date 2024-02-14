@@ -1,13 +1,97 @@
-from abc import ABC
-from typing import Mapping, Iterable, Union
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from typing import Union, Any
 
 import pandas as pd
 
 
+@dataclass
 class PropertyStore(ABC):
-    def __init__(self, level: Union[str, int]):
-        self.level = level
-        super().__init__()
+    data: Any = None
+
+    @property
+    @abstractmethod
+    def properties(self) -> Any:
+        """Properties assigned to items in the underlying data table"""
+        ...
+
+    @abstractmethod
+    def get_properties(self, key) -> dict[Any, Any]:
+        """Get all properties of an item
+
+        Parameters
+        ----------
+        key : str | int
+
+        Returns
+        -------
+        prop_vals : dict
+            ``{named property: property value, ...,
+            misc. property column name: {property name: property value}}``
+
+        Raises
+        ------
+        KeyError
+            if (`key`) is not in :attr:`properties`,
+
+        See Also
+        --------
+        get_property, set_property
+        """
+        ...
+
+    @abstractmethod
+    def get_property(self, key, prop_name) -> Any:
+        """Get a property of an item
+
+        Parameters
+        ----------
+        key : str | int
+            name of an item
+        prop_name : str | int
+            name of the property to get
+
+        Returns
+        -------
+        prop_val : any
+            value of the property
+
+        None
+            if property not found
+
+        Raises
+        ------
+        KeyError
+            if (`key`) is not in :attr:`properties`,
+
+        See Also
+        --------
+        get_properties, set_property
+        """
+        ...
+
+    @abstractmethod
+    def set_property(self, key, prop_name, prop_val) -> None:
+        """Set a property of an item
+
+        Parameters
+        ----------
+        key : str | int
+            name of an item
+        prop_name : str | int
+            name of the property to set
+        prop_val : any
+            value of the property to set
+
+        Raises
+        ------
+        ValueError
+            If `key` is not in :attr:`properties`
+
+        See Also
+        --------
+        get_property, get_properties
+        """
 
     def __iter__(self) -> iter:
         """Returns an iterator over items in the underlying data table
@@ -83,17 +167,26 @@ class PropertyStore(ABC):
         ...
 
 
+# TODO: Implement abstract methods and dunder methods using EntitySet code snippets
 class DataFramePropertyStore(PropertyStore):
-    def __init__(self, level: Union[str, int], data: pd.DataFrame):
-        """
-        :param level:
-        :param data: pd.DataFrame This dataframe must have the shape of the following:
+    @property
+    def properties(self) -> pd.DataFrame:
+        """Properties assigned to items in the underlying data table
 
-        id          | uid   | weight            | properties
-        int or str  | str    | int, default = 1 | dictionary
+        Returns
+        -------
+        pandas.DataFrame a dataframe with the following columns: level/(edge|node), uid, weight, properties
         """
-        super.__init__(level)
-        self.data = data
+        return self.data
+
+    def get_properties(self, key) -> dict[Any, Any]:
+        pass
+
+    def get_property(self, key, prop_name) -> Any:
+        pass
+
+    def set_property(self, key, prop_name, prop_val) -> None:
+        pass
 
     def __iter__(self) -> iter:
         return self.data.itertuples(name=self.level)
@@ -114,11 +207,17 @@ class DataFramePropertyStore(PropertyStore):
         self.data.loc[key, "properties"] = value
 
 
+# This class is shown to demonstrate the flexibility of making PropertyStore an abstract class
 class DictPropertyStore(PropertyStore):
-    def __init__(
-        self,
-        level: Union[str, int],
-        data: Mapping[Union[str, int], Iterable[Union[str, int]]],
-    ):
-        super.__init__(level)
-        self.data = data
+    @property
+    def properties(self) -> dict:
+        pass
+
+    def get_properties(self, key) -> dict[Any, Any]:
+        pass
+
+    def get_property(self, key, prop_name) -> Any:
+        pass
+
+    def set_property(self, key, prop_name, prop_val) -> None:
+        pass
