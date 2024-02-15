@@ -8,7 +8,6 @@ warnings.filterwarnings("default", category=DeprecationWarning)
 from copy import deepcopy
 from collections import defaultdict
 from collections.abc import Sequence, Iterable
-from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
 
 import networkx as nx
 import numpy as np
@@ -23,8 +22,8 @@ from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 from hypernetx.classes.incidence_store import IncidenceStore as IS
 
 
-__all__ = ["Hypergraph"]
-T = TypeVar("T", bound=Union[str, int])
+__all__ = ["HypergraphView"]
+
 
 
 ##################### PROXY CLASSES FOR CONSTRUCTION
@@ -35,8 +34,12 @@ class PropertyStore(object):
             self._dataframe['properties'] = [{} for idx in self.dataframe.index]
         else:
             self._dataframe = pd.DataFrame(columns=['id','weight','properties'])
+    
     def __call_(self):
         return self
+    
+    def __getattribute__(self,uid,attribute_name):
+        return self._dataframe.loc[uid].attribute_name
 
     @property
     def dataframe(self):
@@ -186,13 +189,15 @@ class HypergraphView(object):
         key : _type_
             _description_
         """
-        pass
-        # level = self._level
-        # if level == 0 or level == 1:
-        #     elements = self._incidence_store.neighbors(level,uid)
-        # else:
-        #     return None
-        # ## TODO  return an AttrList associated with this item
+        level = self._level
+        if level == 0 or level == 1:
+            elements = self._incidence_store.neighbors(level,uid)
+        else:
+            return None
+        return {
+                item: NList(entity=self, key=(level, item))
+                for item_id in elements
+            }
 
 
     # def properties(self,key=None,prop_name=None):
@@ -278,3 +283,89 @@ class HypergraphView(object):
     #     """
     #     returns int:label dictionaries 
     #     """
+
+
+
+class NList(UserList):
+    """Custom list wrapper for integrating PropertyStore data with 
+    IncidenceStore relationships
+
+    Parameters
+    ----------
+    entity : hypernetx.EntitySet
+    key : tuple of (int, str or int)
+        ``(level, item)``
+    initlist : list, optional
+        list of elements, passed to ``UserList`` constructor
+
+    # New Parameters
+    # --------------
+    # key :
+    # property_store :
+    # incidence_store :
+
+    # methods return curren view of properties and
+    # neighbors
+    """
+
+    def __init__(
+        self,
+        entity: Property Store,
+        level: int, #0,1,2 will indicate where to look in inc. store
+        key: tuple[int, str | int],
+        initlist: Optional[list] = None,  ## Incidence Store - look up each time.
+    ):
+        self._entity = entity
+        self._key = key
+        super().__init__(initlist)
+
+    def __getattr__(self, attr: str) -> Any:
+        """Get attribute value from properties of :attr:`entity`
+
+        Parameters
+        ----------
+        attr : str
+
+        Returns
+        -------
+        any
+            attribute value; None if not found
+        """
+        if attr == "uidset":
+            return frozenset(self.data)
+        if attr in ["memberships", "elements"]:
+            return self._entity.__getattribute__(attr).get(self._key[1])
+        return self._entity.get_property(self._key[1], attr, self._key[0])
+
+    # def __setattr__(self, attr: str, val: Any) -> None:
+    #     """Set attribute value in properties of :attr:`entity`
+
+    #     Parameters
+    #     ----------
+    #     attr : str
+    #     val : any
+    #     """
+    #     if attr in ["_entity", "_key", "data"]:
+    #         object.__setattr__(self, attr, val)
+    #     else:
+    #         self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+
+    # def properties(self):
+    #     """
+    #     Return dict of properties associated with this AttrList as a dictionary.
+    #     """
+    #     pass
+
+
+def _flatten(my_dict):
+    '''Recursive method to flatten dictionary for returning properties as
+    a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
+
+    '''
+    result = {}
+    for key, value in my_dict.items():
+        if isinstance(value, dict):
+            result.update(_flatten(value))
+        else:
+            result[key] = value 
+    return result
