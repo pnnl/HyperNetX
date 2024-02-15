@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>algorithms &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="algorithms package" href="algorithms.html" />
+    <link rel="prev" title="classes package" href="../classes/classes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../core.html">HyperNetX Packages</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html">algorithms package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../drawing/modules.html">Drawing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reports/modules.html">Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../core.html">HyperNetX Packages</a></li>
+      <li class="breadcrumb-item active">algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/algorithms/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="algorithms">
+<h1>algorithms<a class="headerlink" href="#algorithms" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.contagion">algorithms.contagion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.Gillespie_SIR"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.Gillespie_SIS"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.collective_contagion"><code class="docutils literal notranslate"><span class="pre">collective_contagion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.contagion_animation"><code class="docutils literal notranslate"><span class="pre">contagion_animation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.discrete_SIR"><code class="docutils literal notranslate"><span class="pre">discrete_SIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.discrete_SIS"><code class="docutils literal notranslate"><span class="pre">discrete_SIS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.individual_contagion"><code class="docutils literal notranslate"><span class="pre">individual_contagion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.majority_vote"><code class="docutils literal notranslate"><span class="pre">majority_vote()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion.threshold"><code class="docutils literal notranslate"><span class="pre">threshold()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.generative_models">algorithms.generative_models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.generative_models.chung_lu_hypergraph"><code class="docutils literal notranslate"><span class="pre">chung_lu_hypergraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.generative_models.dcsbm_hypergraph"><code class="docutils literal notranslate"><span class="pre">dcsbm_hypergraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.generative_models.erdos_renyi_hypergraph"><code class="docutils literal notranslate"><span class="pre">erdos_renyi_hypergraph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.homology_mod2">algorithms.homology_mod2 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#homology-and-smith-normal-form">Homology and Smith Normal Form</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms.html#homology-mod2">Homology Mod2</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.add_to_column"><code class="docutils literal notranslate"><span class="pre">add_to_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.add_to_row"><code class="docutils literal notranslate"><span class="pre">add_to_row()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.betti"><code class="docutils literal notranslate"><span class="pre">betti()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.betti_numbers"><code class="docutils literal notranslate"><span class="pre">betti_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.bkMatrix"><code class="docutils literal notranslate"><span class="pre">bkMatrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.boundary_group"><code class="docutils literal notranslate"><span class="pre">boundary_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.chain_complex"><code class="docutils literal notranslate"><span class="pre">chain_complex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.homology_basis"><code class="docutils literal notranslate"><span class="pre">homology_basis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.hypergraph_homology_basis"><code class="docutils literal notranslate"><span class="pre">hypergraph_homology_basis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.interpret"><code class="docutils literal notranslate"><span class="pre">interpret()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.kchainbasis"><code class="docutils literal notranslate"><span class="pre">kchainbasis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.logical_dot"><code class="docutils literal notranslate"><span class="pre">logical_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.logical_matadd"><code class="docutils literal notranslate"><span class="pre">logical_matadd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.logical_matmul"><code class="docutils literal notranslate"><span class="pre">logical_matmul()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.matmulreduce"><code class="docutils literal notranslate"><span class="pre">matmulreduce()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.reduced_row_echelon_form_mod2"><code class="docutils literal notranslate"><span class="pre">reduced_row_echelon_form_mod2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.smith_normal_form_mod2"><code class="docutils literal notranslate"><span class="pre">smith_normal_form_mod2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.swap_columns"><code class="docutils literal notranslate"><span class="pre">swap_columns()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_mod2.swap_rows"><code class="docutils literal notranslate"><span class="pre">swap_rows()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.hypergraph_modularity">algorithms.hypergraph_modularity module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#hypergraph-modularity">Hypergraph_Modularity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.conductance"><code class="docutils literal notranslate"><span class="pre">conductance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.dict2part"><code class="docutils literal notranslate"><span class="pre">dict2part()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.kumar"><code class="docutils literal notranslate"><span class="pre">kumar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.last_step"><code class="docutils literal notranslate"><span class="pre">last_step()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.majority"><code class="docutils literal notranslate"><span class="pre">majority()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.modularity"><code class="docutils literal notranslate"><span class="pre">modularity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.part2dict"><code class="docutils literal notranslate"><span class="pre">part2dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.strict"><code class="docutils literal notranslate"><span class="pre">strict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_modularity.two_section"><code class="docutils literal notranslate"><span class="pre">two_section()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.laplacians_clustering">algorithms.laplacians_clustering module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#hypergraph-probability-transition-matrices-laplacians-and-clustering">Hypergraph Probability Transition Matrices, Laplacians, and Clustering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.laplacians_clustering.get_pi"><code class="docutils literal notranslate"><span class="pre">get_pi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.laplacians_clustering.norm_lap"><code class="docutils literal notranslate"><span class="pre">norm_lap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.laplacians_clustering.prob_trans"><code class="docutils literal notranslate"><span class="pre">prob_trans()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.laplacians_clustering.spec_clus"><code class="docutils literal notranslate"><span class="pre">spec_clus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#s-centrality-measures">S-Centrality Measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_centrality_measures.s_betweenness_centrality"><code class="docutils literal notranslate"><span class="pre">s_betweenness_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_centrality_measures.s_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_closeness_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_centrality_measures.s_eccentricity"><code class="docutils literal notranslate"><span class="pre">s_eccentricity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_centrality_measures.s_harmonic_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_centrality_measures.s_harmonic_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_closeness_centrality()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html#module-algorithms">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.Gillespie_SIR"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.Gillespie_SIS"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.add_to_column"><code class="docutils literal notranslate"><span class="pre">add_to_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.add_to_row"><code class="docutils literal notranslate"><span class="pre">add_to_row()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.betti"><code class="docutils literal notranslate"><span class="pre">betti()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.betti_numbers"><code class="docutils literal notranslate"><span class="pre">betti_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.bkMatrix"><code class="docutils literal notranslate"><span class="pre">bkMatrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.boundary_group"><code class="docutils literal notranslate"><span class="pre">boundary_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.chain_complex"><code class="docutils literal notranslate"><span class="pre">chain_complex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.chung_lu_hypergraph"><code class="docutils literal notranslate"><span class="pre">chung_lu_hypergraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.collective_contagion"><code class="docutils literal notranslate"><span class="pre">collective_contagion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.contagion_animation"><code class="docutils literal notranslate"><span class="pre">contagion_animation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.dcsbm_hypergraph"><code class="docutils literal notranslate"><span class="pre">dcsbm_hypergraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.dict2part"><code class="docutils literal notranslate"><span class="pre">dict2part()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.discrete_SIR"><code class="docutils literal notranslate"><span class="pre">discrete_SIR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.discrete_SIS"><code class="docutils literal notranslate"><span class="pre">discrete_SIS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.erdos_renyi_hypergraph"><code class="docutils literal notranslate"><span class="pre">erdos_renyi_hypergraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.get_pi"><code class="docutils literal notranslate"><span class="pre">get_pi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.homology_basis"><code class="docutils literal notranslate"><span class="pre">homology_basis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.hypergraph_homology_basis"><code class="docutils literal notranslate"><span class="pre">hypergraph_homology_basis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.individual_contagion"><code class="docutils literal notranslate"><span class="pre">individual_contagion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.interpret"><code class="docutils literal notranslate"><span class="pre">interpret()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.kchainbasis"><code class="docutils literal notranslate"><span class="pre">kchainbasis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.kumar"><code class="docutils literal notranslate"><span class="pre">kumar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.last_step"><code class="docutils literal notranslate"><span class="pre">last_step()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.logical_dot"><code class="docutils literal notranslate"><span class="pre">logical_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.logical_matadd"><code class="docutils literal notranslate"><span class="pre">logical_matadd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.logical_matmul"><code class="docutils literal notranslate"><span class="pre">logical_matmul()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.majority"><code class="docutils literal notranslate"><span class="pre">majority()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.majority_vote"><code class="docutils literal notranslate"><span class="pre">majority_vote()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.matmulreduce"><code class="docutils literal notranslate"><span class="pre">matmulreduce()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.modularity"><code class="docutils literal notranslate"><span class="pre">modularity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.norm_lap"><code class="docutils literal notranslate"><span class="pre">norm_lap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.part2dict"><code class="docutils literal notranslate"><span class="pre">part2dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.prob_trans"><code class="docutils literal notranslate"><span class="pre">prob_trans()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.reduced_row_echelon_form_mod2"><code class="docutils literal notranslate"><span class="pre">reduced_row_echelon_form_mod2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_betweenness_centrality"><code class="docutils literal notranslate"><span class="pre">s_betweenness_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_closeness_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_eccentricity"><code class="docutils literal notranslate"><span class="pre">s_eccentricity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_harmonic_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.s_harmonic_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_closeness_centrality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.smith_normal_form_mod2"><code class="docutils literal notranslate"><span class="pre">smith_normal_form_mod2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.spec_clus"><code class="docutils literal notranslate"><span class="pre">spec_clus()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.strict"><code class="docutils literal notranslate"><span class="pre">strict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.swap_columns"><code class="docutils literal notranslate"><span class="pre">swap_columns()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.swap_rows"><code class="docutils literal notranslate"><span class="pre">swap_rows()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.threshold"><code class="docutils literal notranslate"><span class="pre">threshold()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms.html#algorithms.two_section"><code class="docutils literal notranslate"><span class="pre">two_section()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../classes/classes.html" class="btn btn-neutral float-left" title="classes package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="algorithms.html" class="btn btn-neutral float-right" title="algorithms package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

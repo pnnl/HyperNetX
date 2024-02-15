@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installing HyperNetX &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Glossary of HNX terms" href="glossary.html" />
+    <link rel="prev" title="Overview" href="overview/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing HyperNetX</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment">Create a virtual environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-anaconda">Using Anaconda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-venv">Using venv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#for-windows-users">For Windows Users</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Installing Hypernetx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-from-pypi">Installing from PyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-from-source">Installing from Source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#post-installation-actions">Post-Installation Actions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies-for-some-submodules">Dependencies for some Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interact-with-hypernetx-in-a-repl">Interact with HyperNetX in a REPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-actions-if-installed-from-source">Other Actions if installed from source</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-jupyter-notebooks">Viewing jupyter notebooks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-documentation">Building documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installing HyperNetX</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installing-hypernetx">
+<h1>Installing HyperNetX<a class="headerlink" href="#installing-hypernetx" title="Permalink to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>The recommended installation method for most users is to create a virtual environment
+and install HyperNetX from PyPi.</p>
+<p>HyperNetX may be cloned or forked from <a class="reference external" href="https://github.com/pnnl/HyperNetX">Github</a>.</p>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<p>HyperNetX officially supports Python 3.8, 3.9, 3.10 and 3.11.</p>
+</section>
+<section id="create-a-virtual-environment">
+<h2>Create a virtual environment<a class="headerlink" href="#create-a-virtual-environment" title="Permalink to this heading"></a></h2>
+<section id="using-anaconda">
+<h3>Using Anaconda<a class="headerlink" href="#using-anaconda" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.8</span> <span class="o">-</span><span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span>
+</pre></div>
+</div>
+</section>
+<section id="using-venv">
+<h3>Using venv<a class="headerlink" href="#using-venv" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">venv</span><span class="o">-</span><span class="n">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+</section>
+<section id="using-virtualenv">
+<h3>Using virtualenv<a class="headerlink" href="#using-virtualenv" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">virtualenv</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="n">env</span><span class="o">-</span><span class="n">hnx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+</section>
+<section id="for-windows-users">
+<h3>For Windows Users<a class="headerlink" href="#for-windows-users" title="Permalink to this heading"></a></h3>
+<p>On both Windows PowerShell or Command Prompt, you can use the following command to activate your virtual environment:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">.</span>\<span class="n">env</span><span class="o">-</span><span class="n">hnx</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+</pre></div>
+</div>
+<p>To deactivate your environment, use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">.</span>\<span class="n">env</span><span class="o">-</span><span class="n">hnx</span>\<span class="n">Scripts</span>\<span class="n">deactivate</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id1">
+<h2>Installing Hypernetx<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python &gt;=3.8.</p>
+<section id="installing-from-pypi">
+<h3>Installing from PyPi<a class="headerlink" href="#installing-from-pypi" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span>
+</pre></div>
+</div>
+</section>
+<section id="installing-from-source">
+<h3>Installing from Source<a class="headerlink" href="#installing-from-source" title="Permalink to this heading"></a></h3>
+<p>Ensure that you have <code class="docutils literal notranslate"><span class="pre">git</span></code> installed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pnnl</span><span class="o">/</span><span class="n">HyperNetX</span><span class="o">.</span><span class="n">git</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">HyperNetX</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If you are using zsh as your shell, ensure that the single quotation marks are placed outside the square brackets:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="s1">&#39;[all]&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="post-installation-actions">
+<h2>Post-Installation Actions<a class="headerlink" href="#post-installation-actions" title="Permalink to this heading"></a></h2>
+<section id="running-tests">
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this heading"></a></h3>
+<p>To run all the tests, ensure that you first install the testing dependencies:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="s1">&#39;testing&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Then try running all the tests:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pytest</span>
+</pre></div>
+</div>
+</section>
+<section id="dependencies-for-some-submodules">
+<h3>Dependencies for some Submodules<a class="headerlink" href="#dependencies-for-some-submodules" title="Permalink to this heading"></a></h3>
+<p>Two submodules in the library, <code class="docutils literal notranslate"><span class="pre">hypernetx.algorithms.hypergraph_modularity</span></code> and <code class="docutils literal notranslate"><span class="pre">hypernetx.algorithms.contagion</span></code>,
+require some additional dependencies. If you want to use those submodules, you will need to install those dependencies.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">hypernetx.algorithms.hypergraph_modularity</span></code>, install the following:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="s1">&#39;igraph&gt;=0.10.4&#39;</span>
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">hypernetx.algorithms.contagion</span></code>, install the following:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="s1">&#39;celluloid&gt;=0.2.0&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="interact-with-hypernetx-in-a-repl">
+<h3>Interact with HyperNetX in a REPL<a class="headerlink" href="#interact-with-hypernetx-in-a-repl" title="Permalink to this heading"></a></h3>
+<p>Ensure that your environment is activated and that you run <code class="docutils literal notranslate"><span class="pre">python</span></code> on your terminal to open a REPL:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hypernetx</span> <span class="k">as</span> <span class="nn">hnx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hypergraph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="go">[&#39;G&#39;, &#39;F&#39;, &#39;D&#39;, &#39;A&#39;, &#39;B&#39;, &#39;H&#39;, &#39;C&#39;, &#39;E&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(8, 4)</span>
+</pre></div>
+</div>
+</section>
+<section id="other-actions-if-installed-from-source">
+<h3>Other Actions if installed from source<a class="headerlink" href="#other-actions-if-installed-from-source" title="Permalink to this heading"></a></h3>
+<p>Ensure that you are at the root of the source directory before running any of the following commands:</p>
+<section id="viewing-jupyter-notebooks">
+<h4>Viewing jupyter notebooks<a class="headerlink" href="#viewing-jupyter-notebooks" title="Permalink to this heading"></a></h4>
+<p>The following command will automatically open the notebooks in a browser.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jupyter</span><span class="o">-</span><span class="n">notebook</span> <span class="n">tutorials</span>
+</pre></div>
+</div>
+</section>
+<section id="building-documentation">
+<h4>Building documentation<a class="headerlink" href="#building-documentation" title="Permalink to this heading"></a></h4>
+<p>The following commands will build and open a local version of the documentation in a browser:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">build</span><span class="o">-</span><span class="n">docs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">open</span> <span class="n">docs</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview/index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary of HNX terms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

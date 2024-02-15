@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hypernetx-Widget &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modularity and Clustering" href="modularity.html" />
+    <link rel="prev" title="Hypergraph Constructors" href="hypconstructors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization Widget</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-steps">Installation Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#conda-environment">Conda Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-tool">Using the Tool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#layout">Layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selection">Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#side-panel">Side Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-features">Other Features</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hypernetx-Widget</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/widget.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hypernetx-widget">
+<span id="widget"></span><h1>Hypernetx-Widget<a class="headerlink" href="#hypernetx-widget" title="Permalink to this heading"></a></h1>
+<a class="reference internal image-reference" href="_images/WidgetScreenShot.png"><img alt="_images/WidgetScreenShot.png" class="align-right" src="_images/WidgetScreenShot.png" style="width: 300px;" /></a>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The HyperNetXWidget is an addon for HNX, which extends the built-in visualization
+capabilities of HNX to a JavaScript based interactive visualization. The tool has two main interfaces,
+the hypergraph visualization and the nodes &amp; edges panel.
+You may <a class="reference external" href="https://pnnl.github.io/hypernetx-widget/">demo the widget here</a>.</p>
+<p>The HypernetxWidget is open source and
+available on <a class="reference external" href="https://github.com/pnnl/hypernetx-widget">GitHub</a> It is also <a class="reference external" href="https://pypi.org/project/hnxwidget/">published on PyPi</a></p>
+<p><strong>The HyperNetX widget is currently in beta with limitations on the Jupyter environment in which it may be used.
+It is being actively worked on. Look for improvements and an expanded list of usable environments in a future release.</strong></p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>HyperNetXWidget is currently in beta and will only work on Jupyter Notebook 6.5.x. It is not supported on Jupyter Lab,
+but support for Jupyter Lab is in planning.</p>
+<p>In addition, HyperNetXWidget must be installed using the <a class="reference external" href="https://www.anaconda.com/">Anaconda platform</a> so that the
+widget can render on Jupyter notebook. It is highly recommended to use the base environment provided by Anaconda because
+Anaconda’s package management system, <cite>conda</cite>, will resolve dependencies when HyperNetX and HyperNetXWidget are
+installed. For more information on <cite>conda</cite> environments, please see <a class="reference external" href="https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment">their documentation here.</a></p>
+<p><strong>Do not use python’s built-in venv module or virtualenv to create a virtual environment; the widget will not render on
+Jupyter notebook.</strong></p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>conda 23.11.x</p></li>
+<li><p>python 3.11.x</p></li>
+<li><p>jupyter notebook 6.5.4</p></li>
+<li><p>ipywidgets 7.6.5</p></li>
+</ul>
+</section>
+<section id="installation-steps">
+<h3>Installation Steps<a class="headerlink" href="#installation-steps" title="Permalink to this heading"></a></h3>
+<p>Open a new shell and run the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># update conda</span>
+<span class="n">conda</span> <span class="n">update</span> <span class="n">conda</span>
+
+<span class="c1"># activate the base environment</span>
+<span class="n">conda</span> <span class="n">activate</span>
+
+<span class="c1"># install hypernetx and hnxwidget</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">hypernetx</span> <span class="n">hnxwidget</span>
+
+<span class="c1"># install jupyter notebook and extensions</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">c</span> <span class="n">anaconda</span> <span class="n">notebook</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">jupyter_contrib_nbextensions</span>
+
+<span class="c1"># install and enable the hnxwidget on jupyter</span>
+<span class="n">jupyter</span> <span class="n">nbextension</span> <span class="n">install</span> <span class="o">--</span><span class="n">py</span> <span class="o">--</span><span class="n">symlink</span> <span class="o">--</span><span class="n">sys</span><span class="o">-</span><span class="n">prefix</span> <span class="n">hnxwidget</span>
+<span class="n">jupyter</span> <span class="n">nbextension</span> <span class="n">enable</span> <span class="o">--</span><span class="n">py</span> <span class="o">--</span><span class="n">sys</span><span class="o">-</span><span class="n">prefix</span> <span class="n">hnxwidget</span>
+
+<span class="c1"># install ipykernel and use it to add the base environment to jupyter notebook</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">c</span> <span class="n">anaconda</span> <span class="n">ipykernel</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">ipykernel</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="n">base</span>
+
+<span class="c1"># start the notebook</span>
+<span class="n">jupyter</span><span class="o">-</span><span class="n">notebook</span>
+</pre></div>
+</div>
+</section>
+<section id="conda-environment">
+<h3>Conda Environment<a class="headerlink" href="#conda-environment" title="Permalink to this heading"></a></h3>
+<p>If the notebook runs into a <cite>ModuleNotFoundError</cite> for the HyperNetX or HyperNetXWidget packages, ensure that you set
+your kernel to the conda base environment (i.e. <cite>base</cite>). This will ensure that your notebook has the right environment
+to run the widget.</p>
+<p>On the notebook, click the “New” drop-down button and select “base” as the environment for your notebook. See the
+following screenshot as an example:</p>
+<a class="reference internal image-reference" href="_images/notebook_ipykernel.png"><img alt="_images/notebook_ipykernel.png" class="align-center" src="_images/notebook_ipykernel.png" style="width: 300px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line">For more information on setting the environment in Jupyter notebook, see
+<a class="reference external" href="https://medium.com/&#64;nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084">How to add your Conda environment to your jupyter notebook in just 4 steps.</a></div>
+</div>
+</section>
+</section>
+<section id="using-the-tool">
+<h2>Using the Tool<a class="headerlink" href="#using-the-tool" title="Permalink to this heading"></a></h2>
+<section id="layout">
+<h3>Layout<a class="headerlink" href="#layout" title="Permalink to this heading"></a></h3>
+<p>The hypergraph visualization is an Euler diagram that shows nodes as circles and hyper edges as outlines
+containing the nodes/circles they contain. The visualization uses a force directed optimization to perform
+the layout. This algorithm is not perfect and sometimes gives results that the user might want to improve upon.
+The visualization allows the user to drag nodes and position them directly at any time. The algorithm will
+re-position any nodes that are not specified by the user. Ctrl (Windows) or Command (Mac) clicking a node
+will release a pinned node it to be re-positioned by the algorithm.</p>
+</section>
+<section id="selection">
+<h3>Selection<a class="headerlink" href="#selection" title="Permalink to this heading"></a></h3>
+<p>Nodes and edges can be selected by clicking them. Nodes and edges can be selected independently of each other,
+i.e., it is possible to select an edge without selecting the nodes it contains. Multiple nodes and edges can
+be selected, by holding down Shift while clicking. Shift clicking an already selected node will de-select it.
+Clicking the background will de-select all nodes and edges. Dragging a selected node will drag all selected
+nodes, keeping their relative placement.
+Selected nodes can be hidden (having their appearance minimized) or removed completely from the visualization.
+Hiding a node or edge will not cause a change in the layout, wheras removing a node or edge will.
+The selection can also be expanded. Buttons in the toolbar allow for selecting all nodes contained within selected edges,
+and selecting all edges containing any selected nodes.
+The toolbar also contains buttons to select all nodes (or edges), un-select all nodes (or edges),
+or reverse the selected nodes (or edges). An advanced user might:</p>
+<ul class="simple">
+<li><p><strong>Select all nodes not in an edge</strong> by: select an edge, select all nodes in that edge, then reverse the selected nodes to select every node not in that edge.</p></li>
+<li><p><strong>Traverse the graph</strong> by: selecting a start node, then alternating select all edges containing selected nodes and selecting all nodes within selected edges</p></li>
+<li><p><strong>Pin Everything</strong> by: hitting the button to select all nodes, then drag any node slightly to activate the pinning for all nodes.</p></li>
+</ul>
+</section>
+<section id="side-panel">
+<h3>Side Panel<a class="headerlink" href="#side-panel" title="Permalink to this heading"></a></h3>
+<p>Details on nodes and edges are visible in the side panel. For both nodes and edges, a table shows the node name, degree (or size for edges), its selection state, removed state, and color. These properties can also be controlled directly from this panel. The color of nodes and edges can be set in bulk here as well, for example, coloring by degree.</p>
+</section>
+<section id="other-features">
+<h3>Other Features<a class="headerlink" href="#other-features" title="Permalink to this heading"></a></h3>
+<p>Nodes with identical edge membership can be collapsed into a super node, which can be helpful for larger hypergraphs. Dragging any node in a super node will drag the entire super node. This feature is available as a toggle in the nodes panel.</p>
+<p>The hypergraph can also be visualized as a bipartite graph (similar to a traditional node-link diagram). Toggling this feature will preserve the locations of the nodes between the bipartite and the Euler diagrams.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hypconstructors.html" class="btn btn-neutral float-left" title="Hypergraph Constructors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modularity.html" class="btn btn-neutral float-right" title="Modularity and Clustering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

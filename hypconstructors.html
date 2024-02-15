@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hypergraph Constructors &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hypernetx-Widget" href="widget.html" />
+    <link rel="prev" title="A Gentle Introduction to Hypergraph Mathematics" href="hypergraph101.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Hypergraph Constructors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setsystems">SetSystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edge-and-node-properties">Edge and Node Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#weights">Weights</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hypergraph Constructors</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hypconstructors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hypergraph-constructors">
+<span id="hypconstructors"></span><h1>Hypergraph Constructors<a class="headerlink" href="#hypergraph-constructors" title="Permalink to this heading"></a></h1>
+<p>An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
+V = nodes (vertices) and E = (hyper)edges.</p>
+<p>HNX allows for multi-edges by distinguishing edges by
+their identifiers instead of their contents. For example, if
+V = {1,2,3} and E = {e1,e2,e3},
+where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3},
+the edges e1 and e2 contain the same set of nodes and yet
+are distinct and are distinguishable within H = (V,E).</p>
+<p>HNX provides methods to easily store and
+access additional metadata such as cell, edge, and node weights.
+Metadata associated with (edge,node) incidences
+are referenced as <strong>cell_properties</strong>.
+Metadata associated with a single edge or node is referenced
+as its <strong>properties</strong>.</p>
+<p>The fundamental object needed to create a hypergraph is a <strong>setsystem</strong>. The
+setsystem defines the many-to-many relationships between edges and nodes in
+the hypergraph. Cell properties for the incidence pairs can be defined within
+the setsystem or in a separate pandas.Dataframe or dict.
+Edge and node properties are defined with a pandas.DataFrame or dict.</p>
+<section id="setsystems">
+<h2>SetSystems<a class="headerlink" href="#setsystems" title="Permalink to this heading"></a></h2>
+<p>There are five types of setsystems currently accepted by the library.</p>
+<ol class="arabic">
+<li><p><strong>iterable of iterables</strong> : Barebones hypergraph, which uses Pandas default
+indexing to generate hyperedge ids. Elements must be hashable.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">([{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">}])</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>dictionary of iterables</strong> : The most basic way to express many-to-many
+relationships providing edge ids. The elements of the iterables must be
+hashable):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">({</span><span class="s1">&#39;e1&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e2&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;e3&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]})</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>dictionary of dictionaries</strong>  : allows cell properties to be assigned
+to a specific (edge, node) incidence. This is particularly useful when
+there are variable length dictionaries assigned to each pair:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e1&#39;</span><span class="p">:{</span> <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;related_to&#39;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;related_to&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="s1">&#39;startdate&#39;</span><span class="p">:</span> <span class="s1">&#39;05.13.2020&#39;</span><span class="p">}},</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="s1">&#39;e2&#39;</span><span class="p">:{</span> <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.52</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;owned_by&#39;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.2</span><span class="p">}},</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="s1">&#39;e3&#39;</span><span class="p">:{</span> <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;related_to&#39;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;owner_of&#39;</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;relationship&#39;</span><span class="p">}}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">cell_weight_col</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>pandas.DataFrame</strong> For large datasets and for datasets with cell
+properties it is most efficient to construct a hypergraph directly from
+a pandas.DataFrame. Incidence pairs are in the first two columns.
+Cell properties shared by all incidence pairs can be placed in their own
+column of the dataframe. Variable length dictionaries of cell properties
+particular to only some of the incidence pairs may be placed in a single
+column of the dataframe. Representing the data above as a dataframe df:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>col1</p></td>
+<td><p>col2</p></td>
+<td><p>w</p></td>
+<td><p>col3</p></td>
+</tr>
+<tr class="row-even"><td><p>e1</p></td>
+<td><p>1</p></td>
+<td><p>0.5</p></td>
+<td><p>{‘name’:’related_to’}</p></td>
+</tr>
+<tr class="row-odd"><td><p>e1</p></td>
+<td><p>2</p></td>
+<td><p>0.1</p></td>
+<td><dl class="simple">
+<dt>{“name”:”related_to”,</dt><dd><p>“startdate”:”05.13.2020”}</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>e2</p></td>
+<td><p>1</p></td>
+<td><p>0.52</p></td>
+<td><p>{“name”:”owned_by”}</p></td>
+</tr>
+<tr class="row-odd"><td><p>e2</p></td>
+<td><p>2</p></td>
+<td><p>0.2</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>{…}</p></td>
+</tr>
+</tbody>
+</table>
+<p>The first row of the dataframe is used to reference each column.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Hypergraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">edge_col</span><span class="o">=</span><span class="s2">&quot;col1&quot;</span><span class="p">,</span><span class="n">node_col</span><span class="o">=</span><span class="s2">&quot;col2&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">cell_weight_col</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">misc_cell_properties</span><span class="o">=</span><span class="s2">&quot;col3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>numpy.ndarray</strong> For homogeneous datasets given in a <em>n x 2</em> ndarray a
+pandas dataframe is generated and column names are added from the
+edge_col and node_col arguments. Cell properties containing multiple data
+types are added with a separate dataframe or dict and passed through the
+cell_properties keyword.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e2&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="p">[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],[</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">hnx</span><span class="o">.</span><span class="n">Hypergraph</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="edge-and-node-properties">
+<h2>Edge and Node Properties<a class="headerlink" href="#edge-and-node-properties" title="Permalink to this heading"></a></h2>
+<p>Properties specific to edges and/or node can be passed through the
+keywords: <strong>edge_properties, node_properties, properties</strong>.
+Properties may be passed as dataframes or dicts.
+The first column or index of the dataframe or keys of the dict keys
+correspond to the edge and/or node identifiers.
+If properties are specific to an id, they may be stored in a single
+object and passed to the <strong>properties</strong> keyword. For example:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>weight</p></td>
+<td><p>properties</p></td>
+</tr>
+<tr class="row-even"><td><p>e1</p></td>
+<td><p>5.0</p></td>
+<td><p>{‘type’:’event’}</p></td>
+</tr>
+<tr class="row-odd"><td><p>e2</p></td>
+<td><p>0.52</p></td>
+<td><p>{“name”:”owned_by”}</p></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>{…}</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1.2</p></td>
+<td><p>{‘color’:’red’}</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>.003</p></td>
+<td><p>{‘name’:’Fido’,’color’:’brown’}</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>1.0</p></td>
+<td><p>{}</p></td>
+</tr>
+</tbody>
+</table>
+<p>A properties dictionary should have the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dp</span> <span class="o">=</span> <span class="p">{</span><span class="n">id1</span> <span class="p">:</span> <span class="p">{</span><span class="n">prop1</span><span class="p">:</span><span class="n">val1</span><span class="p">,</span> <span class="n">prop2</span><span class="p">,</span><span class="n">val2</span><span class="p">,</span><span class="o">...</span><span class="p">},</span> <span class="n">id2</span> <span class="p">:</span> <span class="o">...</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>A properties dataframe may be used for nodes and edges sharing ids
+but differing in cell properties by adding a level index using 0
+for edges and 1 for nodes:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>level</p></td>
+<td><p>id</p></td>
+<td><p>weight</p></td>
+<td><p>properties</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>e1</p></td>
+<td><p>5.0</p></td>
+<td><p>{‘type’:’event’}</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>e2</p></td>
+<td><p>0.52</p></td>
+<td><p>{“name”:”owned_by”}</p></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>{…}</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1.2</p></td>
+<td colspan="2"><p>{‘color’:’red’}</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>.003</p></td>
+<td colspan="2"><p>{‘name’:’Fido’,’color’:’brown’}</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>{…}</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="weights">
+<h2>Weights<a class="headerlink" href="#weights" title="Permalink to this heading"></a></h2>
+<p>The default key for cell and object weights is “weight”. The default value
+is 1. Weights may be assigned and/or a new default prescribed in the
+constructor using <strong>cell_weight_col</strong> and <strong>cell_weights</strong> for incidence pairs,
+and using <strong>edge_weight_prop, node_weight_prop, weight_prop,
+default_edge_weight,</strong> and <strong>default_node_weight</strong> for node and edge weights.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hypergraph101.html" class="btn btn-neutral float-left" title="A Gentle Introduction to Hypergraph Mathematics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="widget.html" class="btn btn-neutral float-right" title="Hypernetx-Widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

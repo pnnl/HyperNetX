@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HyperNetX Packages &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="classes" href="classes/modules.html" />
+    <link rel="prev" title="Glossary of HNX terms" href="glossary.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HyperNetX Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classes/modules.html">Hypergraphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms/modules.html">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drawing/modules.html">Drawing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports/modules.html">Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HyperNetX Packages</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hypernetx-packages">
+<span id="core"></span><h1>HyperNetX Packages<a class="headerlink" href="#hypernetx-packages" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classes/modules.html">Hypergraphs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classes/classes.html">classes package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#module-classes.entity">classes.entity module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.entity.Entity"><code class="docutils literal notranslate"><span class="pre">Entity</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.add"><code class="docutils literal notranslate"><span class="pre">Entity.add()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.add_element"><code class="docutils literal notranslate"><span class="pre">Entity.add_element()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.add_elements_from"><code class="docutils literal notranslate"><span class="pre">Entity.add_elements_from()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.assign_properties"><code class="docutils literal notranslate"><span class="pre">Entity.assign_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.cell_weights"><code class="docutils literal notranslate"><span class="pre">Entity.cell_weights</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.children"><code class="docutils literal notranslate"><span class="pre">Entity.children</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.data"><code class="docutils literal notranslate"><span class="pre">Entity.data</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.dataframe"><code class="docutils literal notranslate"><span class="pre">Entity.dataframe</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.dimensions"><code class="docutils literal notranslate"><span class="pre">Entity.dimensions</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.dimsize"><code class="docutils literal notranslate"><span class="pre">Entity.dimsize</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.elements"><code class="docutils literal notranslate"><span class="pre">Entity.elements</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.elements_by_column"><code class="docutils literal notranslate"><span class="pre">Entity.elements_by_column()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.elements_by_level"><code class="docutils literal notranslate"><span class="pre">Entity.elements_by_level()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.empty"><code class="docutils literal notranslate"><span class="pre">Entity.empty</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.encode"><code class="docutils literal notranslate"><span class="pre">Entity.encode()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.get_properties"><code class="docutils literal notranslate"><span class="pre">Entity.get_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.get_property"><code class="docutils literal notranslate"><span class="pre">Entity.get_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Entity.incidence_dict</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Entity.incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.index"><code class="docutils literal notranslate"><span class="pre">Entity.index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.indices"><code class="docutils literal notranslate"><span class="pre">Entity.indices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.is_empty"><code class="docutils literal notranslate"><span class="pre">Entity.is_empty()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.isstatic"><code class="docutils literal notranslate"><span class="pre">Entity.isstatic</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.labels"><code class="docutils literal notranslate"><span class="pre">Entity.labels</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.level"><code class="docutils literal notranslate"><span class="pre">Entity.level()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.memberships"><code class="docutils literal notranslate"><span class="pre">Entity.memberships</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.properties"><code class="docutils literal notranslate"><span class="pre">Entity.properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.remove"><code class="docutils literal notranslate"><span class="pre">Entity.remove()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.remove_element"><code class="docutils literal notranslate"><span class="pre">Entity.remove_element()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.remove_elements_from"><code class="docutils literal notranslate"><span class="pre">Entity.remove_elements_from()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.restrict_to_indices"><code class="docutils literal notranslate"><span class="pre">Entity.restrict_to_indices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.restrict_to_levels"><code class="docutils literal notranslate"><span class="pre">Entity.restrict_to_levels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.set_property"><code class="docutils literal notranslate"><span class="pre">Entity.set_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.size"><code class="docutils literal notranslate"><span class="pre">Entity.size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.translate"><code class="docutils literal notranslate"><span class="pre">Entity.translate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.translate_arr"><code class="docutils literal notranslate"><span class="pre">Entity.translate_arr()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.uid"><code class="docutils literal notranslate"><span class="pre">Entity.uid</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.uidset"><code class="docutils literal notranslate"><span class="pre">Entity.uidset</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.uidset_by_column"><code class="docutils literal notranslate"><span class="pre">Entity.uidset_by_column()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entity.Entity.uidset_by_level"><code class="docutils literal notranslate"><span class="pre">Entity.uidset_by_level()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#module-classes.entityset">classes.entityset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet"><code class="docutils literal notranslate"><span class="pre">EntitySet</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.assign_cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.assign_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.cell_properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.collapse_identical_elements"><code class="docutils literal notranslate"><span class="pre">EntitySet.collapse_identical_elements()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.get_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.get_cell_property"><code class="docutils literal notranslate"><span class="pre">EntitySet.get_cell_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.memberships"><code class="docutils literal notranslate"><span class="pre">EntitySet.memberships</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.restrict_to"><code class="docutils literal notranslate"><span class="pre">EntitySet.restrict_to()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.restrict_to_levels"><code class="docutils literal notranslate"><span class="pre">EntitySet.restrict_to_levels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.entityset.EntitySet.set_cell_property"><code class="docutils literal notranslate"><span class="pre">EntitySet.set_cell_property()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#module-classes.helpers">classes.helpers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.AttrList"><code class="docutils literal notranslate"><span class="pre">AttrList</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.assign_weights"><code class="docutils literal notranslate"><span class="pre">assign_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.create_properties"><code class="docutils literal notranslate"><span class="pre">create_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.dict_depth"><code class="docutils literal notranslate"><span class="pre">dict_depth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.encode"><code class="docutils literal notranslate"><span class="pre">encode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.merge_nested_dicts"><code class="docutils literal notranslate"><span class="pre">merge_nested_dicts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.helpers.remove_row_duplicates"><code class="docutils literal notranslate"><span class="pre">remove_row_duplicates()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#module-classes.hypergraph">classes.hypergraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.adjacency_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.auxiliary_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.auxiliary_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.bipartite()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.collapse_nodes_and_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_nodes_and_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.connected_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dataframe</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.degree()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.diameter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.dim"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dim()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.distance"><code class="docutils literal notranslate"><span class="pre">Hypergraph.distance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.dual"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_adjacency_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_diameter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_diameters"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_diameters()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_distance"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_distance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_neighbors"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_neighbors()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_props"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_props</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_size_dist()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edges</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_bipartite()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_incidence_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_incidence_dataframe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.from_numpy_array"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_numpy_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_linegraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_linegraph()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.get_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dataframe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dict</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.is_connected"><code class="docutils literal notranslate"><span class="pre">Hypergraph.is_connected()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.neighbors"><code class="docutils literal notranslate"><span class="pre">Hypergraph.neighbors()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.node_diameters"><code class="docutils literal notranslate"><span class="pre">Hypergraph.node_diameters()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.node_props"><code class="docutils literal notranslate"><span class="pre">Hypergraph.node_props</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.number_of_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.number_of_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.number_of_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.number_of_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.order"><code class="docutils literal notranslate"><span class="pre">Hypergraph.order()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.remove_singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_singletons()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.restrict_to_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.s_connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_connected_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.set_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.set_state()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.shape"><code class="docutils literal notranslate"><span class="pre">Hypergraph.shape</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.singletons()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.size"><code class="docutils literal notranslate"><span class="pre">Hypergraph.size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.hypergraph.Hypergraph.toplexes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.toplexes()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="classes/classes.html#module-classes">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.Entity"><code class="docutils literal notranslate"><span class="pre">Entity</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.add"><code class="docutils literal notranslate"><span class="pre">Entity.add()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.add_element"><code class="docutils literal notranslate"><span class="pre">Entity.add_element()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.add_elements_from"><code class="docutils literal notranslate"><span class="pre">Entity.add_elements_from()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.assign_properties"><code class="docutils literal notranslate"><span class="pre">Entity.assign_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.cell_weights"><code class="docutils literal notranslate"><span class="pre">Entity.cell_weights</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.children"><code class="docutils literal notranslate"><span class="pre">Entity.children</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.data"><code class="docutils literal notranslate"><span class="pre">Entity.data</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.dataframe"><code class="docutils literal notranslate"><span class="pre">Entity.dataframe</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.dimensions"><code class="docutils literal notranslate"><span class="pre">Entity.dimensions</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.dimsize"><code class="docutils literal notranslate"><span class="pre">Entity.dimsize</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.elements"><code class="docutils literal notranslate"><span class="pre">Entity.elements</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.elements_by_column"><code class="docutils literal notranslate"><span class="pre">Entity.elements_by_column()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.elements_by_level"><code class="docutils literal notranslate"><span class="pre">Entity.elements_by_level()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.empty"><code class="docutils literal notranslate"><span class="pre">Entity.empty</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.encode"><code class="docutils literal notranslate"><span class="pre">Entity.encode()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.get_properties"><code class="docutils literal notranslate"><span class="pre">Entity.get_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.get_property"><code class="docutils literal notranslate"><span class="pre">Entity.get_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Entity.incidence_dict</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Entity.incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.index"><code class="docutils literal notranslate"><span class="pre">Entity.index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.indices"><code class="docutils literal notranslate"><span class="pre">Entity.indices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.is_empty"><code class="docutils literal notranslate"><span class="pre">Entity.is_empty()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.isstatic"><code class="docutils literal notranslate"><span class="pre">Entity.isstatic</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.labels"><code class="docutils literal notranslate"><span class="pre">Entity.labels</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.level"><code class="docutils literal notranslate"><span class="pre">Entity.level()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.memberships"><code class="docutils literal notranslate"><span class="pre">Entity.memberships</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.properties"><code class="docutils literal notranslate"><span class="pre">Entity.properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.remove"><code class="docutils literal notranslate"><span class="pre">Entity.remove()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.remove_element"><code class="docutils literal notranslate"><span class="pre">Entity.remove_element()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.remove_elements_from"><code class="docutils literal notranslate"><span class="pre">Entity.remove_elements_from()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.restrict_to_indices"><code class="docutils literal notranslate"><span class="pre">Entity.restrict_to_indices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.restrict_to_levels"><code class="docutils literal notranslate"><span class="pre">Entity.restrict_to_levels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.set_property"><code class="docutils literal notranslate"><span class="pre">Entity.set_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.size"><code class="docutils literal notranslate"><span class="pre">Entity.size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.translate"><code class="docutils literal notranslate"><span class="pre">Entity.translate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.translate_arr"><code class="docutils literal notranslate"><span class="pre">Entity.translate_arr()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.uid"><code class="docutils literal notranslate"><span class="pre">Entity.uid</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.uidset"><code class="docutils literal notranslate"><span class="pre">Entity.uidset</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.uidset_by_column"><code class="docutils literal notranslate"><span class="pre">Entity.uidset_by_column()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Entity.uidset_by_level"><code class="docutils literal notranslate"><span class="pre">Entity.uidset_by_level()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.EntitySet"><code class="docutils literal notranslate"><span class="pre">EntitySet</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.assign_cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.assign_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.cell_properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.collapse_identical_elements"><code class="docutils literal notranslate"><span class="pre">EntitySet.collapse_identical_elements()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">EntitySet.get_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.get_cell_property"><code class="docutils literal notranslate"><span class="pre">EntitySet.get_cell_property()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.memberships"><code class="docutils literal notranslate"><span class="pre">EntitySet.memberships</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.restrict_to"><code class="docutils literal notranslate"><span class="pre">EntitySet.restrict_to()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.restrict_to_levels"><code class="docutils literal notranslate"><span class="pre">EntitySet.restrict_to_levels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.EntitySet.set_cell_property"><code class="docutils literal notranslate"><span class="pre">EntitySet.set_cell_property()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="classes/classes.html#classes.Hypergraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.adjacency_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.auxiliary_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.auxiliary_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.bipartite()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.collapse_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.collapse_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.collapse_nodes_and_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.collapse_nodes_and_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.connected_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.connected_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dataframe</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.degree"><code class="docutils literal notranslate"><span class="pre">Hypergraph.degree()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.diameter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.dim"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dim()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.distance"><code class="docutils literal notranslate"><span class="pre">Hypergraph.distance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.dual"><code class="docutils literal notranslate"><span class="pre">Hypergraph.dual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_adjacency_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_diameter"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_diameter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_diameters"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_diameters()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_distance"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_distance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_neighbors"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_neighbors()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_props"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_props</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edge_size_dist()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.edges</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_bipartite"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_bipartite()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_incidence_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_incidence_dataframe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.from_numpy_array"><code class="docutils literal notranslate"><span class="pre">Hypergraph.from_numpy_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_cell_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_cell_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_linegraph"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_linegraph()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.get_properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.get_properties()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.incidence_dataframe"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dataframe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.incidence_dict"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_dict</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.incidence_matrix"><code class="docutils literal notranslate"><span class="pre">Hypergraph.incidence_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.is_connected"><code class="docutils literal notranslate"><span class="pre">Hypergraph.is_connected()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.neighbors"><code class="docutils literal notranslate"><span class="pre">Hypergraph.neighbors()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.node_diameters"><code class="docutils literal notranslate"><span class="pre">Hypergraph.node_diameters()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.node_props"><code class="docutils literal notranslate"><span class="pre">Hypergraph.node_props</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.number_of_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.number_of_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.number_of_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.number_of_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.order"><code class="docutils literal notranslate"><span class="pre">Hypergraph.order()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.properties"><code class="docutils literal notranslate"><span class="pre">Hypergraph.properties</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.remove_singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.remove_singletons()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.restrict_to_edges"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_edges()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.restrict_to_nodes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.restrict_to_nodes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_component_subgraphs"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_component_subgraphs()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.s_connected_components"><code class="docutils literal notranslate"><span class="pre">Hypergraph.s_connected_components()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.set_state"><code class="docutils literal notranslate"><span class="pre">Hypergraph.set_state()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.shape"><code class="docutils literal notranslate"><span class="pre">Hypergraph.shape</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.singletons"><code class="docutils literal notranslate"><span class="pre">Hypergraph.singletons()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.size"><code class="docutils literal notranslate"><span class="pre">Hypergraph.size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="classes/classes.html#classes.Hypergraph.toplexes"><code class="docutils literal notranslate"><span class="pre">Hypergraph.toplexes()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms/modules.html">Algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="algorithms/algorithms.html">algorithms package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.contagion">algorithms.contagion module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.Gillespie_SIR"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.Gillespie_SIS"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.collective_contagion"><code class="docutils literal notranslate"><span class="pre">collective_contagion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.contagion_animation"><code class="docutils literal notranslate"><span class="pre">contagion_animation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.discrete_SIR"><code class="docutils literal notranslate"><span class="pre">discrete_SIR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.discrete_SIS"><code class="docutils literal notranslate"><span class="pre">discrete_SIS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.individual_contagion"><code class="docutils literal notranslate"><span class="pre">individual_contagion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.majority_vote"><code class="docutils literal notranslate"><span class="pre">majority_vote()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion.threshold"><code class="docutils literal notranslate"><span class="pre">threshold()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.generative_models">algorithms.generative_models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.generative_models.chung_lu_hypergraph"><code class="docutils literal notranslate"><span class="pre">chung_lu_hypergraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.generative_models.dcsbm_hypergraph"><code class="docutils literal notranslate"><span class="pre">dcsbm_hypergraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.generative_models.erdos_renyi_hypergraph"><code class="docutils literal notranslate"><span class="pre">erdos_renyi_hypergraph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.homology_mod2">algorithms.homology_mod2 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#homology-and-smith-normal-form">Homology and Smith Normal Form</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="algorithms/algorithms.html#homology-mod2">Homology Mod2</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.add_to_column"><code class="docutils literal notranslate"><span class="pre">add_to_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.add_to_row"><code class="docutils literal notranslate"><span class="pre">add_to_row()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.betti"><code class="docutils literal notranslate"><span class="pre">betti()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.betti_numbers"><code class="docutils literal notranslate"><span class="pre">betti_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.bkMatrix"><code class="docutils literal notranslate"><span class="pre">bkMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.boundary_group"><code class="docutils literal notranslate"><span class="pre">boundary_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.chain_complex"><code class="docutils literal notranslate"><span class="pre">chain_complex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.homology_basis"><code class="docutils literal notranslate"><span class="pre">homology_basis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.hypergraph_homology_basis"><code class="docutils literal notranslate"><span class="pre">hypergraph_homology_basis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.interpret"><code class="docutils literal notranslate"><span class="pre">interpret()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.kchainbasis"><code class="docutils literal notranslate"><span class="pre">kchainbasis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.logical_dot"><code class="docutils literal notranslate"><span class="pre">logical_dot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.logical_matadd"><code class="docutils literal notranslate"><span class="pre">logical_matadd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.logical_matmul"><code class="docutils literal notranslate"><span class="pre">logical_matmul()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.matmulreduce"><code class="docutils literal notranslate"><span class="pre">matmulreduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.reduced_row_echelon_form_mod2"><code class="docutils literal notranslate"><span class="pre">reduced_row_echelon_form_mod2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.smith_normal_form_mod2"><code class="docutils literal notranslate"><span class="pre">smith_normal_form_mod2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.swap_columns"><code class="docutils literal notranslate"><span class="pre">swap_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_mod2.swap_rows"><code class="docutils literal notranslate"><span class="pre">swap_rows()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.hypergraph_modularity">algorithms.hypergraph_modularity module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#hypergraph-modularity">Hypergraph_Modularity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.conductance"><code class="docutils literal notranslate"><span class="pre">conductance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.dict2part"><code class="docutils literal notranslate"><span class="pre">dict2part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.kumar"><code class="docutils literal notranslate"><span class="pre">kumar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.last_step"><code class="docutils literal notranslate"><span class="pre">last_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.majority"><code class="docutils literal notranslate"><span class="pre">majority()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.modularity"><code class="docutils literal notranslate"><span class="pre">modularity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.part2dict"><code class="docutils literal notranslate"><span class="pre">part2dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.strict"><code class="docutils literal notranslate"><span class="pre">strict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_modularity.two_section"><code class="docutils literal notranslate"><span class="pre">two_section()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.laplacians_clustering">algorithms.laplacians_clustering module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#hypergraph-probability-transition-matrices-laplacians-and-clustering">Hypergraph Probability Transition Matrices, Laplacians, and Clustering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.laplacians_clustering.get_pi"><code class="docutils literal notranslate"><span class="pre">get_pi()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.laplacians_clustering.norm_lap"><code class="docutils literal notranslate"><span class="pre">norm_lap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.laplacians_clustering.prob_trans"><code class="docutils literal notranslate"><span class="pre">prob_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.laplacians_clustering.spec_clus"><code class="docutils literal notranslate"><span class="pre">spec_clus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms.s_centrality_measures">algorithms.s_centrality_measures module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#s-centrality-measures">S-Centrality Measures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_betweenness_centrality"><code class="docutils literal notranslate"><span class="pre">s_betweenness_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_closeness_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_eccentricity"><code class="docutils literal notranslate"><span class="pre">s_eccentricity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_closeness_centrality()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="algorithms/algorithms.html#module-algorithms">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.Gillespie_SIR"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.Gillespie_SIS"><code class="docutils literal notranslate"><span class="pre">Gillespie_SIS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.add_to_column"><code class="docutils literal notranslate"><span class="pre">add_to_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.add_to_row"><code class="docutils literal notranslate"><span class="pre">add_to_row()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.betti"><code class="docutils literal notranslate"><span class="pre">betti()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.betti_numbers"><code class="docutils literal notranslate"><span class="pre">betti_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.bkMatrix"><code class="docutils literal notranslate"><span class="pre">bkMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.boundary_group"><code class="docutils literal notranslate"><span class="pre">boundary_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.chain_complex"><code class="docutils literal notranslate"><span class="pre">chain_complex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.chung_lu_hypergraph"><code class="docutils literal notranslate"><span class="pre">chung_lu_hypergraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.collective_contagion"><code class="docutils literal notranslate"><span class="pre">collective_contagion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.contagion_animation"><code class="docutils literal notranslate"><span class="pre">contagion_animation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.dcsbm_hypergraph"><code class="docutils literal notranslate"><span class="pre">dcsbm_hypergraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.dict2part"><code class="docutils literal notranslate"><span class="pre">dict2part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.discrete_SIR"><code class="docutils literal notranslate"><span class="pre">discrete_SIR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.discrete_SIS"><code class="docutils literal notranslate"><span class="pre">discrete_SIS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.erdos_renyi_hypergraph"><code class="docutils literal notranslate"><span class="pre">erdos_renyi_hypergraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.get_pi"><code class="docutils literal notranslate"><span class="pre">get_pi()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.homology_basis"><code class="docutils literal notranslate"><span class="pre">homology_basis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.hypergraph_homology_basis"><code class="docutils literal notranslate"><span class="pre">hypergraph_homology_basis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.individual_contagion"><code class="docutils literal notranslate"><span class="pre">individual_contagion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.interpret"><code class="docutils literal notranslate"><span class="pre">interpret()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.kchainbasis"><code class="docutils literal notranslate"><span class="pre">kchainbasis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.kumar"><code class="docutils literal notranslate"><span class="pre">kumar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.last_step"><code class="docutils literal notranslate"><span class="pre">last_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.logical_dot"><code class="docutils literal notranslate"><span class="pre">logical_dot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.logical_matadd"><code class="docutils literal notranslate"><span class="pre">logical_matadd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.logical_matmul"><code class="docutils literal notranslate"><span class="pre">logical_matmul()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.majority"><code class="docutils literal notranslate"><span class="pre">majority()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.majority_vote"><code class="docutils literal notranslate"><span class="pre">majority_vote()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.matmulreduce"><code class="docutils literal notranslate"><span class="pre">matmulreduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.modularity"><code class="docutils literal notranslate"><span class="pre">modularity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.norm_lap"><code class="docutils literal notranslate"><span class="pre">norm_lap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.part2dict"><code class="docutils literal notranslate"><span class="pre">part2dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.prob_trans"><code class="docutils literal notranslate"><span class="pre">prob_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.reduced_row_echelon_form_mod2"><code class="docutils literal notranslate"><span class="pre">reduced_row_echelon_form_mod2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_betweenness_centrality"><code class="docutils literal notranslate"><span class="pre">s_betweenness_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_closeness_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_eccentricity"><code class="docutils literal notranslate"><span class="pre">s_eccentricity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_harmonic_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.s_harmonic_closeness_centrality"><code class="docutils literal notranslate"><span class="pre">s_harmonic_closeness_centrality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.smith_normal_form_mod2"><code class="docutils literal notranslate"><span class="pre">smith_normal_form_mod2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.spec_clus"><code class="docutils literal notranslate"><span class="pre">spec_clus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.strict"><code class="docutils literal notranslate"><span class="pre">strict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.swap_columns"><code class="docutils literal notranslate"><span class="pre">swap_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.swap_rows"><code class="docutils literal notranslate"><span class="pre">swap_rows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.threshold"><code class="docutils literal notranslate"><span class="pre">threshold()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="algorithms/algorithms.html#algorithms.two_section"><code class="docutils literal notranslate"><span class="pre">two_section()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drawing/modules.html">Drawing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drawing/drawing.html">drawing package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="drawing/drawing.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drawing/drawing.html#module-drawing.rubber_band">drawing.rubber_band module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.draw_hyper_edge_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edge_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.draw_hyper_edges"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.draw_hyper_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.draw_hyper_nodes"><code class="docutils literal notranslate"><span class="pre">draw_hyper_nodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.get_default_radius"><code class="docutils literal notranslate"><span class="pre">get_default_radius()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.layout_hyper_edges"><code class="docutils literal notranslate"><span class="pre">layout_hyper_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.rubber_band.layout_node_link"><code class="docutils literal notranslate"><span class="pre">layout_node_link()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="drawing/drawing.html#module-drawing.two_column">drawing.two_column module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.two_column.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.two_column.draw_hyper_edges"><code class="docutils literal notranslate"><span class="pre">draw_hyper_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.two_column.draw_hyper_labels"><code class="docutils literal notranslate"><span class="pre">draw_hyper_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.two_column.layout_two_column"><code class="docutils literal notranslate"><span class="pre">layout_two_column()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="drawing/drawing.html#module-drawing.util">drawing.util module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.get_collapsed_size"><code class="docutils literal notranslate"><span class="pre">get_collapsed_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.get_frozenset_label"><code class="docutils literal notranslate"><span class="pre">get_frozenset_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.get_line_graph"><code class="docutils literal notranslate"><span class="pre">get_line_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.get_set_layering"><code class="docutils literal notranslate"><span class="pre">get_set_layering()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.inflate"><code class="docutils literal notranslate"><span class="pre">inflate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.inflate_kwargs"><code class="docutils literal notranslate"><span class="pre">inflate_kwargs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.util.transpose_inflated_kwargs"><code class="docutils literal notranslate"><span class="pre">transpose_inflated_kwargs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="drawing/drawing.html#module-drawing">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.draw"><code class="docutils literal notranslate"><span class="pre">draw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="drawing/drawing.html#drawing.draw_two_column"><code class="docutils literal notranslate"><span class="pre">draw_two_column()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports/modules.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports/reports.html">reports package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reports/reports.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reports/reports.html#module-reports.descriptive_stats">reports.descriptive_stats module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.centrality_stats"><code class="docutils literal notranslate"><span class="pre">centrality_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.comp_dist"><code class="docutils literal notranslate"><span class="pre">comp_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.degree_dist"><code class="docutils literal notranslate"><span class="pre">degree_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.dist_stats"><code class="docutils literal notranslate"><span class="pre">dist_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">edge_size_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.info_dict"><code class="docutils literal notranslate"><span class="pre">info_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.s_comp_dist"><code class="docutils literal notranslate"><span class="pre">s_comp_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.s_edge_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_edge_diameter_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.s_node_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_node_diameter_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.descriptive_stats.toplex_dist"><code class="docutils literal notranslate"><span class="pre">toplex_dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="reports/reports.html#module-reports">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.centrality_stats"><code class="docutils literal notranslate"><span class="pre">centrality_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.comp_dist"><code class="docutils literal notranslate"><span class="pre">comp_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.degree_dist"><code class="docutils literal notranslate"><span class="pre">degree_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.dist_stats"><code class="docutils literal notranslate"><span class="pre">dist_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.edge_size_dist"><code class="docutils literal notranslate"><span class="pre">edge_size_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.info_dict"><code class="docutils literal notranslate"><span class="pre">info_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.s_comp_dist"><code class="docutils literal notranslate"><span class="pre">s_comp_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.s_edge_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_edge_diameter_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.s_node_diameter_dist"><code class="docutils literal notranslate"><span class="pre">s_node_diameter_dist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="reports/reports.html#reports.toplex_dist"><code class="docutils literal notranslate"><span class="pre">toplex_dist()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="glossary.html" class="btn btn-neutral float-left" title="Glossary of HNX terms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="classes/modules.html" class="btn btn-neutral float-right" title="classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

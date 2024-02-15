@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>algorithms.s_centrality_measures &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            HyperNetX
+              <img src="../../_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypergraph101.html">A Gentle Introduction to Hypergraph Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">algorithms.s_centrality_measures</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for algorithms.s_centrality_measures</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright © 2018 Battelle Memorial Institute</span>
+<span class="c1"># All rights reserved.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">S-Centrality Measures</span>
+<span class="sd">=====================</span>
+<span class="sd">We generalize graph metrics to s-metrics for a hypergraph by using its s-connected</span>
+<span class="sd">components. This is accomplished by computing the s edge-adjacency matrix and</span>
+<span class="sd">constructing the corresponding graph of the matrix. We then use existing graph metrics</span>
+<span class="sd">on this representation of the hypergraph. In essence we construct an *s*-line graph</span>
+<span class="sd">corresponding to the hypergraph on which to apply our methods.</span>
+
+<span class="sd">S-Metrics for hypergraphs are discussed in depth in:</span>
+<span class="sd">*Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al. Hypernetwork science via high-order hypergraph walks.</span>
+<span class="sd">EPJ Data Sci. 9, 16 (2020). https://doi.org/10.1140/epjds/s13688-020-00231-0*</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">nwhy</span>
+
+    <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">nwhy_available</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">setrecursionlimit</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_s_centrality</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for computing s-centrality either in NetworkX or in NWHy</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function</span>
+<span class="sd">        Function or partial function from NetworkX or NWHy</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+
+<span class="sd">    s : int, optional</span>
+<span class="sd">        s-width for computation</span>
+<span class="sd">    edges : bool, optional</span>
+<span class="sd">        If True, an edge linegraph will be used, otherwise a node linegraph will be used</span>
+<span class="sd">    f : str, optional</span>
+<span class="sd">        Identifier of node or edge of interest for computing centrality</span>
+<span class="sd">    return_singletons : bool, optional</span>
+<span class="sd">        If True will return 0 value for each singleton in the s-linegraph</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Centrality metric specific keyword arguments to be passed to func</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        dictionary of centrality scores keyed by names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">comps</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">s_component_subgraphs</span><span class="p">(</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="n">return_singletons</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cps</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">edges</span> <span class="ow">and</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cps</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">edges</span> <span class="ow">and</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cps</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+                <span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">cps</span><span class="p">]</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="n">stats</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">vertices</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">edges</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vertices</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">nodes</span>
+
+        <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">edges</span> <span class="o">*</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">get_linegraph</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">func</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="n">f</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">stats</span>
+
+
+<div class="viewcode-block" id="s_betweenness_centrality"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_betweenness_centrality">[docs]</a><span class="k">def</span> <span class="nf">s_betweenness_centrality</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A centrality measure for an s-edge(node) subgraph of H based on shortest paths.</span>
+<span class="sd">    Equals the betweenness centrality of vertices in the edge(node) s-linegraph.</span>
+
+<span class="sd">    In a graph (2-uniform hypergraph) the betweenness centrality of a vertex $v$</span>
+<span class="sd">    is the ratio of the number of non-trivial shortest paths between any pair of</span>
+<span class="sd">    vertices in the graph that pass through $v$ divided by the total number of</span>
+<span class="sd">    non-trivial shortest paths in the graph.</span>
+
+<span class="sd">    The centrality of edge to all shortest s-edge paths</span>
+<span class="sd">    $V$ = the set of vertices in the linegraph.</span>
+<span class="sd">    $\sigma(s,t)$ = the number of shortest paths between vertices $s$ and $t$.</span>
+<span class="sd">    $\sigma(s,t|v)$ = the number of those paths that pass through vertex $v$.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        c_B(v) = \sum_{s \neq t \in V} \frac{\sigma(s, t|v)}{\sigma(s,t)}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+<span class="sd">    s : int</span>
+<span class="sd">        s connectedness requirement</span>
+<span class="sd">    edges : bool, optional</span>
+<span class="sd">        determines if edge or node linegraph</span>
+<span class="sd">    normalized</span>
+<span class="sd">        bool, default=False,</span>
+<span class="sd">        If true the betweenness values are normalized by `2/((n-1)(n-2))`,</span>
+<span class="sd">        where n is the number of edges in H</span>
+<span class="sd">    return_singletons : bool, optional</span>
+<span class="sd">        if False will ignore singleton components of linegraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary of s-betweenness centrality value of the edges.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_s_centrality</span><span class="p">(</span>
+        <span class="n">func</span><span class="p">,</span>
+        <span class="n">H</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">return_singletons</span><span class="o">=</span><span class="n">return_singletons</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">normalized</span> <span class="ow">and</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">edges</span> <span class="o">*</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">edges</span> <span class="o">*</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="s_closeness_centrality"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_closeness_centrality">[docs]</a><span class="k">def</span> <span class="nf">s_closeness_centrality</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In a connected component the reciprocal of the sum of the distance between an</span>
+<span class="sd">    edge(node) and all other edges(nodes) in the component times the number of edges(nodes)</span>
+<span class="sd">    in the component minus 1.</span>
+
+<span class="sd">    $V$ = the set of vertices in the linegraph.</span>
+<span class="sd">    $n = |V|$</span>
+<span class="sd">    $d$ = shortest path distance</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+
+<span class="sd">    s : int, optional</span>
+
+<span class="sd">    edges : bool, optional</span>
+<span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
+<span class="sd">    return_singletons : bool, optional</span>
+<span class="sd">        Indicates if method should return values for singleton components.</span>
+<span class="sd">    source : str, optional</span>
+<span class="sd">        Identifier of node or edge of interest for computing centrality</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or float</span>
+<span class="sd">        returns the s-closeness centrality value of the edges(nodes).</span>
+<span class="sd">        If source=None a dictionary of values for each s-edge in H is returned.</span>
+<span class="sd">        If source then a single value is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_s_centrality</span><span class="p">(</span>
+        <span class="n">func</span><span class="p">,</span>
+        <span class="n">H</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">return_singletons</span><span class="o">=</span><span class="n">return_singletons</span><span class="p">,</span>
+        <span class="n">f</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="s_harmonic_closeness_centrality"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_closeness_centrality">[docs]</a><span class="k">def</span> <span class="nf">s_harmonic_closeness_centrality</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    s_harmonic_closeness_centrality is being replaced with s_harmonic_centrality</span>
+<span class="s2">    and will not be available in future releases.</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s_harmonic_centrality</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">edge</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="s_harmonic_centrality"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_harmonic_centrality">[docs]</a><span class="k">def</span> <span class="nf">s_harmonic_centrality</span><span class="p">(</span>
+    <span class="n">H</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A centrality measure for an s-edge subgraph of H. A value equal to 1 means the s-edge</span>
+<span class="sd">    intersects every other s-edge in H. All values range between 0 and 1.</span>
+<span class="sd">    Edges of size less than s return 0. If H contains only one s-edge a 0 is returned.</span>
+
+<span class="sd">    The denormalized reciprocal of the harmonic mean of all distances from $u$ to all other vertices.</span>
+<span class="sd">    $V$ = the set of vertices in the linegraph.</span>
+<span class="sd">    $d$ = shortest path distance</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}</span>
+
+<span class="sd">    Normalized this becomes:</span>
+<span class="sd">    $$C(u) = \sum_{v \neq u \in V} \frac{1}{d(v, u)}\cdot\frac{2}{(n-1)(n-2)}$$</span>
+<span class="sd">    where $n$ is the number vertices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+
+<span class="sd">    s : int, optional</span>
+
+<span class="sd">    edges : bool, optional</span>
+<span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
+<span class="sd">    return_singletons : bool, optional</span>
+<span class="sd">        Indicates if method should return values for singleton components.</span>
+<span class="sd">    source : str, optional</span>
+<span class="sd">        Identifier of node or edge of interest for computing centrality</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or float</span>
+<span class="sd">        returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.</span>
+<span class="sd">        If source=None a dictionary of values for each s-edge in H is returned.</span>
+<span class="sd">        If source then a single value is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># func = partial(nx.harmonic_centrality)</span>
+    <span class="c1"># result = _s_centrality(</span>
+    <span class="c1">#     func,</span>
+    <span class="c1">#     H,</span>
+    <span class="c1">#     s=s,</span>
+    <span class="c1">#     edges=edges,</span>
+    <span class="c1">#     return_singletons=return_singletons,</span>
+    <span class="c1">#     f=source,</span>
+    <span class="c1"># )</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_linegraph</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">harmonic_centrality</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">normalized</span> <span class="ow">and</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">edges</span> <span class="o">*</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">edges</span> <span class="o">*</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="n">factor</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+    <span class="c1"># if normalized and H.shape[edges * 1] &gt; 2:</span>
+    <span class="c1">#     n = H.shape[edges * 1]</span>
+    <span class="c1">#     result = {k: v * 2 / ((n - 1) * (n - 2)) for k, v in result.items()}</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     return result</span>
+
+
+<div class="viewcode-block" id="s_eccentricity"><a class="viewcode-back" href="../../algorithms/algorithms.html#algorithms.s_centrality_measures.s_eccentricity">[docs]</a><span class="k">def</span> <span class="nf">s_eccentricity</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_singletons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The length of the longest shortest path from a vertex $u$ to every other vertex in</span>
+<span class="sd">    the s-linegraph.</span>
+<span class="sd">    $V$ = set of vertices in the s-linegraph</span>
+<span class="sd">    $d$ = shortest path distance</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \text{s-ecc}(u) = \text{max}\{d(u,v): v \in V\}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    H : hnx.Hypergraph</span>
+
+<span class="sd">    s : int, optional</span>
+
+<span class="sd">    edges : bool, optional</span>
+<span class="sd">        Indicates if method should compute edge linegraph (default) or node linegraph.</span>
+<span class="sd">    return_singletons : bool, optional</span>
+<span class="sd">        Indicates if method should return values for singleton components.</span>
+<span class="sd">    source : str, optional</span>
+<span class="sd">        Identifier of node or edge of interest for computing centrality</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or float</span>
+<span class="sd">        returns the s-eccentricity value of the edges(nodes).</span>
+<span class="sd">        If source=None a dictionary of values for each s-edge in H is returned.</span>
+<span class="sd">        If source then a single value is returned.</span>
+<span class="sd">        If the s-linegraph is disconnected, np.inf is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_linegraph</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="c1"># func = nx.eccentricity</span>
+
+    <span class="c1"># if source is not None:</span>
+    <span class="c1">#     return _s_centrality(</span>
+    <span class="c1">#         func,</span>
+    <span class="c1">#         H,</span>
+    <span class="c1">#         s=s,</span>
+    <span class="c1">#         edges=edges,</span>
+    <span class="c1">#         f=source,</span>
+    <span class="c1">#         return_singletons=return_singletons,</span>
+    <span class="c1">#     )</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     return _s_centrality(</span>
+    <span class="c1">#         func,</span>
+    <span class="c1">#         H,</span>
+    <span class="c1">#         s=s,</span>
+    <span class="c1">#         edges=edges,</span>
+    <span class="c1">#         return_singletons=return_singletons,</span>
+    <span class="c1">#     )</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

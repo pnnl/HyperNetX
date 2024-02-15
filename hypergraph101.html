@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Gentle Introduction to Hypergraph Mathematics &mdash; HyperNetX 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hypergraph Constructors" href="hypconstructors.html" />
+    <link rel="prev" title="reports package" href="reports/reports.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HyperNetX
+              <img src="_static/hnx_logo_smaller.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing HyperNetX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">HyperNetX Packages</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A Gentle Introduction to Hypergraph Mathematics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graphs-and-hypergraphs">Graphs and Hypergraphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#important-things-about-hypergraphs">Important Things About Hypergraphs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#all-hypergraphs-come-in-dual-pairs">All Hypergraphs Come in Dual Pairs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edge-intersections-have-size">Edge Intersections Have Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edges-can-be-nested">Edges Can Be Nested</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#walks-have-length-and-width">Walks Have Length and Width</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#towards-less-gentle-things">Towards Less Gentle Things</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#s-walks-and-hypernetwork-science"><span class="math notranslate nohighlight">\(s\)</span>-Walks and Hypernetwork Science</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hypergraphs-in-mathematics">Hypergraphs in Mathematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-gentle-graphs-and-hypergraphs">Non-Gentle Graphs and Hypergraphs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hypconstructors.html">Hypergraph Constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widget.html">Visualization Widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modularity.html">Algorithms: Modularity and Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HyperNetX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">A Gentle Introduction to Hypergraph Mathematics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hypergraph101.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="a-gentle-introduction-to-hypergraph-mathematics">
+<span id="hypergraph101"></span><h1>A Gentle Introduction to Hypergraph Mathematics<a class="headerlink" href="#a-gentle-introduction-to-hypergraph-mathematics" title="Permalink to this heading"></a></h1>
+<p>Here we gently introduce some of the basic concepts in hypergraph
+modeling. We note that in order to maintain this “gentleness”, we will
+be mostly avoiding the very important and legitimate issues in the
+proper mathematical foundations of hypergraphs and closely related
+structures, which can be very complicated. Rather we will be focusing on
+only the most common cases used in most real modeling, and call a graph
+or hypergraph <strong>gentle</strong> when they are loopless, simple, finite,
+connected, and lacking empty hyperedges, isolated vertices, labels,
+weights, or attributes. Additionally, the deep connections between
+hypergraphs and other critical mathematical objects like partial orders,
+finite topologies, and topological complexes will also be treated
+elsewhere. When it comes up, below we will sometimes refer to the added
+complexities which would attend if we weren’t being so “gentle”. In
+general the reader is referred to [1,2] for a less gentle and more
+comprehensive treatment.</p>
+<section id="graphs-and-hypergraphs">
+<h2>Graphs and Hypergraphs<a class="headerlink" href="#graphs-and-hypergraphs" title="Permalink to this heading"></a></h2>
+<p>Network science is based on the concept of a <strong>graph</strong>
+<span class="math notranslate nohighlight">\(G=\langle V,E\rangle\)</span> as a system of connections between
+entities. <span class="math notranslate nohighlight">\(V\)</span> is a (typically finite) set of elements, nodes, or
+objects, which we formally call <strong>“vertices”</strong>, and <span class="math notranslate nohighlight">\(E\)</span> is a set
+of pairs of vertices. Given that, then for two vertices
+<span class="math notranslate nohighlight">\(u,v \in V\)</span>, an <strong>edge</strong> is a set <span class="math notranslate nohighlight">\(e=\{u,v\}\)</span> in <span class="math notranslate nohighlight">\(E\)</span>,
+indicating that there is a connection between <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span>.
+It is then common to represent <span class="math notranslate nohighlight">\(G\)</span> as either a Boolean <strong>adjacency
+matrix</strong> <span class="math notranslate nohighlight">\(A_{n \times n}\)</span> where <span class="math notranslate nohighlight">\(n=|V|\)</span>, where an
+<span class="math notranslate nohighlight">\(i,j\)</span> entry in <span class="math notranslate nohighlight">\(A\)</span> is 1 if <span class="math notranslate nohighlight">\(v_i,v_j\)</span> are connected in
+<span class="math notranslate nohighlight">\(G\)</span>; or as an <strong>incidence matrix</strong> <span class="math notranslate nohighlight">\(I_{n \times m}\)</span>, where
+now also <span class="math notranslate nohighlight">\(m=|E|\)</span>, and an <span class="math notranslate nohighlight">\(i,j\)</span> entry in <span class="math notranslate nohighlight">\(I\)</span> is now 1
+if the vertex <span class="math notranslate nohighlight">\(v_i\)</span> is in edge <span class="math notranslate nohighlight">\(e_j\)</span>.</p>
+<figure class="align-center" id="id1">
+<span id="f1"></span><a class="with-border reference internal image-reference" href="_images/exgraph.png"><img alt="_images/exgraph.png" class="with-border" src="_images/exgraph.png" style="width: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">An example graph, where the numbers are edge IDs.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<span id="t1"></span><table class="docutils align-center" id="id2">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Adjacency matrix <span class="math notranslate nohighlight">\(A\)</span> of a graph.</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Andrews</p></th>
+<th class="head"><p>Bailey</p></th>
+<th class="head"><p>Carter</p></th>
+<th class="head"><p>Davis</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Andrews</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bailey</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>Carter</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Davis</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<span id="t2"></span><table class="docutils align-center" id="id3">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Incidence matrix <span class="math notranslate nohighlight">\(I\)</span> of a graph.</span><a class="headerlink" href="#id3" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>1</p></th>
+<th class="head"><p>2</p></th>
+<th class="head"><p>3</p></th>
+<th class="head"><p>4</p></th>
+<th class="head"><p>5</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Andrews</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bailey</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>Carter</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Davis</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-center" id="id4">
+<span id="label3"></span><a class="with-border reference internal image-reference" href="_images/biblio_hg.png"><img alt="_images/biblio_hg.png" class="with-border" src="_images/biblio_hg.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">An example hypergraph, where similarly now the hyperedges are shown with numeric IDs.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<span id="t3"></span><table class="docutils align-center" id="id5">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Incidence matrix I of a hypergraph.</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>1</p></th>
+<th class="head"><p>2</p></th>
+<th class="head"><p>3</p></th>
+<th class="head"><p>4</p></th>
+<th class="head"><p>5</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Andrews</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bailey</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>Carter</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Davis</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notice that in the incidence matrix <span class="math notranslate nohighlight">\(I\)</span> of a gentle graph
+<span class="math notranslate nohighlight">\(G\)</span>, it is necessarily the case that every column must have
+precisely two 1 entries, reflecting that every edge connects exactly two
+vertices. The move to a <strong>hypergraph</strong> <span class="math notranslate nohighlight">\(H=\langle V,E\rangle\)</span>
+relaxes this requirement, in that now a <strong>hyperedge</strong> (although we will
+still say edge when clear from context) <span class="math notranslate nohighlight">\(e \in E\)</span> is a subset
+<span class="math notranslate nohighlight">\(e = \{ v_1, v_2, \ldots, v_k\} \subseteq V\)</span> of vertices of
+arbitrary size. We call <span class="math notranslate nohighlight">\(e\)</span> a <span class="math notranslate nohighlight">\(k\)</span>-edge when <span class="math notranslate nohighlight">\(|e|=k\)</span>.
+Note that thereby a 2-edge is a graph edge, while both a singleton
+<span class="math notranslate nohighlight">\(e=\{v\}\)</span> and a 3-edge <span class="math notranslate nohighlight">\(e=\{v_1,v_2,v_3\}\)</span>, 4-edge
+<span class="math notranslate nohighlight">\(e=\{v_1,v_2,v_3,v_4\}\)</span>, etc., are all hypergraph edges. In this
+way, if every edge in a hypergraph <span class="math notranslate nohighlight">\(H\)</span> happens to be a 2-edge,
+then <span class="math notranslate nohighlight">\(H\)</span> is a graph. We call such a hypergraph <strong>2-uniform</strong>.</p>
+<p>Our incidence matrix <span class="math notranslate nohighlight">\(I\)</span> is now very much like that for a graph,
+but the requirement that each column have exactly two 1 entries is
+relaxed: the column for edge <span class="math notranslate nohighlight">\(e\)</span> with size <span class="math notranslate nohighlight">\(k\)</span> will have
+<span class="math notranslate nohighlight">\(k\)</span> 1’s. Thus <span class="math notranslate nohighlight">\(I\)</span> is now a general Boolean matrix (although
+with some restrictions when <span class="math notranslate nohighlight">\(H\)</span> is gentle).</p>
+<p>Notice also that in the examples we’re showing in the figures, the graph
+is closely related to the hypergraph. In fact, this particular graph is
+the <strong>2-section</strong> or <strong>underlying graph</strong> of the hypergraph. It is the
+graph <span class="math notranslate nohighlight">\(G\)</span> recorded when only the pairwise connections in the
+hypergraph <span class="math notranslate nohighlight">\(H\)</span> are recognized. Note that while the 2-section is
+always determined by the hypergraph, and is frequently used as a
+simplified representation, it almost never has enough information to be
+able to recover the hypergraph from it.</p>
+</section>
+<section id="important-things-about-hypergraphs">
+<h2>Important Things About Hypergraphs<a class="headerlink" href="#important-things-about-hypergraphs" title="Permalink to this heading"></a></h2>
+<p>While all graphs <span class="math notranslate nohighlight">\(G\)</span> are (2-uniform) hypergraphs <span class="math notranslate nohighlight">\(H\)</span>, since
+they’re very special cases, general hypergraphs have some important
+properties which really stand out in distinction, especially to those
+already conversant with graphs. The following issues are critical for
+hypergraphs, but “disappear” when considering the special case of
+2-uniform hypergraphs which are graphs.</p>
+<section id="all-hypergraphs-come-in-dual-pairs">
+<h3>All Hypergraphs Come in Dual Pairs<a class="headerlink" href="#all-hypergraphs-come-in-dual-pairs" title="Permalink to this heading"></a></h3>
+<p>If our incidence matrix <span class="math notranslate nohighlight">\(I\)</span> is a general <span class="math notranslate nohighlight">\(n \times m\)</span>
+Boolean matrix, then its transpose <span class="math notranslate nohighlight">\(I^T\)</span> is an <span class="math notranslate nohighlight">\(m \times n\)</span>
+Boolean matrix. In fact, <span class="math notranslate nohighlight">\(I^T\)</span> is also the incidence matrix of a
+different hypergraph called the <strong>dual</strong> hypergraph <span class="math notranslate nohighlight">\(H^*\)</span> of
+<span class="math notranslate nohighlight">\(H\)</span>. In the dual <span class="math notranslate nohighlight">\(H^*\)</span>, it’s just that vertices and edges
+are swapped: we now have <span class="math notranslate nohighlight">\(H^* = \langle E, V \rangle\)</span> where it’s
+<span class="math notranslate nohighlight">\(E\)</span> that is a set of vertices, and the now edges
+<span class="math notranslate nohighlight">\(v \in V, v \subseteq E\)</span> are subsets of those vertices.</p>
+<figure class="align-center" id="id6">
+<span id="f3"></span><a class="with-border reference internal image-reference" href="_images/dual.png"><img alt="_images/dual.png" class="with-border" src="_images/dual.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">The dual hypergraph <span class="math notranslate nohighlight">\(H^*\)</span>.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Just like the “primal” hypergraph <span class="math notranslate nohighlight">\(H\)</span> has a 2-section, so does the
+dual. This is called the <strong>line graph</strong>, and it is an important
+structure which records all of the incident hyperedges. Line graphs are
+also used extensively in graph theory.</p>
+<p>Note that it follows that since every graph <span class="math notranslate nohighlight">\(G\)</span> is a (2-uniform)
+hypergraph <span class="math notranslate nohighlight">\(H\)</span>, so therefore we can form the dual hypergraph
+<span class="math notranslate nohighlight">\(G^*\)</span> of <span class="math notranslate nohighlight">\(G\)</span>. If a graph <span class="math notranslate nohighlight">\(G\)</span> is a 2-uniform
+hypergraph, is its dual <span class="math notranslate nohighlight">\(G^*\)</span> also a 2-uniform hypergraph? In
+general, no, only in the case where <span class="math notranslate nohighlight">\(G\)</span> is a single cycle or a
+union of cycles would that be true. Also note that in order to calculate
+the line graph of a graph <span class="math notranslate nohighlight">\(G\)</span>, one needs to work through its dual
+hypergraph <span class="math notranslate nohighlight">\(G^*\)</span>.</p>
+<figure class="align-center" id="id7">
+<span id="f4"></span><a class="with-border reference internal image-reference" href="_images/dual2.png"><img alt="_images/dual2.png" class="with-border" src="_images/dual2.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">The line graph of <span class="math notranslate nohighlight">\(H\)</span>, which is the 2-section of the dual <span class="math notranslate nohighlight">\(H^*\)</span>.</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="edge-intersections-have-size">
+<h3>Edge Intersections Have Size<a class="headerlink" href="#edge-intersections-have-size" title="Permalink to this heading"></a></h3>
+<p>As we’ve already seen, in a graph all the edges are size 2, whereas in a
+hypergarph edges can be arbitrary size <span class="math notranslate nohighlight">\(1, 2, \ldots, n\)</span>. Our
+example shows a singleton, three “graph edge” pairs, and a 2-edge.</p>
+<p>In a gentle graph <span class="math notranslate nohighlight">\(G\)</span> consider two edges
+<span class="math notranslate nohighlight">\(e = \{ u, v \},f=\{w,z\} \in E\)</span> and their intersection
+<span class="math notranslate nohighlight">\(g = e \cap f\)</span>. If <span class="math notranslate nohighlight">\(g \neq \emptyset\)</span> then <span class="math notranslate nohighlight">\(e\)</span> and
+<span class="math notranslate nohighlight">\(f\)</span> are non-disjoint, and we call them <strong>incident</strong>. Let
+<span class="math notranslate nohighlight">\(s(e,f)=|g|\)</span> be the size of that intersection. If <span class="math notranslate nohighlight">\(G\)</span> is
+gentle and <span class="math notranslate nohighlight">\(e\)</span> and <span class="math notranslate nohighlight">\(f\)</span> are incident, then <span class="math notranslate nohighlight">\(s(e,f)=1\)</span>,
+in that one of <span class="math notranslate nohighlight">\(u,v\)</span> must be equal to one of <span class="math notranslate nohighlight">\(w,z\)</span>, and
+<span class="math notranslate nohighlight">\(g\)</span> will be that singleton. But in a hypergraph, the intersection
+<span class="math notranslate nohighlight">\(g=e \cap f\)</span> of two incident edges can be any size
+<span class="math notranslate nohighlight">\(s(e,f) \in [1,\min(|e|,|f|)]\)</span>. This aspect, the size of the
+intersection of two incident edges, is critical to understanding
+hypergraph structure and properties.</p>
+</section>
+<section id="edges-can-be-nested">
+<h3>Edges Can Be Nested<a class="headerlink" href="#edges-can-be-nested" title="Permalink to this heading"></a></h3>
+<p>While in a gentle graph <span class="math notranslate nohighlight">\(G\)</span> two edges <span class="math notranslate nohighlight">\(e\)</span> and <span class="math notranslate nohighlight">\(f\)</span> can
+be incident or not, in a hypergraph <span class="math notranslate nohighlight">\(H\)</span> there’s another case: two
+edges <span class="math notranslate nohighlight">\(e\)</span> and <span class="math notranslate nohighlight">\(f\)</span> may be <strong>nested</strong> or <strong>included</strong>, in that
+<span class="math notranslate nohighlight">\(e \subseteq f\)</span> or <span class="math notranslate nohighlight">\(f \subseteq e\)</span>. That’s exactly the
+condition above where <span class="math notranslate nohighlight">\(s(e,f) = \min(|e|,|f|)\)</span>, which is the size
+of the edge included within the including edge. In our example, we have
+that edge 1 is included in edge 2 is included in edge 3.</p>
+</section>
+<section id="walks-have-length-and-width">
+<h3>Walks Have Length and Width<a class="headerlink" href="#walks-have-length-and-width" title="Permalink to this heading"></a></h3>
+<p>A <strong>walk</strong> is a sequence
+<span class="math notranslate nohighlight">\(W = \langle { e_0, e_1, \ldots, e_N } \rangle\)</span> of edges where
+each pair <span class="math notranslate nohighlight">\(e_i,e_{i+1}, 0 \le i \le N-1\)</span> in the sequence are
+incident. We call <span class="math notranslate nohighlight">\(N\)</span> the <strong>length</strong> of the walk. Walks are the
+<em>raison d’être</em> of both graphs and hypergraphs, in that in a graph
+<span class="math notranslate nohighlight">\(G\)</span> a walk <span class="math notranslate nohighlight">\(W\)</span> establishes the connectivity of all the
+<span class="math notranslate nohighlight">\(e_i\)</span> to each other, and a way to “travel” between the ends
+<span class="math notranslate nohighlight">\(e_0\)</span> and <span class="math notranslate nohighlight">\(e_N\)</span>. Naturally in a walk for each such pair we
+can also measure the size of the intersection
+<span class="math notranslate nohighlight">\(s_i=s(e_i,e_{i+1}), 0 \le i \le N\)</span>. While in a gentle graph
+<span class="math notranslate nohighlight">\(G\)</span>, all the <span class="math notranslate nohighlight">\(s_i=1\)</span>, as we’ve seen in a hypergraph
+<span class="math notranslate nohighlight">\(H\)</span> all these <span class="math notranslate nohighlight">\(s_i\)</span> can vary widely. So for any walk
+<span class="math notranslate nohighlight">\(W\)</span> we can not only talk about its length <span class="math notranslate nohighlight">\(N\)</span>, but also
+define its <strong>width</strong> <span class="math notranslate nohighlight">\(s(W) = \min_{0 \le i \le N} s_i\)</span> as the size
+of the smallest such intersection. When a walk <span class="math notranslate nohighlight">\(W\)</span> has width
+<span class="math notranslate nohighlight">\(s\)</span>, we call it an <span class="math notranslate nohighlight">\(s\)</span>-walk. It follows that all walks
+in a graph are 1-walks with width 1. In Fig. <a class="reference external" href="#swalks">5</a> we see two
+walks in a hypergraph. While both have length 2 (counting edgewise, and
+recalling origin zero), the one on the left has width 1, and that on the
+right width 3.</p>
+<figure class="align-center" id="id8">
+<span id="f5"></span><a class="with-border reference internal image-reference" href="_images/swalks.png"><img alt="_images/swalks.png" class="with-border" src="_images/swalks.png" style="width: 600px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Two hypergraph walks of length 2: (Left) A 1-walk. (Right) A 3-walk.</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="towards-less-gentle-things">
+<h2>Towards Less Gentle Things<a class="headerlink" href="#towards-less-gentle-things" title="Permalink to this heading"></a></h2>
+<p>We close with just brief mentions of more advanced issues.</p>
+<section id="s-walks-and-hypernetwork-science">
+<h3><span class="math notranslate nohighlight">\(s\)</span>-Walks and Hypernetwork Science<a class="headerlink" href="#s-walks-and-hypernetwork-science" title="Permalink to this heading"></a></h3>
+<p>Network science has become a dominant force in data analytics in recent
+years, including a range of methods measuring distance, connectivity,
+reachability, centrality, modularity, and related things. Most all of
+these concepts generalize to hypergraphs using “<span class="math notranslate nohighlight">\(s\)</span>-versions” of
+them. For example, the <span class="math notranslate nohighlight">\(s\)</span>-distance between two vertices or
+hyperedges is the length of the shortest <span class="math notranslate nohighlight">\(s\)</span>-walk between them, so
+that as <span class="math notranslate nohighlight">\(s\)</span> goes up, requiring wider connections, the distance
+will also tend to grow, so that ultimately perhaps vertices may not be
+<span class="math notranslate nohighlight">\(s\)</span>-reachable at all. See [2] for more details.</p>
+</section>
+<section id="hypergraphs-in-mathematics">
+<h3>Hypergraphs in Mathematics<a class="headerlink" href="#hypergraphs-in-mathematics" title="Permalink to this heading"></a></h3>
+<p>Hypergraphs are very general objects mathematically, and are deeply
+connected to a range of other essential objects and structures mostly in
+discrete science.</p>
+<p>Most obviously, perhaps, is that there is a one-to-one relationship
+between a hypergraph <span class="math notranslate nohighlight">\(H = \langle V, E \rangle\)</span> and a
+corresponding bipartite graph <span class="math notranslate nohighlight">\(B=\langle V \sqcup E, I \rangle\)</span>.
+<span class="math notranslate nohighlight">\(B\)</span> is a new graph (not a hypergraph) with vertices being both the
+vertices and the hyperedges from the hypergraph <span class="math notranslate nohighlight">\(H\)</span>, and a
+connection being a pair <span class="math notranslate nohighlight">\(\{ v, e \} \in I\)</span> if and only if
+<span class="math notranslate nohighlight">\(v \in e\)</span> in <span class="math notranslate nohighlight">\(H\)</span>. That you can go the other way to define a
+hypergraph <span class="math notranslate nohighlight">\(H\)</span> for every bipartite graph <span class="math notranslate nohighlight">\(G\)</span> is evident, but
+not all operations carry over unambiguously between hypergraphs and
+their bipartite versions.</p>
+<figure class="align-center" id="id9">
+<span id="f6"></span><a class="with-border reference internal image-reference" href="_images/bicolored1.png"><img alt="_images/bicolored1.png" class="with-border" src="_images/bicolored1.png" style="width: 200px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">Bipartite graph.</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Even more generally, the Boolean incidence matrix <span class="math notranslate nohighlight">\(I\)</span> of a
+hypergraph <span class="math notranslate nohighlight">\(H\)</span> can be taken as the characteristic matrix of a
+binary relation. When <span class="math notranslate nohighlight">\(H\)</span> is gentle this is somewhat restricted,
+but in general we can see that there are one-to-one relations now
+between hypergraphs, binary relations, as well as bipartite graphs from
+above.</p>
+<p>Additionally, we know that every hypergraph implies a hierarchical
+structure via the fact that for every pair of incident hyperedges either
+one is included in the other, or their intersection is included in both.
+This creates a partial order, establishing a further one-to-one mapping
+to a variety of lattice structures and dual lattice structures relating
+how groups of vertices are included in groups of edges, and vice versa.
+Fig. refex shows the <strong>concept lattice</strong> [3], perhaps the most important
+of these structures, determined by our example.</p>
+<figure class="align-center" id="id10">
+<span id="f7"></span><a class="with-border reference internal image-reference" href="_images/ex.png"><img alt="_images/ex.png" class="with-border" src="_images/ex.png" style="width: 450px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">The concept lattice of the example hypergraph <span class="math notranslate nohighlight">\(H\)</span>.</span><a class="headerlink" href="#id10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Finally, the strength of hypergraphs is their ability to model multi-way
+interactions. Similarly, mathematical topology is concerned with how
+multi-dimensional objects can be attached to each other, not only in
+continuous spaces but also with discrete objects. In fact, a finite
+topological space is a special kind of gentle hypergraph closed under
+both union and intersection, and there are deep connections between
+these structures and the lattices referred to above.</p>
+<p>In this context also an <strong>abstract simplicial complex (ASC)</strong> is a kind
+of hypergraph where all possible included edges are present. Each
+hypergraph determines such an ASC by “closing it down” by subset. ASCs
+have a natural topological structure which can reveal hidden structures
+measurable by homology, and are used extensively as the workhorse of
+topological methods such as persistent homology. In this way hypergraphs
+form a perfect bridge from network science to computational topology in
+general.</p>
+<figure class="align-center" id="id11">
+<span id="f8"></span><a class="with-border reference internal image-reference" href="_images/simplicial.png"><img alt="_images/simplicial.png" class="with-border" src="_images/simplicial.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 8 </span><span class="caption-text">A diagram of the ASC implied by our example. Numbers here indicate the actual hyper-edges in the original hypergraph <span class="math notranslate nohighlight">\(H\)</span>, where now additionally all sub-edges, including singletons, are in the ASC.</span><a class="headerlink" href="#id11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="non-gentle-graphs-and-hypergraphs">
+<h3>Non-Gentle Graphs and Hypergraphs<a class="headerlink" href="#non-gentle-graphs-and-hypergraphs" title="Permalink to this heading"></a></h3>
+<p>Above we described our use of “gentle” graphs and hypergraphs as finite,
+loopless, simple, connected, and lacking empty hyperedges, isolated
+vertices, labels, weights, or attributes. But at a higher level of
+generality we can also have:</p>
+<dl class="simple">
+<dt>Empty Hyperedges:</dt><dd><p>If a column of <span class="math notranslate nohighlight">\(I\)</span> has all zero entries.</p>
+</dd>
+<dt>Isolated Vertices:</dt><dd><p>If a row of <span class="math notranslate nohighlight">\(I\)</span> has all zero entries.</p>
+</dd>
+<dt>Multihypergraphs:</dt><dd><p>We may choose to allow duplicated hyperedges, resulting in duplicate
+columns in the incidence matrix <span class="math notranslate nohighlight">\(I\)</span>.</p>
+</dd>
+<dt>Self-Loops:</dt><dd><p>In a graph allowing an edge to connect to itself.</p>
+</dd>
+<dt>Direction:</dt><dd><p>In an edge, where some vertices are recognized as “inputs” which
+point to others recognized as “outputs”.</p>
+</dd>
+<dt>Order:</dt><dd><p>In a hyperedge, where the vertices carry a particular (total) order.
+In a graph, this is equivalent to being directed, but not in a
+hypergraph.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>In general we use graphs and hypergraphs to model data, and thus
+carrying attributes of different types, including weights, labels,
+identifiers, types, strings, or really in principle any data object.
+These attributes could be on vertices (rows of <span class="math notranslate nohighlight">\(I\)</span>), edges
+(columns of <span class="math notranslate nohighlight">\(I\)</span>) or what we call “incidences”, related to a
+particular appearnace of a particular vertex in a particular edge
+(cells of <span class="math notranslate nohighlight">\(I\)</span>).</p>
+</dd>
+</dl>
+<p>[1] Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE;
+Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi,
+Ignacio J: (2021) “Hypernetwork Science: From Multidimensional
+Networks to Computational Topology”, in: <em>Unifying Themes in Complex
+systems X: Proc. 10th Int. Conf. Complex Systems</em>, ed. D. Braha et
+al., pp. 377-392, Springer,
+<code class="docutils literal notranslate"><span class="pre">https://doi.org/10.1007/978-3-030-67318-5_25</span></code></p>
+<p>[2] Aksoy, Sinan G; Joslyn, Cliff A; Marrero, Carlos O; Praggastis, B;
+Purvine, Emilie AH: (2020) “Hypernetwork Science via High-Order
+Hypergraph Walks”, <em>EPJ Data Science</em>, v. <strong>9</strong>:16,
+<code class="docutils literal notranslate"><span class="pre">https://doi.org/10.1140/epjds/s13688-020-00231-0</span></code></p>
+<p>[3] Ganter, Bernhard and Wille, Rudolf: (1999) <em>Formal Concept
+Analysis</em>, Springer-Verlag</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reports/reports.html" class="btn btn-neutral float-left" title="reports package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hypconstructors.html" class="btn btn-neutral float-right" title="Hypergraph Constructors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Battelle Memorial Institute.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
