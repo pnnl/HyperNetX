@@ -18,12 +18,6 @@ import pandas as pd
 import itertools
 from scipy.stats import binom
 
-try:
-    import igraph as ig
-except ModuleNotFoundError as e:
-    print(
-        f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
-    )
 ################################################################################
 
 # we use 2 representations for partitions (0-based part ids):
@@ -278,6 +272,15 @@ def two_section(HG):
      : igraph.Graph
        The 2-section graph built from HG
     """
+
+    try:
+        import igraph as ig
+    except ModuleNotFoundError as e:
+        raise Exception(
+            f" {e}. If you need to use {__name__}, please install additional packages by running the "
+            f"following command: pip install .['all']"
+        ) from e
+
     s = []
     for e in HG.edges:
         E = HG.edges[e]

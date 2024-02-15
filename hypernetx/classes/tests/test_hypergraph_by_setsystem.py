@@ -1,5 +1,4 @@
 import pytest
-from pytest_lazyfixture import lazy_fixture as lf
 
 from hypernetx import Hypergraph
 
@@ -23,18 +22,18 @@ from hypernetx import Hypergraph
 
 
 @pytest.mark.parametrize(
-    "hyp, expected",
+    "hypergraph_fixture",
     [
-        (lf("hyp_no_props"), None),
-        (lf("hyp_df_with_props"), None),
-        (lf("hyp_dict_with_props"), None),
-        (lf("hyp_props_on_edges_nodes"), None),
+        ("hyp_no_props"),
+        ("hyp_df_with_props"),
+        ("hyp_dict_with_props"),
+        ("hyp_props_on_edges_nodes"),
     ],
 )
-def test_dual(hyp: Hypergraph, expected):
-    actual = hyp.dual()
+def test_dual(hypergraph_fixture, request):
+    actual = request.getfixturevalue(hypergraph_fixture).dual()
     # assertions on the hypergraph
     assert isinstance(actual, Hypergraph)
 
     # assertions on the actual result compared to the expected result that was defined in the parameterize decorator
-    assert actual != expected
+    assert actual is not None

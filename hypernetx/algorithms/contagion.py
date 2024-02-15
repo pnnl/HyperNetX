@@ -68,10 +68,10 @@ def contagion_animation(
     try:
         from celluloid import Camera
     except ModuleNotFoundError as e:
-        print(
-            f" {e}. If you need to use {__name__}, please install additional packages by running the following command: pip install .['all']"
-        )
-        raise
+        raise Exception(
+            f"If you need to use {__name__}, please install additional packages by running the "
+            f"following command: pip install .['all']"
+        ) from e
 
     nodeState = defaultdict(lambda: "S")
 
