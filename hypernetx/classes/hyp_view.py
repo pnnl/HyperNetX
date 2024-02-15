@@ -42,24 +42,25 @@ class PropertyStore(object):
     def dataframe(self):
         return self._dataframe
 
-class IncidenceStore():
+class IncidenceStore(IS):
     def __init__(self,df):
+        super().__init__(df)
         self._dataframe = df
-        self.proxy = IS(df)
+        # self.proxy = IS(df)
             
-    def __call__(self):
-        return self
+    # def __call__(self):
+    #     return self
     
-    def __iter__(self):
-        return self.proxy.__iter__()
+    # def __iter__(self):
+    #     return self.proxy.__iter__()
     
-    @property
-    def edges(self):
-        return self.proxy.edges
+    # @property
+    # def edges(self):
+    #     return self.proxy.edges
     
-    @property
-    def nodes(self):
-        return self.proxy.nodes
+    # @property
+    # def nodes(self):
+    #     return self.proxy.nodes
 
     @property
     def dataframe(self):
@@ -86,11 +87,12 @@ class HypergraphView(object):
         property_store : _type_, optional
             _description_, by default None
         """
-        self.name = "test"
         self._incidence_store = incidence_store
+        self._property_store = property_store or PropertyStore()
+        
         ### incidence store needs index or columns
         self._level = level  ## edges, nodes, or incidence pairs
-        self._properties = property_store or PropertyStore()
+        self._levelset = self.levelset
 
         # self._properties = PropertyStore()  
         ### if no properties and level 0 or 1, 
@@ -99,39 +101,50 @@ class HypergraphView(object):
         ### and empty properties otherwise.
 
     @property
+    def levelset(self):
+        """
+        _summary_
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
+        level = self._level
+        if level == 0:
+            return self._incidence_store.edges
+        elif level == 1:
+            return self._incidence_store.nodes
+        elif level == 2:
+            return self._incidence_store._data.values.tolist()
+        
+    @property
     def dataframe(self):
-        return self._incidence_store.dataframe
+        return self._property_store.dataframe
     
     def __iter__(self):
         """
         Defined by level store
         iterate over the associated level in the incidence store
         """
-        level = self._level
-        if level == 0:
-            return self._incidence_store.edges.__iter__()
-        elif level == 1:
-            return self._incidence_store.nodes.__iter__()
-        elif level == 2:
-            return self._incidence_store.__iter__()
+        return iter(self.levelset)
 
     def __len__(self):
         """
         Defined by incidence store 
         """
-        level = self._level
-        if 
+        return len(self.levelset)
 
-    # def __contains__(self,item):
-    #     """
-    #     Defined by level store
+    def __contains__(self,item):
+        """
+        Defined by incidence store
 
-    #     Parameters
-    #     ----------
-    #     item : _type_
-    #         _description_
-    #     """
-    #     pass
+        Parameters
+        ----------
+        item : _type_
+            _description_
+        """
+        return item in self.levelset
 
     
     # def to_dataframe(self):
@@ -157,23 +170,30 @@ class HypergraphView(object):
 
 
 
-    # def __getitem__(self,key):
-    #     """
-    #     Returns incident objects (neighbors in bipartite graph) 
-    #     to keyed object as an AttrList.
-    #     Returns AttrList associated with item, 
-    #     attributes/properties may be called 
-    #     from AttrList 
-    #     If level 0 - elements, if level 1 - memberships,
-    #     if level 2 - TBD - uses getitem from stores and links to props
-    #         These calls will go to the neighbors method in the incidence store
+    def __getitem__(self,uid):
+        """
+        Returns incident objects (neighbors in bipartite graph) 
+        to keyed object as an AttrList.
+        Returns AttrList associated with item, 
+        attributes/properties may be called 
+        from AttrList 
+        If level 0 - elements, if level 1 - memberships,
+        if level 2 - TBD - uses getitem from stores and links to props
+            These calls will go to the neighbors method in the incidence store
 
-    #     Parameters
-    #     ----------
-    #     key : _type_
-    #         _description_
-    #     """
-    #     pass
+        Parameters
+        ----------
+        key : _type_
+            _description_
+        """
+        pass
+        # level = self._level
+        # if level == 0 or level == 1:
+        #     elements = self._incidence_store.neighbors(level,uid)
+        # else:
+        #     return None
+        # ## TODO  return an AttrList associated with this item
+
 
     # def properties(self,key=None,prop_name=None):
     #     """
