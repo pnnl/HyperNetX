@@ -333,7 +333,9 @@ class NList(UserList):
         uid,
         initlist: Optional[list] = None, 
     ):
-        self._hv = hypergraph_view
+        self._incstore = hypergraph_view._incidence_store
+        self._propstore = hypergraph_view._property_store
+        self._view = hypergraph_view
         self.level = hypergraph_view.level
         self._uid = uid
         super().__init__(initlist)
