@@ -25,20 +25,25 @@ flake8:
 format:
 	@$(PYTHON3) -m black hypernetx
 
-## Test
+## Tests
 
 pre-commit:
 	pre-commit install
 	pre-commit run --all-files
 
+
 test:
+	coverage run --source=hypernetx -m pytest
+	coverage report -m
+
+test-ci:
 	@$(PYTHON3) -m tox
 
-test-ci: lint-deps lint pre-commit test-deps test
+test-ci-stash: lint-deps lint pre-commit test-deps test-ci
 
-test-ci-github: lint-deps lint pre-commit ci-github-deps test-deps test
+test-ci-github: lint-deps lint pre-commit ci-github-deps test-deps test-ci
 
-.PHONY: test, test-ci, test-ci-github, pre-commit
+.PHONY: pre-commit test test-ci, test-ci-stash, test-ci-github
 
 ## Continuous Deployment
 ## Assumes that scripts are run on a container or test server VM
