@@ -26,7 +26,16 @@ __all__ = ["HypergraphView"]
 
 ##################### PROXY CLASSES FOR CONSTRUCTION
 class PropertyStore(object):
-    def __init__(self,dfp=None):
+    """
+    Wrapper for a pandas dataframe. Minimal logic but limits changes
+    to 
+
+    Parameters
+    ----------
+    object : _type_
+        _description_
+    """
+    def __init__(self,dfp=None, level=0):
         if dfp is not None:
             self._dataframe = dfp
             if 'properties' not in dfp.columns:
@@ -37,11 +46,22 @@ class PropertyStore(object):
                 self._dataframe.weight = 1
             else:
                 dfp.weight.fillna(1)
+            if level in [0,1]:
+                self._dataframe = self._dataframe.set_index(self._dataframe.columns[0])
+            elif level in [2]:
+                self._dataframe = self._dataframe.set_index([self._dataframe.columns[0],self._dataframe.columns[1]])
         else:
-            self._dataframe = pd.DataFrame(columns=['id','weight','properties'])
+            self._dataframe = pd.DataFrame(columns=['weight','properties'])
+    
     
     def __call__(self):
         return self
+    
+    def __iter__(self):
+        return iter(self._dataframe.index)
+    
+    def __len__(self):
+        return len(self._dataframe)
 
     @property
     def dataframe(self):
@@ -51,9 +71,9 @@ class PropertyStore(object):
         prop_val = None
         df = self.dataframe
         try:
-            prop_val = df.loc[df.id ==uid][prop_name].item()
+            prop_val = df.loc[uid][prop_name]
         except KeyError:
-            prop_val = df.loc[df.id ==uid]['properties'].get(prop_name,None)
+            prop_val = df.loc[uid]['properties'].get(prop_name,None)
         return prop_val
 
 class IncidenceStore(IS):
@@ -86,7 +106,8 @@ class HypergraphView(object):
     """
     Wrapper for Property and Incidence Stores holding structural and 
     meta data for hypergraph. Provides methods matching EntitySet 
-    methods in previous versions.
+    methods in previous versions. Only nodes and edges in the Incidence
+    Store will be seeable in this view.
     """
     def __init__(self,incidence_store,level,property_store=None):
         """
@@ -101,12 +122,17 @@ class HypergraphView(object):
         property_store : _type_, optional
             _description_, by default None
         """
-        self._incidence_store = incidence_store or IncidenceStore()
-        self._property_store = property_store or PropertyStore()
+        self._store = incidence_store or IncidenceStore()
+        self._level = level
+        self._props = property_store or PropertyStore()
         
         ### incidence store needs index or columns
-        self._level = level  ## edges, nodes, or incidence pairs
-
+        if level == 0 :
+            self._items = self._store.edges
+        elif level == 1 :
+            self._items = self._store.nodes
+        elif level == 2 :
+            self._items = self._store.dataframe.values
         # self._properties = PropertyStore()  
         ### if no properties and level 0 or 1, 
         ### create property store that 
@@ -119,46 +145,46 @@ class HypergraphView(object):
     
     @property
     def incidence_store(self):
-        return self._incidence_store
+        return self._store
     
     @property
     def property_store(self):
-        return self._property_store
+        return self._props
     
-    @property
-    def levelset(self):
-        """
-        _summary_
+    # @property
+    # def levelset(self):
+    #     """
+    #     _summary_
 
-        Returns
-        -------
-        _type_
-            _description_
-        """
-        level = self.level
-        if level == 0:
-            return self._incidence_store.edges
-        elif level == 1:
-            return self._incidence_store.nodes
-        elif level == 2:
-            return self._incidence_store
+    #     Returns
+    #     -------
+    #     _type_
+    #         _description_
+    #     """
+    #     level = self.level
+    #     if level == 0:
+    #         return self._store.edges.unique()
+    #     elif level == 1:
+    #         return self._store.nodes.unique()
+    #     elif level == 2:
+    #         return self._store.dataframe
         
     @property
     def dataframe(self):
-        return self._property_store.dataframe
+        return self._props.dataframe
     
     def __iter__(self):
         """
         Defined by level store
         iterate over the associated level in the incidence store
         """
-        return iter(self.levelset)
+        return iter(self._items)
 
     def __len__(self):
         """
         Defined by incidence store 
         """
-        return len(self.levelset)
+        return len(self._itemse)
 
     def __contains__(self,item):
         """
@@ -169,7 +195,7 @@ class HypergraphView(object):
         item : _type_
             _description_
         """
-        return item in self.levelset
+        return item in self._items
 
     
     # def to_dataframe(self):
@@ -213,10 +239,10 @@ class HypergraphView(object):
         """
         level = self._level
         if level == 0 or level == 1:
-            elements = self._incidence_store.neighbors(level,uid)
+            elements = self._store.neighbors(level,uid)
         else:
-            return None
-        return NList(self, uid, elements)
+            elements = None
+        return NList(self, uid)
 
 
     # def properties(self,key=None,prop_name=None):
@@ -331,13 +357,11 @@ class NList(UserList):
         self,
         hypergraph_view,
         uid,
-        initlist: Optional[list] = None, 
     ):
-        self._incstore = hypergraph_view._incidence_store
-        self._propstore = hypergraph_view._property_store
-        self._view = hypergraph_view
-        self.level = hypergraph_view.level
+        self._props = hypergraph_view._props
+        self._level = hypergraph_view._level
         self._uid = uid
+        initlist = hypergraph_view._store.neighbors(self._level,uid)
         super().__init__(initlist)
 
     def __getattr__(self, attr: str) -> Any:
@@ -353,17 +377,17 @@ class NList(UserList):
             attribute value; None if not found
         """
         if attr == "memberships":
-            if self.hypergraph_view.level == 1:
+            if self._level == 1:
                 return self.data
             else:
-                return None
+                return []
         elif attr == "elements":
-            if self.hypergraph_view.level == 0:
+            if self._level == 0:
                 return self.data
             else:
-                return None
+                return []
         else:        
-            return self._hv._property_store.__getattribute__(uid,prop_name)
+            return self._props.get_property(self._uid, attr)
 
 
     # def __setattr__(self, attr: str, val: Any) -> None:
