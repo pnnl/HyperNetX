@@ -3,81 +3,85 @@ import pandas as pd
 from hypernetx.classes.property_store import PropertyStore, DataFramePropertyStore
 
 
-@pytest.fixture
-def edges() -> list[tuple[str]]:
-    return [("P",), ("R",), ("S",), ("L",), ("M",), ("N",)]
+EDGE_LEVEL = 'e'
+NODE_LEVEL = 'n'
+LEVEL = 'level'
+ID = 'id'
+UUID = 'uuid'
+WEIGHT = 'weight'
+PROPERTIES = 'properties'
+PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES]
+STRENGTH = 'strength'
+HAIR_COLOR = 'hair_color'
+INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES, STRENGTH, HAIR_COLOR]
 
 
 @pytest.fixture
-def df_edges(edges) -> pd.DataFrame:
-    uid = edges
-    data = {
-        "uid": uid,
-        "weight": [1.0 for _ in range(len(uid))],
-        "properties": [{} for _ in range(len(uid))],
-    }
-    return pd.DataFrame.from_dict(data)
+def edges() -> list[tuple[str | int, str | int]]:
+    edges = ['I', 'L', 'O', 'P', 'R', 'S']
+    return [(EDGE_LEVEL, e) for e in edges]
 
 
 @pytest.fixture
-def dfps_edges(df_edges) -> PropertyStore:
-    return DataFramePropertyStore(df_edges)
+def nodes():
+    nodes = ['A', 'C', 'E', 'K', 'T1', 'T2', 'V']
+    return [(NODE_LEVEL, n) for n in nodes]
 
 
 @pytest.fixture
-def incident_pairs() -> list[tuple[str, str]]:
-    return [
-        ("P", "K"),
-        ("P", "A"),
-        ("P", "C"),
-        ("R", "A"),
-        ("R", "E"),
-        ("S", "K"),
-        ("S", "A"),
-        ("S", "V"),
-        ("S", "T2"),
-        ("L", "E"),
-        ("L", "C"),
-        ("M", "T2"),
-        ("M", "T1"),
-        ("N", "K"),
-        ("N", "T2"),
-    ]
+def incidences():
+    return [('I', 'K'), ('I', 'T2'), ('L', 'C'), ('L', 'E'), ('O', 'T1'), ('O', 'T2'), ('P', 'A'), ('P', 'C'),
+                  ('P', 'K'), ('R', 'A'), ('R', 'E'), ('S', 'A'), ('S', 'K'), ('S', 'T2'), ('S', 'V')]
 
 
 @pytest.fixture
-def df_incident_pairs(incident_pairs) -> pd.DataFrame:
-    uid = incident_pairs
-    data = {
-        "uid": uid,
-        "weight": [1.0 for _ in range(len(uid))],
-        "properties": [{} for _ in range(len(uid))],
-        "strength": [42 for _ in range(len(uid))],
-        "hair_color": ["red" for _ in range(len(uid))],
-    }
-    return pd.DataFrame.from_dict(data)
+def edges_df(edges) -> pd.DataFrame:
+    index = pd.MultiIndex.from_tuples(edges, names=[LEVEL, ID])
+    data = [(1, {}) for _ in range(len(index))]
+    return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
 @pytest.fixture
-def dfps_incident_pairs(df_incident_pairs) -> PropertyStore:
-    return DataFramePropertyStore(df_incident_pairs)
+def nodes_df(nodes) -> pd.DataFrame:
+    index = pd.MultiIndex.from_tuples(nodes, names=[LEVEL, ID])
+    data = [(1, {}) for _ in range(len(index))]
+    return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
-def test_properties(dfps_edges, edges):
-    props = dfps_edges.properties
-    assert isinstance(props, pd.DataFrame)
-    # check that all edges are in 'properties'
-    assert all(uid in props.get("uid").tolist() for uid in edges)
-    assert all(weight == 1.0 for weight in props.get("weight").tolist())
-    assert all(prop == dict() for prop in props.get("properties").tolist())
+@pytest.fixture
+def incidences_df(incidences) -> pd.DataFrame:
+    index = pd.MultiIndex.from_tuples(incidences, names=[LEVEL, ID])
+    data = [(1, {}, 42, "red") for _ in range(len(index))]
+    return pd.DataFrame(data=data, index=index, columns=INCIDENCES_PROPERTIES_COLUMNS)
+
+
+@pytest.fixture
+def edges_dfps(edges_df) -> PropertyStore:
+    return DataFramePropertyStore(edges_df)
+
+
+@pytest.fixture
+def nodes_dfps(nodes_df) -> PropertyStore:
+    return DataFramePropertyStore(nodes_df)
+
+
+@pytest.fixture
+def incidences_dfps(incidences_df) -> PropertyStore:
+    return DataFramePropertyStore(incidences_df)
+
+
+def test_properties(edges_dfps, edges):
+    props = edges_dfps.properties
+    assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
+    assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
 
 
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("dfps_edges", ("P",), {"weight": 1.0, "properties": dict()}),
+        ("edges_dfps", ("e", "P"), {"weight": 1.0, "properties": dict()}),
         (
-            "dfps_incident_pairs",
+            "incidences_dfps",
             ("S", "A"),
             {"weight": 1.0, "properties": dict(), "hair_color": "red", "strength": 42},
         ),
@@ -91,7 +95,7 @@ def test_get_properties(fixture, uid, expected, request):
 
 @pytest.mark.parametrize(
     "fixture, uid",
-    [("dfps_edges", ("NEMO",)), ("dfps_incident_pairs", ("NE", "MO"))],
+    [("edges_dfps", ("e", "NEMO")), ("incidences_dfps", ("NE", "MO"))],
 )
 def test_get_properties_raises_key_error(fixture, uid, request):
     with pytest.raises(KeyError) as exc_info:
@@ -107,14 +111,14 @@ def test_get_properties_raises_key_error(fixture, uid, request):
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, expected",
     [
-        ("dfps_edges", ("P",), "weight", 1.0),
-        ("dfps_edges", ("P",), "properties", dict()),
-        ("dfps_incident_pairs", ("S", "A"), "weight", 1.0),
-        ("dfps_incident_pairs", ("S", "A"), "properties", dict()),
-        ("dfps_incident_pairs", ("S", "A"), "strength", 42),
-        ("dfps_incident_pairs", ("S", "A"), "hair_color", "red"),
-        ("dfps_edges", ("P",), "NOT A PROPERTY", None),
-        ("dfps_incident_pairs", ("S", "A"), "not a property", None),
+        ("edges_dfps", ("e", "P",), "weight", 1.0),
+        ("edges_dfps", ("e", "P",), "properties", dict()),
+        ("incidences_dfps", ("S", "A"), "weight", 1.0),
+        ("incidences_dfps", ("S", "A"), "properties", dict()),
+        ("incidences_dfps", ("S", "A"), "strength", 42),
+        ("incidences_dfps", ("S", "A"), "hair_color", "red"),
+        ("edges_dfps", ("e", "P",), "NOT A PROPERTY", None),
+        ("incidences_dfps", ("S", "A"), "not a property", None),
     ],
 )
 def test_get_property(fixture, uid, prop_name, expected, request):
@@ -126,8 +130,8 @@ def test_get_property(fixture, uid, prop_name, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, prop_name",
     [
-        ("dfps_edges", ("NEMO",), "weight"),
-        ("dfps_incident_pairs", ("NE", "MO"), "weight"),
+        ("edges_dfps", ("NEMO",), "weight"),
+        ("incidences_dfps", ("NE", "MO"), "weight"),
     ],
 )
 def test_get_property_raises_key_error(fixture, uid, prop_name, request):
@@ -144,12 +148,12 @@ def test_get_property_raises_key_error(fixture, uid, prop_name, request):
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, prop_val, current_props",
     [
-        ("dfps_edges", ("P",), "weight", 123.0, 1.0),
-        ("dfps_edges", ("P",), "cost", 42.42, None),
-        ("dfps_incident_pairs", ("S", "A"), "weight", 123.0, 1.0),
-        ("dfps_incident_pairs", ("S", "A"), "cost", 42.42, None),
-        ("dfps_incident_pairs", ("S", "A"), "strength", 999, 42),
-        ("dfps_incident_pairs", ("S", "A"), "hair_color", "blue", "red"),
+        ("edges_dfps", ("e", "P",), "weight", 123.0, 1.0),
+        ("edges_dfps", ("e", "P",), "cost", 42.42, None),
+        ("incidences_dfps", ("S", "A"), "weight", 123.0, 1.0),
+        ("incidences_dfps", ("S", "A"), "cost", 42.42, None),
+        ("incidences_dfps", ("S", "A"), "strength", 999, 42),
+        ("incidences_dfps", ("S", "A"), "hair_color", "blue", "red"),
     ],
 )
 def test_set_property(fixture, uid, prop_name, prop_val, current_props, request):
@@ -168,8 +172,8 @@ def test_set_property(fixture, uid, prop_name, prop_val, current_props, request)
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, prop_val",
     [
-        ("dfps_edges", ("NEMO",), "cost", 42.42),
-        ("dfps_incident_pairs", ("NE", "MO"), "hair_color", "red"),
+        ("edges_dfps", ("NEMO",), "cost", 42.42),
+        ("incidences_dfps", ("NE", "MO"), "hair_color", "red"),
     ],
 )
 def test_set_property_raises_key_error(fixture, uid, prop_name, prop_val, request):
@@ -186,21 +190,21 @@ def test_set_property_raises_key_error(fixture, uid, prop_name, prop_val, reques
 @pytest.mark.parametrize(
     "fixture, uids",
     [
-        ("dfps_edges", "edges"),
-        ("dfps_incident_pairs", "incident_pairs"),
+        ("edges_dfps", "edges"),
+        ("incidences_dfps", "incidences"),
     ],
 )
 def test_iter(fixture, uids, request):
     ps = request.getfixturevalue(fixture)
     entities = request.getfixturevalue(uids)
-    assert all([i.uid in entities for i in ps])
+    assert all([uid in entities for uid in ps])
 
 
 @pytest.mark.parametrize(
     "fixture, expected",
     [
-        ("dfps_edges", 6),
-        ("dfps_incident_pairs", 15),
+        ("edges_dfps", 6),
+        ("incidences_dfps", 15),
     ],
 )
 def test_len(fixture, expected, request):
@@ -211,9 +215,9 @@ def test_len(fixture, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("dfps_edges", ("P",), {"weight": 1.0, "properties": dict()}),
+        ("edges_dfps", ("e", "P",), {"weight": 1.0, "properties": dict()}),
         (
-            "dfps_incident_pairs",
+            "incidences_dfps",
             ("S", "A"),
             {"weight": 1.0, "properties": dict(), "hair_color": "red", "strength": 42},
         ),
@@ -228,10 +232,10 @@ def test_getitem(fixture, uid, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("dfps_edges", ("P",), True),
-        ("dfps_edges", ("NEMO",), False),
-        ("dfps_incident_pairs", ("S", "A"), True),
-        ("dfps_incident_pairs", ("NE", "MO"), False),
+        ("edges_dfps", ("e", "P",), True),
+        ("edges_dfps", ("NEMO",), False),
+        ("incidences_dfps", ("S", "A"), True),
+        ("incidences_dfps", ("NE", "MO"), False),
     ],
 )
 def test_contains(fixture, uid, expected, request):
