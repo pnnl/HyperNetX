@@ -60,15 +60,15 @@ def to_property_store_from_dataframe(properties, property_type,
     #set UID column
     if property_type == 'cell_properties':
         incidence_pairs = np.array(properties[[edge_col, node_col]]) #array of incidence pairs to use as UIDs.
-        properties_df_dict['uid'] = [tuple(incidence_pair) for incidence_pair in incidence_pairs]
+        indices = [tuple(incidence_pair) for incidence_pair in incidence_pairs]
     elif property_type == 'edge_properties': 
         edge_names = np.array(properties[[edge_col]]) #array of edges to use as UIDs.
-        properties_df_dict['uid'] = [tuple(edge_name) for edge_name in edge_names]
+        indices = [tuple(['e', edge_name[0]]) for edge_name in edge_names]
     elif property_type == 'node_properties': 
         node_names = np.array(properties[[node_col]]) #array of edges to use as UIDs.
-        properties_df_dict['uid'] = [tuple(node_name) for node_name in node_names]
-    
-    
+        indices = [tuple(['n', node_name[0]]) for node_name in node_names]
+        
+    multi_index = pd.MultiIndex.from_tuples(indices, names=['level', 'id'])
     
     #set property columns including weight and misc props.
     
@@ -80,13 +80,37 @@ def to_property_store_from_dataframe(properties, property_type,
     #set weight property column if not already provided
     default_weights = {'cell_properties': default_cell_weight, 'edge_properties': default_edge_weight, 'node_properties': default_node_weight}
     if weight_col not in property_columns:
-        properties_df_dict[weight_col] = [default_weights[property_type]]*len(properties_df_dict['uid'])
+        properties_df_dict[weight_col] = [default_weights[property_type]]*len(indices)
     
+    print(misc_properties_col)
     #set misc properties column if not already provided
     if misc_properties_col not in property_columns:
-        properties_df_dict[misc_properties_col] = [{}]*len(properties_df_dict['uid'])
+        properties_df_dict[misc_properties_col] = [{}]*len(indices)
+        
+    #change not of misc props column to "properties"
+    if misc_properties_col != 'properties':
+        # Pop the value associated with properties key and store it
+        misc_props = properties_df_dict.pop(misc_properties_col)
+        # Add the popped value with the new properties name "properties"
+        properties_df_dict['properties'] = misc_props
 
-    return pd.DataFrame(properties_df_dict)
+    PS = pd.DataFrame(properties_df_dict)    
+    PS = PS.set_index(multi_index)
+    
+    
+    #reorder columns to have properties last 
+    
+    # Get the column names and the specific column
+    column_names = list(PS.columns)
+    specific_col = 'properties'
+    
+    # Create a new order for the columns
+    new_order = [col for col in column_names if col != specific_col] + [specific_col]
+    
+    # Reorder the dataframe using reindex
+    PS = PS.reindex(columns=new_order)
+    
+    return PS
 
 def to_property_store_from_dictionary():
     
@@ -106,7 +130,6 @@ def check_properties_data_type(data):
     data_type = 'iterable_of_iterables'
     return data_type
 
-
 def combine_repeated_incidences(incidence_store_dataframe, incidence_property_store_dataframe, aggregateby):
     '''
     returns an updated version of the incidence store nd incidence property store where repeated incidences are grouped and the weight 
@@ -116,7 +139,6 @@ def combine_repeated_incidences(incidence_store_dataframe, incidence_property_st
     This should be run within each of the factory methods after all stores are created.
     '''
     pass
-
 
 def restructure_data(setsystem, cell_properties = None, edge_properties = None, node_properties = None, 
                      setsystem_data_type = None, properties_data_type = None,
@@ -132,10 +154,11 @@ def restructure_data(setsystem, cell_properties = None, edge_properties = None, 
         setsystem_data_type = check_setsystem_data_type(setsystem)
     
     #get incidence store for the given data type.
-    if setsystem_data_type == 'iterable_of_iterables':
-        IS = to_incidence_store_from_iterable_of_iterables(setsystem)
-    elif setsystem_data_type == 'dataframe':
+    
+    if setsystem_data_type == 'two_column_dataframe':
         IS = to_incidence_store_from_two_column_pandas_dataframe(setsystem)
+    elif setsystem_data_type == 'iterable_of_iterables':
+        IS = None
     elif setsystem_data_type == 'bipartite':
         IS = None
     elif setsystem_data_type == 'dictionary_of_iterables':
@@ -164,14 +187,13 @@ def restructure_data(setsystem, cell_properties = None, edge_properties = None, 
                 properties_data_type = check_properties_data_type(properties)
                 
             # get property store for the given data type.
-            if properties_data_type == 'dictionary': 
-                df = to_property_store_from_dictionary(properties, property_type, 
-                                                       edge_col = 'edges', node_col = 'nodes', weight_col = 'weight', misc_properties_col = 'properties',
-                                                       default_cell_weight = 1.0, default_edge_weight = 1.0, default_node_weight = 1.0)
-            elif properties_data_type == 'dataframe': 
+            
+            if properties_data_type == 'dataframe': 
                 df = to_property_store_from_dataframe(properties, property_type, 
-                                                      edge_col = 'edges', node_col = 'nodes', weight_col = 'weight', misc_properties_col = 'properties',
-                                                      default_cell_weight = 1.0, default_edge_weight = 1.0, default_node_weight = 1.0)
+                                                      edge_col, node_col, weight_col, misc_properties_col,
+                                                      default_cell_weight, default_edge_weight, default_node_weight)
+            elif properties_data_type == 'dictionary': 
+                df = None
             else:
                 raise ValueError("Provided properties_data_type is not a valid option. See documentation for available options.")
         
@@ -184,18 +206,14 @@ def restructure_data(setsystem, cell_properties = None, edge_properties = None, 
     
     return IS, IPS, EPS, NPS
 
-
-
 # In[ ]: testing code
-
-
 # Only runs if running from this file (This will show basic examples and testing of the code)
 if __name__ == "__main__":
     incidence_dataframe = pd.DataFrame({'edges': ['a', 'a', 'b', 'c', 'c'], 'nodes': [1, 2, 3, 2, 3]})
     
     cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'b', 'c', 'c'], 'nodes': [1, 2, 3, 2, 3], 
                                        'color': ['red', 'red', 'red', 'red', 'blue'], 
-                                       'properties': [{}, {}, {'time': 3}, {}, {}]})
+                                       'other_properties': [{}, {}, {'time': 3}, {}, {}]})
     
     edge_prop_dataframe = pd.DataFrame({'edges': ['a', 'b', 'c'], 
                                        'weight': [2, 3, 3]})
@@ -211,11 +229,12 @@ if __name__ == "__main__":
     
     print('\n \nRestructured Dataframes\n------------------------')
     IS, IPS, EPS, NPS = restructure_data(incidence_dataframe, cell_prop_dataframe, edge_prop_dataframe, node_prop_dataframe, 
-                                         setsystem_data_type = 'dataframe', properties_data_type = 'dataframe', )
+                                         setsystem_data_type = 'two_column_dataframe', 
+                                         properties_data_type = 'dataframe', 
+                                         misc_properties_col = 'other_properties')
     display(IS)
     display(IPS)
     display(EPS)
     display(NPS)
-    
-    
+
     
