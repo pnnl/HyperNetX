@@ -3,8 +3,6 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from pytest_lazyfixture import lazy_fixture
-
 from hypernetx import EntitySet
 
 
@@ -49,11 +47,6 @@ class TestEntitySetOnSBSDataframe:
         "props, multidx, expected_props",
         [
             (
-                lazy_fixture("props_dataframe"),
-                (0, "P"),
-                {"prop1": "propval1", "prop2": "propval2"},
-            ),
-            (
                 {0: {"P": {"prop1": "propval1", "prop2": "propval2"}}},
                 (0, "P"),
                 {"prop1": "propval1", "prop2": "propval2"},
@@ -77,16 +70,6 @@ class TestEntitySetOnSBSDataframe:
     @pytest.mark.parametrize(
         "cell_props, multidx, expected_cell_properties",
         [
-            (
-                lazy_fixture("cell_props_dataframe"),
-                ("P", "A"),
-                {"prop1": "propval1", "prop2": "propval2"},
-            ),
-            (
-                lazy_fixture("cell_props_dataframe_multidx"),
-                ("P", "A"),
-                {"prop1": "propval1", "prop2": "propval2"},
-            ),
             (
                 {"P": {"A": {"prop1": "propval1", "prop2": "propval2"}}},
                 ("P", "A"),

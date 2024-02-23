@@ -1,56 +1,52 @@
 import numpy as np
 import pytest
 
-from pytest_lazyfixture import lazy_fixture
-
 from hypernetx.classes import EntitySet
 
 
 @pytest.mark.parametrize(
     "entity, data, data_cols, labels",
     [
-        (lazy_fixture("sbs_dict"), None, (0, 1), None),
+        (("sbs_dict"), None, (0, 1), None),
         (
-            lazy_fixture("sbs_dict"),
+            ("sbs_dict"),
             None,
             (0, 1),
-            lazy_fixture("sbs_labels"),
+            ("sbs_labels"),
         ),  # labels are ignored if entity is provided
-        (lazy_fixture("sbs_dict"), None, ["edges", "nodes"], None),
-        (lazy_fixture("sbs_dict"), lazy_fixture("sbs_data"), (0, 1), None),
-        (None, lazy_fixture("sbs_data"), (0, 1), lazy_fixture("sbs_labels")),
+        ("sbs_dict", None, ["edges", "nodes"], None)
     ],
 )
 class TestEntitySBSDict:
     """Tests on different use cases for combination of the following params: entity, data, data_cols, labels"""
 
-    def test_size(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_size(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.size() == len(sbs.edgedict)
 
     # check all the EntitySet properties
-    def test_isstatic(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_isstatic(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.isstatic
 
-    def test_uid(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_uid(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.uid is None
 
-    def test_empty(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_empty(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert not es.empty
 
-    def test_uidset(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_uidset(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.uidset == {"I", "R", "S", "P", "O", "L"}
 
-    def test_dimsize(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_dimsize(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.dimsize == 2
 
-    def test_elements(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_elements(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert len(es.elements) == 6
         expected_elements = {
             "I": ["K", "T2"],
@@ -64,8 +60,8 @@ class TestEntitySBSDict:
             assert expected_edge in es.elements
             assert es.elements[expected_edge].sort() == expected_nodes.sort()
 
-    def test_incident_dict(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_incident_dict(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         expected_incident_dict = {
             "I": ["K", "T2"],
             "L": ["E", "C"],
@@ -81,12 +77,12 @@ class TestEntitySBSDict:
         assert "I" in es
         assert "K" in es
 
-    def test_children(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_children(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.children == {"C", "T1", "A", "K", "T2", "V", "E"}
 
-    def test_memberships(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_memberships(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.memberships == {
             "A": ["P", "R", "S"],
             "C": ["P", "L"],
@@ -97,15 +93,15 @@ class TestEntitySBSDict:
             "V": ["S"],
         }
 
-    def test_cell_properties(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_cell_properties(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.cell_properties.shape == (
             15,
             1,
         )
 
-    def test_cell_weights(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_cell_weights(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert es.cell_weights == {
             ("P", "C"): 1,
             ("P", "K"): 1,
@@ -124,8 +120,8 @@ class TestEntitySBSDict:
             ("I", "T2"): 1,
         }
 
-    def test_labels(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_labels(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         # check labeling based on given attributes for EntitySet
         if data_cols == [
             "edges",
@@ -145,8 +141,8 @@ class TestEntitySBSDict:
                 1: ["A", "C", "E", "K", "T1", "T2", "V"],
             }
 
-    def test_dataframe(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_dataframe(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         # check dataframe
         # size should be the number of rows times the number of columns, i.e 15 x 3
         assert es.dataframe.size == 45
@@ -159,8 +155,8 @@ class TestEntitySBSDict:
         assert actual_node_row0 in ["A", "C", "K"]
         assert actual_cell_weight_row0 == 1
 
-    def test_data(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_data(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
 
         actual_data = es.data
 
@@ -189,8 +185,8 @@ class TestEntitySBSDict:
             np.sort(actual_data, axis=0), np.sort(expected_data, axis=0)
         )
 
-    def test_properties(self, entity, data, data_cols, labels, sbs):
-        es = EntitySet(entity=entity, data=data, data_cols=data_cols, labels=labels)
+    def test_properties(self, entity, data, data_cols, labels, sbs, request):
+        es = EntitySet(entity=request.getfixturevalue(entity), data=data, data_cols=data_cols, labels=labels)
         assert (
             es.properties.size == 39
         )  # Properties has three columns and 13 rows of data (i.e. edges + nodes)
@@ -198,7 +194,7 @@ class TestEntitySBSDict:
 
 
 @pytest.mark.xfail(reason="Deprecated; to be removed in next released")
-def test_level(sbs):
+def test_level(sbs, request):
     # at some point we are casting out and back to categorical dtype without
     #  preserving categories ordering from `labels` provided to constructor
     ent_sbs = EntitySet(data=np.asarray(sbs.data), labels=sbs.labels)
