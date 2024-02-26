@@ -21,8 +21,50 @@ class IncidenceStore:
         # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
         self._data = data
         
-        pass
+
+    @property
+    def data(self):
+        return self._data
     
+    @property
+    def dimensions(self):
+        """
+        Dimensions of incidence pairs dataframe.
+        i.e., the number of distinct nodes and edges.
+        
+        Returns
+        -------
+        tuple of ints
+             Tuple of size two of (number of unique nodes, number of unique edges).
+        """
+        return (len(self.nodes), len(self.edges))
+    
+    @property
+    def edges(self):
+        """
+        Returns an array of edge names from the incidence pairs
+        
+        Returns
+        -------
+        array
+             Returns an array of edge names
+        """
+        df = self._data
+        return list(df['edges'].unique())
+    
+    @property
+    def nodes(self):
+        """
+        Returns an array of node names from the incidence pairs
+        
+        Returns
+        -------
+        array
+             Returns an array of node names
+        """
+        df = self._data
+        return list(df['nodes'].unique())
+
     def __iter__(self):
         """
         Iterator over the incidence pairs of the hypergraph
@@ -115,45 +157,7 @@ class IncidenceStore:
         else:
             raise ValueError("Invalid level provided. Must be 0 or 1.")
 
-    
-    def edges(self):
-        """
-        Returns an array of edge names from the incidence pairs
-        
-        Returns
-        -------
-        array
-             Returns an array of edge names
-        """
-        df = self._data
-        return list(df['edges'].unique())
-    
-    def nodes(self):
-        """
-        Returns an array of node names from the incidence pairs
-        
-        Returns
-        -------
-        array
-             Returns an array of node names
-        """
-        df = self._data
-        return list(df['nodes'].unique())
-    
-    
-    def dimensions(self):
-        """
-        Dimensions of incidence pairs dataframe.
-        i.e., the number of distinct nodes and edges.
-        
-        Returns
-        -------
-        tuple of ints
-             Tuple of size two of (number of unique nodes, number of unique edges).
-        """
-        return (len(self.nodes()), len(self.edges()))
-
-    def restrict_to(self, level, items, inplace=True):
+    def restrict_to(self, level, items, inplace=False):
         
         """
         returns IncidenceStore of subset of incidence store restricted 
@@ -169,7 +173,7 @@ class IncidenceStore:
         key : int or str
             Name of node or edge depending on level.
         inplace : bool, optional
-            _description_, by default True
+            _description_, by default False
             
         Returns
         -------
