@@ -104,7 +104,7 @@ def test_get_properties_raises_key_error(fixture, uid, request):
 
     assert (
         str(exc_info.value)
-        == f"""'uid, ({",".join(uid)}), not found in PropertyStore'"""
+        == f'"uid, {uid}, not found in PropertyStore"'
     )
 
 
@@ -141,7 +141,7 @@ def test_get_property_raises_key_error(fixture, uid, prop_name, request):
 
     assert (
         str(exc_info.value)
-        == f"""'uid, ({",".join(uid)}), not found in PropertyStore'"""
+        == f'"uid, {uid}, not found in PropertyStore"'
     )
 
 
@@ -183,7 +183,7 @@ def test_set_property_raises_key_error(fixture, uid, prop_name, prop_val, reques
 
     assert (
         str(exc_info.value)
-        == f"""'uid, ({",".join(uid)}), not found in PropertyStore'"""
+        == f'"uid, {uid}, not found in PropertyStore"'
     )
 
 

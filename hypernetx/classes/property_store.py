@@ -221,7 +221,7 @@ class DataFramePropertyStore(PropertyStore):
         try:
             properties = self._data.loc[uid]
         except KeyError:
-            raise KeyError(f"uid {uid}, not found in PropertyStore")
+            raise KeyError(f"uid, {uid}, not found in PropertyStore")
         return properties.to_dict()
 
     def get_property(self, uid, prop_name ) -> Any:
