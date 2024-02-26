@@ -25,80 +25,80 @@ from hypernetx.classes.incidence_store import IncidenceStore as IS
 __all__ = ["HypergraphView"]
 
 ##################### PROXY CLASSES FOR CONSTRUCTION
-class PropertyStore(object):
-    """
-    Wrapper for a pandas dataframe. Minimal logic but limits changes
-    to 
+# class PropertyStore(object):
+#     """
+#     Wrapper for a pandas dataframe. Minimal logic but limits changes
+#     to 
 
-    Parameters
-    ----------
-    object : _type_
-        _description_
-    """
-    def __init__(self,dfp=None, level=0):
-        if dfp is not None:
-            self._dataframe = dfp
-            if 'properties' not in dfp.columns:
-                self._dataframe['properties'] = [{} for idx in self.dataframe.index]
-            else:
-                dfp.properties.fillna({})
-            if 'weight' not in dfp.columns:
-                self._dataframe.weight = 1
-            else:
-                dfp.weight.fillna(1)
-            if level in [0,1]:
-                self._dataframe = self._dataframe.set_index(self._dataframe.columns[0])
-            elif level in [2]:
-                self._dataframe = self._dataframe.set_index([self._dataframe.columns[0],self._dataframe.columns[1]])
-        else:
-            self._dataframe = pd.DataFrame(columns=['weight','properties'])
+#     Parameters
+#     ----------
+#     object : _type_
+#         _description_
+#     """
+#     def __init__(self,dfp=None, level=0):
+#         if dfp is not None:
+#             self._dataframe = dfp
+#             if 'properties' not in dfp.columns:
+#                 self._dataframe['properties'] = [{} for idx in self.dataframe.index]
+#             else:
+#                 dfp.properties.fillna({})
+#             if 'weight' not in dfp.columns:
+#                 self._dataframe.weight = 1
+#             else:
+#                 dfp.weight.fillna(1)
+#             if level in [0,1]:
+#                 self._dataframe = self._dataframe.set_index(self._dataframe.columns[0])
+#             elif level in [2]:
+#                 self._dataframe = self._dataframe.set_index([self._dataframe.columns[0],self._dataframe.columns[1]])
+#         else:
+#             self._dataframe = pd.DataFrame(columns=['weight','properties'])
     
     
-    def __call__(self):
-        return self
+#     def __call__(self):
+#         return self
     
-    def __iter__(self):
-        return iter(self._dataframe.index)
+#     def __iter__(self):
+#         return iter(self._dataframe.index)
     
-    def __len__(self):
-        return len(self._dataframe)
+#     def __len__(self):
+#         return len(self._dataframe)
 
-    @property
-    def dataframe(self):
-        return self._dataframe
+#     @property
+#     def dataframe(self):
+#         return self._dataframe
     
-    def get_property(self, uid, prop_name):
-        prop_val = None
-        df = self.dataframe
-        try:
-            prop_val = df.loc[uid][prop_name]
-        except KeyError:
-            prop_val = df.loc[uid]['properties'].get(prop_name,None)
-        return prop_val
+#     def get_property(self, uid, prop_name):
+#         prop_val = None
+#         df = self.dataframe
+#         try:
+#             prop_val = df.loc[uid][prop_name]
+#         except KeyError:
+#             prop_val = df.loc[uid]['properties'].get(prop_name,None)
+#         return prop_val
 
-class IncidenceStore(IS):
-    def __init__(self,df):
-        super().__init__(df)
-        # self._dataframe = self._data
-        # self.proxy = IS(df)
+# class IncidenceStore(IS):
+#     def __init__(self,df):
+#         super().__init__(df)
+#         # self._dataframe = self._data
+#         # self.proxy = IS(df)
             
-    # def __call__(self):
-    #     return self
+#     # def __call__(self):
+#     #     return self
     
-    # def __iter__(self):
-    #     return self.proxy.__iter__()
+#     # def __iter__(self):
+#     #     return self.proxy.__iter__()
     
-    # @property
-    # def edges(self):
-    #     return self.proxy.edges
+#     # @property
+#     # def edges(self):
+#     #     return self.proxy.edges
     
-    # @property
-    # def nodes(self):
-    #     return self.proxy.nodes
+#     # @property
+#     # def nodes(self):
+#     #     return self.proxy.nodes
 
-    @property
-    def dataframe(self):
-        return self._data
+#     @property
+#     def dataframe(self):
+#         return self._data
     
 ######################################################
 
@@ -122,17 +122,23 @@ class HypergraphView(object):
         property_store : _type_, optional
             _description_, by default None
         """
-        self._store = incidence_store or IncidenceStore()
+        self._store = incidence_store
         self._level = level
-        self._props = property_store or PropertyStore()
+        if property_store is not None:
+            self._props = property_store
+
+        else:
+            self._props = PropertyStore()
         
+
         ### incidence store needs index or columns
         if level == 0 :
             self._items = self._store.edges
         elif level == 1 :
             self._items = self._store.nodes
         elif level == 2 :
-            self._items = self._store.dataframe.values
+            self._items = self._store.data.values
+
         # self._properties = PropertyStore()  
         ### if no properties and level 0 or 1, 
         ### create property store that 
@@ -150,7 +156,12 @@ class HypergraphView(object):
     @property
     def property_store(self):
         return self._props
+        
+    @property
+    def properties(self):
+        return self._props.properties
     
+
     # @property
     # def levelset(self):
     #     """
@@ -169,9 +180,6 @@ class HypergraphView(object):
     #     elif level == 2:
     #         return self._store.dataframe
         
-    @property
-    def dataframe(self):
-        return self._props.dataframe
     
     def __iter__(self):
         """
@@ -364,6 +372,8 @@ class NList(UserList):
         initlist = hypergraph_view._store.neighbors(self._level,uid)
         super().__init__(initlist)
 
+    
+    
     def __getattr__(self, attr: str) -> Any:
         """Get attribute value from properties of :attr:`entity`
 
@@ -386,8 +396,11 @@ class NList(UserList):
                 return self.data
             else:
                 return []
+        elif attr == "properties":
+            return self._props.get_properties(self._uid)
         else:        
             return self._props.get_property(self._uid, attr)
+
 
 
     # def __setattr__(self, attr: str, val: Any) -> None:
@@ -410,7 +423,7 @@ class NList(UserList):
     #     pass
 
 
-def _flatten(my_dict):
+def flatten(my_dict):
     '''Recursive method to flatten dictionary for returning properties as
     a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
 
