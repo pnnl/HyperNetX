@@ -10,161 +10,163 @@ PROPERTIES = "properties"
 
 
 class PropertyStore(ABC):
-    @property
-    @abstractmethod
-    def properties(self) -> Any:
-        """Properties assigned to all items in the underlying data table
+    def __init__(self):
+        pass
+    # @property
+    # @abstractmethod
+    # def properties(self) -> Any:
+    #     """Properties assigned to all items in the underlying data table
 
-        Returns
-        -------
-        Object containing all properties of the underlying data table
-        """
-        ...
+    #     Returns
+    #     -------
+    #     Object containing all properties of the underlying data table
+    #     """
+    #     ...
 
-    @abstractmethod
-    def get_properties(self, uid: Hashable) -> dict[Any, Any]:
-        """Get all properties of an item
+    # @abstractmethod
+    # def get_properties(self, uid: Hashable) -> dict[Any, Any]:
+    #     """Get all properties of an item
 
-        Parameters
-        ----------
-        uid : Hashable
-            uid is the index used to fetch all its properties
+    #     Parameters
+    #     ----------
+    #     uid : Hashable
+    #         uid is the index used to fetch all its properties
 
-        Returns
-        -------
-        prop_vals : dict
-            ``{named property: property value, ...,
-            properties: {property name: property value}}``
-
-
-        Raises
-        ------
-        KeyError
-            if (`uid`) is not in :attr:`properties`,
-
-        See Also
-        --------
-        get_property, set_property
-        """
-        ...
-
-    @abstractmethod
-    def get_property(self, uid: Hashable, prop_name: str | int) -> Any:
-        """Get a property of an item
-
-        Parameters
-        ----------
-        uid : Hashable
-            uid is the index used to fetch its property
-        prop_name : str | int
-            name of the property to get
-
-        Returns
-        -------
-        prop_val : any
-            value of the property
-
-        None
-            if property not found
-
-        Raises
-        ------
-        KeyError
-            if (`uid`) is not in :attr:`properties`,
-
-        See Also
-        --------
-        get_properties, set_property
-        """
-        ...
-
-    @abstractmethod
-    def set_property(self, uid: Hashable, prop_name: str | int, prop_val: Any) -> None:
-        """Set a property of an item in the 'properties' colelction
-
-        Parameters
-        ----------
-        uid : Hashable
-            uid is the index used to set its property
-        prop_name : str | int
-            name of the property to set
-        prop_val : any
-            value of the property to set
-
-        Raises
-        ------
-        KeyError
-            If (`uid`) is not in :attr:`properties`
+    #     Returns
+    #     -------
+    #     prop_vals : dict
+    #         ``{named property: property value, ...,
+    #         properties: {property name: property value}}``
 
 
-        See Also
-        --------
-        get_property, get_properties
-        """
+    #     Raises
+    #     ------
+    #     KeyError
+    #         if (`uid`) is not in :attr:`properties`,
 
-    def __iter__(self):
-        """
-        Returns an iterator object for iterating over data in PropertyStore
+    #     See Also
+    #     --------
+    #     get_property, set_property
+    #     """
+    #     ...
 
-        Returns:
-        -------
-        DataIterator:
-            An iterator object
-        """
-        return self
+    # @abstractmethod
+    # def get_property(self, uid: Hashable, prop_name: str | int) -> Any:
+    #     """Get a property of an item
 
-    def __iter__(self):
-        """Returns an iterator over items in the underlying data table
+    #     Parameters
+    #     ----------
+    #     uid : Hashable
+    #         uid is the index used to fetch its property
+    #     prop_name : str | int
+    #         name of the property to get
 
-        Returns
-        -------
-        Iterator
+    #     Returns
+    #     -------
+    #     prop_val : any
+    #         value of the property
 
-        """
-        ...
+    #     None
+    #         if property not found
 
-    def __len__(self) -> int:
-        """Number of items in the underlying data table
+    #     Raises
+    #     ------
+    #     KeyError
+    #         if (`uid`) is not in :attr:`properties`,
 
-        Returns
-        -------
-        int
-        """
-        ...
+    #     See Also
+    #     --------
+    #     get_properties, set_property
+    #     """
+    #     ...
 
-    def __getitem__(self, uid) -> dict:
-        """Returns the common attributes (e.g. weight) and properties of an item in the underlying data table
+    # @abstractmethod
+    # def set_property(self, uid: Hashable, prop_name: str | int, prop_val: Any) -> None:
+    #     """Set a property of an item in the 'properties' colelction
 
-        Returns same result as get_property
+    #     Parameters
+    #     ----------
+    #     uid : Hashable
+    #         uid is the index used to set its property
+    #     prop_name : str | int
+    #         name of the property to set
+    #     prop_val : any
+    #         value of the property to set
 
-        Parameters
-        ----------
-        Hashable
-            uid is the index used to set its property
+    #     Raises
+    #     ------
+    #     KeyError
+    #         If (`uid`) is not in :attr:`properties`
 
-        Returns
-        -------
-        dict
-        """
-        ...
 
-    def __contains__(self, uid) -> bool:
-        """Returns true if uid is in the underlying data table; false otherwise
+    #     See Also
+    #     --------
+    #     get_property, get_properties
+    #     """
 
-        Parameters
-        ----------
-        Hashable
-            uid is the index used to set its property
+    # def __iter__(self):
+    #     """
+    #     Returns an iterator object for iterating over data in PropertyStore
 
-        Returns
-        -------
-        bool
-        """
-        ...
+    #     Returns:
+    #     -------
+    #     DataIterator:
+    #         An iterator object
+    #     """
+    #     return self
+
+    # def __iter__(self):
+    #     """Returns an iterator over items in the underlying data table
+
+    #     Returns
+    #     -------
+    #     Iterator
+
+    #     """
+    #     ...
+
+    # def __len__(self) -> int:
+    #     """Number of items in the underlying data table
+
+    #     Returns
+    #     -------
+    #     int
+    #     """
+    #     ...
+
+    # def __getitem__(self, uid) -> dict:
+    #     """Returns the common attributes (e.g. weight) and properties of an item in the underlying data table
+
+    #     Returns same result as get_property
+
+    #     Parameters
+    #     ----------
+    #     Hashable
+    #         uid is the index used to set its property
+
+    #     Returns
+    #     -------
+    #     dict
+    #     """
+    #     ...
+
+    # def __contains__(self, uid) -> bool:
+    #     """Returns true if uid is in the underlying data table; false otherwise
+
+    #     Parameters
+    #     ----------
+    #     Hashable
+    #         uid is the index used to set its property
+
+    #     Returns
+    #     -------
+    #     bool
+    #     """
+    #     ...
 
 
 class DataFramePropertyStore(PropertyStore):
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data):
         """
         Parameters
         ----------
@@ -193,7 +195,7 @@ class DataFramePropertyStore(PropertyStore):
         """
         return self._data
 
-    def get_properties(self, uid: tuple[str | int, str | int]) -> dict[Any, Any]:
+    def get_properties(self, uid) -> dict:
         """Get all properties of an item
 
         Parameters
@@ -219,10 +221,10 @@ class DataFramePropertyStore(PropertyStore):
         try:
             properties = self._data.loc[uid]
         except KeyError:
-            raise KeyError(f"uid, ({','.join(uid)}), not found in PropertyStore")
+            raise KeyError(f"uid {uid}, not found in PropertyStore")
         return properties.to_dict()
 
-    def get_property(self, uid: tuple[str | int, str | int], prop_name: str | int) -> Any:
+    def get_property(self, uid, prop_name ) -> Any:
         """Get a property of an item
 
         Parameters
@@ -317,10 +319,10 @@ class DataFramePropertyStore(PropertyStore):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __getitem__(self, uid: tuple[str | int, str | int]) -> dict:
+    def __getitem__(self, uid) -> dict:
         return self._data.loc[uid].to_dict()
 
-    def __contains__(self, uid: tuple[str | int, str | int]) -> bool:
+    def __contains__(self, uid) -> bool:
         return uid in self._data.index
 
 
