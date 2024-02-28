@@ -1,15 +1,11 @@
 import pytest
 import pandas as pd
-from hypernetx.classes.property_store import PropertyStore, DataFramePropertyStore
+from hypernetx.classes.property_store import PropertyStore, DataFramePropertyStore, WEIGHT, PROPERTIES
 
 
-EDGE_LEVEL = 'e'
-NODE_LEVEL = 'n'
 LEVEL = 'level'
 ID = 'id'
 UUID = 'uuid'
-WEIGHT = 'weight'
-PROPERTIES = 'properties'
 PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES]
 STRENGTH = 'strength'
 HAIR_COLOR = 'hair_color'
@@ -18,14 +14,12 @@ INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES, STRENGTH, HAIR_COLOR]
 
 @pytest.fixture
 def edges() -> list[tuple[str | int, str | int]]:
-    edges = ['I', 'L', 'O', 'P', 'R', 'S']
-    return [(EDGE_LEVEL, e) for e in edges]
+    return ['I', 'L', 'O', 'P', 'R', 'S']
 
 
 @pytest.fixture
 def nodes():
-    nodes = ['A', 'C', 'E', 'K', 'T1', 'T2', 'V']
-    return [(NODE_LEVEL, n) for n in nodes]
+    return ['A', 'C', 'E', 'K', 'T1', 'T2', 'V']
 
 
 @pytest.fixture
@@ -36,15 +30,15 @@ def incidences():
 
 @pytest.fixture
 def edges_df(edges) -> pd.DataFrame:
-    index = pd.MultiIndex.from_tuples(edges, names=[LEVEL, ID])
-    data = [(1, {}) for _ in range(len(index))]
+    data = [(1, {}) for _ in edges]
+    index = pd.Index(edges, name=ID)
     return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
 @pytest.fixture
 def nodes_df(nodes) -> pd.DataFrame:
-    index = pd.MultiIndex.from_tuples(nodes, names=[LEVEL, ID])
-    data = [(1, {}) for _ in range(len(index))]
+    data = [(1, {}) for _ in nodes]
+    index = pd.Index(nodes, name=ID)
     return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
@@ -79,11 +73,11 @@ def test_properties(edges_dfps, edges):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("edges_dfps", ("e", "P"), {"weight": 1.0, "properties": dict()}),
+        ("edges_dfps", "P", {"weight": 1.0, PROPERTIES: dict()}),
         (
             "incidences_dfps",
             ("S", "A"),
-            {"weight": 1.0, "properties": dict(), "hair_color": "red", "strength": 42},
+            {"weight": 1.0, PROPERTIES: dict(), "hair_color": "red", "strength": 42},
         ),
     ],
 )
@@ -95,29 +89,27 @@ def test_get_properties(fixture, uid, expected, request):
 
 @pytest.mark.parametrize(
     "fixture, uid",
-    [("edges_dfps", ("e", "NEMO")), ("incidences_dfps", ("NE", "MO"))],
+    [("edges_dfps", "NEMO"), ("incidences_dfps", ("NE", "MO"))],
 )
 def test_get_properties_raises_key_error(fixture, uid, request):
     with pytest.raises(KeyError) as exc_info:
         ps = request.getfixturevalue(fixture)
         ps.get_properties(uid)
 
-    assert (
-        str(exc_info.value)
-        == f'"uid, {uid}, not found in PropertyStore"'
-    )
+    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
+
 
 
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, expected",
     [
-        ("edges_dfps", ("e", "P",), "weight", 1.0),
-        ("edges_dfps", ("e", "P",), "properties", dict()),
-        ("incidences_dfps", ("S", "A"), "weight", 1.0),
-        ("incidences_dfps", ("S", "A"), "properties", dict()),
+        ("edges_dfps", "P", WEIGHT, 1.0),
+        ("edges_dfps", "P", PROPERTIES, dict()),
+        ("incidences_dfps", ("S", "A"), WEIGHT, 1.0),
+        ("incidences_dfps", ("S", "A"), PROPERTIES, dict()),
         ("incidences_dfps", ("S", "A"), "strength", 42),
         ("incidences_dfps", ("S", "A"), "hair_color", "red"),
-        ("edges_dfps", ("e", "P",), "NOT A PROPERTY", None),
+        ("edges_dfps", "P", "NOT A PROPERTY", None),
         ("incidences_dfps", ("S", "A"), "not a property", None),
     ],
 )
@@ -130,7 +122,7 @@ def test_get_property(fixture, uid, prop_name, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, prop_name",
     [
-        ("edges_dfps", ("NEMO",), "weight"),
+        ("edges_dfps", "NEMO", "weight"),
         ("incidences_dfps", ("NE", "MO"), "weight"),
     ],
 )
@@ -139,17 +131,14 @@ def test_get_property_raises_key_error(fixture, uid, prop_name, request):
         ps = request.getfixturevalue(fixture)
         ps.get_property(uid, prop_name)
 
-    assert (
-        str(exc_info.value)
-        == f'"uid, {uid}, not found in PropertyStore"'
-    )
+    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
 
 
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, prop_val, current_props",
     [
-        ("edges_dfps", ("e", "P",), "weight", 123.0, 1.0),
-        ("edges_dfps", ("e", "P",), "cost", 42.42, None),
+        ("edges_dfps", "P", "weight", 123.0, 1.0),
+        ("edges_dfps", "P", "cost", 42.42, None),
         ("incidences_dfps", ("S", "A"), "weight", 123.0, 1.0),
         ("incidences_dfps", ("S", "A"), "cost", 42.42, None),
         ("incidences_dfps", ("S", "A"), "strength", 999, 42),
@@ -172,7 +161,7 @@ def test_set_property(fixture, uid, prop_name, prop_val, current_props, request)
 @pytest.mark.parametrize(
     "fixture, uid, prop_name, prop_val",
     [
-        ("edges_dfps", ("NEMO",), "cost", 42.42),
+        ("edges_dfps", "NEMO", "cost", 42.42),
         ("incidences_dfps", ("NE", "MO"), "hair_color", "red"),
     ],
 )
@@ -181,10 +170,7 @@ def test_set_property_raises_key_error(fixture, uid, prop_name, prop_val, reques
         ps = request.getfixturevalue(fixture)
         ps.set_property(uid, prop_name, prop_val)
 
-    assert (
-        str(exc_info.value)
-        == f'"uid, {uid}, not found in PropertyStore"'
-    )
+    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
 
 
 @pytest.mark.parametrize(
@@ -215,11 +201,11 @@ def test_len(fixture, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("edges_dfps", ("e", "P",), {"weight": 1.0, "properties": dict()}),
+        ("edges_dfps", "P", {"weight": 1.0, PROPERTIES: dict()}),
         (
             "incidences_dfps",
             ("S", "A"),
-            {"weight": 1.0, "properties": dict(), "hair_color": "red", "strength": 42},
+            {"weight": 1.0, PROPERTIES: dict(), "hair_color": "red", "strength": 42},
         ),
     ],
 )
@@ -232,7 +218,7 @@ def test_getitem(fixture, uid, expected, request):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("edges_dfps", ("e", "P",), True),
+        ("edges_dfps", "P", True),
         ("edges_dfps", ("NEMO",), False),
         ("incidences_dfps", ("S", "A"), True),
         ("incidences_dfps", ("NE", "MO"), False),

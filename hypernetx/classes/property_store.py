@@ -6,7 +6,7 @@ import pandas as pd
 
 UUID = "uuid"
 WEIGHT = "weight"
-PROPERTIES = "properties"
+PROPERTIES = "misc_properties"
 
 
 class PropertyStore(ABC):
@@ -171,15 +171,17 @@ class DataFramePropertyStore(PropertyStore):
         Parameters
         ----------
         data: pd.DataFrame
-            data must be a MultiIndex Dataframe of the following shape
+            data must be a dataframe or MultiIndex Dataframe of the following shape
 
-            level | id | weight | properties | ...
-            <common level value> | <edge> | 1.0 | {} | somepropname | somepropname2| ...
+            Example of dataframe (id is set as the index):
 
-            level | id | weight | properties | ...
-            <common level value> | <node1> | 1.0 | {} | somepropname | somepropname2| ...
+            id | weight | misc_properties | ...
+             <node1> | 1.0 | {} | somepropname | somepropname2| ...
 
-            level | id | weight | properties | ...
+
+            Example of multiIndex dataframe (level and id are set as the multiIndex):
+
+            level | id | weight | misc_properties | ...
             <edge> | <node> | 1.0 | {} | somepropname | somepropname2| ...
         """
         self._data: pd.DataFrame = data
@@ -200,7 +202,7 @@ class DataFramePropertyStore(PropertyStore):
 
         Parameters
         ----------
-        uid: tuple[str | int, str | int ]
+        uid: str | int | tuple[str | int, str | int ]
             uid is the index used to fetch all its properties
 
         Returns
@@ -229,7 +231,7 @@ class DataFramePropertyStore(PropertyStore):
 
         Parameters
         ----------
-        uid: tuple[str | int, str | int ]
+        uid: str | int | tuple[str | int, str | int ]
             uid is the index used to fetch its property
 
         prop_name : str | int
@@ -268,7 +270,7 @@ class DataFramePropertyStore(PropertyStore):
 
         Parameters
         ----------
-        uid : tuple[str | int] | tuple[str | int, str | int ]
+        uid : str | int | tuple[str | int, str | int ]
             uid is the index used to set its property
         prop_name : str | int
             name of the property to set
