@@ -389,7 +389,7 @@ def incidence_store_from_two_column_dataframe(setsystem, edge_col = 'edges', nod
         IS = None
     else: #if non-empty setsystem
         #get incidence store for the given data type.
-        IS = to_incidence_store_from_two_column_pandas_dataframe(setsystem)
+        IS = to_incidence_store_from_two_column_pandas_dataframe(setsystem, edge_col, node_col)
         #remove duplicate rows with same ID
         IS = remove_incidence_store_duplicates(IS)
 
@@ -840,10 +840,6 @@ def restructure_data(setsystem, setsystem_data_type = None,
 to do:
     * program dictionary type properties
     * program other setsystem data types
-    * program setsystem and property data type checkers
-    * Change all the factory methods to from_... Instead of having a restructure data function
-    
-    
 
 '''
 
