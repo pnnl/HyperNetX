@@ -56,7 +56,7 @@ test-ci-github: lint-deps lint pre-commit ci-github-deps test-deps test-ci
 
 .PHONY: publish-deps
 publish-deps:
-	@$(PYTHON3) -m pip install -e .'[packaging]' --use-pep517
+	@$(PYTHON3) -m pip install -e .[packaging] --use-pep517
 
 .PHONY: build-dist
 build-dist: publish-deps clean
@@ -75,21 +75,21 @@ publish-to-pypi: publish-deps build-dist
 
 .PHONY: version-deps
 version-deps:
-	@$(PYTHON3) -m pip install .'[releases]' --use-pep517
+	@$(PYTHON3) -m pip install .[releases] --use-pep517
 
 
 ### Documentation
 
 .PHONY: docs-deps
 docs-deps:
-	@$(PYTHON3) -m pip install .'[documentation]' --use-pep517
+	@$(PYTHON3) -m pip install .[documentation] --use-pep517
 
 
 ## Tutorials
 
 .PHONY: tutorial-deps
 tutorial-deps:
-	@$(PYTHON3) -m pip install .'[tutorials]' .'[widget]' --use-pep517
+	@$(PYTHON3) -m pip install .[tutorials] .[widget] --use-pep517
 
 .PHONY: tutorials
 tutorials:
@@ -116,16 +116,16 @@ ci-github-deps:
 
 .PHONY: lint-deps
 lint-deps:
-	@$(PYTHON3) -m pip install .'[lint]' --use-pep517
+	@$(PYTHON3) -m pip install .[lint] --use-pep517
 
 .PHONY: format-deps
 format-deps:
-	@$(PYTHON3) -m pip install .'[format]' --use-pep517
+	@$(PYTHON3) -m pip install .[format] --use-pep517
 
 .PHONY: test-deps
 test-deps:
-	@$(PYTHON3) -m pip install .'[testing]' --use-pep517
+	@$(PYTHON3) -m pip install .[testing] --use-pep517
 
 .PHONY: all-deps
 all-deps:
-	@$(PYTHON3) -m pip install .'[all]' --use-pep517
+	@$(PYTHON3) -m pip install .[all] --use-pep517

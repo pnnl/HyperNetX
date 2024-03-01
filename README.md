@@ -150,8 +150,8 @@ conda activate venv-hnx
 
 
 ```shell
-virtualenv env-hnx
-source env-hnx/bin/activate
+virtualenv venv-hnx
+source venv-hnx/bin/activate
 ```
 
 
@@ -190,17 +190,9 @@ Ensure that you have [git](https://git-scm.com/book/en/v2/Getting-Started-Instal
 ```shell
 git clone https://github.com/pnnl/HyperNetX.git
 cd HyperNetX
+make venv
+source venv-hnx/bin/activate
 pip install .
-```
-
-Post-Installation Actions
-=========================
-
-Running Tests
--------------
-
-```shell
-python -m pytest
 ```
 
 Development
@@ -213,10 +205,13 @@ Install an editable version
 pip install -e .
 ```
 
-Install an editable version with access to jupyter notebooks
-------------------------------------------------------------
+Install an editable version with supported applications
+-------------------------------------------------------
 
 ```shell
+pip install -e .['all']
+
+# for zsh users
 pip install -e .'[all]'
 ```
 
@@ -226,7 +221,7 @@ Install support for testing
 > ℹ️ **NOTE:** This project has a pytest configuration file named 'pytest.ini'. By default, pytest will use those configuration settings to run tests.
 
 ```shell
-pip install .'[testing]'
+make test-deps
 
 # run tests
 python -m pytest
@@ -243,20 +238,14 @@ Install support for tutorials
 -----------------------------
 
 ``` shell
-pip install .'[tutorials]'
+make tutorial-deps
+
+# open Jupyter notebooks in a browser
+make tutorials
 ```
 
-Install support for documentation
----------------------------------
 
-```shell
-pip install .'[documentation]'
-cd docs
 
-## This will generate the documentation in /docs/build/
-## Open them in your browser with docs/build/html/index.html
-make html
-```
 
 
 Code Quality
@@ -269,7 +258,7 @@ HyperNetX uses a number of tools to maintain code quality:
 Before using these tools, ensure that you install Pylint in your environment:
 
 ```shell
-pip install .'[lint]'
+make lint-deps
 ```
 
 
@@ -299,6 +288,7 @@ For more information on configuration, see https://pylint.pycqa.org/en/latest/us
 
 
 ```shell
+make format-deps
 black hypernetx
 ```
 
@@ -309,6 +299,7 @@ Build and view documentation locally
 ---------------------------
 
 ```
+make docs-deps
 cd docs
 make html
 open docs/build/html/index.html
@@ -316,12 +307,12 @@ open docs/build/html/index.html
 
 Editing documentation
 ----------------------
-NOTE: make sure you install the required dependencies using: `make docs-deps`
 
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
 live on the browser without having to rebuild every time you have a change.
 
 ```
+make docs-deps
 cd docs
 make livehtml
 ```
