@@ -26,21 +26,21 @@ Create a virtual environment
 Using Anaconda
 *************************
 
-    >>> conda create -n env-hnx python=3.8 -y
-    >>> conda activate env-hnx
+    >>> conda create -n venv-hnx python=3.8 -y
+    >>> conda activate venv-hnx
 
 Using venv
 *************************
 
     >>> python -m venv venv-hnx
-    >>> source env-hnx/bin/activate
+    >>> source venv-hnx/bin/activate
 
 
 Using virtualenv
 *************************
 
-    >>> virtualenv env-hnx
-    >>> source env-hnx/bin/activate
+    >>> virtualenv venv-hnx
+    >>> source venv-hnx/bin/activate
 
 
 For Windows Users
@@ -66,6 +66,15 @@ Installing from PyPi
 
     >>> pip install hypernetx
 
+If you want to use supported applications built upon HyperNetX (e.g. ``hypernetx.algorithms.hypergraph_modularity`` or
+``hypernetx.algorithms.contagion``), you can install HyperNetX with those supported applications by using
+the following command:
+
+    >>> pip install hypernetx[all]
+
+If you are using zsh as your shell, use single quotation marks around the square brackets:
+
+    >>> pip install hypernetx'[all]'
 
 Installing from Source
 *************************
@@ -74,42 +83,13 @@ Ensure that you have ``git`` installed.
 
     >>> git clone https://github.com/pnnl/HyperNetX.git
     >>> cd HyperNetX
-    >>> pip install -e .['all']
-
-If you are using zsh as your shell, ensure that the single quotation marks are placed outside the square brackets:
-
-    >>> pip install -e .'[all]'
+    >>> make venv
+    >>> source venv-hnx/bin/activate
+    >>> pip install .
 
 
 Post-Installation Actions
 ##########################
-
-Running Tests
-**************
-
-To run all the tests, ensure that you first install the testing dependencies:
-
-    >>> pip install -e .['testing']
-
-Then try running all the tests:
-
-    >>> python -m pytest
-
-
-Dependencies for some Submodules
-********************************
-
-Two submodules in the library, ``hypernetx.algorithms.hypergraph_modularity`` and ``hypernetx.algorithms.contagion``,
-require some additional dependencies. If you want to use those submodules, you will need to install those dependencies.
-
-For ``hypernetx.algorithms.hypergraph_modularity``, install the following:
-
-    >>> pip install 'igraph>=0.10.4'
-
-For ``hypernetx.algorithms.contagion``, install the following:
-
-    >>> pip install 'celluloid>=0.2.0'
-
 
 Interact with HyperNetX in a REPL
 ********************************************
@@ -130,14 +110,19 @@ Ensure that your environment is activated and that you run ``python`` on your te
 Other Actions if installed from source
 ********************************************
 
-Ensure that you are at the root of the source directory before running any of the following commands:
+If you have installed HyperNetX from source, you can perform additional actions such as viewing the provided Jupyter notebooks
+or building the documentation locally.
+
+Ensure that you have activated your virtual environment and are at the root of the source directory before running any of the following commands:
+
 
 Viewing jupyter notebooks
 --------------------------
 
 The following command will automatically open the notebooks in a browser.
 
-    >>> jupyter-notebook tutorials
+    >>> make tutorial-deps
+    >>> make tutorials
 
 
 Building documentation
@@ -145,7 +130,9 @@ Building documentation
 
 The following commands will build and open a local version of the documentation in a browser:
 
-    >>> make build-docs
-    >>> open docs/build/index.html
+    >>> make docs-deps
+    >>> cd docs
+    >>> make html
+    >>> open build/index.html
 
 

@@ -1,6 +1,9 @@
 import pytest
 import numpy as np
+import pandas as pd
 from hypernetx.classes.hypergraph import Hypergraph
+
+from networkx.algorithms import bipartite
 
 
 def test_hypergraph_from_iterable_of_sets(sbs):
@@ -296,11 +299,7 @@ def test_edge_diameter(sbs):
 
 
 def test_bipartite(sbs_hypergraph):
-    from networkx.algorithms import bipartite
-
-    h = sbs_hypergraph
-    b = h.bipartite()
-    assert bipartite.is_bipartite(b)
+    assert bipartite.is_bipartite(sbs_hypergraph.bipartite())
 
 
 def test_dual(sbs_hypergraph):
@@ -311,8 +310,8 @@ def test_dual(sbs_hypergraph):
     assert list(H.dataframe.columns) == list(HD.dataframe.columns)
 
 
-def test_dual_again(sbs_edgedict):
-    H = Hypergraph(sbs_edgedict, edge_col="Types", node_col="Values")
+def test_dual_again(sbs):
+    H = Hypergraph(sbs.edgedict, edge_col="Types", node_col="Values")
     assert list(H.dataframe.columns[0:2]) == ["Types", "Values"]
     assert list(H.dual().dataframe.columns[0:2]) == ["Values", "Types"]
     assert list(H.dual(switch_names=False).dataframe.columns[0:2]) == [
@@ -347,6 +346,21 @@ def test_dataframe(lesmis):
 
 def test_construct_empty_hypergraph():
     h = Hypergraph()
+    assert h.shape == (0, 0)
+    assert h.edges.is_empty()
+    assert h.nodes.is_empty()
+    assert isinstance(h.dataframe, pd.DataFrame)
+
+
+def test_construct_hypergraph_from_empty_dict():
+    h = Hypergraph({})
+    assert h.shape == (0, 0)
+    assert h.edges.is_empty()
+    assert h.nodes.is_empty()
+
+
+def test_construct_hypergraph_empty_dict():
+    h = Hypergraph(dict())
     assert h.shape == (0, 0)
     assert h.edges.is_empty()
     assert h.nodes.is_empty()
