@@ -30,10 +30,16 @@ HyperNetXWidget is currently in beta and will only work on Jupyter Notebook 6.5.
 but support for Jupyter Lab is in planning.
 
 In addition, HyperNetXWidget must be installed using the `Anaconda platform <https://www.anaconda.com/>`_ so that the
-widget can render on Jupyter notebook. It is highly recommended to use the base environment provided by Anaconda because
-Anaconda's package management system, `conda`, will resolve dependencies when HyperNetX and HyperNetXWidget are
-installed. For more information on `conda` environments, please see `their documentation here.
-<https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment>`_
+widget can render on Jupyter notebook.
+
+For users with inexperience with Jupyter and Anaconda, it is highly recommended to use the base environment of Anaconda so
+that the widget works seamlessly and out-of-the box on Jupyter Notebook. The widget does not work on Jupyter Lab.
+
+If users want to create a custom environment instead of using the base environment provided by Anaconda, then users
+will need to do additional configuration on Jupyter and the kernel to ensure that the widget works.
+Specifically, users will need to set the Kernel to use a custom environment. For a guide on how to do this, please
+read and follow this guide: `How to add your Conda environment to your jupyter notebook in just 4 steps <https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084>`_.
+
 
 **Do not use python's built-in venv module or virtualenv to create a virtual environment; the widget will not render on
 Jupyter notebook.**
@@ -89,12 +95,6 @@ following screenshot as an example:
 .. image:: images/notebook_ipykernel.png
    :width: 300px
    :align: center
-
-
-|
-| For more information on setting the environment in Jupyter notebook, see
-  `How to add your Conda environment to your jupyter notebook in just 4 steps.
-  <https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084>`_
 
 
 Using the Tool

@@ -4,14 +4,6 @@ classes package
 Submodules
 ----------
 
-classes.entity module
----------------------
-
-.. automodule:: classes.entity
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 classes.entityset module
 ------------------------
 
