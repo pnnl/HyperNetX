@@ -57,7 +57,7 @@ Metadata may be attached to the tool by providing tabular data via two optional 
 
 # Statement of need
 For more than a century, graph theory has provided powerful methods for studying network relationships among abstract entities.
-Since the early 2000's, software packages such as NetworkX [@SciPyProceedings_11] and Igraph [@csardi2006]  have
+Since the early 2000's, software packages such as NetworkX [@SciPyProceedings_11] and `igraph` [@csardi2006igraph;@antonov2023igraph]  have
 made these theoretical tools available to data scientists for studying large data sets.
 Graphs represent pairwise interactions between entities, but for many network datasets this is a severe limitation.
 In 1973, hypergraphs were introduced by Claude Berge [@Berge1973Graphs] as a strict generalization of graphs: a hyperedge in a hypergraph can contain any number of nodes, including 1, 2, or more.
