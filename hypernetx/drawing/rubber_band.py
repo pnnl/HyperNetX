@@ -499,6 +499,14 @@ def draw(
             **inflate_kwargs(with_additional_edges.edges(), additional_edges_kwargs)
         )
 
+    if with_additional_edges:
+        nx.draw_networkx_edges(
+            with_additional_edges,
+            pos=pos,
+            ax=ax,
+            **inflate_kwargs(with_additional_edges.edges(), additional_edges_kwargs)
+        )
+
     if with_edge_labels:
         labels = get_frozenset_label(
             H.edges, count=with_edge_counts, override=edge_labels
