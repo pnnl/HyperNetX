@@ -57,10 +57,10 @@ Metadata may be attached to the tool by providing tabular data via two optional 
 
 # Statement of need
 For more than a century, graph theory has provided powerful methods for studying network relationships among abstract entities.
-Since the early 2000's, software packages such as NetworkX [@SciPyProceedings_11] and `igraph` [@csardi2006igraph;@antonov2023igraph]  have
+Since the early 2000s, software packages such as NetworkX [@SciPyProceedings_11] and `igraph` [@csardi2006igraph;@antonov2023igraph]  have
 made these theoretical tools available to data scientists for studying large data sets.
 Graphs represent pairwise interactions between entities, but for many network datasets this is a severe limitation.
-In 1973, hypergraphs were introduced by Claude Berge [@Berge1973Graphs] as a strict generalization of graphs: a hyperedge in a hypergraph can contain any number of nodes, including 1, 2, or more.
+In 1973, hypergraphs were introduced by @Berge1973Graphs as a strict generalization of graphs: a hyperedge in a hypergraph can contain any number of nodes, including 1, 2, or more.
 Hypergraphs have been used to model complex network datasets in
 areas such as the biological sciences, information systems, the power grid, and cyber security.
 Hypergraphs strictly generalize graphs (all graphs are (2-uniform) hypergraphs), and thus can represent additional data complexity and have more mathematical properties to exploit (for example, hyperedges can be contained in other hyperedges). As mathematical set systems, simplicial and homological methods from
@@ -71,13 +71,13 @@ experimentation and exploration, which prompted the development of HyperNetX.
 ## Related Software
 Due to the diversity of hypergraph modeling applications, hypergraph software libraries are 
 often bootstrapped using data structures and methods most appropriate to their usage. 
-In 2020 SimpleHypergraph.jl  was made available for high performance computing on hypergraphs using Julia. 
+In 2020, SimpleHypergraph.jl  was made available for high performance computing on hypergraphs using Julia. 
 The library offers a suite of tools for centrality analysis and community detection and integrates its own 
-visualization tools with those offered by HNX.[@Szufel2019] In 2021 CompleX Group Interactions (XGI)  was released. 
+visualization tools with those offered by HNX [@Szufel2019]. In 2021, CompleX Group Interactions (XGI)  was released. 
 Originally developed to efficiently discover spreading processes in complex social systems, the library now offers 
-a statistics package as well as a full suite of hypergraph analysis and visualization tools.[@Landry2023] 
+a statistics package as well as a full suite of hypergraph analysis and visualization tools [@Landry2023]. 
 More recently, in 2023 HyperGraphX (HGX)  was released, again with a full suite of tools for community detection 
-as well as general hypergraph analytics.[@Lotito2023Hypergraphx]
+as well as general hypergraph analytics [@Lotito2023Hypergraphx],
 A nice compendium of many of the hypergraph libraries created in the last decade can be found in @Kurte2021.
 
 HNX leads the effort to share library capabilities by specifying a Hypergraph Interchange Format (HIF) 
@@ -85,7 +85,7 @@ for storing hypergraph data as a JSON object. Since hypergraphs can store metada
 hyperedges, and incidence pairs, a standardized format makes it easy to share hypergraphs across libraries.
  
 ![Visualizations from hypergraph libraries based on the bipartite graph seen in grey
-  under the HyperNetX visualization (left side): XGI (Center), @Landry2023 and SimpleHypergraph (Right), @Szufel2019.](Figures/3graphs.png)
+  under the HyperNetX visualization (left): XGI (center), @Landry2023 and SimpleHypergraph (right), @Szufel2019.](Figures/3graphs.png)
  
 # Overview of HNX
 HNX serves as a platform for the collaboration and sharing of hypergraph
@@ -110,7 +110,7 @@ As a collaborative platform, HNX contains contributed modules
 and tutorials in the form of Jupyter notebooks
 for Laplacian clustering, clustering and modularity, synthetic
 generation of hypergraphs, and Contagion Theory.
-In its latest release, HNX 2.0 uses Pandas dataframes[@reback2020pandas;@mckinney-proc-scipy-2010] as its underlying data structure,
+In its latest release, HNX 2.0 uses Pandas dataframes [@reback2020pandas;@mckinney-proc-scipy-2010] as its underlying data structure,
 making the nodes and hyperedges of a hypergraph as accessible as the
 cells in a dataframe.
 This simple design allows HNX to import data from semantically
