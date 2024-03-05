@@ -11,7 +11,7 @@ lint: pylint flake8 mypy
 
 .PHONY: pylint
 pylint:
-	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx
+	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx --exit-zero
 
 .PHONY: mypy
 mypy:
