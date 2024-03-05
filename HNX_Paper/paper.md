@@ -73,11 +73,11 @@ Due to the diversity of hypergraph modeling applications, hypergraph software li
 often bootstrapped using data structures and methods most appropriate to their usage. 
 In 2020 SimpleHypergraph.jl  was made available for high performance computing on hypergraphs using Julia. 
 The library offers a suite of tools for centrality analysis and community detection and integrates its own 
-visualization tools with those offered by HNX.[@Szufel2019] In 2021 CompleX Group Interactions (XGI)  was released. 
+visualization tools with those offered by HNX [@Szufel2019]. In 2021 CompleX Group Interactions (XGI)  was released. 
 Originally developed to efficiently discover spreading processes in complex social systems, the library now offers 
-a statistics package as well as a full suite of hypergraph analysis and visualization tools.[@Landry2023] 
+a statistics package as well as a full suite of hypergraph analysis and visualization tools[@Landry2023]. 
 More recently, in 2023 HyperGraphX (HGX)  was released, again with a full suite of tools for community detection 
-as well as general hypergraph analytics.[@Lotito2023Hypergraphx]
+as well as general hypergraph analytics [@Lotito2023Hypergraphx].
 A nice compendium of many of the hypergraph libraries created in the last decade can be found in @Kurte2021.
 
 HNX leads the effort to share library capabilities by specifying a Hypergraph Interchange Format (HIF) 
