@@ -40,7 +40,7 @@ def to_property_store_from_dataframe(properties, property_type,
     ----------
     
     properties : dataframe
-        dataframe of properties for either incicences, edges, or nodes
+        dataframe of properties for either incidences, edges, or nodes
     
     property_type : str
         type of property dataframe provided. 
@@ -105,10 +105,12 @@ def to_property_store_from_dataframe(properties, property_type,
         incidence_pairs = np.array(properties[[edge_col, node_col]]) #array of incidence pairs to use as UIDs.
         indices = [tuple(incidence_pair) for incidence_pair in incidence_pairs]
         multi_index = pd.MultiIndex.from_tuples(indices, names=['edges', 'nodes'])
+        # incidence_df = create_df(datadf, uid_col, weight_col, misc_col)
     elif property_type == 'edge_properties': 
         edge_names = np.array(properties[[edge_col]]) #array of edges to use as UIDs.
         indices = [tuple([edge_name[0]]) for edge_name in edge_names]
         multi_index = pd.MultiIndex.from_tuples(indices, names=['edges'])
+        # edge_df = create_df(datadf, uid_col, weight_col, misc_col)
     elif property_type == 'node_properties': 
         node_names = np.array(properties[[node_col]]) #array of edges to use as UIDs.
         indices = [tuple([node_name[0]]) for node_name in node_names]
