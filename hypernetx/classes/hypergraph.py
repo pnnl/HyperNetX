@@ -598,7 +598,7 @@ class Hypergraph:
 
     @property
     def dataframe(self):
-        # returns incidence store 
+        # returns incidence store
         """Returns dataframe of incidence pairs and their properties.
 
         Returns
@@ -616,7 +616,7 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        return self.E.properties 
+        return self.E.properties
 
     @property
     def edge_props(self):
@@ -1630,7 +1630,7 @@ class Hypergraph:
             misc_properties_col=self.edges._misc_props_col,
             name=name,
         )
-    
+
     def remove_incidence(self):
         pass
 
@@ -1926,7 +1926,7 @@ class Hypergraph:
         )
 
     def node_diameters(self, s=1):
-        # method on incidence stores 
+        # method on incidence stores
         """
         Returns the node diameters of the connected components in hypergraph.
 

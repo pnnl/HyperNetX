@@ -7,7 +7,7 @@ class IncidenceStore:
     ----------
     incidences : Dictionary
         dicitonary of incidences with key as incidence name and value as tuple of edge and node names.
-        
+
     Methods
     --------
     __iter__
@@ -22,7 +22,7 @@ class IncidenceStore:
     elements
     dual
     """
-    
+
     def __init__(self, incidences):
         self._incidences = incidences  # Dataframe of index, incidence pairs, and attributes
 
@@ -31,7 +31,7 @@ class IncidenceStore:
         Iterator over the incidence pairs of the hypergraph
 
         """
-        
+
         return iter(self._incidences.values)
 
     def __len__(self):
@@ -43,10 +43,10 @@ class IncidenceStore:
         int
 
         """
-        
-        # 
+
+        #
         return len(self._incidences)
-    
+
     def unique_incidences():
         """
         List of unique incidences
@@ -57,7 +57,7 @@ class IncidenceStore:
 
         """
         pass
-    
+
     def __setattr__(self, incidence_key, property_key, property_value) -> None:
         """Sets a property to an incidence.
 
@@ -71,16 +71,16 @@ class IncidenceStore:
         -------
         None
         """
-    
+
     def __contains__(self, incidence_pair):
         """
         First, check if the incidence pair is of length two.
-        
+
         Then, checks if it exists in incidence pairs.
 
         """
-        
-        
+
+
         pass
 
     def __getitem__(self, incidence_key):
@@ -88,7 +88,7 @@ class IncidenceStore:
         key is incidence key (e.g., index) and returns incidence pair and attributes
 
         """
-        
+
         return self._incidences[incidence_key]
 
     def get_incidence_attributes(self, incidence_pair):
@@ -102,12 +102,12 @@ class IncidenceStore:
 
         Returns
         -------
-        dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and 
+        dictionary of incidence pairs of that incidence with incidence key (e.g., index) as dictionary keys and
         attributes as dictionary values.
-        
+
         '''
         pass
-    
+
     def incidence_matrix(self):
         """
         Implement incidence matrix creation logic here from unique incidence pairs.
@@ -119,10 +119,10 @@ class IncidenceStore:
         # Was collapse
         """
         Collapse the multi-incidences and combine attributes of multi-incidences.
-        
+
         Updates
         -------
-        
+
         """
         pass
 
@@ -155,7 +155,7 @@ class IncidenceStore:
 
         """
         pass
-    
+
 
     def dual(self):
         """
@@ -163,4 +163,3 @@ class IncidenceStore:
 
         """
         pass
-        

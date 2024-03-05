@@ -13,7 +13,7 @@ INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES, STRENGTH, HAIR_COLOR]
 
 
 @pytest.fixture
-def edges() -> list[tuple[str | int, str | int]]:
+def edges():
     return ['I', 'L', 'O', 'P', 'R', 'S']
 
 

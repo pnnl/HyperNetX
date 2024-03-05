@@ -1395,7 +1395,7 @@ class EntitySet:
         misc_col: Optional[str] = None,
         replace: bool = False,
     ) -> None:
-        #method on incidence store 
+        #method on incidence store
         """Assign new properties to cells of the incidence matrix and update
         :attr:`properties`
 
@@ -1435,7 +1435,7 @@ class EntitySet:
         level_col=0,
         id_col=1,
     ) -> None:
-        #method on incidence store 
+        #method on incidence store
         """Assign new properties to items in the data table, update :attr:`properties`
 
         Parameters
@@ -1869,7 +1869,7 @@ class EntitySet:
     def set_cell_property(
         self, item1: T, item2: T, prop_name: Any, prop_val: Any
     ) -> None:
-        #method on incidence store 
+        #method on incidence store
         """Set a property of a cell i.e., incidence between items of different levels
 
         Parameters
@@ -1910,7 +1910,7 @@ class EntitySet:
             )
 
     def get_cell_property(self, item1: T, item2: T, prop_name: Any) -> Any:
-        #method on incidence store 
+        #method on incidence store
         """Get a property of a cell i.e., incidence between items of different levels
 
         Parameters
@@ -1959,7 +1959,7 @@ class EntitySet:
         return prop_val
 
     def get_cell_properties(self, item1: T, item2: T) -> Optional[dict[Any, Any]]:
-        #method on incidence store 
+        #method on incidence store
         """Get all properties of a cell, i.e., incidence between items of different
         levels
 

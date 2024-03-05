@@ -31,20 +31,20 @@ class Hypergraph:
     def __init__(structural_data, properties):
 
         #### Use a Factory Method to create 4 stores
-            ## df = Incidence Store from structural data 
+            ## df = Incidence Store from structural data
             ## edges,nodes,incidences = Property stores tied to ids in df
-            ## Incidences - uses df, dictionary - assigns keys to incidence 
-            ## pairs and/or removes duplicates, 
+            ## Incidences - uses df, dictionary - assigns keys to incidence
+            ## pairs and/or removes duplicates,
             ## identifies keys for edges and nodes
-        
+
         ## Construct 3 HypergraphViews to tie these together?
             ## Incidences - links keys from 3 stores, and incidences with properties
             ## Edges - reconciles keys from Incidences against a Property Store
             ## Nodes - reconciles keys from Incidences against a Property Store
-        
+
         # decision tree to route data by type OR user specified type
         # to correct factory method for each of 3 property stores
-        # and 1 incidence store 
+        # and 1 incidence store
         # 3 calls to the different factory methods (data => df for Property Store)
         # 1 call to the incidence factory method (setsystem => df for Incidence Store)
 
@@ -97,7 +97,7 @@ class Hypergraph:
         pd.DataFrame or Dictionary?
         """
         ## Concatenate self._edges and self._nodes into a dataframe
-        
+
 
     @property
     def edge_props(self):
@@ -228,7 +228,7 @@ class Hypergraph:
             edgeid
         node : str
             nodeid
-        key : int, optional, 
+        key : int, optional,
             incidence store id, by default None
         prop_name : str, optional
             name of a cell property; if None, all cell properties will be returned
@@ -260,7 +260,7 @@ class Hypergraph:
         : str or dict
             single property or dictionary of properties
         """
-        
+
         if level == None or level == 0:
             store = self._edges
         else:
@@ -625,7 +625,7 @@ class Hypergraph:
             _description_, by default 'weight'
         """
         pass
-    
+
     def adjacency_matrix(self, s=1, index=False, remove_empty_rows=False):
         """
         The :term:`s-adjacency matrix` for the hypergraph.
@@ -1918,4 +1918,3 @@ class Hypergraph:
                 weights="cell_weights",
                 name=None,
             )
-

@@ -28,7 +28,7 @@ __all__ = ["HypergraphView"]
 # class PropertyStore(object):
 #     """
 #     Wrapper for a pandas dataframe. Minimal logic but limits changes
-#     to 
+#     to
 
 #     Parameters
 #     ----------
@@ -52,21 +52,21 @@ __all__ = ["HypergraphView"]
 #                 self._dataframe = self._dataframe.set_index([self._dataframe.columns[0],self._dataframe.columns[1]])
 #         else:
 #             self._dataframe = pd.DataFrame(columns=['weight','properties'])
-    
-    
+
+
 #     def __call__(self):
 #         return self
-    
+
 #     def __iter__(self):
 #         return iter(self._dataframe.index)
-    
+
 #     def __len__(self):
 #         return len(self._dataframe)
 
 #     @property
 #     def dataframe(self):
 #         return self._dataframe
-    
+
 #     def get_property(self, uid, prop_name):
 #         prop_val = None
 #         df = self.dataframe
@@ -81,17 +81,17 @@ __all__ = ["HypergraphView"]
 #         super().__init__(df)
 #         # self._dataframe = self._data
 #         # self.proxy = IS(df)
-            
+
 #     # def __call__(self):
 #     #     return self
-    
+
 #     # def __iter__(self):
 #     #     return self.proxy.__iter__()
-    
+
 #     # @property
 #     # def edges(self):
 #     #     return self.proxy.edges
-    
+
 #     # @property
 #     # def nodes(self):
 #     #     return self.proxy.nodes
@@ -99,13 +99,13 @@ __all__ = ["HypergraphView"]
 #     @property
 #     def dataframe(self):
 #         return self._data
-    
+
 ######################################################
 
 class HypergraphView(object):
     """
-    Wrapper for Property and Incidence Stores holding structural and 
-    meta data for hypergraph. Provides methods matching EntitySet 
+    Wrapper for Property and Incidence Stores holding structural and
+    meta data for hypergraph. Provides methods matching EntitySet
     methods in previous versions. Only nodes and edges in the Incidence
     Store will be seeable in this view.
     """
@@ -129,7 +129,7 @@ class HypergraphView(object):
 
         else:
             self._props = PropertyStore()
-        
+
 
         ### incidence store needs index or columns
         if level == 0 :
@@ -139,28 +139,28 @@ class HypergraphView(object):
         elif level == 2 :
             self._items = self._store.data.values
 
-        # self._properties = PropertyStore()  
-        ### if no properties and level 0 or 1, 
-        ### create property store that 
-        ### returns weight 1 on every call for a weight 
+        # self._properties = PropertyStore()
+        ### if no properties and level 0 or 1,
+        ### create property store that
+        ### returns weight 1 on every call for a weight
         ### and empty properties otherwise.
 
     @property
     def level(self):
         return self._level
-    
+
     @property
     def incidence_store(self):
         return self._store
-    
+
     @property
     def property_store(self):
         return self._props
-        
+
     @property
     def properties(self):
         return self._props.properties
-    
+
 
     # @property
     # def levelset(self):
@@ -179,8 +179,8 @@ class HypergraphView(object):
     #         return self._store.nodes.unique()
     #     elif level == 2:
     #         return self._store.dataframe
-        
-    
+
+
     def __iter__(self):
         """
         Defined by level store
@@ -190,7 +190,7 @@ class HypergraphView(object):
 
     def __len__(self):
         """
-        Defined by incidence store 
+        Defined by incidence store
         """
         return len(self._itemse)
 
@@ -205,11 +205,11 @@ class HypergraphView(object):
         """
         return item in self._items
 
-    
+
     # def to_dataframe(self):
     #     """
     #     Defined by property store.
-    #     Returns a pandas dataframe keyed by level keys 
+    #     Returns a pandas dataframe keyed by level keys
     #         with properties as columns or in a variable length dict.
     #         The returned data frame will either reflect the
     #         """
@@ -231,11 +231,11 @@ class HypergraphView(object):
 
     def __getitem__(self,uid):
         """
-        Returns incident objects (neighbors in bipartite graph) 
+        Returns incident objects (neighbors in bipartite graph)
         to keyed object as an AttrList.
-        Returns AttrList associated with item, 
-        attributes/properties may be called 
-        from AttrList 
+        Returns AttrList associated with item,
+        attributes/properties may be called
+        from AttrList
         If level 0 - elements, if level 1 - memberships,
         if level 2 - TBD - uses getitem from stores and links to props
             These calls will go to the neighbors method in the incidence store
@@ -293,7 +293,7 @@ class HypergraphView(object):
     # def to_json(self):
     #     """
     #     Returns jsonified data. For levels 0,1 this will be the edge and nodes
-    #     properties and for level 2 this will be the incidence pairs and their 
+    #     properties and for level 2 this will be the incidence pairs and their
     #     properties
     #     """
     #     pass
@@ -334,13 +334,13 @@ class HypergraphView(object):
 
     # def decoder(self):
     #     """
-    #     returns int:label dictionaries 
+    #     returns int:label dictionaries
     #     """
 
 
 
 class NList(UserList):
-    """Custom list wrapper for integrating PropertyStore data with 
+    """Custom list wrapper for integrating PropertyStore data with
     IncidenceStore relationships
 
     Parameters
@@ -372,8 +372,8 @@ class NList(UserList):
         initlist = hypergraph_view._store.neighbors(self._level,uid)
         super().__init__(initlist)
 
-    
-    
+
+
     def __getattr__(self, attr: str) -> Any:
         """Get attribute value from properties of :attr:`entity`
 
@@ -398,7 +398,7 @@ class NList(UserList):
                 return []
         elif attr == "properties":
             return self._props.get_properties(self._uid)
-        else:        
+        else:
             return self._props.get_property(self._uid, attr)
 
 
@@ -433,5 +433,5 @@ def flatten(my_dict):
         if isinstance(value, dict):
             result.update(_flatten(value))
         else:
-            result[key] = value 
+            result[key] = value
     return result
