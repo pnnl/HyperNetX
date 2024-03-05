@@ -121,6 +121,6 @@ hypergraph researchers to implement their own methods built from
 HNX and contribute them as modules and Jupyter tutorials to the HNX user community.
  
 ## Projects using HNX
-HNX was created by the Pacific Northwest National Laboratory. It has provided data analysis and visualization support for academic papers in subject areas such as biological systems [@Feng2021;@Colby2023], cyber security [@Joslyn2020DNS], information systems [@Molnar2022Application], neural networks [@Praggastis2022SVD], knowledge graphs [@joslyn2018], and the foundations of hypergraph theory [@Vazquez2022Growth].
+HNX was created by the Pacific Northwest National Laboratory. It has provided data analysis and visualization support for academic papers in subject areas such as biological systems [@Feng2021;@Colby2023], cyber security [@Joslyn2020DNS], information systems [@Molnar2022Application]. neural networks [@Praggastis2022SVD], knowledge graphs [@joslyn2018], and the foundations of hypergraph theory [@Vazquez2022Growth].
  
 # References
