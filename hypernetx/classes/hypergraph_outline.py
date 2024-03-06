@@ -56,24 +56,24 @@ class Hypergraph:
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
         properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        prop_index : bool = True, ### this means the index will be used for uid
-        ### if False then the first column will be used.
+        prop_uid_col : str | int | None, ### this means the index will be used for uid
+        ### How do we know which column to use for uid
         misc_properties_col: Optional[str | int] = None,
         weight_prop_col: str | int = "weight",
         default_weight: float = 1.0,   
 
         ### these are just for properties on the edges - ignored if properties exists
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        edge_index : bool = True, ### this means the index will be used for uid
-        ### if False then the first column will be used.
+        edge_uid_col : str | int | None, ### this means the index will be used for uid
+        ### How do we know which column to use for uid
         misc_edge_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
         default_edge_weight: float = 1.0,
 
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        node_index : bool = True, ### this means the index will be used for uid
-        ### if False then the first column will be used.
+        node_uid_col : str | int | None, ### this means the index will be used for uid
+        ### How do we know which column to use for uid
         misc_node_properties_col: Optional[str | int] = None,
         node_weight_prop_col: str | int = "weight",
         default_node_weight: float = 1.0,
@@ -105,10 +105,13 @@ class Hypergraph:
             'dict' : dict_factory_method,
             'list' : list_factory_method,
         }
+    
+    ## dataframe_factory_method(df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
+    ## dataframe_factory_method(edf,index_cols=[uid_col],weight_col,default_weight,misc_properties)
 
         setsystem_type = type(setsystem)
         if setsystem_type in type_dict:
-            df = type_dict[setsystem_type](setsystem,**setsystemkwargs) 
+            df = type_dict[setsystem_type](setsystem,edge_col,node_col,) 
             ## multi index set by uid_cols = [edge_col,node_col]
             incidence_store = IncidenceStore(df.index)
             incidence_propertystore = PropertyStore(df,index=True) 
