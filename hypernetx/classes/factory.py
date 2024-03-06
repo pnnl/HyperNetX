@@ -16,21 +16,21 @@ def remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods =
         if col not in aggregation_methods:
             aggregation_methods[col] = 'first'
     return PS.groupby(level = default_uid_cols).agg(aggregation_methods)
-    
-    
-def create_df(properties, uid_cols, indices, multi_index, 
-              default_uid_cols, weight_prop_col, 
+
+
+def create_df(properties, uid_cols, indices, multi_index,
+              default_uid_cols, weight_prop_col,
               misc_prop_col, default_weight, aggregation_methods):
-    
+
     # initialize a dictionary to be converted to a pandas dataframe.
     properties_df_dict = {}
-    
+
     #get names of property columns provided that are not the edge or node columns
     property_columns = set(list(properties.columns)) - set(uid_cols)
     for prop in property_columns: #set those as rows in DF
         properties_df_dict[prop] = properties.loc[:, prop]
-    
-    
+
+
     #get column names if integer was provided instead and create new uid_cols with string names.
     uid_cols_to_str = []
     for col in uid_cols:
@@ -43,10 +43,10 @@ def create_df(properties, uid_cols, indices, multi_index,
         weight_prop_col = properties.columns[weight_prop_col]
     if isinstance(misc_prop_col, int):
         misc_prop_col = properties.columns[misc_prop_col]
-        
-        
+
+
     #rename uid columns if needed to default names. No way of doing this correctly without knowing data type.
-    for i in range(len(uid_cols)):    
+    for i in range(len(uid_cols)):
         col, default_col = uid_cols[i], default_uid_cols[i]
         #change name of edges column to "edges"
         if col != default_col and col in properties_df_dict:
@@ -55,7 +55,7 @@ def create_df(properties, uid_cols, indices, multi_index,
             # Add the popped value with the correct col name
             properties_df_dict[default_col] = column_values
 
-    
+
     # set weight column code:
     # check if weight column exists or if weight col name exists in dictionary and assign it as column if it doesn't
     # default to use weight column if it exists before looking in misc properties column.
@@ -104,8 +104,8 @@ def create_df(properties, uid_cols, indices, multi_index,
         misc_props = properties_df_dict.pop(misc_prop_col)
         # Add the popped value with the new properties name "misc_properties"
         properties_df_dict['misc_properties'] = misc_props
-        
-        
+
+
     #create dataframe from property store dictionary object
     PS = pd.DataFrame(properties_df_dict)
     #set multi index for dataframe
@@ -113,11 +113,11 @@ def create_df(properties, uid_cols, indices, multi_index,
 
     #remove any NaN values or missing values in weight column
     PS['weight'].fillna(default_weight, inplace = True)
-    
-    
+
+
     # remove any duplicate indices and combine using aggregation methods (defaults to 'first' if none provided).
     PS = remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods = aggregation_methods)
-    
+
     #reorder columns to have properties last
     # Get the column names and the specific column
     column_names = list(PS.columns)
@@ -126,17 +126,17 @@ def create_df(properties, uid_cols, indices, multi_index,
     new_order = [col for col in column_names if col != specific_col] + [specific_col]
     # Reorder the dataframe using reindex
     PS = PS.reindex(columns=new_order)
-            
+
     return PS
-        
-        
+
+
 
 def property_store_from_dataframe(properties, property_type,
                                      edge_col = 'edges', node_col = 'nodes',
                                      misc_cell_properties = 'misc_properties', misc_properties = 'misc_properties',
                                      weight_prop = None, edge_weight_prop = 'weight', node_weight_prop = 'weight',
                                      cell_weight_col = 'weight',
-                                     cell_weights = 1.0, default_edge_weight = 1.0, default_node_weight = 1.0, 
+                                     cell_weights = 1.0, default_edge_weight = 1.0, default_node_weight = 1.0,
                                      aggregation_methods = {}):
 
 
@@ -203,8 +203,8 @@ def property_store_from_dataframe(properties, property_type,
 
     default_node_weight : (optional) int | float, default = 1
         Used when node weight property is missing or undefined
-        
-        
+
+
     aggregation_methods : (optional) dict, default = {}
         By default duplicate incidences will be dropped unless
         specified with `aggregation_methods`.
@@ -223,53 +223,53 @@ def property_store_from_dataframe(properties, property_type,
             default_uid_cols = ['nodes']
         multi_index = pd.MultiIndex.from_tuples(levels=[[],[]], codes=[[],[]], names=default_uid_cols)
         PS = pd.DataFrame(index = multi_index, columns=['weight', 'misc_properties'])
-        
+
     else:
         if property_type == 'cell_properties':
             incidence_pairs = np.array(properties[[edge_col, node_col]]) #array of incidence pairs to use as UIDs.
             indices = [tuple(incidence_pair) for incidence_pair in incidence_pairs]
             multi_index = pd.MultiIndex.from_tuples(indices, names=['edges', 'nodes'])
             default_uid_cols = ['edges', 'nodes']
-            PS = create_df(properties, 
-                           uid_cols = [edge_col, node_col], 
-                           default_uid_cols = default_uid_cols, 
-                           indices = indices, multi_index = multi_index, 
-                           weight_prop_col = cell_weight_col, 
-                           misc_prop_col = misc_cell_properties, 
-                           default_weight = cell_weights, 
+            PS = create_df(properties,
+                           uid_cols = [edge_col, node_col],
+                           default_uid_cols = default_uid_cols,
+                           indices = indices, multi_index = multi_index,
+                           weight_prop_col = cell_weight_col,
+                           misc_prop_col = misc_cell_properties,
+                           default_weight = cell_weights,
                            aggregation_methods = aggregation_methods)
-            
+
         elif property_type == 'edge_properties':
             edge_names = np.array(properties[[edge_col]]) #array of edges to use as UIDs.
             indices = [tuple([edge_name[0]]) for edge_name in edge_names]
             multi_index = pd.MultiIndex.from_tuples(indices, names=['edges'])
             default_uid_cols = ['edges']
-            PS = create_df(properties, 
-                           uid_cols = [edge_col], 
-                           default_uid_cols = default_uid_cols, 
-                           indices = indices, multi_index = multi_index, 
-                           weight_prop_col = edge_weight_prop, 
-                           misc_prop_col = misc_properties, 
-                           default_weight = default_edge_weight, 
+            PS = create_df(properties,
+                           uid_cols = [edge_col],
+                           default_uid_cols = default_uid_cols,
+                           indices = indices, multi_index = multi_index,
+                           weight_prop_col = edge_weight_prop,
+                           misc_prop_col = misc_properties,
+                           default_weight = default_edge_weight,
                            aggregation_methods = aggregation_methods)
-            
+
         elif property_type == 'node_properties':
             node_names = np.array(properties[[node_col]]) #array of edges to use as UIDs.
             indices = [tuple([node_name[0]]) for node_name in node_names]
             multi_index = pd.MultiIndex.from_tuples(indices, names=['nodes'])
             default_uid_cols = ['nodes']
-            PS = create_df(properties, 
-                           uid_cols = [node_col], 
-                           default_uid_cols = default_uid_cols, 
-                           indices = indices, multi_index = multi_index, 
-                           weight_prop_col = node_weight_prop, 
-                           misc_prop_col = misc_properties, 
-                           default_weight = default_node_weight, 
+            PS = create_df(properties,
+                           uid_cols = [node_col],
+                           default_uid_cols = default_uid_cols,
+                           indices = indices, multi_index = multi_index,
+                           weight_prop_col = node_weight_prop,
+                           misc_prop_col = misc_properties,
+                           default_weight = default_node_weight,
                            aggregation_methods = aggregation_methods)
-    
-    
-        
-        
+
+
+
+
     return PS
 
 
@@ -320,7 +320,7 @@ def incidence_store_from_two_column_dataframe(setsystem, edge_col = 'edges', nod
         IS = setsystem.rename(column_renaming_dict)
         #remove duplicate rows with same ID
         IS = remove_incidence_store_duplicates(IS)
-        
+
     return IS
 
 
@@ -360,22 +360,22 @@ if __name__ == "__main__":
     display(node_prop_dataframe)
 
 
-    
+
     print('\n \nRestructured Dataframes using single factory method for property store repeated')
     print('-'*100)
-    
-    
-    
+
+
+
     IS = incidence_store_from_two_column_dataframe(incidence_dataframe)
     display(IS)
 
-    IPS = property_store_from_dataframe(properties = cell_prop_dataframe, 
+    IPS = property_store_from_dataframe(properties = cell_prop_dataframe,
                                         property_type = 'cell_properties',
                                         misc_cell_properties = 'other_properties',
                                         aggregation_methods = {'weight': 'sum'},)
     display(IPS)
 
-    EPS = property_store_from_dataframe(properties = edge_prop_dataframe, 
+    EPS = property_store_from_dataframe(properties = edge_prop_dataframe,
                                         property_type = 'edge_properties',
                                         edge_weight_prop = 1)
     display(EPS)
@@ -383,6 +383,3 @@ if __name__ == "__main__":
     NPS = property_store_from_dataframe(properties = node_prop_dataframe,
                                         property_type = 'node_properties',)
     display(NPS)
-
-
-
