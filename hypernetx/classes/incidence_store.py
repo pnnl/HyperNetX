@@ -154,6 +154,8 @@ class IncidenceStore:
             except KeyError:
                 # Return empty list if key doesn't exist for level 1 (node)
                 return []
+        elif level == 2:
+            return []
         else:
             return []
 
