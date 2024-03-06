@@ -155,7 +155,7 @@ class IncidenceStore:
                 # Return empty list if key doesn't exist for level 1 (node)
                 return []
         else:
-            raise ValueError("Invalid level provided. Must be 0 or 1.")
+            return []
 
     def restrict_to(self, level, items, inplace=False):
 
