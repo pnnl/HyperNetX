@@ -28,7 +28,59 @@ T = TypeVar("T", bound=Union[str, int])
 
 class Hypergraph:
 
-    def __init__(structural_data, properties):
+    def __init__(
+        self,
+        ### these are for the incidence pairs and their properties
+        ### format for properties must follow from incidence pairs
+        ### so that properties are provided either in the dataframe
+        ### or as part of a nested dictionary.
+        setsystem: Optional[
+            pd.DataFrame
+            | np.ndarray
+            | Mapping[T, Iterable[T]]
+            | Iterable[Iterable[T]]
+            | Mapping[T, Mapping[T, Mapping[str, Any]]]
+        ] = None,
+        default_cell_weight: float = 1.0    ### we will no longer support a sequence
+        edge_col: str | int = 0,
+        node_col: str | int = 1,
+        cell_weight_col: Optional[str | int] = "weight",
+
+        cell_properties: Optional[
+            Sequence[str | int] | Mapping[T, Mapping[T, Mapping[str, Any]]]
+        ] = None,
+        misc_cell_properties_col: Optional[str | int] = None,
+        aggregateby: str | dict[str, str] = "first",
+
+        ### Format for properties can be either a dataframe indexed on uid
+        ### or with first column equal to uid or a dictionary
+        ### use these for a single properties list
+        properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
+        prop_index : bool = True, ### this means the index will be used for uid
+        ### if False then the first column will be used.
+        misc_properties_col: Optional[str | int] = None,
+        weight_prop_col: str | int = "weight",
+        default_weight: float = 1.0,   
+
+        ### these are just for properties on the edges - ignored if properties exists
+        edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
+        edge_index : bool = True, ### this means the index will be used for uid
+        ### if False then the first column will be used.
+        misc_edge_properties_col: Optional[str | int] = None,
+        edge_weight_prop_col: str | int = "weight",
+        default_edge_weight: float = 1.0,
+
+        ### these are just for properties on the nodes - ignored if properties exists
+        node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
+        node_index : bool = True, ### this means the index will be used for uid
+        ### if False then the first column will be used.
+        misc_node_properties_col: Optional[str | int] = None,
+        node_weight_prop_col: str | int = "weight",
+        default_node_weight: float = 1.0,
+
+        name: Optional[str] = None,
+        **kwargs,
+   ):
 
         #### Use a Factory Method to create 4 stores
             ## df = Incidence Store from structural data
@@ -48,9 +100,50 @@ class Hypergraph:
         # 3 calls to the different factory methods (data => df for Property Store)
         # 1 call to the incidence factory method (setsystem => df for Incidence Store)
 
-        self._E = HypergraphView(incidencestore,propertystore,level=2)
-        self._edges = HypergraphView(incidencestore,propertystore,level=0)
-        self._nodes = HypergraphView(incidencestore,propertystore,level=1)
+        type_dict = { 
+            'DataFrame' : dataframe_factory_method,
+            'dict' : dict_factory_method,
+            'list' : list_factory_method,
+        }
+
+        setsystem_type = type(setsystem)
+        if setsystem_type in type_dict:
+            df = type_dict[setsystem_type](setsystem,**setsystemkwargs) 
+            ## multi index set by uid_cols = [edge_col,node_col]
+            incidence_store = IncidenceStore(df.index)
+            incidence_propertystore = PropertyStore(df,index=True) 
+            self._E = HypergraphView(incidence_store,2,incidence_propertystore)
+            ## if no properties PropertyStore should store in the most efficient way
+        else:
+            raise HyperNetXError("setsystem data type not supported")
+        ## check if there is another constructor they could use.
+
+        if properties is not None:
+            property_type = type(properties)
+            if property_type in type_dict:
+                dfp = type_dict[property_type](properties, **propertieskwargs)
+                all_propertystore = PropertyStore(dfp)
+                self.edges = HypergraphView(incidence_store,0,all_propertystore)
+                self.nodes = HypergraphView(incidence_store,1,all_propertystore)
+        else:
+            if edge_properties is not None:
+                edge_property_type = type(edge_properties)
+                if edge_property_type in type_dict:
+                    edfp = type_dict[edge_property_type](edge_properties, **edgepropertieskwargs)
+                    edge_propertystore = PropertyStore(edfp)
+                else:
+                    edge_propertystore = PropertyStore()       
+                self.edges = HypergraphView(incidence_store,0,edge_propertystore) 
+            if node_properties is not None:
+                node_property_type = type(node_properties)
+                if node_property_type in type_dict:
+                    ndfp = type_dict[node_property_type](node_properties, **nodepropertieskwargs)
+                    node_propertystore = PropertyStore(ndfp)
+                else:
+                    node_propertystore = PropertyStore()       
+                self.nodes = HypergraphView(incidence_store,0,node_propertystore)     
+                    
+                    
 
         self._dataframe = self.dataframe()
         self._set_default_state()
@@ -132,7 +225,7 @@ class Hypergraph:
         dict
 
         """
-        return self._E.to_dict()
+        return self._E.to_dict()  ### should this call the incidence store directly?
 
     @property
     def shape(self):
@@ -144,7 +237,7 @@ class Hypergraph:
         tuple
 
         """
-        return len(self._nodes), len(self._edges)
+        return len(self._nodes), len(self._edges)  ## incidence store call?
 
     def __str__(self):
         """
@@ -239,7 +332,7 @@ class Hypergraph:
             cell property value if `prop_name` is provided, otherwise ``dict`` of all
             cell properties and values
         """
-        return self._E.properties((edge,node),prop_name=prop_name)
+        return self._E.properties((edge,node),prop_name=prop_name)  ### get_property from hyp_view
 
     def get_properties(self, id, level=None, prop_name=None):
         """Returns an object's specific property or all properties
