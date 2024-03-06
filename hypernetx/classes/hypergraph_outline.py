@@ -106,12 +106,13 @@ class Hypergraph:
             'list' : list_factory_method,
         }
     
-    ## dataframe_factory_method(df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
-    ## dataframe_factory_method(edf,index_cols=[uid_col],weight_col,default_weight,misc_properties)
+    ## dataframe_factory_method(setsystem_df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
+    ## dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
 
         setsystem_type = type(setsystem)
         if setsystem_type in type_dict:
-            df = type_dict[setsystem_type](setsystem,edge_col,node_col,) 
+            df = type_dict[setsystem_type](setsystem,index_cols=[edge_col,node_col],cell_weight_col,default_cell_weight,misc_cell_properties,aggregate_by)
+    ## dataframe_factory_method(edf,index_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
             incidence_store = IncidenceStore(df.index)
             incidence_propertystore = PropertyStore(df,index=True) 
@@ -124,7 +125,7 @@ class Hypergraph:
         if properties is not None:
             property_type = type(properties)
             if property_type in type_dict:
-                dfp = type_dict[property_type](properties, **propertieskwargs)
+                dfp = type_dict[property_type](properties,index_cols=[prop_uid_col],property_weight_col,default_property_weight,misc_properties)
                 all_propertystore = PropertyStore(dfp)
                 self.edges = HypergraphView(incidence_store,0,all_propertystore)
                 self.nodes = HypergraphView(incidence_store,1,all_propertystore)
@@ -132,7 +133,7 @@ class Hypergraph:
             if edge_properties is not None:
                 edge_property_type = type(edge_properties)
                 if edge_property_type in type_dict:
-                    edfp = type_dict[edge_property_type](edge_properties, **edgepropertieskwargs)
+                    edfp = type_dict[edge_property_type](edge_properties,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
                     edge_propertystore = PropertyStore(edfp)
                 else:
                     edge_propertystore = PropertyStore()       
@@ -140,7 +141,7 @@ class Hypergraph:
             if node_properties is not None:
                 node_property_type = type(node_properties)
                 if node_property_type in type_dict:
-                    ndfp = type_dict[node_property_type](node_properties, **nodepropertieskwargs)
+                    ndfp = type_dict[node_property_type](node_properties,index_cols=[node_uid_col],node_weight_col,default_node_weight,misc_node_properties)
                     node_propertystore = PropertyStore(ndfp)
                 else:
                     node_propertystore = PropertyStore()       
