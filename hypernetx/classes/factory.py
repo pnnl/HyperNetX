@@ -131,16 +131,12 @@ def create_df(properties, uid_cols, indices, multi_index,
 
 
 
-def property_store_from_dataframe(properties, property_type,
-                                     edge_col = 'edges', node_col = 'nodes',
-                                     misc_cell_properties = 'misc_properties', misc_properties = 'misc_properties',
-                                     weight_prop = None, edge_weight_prop = 'weight', node_weight_prop = 'weight',
-                                     cell_weight_col = 'weight',
-                                     cell_weights = 1.0, default_edge_weight = 1.0, default_node_weight = 1.0,
-                                     aggregation_methods = {}):
-
-
-
+def dataframe_factory_method(DF, uid_cols, 
+                             misc_properties_col = 'misc_properties', 
+                             weight_col = 'weight', 
+                             default_weight = 1.0,
+                             aggregate_by = {}):
+    
     """
     This function creates a pandas dataframe in the correct format given a
     pandas dataframe of either cell, node, or edge properties.
@@ -148,64 +144,24 @@ def property_store_from_dataframe(properties, property_type,
     Parameters
     ----------
 
-    properties : dataframe
+    DF : dataframe
         dataframe of properties for either incidences, edges, or nodes
+        
+    uid_cols : list of str or int
+        column index (or name) in pandas.dataframe
+        used for (hyper)edge, node, or incidence (edge, node) IDs. 
 
-    property_type : str
-        type of property dataframe provided.
-        Either 'edge_properties', 'node_properties', or 'cell_properties'
-
-    edge_col : (optional) str | int, default = 0
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for (hyper)edge ids. Will be used to reference edgeids for
-        all set systems.
-
-    node_col : (optional) str | int, default = 1
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for node ids. Will be used to reference nodeids for all set systems.
-
-    cell_weight_col : (optional) str | int, default = None
-        column index (or name) in pandas.dataframe or numpy.ndarray used for
-        referencing cell weights. For a dict of dicts references key in cell
-        property dicts.
-
-    cell_weights : (optional) Sequence[float,int] | int |  float , default = 1.0
-        User specified cell_weights or default cell weight.
-        Sequential values are only used if setsystem is a
-        dataframe or ndarray in which case the sequence must
-        have the same length and order as these objects.
-        Sequential values are ignored for dataframes if cell_weight_col is already
-        a column in the data frame.
-        If cell_weights is assigned a single value
-        then it will be used as default for missing values or when no cell_weight_col
-        is given.
-
-    misc_cell_properties : (optional) str | int, default = None
-        Column name of dataframe corresponding to a column of variable
-        length property dictionaries for the cell. Ignored for other setsystem
-        types.
-
-    misc_properties : (optional) int | str, default = None
+    misc_properties_col : (optional) int | str, default = None
         Column of property dataframes with dtype=dict. Intended for variable
         length property dictionaries for the objects.
 
-    edge_weight_prop : (optional) str, default = None,
+    weight_col : (optional) str, default = None,
         Name of property in edge_properties to use for weight.
 
-    node_weight_prop : (optional) str, default = None,
-        Name of property in node_properties to use for weight.
-
-    weight_prop : (optional) str, default = None
-        Name of property in properties to use for 'weight'
-
-    default_edge_weight : (optional) int | float, default = 1
+    default_weight : (optional) int | float, default = 1
         Used when edge weight property is missing or undefined.
-
-    default_node_weight : (optional) int | float, default = 1
-        Used when node weight property is missing or undefined
-
-
-    aggregation_methods : (optional) dict, default = {}
+    
+    aggregate_by : (optional) dict, default = {}
         By default duplicate incidences will be dropped unless
         specified with `aggregation_methods`.
         See pandas.DataFrame.agg() methods for additional syntax and usage
@@ -213,117 +169,107 @@ def property_store_from_dataframe(properties, property_type,
         the weights of the aggregated duplicate rows.
 
     """
-
-    if properties is None: #if no properties are provided for that property type.
-        if property_type == 'cell_properties':
-            default_uid_cols = ['edges', 'nodes']
-        elif property_type == 'edge_properties':
-            default_uid_cols = ['edges']
-        elif property_type == 'node_properties':
-            default_uid_cols = ['nodes']
+    
+    #error checking
+    if len(uid_cols) != 1 and len(uid_cols) != 2:
+        raise ValueError("uid_col must be a list and have length of 1 or 2.")
+    
+    
+    if DF is None: #if no properties are provided for that property type.
+        default_uid_cols = uid_cols
         multi_index = pd.MultiIndex.from_tuples(levels=[[],[]], codes=[[],[]], names=default_uid_cols)
         PS = pd.DataFrame(index = multi_index, columns=['weight', 'misc_properties'])
 
     else:
-        if property_type == 'cell_properties':
-            incidence_pairs = np.array(properties[[edge_col, node_col]]) #array of incidence pairs to use as UIDs.
-            indices = [tuple(incidence_pair) for incidence_pair in incidence_pairs]
-            multi_index = pd.MultiIndex.from_tuples(indices, names=['edges', 'nodes'])
-            default_uid_cols = ['edges', 'nodes']
-            PS = create_df(properties,
-                           uid_cols = [edge_col, node_col],
-                           default_uid_cols = default_uid_cols,
-                           indices = indices, multi_index = multi_index,
-                           weight_prop_col = cell_weight_col,
-                           misc_prop_col = misc_cell_properties,
-                           default_weight = cell_weights,
-                           aggregation_methods = aggregation_methods)
-
-        elif property_type == 'edge_properties':
-            edge_names = np.array(properties[[edge_col]]) #array of edges to use as UIDs.
-            indices = [tuple([edge_name[0]]) for edge_name in edge_names]
-            multi_index = pd.MultiIndex.from_tuples(indices, names=['edges'])
-            default_uid_cols = ['edges']
-            PS = create_df(properties,
-                           uid_cols = [edge_col],
-                           default_uid_cols = default_uid_cols,
-                           indices = indices, multi_index = multi_index,
-                           weight_prop_col = edge_weight_prop,
-                           misc_prop_col = misc_properties,
-                           default_weight = default_edge_weight,
-                           aggregation_methods = aggregation_methods)
-
-        elif property_type == 'node_properties':
-            node_names = np.array(properties[[node_col]]) #array of edges to use as UIDs.
-            indices = [tuple([node_name[0]]) for node_name in node_names]
-            multi_index = pd.MultiIndex.from_tuples(indices, names=['nodes'])
-            default_uid_cols = ['nodes']
-            PS = create_df(properties,
-                           uid_cols = [node_col],
-                           default_uid_cols = default_uid_cols,
-                           indices = indices, multi_index = multi_index,
-                           weight_prop_col = node_weight_prop,
-                           misc_prop_col = misc_properties,
-                           default_weight = default_node_weight,
-                           aggregation_methods = aggregation_methods)
-
-
-
+        uids = np.array(DF[uid_cols]) #array of incidence pairs to use as UIDs.
+        indices = [tuple(uid) for uid in uids]
+        multi_index = pd.MultiIndex.from_tuples(indices, names=uid_cols)
+        default_uid_cols = uid_cols
+        PS = create_df(DF,
+                       uid_cols = uid_cols,
+                       default_uid_cols = default_uid_cols,
+                       indices = indices, 
+                       multi_index = multi_index,
+                       weight_prop_col = weight_col,
+                       misc_prop_col = misc_properties_col,
+                       default_weight = default_weight,
+                       aggregation_methods = aggregate_by)
 
     return PS
 
 
-def to_property_store_from_dictionary():
-
-    pass
 
 
 
 
-# In[ ]:
-#-------------------------------------------------------------------------------------------------
-# Individual factory methods for incidence stores
-#-------------------------------------------------------------------------------------------------
+def dict_depth(dic, level = 0):
+     
+    if not isinstance(dic, dict) or not dic:
+        return level
+    return max(dict_depth(dic[key], level + 1) for key in dic) 
 
-
-def remove_incidence_store_duplicates(IS):
-    return IS.drop_duplicates(keep='first', inplace = False)
-
-
-def incidence_store_from_two_column_dataframe(setsystem, edge_col = 'edges', node_col = 'nodes'):
+def dict_factory_method(D, is_setsystem,
+                        misc_properties_col = 'misc_properties', 
+                        weight_col = 'weight',
+                        default_weight = 1.0,
+                        aggregate_by = {}):
     '''
+
     Parameters
     ----------
-
-    setsystem : (optional) dict of iterables, dict of dicts,iterable of iterables,
-        pandas.DataFrame, numpy.ndarray, default = None
-        See SetSystem above for additional setsystem requirements.
-
-    edge_col : (optional) str | int, default = 0
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for (hyper)edge ids. Will be used to reference edgeids for
-        all set systems.
-
-    node_col : (optional) str | int, default = 1
-        column index (or name) in pandas.dataframe or numpy.ndarray,
-        used for node ids. Will be used to reference nodeids for all set systems.
+    D : dict
+        DESCRIPTION.
+    is_setsystem : bool
+        Does the provided dictionary a setsystem (i.e., holds structure)?
+        If false then the dictionary should be for edge or node properties.
+    misc_properties_col : TYPE
+        DESCRIPTION.
+    weight_col : TYPE
+        DESCRIPTION.
+    default_weight : TYPE
+        DESCRIPTION.
+    aggregate_by : TYPE
+        DESCRIPTION.
+    
+    Returns
+    -------
+    None.
 
     '''
+    
+    if is_setsystem:
+        # initialize set system dictionary to be converted to a dataframe
+        setsystem_dict = {}
+        
+        # get incidence pairs from dictionary keys and values.
+        edges, nodes = [], []
+        for edge in D:
+            for node in D[edge]:
+                edges.append(edge)
+                nodes.append(node)
+        setsystem_dict['edges'] = edges
+        setsystem_dict['nodes'] = nodes
+        
+        
+        
+        print(dict_depth({'a': [1]}))
+        print(dict_depth({'a': {1: 2}}))
+        
+        if dict_depth(D) > 2:
+            incidence_pairs = [list(ip) for ip in zip(*[edges, nodes])]
+            for incidence_pair in incidence_pairs:
+                edge, node = incidence_pair
+                attributes_of_incidence_pair = D[edge][node]
+                print(incidence_pair, attributes_of_incidence_pair)
+                if weight_col in attributes_of_incidence_pair:
+                    print(attributes_of_incidence_pair[weight_col])
+                    
+        
+        return setsystem_dict
 
 
-    #restructing set system to incidence store dataframe
-    if len(setsystem) == 0: #if setsystem of length 0 or no set system is provided then return None for IS.
-        IS = None
-    else: #if non-empty setsystem
-        #change column names to edges and nodes.
-        column_renaming_dict = {edge_col: 'edges', node_col: 'nodes'}
-        IS = setsystem.rename(column_renaming_dict)
-        #remove duplicate rows with same ID
-        IS = remove_incidence_store_duplicates(IS)
-
-    return IS
-
-
+def list_factory_method():
+    pass
 
 # In[ ]: testing code
 # Only runs if running from this file (This will show basic examples and testing of the code)
@@ -333,53 +279,93 @@ def incidence_store_from_two_column_dataframe(setsystem, edge_col = 'edges', nod
 to do:
     * program dictionary type properties
     * program other setsystem data types
+    
+IPS = dataframe_factory_method(setsystem_df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
 
+EPS = dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
+    
 '''
 
 
 if __name__ == "__main__":
-    incidence_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3]})
-
-    cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3],
-                                       'color': ['red', 'red', 'red', 'red', 'red', 'blue'],
-                                       'other_properties': [{}, {}, {}, {'time': 3}, {}, {}]})
-
-    edge_prop_dataframe = pd.DataFrame({'edges': ['a', 'b', 'c'],
-                                       'strength': [2, np.nan, 3]})
-
-    node_prop_dataframe = pd.DataFrame({'nodes': [1],
-                                       'temperature': [60]})
-
-
-
-    print('Provided Dataframes')
-    print('-'*100)
-    display(incidence_dataframe)
-    display(cell_prop_dataframe)
-    display(edge_prop_dataframe)
-    display(node_prop_dataframe)
-
-
-
-    print('\n \nRestructured Dataframes using single factory method for property store repeated')
-    print('-'*100)
-
-
-
-    IS = incidence_store_from_two_column_dataframe(incidence_dataframe)
-    display(IS)
-
-    IPS = property_store_from_dataframe(properties = cell_prop_dataframe,
-                                        property_type = 'cell_properties',
-                                        misc_cell_properties = 'other_properties',
-                                        aggregation_methods = {'weight': 'sum'},)
-    display(IPS)
-
-    EPS = property_store_from_dataframe(properties = edge_prop_dataframe,
-                                        property_type = 'edge_properties',
-                                        edge_weight_prop = 1)
-    display(EPS)
-
-    NPS = property_store_from_dataframe(properties = node_prop_dataframe,
-                                        property_type = 'node_properties',)
-    display(NPS)
+    
+    
+    run_dict_example = True
+    if run_dict_example:
+        
+        cell_prop_dict = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
+                                 2: {'w':0.1, 'name': 'related_to','startdate': '05.13.2020'}},
+                          'e2':{ 1: {'w':0.52, 'name': 'owned_by'},
+                                 2: {'w':0.2}},
+                          'e3':{ 1: {'w':0.5, 'name': 'related_to'},
+                                 2: {'w':0.2, 'name': 'owner_of'},
+                                 3: {'w':1, 'type': 'relationship'}}}
+    
+        print('Provided Dataframes')
+        print('-'*100)
+        display(cell_prop_dict)
+        
+        print('\n \nRestructured Dataframes using single factory method for property store repeated')
+        print('-'*100)
+        
+        IPS = dict_factory_method(cell_prop_dict, is_setsystem = True, weight_col = 'w')
+        
+        display(IPS)
+    
+    
+    
+        
+        
+    run_dataframe_example = False
+    if run_dataframe_example:
+        
+        cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3],
+                                            'color': ['red', 'red', 'red', 'red', 'red', 'blue'],
+                                            'other_properties': [{}, {}, {}, {'time': 3}, {}, {}]})
+    
+        edge_prop_dataframe = pd.DataFrame({'edges': ['a', 'b', 'c'],
+                                            'strength': [2, np.nan, 3]})
+    
+        node_prop_dataframe = pd.DataFrame({'nodes': [1],
+                                            'temperature': [60]})
+    
+    
+        print('Provided Dataframes')
+        print('-'*100)
+        display(cell_prop_dataframe)
+        display(edge_prop_dataframe)
+        display(node_prop_dataframe)
+    
+    
+    
+        print('\n \nRestructured Dataframes using single factory method for property store repeated')
+        print('-'*100)
+    
+    
+    
+        IPS = dataframe_factory_method(cell_prop_dataframe, 
+                                       uid_cols = ['edges', 'nodes'], 
+                                       misc_properties_col = 'other_properties',
+                                       aggregate_by = {'weight': 'sum'},)
+        IS = IPS.index
+        
+        display(IS)
+        
+        display(IPS)
+        
+    
+        EPS = dataframe_factory_method(edge_prop_dataframe, 
+                                       uid_cols = ['edges'],
+                                       weight_col = 1)
+        display(EPS)
+        
+    
+        NPS = dataframe_factory_method(node_prop_dataframe, 
+                                       uid_cols = ['nodes'],)
+        display(NPS)
+        
+        
+    
+    
+    
+    
