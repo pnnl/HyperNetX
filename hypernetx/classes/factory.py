@@ -244,13 +244,14 @@ def dict_factory_method(D, is_setsystem, default_uid_cols = None,
 
     '''
     
-    #use provided column uids if specified
     
+    #if no dictionary is provided set it to an empty dictionary.
     if D is None:
         D = {}
     
     
     if is_setsystem:
+        #use provided column uids if specified
         if default_uid_cols != None:
             uid_cols = default_uid_cols
         else:
@@ -263,7 +264,7 @@ def dict_factory_method(D, is_setsystem, default_uid_cols = None,
         for edge in D:
             for node in D[edge]:
                 incidence_pairs.append([edge, node])
-        DF = pd.DataFrame(incidence_pairs, columns = ['edges', 'nodes'])
+        DF = pd.DataFrame(incidence_pairs, columns = uid_cols)
         
         #if attributes are stored on the dictionary (ie, it has a depth greater than 2)
         if dict_depth(D) > 2:
@@ -283,6 +284,7 @@ def dict_factory_method(D, is_setsystem, default_uid_cols = None,
         return PS
     
     else:
+        #use provided column uids if specified
         if default_uid_cols != None:
             uid_cols = default_uid_cols
         else:
@@ -306,8 +308,46 @@ def dict_factory_method(D, is_setsystem, default_uid_cols = None,
         return PS
 
 
-def list_factory_method():
-    pass
+def list_factory_method(L, uid_cols = ['edges', 'nodes'],
+                        misc_properties_col = 'misc_properties', 
+                        weight_col = 'weight',
+                        default_weight = 1.0,
+                        aggregate_by = {}):
+    '''
+
+    Parameters
+    ----------
+    L : list
+        DESCRIPTION.
+    default_uid_cols : TYPE
+        DESCRIPTION.
+    misc_properties_col : TYPE
+        DESCRIPTION.
+    weight_col : TYPE
+        DESCRIPTION.
+    default_weight : TYPE
+        DESCRIPTION.
+    aggregate_by : TYPE
+        DESCRIPTION.
+    
+    Returns
+    -------
+    None.
+    '''
+    
+    # get incidence pairs from list of lists
+    incidence_pairs = []
+    for i, edge in enumerate(L):
+        for node in edge:
+            incidence_pairs.append([i, node])
+    DF = pd.DataFrame(incidence_pairs, columns = uid_cols)
+    PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
+                                 misc_properties_col = misc_properties_col, 
+                                 weight_col = weight_col, 
+                                 default_weight = default_weight,
+                                 aggregate_by = aggregate_by)
+    
+    return PS
 
 # In[ ]: testing code
 # Only runs if running from this file (This will show basic examples and testing of the code)
@@ -327,7 +367,18 @@ EPS = dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge
 
 if __name__ == "__main__":
     
-    
+    run_dataframe_example = False
+    if run_dataframe_example:
+        
+        list_of_iterables = [[1, 1, 2], {1, 2}, {1, 2, 3}]
+        display(list_of_iterables)
+        
+        IPS = list_factory_method(list_of_iterables, aggregate_by = {'weight': 'sum'})
+        display(IPS)
+        print('-'*100)
+        
+        
+        
     run_simple_dict_example = False
     if run_simple_dict_example:
         
@@ -343,9 +394,10 @@ if __name__ == "__main__":
         IPS = dict_factory_method(cell_dict, is_setsystem = True)
         
         display(IPS)
+        print('-'*100)
     
         
-    run_dict_example = True
+    run_dict_example = False
     if run_dict_example:
         
         cell_prop_dict = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
@@ -371,14 +423,13 @@ if __name__ == "__main__":
         display(IPS)
         
         
-        EPS = dict_factory_method(edge_prop_dict, is_setsystem = False)
+        EPS = dict_factory_method(edge_prop_dict, is_setsystem = False, default_uid_cols = ['edges'])
         display(EPS)
         
         
         NPS = dict_factory_method(None, is_setsystem = False, weight_col = 'w')
         display(NPS)
-    
-    
+        print('-'*100)
     
     
     run_simple_dataframe_example = False
@@ -409,9 +460,10 @@ if __name__ == "__main__":
         
         NPS = dataframe_factory_method(None, uid_cols = ['nodes'])
         display(NPS)
+        print('-'*100)
         
         
-    run_dataframe_example = False
+    run_dataframe_example = True
     if run_dataframe_example:
         
         cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3],
@@ -458,9 +510,14 @@ if __name__ == "__main__":
         NPS = dataframe_factory_method(node_prop_dataframe, 
                                        uid_cols = ['nodes'],)
         display(NPS)
+        print('-'*100)
         
-        
-    
+        from tqdm import tqdm
+        for i in tqdm(range(10000)):
+            IPS = dataframe_factory_method(cell_prop_dataframe, 
+                                           uid_cols = ['edges', 'nodes'], 
+                                           misc_properties_col = 'other_properties',
+                                           aggregate_by = {'weight': 'sum'},)
     
     
     
