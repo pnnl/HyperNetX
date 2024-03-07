@@ -20,6 +20,7 @@ authors:
   orcid: 0000-0003-2466-199X
   affiliation: "1"
 - name: Mark Bonicillo
+  orcid: 0009-0003-9764-2180
   affiliation: "1"
 - name: Cliff Joslyn
   orcid: 0000-0002-5923-5547
