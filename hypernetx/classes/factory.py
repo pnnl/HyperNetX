@@ -12,10 +12,13 @@ import numpy as np
 
 
 def remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods = {}):
+    agg_methods = {}
     for col in PS.columns:
         if col not in aggregation_methods:
-            aggregation_methods[col] = 'first'
-    return PS.groupby(level = default_uid_cols).agg(aggregation_methods)
+            agg_methods[col] = 'first'
+        else:
+            agg_methods[col] = aggregation_methods[col]
+    return PS.groupby(level = default_uid_cols).agg(agg_methods)
 
 
 def create_df(properties, uid_cols, indices, multi_index,
@@ -113,8 +116,8 @@ def create_df(properties, uid_cols, indices, multi_index,
 
     #remove any NaN values or missing values in weight column
     PS['weight'].fillna(default_weight, inplace = True)
-
-
+    
+    
     # remove any duplicate indices and combine using aggregation methods (defaults to 'first' if none provided).
     PS = remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods = aggregation_methods)
 
@@ -131,7 +134,7 @@ def create_df(properties, uid_cols, indices, multi_index,
 
 
 
-def dataframe_factory_method(DF, uid_cols, 
+def dataframe_factory_method(DF, uid_cols, default_uid_cols = None, 
                              misc_properties_col = 'misc_properties', 
                              weight_col = 'weight', 
                              default_weight = 1.0,
@@ -174,17 +177,19 @@ def dataframe_factory_method(DF, uid_cols,
     if len(uid_cols) != 1 and len(uid_cols) != 2:
         raise ValueError("uid_col must be a list and have length of 1 or 2.")
     
-    
-    if DF is None: #if no properties are provided for that property type.
+    #use provided column uids if none are specified
+    if default_uid_cols == None:
         default_uid_cols = uid_cols
-        multi_index = pd.MultiIndex.from_tuples(levels=[[],[]], codes=[[],[]], names=default_uid_cols)
+        
+    if DF is None: #if no properties are provided for that property type.
+        multi_index = pd.MultiIndex.from_tuples([], names=default_uid_cols)
+
         PS = pd.DataFrame(index = multi_index, columns=['weight', 'misc_properties'])
 
     else:
         uids = np.array(DF[uid_cols]) #array of incidence pairs to use as UIDs.
         indices = [tuple(uid) for uid in uids]
-        multi_index = pd.MultiIndex.from_tuples(indices, names=uid_cols)
-        default_uid_cols = uid_cols
+        multi_index = pd.MultiIndex.from_tuples(indices, names=default_uid_cols)
         PS = create_df(DF,
                        uid_cols = uid_cols,
                        default_uid_cols = default_uid_cols,
@@ -208,7 +213,7 @@ def dict_depth(dic, level = 0):
         return level
     return max(dict_depth(dic[key], level + 1) for key in dic) 
 
-def dict_factory_method(D, is_setsystem,
+def dict_factory_method(D, is_setsystem, default_uid_cols = None,
                         misc_properties_col = 'misc_properties', 
                         weight_col = 'weight',
                         default_weight = 1.0,
@@ -222,6 +227,8 @@ def dict_factory_method(D, is_setsystem,
     is_setsystem : bool
         Does the provided dictionary a setsystem (i.e., holds structure)?
         If false then the dictionary should be for edge or node properties.
+    default_uid_cols : TYPE
+        DESCRIPTION.
     misc_properties_col : TYPE
         DESCRIPTION.
     weight_col : TYPE
@@ -237,35 +244,66 @@ def dict_factory_method(D, is_setsystem,
 
     '''
     
+    #use provided column uids if specified
+    
+    if D is None:
+        D = {}
+    
+    
     if is_setsystem:
-        # initialize set system dictionary to be converted to a dataframe
-        setsystem_dict = {}
-        
+        if default_uid_cols != None:
+            uid_cols = default_uid_cols
+        else:
+            uid_cols = ['edges', 'nodes']
+            
+
+
         # get incidence pairs from dictionary keys and values.
-        edges, nodes = [], []
+        incidence_pairs = []
         for edge in D:
             for node in D[edge]:
-                edges.append(edge)
-                nodes.append(node)
-        setsystem_dict['edges'] = edges
-        setsystem_dict['nodes'] = nodes
+                incidence_pairs.append([edge, node])
+        DF = pd.DataFrame(incidence_pairs, columns = ['edges', 'nodes'])
         
-        
-        
-        print(dict_depth({'a': [1]}))
-        print(dict_depth({'a': {1: 2}}))
-        
+        #if attributes are stored on the dictionary (ie, it has a depth greater than 2)
         if dict_depth(D) > 2:
-            incidence_pairs = [list(ip) for ip in zip(*[edges, nodes])]
+            attribute_data = []
             for incidence_pair in incidence_pairs:
                 edge, node = incidence_pair
                 attributes_of_incidence_pair = D[edge][node]
-                print(incidence_pair, attributes_of_incidence_pair)
-                if weight_col in attributes_of_incidence_pair:
-                    print(attributes_of_incidence_pair[weight_col])
-                    
+                attribute_data.append(attributes_of_incidence_pair)
+            attribute_df = pd.DataFrame(attribute_data)
+            DF = pd.concat([DF, attribute_df], axis = 1)
+            
+        PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
+                                     misc_properties_col = misc_properties_col, 
+                                     weight_col = weight_col, 
+                                     default_weight = default_weight,
+                                     aggregate_by = aggregate_by)
+        return PS
+    
+    else:
+        if default_uid_cols != None:
+            uid_cols = default_uid_cols
+        else:
+            uid_cols = ['uid']
+
+        attribute_data = []
+        for key in D:
+            attributes_of_key = D[key]
+            attribute_data.append(attributes_of_key)
+    
+        attribute_df = pd.DataFrame(attribute_data)
         
-        return setsystem_dict
+        
+            
+        DF = pd.concat([pd.DataFrame(list(D.keys()), columns = uid_cols), attribute_df], axis = 1)
+        PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
+                                     misc_properties_col = misc_properties_col, 
+                                     weight_col = weight_col, 
+                                     default_weight = default_weight,
+                                     aggregate_by = aggregate_by)
+        return PS
 
 
 def list_factory_method():
@@ -290,6 +328,23 @@ EPS = dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge
 if __name__ == "__main__":
     
     
+    run_simple_dict_example = False
+    if run_simple_dict_example:
+        
+        cell_dict = {'e1':[1,2],'e2':[1,2],'e3':[1,2,3]}
+    
+        print('Provided Dataframes')
+        print('-'*100)
+        display(cell_dict)
+        
+        print('\n \nRestructured Dataframes using single factory method for property store repeated')
+        print('-'*100)
+        
+        IPS = dict_factory_method(cell_dict, is_setsystem = True)
+        
+        display(IPS)
+    
+        
     run_dict_example = True
     if run_dict_example:
         
@@ -300,6 +355,10 @@ if __name__ == "__main__":
                           'e3':{ 1: {'w':0.5, 'name': 'related_to'},
                                  2: {'w':0.2, 'name': 'owner_of'},
                                  3: {'w':1, 'type': 'relationship'}}}
+        
+        edge_prop_dict = {'e1': {'number': 1},
+                          'e2': {'number': 2},
+                          'e3': {'number': 3}}
     
         print('Provided Dataframes')
         print('-'*100)
@@ -309,11 +368,47 @@ if __name__ == "__main__":
         print('-'*100)
         
         IPS = dict_factory_method(cell_prop_dict, is_setsystem = True, weight_col = 'w')
-        
         display(IPS)
+        
+        
+        EPS = dict_factory_method(edge_prop_dict, is_setsystem = False)
+        display(EPS)
+        
+        
+        NPS = dict_factory_method(None, is_setsystem = False, weight_col = 'w')
+        display(NPS)
     
     
     
+    
+    run_simple_dataframe_example = False
+    if run_simple_dataframe_example:
+        
+        incidence_dataframe = pd.DataFrame({'e': ['a', 'a', 'a', 'b', 'c', 'c'], 'n': [1, 1, 2, 3, 2, 3],})
+    
+    
+        print('Provided Dataframes')
+        print('-'*100)
+        display(incidence_dataframe)
+    
+    
+    
+        print('\n \nRestructured Dataframes using single factory method for property store repeated')
+        print('-'*100)
+    
+    
+    
+        IPS = dataframe_factory_method(incidence_dataframe, 
+                                       uid_cols = ['e', 'n'], 
+                                       default_uid_cols = ['edges', 'nodes'],
+                                       aggregate_by = {'weight': 'sum'},)
+        IS = IPS.index
+        
+        display(IS)
+        display(IPS)
+        
+        NPS = dataframe_factory_method(None, uid_cols = ['nodes'])
+        display(NPS)
         
         
     run_dataframe_example = False
