@@ -1,11 +1,11 @@
 import pytest
 import pandas as pd
-from hypernetx.classes.property_store import PropertyStore, DataFramePropertyStore, WEIGHT, PROPERTIES
+from pandas import DataFrame
+from hypernetx.classes.property_store import PropertyStore, WEIGHT, PROPERTIES, ID
 
 
-LEVEL = 'level'
-ID = 'id'
-UUID = 'uuid'
+EDGES = 'edges'
+NODES = 'nodes'
 PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES]
 STRENGTH = 'strength'
 HAIR_COLOR = 'hair_color'
@@ -29,45 +29,59 @@ def incidences():
 
 
 @pytest.fixture
-def edges_df(edges) -> pd.DataFrame:
+def edges_df(edges) -> DataFrame:
     data = [(1, {}) for _ in edges]
-    index = pd.Index(edges, name=ID)
-    return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
+    index = pd.Index(edges, name=EDGES)
+    return DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
 @pytest.fixture
-def nodes_df(nodes) -> pd.DataFrame:
+def nodes_df(nodes) -> DataFrame:
     data = [(1, {}) for _ in nodes]
-    index = pd.Index(nodes, name=ID)
-    return pd.DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
+    index = pd.Index(nodes, name=NODES)
+    return DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
 
 
 @pytest.fixture
-def incidences_df(incidences) -> pd.DataFrame:
-    index = pd.MultiIndex.from_tuples(incidences, names=[LEVEL, ID])
+def incidences_df(incidences) -> DataFrame:
+    index = pd.MultiIndex.from_tuples(incidences, names=[EDGES, NODES])
     data = [(1, {}, 42, "red") for _ in range(len(index))]
-    return pd.DataFrame(data=data, index=index, columns=INCIDENCES_PROPERTIES_COLUMNS)
+    return DataFrame(data=data, index=index, columns=INCIDENCES_PROPERTIES_COLUMNS)
 
 
 @pytest.fixture
-def edges_dfps(edges_df) -> PropertyStore:
-    return DataFramePropertyStore(edges_df)
+def edges_ps(edges_df) -> PropertyStore:
+    return PropertyStore(edges_df)
 
 
 @pytest.fixture
-def nodes_dfps(nodes_df) -> PropertyStore:
-    return DataFramePropertyStore(nodes_df)
+def nodes_ps(nodes_df) -> PropertyStore:
+    return PropertyStore(nodes_df)
 
 
 @pytest.fixture
-def incidences_dfps(incidences_df) -> PropertyStore:
-    return DataFramePropertyStore(incidences_df)
+def incidences_ps(incidences_df) -> PropertyStore:
+    return PropertyStore(incidences_df)
 
 
-def test_properties(edges_dfps, edges):
-    props = edges_dfps.properties
+def test_empty_property_store():
+    ps = PropertyStore()
+    assert len(ps) == 0
+    assert ps.properties.columns.tolist() == [ID, WEIGHT, PROPERTIES]
+
+
+def test_properties_on_edges_ps(edges_ps):
+    props = edges_ps.properties
     assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
     assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
+
+
+def test_properties_on_incidences_ps(incidences_ps):
+    props = incidences_ps.properties
+    assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
+    assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
+    assert all(prop == 'red' for prop in props.get(HAIR_COLOR).tolist())
+    assert all(prop == 42 for prop in props.get(STRENGTH).tolist())
 
 
 @pytest.mark.parametrize(
@@ -97,7 +111,6 @@ def test_get_properties_raises_key_error(fixture, uid, request):
         ps.get_properties(uid)
 
     assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
-
 
 
 @pytest.mark.parametrize(
