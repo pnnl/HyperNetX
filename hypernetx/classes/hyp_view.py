@@ -156,6 +156,13 @@ class HypergraphView(object):
     @property
     def property_store(self):
         return self._props
+    
+    @property
+    def dataframe(self):
+        if self._level == 2:
+            return self._props._data.reset_index().rename(columns={0:'edges',1:'nodes'})
+        else:
+            return self._props._data.reset_index().rename(columns={0:'uid'})
 
     @property
     def properties(self):
@@ -192,7 +199,7 @@ class HypergraphView(object):
         """
         Defined by incidence store
         """
-        return len(self._itemse)
+        return len(self._items)
 
     def __contains__(self,item):
         """
@@ -204,6 +211,12 @@ class HypergraphView(object):
             _description_
         """
         return item in self._items
+    
+    def __call__(self):
+        """
+        Returns iterator 
+        """
+        return iter(self._items)
 
 
     # def to_dataframe(self):
@@ -298,29 +311,30 @@ class HypergraphView(object):
     #     """
     #     pass
 
-    # def memberships(self,item):
-    #     """
-    #     applies to level 1: returns edges the item belongs to.
-    #     if level = 0 or 2 then memberships returns none.
+        
+    def memberships(self,item):
+        """
+        applies to level 1: returns edges the item belongs to.
+        if level = 0 or 2 then memberships returns none.
 
-    #     Parameters
-    #     ----------
-    #     item : _type_
-    #         _description_
-    #     """
-    #     pass
+        Parameters
+        ----------
+        item : _type_
+            _description_
+        """
+        pass
 
-    # def elements(self,item):
-    #     """
-    #     applies to levels 0: returns nodes the item belongs to.
-    #     if level = 1 or 2 then elements returns none.
+    def elements(self,item):
+        """
+        applies to levels 0: returns nodes the item belongs to.
+        if level = 1 or 2 then elements returns none.
 
-    #     Parameters
-    #     ----------
-    #     item : _type_
-    #         _description_
-    #     """
-    #     pass
+        Parameters
+        ----------
+        item : _type_
+            _description_
+        """
+        pass
 
 
     # #### data,labels should be handled in the stores and accessible

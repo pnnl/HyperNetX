@@ -3,7 +3,7 @@
 
 import pandas as pd
 import numpy as np
-from helpers import dict_depth
+from hypernetx.classes.helpers import dict_depth
 
 
 # In[ ]:

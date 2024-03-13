@@ -21,8 +21,13 @@ from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
+from hypernetx.classes.factory import dataframe_factory_method, dict_factory_method, list_factory_method
+from hypernetx.classes.incidence_store import IncidenceStore
+from hypernetx.classes.property_store import PropertyStore
+from hypernetx.classes.hyp_view import HypergraphView
 
 __all__ = ["Hypergraph"]
+
 T = TypeVar("T", bound=Union[str, int])
 
 
@@ -50,7 +55,7 @@ class Hypergraph:
             Sequence[str | int] | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
         misc_cell_properties_col: Optional[str | int] = None,
-        aggregateby: str | dict[str, str] = "first",
+        aggregate_by: str | dict[str, str] = "first",
 
         ### Format for properties can be either a dataframe indexed on uid
         ### or with first column equal to uid or a dictionary
@@ -64,7 +69,7 @@ class Hypergraph:
 
         ### these are just for properties on the edges - ignored if properties exists
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        edge_uid_col : str | int | None, ### this means the index will be used for uid
+        edge_uid_col : str | int | None = None, ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_edge_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
@@ -72,7 +77,7 @@ class Hypergraph:
 
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        node_uid_col : str | int | None, ### this means the index will be used for uid
+        node_uid_col : str | int | None = None, ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_node_properties_col: Optional[str | int] = None,
         node_weight_prop_col: str | int = "weight",
@@ -106,21 +111,21 @@ class Hypergraph:
             'list' : list_factory_method,
         }
     
-    ## dataframe_factory_method(setsystem_df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
-    ## dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
+    ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
+    ## dataframe_factory_method(edge_properties_df,uid_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
 
-        setsystem_type = type(setsystem)
+        setsystem_type = type(setsystem).__name__
         if setsystem_type in type_dict:
-            df = type_dict[setsystem_type](setsystem,
-                                           index_cols=[edge_col,node_col],
-                                           cell_weight_col = cell_weight_col,
-                                           default_cell_weight=default_cell_weight,
-                                           misc_cell_properties_col=misc_cell_properties_col,
+            df = type_dict[setsystem_type](setsystem,2,
+                                           uid_cols=[edge_col,node_col],
+                                           weight_col = cell_weight_col,
+                                           default_weight=default_cell_weight,
+                                           misc_properties_col=misc_cell_properties_col,
                                            aggregate_by=aggregate_by)
-    ## dataframe_factory_method(edf,index_cols=[uid_col],weight_col,default_weight,misc_properties)
+    ## dataframe_factory_method(edf,uid_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
-            incidence_store = IncidenceStore(df.index)
-            incidence_propertystore = PropertyStore(df,index=True) 
+            incidence_store = IncidenceStore(pd.DataFrame(list(df.index),columns=['edges','nodes']))
+            incidence_propertystore = PropertyStore(data=df,index=True) 
             self._E = HypergraphView(incidence_store,2,incidence_propertystore)
             ## if no properties PropertyStore should store in the most efficient way
         else:
@@ -128,39 +133,47 @@ class Hypergraph:
         ## check if there is another constructor they could use.
 
         if properties is not None:
-            property_type = type(properties)
+            property_type = type(properties).__name__
             if property_type in type_dict:
-                dfp = type_dict[property_type](properties,
-                                               index_cols=[prop_uid_col],
-                                               property_weight_col=property_weight_col,
-                                               default_property_weight=default_property_weight,
+                dfp = type_dict[property_type](properties,0,
+                                               weight_col=weight_prop_col,
+                                               default_weight=default_weight,
                                                misc_properties_col=misc_properties_col)
-                all_propertystore = PropertyStore(dfp)
-                self.edges = HypergraphView(incidence_store,0,all_propertystore)
-                self.nodes = HypergraphView(incidence_store,1,all_propertystore)
+                all_propertystore = PropertyStore(data=dfp)
+                self._edges = HypergraphView(incidence_store,0,all_propertystore)
+                self._nodes = HypergraphView(incidence_store,1,all_propertystore)
         else:
             if edge_properties is not None:
-                edge_property_type = type(edge_properties)
+                edge_property_type = type(edge_properties).__name__
                 if edge_property_type in type_dict:
-                    edfp = type_dict[edge_property_type](edge_properties,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
+                    edfp = type_dict[edge_property_type](edge_properties,0,
+                                                         weight_col=edge_weight_prop_col,
+                                                         default_weight=default_edge_weight,
+                                                         misc_properties_col=misc_edge_properties_col)
                     edge_propertystore = PropertyStore(edfp)
                 else:
                     edge_propertystore = PropertyStore()       
-                self.edges = HypergraphView(incidence_store,0,edge_propertystore) 
+                self._edges = HypergraphView(incidence_store,0,edge_propertystore) 
             if node_properties is not None:
-                node_property_type = type(node_properties)
+                node_property_type = type(node_properties).__name__
                 if node_property_type in type_dict:
-                    ndfp = type_dict[node_property_type](node_properties,index_cols=[node_uid_col],node_weight_col,default_node_weight,misc_node_properties)
+                    ndfp = type_dict[node_property_type](node_properties,1,
+                                                         weight_col=node_weight_prop_col,
+                                                         default_weight=default_node_weight,
+                                                         misc_properties_col=misc_node_properties_col)
                     node_propertystore = PropertyStore(ndfp)
                 else:
                     node_propertystore = PropertyStore()       
-                self.nodes = HypergraphView(incidence_store,0,node_propertystore)     
+                self._nodes = HypergraphView(incidence_store,0,node_propertystore)     
                     
                     
 
-        self._dataframe = self.dataframe()
+        self._dataframe = self.dataframe
         self._set_default_state()
-        self._dict_.update(locals())
+        self.name = name
+        self.__dict__.update(locals())
+
+
 
     @property
     def edges(self):
@@ -192,7 +205,10 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        return self._E.dataframe
+        df = self._E.dataframe
+        a,b = df.columns[:2]
+        df = df.astype({a:'category',b:'category'})
+        return df
 
     @property ### TBD
     def properties(self):
@@ -440,8 +456,8 @@ class Hypergraph:
         longer required to be in a specific structure
         """
         self._state_dict = {}
-
-        self._state_dict["dataframe"] = df = self.dataframe()
+        df = self.dataframe
+        self._state_dict["dataframe"] = df 
 
         if empty:
             self._state_dict["labels"] = {
@@ -452,11 +468,11 @@ class Hypergraph:
 #### Do we need to set types to category for use of encoders in pandas?
         else:
             self._state_dict["labels"] = {
-                "edges": np.array(df[self._edge_col].cat.categories),
-                "nodes": np.array(df[self._node_col].cat.categories),
+                "edges": np.array(df['edges'].cat.categories),
+                "nodes": np.array(df['nodes'].cat.categories),
             }
             self._state_dict["data"] = np.array(
-                [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
+                [df['edges'].cat.codes, df['nodes'].cat.codes], dtype=int
             ).T
 
 
