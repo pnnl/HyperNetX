@@ -1,8 +1,8 @@
 
 
 import pandas as pd
-import networkx as nx
 import numpy as np
+from helpers import dict_depth
 
 
 # In[ ]:
@@ -11,18 +11,18 @@ import numpy as np
 #-------------------------------------------------------------------------------------------------
 
 
-def remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods = {}):
+def remove_property_store_duplicates(PS, default_uid_col_names, aggregation_methods = {}):
     agg_methods = {}
     for col in PS.columns:
         if col not in aggregation_methods:
             agg_methods[col] = 'first'
         else:
             agg_methods[col] = aggregation_methods[col]
-    return PS.groupby(level = default_uid_cols).agg(agg_methods)
+    return PS.groupby(level = default_uid_col_names).agg(agg_methods)
 
 
 def create_df(properties, uid_cols, indices, multi_index,
-              default_uid_cols, weight_prop_col,
+              default_uid_col_names, weight_prop_col,
               misc_prop_col, default_weight, aggregation_methods):
 
     # initialize a dictionary to be converted to a pandas dataframe.
@@ -50,7 +50,7 @@ def create_df(properties, uid_cols, indices, multi_index,
 
     #rename uid columns if needed to default names. No way of doing this correctly without knowing data type.
     for i in range(len(uid_cols)):
-        col, default_col = uid_cols[i], default_uid_cols[i]
+        col, default_col = uid_cols[i], default_uid_col_names[i]
         #change name of edges column to "edges"
         if col != default_col and col in properties_df_dict:
             # Pop the value associated with col key and store it
@@ -119,7 +119,7 @@ def create_df(properties, uid_cols, indices, multi_index,
     
     
     # remove any duplicate indices and combine using aggregation methods (defaults to 'first' if none provided).
-    PS = remove_property_store_duplicates(PS, default_uid_cols, aggregation_methods = aggregation_methods)
+    PS = remove_property_store_duplicates(PS, default_uid_col_names, aggregation_methods = aggregation_methods)
 
     #reorder columns to have properties last
     # Get the column names and the specific column
@@ -134,7 +134,8 @@ def create_df(properties, uid_cols, indices, multi_index,
 
 
 
-def dataframe_factory_method(DF, uid_cols, default_uid_cols = None, 
+def dataframe_factory_method(DF, level, 
+                             uid_cols = None, default_uid_col_names = None,
                              misc_properties_col = 'misc_properties', 
                              weight_col = 'weight', 
                              default_weight = 1.0,
@@ -150,9 +151,122 @@ def dataframe_factory_method(DF, uid_cols, default_uid_cols = None,
     DF : dataframe
         dataframe of properties for either incidences, edges, or nodes
         
+    level : int
+        Level to specify the type of data the dataframe is for: 0 for edges, 1 for nodes, and 2 for incidences (cells).
+        
     uid_cols : list of str or int
         column index (or name) in pandas.dataframe
         used for (hyper)edge, node, or incidence (edge, node) IDs. 
+        
+    default_uid_col_names : (optional) list of str, default = None
+        Name of columns for the edges, nodes, or (edge,node) pair columns 
+        to be renamed to in the multiindex.
+        If None, then uses uid_cols column names; which, if also None, uses the first and/or second column names.
+
+    misc_properties_col : (optional) int | str, default = None
+        Column of property dataframes with dtype=dict. Intended for variable
+        length property dictionaries for the objects.
+
+    weight_col : (optional) str, default = None,
+        Name of property in edge_properties to use for weight.
+
+    default_weight : (optional) int | float, default = 1
+        Used when edge weight property is missing or undefined.
+    
+    aggregate_by : (optional) dict, default = {}
+        By default duplicate incidences will be dropped unless
+        specified with `aggregation_methods`.
+        See pandas.DataFrame.agg() methods for additional syntax and usage
+        information. An example aggregation method is {'weight': 'sum'} to sum
+        the weights of the aggregated duplicate rows.
+        
+    Returns
+    -------
+    Pandas Dataframe of the property store in the correct format for HNX.
+
+    """
+    
+
+    if DF is None: #if no properties are provided for that property type.
+        #check if default_uid_col_names are provided. if not set them to edges and/or nodes based on level.
+        if default_uid_col_names is None:
+            if level == 2:
+                default_uid_col_names = ['edges', 'nodes']
+            elif level == 1:
+                default_uid_col_names = ['nodes']
+            else:
+                default_uid_col_names = ['edges']
+                
+        multi_index = pd.MultiIndex.from_tuples([], names=default_uid_col_names)
+
+        PS = pd.DataFrame(index = multi_index, columns=['weight', 'misc_properties'])
+
+    else:
+        #uid column name setting if they are not provided
+        if uid_cols == None: #if none are provided set to the names of the first two olumns
+            if level == 0 or level == 1:
+                uid_cols = [DF.columns[0]]
+            elif level == 2:
+                uid_cols = [DF.columns[0], DF.columns[1]]
+        
+        #default uid column name setting if they are not provided. defaults to uid column names.
+        if default_uid_col_names is None:
+            default_uid_col_names =  uid_cols
+            
+            
+        #error checking on uid_cols length
+        if len(uid_cols) != 1 and (level == 0 or level == 1):
+            raise ValueError("For level 0 or 1, the uid_cols must be a list and have length of 1.")
+        elif len(uid_cols) != 2 and level == 2:
+            raise ValueError("For level 2, the uid_cols must be a list and have length of 2.")
+            
+            
+        uids = np.array(DF[uid_cols]) #array of incidence pairs to use as UIDs.
+        indices = [tuple(uid) for uid in uids]
+        # set multi index to be used in property store dataframe
+        multi_index = pd.MultiIndex.from_tuples(indices, names=default_uid_col_names)
+        #create property store dataframe
+        PS = create_df(DF,
+                       uid_cols = uid_cols,
+                       default_uid_col_names = default_uid_col_names,
+                       indices = indices, 
+                       multi_index = multi_index,
+                       weight_prop_col = weight_col,
+                       misc_prop_col = misc_properties_col,
+                       default_weight = default_weight,
+                       aggregation_methods = aggregate_by)
+
+    return PS
+
+
+
+def dict_factory_method(D, level, 
+                        uid_cols = None, default_uid_col_names = None,
+                        misc_properties_col = 'misc_properties', 
+                        weight_col = 'weight', 
+                        default_weight = 1.0,
+                        aggregate_by = {}):
+    '''
+    This function creates a pandas dataframe in the correct format given a
+    dictionary of either cell, node, or edge properties.
+    
+    Parameters
+    ----------
+
+    D : dictionary
+        dictionary of properties for either incidences, edges, or nodes
+        
+    level : int
+        Level to specify the type of data the dataframe is for: 0 for edges, 1 for nodes, and 2 for incidences (cells).
+        
+    uid_cols : list of str or int
+        column index (or name) in pandas.dataframe
+        used for (hyper)edge, node, or incidence (edge, node) IDs. 
+        
+    default_uid_col_names : (optional) list of str, default = None
+        Name of columns for the edges, nodes, or (edge,node) pair columns 
+        to be renamed to in the multiindex.
+        If None, then uses uid_cols column names; which, if also None, uses the first and/or second column names.
 
     misc_properties_col : (optional) int | str, default = None
         Column of property dataframes with dtype=dict. Intended for variable
@@ -173,99 +287,23 @@ def dataframe_factory_method(DF, uid_cols, default_uid_cols = None,
 
     """
     
-    #error checking
-    if len(uid_cols) != 1 and len(uid_cols) != 2:
-        raise ValueError("uid_col must be a list and have length of 1 or 2.")
-    
-    #use provided column uids if none are specified
-    if default_uid_cols == None:
-        default_uid_cols = uid_cols
-        
-    if DF is None: #if no properties are provided for that property type.
-        multi_index = pd.MultiIndex.from_tuples([], names=default_uid_cols)
-
-        PS = pd.DataFrame(index = multi_index, columns=['weight', 'misc_properties'])
-
-    else:
-        uids = np.array(DF[uid_cols]) #array of incidence pairs to use as UIDs.
-        indices = [tuple(uid) for uid in uids]
-        multi_index = pd.MultiIndex.from_tuples(indices, names=default_uid_cols)
-        PS = create_df(DF,
-                       uid_cols = uid_cols,
-                       default_uid_cols = default_uid_cols,
-                       indices = indices, 
-                       multi_index = multi_index,
-                       weight_prop_col = weight_col,
-                       misc_prop_col = misc_properties_col,
-                       default_weight = default_weight,
-                       aggregation_methods = aggregate_by)
-
-    return PS
-
-
-
-
-
-
-def dict_depth(dic, level = 0):
-     
-    if not isinstance(dic, dict) or not dic:
-        return level
-    return max(dict_depth(dic[key], level + 1) for key in dic) 
-
-def dict_factory_method(D, is_setsystem, default_uid_cols = None,
-                        misc_properties_col = 'misc_properties', 
-                        weight_col = 'weight',
-                        default_weight = 1.0,
-                        aggregate_by = {}):
-    '''
-
-    Parameters
-    ----------
-    D : dict
-        DESCRIPTION.
-    is_setsystem : bool
-        Does the provided dictionary a setsystem (i.e., holds structure)?
-        If false then the dictionary should be for edge or node properties.
-    default_uid_cols : TYPE
-        DESCRIPTION.
-    misc_properties_col : TYPE
-        DESCRIPTION.
-    weight_col : TYPE
-        DESCRIPTION.
-    default_weight : TYPE
-        DESCRIPTION.
-    aggregate_by : TYPE
-        DESCRIPTION.
-    
     Returns
     -------
-    None.
+    Pandas Dataframe of the property store in the correct format for HNX.
 
     '''
-    
-    
+        
     #if no dictionary is provided set it to an empty dictionary.
     if D is None:
-        D = {}
-    
-    
-    if is_setsystem:
-        #use provided column uids if specified
-        if default_uid_cols != None:
-            uid_cols = default_uid_cols
-        else:
-            uid_cols = ['edges', 'nodes']
-            
-
-
+        DF = None
+    # if the dictionary data provided is for the setsystem (incidence data)
+    elif level == 2:
         # get incidence pairs from dictionary keys and values.
         incidence_pairs = []
         for edge in D:
             for node in D[edge]:
                 incidence_pairs.append([edge, node])
         DF = pd.DataFrame(incidence_pairs, columns = uid_cols)
-        
         #if attributes are stored on the dictionary (ie, it has a depth greater than 2)
         if dict_depth(D) > 2:
             attribute_data = []
@@ -275,77 +313,92 @@ def dict_factory_method(D, is_setsystem, default_uid_cols = None,
                 attribute_data.append(attributes_of_incidence_pair)
             attribute_df = pd.DataFrame(attribute_data)
             DF = pd.concat([DF, attribute_df], axis = 1)
-            
-        PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
-                                     misc_properties_col = misc_properties_col, 
-                                     weight_col = weight_col, 
-                                     default_weight = default_weight,
-                                     aggregate_by = aggregate_by)
-        return PS
     
     else:
-        #use provided column uids if specified
-        if default_uid_cols != None:
-            uid_cols = default_uid_cols
-        else:
-            uid_cols = ['uid']
-
         attribute_data = []
         for key in D:
             attributes_of_key = D[key]
             attribute_data.append(attributes_of_key)
-    
         attribute_df = pd.DataFrame(attribute_data)
-        
-        
-            
         DF = pd.concat([pd.DataFrame(list(D.keys()), columns = uid_cols), attribute_df], axis = 1)
-        PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
-                                     misc_properties_col = misc_properties_col, 
-                                     weight_col = weight_col, 
-                                     default_weight = default_weight,
-                                     aggregate_by = aggregate_by)
-        return PS
+        
+        
+    # get property store from dataframe
+    PS = dataframe_factory_method(DF, level = level,
+                                  uid_cols = uid_cols, default_uid_col_names = default_uid_col_names,
+                                  misc_properties_col = misc_properties_col, 
+                                  weight_col = weight_col, 
+                                  default_weight = default_weight,
+                                  aggregate_by = aggregate_by)
+    return PS
 
 
-def list_factory_method(L, uid_cols = ['edges', 'nodes'],
+def list_factory_method(L, level, 
+                        uid_cols = None, default_uid_col_names = None,
                         misc_properties_col = 'misc_properties', 
-                        weight_col = 'weight',
+                        weight_col = 'weight', 
                         default_weight = 1.0,
                         aggregate_by = {}):
     '''
 
+    This function creates a pandas dataframe in the correct format given a
+    list of lists to be used as the cell property store dataframe.
+    
     Parameters
     ----------
-    L : list
-        DESCRIPTION.
-    default_uid_cols : TYPE
-        DESCRIPTION.
-    misc_properties_col : TYPE
-        DESCRIPTION.
-    weight_col : TYPE
-        DESCRIPTION.
-    default_weight : TYPE
-        DESCRIPTION.
-    aggregate_by : TYPE
-        DESCRIPTION.
+
+    L : list of lists
+        list of lists representing the nodes in each hyperedge.
+        
+    level : int
+        Level to specify the type of data the dataframe is for: 0 for edges, 1 for nodes, and 2 for incidences (cells).
+        
+    uid_cols : list of str or int
+        column index (or name) in pandas.dataframe
+        used for (hyper)edge, node, or incidence (edge, node) IDs. 
+        
+    default_uid_col_names : (optional) list of str, default = None
+        Name of columns for the edges, nodes, or (edge,node) pair columns 
+        to be renamed to in the multiindex.
+        If None, then uses uid_cols column names; which, if also None, uses the first and/or second column names.
+
+    misc_properties_col : (optional) int | str, default = None
+        Column of property dataframes with dtype=dict. Intended for variable
+        length property dictionaries for the objects.
+
+    weight_col : (optional) str, default = None,
+        Name of property in edge_properties to use for weight.
+
+    default_weight : (optional) int | float, default = 1
+        Used when edge weight property is missing or undefined.
+    
+    aggregate_by : (optional) dict, default = {}
+        By default duplicate incidences will be dropped unless
+        specified with `aggregation_methods`.
+        See pandas.DataFrame.agg() methods for additional syntax and usage
+        information. An example aggregation method is {'weight': 'sum'} to sum
+        the weights of the aggregated duplicate rows.
+
+    """
     
     Returns
     -------
-    None.
+    Pandas Dataframe of the property store in the correct format for HNX.
     '''
     
-    # get incidence pairs from list of lists
-    incidence_pairs = []
-    for i, edge in enumerate(L):
-        for node in edge:
-            incidence_pairs.append([i, node])
-    DF = pd.DataFrame(incidence_pairs, columns = uid_cols)
-    PS = dataframe_factory_method(DF, uid_cols = uid_cols, 
-                                 misc_properties_col = misc_properties_col, 
-                                 weight_col = weight_col, 
-                                 default_weight = default_weight,
-                                 aggregate_by = aggregate_by)
+    #explode list of lists into incidence pairs as a pandas dataframe using pandas series explode.
+    DF = pd.DataFrame(pd.Series(L).explode()).reset_index()
+    #rename columns to correct column names for edges and nodes using default_uid_col_names
+    if default_uid_col_names is None: #if no uid_cols
+        default_uid_col_names = ['edges', 'nodes']
+    DF = DF.rename(columns=dict(zip(DF.columns, default_uid_col_names)))
+    #create property store from dataframe.
+    PS = dataframe_factory_method(DF, level= level,
+                                  uid_cols = uid_cols, default_uid_col_names = default_uid_col_names,
+                                  misc_properties_col = misc_properties_col, 
+                                  weight_col = weight_col, 
+                                  default_weight = default_weight,
+                                  aggregate_by = aggregate_by)
     
     return PS
 
@@ -353,27 +406,16 @@ def list_factory_method(L, uid_cols = ['edges', 'nodes'],
 # Only runs if running from this file (This will show basic examples and testing of the code)
 
 
-'''
-to do:
-    * program dictionary type properties
-    * program other setsystem data types
-    
-IPS = dataframe_factory_method(setsystem_df,index_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
-
-EPS = dataframe_factory_method(edge_properties_df,index_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
-    
-'''
-
-
 if __name__ == "__main__":
     
-    run_dataframe_example = False
-    if run_dataframe_example:
+    run_list_example = False
+    if run_list_example:
         
         list_of_iterables = [[1, 1, 2], {1, 2}, {1, 2, 3}]
         display(list_of_iterables)
         
-        IPS = list_factory_method(list_of_iterables, aggregate_by = {'weight': 'sum'})
+        IPS = list_factory_method(list_of_iterables, level = 2,
+                                  aggregate_by = {'weight': 'sum'})
         display(IPS)
         print('-'*100)
         
@@ -391,7 +433,7 @@ if __name__ == "__main__":
         print('\n \nRestructured Dataframes using single factory method for property store repeated')
         print('-'*100)
         
-        IPS = dict_factory_method(cell_dict, is_setsystem = True)
+        IPS = dict_factory_method(cell_dict, level = 2)
         
         display(IPS)
         print('-'*100)
@@ -419,15 +461,15 @@ if __name__ == "__main__":
         print('\n \nRestructured Dataframes using single factory method for property store repeated')
         print('-'*100)
         
-        IPS = dict_factory_method(cell_prop_dict, is_setsystem = True, weight_col = 'w')
+        IPS = dict_factory_method(cell_prop_dict, level = 2, weight_col = 'w')
         display(IPS)
         
         
-        EPS = dict_factory_method(edge_prop_dict, is_setsystem = False, default_uid_cols = ['edges'])
+        EPS = dict_factory_method(edge_prop_dict, level = 0, default_uid_col_names = ['E'])
         display(EPS)
         
         
-        NPS = dict_factory_method(None, is_setsystem = False, weight_col = 'w')
+        NPS = dict_factory_method(None, level = 1, weight_col = 'w')
         display(NPS)
         print('-'*100)
     
@@ -449,21 +491,24 @@ if __name__ == "__main__":
     
     
     
-        IPS = dataframe_factory_method(incidence_dataframe, 
+        IPS = dataframe_factory_method(incidence_dataframe, level = 2,
                                        uid_cols = ['e', 'n'], 
-                                       default_uid_cols = ['edges', 'nodes'],
+                                       default_uid_col_names = ['edges', 'nodes'],
                                        aggregate_by = {'weight': 'sum'},)
         IS = IPS.index
         
         display(IS)
         display(IPS)
         
-        NPS = dataframe_factory_method(None, uid_cols = ['nodes'])
+        EPS = dataframe_factory_method(None, level = 0, uid_cols = ['edges'])
+        display(EPS)
+        
+        NPS = dataframe_factory_method(None, level = 1, uid_cols = ['nodes'])
         display(NPS)
         print('-'*100)
         
         
-    run_dataframe_example = True
+    run_dataframe_example = False
     if run_dataframe_example:
         
         cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3],
@@ -475,7 +520,6 @@ if __name__ == "__main__":
     
         node_prop_dataframe = pd.DataFrame({'nodes': [1],
                                             'temperature': [60]})
-    
     
         print('Provided Dataframes')
         print('-'*100)
@@ -490,7 +534,7 @@ if __name__ == "__main__":
     
     
     
-        IPS = dataframe_factory_method(cell_prop_dataframe, 
+        IPS = dataframe_factory_method(cell_prop_dataframe, level = 2,
                                        uid_cols = ['edges', 'nodes'], 
                                        misc_properties_col = 'other_properties',
                                        aggregate_by = {'weight': 'sum'},)
@@ -501,23 +545,16 @@ if __name__ == "__main__":
         display(IPS)
         
     
-        EPS = dataframe_factory_method(edge_prop_dataframe, 
+        EPS = dataframe_factory_method(edge_prop_dataframe, level = 0,
                                        uid_cols = ['edges'],
                                        weight_col = 1)
         display(EPS)
         
     
-        NPS = dataframe_factory_method(node_prop_dataframe, 
+        NPS = dataframe_factory_method(node_prop_dataframe, level = 1,
                                        uid_cols = ['nodes'],)
         display(NPS)
         print('-'*100)
         
-        from tqdm import tqdm
-        for i in tqdm(range(10000)):
-            IPS = dataframe_factory_method(cell_prop_dataframe, 
-                                           uid_cols = ['edges', 'nodes'], 
-                                           misc_properties_col = 'other_properties',
-                                           aggregate_by = {'weight': 'sum'},)
-    
-    
+
     
