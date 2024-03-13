@@ -20,7 +20,7 @@ from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 from hypernetx.classes.incidence_store import IncidenceStore as IS
-
+from hypernetx.classes.property_store import PropertyStore
 
 __all__ = ["HypergraphView"]
 
@@ -374,7 +374,7 @@ class NList(UserList):
 
 
 
-    def __getattr__(self, attr: str) -> Any:
+    def __getattr__(self, attr: str):
         """Get attribute value from properties of :attr:`entity`
 
         Parameters
@@ -431,7 +431,7 @@ def flatten(my_dict):
     result = {}
     for key, value in my_dict.items():
         if isinstance(value, dict):
-            result.update(_flatten(value))
+            result.update(flatten(value))
         else:
             result[key] = value
     return result

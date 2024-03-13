@@ -41,7 +41,7 @@ class Hypergraph:
             | Iterable[Iterable[T]]
             | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
-        default_cell_weight: float = 1.0    ### we will no longer support a sequence
+        default_cell_weight: float = 1.0,    ### we will no longer support a sequence
         edge_col: str | int = 0,
         node_col: str | int = 1,
         cell_weight_col: Optional[str | int] = "weight",
@@ -56,7 +56,7 @@ class Hypergraph:
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
         properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        prop_uid_col : str | int | None, ### this means the index will be used for uid
+        prop_uid_col : str | int | None = None, ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_properties_col: Optional[str | int] = None,
         weight_prop_col: str | int = "weight",
@@ -111,7 +111,12 @@ class Hypergraph:
 
         setsystem_type = type(setsystem)
         if setsystem_type in type_dict:
-            df = type_dict[setsystem_type](setsystem,index_cols=[edge_col,node_col],cell_weight_col,default_cell_weight,misc_cell_properties,aggregate_by)
+            df = type_dict[setsystem_type](setsystem,
+                                           index_cols=[edge_col,node_col],
+                                           cell_weight_col = cell_weight_col,
+                                           default_cell_weight=default_cell_weight,
+                                           misc_cell_properties_col=misc_cell_properties_col,
+                                           aggregate_by=aggregate_by)
     ## dataframe_factory_method(edf,index_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
             incidence_store = IncidenceStore(df.index)
@@ -125,7 +130,11 @@ class Hypergraph:
         if properties is not None:
             property_type = type(properties)
             if property_type in type_dict:
-                dfp = type_dict[property_type](properties,index_cols=[prop_uid_col],property_weight_col,default_property_weight,misc_properties)
+                dfp = type_dict[property_type](properties,
+                                               index_cols=[prop_uid_col],
+                                               property_weight_col=property_weight_col,
+                                               default_property_weight=default_property_weight,
+                                               misc_properties_col=misc_properties_col)
                 all_propertystore = PropertyStore(dfp)
                 self.edges = HypergraphView(incidence_store,0,all_propertystore)
                 self.nodes = HypergraphView(incidence_store,1,all_propertystore)
