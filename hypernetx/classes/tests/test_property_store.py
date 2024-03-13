@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from pandas import DataFrame
-from hypernetx.classes.property_store import PropertyStore, WEIGHT, PROPERTIES, ID, UID
+from hypernetx.classes.property_store import PropertyStore, WEIGHT, PROPERTIES, ID
 
 
 EDGES = 'edges'
@@ -30,13 +30,14 @@ def incidences():
 
 @pytest.fixture
 def edges_df(edges) -> DataFrame:
-    data = [(1, {}) for _ in edges]
-    index = pd.Index(edges, name=EDGES)
-    return DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
+    # index is not set
+    data = [(e, 1.0, {}) for e in edges]
+    return DataFrame(data=data, columns=[EDGES, WEIGHT, PROPERTIES])
 
 
 @pytest.fixture
 def nodes_df(nodes) -> DataFrame:
+    # index is set
     data = [(1, {}) for _ in nodes]
     index = pd.Index(nodes, name=NODES)
     return DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
@@ -44,6 +45,7 @@ def nodes_df(nodes) -> DataFrame:
 
 @pytest.fixture
 def incidences_df(incidences) -> DataFrame:
+    # index is set
     index = pd.MultiIndex.from_tuples(incidences, names=[EDGES, NODES])
     data = [(1, {}, 42, "red") for _ in range(len(index))]
     return DataFrame(data=data, index=index, columns=INCIDENCES_PROPERTIES_COLUMNS)
@@ -51,28 +53,30 @@ def incidences_df(incidences) -> DataFrame:
 
 @pytest.fixture
 def edges_ps(edges_df) -> PropertyStore:
+    # dataframe has not set the index; use the first column as the index
     return PropertyStore(edges_df)
 
 
 @pytest.fixture
 def nodes_ps(nodes_df) -> PropertyStore:
-    # Uses the index dataframe as the 'uid'
+    # dataframe has already set the index
     return PropertyStore(nodes_df, index=True)
 
 
 @pytest.fixture
 def incidences_ps(incidences_df) -> PropertyStore:
-    return PropertyStore(incidences_df)
+    return PropertyStore(incidences_df, index=True)
 
 
 def test_empty_property_store():
     ps = PropertyStore()
     assert len(ps) == 0
-    assert ps.properties.columns.tolist() == [ID, WEIGHT, PROPERTIES, UID]
+    assert ps.properties.columns.tolist() == [WEIGHT, PROPERTIES]
 
 
 def test_properties_on_edges_ps(edges_ps):
     props = edges_ps.properties
+    print(props.columns)
     assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
     assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
 
@@ -81,7 +85,6 @@ def test_properties_on_nodes_ps(nodes_ps, nodes):
     props = nodes_ps.properties
     assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
     assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
-    assert all(prop in nodes for prop in props.get(UID))
 
 
 def test_properties_on_incidences_ps(incidences_ps):
@@ -95,18 +98,14 @@ def test_properties_on_incidences_ps(incidences_ps):
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
-        ("edges_ps", "P", {"weight": 1.0, PROPERTIES: dict()}),
-        (
-            "incidences_ps",
-            ("S", "A"),
-            {"weight": 1.0, PROPERTIES: dict(), "hair_color": "red", "strength": 42},
-        ),
+        ("edges_ps", "P", {"weight": 1.0, "misc_properties": dict()}),
+        ("incidences_ps", ("S", "A"), {"weight": 1.0, "misc_properties": dict(), "hair_color": "red", "strength": 42})
     ],
 )
 def test_get_properties(fixture, uid, expected, request):
     ps = request.getfixturevalue(fixture)
     props = ps.get_properties(uid)
-    assert expected.items() <= props.items()
+    assert props == expected
 
 
 
@@ -234,7 +233,7 @@ def test_len(fixture, expected, request):
 def test_getitem(fixture, uid, expected, request):
     ps = request.getfixturevalue(fixture)
     props = ps[uid]
-    assert expected.items() <= props.items()
+    assert props == expected
 
 
 @pytest.mark.parametrize(

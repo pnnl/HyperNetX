@@ -1,11 +1,8 @@
-import uuid
-
 from typing import Any
 from collections.abc import Hashable
 
-from pandas import DataFrame
+from pandas import DataFrame, MultiIndex
 
-UID = "uid"
 ID = "id"
 WEIGHT = "weight"
 PROPERTIES = "misc_properties"
@@ -48,11 +45,19 @@ class PropertyStore:
         else:
             self._data: DataFrame = data
 
-        # add the UID column to the dataframe based on 'index'
-        if index:
-            self._data[UID] = self._data.index
-        else:
-            self._data[UID] = [str(uuid.uuid4()) for _ in range(len(self._data))]
+        print(self._data)
+
+        # if the index is not set, then set the index on the dataframe
+        if not index:
+            if isinstance(self._data.index, MultiIndex):
+                # set index to the first two columns
+                first_column = self._data.columns[0]
+                second_column = self._data.columns[1]
+                self._data.set_index([first_column, second_column], inplace=True)
+            else:
+                # set the index to the first column
+                first_column = self._data.columns[0]
+                self._data.set_index(first_column, inplace=True)
 
         # supports the __iter__ magic method
         self._index_iter = iter(self._data.index)
