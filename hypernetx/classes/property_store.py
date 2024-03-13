@@ -1,9 +1,11 @@
+import uuid
+
 from typing import Any
 from collections.abc import Hashable
 
 from pandas import DataFrame
 
-UUID = "uuid"
+UID = "uid"
 ID = "id"
 WEIGHT = "weight"
 PROPERTIES = "misc_properties"
@@ -15,7 +17,7 @@ class PropertyStore:
     Properties will be stored in a pandas dataframe;
 
     """
-    def __init__(self, data=None):
+    def __init__(self, data=None, index=False):
         """
         Parameters
         ----------
@@ -34,13 +36,25 @@ class PropertyStore:
 
             edges | nodes | weight | misc_properties | <additional property> | ...
             <edge> | <node> | 1.0 | {} | <property value> | ...
+
+        index: Boolean
+            optional parameter to use the dataframe index as the uid
+            defaults to False
         """
+        # If no dataframe is provided, create an empty dataframe
         if data is None:
             self._data: DataFrame = DataFrame(columns=[ID, WEIGHT, PROPERTIES])
             self._data.set_index(ID)
         else:
             self._data: DataFrame = data
 
+        # add the UID column to the dataframe based on 'index'
+        if index:
+            self._data[UID] = self._data.index
+        else:
+            self._data[UID] = [str(uuid.uuid4()) for _ in range(len(self._data))]
+
+        # supports the __iter__ magic method
         self._index_iter = iter(self._data.index)
 
     @property
