@@ -1,4 +1,5 @@
-
+# make PS for nodes and edges use uid for index.
+# fix bug
 
 import pandas as pd
 import numpy as np
@@ -32,23 +33,15 @@ def create_df(properties, uid_cols, indices, multi_index,
     property_columns = set(list(properties.columns)) - set(uid_cols)
     for prop in property_columns: #set those as rows in DF
         properties_df_dict[prop] = properties.loc[:, prop]
-
-
-    #get column names if integer was provided instead and create new uid_cols with string names.
-    uid_cols_to_str = []
-    for col in uid_cols:
-        if isinstance(col, int):
-            uid_cols_to_str.append(properties.columns[col])
-        else:
-            uid_cols_to_str.append(col)
-    uid_cols = uid_cols_to_str
+    
+    #get column names if integer was provided instead
     if isinstance(weight_prop_col, int):
         weight_prop_col = properties.columns[weight_prop_col]
     if isinstance(misc_prop_col, int):
         misc_prop_col = properties.columns[misc_prop_col]
 
 
-    #rename uid columns if needed to default names. No way of doing this correctly without knowing data type.
+    #rename uid columns if needed to default names.
     for i in range(len(uid_cols)):
         col, default_col = uid_cols[i], default_uid_col_names[i]
         #change name of edges column to "edges"
@@ -57,7 +50,6 @@ def create_df(properties, uid_cols, indices, multi_index,
             column_values = properties_df_dict.pop(col)
             # Add the popped value with the correct col name
             properties_df_dict[default_col] = column_values
-
 
     # set weight column code:
     # check if weight column exists or if weight col name exists in dictionary and assign it as column if it doesn't
@@ -133,7 +125,6 @@ def create_df(properties, uid_cols, indices, multi_index,
     return PS
 
 
-
 def dataframe_factory_method(DF, level, 
                              uid_cols = None, default_uid_col_names = None,
                              misc_properties_col = 'misc_properties', 
@@ -192,10 +183,8 @@ def dataframe_factory_method(DF, level,
         if default_uid_col_names is None:
             if level == 2:
                 default_uid_col_names = ['edges', 'nodes']
-            elif level == 1:
-                default_uid_col_names = ['nodes']
-            else:
-                default_uid_col_names = ['edges']
+            elif level == 1 or level == 0:
+                default_uid_col_names = ['uid']
                 
         multi_index = pd.MultiIndex.from_tuples([], names=default_uid_col_names)
 
@@ -203,16 +192,20 @@ def dataframe_factory_method(DF, level,
 
     else:
         #uid column name setting if they are not provided
-        if uid_cols == None: #if none are provided set to the names of the first two olumns
+        if uid_cols == None: #if none are provided set to the names of the first or first two columns depending on level
             if level == 0 or level == 1:
                 uid_cols = [DF.columns[0]]
             elif level == 2:
                 uid_cols = [DF.columns[0], DF.columns[1]]
-        
-        #default uid column name setting if they are not provided. defaults to uid column names.
-        if default_uid_col_names is None:
-            default_uid_col_names =  uid_cols
+                
             
+        
+        #default uid column name setting if they are not provided.
+        if default_uid_col_names is None:
+            if level == 0 or level == 1:
+                default_uid_col_names = ['uid']
+            elif level == 2:
+                default_uid_col_names = ['edges', 'nodes']
             
         #error checking on uid_cols length
         if len(uid_cols) != 1 and (level == 0 or level == 1):
@@ -220,7 +213,16 @@ def dataframe_factory_method(DF, level,
         elif len(uid_cols) != 2 and level == 2:
             raise ValueError("For level 2, the uid_cols must be a list and have length of 2.")
             
-            
+        
+        #get column names if integer was provided instead and create new uid_cols with string names.
+        uid_cols_to_str = []
+        for col in uid_cols:
+            if isinstance(col, int):
+                uid_cols_to_str.append(DF.columns[col])
+            else:
+                uid_cols_to_str.append(col)
+        uid_cols = uid_cols_to_str
+        
         uids = np.array(DF[uid_cols]) #array of incidence pairs to use as UIDs.
         indices = [tuple(uid) for uid in uids]
         # set multi index to be used in property store dataframe
@@ -500,7 +502,7 @@ if __name__ == "__main__":
         display(IS)
         display(IPS)
         
-        EPS = dataframe_factory_method(None, level = 0, uid_cols = ['edges'])
+        EPS = dataframe_factory_method(None, level = 0)
         display(EPS)
         
         NPS = dataframe_factory_method(None, level = 1, uid_cols = ['nodes'])
@@ -508,8 +510,13 @@ if __name__ == "__main__":
         print('-'*100)
         
         
-    run_dataframe_example = False
+    run_dataframe_example = True
     if run_dataframe_example:
+        print('')
+        print('='*100)
+        print('='*100)
+        print('='*100)
+        print('')
         
         cell_prop_dataframe = pd.DataFrame({'edges': ['a', 'a', 'a', 'b', 'c', 'c'], 'nodes': [1, 1, 2, 3, 2, 3],
                                             'color': ['red', 'red', 'red', 'red', 'red', 'blue'],
@@ -526,12 +533,9 @@ if __name__ == "__main__":
         display(cell_prop_dataframe)
         display(edge_prop_dataframe)
         display(node_prop_dataframe)
-    
-    
-    
+        
         print('\n \nRestructured Dataframes using single factory method for property store repeated')
         print('-'*100)
-    
     
     
         IPS = dataframe_factory_method(cell_prop_dataframe, level = 2,
@@ -546,13 +550,12 @@ if __name__ == "__main__":
         
     
         EPS = dataframe_factory_method(edge_prop_dataframe, level = 0,
-                                       uid_cols = ['edges'],
-                                       weight_col = 1)
+                                       weight_col = 1, uid_cols = [0])
         display(EPS)
         
     
         NPS = dataframe_factory_method(node_prop_dataframe, level = 1,
-                                       uid_cols = ['nodes'],)
+                                       uid_cols = ['nodes'], default_uid_col_names = ['nodes'])
         display(NPS)
         print('-'*100)
         
