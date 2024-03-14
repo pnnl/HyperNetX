@@ -179,7 +179,7 @@ class IncidenceStore:
         if level == 0:
             return self._elements.get(key,[])
         elif level == 1:
-            return self.__memberships.get(key,[])
+            return self._memberships.get(key,[])
         else:
             return []
         
