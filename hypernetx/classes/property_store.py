@@ -14,7 +14,7 @@ class PropertyStore:
     Properties will be stored in a pandas dataframe;
 
     """
-    def __init__(self, data=None, index=False):
+    def __init__(self, data=None, index=False, default_weight = 1.0):
         """
         Parameters
         ----------
@@ -45,6 +45,10 @@ class PropertyStore:
         else:
             self._data: DataFrame = data
 
+        ## minimize space but allow everything to have weight
+        # defwt = lambda : {'weight': default_weight}
+        # self._datadict = defaultdict(defwt)
+
         print(self._data)
 
         # if the index is not set, then set the index on the dataframe
@@ -71,6 +75,7 @@ class PropertyStore:
         out: pandas.DataFrame
             a dataframe with the following columns: level, id, uid, weight, properties, <optional props>
         """
+        ### update self_data to incorporate the self._datadict
         return self._data
 
     def get_properties(self, uid) -> dict:
@@ -97,6 +102,9 @@ class PropertyStore:
         --------
         get_property, set_property
         """
+        ### look in self._data and self._datadict
+        ### always return properties for a uid in the incidence
+        ### store & should should always have a weight property
         try:
             properties = self._data.loc[uid]
         except KeyError:
@@ -131,6 +139,7 @@ class PropertyStore:
         --------
         get_properties, set_property
         """
+        ### look in self._data and self._datadict
         properties = self.get_properties(uid)
 
         if prop_name in self._data.columns:
@@ -163,6 +172,7 @@ class PropertyStore:
         --------
         get_property, get_properties
         """
+        ### look in self._data and self._datadict
         properties = self.get_properties(uid)
 
         if prop_name in properties:
@@ -171,34 +181,34 @@ class PropertyStore:
         else:
             self._data.loc[uid, PROPERTIES].update({prop_name: prop_val})
 
-    def __iter__(self):
-        """
-        Returns an iterator object for iterating over the uid's of the underlying data table
+    # def __iter__(self):
+    #     """
+    #     Returns an iterator object for iterating over the uid's of the underlying data table
 
-        Returns:
-        -------
-        out: Iterator
-            An iterator object for the specified iteration type ('rows' or 'columns').
+    #     Returns:
+    #     -------
+    #     out: Iterator
+    #         An iterator object for the specified iteration type ('rows' or 'columns').
 
-        Example:
-        --------
-        >>> iterator = DataFramePropertyStore(dataframe)
-        >>> for uid in iterator:
-        ...     print(uid)
-        """
-        return self
+    #     Example:
+    #     --------
+    #     >>> iterator = DataFramePropertyStore(dataframe)
+    #     >>> for uid in iterator:
+    #     ...     print(uid)
+    #     """
+    #     return self
 
-    def __next__(self):
-        try:
-            return next(self._index_iter)
-        except StopIteration:
-            raise StopIteration
+    # def __next__(self):
+    #     try:
+    #         return next(self._index_iter)
+    #     except StopIteration:
+    #         raise StopIteration
 
-    def __len__(self) -> int:
-        return len(self._data)
+    # def __len__(self) -> int:
+    #     return len(self._data)
 
-    def __getitem__(self, uid) -> dict:
+    def __getitem__(self, uid) -> dict: ### get properties with []
         return self._data.loc[uid].to_dict()
 
-    def __contains__(self, uid) -> bool:
+    def __contains__(self, uid) -> bool: ### do we already have data
         return uid in self._data.index

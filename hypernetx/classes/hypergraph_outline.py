@@ -125,7 +125,7 @@ class Hypergraph:
     ## dataframe_factory_method(edf,uid_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
             incidence_store = IncidenceStore(pd.DataFrame(list(df.index),columns=['edges','nodes']))
-            incidence_propertystore = PropertyStore(data=df,index=True) 
+            incidence_propertystore = PropertyStore(data=df,index=True,default_weight = default_cell_weight) 
             self._E = HypergraphView(incidence_store,2,incidence_propertystore)
             ## if no properties PropertyStore should store in the most efficient way
         else:
@@ -139,7 +139,7 @@ class Hypergraph:
                                                weight_col=weight_prop_col,
                                                default_weight=default_weight,
                                                misc_properties_col=misc_properties_col)
-                all_propertystore = PropertyStore(data=dfp)
+                all_propertystore = PropertyStore(data=dfp, default_weight = default_weight)
                 self._edges = HypergraphView(incidence_store,0,all_propertystore)
                 self._nodes = HypergraphView(incidence_store,1,all_propertystore)
         else:
@@ -150,10 +150,13 @@ class Hypergraph:
                                                          weight_col=edge_weight_prop_col,
                                                          default_weight=default_edge_weight,
                                                          misc_properties_col=misc_edge_properties_col)
-                    edge_propertystore = PropertyStore(edfp)
-                else:
-                    edge_propertystore = PropertyStore()       
-                self._edges = HypergraphView(incidence_store,0,edge_propertystore) 
+                    edge_propertystore = PropertyStore(edfp, default_weight = default_edge_weight)
+                else: 
+                    edge_properties = PropertyStore(default_weight = default_edge_weight)
+            else:
+                edge_propertystore = PropertyStore(default_weight = default_edge_weight)       
+            self._edges = HypergraphView(incidence_store,0,edge_propertystore) 
+
             if node_properties is not None:
                 node_property_type = type(node_properties).__name__
                 if node_property_type in type_dict:
@@ -161,10 +164,12 @@ class Hypergraph:
                                                          weight_col=node_weight_prop_col,
                                                          default_weight=default_node_weight,
                                                          misc_properties_col=misc_node_properties_col)
-                    node_propertystore = PropertyStore(ndfp)
+                    node_propertystore = PropertyStore(ndfp, default_weight = default_node_weight)
                 else:
-                    node_propertystore = PropertyStore()       
-                self._nodes = HypergraphView(incidence_store,0,node_propertystore)  
+                    node_propertystore = PropertyStore(default_weight = default_node_weight)       
+            else:
+                node_propertystore = PropertyStore(default_weight = default_node_weight)        
+            self._nodes = HypergraphView(incidence_store,0,node_propertystore)  
                
                     
                     
