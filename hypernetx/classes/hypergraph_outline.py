@@ -164,7 +164,8 @@ class Hypergraph:
                     node_propertystore = PropertyStore(ndfp)
                 else:
                     node_propertystore = PropertyStore()       
-                self._nodes = HypergraphView(incidence_store,0,node_propertystore)     
+                self._nodes = HypergraphView(incidence_store,0,node_propertystore)  
+               
                     
                     
 
@@ -205,9 +206,7 @@ class Hypergraph:
         -------
         pd.DataFrame
         """
-        df = self._E.dataframe
-        a,b = df.columns[:2]
-        df = df.astype({a:'category',b:'category'})
+        df = self._E.dataframe.reset_index()
         return df
 
     @property ### TBD
@@ -467,6 +466,8 @@ class Hypergraph:
             self._state_dict["data"] = np.array([[],[]])
 #### Do we need to set types to category for use of encoders in pandas?
         else:
+            df.edges = df.edges.astype('category')
+            df.nodes = df.nodes.astype('category')
             self._state_dict["labels"] = {
                 "edges": np.array(df['edges'].cat.categories),
                 "nodes": np.array(df['nodes'].cat.categories),

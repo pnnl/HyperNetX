@@ -1,3 +1,4 @@
+.github/
 .DS_Store
 gitmerge.sh
 dist

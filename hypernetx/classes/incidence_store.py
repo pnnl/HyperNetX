@@ -1,4 +1,10 @@
+# Copyright © 2024 Battelle Memorial Institute
+# All rights reserved.
+from __future__ import annotations
+
 import pandas as pd
+
+__all__=["IncidenceStore"]
 
 class IncidenceStore:
     """
@@ -20,11 +26,21 @@ class IncidenceStore:
         """
         # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
         self._data = data
+        self._elements = data.groupby('edges').agg(list).to_dict()['nodes']
+        self._memberships = data.groupby('nodes').agg(list).to_dict()['edges']
 
 
     @property
     def data(self):
         return self._data
+    
+    @property
+    def elements(self):
+        return self._elements
+    
+    @property
+    def memberships(self):
+        return self._memberships
 
     @property
     def dimensions(self):
@@ -37,7 +53,7 @@ class IncidenceStore:
         tuple of ints
              Tuple of size two of (number of unique nodes, number of unique edges).
         """
-        return (len(self.nodes), len(self.edges))
+        return (len(self._elements), len(self._memberships))
 
     @property
     def edges(self):
@@ -49,8 +65,7 @@ class IncidenceStore:
         array
              Returns an array of edge names
         """
-        df = self._data
-        return list(df['edges'].unique())
+        return list(self._data['edges'].unique())
 
     @property
     def nodes(self):
@@ -62,8 +77,7 @@ class IncidenceStore:
         array
              Returns an array of node names
         """
-        df = self._data
-        return list(df['nodes'].unique())
+        return list(self._data['nodes'].unique())
 
     def __iter__(self):
         """
@@ -74,8 +88,9 @@ class IncidenceStore:
         iter of tuples
             Iterator over incidence pairs (tuples) in the hypergraph.
         """
-        #itertuples provides iterator over rows in a dataframe with index as false to not return index
-        #and name as None to return a standard tuple.
+        # itertuples provides iterator over rows in a dataframe 
+        # with index as false to not return index
+        # and name as None to return a standard tuple.
         return iter(self._data.itertuples(index=False, name=None))
 
     def __len__(self):
@@ -106,17 +121,19 @@ class IncidenceStore:
         bool
             True if incidence pair exists in incidence store.
         """
-        df = self._data
+        # df = self._data
 
-        #verify the incidence pair is of length two. Otherwise, pair does not exist.
-        if len(incidence_pair) == 2:
-            node, edge = incidence_pair[0], incidence_pair[1]
-            # check if first element in pair (node) exists in 'nodes' column anywhere
-            # and check if second element of pair (edge) exists in 'edges' column anywhere.
-            does_contain = ((df['nodes'] == node) & (df['edges'] == edge)).any()
-            return does_contain
-        else:
-            return False
+        # #verify the incidence pair is of length two. Otherwise, pair does not exist.
+        # if len(incidence_pair) == 2:
+        #     node, edge = incidence_pair[0], incidence_pair[1]
+        #     # check if first element in pair (node) exists in 'nodes' column anywhere
+        #     # and check if second element of pair (edge) exists in 'edges' column anywhere.
+        #     does_contain = ((df['nodes'] == node) & (df['edges'] == edge)).any()
+        #     return does_contain
+        # else:
+        #     return False
+        
+        return incidence_pair in self._data.values
 
 
 
@@ -138,28 +155,38 @@ class IncidenceStore:
         list
             Elements or memberships (depending on level) of a given edge or node, respectively.
         """
-        df = self._data
+        # df = self._data
 
-        if level == 0: # if looking for elements
-            try:
-                # Group by 'edges' and get 'nodes' within each group where 'edges' matches the key
-                return df.groupby('edges')['nodes'].get_group(key).tolist()
-            except KeyError:
-                # Return empty list if key doesn't exist for level 0 (edge)
-                return []
-        elif level == 1: # if looking for memberships
-            try:
-                # Group by 'nodes' and get 'edges' within each group where 'nodes' matches the key
-                return df.groupby('nodes')['edges'].get_group(key).tolist()
-            except KeyError:
-                # Return empty list if key doesn't exist for level 1 (node)
-                return []
-        elif level == 2:
-            return []
+        # if level == 0: # if looking for elements
+        #     try:
+        #         # Group by 'edges' and get 'nodes' within each group where 'edges' matches the key
+        #         return df.groupby('edges')['nodes'].get_group(key).tolist()
+        #     except KeyError:
+        #         # Return empty list if key doesn't exist for level 0 (edge)
+        #         return []
+        # elif level == 1: # if looking for memberships
+        #     try:
+        #         # Group by 'nodes' and get 'edges' within each group where 'nodes' matches the key
+        #         return df.groupby('nodes')['edges'].get_group(key).tolist()
+        #     except KeyError:
+        #         # Return empty list if key doesn't exist for level 1 (node)
+        #         return []
+        # elif level == 2:
+        #     return []
+        # else:
+        #     return []
+        
+        if level == 0:
+            return self._elements.get(key,[])
+        elif level == 1:
+            return self.__memberships.get(key,[])
         else:
             return []
+        
 
     def restrict_to(self, level, items, inplace=False):
+        ### TODO if inplace == True the constructor's attributes need to be
+        ### adjusted.
 
         """
         returns IncidenceStore of subset of incidence store restricted
@@ -172,10 +199,10 @@ class IncidenceStore:
             Level indicator for finding either elements or memberships.
             For level 0 (elements), returns nodes in the edge.
             For level 1 (memberships), returns edges containing the node.
-        key : int or str
-            Name of node or edge depending on level.
+        items : list
+            List of uids to be removed from level
         inplace : bool, optional
-            _description_, by default False
+            whether to replace self, by default False
 
         Returns
         -------
