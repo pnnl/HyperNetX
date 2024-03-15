@@ -3,7 +3,7 @@ from collections.abc import Hashable
 
 from pandas import DataFrame, MultiIndex
 
-ID = "id"
+ID = "uid"
 WEIGHT = "weight"
 PROPERTIES = "misc_properties"
 
@@ -14,57 +14,57 @@ class PropertyStore:
     Properties will be stored in a pandas dataframe;
 
     """
-    def __init__(self, data=None, index=False, default_weight = 1.0):
+    def __init__(self, data=None, default_weight = 1.0):
         """
         Parameters
         ----------
         data: DataFrame
             optional parameter that holds the properties data in a Dataframe or MultiIndex Dataframe of the following shape
-
+            DataFrame index is uid of objects.
             Example of dataframe (id is set as the index):
 
-            edges | weight | misc_properties | <additional property> | ...
-             <node1> | 1.0 | {} | <property value> | ...
+                        | weight | misc_properties | <additional property> | ...
+            uid
+            <edge1uid>   | 1.0 | {} | <property value> | ...
 
             nodes | weight | misc_properties | <additional property> | ...
              <node1> | 1.0 | {} | <property value> | ...
 
-            Example of multiIndex dataframe (level and id are set as the multiIndex):
+            Example of multiIndex dataframe (edgeid and nodeid are set as the multiIndex):
 
-            edges | nodes | weight | misc_properties | <additional property> | ...
-            <edge> | <node> | 1.0 | {} | <property value> | ...
+                                    | weight | misc_properties | <additional property> | ...
+            <edge1uid>  <node1uid>  | 1.0   | {} | <property value> | ...
+                        <node2uid>  | 1.5   | {} | <property value> | ...
 
-        index: Boolean
-            optional parameter to use the dataframe index as the uid
-            defaults to False
         """
         # If no dataframe is provided, create an empty dataframe
         if data is None:
             self._data: DataFrame = DataFrame(columns=[ID, WEIGHT, PROPERTIES])
-            self._data.set_index(ID)
+            self._data = self._data.set_index(ID)
         else:
             self._data: DataFrame = data
+        self._default_weight = default_weight
 
         ## minimize space but allow everything to have weight
-        # defwt = lambda : {'weight': default_weight}
+        # defwt = lambda : {'weight': self._default_weight}
         # self._datadict = defaultdict(defwt)
 
-        print(self._data)
+        # print(self._data)
 
         # if the index is not set, then set the index on the dataframe
-        if not index:
-            if isinstance(self._data.index, MultiIndex):
-                # set index to the first two columns
-                first_column = self._data.columns[0]
-                second_column = self._data.columns[1]
-                self._data.set_index([first_column, second_column], inplace=True)
-            else:
-                # set the index to the first column
-                first_column = self._data.columns[0]
-                self._data.set_index(first_column, inplace=True)
+        # if not index:
+        #     if isinstance(self._data.index, MultiIndex):
+        #         # set index to the first two columns
+        #         first_column = self._data.columns[0]
+        #         second_column = self._data.columns[1]
+        #         self._data.set_index([first_column, second_column], inplace=True)
+        #     else:
+        #         # set the index to the first column
+        #         first_column = self._data.columns[0]
+        #         self._data.set_index(first_column, inplace=True)
 
         # supports the __iter__ magic method
-        self._index_iter = iter(self._data.index)
+        # self._index_iter = iter(self._data.index)
 
     @property
     def properties(self) -> DataFrame:
@@ -105,11 +105,13 @@ class PropertyStore:
         ### look in self._data and self._datadict
         ### always return properties for a uid in the incidence
         ### store & should should always have a weight property
-        try:
-            properties = self._data.loc[uid]
-        except KeyError:
-            raise KeyError(f"uid, {uid}, not found in PropertyStore")
-        return properties.to_dict()
+    
+        temp = {'weight': self._default_weight, PROPERTIES : {}}
+        if uid in self._data.index:
+            properties = self._data.loc[uid].to_dict()
+            temp.update(properties)
+            temp = flatten(temp)
+        return temp
 
     def get_property(self, uid, prop_name) -> Any:
         """Get a property of an item
@@ -139,17 +141,15 @@ class PropertyStore:
         --------
         get_properties, set_property
         """
-        ### look in self._data and self._datadict
         properties = self.get_properties(uid)
+        return properties.get(prop_name,None)
 
-        if prop_name in self._data.columns:
-            return properties.get(prop_name)
+        # if prop_name in properties:
+        #     return properties[prop_name]
+        # else:
+        #     return properties.get(PROPERTIES,{}).get(prop_name,None)
 
-        props_collection = properties.get(PROPERTIES)
-        if prop_name in props_collection:
-            return props_collection.get(prop_name)
 
-        return None
 
     def set_property(self, uid, prop_name, prop_val) -> None:
         """Set a property of an item in the 'properties' collection
@@ -208,7 +208,24 @@ class PropertyStore:
     #     return len(self._data)
 
     def __getitem__(self, uid) -> dict: ### get properties with []
-        return self._data.loc[uid].to_dict()
+        # return self._data.loc[uid].to_dict()
+        return self.get_properties(uid)
 
     def __contains__(self, uid) -> bool: ### do we already have data
         return uid in self._data.index
+    
+
+def flatten(my_dict):
+    '''Recursive method to flatten dictionary for returning properties as
+    a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
+
+    '''
+    result = {}
+    for key, value in my_dict.items():
+        if isinstance(value, dict):
+            temp = flatten(value)
+            temp.update(result)
+            result = temp
+        else:
+            result[key] = value
+    return result

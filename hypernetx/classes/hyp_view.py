@@ -46,11 +46,7 @@ class HypergraphView(object):
         """
         self._incidence_store = incidence_store
         self._level = level
-        if property_store is not None:
-            self._property_store = property_store
-
-        else:
-            self._property_store = PropertyStore() ## default must return weight = 1
+        self._property_store = property_store
 
 
         ### incidence store needs index or columns
@@ -88,25 +84,6 @@ class HypergraphView(object):
         return self._property_store.properties
 
 
-    # @property
-    # def levelset(self):
-    #     """
-    #     _summary_
-
-    #     Returns
-    #     -------
-    #     _type_
-    #         _description_
-    #     """
-    #     level = self.level
-    #     if level == 0:
-    #         return self._incidence_store.edges.unique()
-    #     elif level == 1:
-    #         return self._incidence_store.nodes.unique()
-    #     elif level == 2:
-    #         return self._incidence_store.dataframe
-
-
     def __iter__(self):
         """
         Defined by level store
@@ -138,29 +115,6 @@ class HypergraphView(object):
         return iter(self._items)
 
 
-    # def to_dataframe(self):
-    #     """
-    #     Defined by property store.
-    #     Returns a pandas dataframe keyed by level keys
-    #         with properties as columns or in a variable length dict.
-    #         The returned data frame will either reflect the
-    #         """
-    #     pass
-
-
-
-    def to_dict(self, data=False):
-        """
-        Association dictionary - neighbors from bipartite form
-        returns a dictionary of key: <elements,memberships,elements>
-        for level 0,1,2
-        values are initlist from NList class
-        if data = True, include data
-        """
-        return {idx: NList(self,idx) for idx in self}
-
-
-
     def __getitem__(self,uid):
         """
         Returns incident objects (neighbors in bipartite graph)
@@ -174,15 +128,11 @@ class HypergraphView(object):
 
         Parameters
         ----------
-        key : _type_
+        uid : _type_
             _description_
         """
-        level = self._level
-        if level == 0 or level == 1:
-            elements = self._incidence_store.neighbors(level,uid)
-        else:
-            elements = None
-        return NList(self, uid)
+        if uid in self._items:
+            return NList(self, uid)
 
 
     # def properties(self,key=None,prop_name=None):
@@ -230,13 +180,8 @@ class HypergraphView(object):
     #     """
     #     pass
 
-    def incidence_dict(self,col='edges'):
-        temp = self._incidence_store_data.groupby(col).agg('list')
-        return {idx:NList(self,idx) for idx in temp.index}
-
-
-    @property
-    def memberships(self):
+        
+    def memberships(self,data=False):
         """
         applies to level 1: returns edges the item belongs to.
         if level = 0 or 2 then memberships returns none.
@@ -247,12 +192,14 @@ class HypergraphView(object):
             _description_
         """
         if self._level == 1:
-            return self._incidence_store.incidence_dict(col='nodes')
+            if data == True:
+                return {idx:NList(self,idx,initlist=vdx) for idx,vdx in self.incidence_store.memberships.items()}
+            else:
+                return self.incidence_store.memberships
         else:
             return {}
         
-    @property
-    def elements(self):
+    def elements(self,data=False):
         """
         applies to levels 0: returns nodes the item belongs to.
         if level = 1 or 2 then elements returns none.
@@ -263,10 +210,12 @@ class HypergraphView(object):
             _description_
         """
         if self._level == 0:
-            return self._incidence_store.incidence_dict(col='edges')
+            if data == True:
+                return {idx:NList(self,idx,initlist=vdx) for idx,vdx in self.incidence_store.elements.items()}
+            else:
+                return self.incidence_store.elements
         else:
             return {}
-
 
     # #### data,labels should be handled in the stores and accessible
     # #### here - if we want them??
@@ -302,11 +251,13 @@ class NList(UserList):
         self,
         hypergraph_view,
         uid,
+        initlist = None
     ):
         self._props = hypergraph_view._property_store.get_properties(uid)
         self._level = hypergraph_view._level
         self._uid = uid
-        initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
+        if initlist == None:
+            initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
         super().__init__(initlist)
 
 
@@ -322,7 +273,6 @@ class NList(UserList):
         any
             attribute value; None if not found
         """
-        neighborlists = ['elements','memberships']
         if attr == "memberships":
             if self._level == 1:
                 return self.data
@@ -363,12 +313,15 @@ class NList(UserList):
 def flatten(my_dict):
     '''Recursive method to flatten dictionary for returning properties as
     a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
+    Redundant keys are kept in the order of hierarchy (first seen kept by default)
 
     '''
     result = {}
     for key, value in my_dict.items():
         if isinstance(value, dict):
-            result.update(flatten(value))
+            temp = flatten(value)
+            temp.update(result)
+            result = temp
         else:
             result[key] = value
     return result

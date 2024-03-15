@@ -21,6 +21,51 @@ def remove_property_store_duplicates(PS, default_uid_col_names, aggregation_meth
             agg_methods[col] = aggregation_methods[col]
     return PS.groupby(level = default_uid_col_names).agg(agg_methods)
 
+# def createdf(dfp,
+#              uid_cols = None,
+#              level = 0,
+#              use_index = False,
+#              weight_prop = None,
+#              default_weight = 1.0,
+#              misc_properties_col = None,):
+#     if not isinstance(properties,pd.DataFrame):
+#         raise TypeError('method requires a Pandas DataFrame')
+#     else:    
+        # dfp = deepcopy(properties)   ### not sure if this is wise
+#         dfp.drop_duplicates(inplace=True)
+#         if use_index == False:
+#             if uid_cols != None:
+#                 chk = lambda c : c if isinstance(c,str) else dfp.columns[c]
+#                 dfp = dfp.set_index([chk(c) for c in uid_cols])
+#             else:
+#                 if level == 2:
+#                     dfp = dfp.set_index(dfp.columns[0],dfp.columns[1])
+#                 else:
+#                     dfp = dfp.set_index(dfp.columns[0])
+            
+#         if weight_prop is not None and weight_prop in dfp.columns:
+#             dfp = dfp.rename(columns={weight_prop: 'weight'})
+#             dfp = dfp.fillna(
+#                 {'weight': default_weight}
+#             ) 
+#         else:
+#             dfp['weight'] = default_weight 
+
+#         if misc_properties_col in dfp.columns and misc_properties_col != 'misc_properties':
+#             dfp = dfp.rename(columns={misc_properties_col: 'misc_properties'}) 
+#             prop_flag = 1
+#             dfp.misc_properties.fillna({})            
+#         else:
+#             dfp['misc_properties'] = [{} for row in dfp.index]
+#             prop_flag = 0 
+
+#     cols = [c for c in dfp.columns if c not in ['uid','weight','misc_properties'] ] 
+#     dfp = dfp[['weight'] + cols + ['misc_properties']]   
+#     if prop_flag == 0:
+#         return dfp
+#     else:
+#         dfp.misc_properties = dfp.misc_properties.map(mkdict)
+#         return dfp
 
 def create_df(properties, uid_cols, indices, multi_index,
               default_uid_col_names, weight_prop_col,
@@ -92,7 +137,7 @@ def create_df(properties, uid_cols, indices, multi_index,
 
     #set misc properties column if not already provided
     if misc_prop_col not in property_columns:
-        properties_df_dict[misc_prop_col] = [{}]*len(indices)
+        properties_df_dict[misc_prop_col] = [{}]*len(indices)  ### TODO indices = df.index after deduping.
     #change name of misc props column to "properties"
     if misc_prop_col != 'misc_properties':
         # Pop the value associated with properties key and store it
@@ -124,9 +169,10 @@ def create_df(properties, uid_cols, indices, multi_index,
 
     return PS
 
-
+###### TODO maybe have a use_index=False kwarg indicating if the uids are already the index
+###### TODO lets keep life simple - assume uid as the default column name or 'edges','nodes' if level == 2
 def dataframe_factory_method(DF, level, 
-                             uid_cols = None, default_uid_col_names = None,
+                             uid_cols = None, default_uid_col_names = ['edges','nodes'],
                              misc_properties_col = 'misc_properties', 
                              weight_col = 'weight', 
                              default_weight = 1.0,
@@ -177,7 +223,7 @@ def dataframe_factory_method(DF, level,
 
     """
     
-
+#### TODO if DF is None then you can't create a dataframe. So return None.
     if DF is None: #if no properties are provided for that property type.
         #check if default_uid_col_names are provided. if not set them to edges and/or nodes based on level.
         if default_uid_col_names is None:
@@ -228,6 +274,7 @@ def dataframe_factory_method(DF, level,
         # set multi index to be used in property store dataframe
         multi_index = pd.MultiIndex.from_tuples(indices, names=default_uid_col_names)
         #create property store dataframe
+        #### TODO look at the
         PS = create_df(DF,
                        uid_cols = uid_cols,
                        default_uid_col_names = default_uid_col_names,
@@ -294,6 +341,16 @@ def dict_factory_method(D, level,
     Pandas Dataframe of the property store in the correct format for HNX.
 
     '''
+    ### Look up Series.explode:
+    ###  d = {'a':[1,2,3],'b':[5,6,7]}
+    ### pd.Series(d).explode()
+    ### Returns:
+        # a    1
+        # a    2
+        # a    3
+        # b    5
+        # b    6
+        # b    7
         
     #if no dictionary is provided set it to an empty dictionary.
     if D is None:

@@ -125,7 +125,7 @@ class Hypergraph:
     ## dataframe_factory_method(edf,uid_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
             incidence_store = IncidenceStore(pd.DataFrame(list(df.index),columns=['edges','nodes']))
-            incidence_propertystore = PropertyStore(data=df,index=True,default_weight = default_cell_weight) 
+            incidence_propertystore = PropertyStore(data=df,default_weight = default_cell_weight) 
             self._E = HypergraphView(incidence_store,2,incidence_propertystore)
             ## if no properties PropertyStore should store in the most efficient way
         else:
@@ -190,7 +190,7 @@ class Hypergraph:
         -------
         EntitySet
         """
-        return self._edges
+        return self._edges  ## HypergraphView
 
     @property
     def nodes(self):
