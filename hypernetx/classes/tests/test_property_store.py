@@ -1,169 +1,251 @@
 import pytest
 import pandas as pd
 from pandas import DataFrame
-from hypernetx.classes.property_store import PropertyStore, WEIGHT, PROPERTIES, ID
+from hypernetx.classes.property_store import PropertyStore, WEIGHT, MISC_PROPERTIES
 
 
-EDGES = 'edges'
-NODES = 'nodes'
-PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES]
-STRENGTH = 'strength'
-HAIR_COLOR = 'hair_color'
-INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, PROPERTIES, STRENGTH, HAIR_COLOR]
+EDGES = "edges"
+NODES = "nodes"
+PROPERTIES_COLUMNS = [WEIGHT, MISC_PROPERTIES]
+STRENGTH = "strength"
+HAIR_COLOR = "hair_color"
+INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, MISC_PROPERTIES, STRENGTH, HAIR_COLOR]
+MISC_PROPERTIES = {
+    "status": "married",
+    "education": {
+        "undergraduate": "University of Washington",
+        "graduate": "Northeastern University",
+        "vocational": "ITT Tech",
+    },
+}
+MISC_PROPERTIES_FLATTENED = {
+    "graduate": "Northeastern University",
+    "status": "married",
+    "undergraduate": "University of Washington",
+    "vocational": "ITT Tech",
+}
+INCIDENCE_PROPERTIES_FLATTENED = {
+    "graduate": "Northeastern University",
+    "hair_color": "red",
+    "status": "married",
+    "strength": 42.0,
+    "undergraduate": "University of Washington",
+    "vocational": "ITT Tech",
+    "weight": 1.23,
+}
 
 
 @pytest.fixture
 def edges():
-    return ['I', 'L', 'O', 'P', 'R', 'S']
+    return ["I", "L", "O", "P", "R", "S"]
 
 
 @pytest.fixture
 def nodes():
-    return ['A', 'C', 'E', 'K', 'T1', 'T2', 'V']
+    return ["A", "C", "E", "K", "T1", "T2", "V"]
 
 
 @pytest.fixture
 def incidences():
-    return [('I', 'K'), ('I', 'T2'), ('L', 'C'), ('L', 'E'), ('O', 'T1'), ('O', 'T2'), ('P', 'A'), ('P', 'C'),
-                  ('P', 'K'), ('R', 'A'), ('R', 'E'), ('S', 'A'), ('S', 'K'), ('S', 'T2'), ('S', 'V')]
+    return [
+        ("I", "K"),
+        ("I", "T2"),
+        ("L", "C"),
+        ("L", "E"),
+        ("O", "T1"),
+        ("O", "T2"),
+        ("P", "A"),
+        ("P", "C"),
+        ("P", "K"),
+        ("R", "A"),
+        ("R", "E"),
+        ("S", "A"),
+        ("S", "K"),
+        ("S", "T2"),
+        ("S", "V"),
+    ]
 
 
 @pytest.fixture
 def edges_df(edges) -> DataFrame:
-    # index is not set
-    data = [(e, 1.0, {}) for e in edges]
-    return DataFrame(data=data, columns=[EDGES, WEIGHT, PROPERTIES])
+    # get a subset of edges that will have properties
+    data = [(edge, 43.0, {}) for edge in edges[:4]]
+    df = DataFrame(data=data, columns=[EDGES, WEIGHT, MISC_PROPERTIES])
+    df.set_index(EDGES, inplace=True)
+    return df
 
 
 @pytest.fixture
 def nodes_df(nodes) -> DataFrame:
-    # index is set
-    data = [(1, {}) for _ in nodes]
-    index = pd.Index(nodes, name=NODES)
-    return DataFrame(data=data, index=index, columns=PROPERTIES_COLUMNS)
+    data = [(node, float(idx), {}) for idx, node in enumerate(nodes)]
+    df = DataFrame(data=data, columns=[NODES, WEIGHT, MISC_PROPERTIES])
+    df.set_index(NODES, inplace=True)
+    return df
 
 
 @pytest.fixture
 def incidences_df(incidences) -> DataFrame:
-    # index is set
-    index = pd.MultiIndex.from_tuples(incidences, names=[EDGES, NODES])
-    data = [(1, {}, 42, "red") for _ in range(len(index))]
-    return DataFrame(data=data, index=index, columns=INCIDENCES_PROPERTIES_COLUMNS)
+    misc_properties = {
+        "status": "married",
+        "education": {
+            "undergraduate": "University of Washington",
+            "graduate": "Northeastern University",
+            "vocational": "ITT Tech",
+        },
+    }
+    index = pd.MultiIndex.from_tuples(incidences[:9], names=[EDGES, NODES])
+    data = [(1.23, misc_properties, 42.0, "red") for _ in range(len(index))]
+    return DataFrame(
+        data=data, index=index, columns=[WEIGHT, MISC_PROPERTIES, STRENGTH, HAIR_COLOR]
+    )
 
 
 @pytest.fixture
 def edges_ps(edges_df) -> PropertyStore:
-    # dataframe has not set the index; use the first column as the index
     return PropertyStore(edges_df)
 
 
 @pytest.fixture
 def nodes_ps(nodes_df) -> PropertyStore:
-    # dataframe has already set the index
-    return PropertyStore(nodes_df, index=True)
+    return PropertyStore(nodes_df, default_weight=42.0)
 
 
 @pytest.fixture
 def incidences_ps(incidences_df) -> PropertyStore:
-    return PropertyStore(incidences_df, index=True)
+    return PropertyStore(incidences_df, default_weight=3.33)
 
 
 def test_empty_property_store():
     ps = PropertyStore()
-    assert len(ps) == 0
-    assert ps.properties.columns.tolist() == [WEIGHT, PROPERTIES]
+    assert ps.properties.columns.tolist() == [WEIGHT, MISC_PROPERTIES]
 
 
 def test_properties_on_edges_ps(edges_ps):
-    props = edges_ps.properties
-    print(props.columns)
-    assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
-    assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
+    props: DataFrame = edges_ps.properties
 
-
-def test_properties_on_nodes_ps(nodes_ps, nodes):
-    props = nodes_ps.properties
-    assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
-    assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
+    assert all(weight == 43.0 for weight in props.get(WEIGHT).tolist())
+    assert all(prop == dict() for prop in props.get(MISC_PROPERTIES).tolist())
 
 
 def test_properties_on_incidences_ps(incidences_ps):
-    props = incidences_ps.properties
-    assert all(weight == 1.0 for weight in props.get(WEIGHT).tolist())
-    assert all(prop == dict() for prop in props.get(PROPERTIES).tolist())
-    assert all(prop == 'red' for prop in props.get(HAIR_COLOR).tolist())
+    props: DataFrame = incidences_ps.properties
+
+    assert all(weight == 1.23 for weight in props.get(WEIGHT).tolist())
+    assert all(prop == MISC_PROPERTIES for prop in props.get(MISC_PROPERTIES).tolist())
+    assert all(prop == "red" for prop in props.get(HAIR_COLOR).tolist())
     assert all(prop == 42 for prop in props.get(STRENGTH).tolist())
 
 
 @pytest.mark.parametrize(
-    "fixture, uid, expected",
+    "property_store, uid, expected",
     [
-        ("edges_ps", "P", {"weight": 1.0, "misc_properties": dict()}),
-        ("incidences_ps", ("S", "A"), {"weight": 1.0, "misc_properties": dict(), "hair_color": "red", "strength": 42})
+        # edge has properties
+        ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
+        # edge does not currently have any properties, uses defaults
+        ("edges_ps", "R", {"weight": 1.0, "misc_properties": dict()}),
+        # incidence has properties
+        (
+            "incidences_ps",
+            ("I", "K"),
+            {
+                "weight": 1.23,
+                "hair_color": "red",
+                "strength": 42.0,
+                **INCIDENCE_PROPERTIES_FLATTENED,
+            },
+        ),
+        # incidence does not currently have any properties
+        ("incidences_ps", ("R", "A"), {"weight": 3.33, "misc_properties": dict()}),
     ],
 )
-def test_get_properties(fixture, uid, expected, request):
-    ps = request.getfixturevalue(fixture)
+def test_get_properties(property_store, uid, expected, request):
+    ps = request.getfixturevalue(property_store)
+
     props = ps.get_properties(uid)
+
     assert props == expected
 
 
-
 @pytest.mark.parametrize(
-    "fixture, uid",
-    [("edges_ps", "NEMO"), ("incidences_ps", ("NE", "MO"))],
-)
-def test_get_properties_raises_key_error(fixture, uid, request):
-    with pytest.raises(KeyError) as exc_info:
-        ps = request.getfixturevalue(fixture)
-        ps.get_properties(uid)
-
-    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
-
-
-@pytest.mark.parametrize(
-    "fixture, uid, prop_name, expected",
+    "property_store, uid, expected",
     [
-        ("edges_ps", "P", WEIGHT, 1.0),
-        ("edges_ps", "P", PROPERTIES, dict()),
-        ("incidences_ps", ("S", "A"), WEIGHT, 1.0),
-        ("incidences_ps", ("S", "A"), PROPERTIES, dict()),
-        ("incidences_ps", ("S", "A"), "strength", 42),
-        ("incidences_ps", ("S", "A"), "hair_color", "red"),
+        # edge has properties
+        ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
+        # edge does not currently have any properties, uses defaults
+        ("edges_ps", "R", {"weight": 1.0, "misc_properties": dict()}),
+        # incidence has properties
+        (
+            "incidences_ps",
+            ("I", "K"),
+            {
+                "weight": 1.23,
+                "hair_color": "red",
+                "strength": 42.0,
+                **INCIDENCE_PROPERTIES_FLATTENED,
+            },
+        ),
+        # incidence does not currently have any properties
+        ("incidences_ps", ("R", "A"), {"weight": 3.33, "misc_properties": dict()}),
+    ],
+)
+def test_getitem(property_store, uid, expected, request):
+    ps = request.getfixturevalue(property_store)
+
+    props = ps[uid]
+
+    assert props == expected
+
+
+@pytest.mark.parametrize(
+    "property_store, uid, prop_name, expected",
+    [
+        # edge does have properties
+        ("edges_ps", "P", WEIGHT, 43.0),
+        ("edges_ps", "P", MISC_PROPERTIES, dict()),
         ("edges_ps", "P", "NOT A PROPERTY", None),
+        # edge does not currently have any properties, uses defaults
+        ("edges_ps", "S", WEIGHT, 1.0),
+        ("edges_ps", "S", MISC_PROPERTIES, dict()),
+        ("edges_ps", "S", "NOT A PROPERTY", None),
+        # incidence does have properties
+        ("incidences_ps", ("I", "K"), WEIGHT, 1.23),
+        ("incidences_ps", ("I", "K"), MISC_PROPERTIES, MISC_PROPERTIES_FLATTENED),
+        ("incidences_ps", ("I", "K"), "strength", 42),
+        ("incidences_ps", ("I", "K"), "hair_color", "red"),
+        ("incidences_ps", ("I", "K"), "not a property", None),
+        # incidence does not have any properties, uses defaults
+        ("incidences_ps", ("S", "A"), WEIGHT, 3.33),
+        ("incidences_ps", ("S", "A"), MISC_PROPERTIES, dict()),
         ("incidences_ps", ("S", "A"), "not a property", None),
     ],
 )
-def test_get_property(fixture, uid, prop_name, expected, request):
-    ps = request.getfixturevalue(fixture)
+def test_get_property(property_store, uid, prop_name, expected, request):
+    ps = request.getfixturevalue(property_store)
     props = ps.get_property(uid, prop_name)
     assert props == expected
 
 
 @pytest.mark.parametrize(
-    "fixture, uid, prop_name",
-    [
-        ("edges_ps", "NEMO", "weight"),
-        ("incidences_ps", ("NE", "MO"), "weight"),
-    ],
-)
-def test_get_property_raises_key_error(fixture, uid, prop_name, request):
-    with pytest.raises(KeyError) as exc_info:
-        ps = request.getfixturevalue(fixture)
-        ps.get_property(uid, prop_name)
-
-    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
-
-
-@pytest.mark.parametrize(
     "fixture, uid, prop_name, prop_val, current_props",
     [
-        ("edges_ps", "P", "weight", 123.0, 1.0),
-        ("edges_ps", "P", "cost", 42.42, None),
-        ("incidences_ps", ("S", "A"), "weight", 123.0, 1.0),
+        # edge has property and updates it
+        ("edges_ps", "P", "weight", 3.14, 43.0),
+        # edge does not have property and adds it
+        ("edges_ps", "P", "cost", 2.99, None),
+        # edge has property (default value) and updates it
+        ("edges_ps", "R", "weight", 78.9, 1.0),
+        # edge does not have property and adds it
+        ("edges_ps", "R", "cost", 2.99, None),
+        # incidence has property and updates it
+        ("incidences_ps", ("I", "K"), "weight", 93.3, 1.23),
+        ("incidences_ps", ("I", "K"), "strength", 999, 42),
+        ("incidences_ps", ("I", "K"), "hair_color", "blue", "red"),
+        # incidence has property (default) and updates it
+        ("incidences_ps", ("S", "A"), "weight", 0.46, 3.33),
+        # incidence has does not have property (default) and adds it
         ("incidences_ps", ("S", "A"), "cost", 42.42, None),
-        ("incidences_ps", ("S", "A"), "strength", 999, 42),
-        ("incidences_ps", ("S", "A"), "hair_color", "blue", "red"),
+        ("incidences_ps", ("S", "A"), "strength", 999, None),
+        ("incidences_ps", ("S", "A"), "hair_color", "blue", None),
     ],
 )
 def test_set_property(fixture, uid, prop_name, prop_val, current_props, request):
@@ -180,68 +262,11 @@ def test_set_property(fixture, uid, prop_name, prop_val, current_props, request)
 
 
 @pytest.mark.parametrize(
-    "fixture, uid, prop_name, prop_val",
-    [
-        ("edges_ps", "NEMO", "cost", 42.42),
-        ("incidences_ps", ("NE", "MO"), "hair_color", "red"),
-    ],
-)
-def test_set_property_raises_key_error(fixture, uid, prop_name, prop_val, request):
-    with pytest.raises(KeyError) as exc_info:
-        ps = request.getfixturevalue(fixture)
-        ps.set_property(uid, prop_name, prop_val)
-
-    assert f"uid, {uid}, not found in PropertyStore" in str(exc_info.value)
-
-
-@pytest.mark.parametrize(
-    "fixture, uids",
-    [
-        ("edges_ps", "edges"),
-        ("incidences_ps", "incidences"),
-    ],
-)
-def test_iter(fixture, uids, request):
-    ps = request.getfixturevalue(fixture)
-    entities = request.getfixturevalue(uids)
-    assert all([uid in entities for uid in ps])
-
-
-@pytest.mark.parametrize(
-    "fixture, expected",
-    [
-        ("edges_ps", 6),
-        ("incidences_ps", 15),
-    ],
-)
-def test_len(fixture, expected, request):
-    ps = request.getfixturevalue(fixture)
-    assert len(ps) == expected
-
-
-@pytest.mark.parametrize(
-    "fixture, uid, expected",
-    [
-        ("edges_ps", "P", {"weight": 1.0, PROPERTIES: dict()}),
-        (
-            "incidences_ps",
-            ("S", "A"),
-            {"weight": 1.0, PROPERTIES: dict(), "hair_color": "red", "strength": 42},
-        ),
-    ],
-)
-def test_getitem(fixture, uid, expected, request):
-    ps = request.getfixturevalue(fixture)
-    props = ps[uid]
-    assert props == expected
-
-
-@pytest.mark.parametrize(
     "fixture, uid, expected",
     [
         ("edges_ps", "P", True),
         ("edges_ps", ("NEMO",), False),
-        ("incidences_ps", ("S", "A"), True),
+        ("incidences_ps", ("I", "K"), True),
         ("incidences_ps", ("NE", "MO"), False),
     ],
 )
