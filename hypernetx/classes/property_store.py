@@ -149,11 +149,14 @@ class PropertyStore:
 
     def _update_row(self, uid, prop_name, prop_val):
         properties = self.get_properties(uid)
-        if prop_name in properties:
-            self._data.loc[uid, prop_name] = prop_val
+        if prop_name in self._data.columns.tolist():
+            # self._data.loc[uid, prop_name] = prop_val
+            self._data.at[uid, prop_name] = prop_val
         else:
             # add the unique property to 'misc_properties'
-            self._data.loc[uid, MISC_PROPERTIES].update({prop_name: prop_val})
+            # self._data.loc[uid, MISC_PROPERTIES].update({prop_name: prop_val})
+            self._data.at[uid, MISC_PROPERTIES].update({prop_name: prop_val})
+
 
     def _add_row(self, uid, prop_name, prop_val):
         if prop_name in self._data.columns.tolist():

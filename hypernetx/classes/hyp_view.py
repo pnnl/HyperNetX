@@ -83,6 +83,19 @@ class HypergraphView(object):
     def properties(self):
         return self._property_store.properties
 
+    @property
+    def memberships(self):
+        if self._level == 1 or self._level == 2:
+            return self.incidence_store.memberships
+        else:
+            return {}
+        
+    @property
+    def elements(self):
+        if self._level == 0 or self._level == 2:
+            return self.incidence_store.elements
+        else:
+            return {}
 
     def __iter__(self):
         """
@@ -181,41 +194,6 @@ class HypergraphView(object):
     #     pass
 
         
-    def memberships(self,data=False):
-        """
-        applies to level 1: returns edges the item belongs to.
-        if level = 0 or 2 then memberships returns none.
-
-        Parameters
-        ----------
-        item : _type_
-            _description_
-        """
-        if self._level == 1:
-            if data == True:
-                return {idx:NList(self,idx,initlist=vdx) for idx,vdx in self.incidence_store.memberships.items()}
-            else:
-                return self.incidence_store.memberships
-        else:
-            return {}
-        
-    def elements(self,data=False):
-        """
-        applies to levels 0: returns nodes the item belongs to.
-        if level = 1 or 2 then elements returns none.
-
-        Parameters
-        ----------
-        item : _type_
-            _description_
-        """
-        if self._level == 0:
-            if data == True:
-                return {idx:NList(self,idx,initlist=vdx) for idx,vdx in self.incidence_store.elements.items()}
-            else:
-                return self.incidence_store.elements
-        else:
-            return {}
 
     # #### data,labels should be handled in the stores and accessible
     # #### here - if we want them??
@@ -253,15 +231,15 @@ class NList(UserList):
         uid,
         initlist = None
     ):
-        self._props = hypergraph_view._property_store.get_properties(uid)
+        self.__dict__['_hypergraph_view'] = hypergraph_view
+        self.__dict__['_props'] = hypergraph_view._property_store.get_properties(uid)   
         self._level = hypergraph_view._level
         self._uid = uid
         if initlist == None:
             initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
         super().__init__(initlist)
-
-
-    def __getattr__(self, attr: str):
+    
+    def __getattr__(self, attr: str = None):
         """Get attribute value from properties of :attr:`entity`
 
         Parameters
@@ -290,24 +268,29 @@ class NList(UserList):
 
 
 
-    # def __setattr__(self, attr: str, val: Any) -> None:
-    #     """Set attribute value in properties of :attr:`entity`
+    # def __setattr__(self, attr: str , val: Any = None) -> None:
+    #     """Set attribute value in properties 
 
     #     Parameters
     #     ----------
     #     attr : str
     #     val : any
     #     """
-    #     if attr in ["_entity", "_key", "data"]:
-    #         object.__setattr__(self, attr, val)
+    # #     temp = self._hypergraph_view
+    # #     temp.property_store.set_property(self.uid, attr, val)
+    # #     self.__dict__['_hypergraph_view'] = temp
+    # #     self.__dict__['_props'] = temp._property_store.get_properties(self._uid)
+    #     if attr in ["_level", "_uid"]:
+    #         pass
+    #         # object.__setattr__(self, attr, val)
     #     else:
-    #         self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+    #         self._hypergraph_view._property_store.set_property(self._uid, attr, val)
 
-    # def properties(self):
-    #     """
-    #     Return dict of properties associated with this AttrList as a dictionary.
-    #     """
-    #     pass
+    # # def properties(self):
+    # #     """
+    # #     Return dict of properties associated with this AttrList as a dictionary.
+    # #     """
+    #     # pass
 
 
 def flatten(my_dict):

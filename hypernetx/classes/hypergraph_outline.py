@@ -114,6 +114,9 @@ class Hypergraph:
     ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
     ## dataframe_factory_method(edge_properties_df,uid_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
 
+        
+        if setsystem is None:
+            setsystem = pd.DataFrame(columns = ['edges','nodes','weight','misc_properties'])
         setsystem_type = type(setsystem).__name__
         if setsystem_type in type_dict:
             df = type_dict[setsystem_type](setsystem,2,
@@ -169,7 +172,7 @@ class Hypergraph:
                     node_propertystore = PropertyStore(default_weight = default_node_weight)       
             else:
                 node_propertystore = PropertyStore(default_weight = default_node_weight)        
-            self._nodes = HypergraphView(incidence_store,0,node_propertystore)  
+            self._nodes = HypergraphView(incidence_store,1,node_propertystore)  
                
                     
                     
@@ -367,12 +370,12 @@ class Hypergraph:
         """
         return self._E.properties((edge,node),prop_name=prop_name)  ### get_property from hyp_view
 
-    def get_properties(self, id, level=None, prop_name=None):
+    def get_properties(self, uid, level=0, prop_name=None):
         """Returns an object's specific property or all properties
         ### Change to level is 0,1,2 and call props from correct store
         Parameters
         ----------
-        id : hashable
+        uid : hashable
             edge or node id
         level : int | None , optional, default = None
             if separate edge and node properties then enter 0 for edges
@@ -387,14 +390,16 @@ class Hypergraph:
             single property or dictionary of properties
         """
 
-        if level == None or level == 0:
+        if level == 0:
             store = self._edges
-        else:
+        elif level == 1:
             store = self._nodes
+        elif level == 2:
+            store = self._E
         if prop_name is None: ## rewrite for edges and nodes.
-            return self.store.get_properties(id)
+            return store[uid].properties
         else:
-            return self.store.get_property(id, prop_name)
+            return store[uid].__getattr__(prop_name)
 
     @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
@@ -884,7 +889,7 @@ class Hypergraph:
         B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
         return B
 
-    def dual(self, name=None, switch_names=True):
+    def dual(self, name=None, share_properties = True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -902,33 +907,59 @@ class Hypergraph:
         : hypergraph
 
         """
-        dfp = deepcopy(self.edges.properties)
-        dfp = dfp.reset_index()
-        dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
-        dfp = dfp.set_index(["level", "id"])
+        # dfp = deepcopy(self.edges.properties)
+        # dfp = dfp.reset_index()
+        # dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
+        # dfp = dfp.set_index(["level", "id"])
 
-        edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
-        df = deepcopy(self.dataframe)
-        cprops = [col for col in df.columns if not col in [edge, node, wt]]
+        # edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
+        # df = deepcopy(self.dataframe)
+        # cprops = [col for col in df.columns if not col in [edge, node, wt]]
 
-        df[[edge, node]] = df[[node, edge]]
-        if switch_names == True and not (
-            self._edge_col == "edges" and self._node_col == "nodes"
-        ):
-            # if switch_names == False or (self._edge_col == 'edges' and self._node_col == 'nodes'):
-            df = df.rename(columns={edge: self._node_col, node: self._edge_col})
-            node = self._edge_col
-            edge = self._node_col
+        # df[[edge, node]] = df[[node, edge]]
+        # if switch_names == True and not (
+        #     self._edge_col == "edges" and self._node_col == "nodes"
+        # ):
+        #     # if switch_names == False or (self._edge_col == 'edges' and self._node_col == 'nodes'):
+        #     df = df.rename(columns={edge: self._node_col, node: self._edge_col})
+        #     node = self._edge_col
+        #     edge = self._node_col
 
-        return Hypergraph(
-            df,
-            edge_col=edge,
-            node_col=node,
-            cell_weight_col=wt,
-            cell_properties=cprops,
-            properties=dfp,
-            name=name,
-        )
+        # return Hypergraph(
+        #     df,
+        #     edge_col=edge,
+        #     node_col=node,
+        #     cell_weight_col=wt,
+        #     cell_properties=cprops,
+        #     properties=dfp,
+        #     name=name,
+        # )
+    
+
+        C = self.dataframe.columns.tolist()
+
+        dsetsystem = self.dataframe[[C[1] , C[0]] + C[2:]].rename(columns={'edges':'nodes','nodes':'edges'}).set_index(['edges','nodes'])
+
+        if share_properties == False:
+            dedgeps = PropertyStore(self.nodes.dataframe.copy(deep=True))
+            dnodeps = PropertyStore(self.edges.dataframe.copy(deep=True))
+        else:
+            dedgeps = PropertyStore(self.nodes.dataframe)
+            dnodeps = PropertyStore(self.edges.dataframe)
+
+        dincps = PropertyStore(dsetsystem,2)
+        dincstore = IncidenceStore(pd.DataFrame(dsetsystem.index.tolist(),columns=['edges','nodes']))
+
+        hdual = Hypergraph()
+        hdual._E = HypergraphView(dincstore,2,dincps)
+        hdual._edges = HypergraphView(dincstore,0,dedgeps)
+        hdual._nodes = HypergraphView(dincstore,1,dnodeps)
+        hdual._dataframe = hdual.dataframe
+        hdual._set_default_state()
+        hdual.name = name or str(self.name) + '_dual'
+        hdual.__dict__.update(locals())
+
+        return hdual
 
 ###### Collapse methods now handled completely in the incidence store
     def collapse_edges(

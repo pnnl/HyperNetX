@@ -185,7 +185,7 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None):
 
     radii = {
         v: {v: i for i, v in enumerate(sorted(e, key=levels.get))}
-        for v, e in H.dual().edges.elements.items()
+        for v, e in H.nodes.memberships.items()
     }
 
     def get_padded_hull(uid, edge):

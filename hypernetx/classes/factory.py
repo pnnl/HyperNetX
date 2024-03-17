@@ -21,141 +21,160 @@ def remove_property_store_duplicates(PS, default_uid_col_names, aggregation_meth
             agg_methods[col] = aggregation_methods[col]
     return PS.groupby(level = default_uid_col_names).agg(agg_methods)
 
-# def createdf(dfp,
-#              uid_cols = None,
-#              level = 0,
-#              use_index = False,
-#              weight_prop = None,
-#              default_weight = 1.0,
-#              misc_properties_col = None,):
-#     if not isinstance(properties,pd.DataFrame):
-#         raise TypeError('method requires a Pandas DataFrame')
-#     else:    
-        # dfp = deepcopy(properties)   ### not sure if this is wise
-#         dfp.drop_duplicates(inplace=True)
-#         if use_index == False:
-#             if uid_cols != None:
-#                 chk = lambda c : c if isinstance(c,str) else dfp.columns[c]
-#                 dfp = dfp.set_index([chk(c) for c in uid_cols])
-#             else:
-#                 if level == 2:
-#                     dfp = dfp.set_index(dfp.columns[0],dfp.columns[1])
-#                 else:
-#                     dfp = dfp.set_index(dfp.columns[0])
-            
-#         if weight_prop is not None and weight_prop in dfp.columns:
-#             dfp = dfp.rename(columns={weight_prop: 'weight'})
-#             dfp = dfp.fillna(
-#                 {'weight': default_weight}
-#             ) 
-#         else:
-#             dfp['weight'] = default_weight 
-
-#         if misc_properties_col in dfp.columns and misc_properties_col != 'misc_properties':
-#             dfp = dfp.rename(columns={misc_properties_col: 'misc_properties'}) 
-#             prop_flag = 1
-#             dfp.misc_properties.fillna({})            
-#         else:
-#             dfp['misc_properties'] = [{} for row in dfp.index]
-#             prop_flag = 0
-
-#     cols = [c for c in dfp.columns if c not in ['uid','weight','misc_properties'] ] 
-#     dfp = dfp[['weight'] + cols + ['misc_properties']]   
-#     if prop_flag == 0:
-#         return dfp
-#     else:
-#         dfp.misc_properties = dfp.misc_properties.map(mkdict)
-#         return dfp
-
-
-
-
-def create_df(properties, uid_cols, use_indices,
-              default_uid_col_names, weight_prop_col,
-              misc_prop_col, default_weight, aggregation_methods):
-    
-    #get length of dataframe once to be used throughout this function.
-    length_of_dataframe = len(properties)
-    
-    #get column names if integer was provided instead
-    if isinstance(weight_prop_col, int):
-        weight_prop_col = properties.columns[weight_prop_col]
-    if isinstance(misc_prop_col, int):
-        misc_prop_col = properties.columns[misc_prop_col]
-
-    #get list of all column names in properties dataframe
-    column_names = list(properties.columns)
-    
-    
-    
-    # set weight column code:
-    # default to use weight column if it exists before looking for default weight array or in misc properties column.
-    if weight_prop_col in column_names:
-        #do nothing since this is the format we expect by default.
-        pass
-    #check to see if an array of weights was provided to use for weights column
-    elif not isinstance(default_weight, int) and not isinstance(default_weight, float):
-        properties[weight_prop_col] = default_weight
+### Alternate code for creating dataframe for PS
+import ast,json
+def mkdict(x):
+    if isinstance(x,dict):
+        return x
+    else:
+        try:
+            temp = ast.literal_eval(x)
+        except:
+            try:
+                temp = json.loads(x)
+            except:
+                temp = {}
+        if isinstance(temp,dict):
+            return temp
+        else:
+            return {}
         
-    #check if the weight column name exists in the misc properties.
-    elif misc_prop_col in column_names: #check if misc properties exists
-        #check if weight_prop_col is a key in any of the misc properties dicitonary.
-        if any(weight_prop_col in misc_dict for misc_dict in properties[misc_prop_col]):
-            #create list of cell weights from misc properties dictionaries and use default value if not in keys
-            weights_from_misc_dicts = []
-            for misc_dict in properties[misc_prop_col]:
-                if weight_prop_col in misc_dict:
-                    weights_from_misc_dicts.append(misc_dict[weight_prop_col])
+def create_df(dfp,
+             uid_cols = None,
+             level = 0,
+             use_index = False,
+             weight_prop = None,
+             default_weight = 1.0,
+             misc_properties_col = None,
+             aggregation_methods = None):
+    if not isinstance(dfp,pd.DataFrame):
+        raise TypeError('method requires a Pandas DataFrame')
+    else:    
+        # dfp = deepcopy(properties)   ### not sure if this is wise
+
+        if use_index == False:
+            if uid_cols != None:
+                chk = lambda c : c if isinstance(c,str) else dfp.columns[c]
+                dfp = dfp.set_index([chk(c) for c in uid_cols])
+            else:
+                if level == 2:
+                    dfp = dfp.set_index(dfp.columns[0],dfp.columns[1])
                 else:
-                    weights_from_misc_dicts.append(default_weight)
-            properties[weight_prop_col] = weights_from_misc_dicts
+                    dfp = dfp.set_index(dfp.columns[0])
+
+        if misc_properties_col in dfp.columns and misc_properties_col != 'misc_properties':
+            dfp = dfp.rename(columns={misc_properties_col: 'misc_properties'}) 
+            dfp.misc_properties = dfp.misc_properties.map(mkdict) 
+        else:
+            dfp['misc_properties'] = [{} for row in dfp.index]
             
-    #if not provided anywhere then add in as default value
-    else: 
-        properties[weight_prop_col] = [default_weight]*length_of_dataframe
+        if weight_prop in dfp.columns:
+            dfp = dfp.rename(columns={weight_prop: 'weight'})
+            dfp = dfp.fillna(
+                {'weight': default_weight}
+            ) 
+        elif weight_prop is not None:
+            def grabweight(cell):
+                if isinstance(cell,dict):
+                    return cell.get(weight_prop,default_weight)
+                else:
+                    return default_weight
+            dfp['weight'] = dfp['misc_properties'].map(grabweight) 
+
+    cols = [c for c in dfp.columns if c not in ['weight','misc_properties'] ] 
+    dfp = dfp[['weight'] + cols + ['misc_properties']]   
+    dfp = dfp[~dfp.index.duplicated(keep='first')]
+    return dfp
+
+
+
+
+# def create_df(properties, uid_cols, use_indices,
+#               default_uid_col_names, weight_prop_col,
+#               misc_prop_col, default_weight, aggregation_methods):
+    
+#     #get length of dataframe once to be used throughout this function.
+#     length_of_dataframe = len(properties)
+    
+#     #get column names if integer was provided instead
+#     if isinstance(weight_prop_col, int):
+#         weight_prop_col = properties.columns[weight_prop_col]
+#     if isinstance(misc_prop_col, int):
+#         misc_prop_col = properties.columns[misc_prop_col]
+
+#     #get list of all column names in properties dataframe
+#     column_names = list(properties.columns)
+    
+    
+    
+#     # set weight column code:
+#     # default to use weight column if it exists before looking for default weight array or in misc properties column.
+#     if weight_prop_col in column_names:
+#         #do nothing since this is the format we expect by default.
+#         pass
+#     #check to see if an array of weights was provided to use for weights column
+#     elif not isinstance(default_weight, int) and not isinstance(default_weight, float):
+#         properties[weight_prop_col] = default_weight
+        
+#     #check if the weight column name exists in the misc properties.
+#     elif misc_prop_col in column_names: #check if misc properties exists
+#         #check if weight_prop_col is a key in any of the misc properties dicitonary.
+#         if any(weight_prop_col in misc_dict for misc_dict in properties[misc_prop_col]):
+#             #create list of cell weights from misc properties dictionaries and use default value if not in keys
+#             weights_from_misc_dicts = []
+#             for misc_dict in properties[misc_prop_col]:
+#                 if weight_prop_col in misc_dict:
+#                     weights_from_misc_dicts.append(misc_dict[weight_prop_col])
+#                 else:
+#                     weights_from_misc_dicts.append(default_weight)
+#             properties[weight_prop_col] = weights_from_misc_dicts
             
-    #rename the columns where needed
-    #start by defining dictionary of column renaming with uid columns.
-    if not use_indices: #include uid columns if they are not indices.
-        col_rename_dict = {uid_cols[i]: default_uid_col_names[i] for i in range(len(uid_cols))} #renaming dictionary
-    else:
-        col_rename_dict = {}
-    #add weight column renaming
-    col_rename_dict[weight_prop_col] = 'weight'
-    #set misc properties column if not already provided and if set then update renaming dictionary.
-    if misc_prop_col not in column_names:
-        properties['misc_properties'] = [{}]*length_of_dataframe
-    else:
-        col_rename_dict[misc_prop_col] = 'misc_properties'
-    #rename the columns
-    properties.rename(columns = col_rename_dict, inplace = True) #rename the columns
+#     #if not provided anywhere then add in as default value
+#     else: 
+#         properties[weight_prop_col] = [default_weight]*length_of_dataframe
+            
+#     #rename the columns where needed
+#     #start by defining dictionary of column renaming with uid columns.
+#     if not use_indices: #include uid columns if they are not indices.
+#         col_rename_dict = {uid_cols[i]: default_uid_col_names[i] for i in range(len(uid_cols))} #renaming dictionary
+#     else:
+#         col_rename_dict = {}
+#     #add weight column renaming
+#     col_rename_dict[weight_prop_col] = 'weight'
+#     #set misc properties column if not already provided and if set then update renaming dictionary.
+#     if misc_prop_col not in column_names:
+#         properties['misc_properties'] = [{}]*length_of_dataframe
+#     else:
+#         col_rename_dict[misc_prop_col] = 'misc_properties'
+#     #rename the columns
+#     properties.rename(columns = col_rename_dict, inplace = True) #rename the columns
     
     
-    #set index for dataframe using the default uid column names that are dependent on the level if indices flag not on.
-    if not use_indices:
-        properties = properties.set_index(default_uid_col_names)
-    else: #otherwise just rename the incides to the default names.
-        properties.index.names = default_uid_col_names
+#     #set index for dataframe using the default uid column names that are dependent on the level if indices flag not on.
+#     if not use_indices:
+#         properties = properties.set_index(default_uid_col_names)
+#     else: #otherwise just rename the incides to the default names.
+#         properties.index.names = default_uid_col_names
     
     
-    #remove any NaN values or missing values in weight column
-    properties['weight'].fillna(default_weight, inplace = True)
+#     #remove any NaN values or missing values in weight column
+#     properties['weight'].fillna(default_weight, inplace = True)
     
     
-    # remove any duplicate indices and combine using aggregation methods (defaults to 'first' if none provided).
-    properties = remove_property_store_duplicates(properties, default_uid_col_names, aggregation_methods = aggregation_methods)
+#     # remove any duplicate indices and combine using aggregation methods (defaults to 'first' if none provided).
+#     properties = remove_property_store_duplicates(properties, default_uid_col_names, aggregation_methods = aggregation_methods)
     
     
-    #reorder columns to have properties last
-    # Get the column names and the specific column
-    specific_col = 'misc_properties'
-    # Create a new order for the columns
-    updated_column_names = list(properties.columns)
-    new_order = [col for col in updated_column_names if col != specific_col] + [specific_col]
-    # Reorder the dataframe using reindex
-    properties = properties.reindex(columns=new_order)
+#     #reorder columns to have properties last
+#     # Get the column names and the specific column
+#     specific_col = 'misc_properties'
+#     # Create a new order for the columns
+#     updated_column_names = list(properties.columns)
+#     new_order = [col for col in updated_column_names if col != specific_col] + [specific_col]
+#     # Reorder the dataframe using reindex
+#     properties = properties.reindex(columns=new_order)
     
-    return properties
+#     return properties
 
 
 def dataframe_factory_method(DF, level, use_indices = False,
@@ -239,10 +258,16 @@ def dataframe_factory_method(DF, level, use_indices = False,
         
         
         
-        PS = create_df(DF, uid_cols = uid_cols, use_indices = use_indices,
-                       default_uid_col_names = default_uid_col_names,
-                       weight_prop_col = weight_col,
-                       misc_prop_col = misc_properties_col,
+        # PS = create_df(DF, uid_cols = uid_cols, use_indices = use_indices,
+        #                default_uid_col_names = default_uid_col_names,
+        #                weight_prop_col = weight_col,
+        #                misc_prop_col = misc_properties_col,
+        #                default_weight = default_weight,
+        #                aggregation_methods = aggregate_by)
+        
+        PS = create_df(DF, uid_cols = uid_cols, use_index = use_indices,
+                       weight_prop = weight_col,
+                       misc_properties_col = misc_properties_col,
                        default_weight = default_weight,
                        aggregation_methods = aggregate_by)
 
@@ -335,6 +360,7 @@ def dict_factory_method(D, level, use_indices = False,
                                   weight_col = weight_col, 
                                   default_weight = default_weight,
                                   aggregate_by = aggregate_by)
+    
     return PS
 
 
