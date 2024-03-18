@@ -233,8 +233,8 @@ class NList(UserList):
     ):
         self.__dict__['_hypergraph_view'] = hypergraph_view
         self.__dict__['_props'] = hypergraph_view._property_store.get_properties(uid)   
-        self._level = hypergraph_view._level
-        self._uid = uid
+        self.__dict__['_level'] = hypergraph_view._level
+        self.__dict__['_uid'] = uid
         if initlist == None:
             initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
         super().__init__(initlist)
@@ -268,29 +268,31 @@ class NList(UserList):
 
 
 
-    # def __setattr__(self, attr: str , val: Any = None) -> None:
-    #     """Set attribute value in properties 
+    def __setattr__(self, attr: str = None , val: Any = None) -> None:
+        """Set attribute value in properties 
 
-    #     Parameters
-    #     ----------
-    #     attr : str
-    #     val : any
+        Parameters
+        ----------
+        attr : str
+        val : any
+        """
+    #     temp = self._hypergraph_view
+    #     temp.property_store.set_property(self.uid, attr, val)
+    #     self.__dict__['_hypergraph_view'] = temp
+    #     self.__dict__['_props'] = temp._property_store.get_properties(self._uid)
+        if attr is None:
+            return self
+        elif attr in ["_hypergraph_view", "_props","_level", "_uid"]:
+            pass
+            # object.__setattr__(self, attr, val)
+        else:
+            self._hypergraph_view._property_store.set_property(self._uid, attr, val)
+
+    # def properties(self):
     #     """
-    # #     temp = self._hypergraph_view
-    # #     temp.property_store.set_property(self.uid, attr, val)
-    # #     self.__dict__['_hypergraph_view'] = temp
-    # #     self.__dict__['_props'] = temp._property_store.get_properties(self._uid)
-    #     if attr in ["_level", "_uid"]:
-    #         pass
-    #         # object.__setattr__(self, attr, val)
-    #     else:
-    #         self._hypergraph_view._property_store.set_property(self._uid, attr, val)
-
-    # # def properties(self):
-    # #     """
-    # #     Return dict of properties associated with this AttrList as a dictionary.
-    # #     """
-    #     # pass
+    #     Return dict of properties associated with this AttrList as a dictionary.
+    #     """
+        # pass
 
 
 def flatten(my_dict):

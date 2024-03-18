@@ -886,7 +886,7 @@ class Hypergraph:
         edges = self._state_dict["labels"]["edges"]
         B.add_nodes_from(self.edges, bipartite=0)
         B.add_nodes_from(self.nodes, bipartite=1)
-        B.add_edges_from([(v, e) for e in self.edges for v in self.edges[e]])
+        B.add_edges_from([(v,e) for v in self._nodes.memberships for e in self._nodes.memberships[v]])
         return B
 
     def dual(self, name=None, share_properties = True):
@@ -906,35 +906,7 @@ class Hypergraph:
         -------
         : hypergraph
 
-        """
-        # dfp = deepcopy(self.edges.properties)
-        # dfp = dfp.reset_index()
-        # dfp.level = dfp.level.apply(lambda x: 1 * (x == 0))
-        # dfp = dfp.set_index(["level", "id"])
-
-        # edge, node, wt = self._edge_col, self._node_col, self._cell_weight_col
-        # df = deepcopy(self.dataframe)
-        # cprops = [col for col in df.columns if not col in [edge, node, wt]]
-
-        # df[[edge, node]] = df[[node, edge]]
-        # if switch_names == True and not (
-        #     self._edge_col == "edges" and self._node_col == "nodes"
-        # ):
-        #     # if switch_names == False or (self._edge_col == 'edges' and self._node_col == 'nodes'):
-        #     df = df.rename(columns={edge: self._node_col, node: self._edge_col})
-        #     node = self._edge_col
-        #     edge = self._node_col
-
-        # return Hypergraph(
-        #     df,
-        #     edge_col=edge,
-        #     node_col=node,
-        #     cell_weight_col=wt,
-        #     cell_properties=cprops,
-        #     properties=dfp,
-        #     name=name,
-        # )
-    
+        """   
 
         C = self.dataframe.columns.tolist()
 
