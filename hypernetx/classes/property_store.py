@@ -14,7 +14,7 @@ MISC_PROPERTIES = "misc_properties"
 class PropertyStore:
     """Class for storing properties of a collection of edges, nodes, or incidences.
 
-    Properties will be stored in a pandas dataframe;
+    Properties will be stored in a pandas dataframe.
 
     """
 
@@ -133,11 +133,6 @@ class PropertyStore:
         prop_val : any
             value of the property to set
 
-        Raises
-        ------
-        KeyError
-            If (`uid`) is not in :attr:`properties`
-
         See Also
         --------
         get_property, get_properties
@@ -148,18 +143,33 @@ class PropertyStore:
             self._add_row(uid, prop_name, prop_val)
 
     def _update_row(self, uid, prop_name, prop_val):
-        properties = self.get_properties(uid)
-        if prop_name in self._data.columns.tolist():
-            # self._data.loc[uid, prop_name] = prop_val
+        """Updates a row in the underlying data table
+
+        Parameters
+        ----------
+        uid : Hashable
+            uid is the index used to set its property
+        prop_name : str | int
+            name of the property to set
+        prop_val : any
+            value of the property to set
+
+        Raises
+        ------
+        KeyError
+            If (`uid`) is not in the underlying data table
+        """
+        if prop_name in self._get_properties():
+            # overwrite the current property with the updated property
             self._data.at[uid, prop_name] = prop_val
         else:
+            # if the property to be added is not one of existing properties,
             # add the unique property to 'misc_properties'
-            # self._data.loc[uid, MISC_PROPERTIES].update({prop_name: prop_val})
             self._data.at[uid, MISC_PROPERTIES].update({prop_name: prop_val})
 
-
     def _add_row(self, uid, prop_name, prop_val):
-        if prop_name in self._data.columns.tolist():
+        """Adds a new row to the underlying data table"""
+        if prop_name in self._get_properties():
             new_row = DataFrame(
                 {
                     "weight": [self._default_weight],
@@ -169,7 +179,8 @@ class PropertyStore:
                 index=[uid],
             )
         else:
-            # add the unique property to 'misc_properties'
+            # if the property to be added is not one of existing properties,
+            # add the property to 'misc_properties'
             new_row = DataFrame(
                 {
                     "weight": [self._default_weight],
@@ -179,6 +190,9 @@ class PropertyStore:
             )
 
         self._data = pd.concat([self._data, new_row])
+
+    def _get_properties(self) -> list[str]:
+        return self._data.columns.tolist()
 
     def __getitem__(self, uid) -> dict:
         """Gets all the properties of an item

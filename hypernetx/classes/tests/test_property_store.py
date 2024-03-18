@@ -10,7 +10,7 @@ PROPERTIES_COLUMNS = [WEIGHT, MISC_PROPERTIES]
 STRENGTH = "strength"
 HAIR_COLOR = "hair_color"
 INCIDENCES_PROPERTIES_COLUMNS = [WEIGHT, MISC_PROPERTIES, STRENGTH, HAIR_COLOR]
-MISC_PROPERTIES = {
+MISC_PROPERTIES_NESTED = {
     "status": "married",
     "education": {
         "undergraduate": "University of Washington",
@@ -131,7 +131,9 @@ def test_properties_on_incidences_ps(incidences_ps):
     props: DataFrame = incidences_ps.properties
 
     assert all(weight == 1.23 for weight in props.get(WEIGHT).tolist())
-    assert all(prop == MISC_PROPERTIES for prop in props.get(MISC_PROPERTIES).tolist())
+    assert all(
+        prop == MISC_PROPERTIES_NESTED for prop in props.get(MISC_PROPERTIES).tolist()
+    )
     assert all(prop == "red" for prop in props.get(HAIR_COLOR).tolist())
     assert all(prop == 42 for prop in props.get(STRENGTH).tolist())
 
