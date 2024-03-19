@@ -1,0 +1,68 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Praggastis
+  given-names: Brenda
+  orcid: "https://orcid.org/0000-0003-1344-0497"
+- family-names: Aksoy
+  given-names: Sinan
+  orcid: "https://orcid.org/0000-0002-3466-3334"
+- family-names: Arendt
+  given-names: Dustin
+  orcid: "https://orcid.org/0000-0003-2466-199X"
+- family-names: Bonicillo
+  given-names: Mark
+  orcid: "https://orcid.org/0009-0003-9764-2180"
+- family-names: Joslyn
+  given-names: Cliff
+  orcid: "https://orcid.org/0000-0002-5923-5547"
+- family-names: Purvine
+  given-names: Emilie
+  orcid: "https://orcid.org/0000-0003-2069-5594"
+- family-names: Shapiro
+  given-names: Madelyn
+  orcid: "https://orcid.org/0000-0002-2786-7056"
+- family-names: Yun
+  given-names: Ji Young
+doi: 10.5281/zenodo.10795225
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Praggastis
+    given-names: Brenda
+    orcid: "https://orcid.org/0000-0003-1344-0497"
+  - family-names: Aksoy
+    given-names: Sinan
+    orcid: "https://orcid.org/0000-0002-3466-3334"
+  - family-names: Arendt
+    given-names: Dustin
+    orcid: "https://orcid.org/0000-0003-2466-199X"
+  - family-names: Bonicillo
+    given-names: Mark
+    orcid: "https://orcid.org/0009-0003-9764-2180"
+  - family-names: Joslyn
+    given-names: Cliff
+    orcid: "https://orcid.org/0000-0002-5923-5547"
+  - family-names: Purvine
+    given-names: Emilie
+    orcid: "https://orcid.org/0000-0003-2069-5594"
+  - family-names: Shapiro
+    given-names: Madelyn
+    orcid: "https://orcid.org/0000-0002-2786-7056"
+  - family-names: Yun
+    given-names: Ji Young
+  date-published: 2024-03-09
+  doi: 10.21105/joss.06016
+  issn: 2475-9066
+  issue: 95
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 6016
+  title: "HyperNetX: A Python package for modeling complex network data
+    as hypergraphs"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.06016"
+  volume: 9
+title: "HyperNetX: A Python package for modeling complex network data as
+  hypergraphs"

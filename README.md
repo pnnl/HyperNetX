@@ -5,7 +5,7 @@ HyperNetX
 [![Pytest](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
-
+[![CITATION.cff](https://github.com/pnnl/HyperNetX/actions/workflows/cff.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/cff.yml)
 
 The HyperNetX library provides classes and methods for the analysis
 and visualization of complex network data modeled as hypergraphs.
