@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import pandas as pd
+from scipy.sparse import csr_matrix
+from collections import defaultdict
+import numpy as np
 
 __all__=["IncidenceStore"]
 
@@ -45,13 +48,12 @@ class IncidenceStore:
     @property
     def dimensions(self):
         """
-        Dimensions of incidence pairs dataframe.
-        i.e., the number of distinct nodes and edges.
+        The number of distinct edges and nodes in that order
 
         Returns
         -------
         tuple of ints
-             Tuple of size two of (number of unique nodes, number of unique edges).
+             Tuple of size two of (number of unique edges, number of unique nodes).
         """
         return (len(self._elements), len(self._memberships))
 
@@ -65,7 +67,7 @@ class IncidenceStore:
         array
              Returns an array of edge names
         """
-        return list(self._data['edges'].unique())
+        return self._data['edges'].unique()
 
     @property
     def nodes(self):
@@ -77,7 +79,7 @@ class IncidenceStore:
         array
              Returns an array of node names
         """
-        return list(self._data['nodes'].unique())
+        return self._data['nodes'].unique()
 
     def __iter__(self):
         """
@@ -91,8 +93,8 @@ class IncidenceStore:
         # itertuples provides iterator over rows in a dataframe 
         # with index as false to not return index
         # and name as None to return a standard tuple.
-        return iter(self._data.itertuples(index=False, name=None))
-
+        return self._data.itertuples(index=False, name=None)
+    
     def __len__(self):
         """
         Total number of incidences
@@ -155,26 +157,6 @@ class IncidenceStore:
         list
             Elements or memberships (depending on level) of a given edge or node, respectively.
         """
-        # df = self._data
-
-        # if level == 0: # if looking for elements
-        #     try:
-        #         # Group by 'edges' and get 'nodes' within each group where 'edges' matches the key
-        #         return df.groupby('edges')['nodes'].get_group(key).tolist()
-        #     except KeyError:
-        #         # Return empty list if key doesn't exist for level 0 (edge)
-        #         return []
-        # elif level == 1: # if looking for memberships
-        #     try:
-        #         # Group by 'nodes' and get 'edges' within each group where 'nodes' matches the key
-        #         return df.groupby('nodes')['edges'].get_group(key).tolist()
-        #     except KeyError:
-        #         # Return empty list if key doesn't exist for level 1 (node)
-        #         return []
-        # elif level == 2:
-        #     return []
-        # else:
-        #     return []
         
         if level == 0:
             return self._elements.get(key,[])
@@ -225,3 +207,51 @@ class IncidenceStore:
         else: #return a subset without editing the original dataframe.
             df = self._data
             return df[df[column].isin(items)]
+        
+    def collapse_identical_elements(self,level,return_equivalence_classes=False):
+        if level == 0:
+            old_dict = self._elements
+            col = 'edges'
+        elif level == 1:
+            old_dict = self._memberships
+            col = 'nodes'
+
+        temp = defaultdict(list)
+        for k,v in old_dict.items():
+            temp[frozenset(v)] += [k]
+        eclasses = dict()
+        new_dict = dict()
+        for k,v in temp.items():
+            eclasses[v[0]] = v
+            new_dict[v[0]] = set(k)
+
+        df = self._data.loc[self._data[col].isin(eclasses.keys())]
+        if return_equivalence_classes == True:
+            return IncidenceStore(df), eclasses
+        else:
+            return IncidenceStore(df)
+        
+    def incidence_matrix(self, index = False):   ##move to hyp outline and add weights
+        df = self.data.astype('category')
+        cols = df['edges'].cat.codes.values
+        rows = df['nodes'].cat.codes.values
+        mat = csr_matrix((np.ones(len(df)),(rows,cols)))
+        if index == False:
+            return mat
+        else:
+            return mat, df['nodes'].cat.categories, df['edges'].cat.categories
+        
+    def incidence_dataframe(self):
+        mat, rindex, cindex = self.incidence_matrix(index = True)
+        return pd.DataFrame(mat.toarray(),columns=cindex,index=rindex)
+
+    
+
+
+        
+            
+
+
+
+
+

@@ -85,7 +85,7 @@ class PropertyStore:
         """
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
-            return {"weight": self._default_weight, MISC_PROPERTIES: {}}
+            return {"weight": self._default_weight}
 
         properties = self._data.loc[uid].to_dict()
         return flatten(properties)
@@ -116,10 +116,10 @@ class PropertyStore:
         # if the item is in the data table and the property is 'misc_properties'
         # return a flattened dictionary of 'misc_properties'
         if uid in self._data.index and prop_name == MISC_PROPERTIES:
-            return flatten(self._data.loc[uid, prop_name])
-
-        properties: dict = self.get_properties(uid)
-        return properties.get(prop_name, None)
+            return self._data.loc[uid][MISC_PROPERTIES]
+        else:
+            properties = self.get_properties(uid)
+            return properties.get(prop_name, None)
 
     def set_property(self, uid, prop_name, prop_val) -> None:
         """Set a property of an item in the 'properties' collection
@@ -191,7 +191,7 @@ class PropertyStore:
 
         self._data = pd.concat([self._data, new_row])
 
-    def _get_properties(self) -> list[str]:
+    def _get_properties(self) -> list:
         return self._data.columns.tolist()
 
     def __getitem__(self, uid) -> dict:

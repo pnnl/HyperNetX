@@ -882,8 +882,8 @@ class Hypergraph:
 
         """
         B = nx.Graph()
-        nodes = self._state_dict["labels"]["nodes"]
-        edges = self._state_dict["labels"]["edges"]
+        # nodes = self._state_dict["labels"]["nodes"]
+        # edges = self._state_dict["labels"]["edges"]
         B.add_nodes_from(self.edges, bipartite=0)
         B.add_nodes_from(self.nodes, bipartite=1)
         B.add_edges_from([(v,e) for v in self._nodes.memberships for e in self._nodes.memberships[v]])
@@ -926,10 +926,9 @@ class Hypergraph:
         hdual._E = HypergraphView(dincstore,2,dincps)
         hdual._edges = HypergraphView(dincstore,0,dedgeps)
         hdual._nodes = HypergraphView(dincstore,1,dnodeps)
-        hdual._dataframe = hdual.dataframe
+        hdual._dataframe = hdual._E.dataframe.reset_index()
         hdual._set_default_state()
         hdual.name = name or str(self.name) + '_dual'
-        hdual.__dict__.update(locals())
 
         return hdual
 

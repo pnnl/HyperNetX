@@ -103,6 +103,7 @@ class HypergraphView(object):
         iterate over the associated level in the incidence store
         """
         return iter(self._items)
+    
 
     def __len__(self):
         """
@@ -145,7 +146,8 @@ class HypergraphView(object):
             _description_
         """
         if uid in self._items:
-            return NList(self, uid)
+            neighbors = self.incidence_store.neighbors(self.level,uid)
+            return NList(uid, self, initlist = neighbors)
 
 
     # def properties(self,key=None,prop_name=None):
@@ -227,19 +229,17 @@ class NList(UserList):
 
     def __init__(
         self,
-        hypergraph_view,
         uid,
+        hypergraph_view,
         initlist = None
     ):
-        self.__dict__['_hypergraph_view'] = hypergraph_view
-        self.__dict__['_props'] = hypergraph_view._property_store.get_properties(uid)   
-        self.__dict__['_level'] = hypergraph_view._level
-        self.__dict__['_uid'] = uid
+        self._hypergraph_view = hypergraph_view
+        self._uid = uid
         if initlist == None:
             initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
         super().__init__(initlist)
     
-    def __getattr__(self, attr: str = None):
+    def __getattr__(self, attr: str):
         """Get attribute value from properties of :attr:`entity`
 
         Parameters
@@ -262,13 +262,12 @@ class NList(UserList):
             else:
                 return []
         elif attr == "properties":
-            return self._props
+            return self._hypergraph_view._property_store.get_properties(self._uid)
         else:
-            return self._props.get(attr,None)
+            return self._hypergraph_view._property_store.get_property(self._uid, attr)
 
 
-
-    def __setattr__(self, attr: str = None , val: Any = None) -> None:
+    def __setattr__(self, attr, val):
         """Set attribute value in properties 
 
         Parameters
@@ -276,23 +275,13 @@ class NList(UserList):
         attr : str
         val : any
         """
-    #     temp = self._hypergraph_view
-    #     temp.property_store.set_property(self.uid, attr, val)
-    #     self.__dict__['_hypergraph_view'] = temp
-    #     self.__dict__['_props'] = temp._property_store.get_properties(self._uid)
-        if attr is None:
-            return self
-        elif attr in ["_hypergraph_view", "_props","_level", "_uid"]:
-            pass
-            # object.__setattr__(self, attr, val)
+        if attr in ["_hypergraph_view", "_uid", "data"]:
+            object.__setattr__(self, attr, val)
         else:
+            pass
+            # print('here')
             self._hypergraph_view._property_store.set_property(self._uid, attr, val)
 
-    # def properties(self):
-    #     """
-    #     Return dict of properties associated with this AttrList as a dictionary.
-    #     """
-        # pass
 
 
 def flatten(my_dict):
