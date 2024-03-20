@@ -144,7 +144,7 @@ def test_properties_on_incidences_ps(incidences_ps):
         # edge has properties
         ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
         # edge does not currently have any properties, uses defaults
-        ("edges_ps", "R", {"weight": 1.0, "misc_properties": dict()}),
+        ("edges_ps", "R", {"weight": 1.0}),
         # incidence has properties
         (
             "incidences_ps",
@@ -157,7 +157,7 @@ def test_properties_on_incidences_ps(incidences_ps):
             },
         ),
         # incidence does not currently have any properties
-        ("incidences_ps", ("R", "A"), {"weight": 3.33, "misc_properties": dict()}),
+        ("incidences_ps", ("R", "A"), {"weight": 3.33}),
     ],
 )
 def test_get_properties(property_store, uid, expected, request):
@@ -174,7 +174,7 @@ def test_get_properties(property_store, uid, expected, request):
         # edge has properties
         ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
         # edge does not currently have any properties, uses defaults
-        ("edges_ps", "R", {"weight": 1.0, "misc_properties": dict()}),
+        ("edges_ps", "R", {"weight": 1.0}),
         # incidence has properties
         (
             "incidences_ps",
@@ -187,7 +187,7 @@ def test_get_properties(property_store, uid, expected, request):
             },
         ),
         # incidence does not currently have any properties
-        ("incidences_ps", ("R", "A"), {"weight": 3.33, "misc_properties": dict()}),
+        ("incidences_ps", ("R", "A"), {"weight": 3.33}),
     ],
 )
 def test_getitem(property_store, uid, expected, request):
@@ -199,7 +199,7 @@ def test_getitem(property_store, uid, expected, request):
 
 
 @pytest.mark.parametrize(
-    "property_store, uid, prop_name, expected",
+    "property_store, uid, prop_name, expected_props",
     [
         # edge does have properties
         ("edges_ps", "P", WEIGHT, 43.0),
@@ -207,24 +207,24 @@ def test_getitem(property_store, uid, expected, request):
         ("edges_ps", "P", "NOT A PROPERTY", None),
         # edge does not currently have any properties, uses defaults
         ("edges_ps", "S", WEIGHT, 1.0),
-        ("edges_ps", "S", MISC_PROPERTIES, dict()),
+        ("edges_ps", "S", MISC_PROPERTIES, None),
         ("edges_ps", "S", "NOT A PROPERTY", None),
         # incidence does have properties
         ("incidences_ps", ("I", "K"), WEIGHT, 1.23),
-        ("incidences_ps", ("I", "K"), MISC_PROPERTIES, MISC_PROPERTIES_FLATTENED),
+        ("incidences_ps", ("I", "K"), MISC_PROPERTIES, MISC_PROPERTIES_NESTED),
         ("incidences_ps", ("I", "K"), "strength", 42),
         ("incidences_ps", ("I", "K"), "hair_color", "red"),
         ("incidences_ps", ("I", "K"), "not a property", None),
         # incidence does not have any properties, uses defaults
         ("incidences_ps", ("S", "A"), WEIGHT, 3.33),
-        ("incidences_ps", ("S", "A"), MISC_PROPERTIES, dict()),
+        ("incidences_ps", ("S", "A"), MISC_PROPERTIES, None),
         ("incidences_ps", ("S", "A"), "not a property", None),
     ],
 )
-def test_get_property(property_store, uid, prop_name, expected, request):
+def test_get_property(property_store, uid, prop_name, expected_props, request):
     ps = request.getfixturevalue(property_store)
     props = ps.get_property(uid, prop_name)
-    assert props == expected
+    assert props == expected_props
 
 
 @pytest.mark.parametrize(

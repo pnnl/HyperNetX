@@ -43,6 +43,9 @@ class PropertyStore:
             <edge2uid> | <node1uid>  | 1.0    | {}              | <property value>      | ...
                        | <node3uid>  | 1.0    | {}              | <property value>      | ...
 
+        default_weight: int
+
+            optional parameter that holds the specified default weight of the weight property
         """
         # If no dataframe is provided, create an empty dataframe
         if data is None:
@@ -51,7 +54,7 @@ class PropertyStore:
         else:
             self._data: DataFrame = data
 
-        self._default_weight = default_weight
+        self._default_weight: int = default_weight
 
     @property
     def properties(self) -> DataFrame:
@@ -86,9 +89,7 @@ class PropertyStore:
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
             return {"weight": self._default_weight}
-
-        properties = self._data.loc[uid].to_dict()
-        return flatten(properties)
+        return flatten(self._data.loc[uid].to_dict())
 
     def get_property(self, uid, prop_name) -> Any:
         """Get a property of an item
@@ -114,12 +115,10 @@ class PropertyStore:
         get_properties, set_property
         """
         # if the item is in the data table and the property is 'misc_properties'
-        # return a flattened dictionary of 'misc_properties'
+        # return 'misc_properties'
         if uid in self._data.index and prop_name == MISC_PROPERTIES:
             return self._data.loc[uid][MISC_PROPERTIES]
-        else:
-            properties = self.get_properties(uid)
-            return properties.get(prop_name, None)
+        return self.get_properties(uid).get(prop_name, None)
 
     def set_property(self, uid, prop_name, prop_val) -> None:
         """Set a property of an item in the 'properties' collection
