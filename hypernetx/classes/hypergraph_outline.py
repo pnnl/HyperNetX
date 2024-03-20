@@ -227,6 +227,20 @@ class Hypergraph:
         """
         ## Concatenate self._edges and self._nodes into a dataframe
 
+    def incidence_matrix(self, index = False):   ##move to hyp outline and add weights
+        df = self._E.incidence_store.data.astype('category')
+        cols = df['edges'].cat.codes.values
+        rows = df['nodes'].cat.codes.values
+        mat = csr_matrix((np.ones(len(df)),(rows,cols)))
+        if index == False:
+            return mat
+        else:
+            return mat, df['nodes'].cat.categories, df['edges'].cat.categories
+        
+    def incidence_dataframe(self):
+        mat, rindex, cindex = self.incidence_matrix(index = True)
+        return pd.DataFrame(mat.toarray(),columns=cindex,index=rindex)
+
 
     @property
     def edge_props(self):
@@ -690,7 +704,7 @@ class Hypergraph:
                 self._state_dict["edge_neighbors"][s][edge] = []
             return edge_neighbors
 
-    def incidence_matrix(self, weights=False, index=False):
+    def incidence_matrix_old(self, weights=False, index=False):
         """
         An incidence matrix for the hypergraph indexed by nodes x edges.
 
@@ -747,7 +761,7 @@ class Hypergraph:
         else:
             return M
 
-    def incidence_dataframe(self, prop_name = 'weight'):
+    def incidence_dataframe_old(self, prop_name = 'weight'):
         """
         pivot table from dataframe for self._E, specifying
         cell value by property from cell properties

@@ -231,19 +231,7 @@ class IncidenceStore:
         else:
             return IncidenceStore(df)
         
-    def incidence_matrix(self, index = False):   ##move to hyp outline and add weights
-        df = self.data.astype('category')
-        cols = df['edges'].cat.codes.values
-        rows = df['nodes'].cat.codes.values
-        mat = csr_matrix((np.ones(len(df)),(rows,cols)))
-        if index == False:
-            return mat
-        else:
-            return mat, df['nodes'].cat.categories, df['edges'].cat.categories
-        
-    def incidence_dataframe(self):
-        mat, rindex, cindex = self.incidence_matrix(index = True)
-        return pd.DataFrame(mat.toarray(),columns=cindex,index=rindex)
+
 
     
 
