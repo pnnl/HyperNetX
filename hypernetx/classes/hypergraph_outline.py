@@ -225,20 +225,24 @@ class Hypergraph:
         -------
         pd.DataFrame or Dictionary?
         """
-        ## Concatenate self._edges and self._nodes into a dataframe
+        return self._E.properties
 
-    def incidence_matrix(self, index = False):   ##move to hyp outline and add weights
-        df = self._E.incidence_store.data.astype('category')
-        cols = df['edges'].cat.codes.values
-        rows = df['nodes'].cat.codes.values
-        mat = csr_matrix((np.ones(len(df)),(rows,cols)))
+    def incidence_matrix(self, index = False, use_weights=False): 
+        
+          ##move to hyp outline and add weights
+        e,n = self._state_dict['data'].T
+        if use_weights == True:
+            data = [self._E[d].weight for d in self._E]
+        else:
+            data = np.ones(len(e)).astype(int)
+        mat = csr_matrix((data,(n,e)))
         if index == False:
             return mat
         else:
-            return mat, df['nodes'].cat.categories, df['edges'].cat.categories
+            return mat, self._state_dict['labels']['nodes'], self._state_dict['labels']['edges']
         
-    def incidence_dataframe(self):
-        mat, rindex, cindex = self.incidence_matrix(index = True)
+    def incidence_dataframe(self, use_weights=False):
+        mat, rindex, cindex = self.incidence_matrix( index = True, use_weights=use_weights)
         return pd.DataFrame(mat.toarray(),columns=cindex,index=rindex)
 
 
@@ -275,7 +279,7 @@ class Hypergraph:
         dict
 
         """
-        return self._E.to_dict()  ### should this call the incidence store directly?
+        return self._E.elements  
 
     @property
     def shape(self):
@@ -479,7 +483,7 @@ class Hypergraph:
         longer required to be in a specific structure
         """
         self._state_dict = {}
-        df = self.dataframe
+        df = self._E.incidence_store.data
         self._state_dict["dataframe"] = df 
 
         if empty:
@@ -488,7 +492,6 @@ class Hypergraph:
                 "nodes": np.array([])
                 }
             self._state_dict["data"] = np.array([[],[]])
-#### Do we need to set types to category for use of encoders in pandas?
         else:
             df.edges = df.edges.astype('category')
             df.nodes = df.nodes.astype('category')
@@ -704,74 +707,74 @@ class Hypergraph:
                 self._state_dict["edge_neighbors"][s][edge] = []
             return edge_neighbors
 
-    def incidence_matrix_old(self, weights=False, index=False):
-        """
-        An incidence matrix for the hypergraph indexed by nodes x edges.
+    # def incidence_matrix_old(self, weights=False, index=False):
+    #     """
+    #     An incidence matrix for the hypergraph indexed by nodes x edges.
 
-        Parameters
-        ----------
-        weights : bool, default =False
-            If False all nonzero entries are 1.
-            If True and self.static all nonzero entries are filled by
-            self.edges.cell_weights dictionary values.
+    #     Parameters
+    #     ----------
+    #     weights : bool, default =False
+    #         If False all nonzero entries are 1.
+    #         If True and self.static all nonzero entries are filled by
+    #         self.edges.cell_weights dictionary values.
 
-        index : boolean, optional, default = False
-            If True return will include a dictionary of node uid : row number
-            and edge uid : column number
+    #     index : boolean, optional, default = False
+    #         If True return will include a dictionary of node uid : row number
+    #         and edge uid : column number
 
-        Returns
-        -------
-        incidence_matrix : scipy.sparse.csr.csr_matrix or np.ndarray
+    #     Returns
+    #     -------
+    #     incidence_matrix : scipy.sparse.csr.csr_matrix or np.ndarray
 
-        row_index : list
-            index of node ids for rows
+    #     row_index : list
+    #         index of node ids for rows
 
-        col_index : list
-            index of edge ids for columns
+    #     col_index : list
+    #         index of edge ids for columns
 
-        """
-        sdkey = "incidence_matrix"
-        if weights:
-            sdkey = "weighted_" + sdkey
+    #     """
+    #     sdkey = "incidence_matrix"
+    #     if weights:
+    #         sdkey = "weighted_" + sdkey
 
-        if sdkey in self._state_dict:
-            M = self._state_dict[sdkey]
-        else:
-            df = self.dataframe
-            data_cols = [self._node_col, self._edge_col]
-            if weights == True:
-                data = df[self._cell_weight_col].values
-                M = csr_matrix(
-                    (data, tuple(np.array(df[col].cat.codes) for col in data_cols))
-                )
-            else:
-                M = csr_matrix(
-                    (
-                        [1] * len(df),
-                        tuple(np.array(df[col].cat.codes) for col in data_cols),
-                    )
-                )
-            self._state_dict[sdkey] = M
+    #     if sdkey in self._state_dict:
+    #         M = self._state_dict[sdkey]
+    #     else:
+    #         df = self.dataframe
+    #         data_cols = [self._node_col, self._edge_col]
+    #         if weights == True:
+    #             data = df[self._cell_weight_col].values
+    #             M = csr_matrix(
+    #                 (data, tuple(np.array(df[col].cat.codes) for col in data_cols))
+    #             )
+    #         else:
+    #             M = csr_matrix(
+    #                 (
+    #                     [1] * len(df),
+    #                     tuple(np.array(df[col].cat.codes) for col in data_cols),
+    #                 )
+    #             )
+    #         self._state_dict[sdkey] = M
 
-        if index == True:
-            rdx = self.dataframe[self._node_col].cat.categories
-            cdx = self.dataframe[self._edge_col].cat.categories
+    #     if index == True:
+    #         rdx = self.dataframe[self._node_col].cat.categories
+    #         cdx = self.dataframe[self._edge_col].cat.categories
 
-            return M, rdx, cdx
-        else:
-            return M
+    #         return M, rdx, cdx
+    #     else:
+    #         return M
 
-    def incidence_dataframe_old(self, prop_name = 'weight'):
-        """
-        pivot table from dataframe for self._E, specifying
-        cell value by property from cell properties
+    # def incidence_dataframe_old(self, prop_name = 'weight'):
+    #     """
+    #     pivot table from dataframe for self._E, specifying
+    #     cell value by property from cell properties
 
-        Parameters
-        ----------
-        prop_name : str, optional
-            _description_, by default 'weight'
-        """
-        pass
+    #     Parameters
+    #     ----------
+    #     prop_name : str, optional
+    #         _description_, by default 'weight'
+    #     """
+    #     pass
 
     def adjacency_matrix(self, s=1, index=False, remove_empty_rows=False):
         """
@@ -1748,7 +1751,7 @@ class Hypergraph:
         return edge_dist
 
 #### pivot table on dataframe gotten from incidence store
-    def incidence_dataframe(
+    def incidence_dataframe_very_old(
         self, sort_rows=False, sort_columns=False, cell_weights=True
     ):
         """

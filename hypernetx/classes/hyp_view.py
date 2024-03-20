@@ -55,7 +55,7 @@ class HypergraphView(object):
         elif level == 1 :
             self._items = self._incidence_store.nodes
         elif level == 2 :
-            self._items = self._incidence_store.data.values
+            self._items = self._incidence_store
 
         # self._properties = PropertyStore()
         ### if no properties and level 0 or 1,
@@ -103,7 +103,6 @@ class HypergraphView(object):
         iterate over the associated level in the incidence store
         """
         return iter(self._items)
-    
 
     def __len__(self):
         """
@@ -278,8 +277,6 @@ class NList(UserList):
         if attr in ["_hypergraph_view", "_uid", "data"]:
             object.__setattr__(self, attr, val)
         else:
-            pass
-            # print('here')
             self._hypergraph_view._property_store.set_property(self._uid, attr, val)
 
 

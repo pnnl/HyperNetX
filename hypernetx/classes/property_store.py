@@ -226,6 +226,8 @@ def flatten(my_dict):
     """
     result = {}
     for key, value in my_dict.items():
+        if value == {}:
+            continue
         if isinstance(value, dict):
             temp = flatten(value)
             # if temp is an empty dictionary, we still want to include the empty dictionary in the
