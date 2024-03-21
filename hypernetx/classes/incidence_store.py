@@ -208,7 +208,7 @@ class IncidenceStore:
             df = self._data
             return df[df[column].isin(items)]
         
-    def collapse_identical_elements(self,level,return_equivalence_classes=False):
+    def equivalence_classes(self,level=0):
         if level == 0:
             old_dict = self._elements
             col = 'edges'
@@ -221,17 +221,32 @@ class IncidenceStore:
         temp = defaultdict(list)
         for k,v in old_dict.items():
             temp[frozenset(v)] += [k]
-        eclasses = dict()
-        new_dict = dict()
-        for k,v in temp.items():
-            eclasses[v[0]] = v
-            new_dict[v[0]] = set(k)
-
-        df = self._data.loc[self._data[col].isin(eclasses.keys())]
-        if return_equivalence_classes == True:
-            return IncidenceStore(df)._data, eclasses
+        return list(temp.values())
+    
+    def collapse_identical_elements(self,level,use_keys = None, return_equivalence_classes=False):
+        if level == 0:
+            col = 'edges'
+        elif level == 1:
+            col = 'nodes'
         else:
-            return IncidenceStore(df)._data
+            return None
+        
+        eclasses = self.equivalence_classes(level=level)
+        if use_keys == None:           
+            edict = {ec[0]:ec for ec in eclasses}
+        else:
+            edict = dict()
+            for ec in eclasses:
+                k = list(set(use_keys).intersection(ec))
+                if len(k)> 0:
+                    edict[k[0]] = ec
+                else:
+                    edict[ec[0]] = ec
+        df = self._data.loc[self._data[col].isin(edict.keys())]
+        if return_equivalence_classes == True:
+            return df, edict
+        else:
+            return df
         
 
         
