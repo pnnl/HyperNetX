@@ -9,6 +9,7 @@ from pandas import DataFrame
 UID = "uid"
 WEIGHT = "weight"
 MISC_PROPERTIES = "misc_properties"
+DEFAULT_PROPERTIES = [WEIGHT, MISC_PROPERTIES]
 
 
 class PropertyStore:
@@ -66,6 +67,49 @@ class PropertyStore:
             a dataframe with the following columns: level, id, uid, weight, properties, <optional props>
         """
         return self._data
+
+    def properties_uids(self, uids) -> DataFrame:
+        """Creates a new dataframe with the given list of uids. uids that are not in the underlying data will be
+        given default properties
+
+        Parameters
+        ----------
+        uids: list of Hashables
+            The list of uids
+
+        Returns
+        -------
+
+        """
+        dfp_uids = self._data.copy(deep=True)
+
+        uids_not_in_data = self._uid_not_in_data(uids)
+        custom_col = self._custom_properties()
+
+        # Update the new dataframe with default properties for uids that aren't present in the underlying data
+        for uid in uids_not_in_data:
+            dfp_uids.loc[uid] = self._default_properties(custom_properties=custom_col)
+        return dfp_uids
+
+    def _uid_not_in_data(self, uids) -> list:
+        """Filter the list of uids by removing uids already in the underlying data"""
+        df_indexes = self._data.index.tolist()
+        return list(set(uids) - set(df_indexes))
+
+    def _custom_properties(self) -> list:
+        """Create a list of custom properties from the underlying data"""
+        properties = self._data.columns.tolist()
+        return [prop for prop in properties if prop not in DEFAULT_PROPERTIES]
+
+    def _default_properties(self, custom_properties: list = None) -> dict:
+        """Create a default properties dictionary; if custom properties are given, set those to None"""
+        data = {WEIGHT: self._default_weight, MISC_PROPERTIES: {}}
+        if custom_properties is None:
+            return data
+
+        for col in custom_properties:
+            data[col] = None
+        return data
 
     def get_properties(self, uid) -> dict:
         """Get all properties of an item
@@ -199,8 +243,7 @@ class PropertyStore:
         This magic method has the same behavior as get_properties; in fact, it calls the method
         get_properties.
 
-        This magic method
-        allows the use of brackets to get an item from an instance of PropertyStore
+        This magic method allows the use of brackets to get an item from an instance of PropertyStore
 
         For example:
 
