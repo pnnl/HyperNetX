@@ -64,7 +64,10 @@ class PropertyStore:
         Returns
         -------
         out: pandas.DataFrame
-            a dataframe with the following columns: level, id, uid, weight, properties, <optional props>
+            a dataframe with the following columns:
+                uid, weight, properties, <optional props>
+                or
+                level, id, weight, properties, <optional props>
         """
         return self._data
 
@@ -79,16 +82,18 @@ class PropertyStore:
 
         Returns
         -------
-
+        out: pandas.DataFrame
+            a dataframe with the following columns:
+                uid, weight, properties, <optional props>
+                or
+                level, id, weight, properties, <optional props>
         """
         dfp_uids = self._data.copy(deep=True)
-
         uids_not_in_data = self._uid_not_in_data(uids)
-        custom_col = self._custom_properties()
 
         # Update the new dataframe with default properties for uids that aren't present in the underlying data
         for uid in uids_not_in_data:
-            dfp_uids.loc[uid] = self._default_properties(custom_properties=custom_col)
+            dfp_uids.loc[uid] = self._default_properties()
         return dfp_uids
 
     def _uid_not_in_data(self, uids) -> list:
@@ -101,10 +106,12 @@ class PropertyStore:
         properties = self._data.columns.tolist()
         return [prop for prop in properties if prop not in DEFAULT_PROPERTIES]
 
-    def _default_properties(self, custom_properties: list = None) -> dict:
+    def _default_properties(self) -> dict:
         """Create a default properties dictionary; if custom properties are given, set those to None"""
         data = {WEIGHT: self._default_weight, MISC_PROPERTIES: {}}
-        if custom_properties is None:
+        custom_properties = self._custom_properties()
+
+        if not custom_properties:
             return data
 
         for col in custom_properties:
@@ -213,26 +220,14 @@ class PropertyStore:
     def _add_row(self, uid, prop_name, prop_val):
         """Adds a new row to the underlying data table"""
         if prop_name in self._get_properties():
-            new_row = DataFrame(
-                {
-                    "weight": [self._default_weight],
-                    MISC_PROPERTIES: [{}],
-                    prop_name: [prop_val],
-                },
-                index=[uid],
-            )
+            data = self._default_properties()
+            data[prop_name] = prop_val
         else:
             # if the property to be added is not one of existing properties,
             # add the property to 'misc_properties'
-            new_row = DataFrame(
-                {
-                    "weight": [self._default_weight],
-                    MISC_PROPERTIES: [{prop_name: prop_val}],
-                },
-                index=[uid],
-            )
-
-        self._data = pd.concat([self._data, new_row])
+            data = self._default_properties()
+            data[MISC_PROPERTIES] = {prop_name: prop_val}
+        self._data.loc[uid, :] = data
 
     def _get_properties(self) -> list:
         return self._data.columns.tolist()

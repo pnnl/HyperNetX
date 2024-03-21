@@ -142,7 +142,7 @@ def test_properties_on_incidences_ps(incidences_ps):
     "property_store, uid, expected",
     [
         # edge has properties
-        ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
+        ("edges_ps", "P", {"weight": 43.0}),
         # edge does not currently have any properties, uses defaults
         ("edges_ps", "R", {"weight": 1.0}),
         # incidence has properties
@@ -172,7 +172,7 @@ def test_get_properties(property_store, uid, expected, request):
     "property_store, uid, expected",
     [
         # edge has properties
-        ("edges_ps", "P", {"weight": 43.0, "misc_properties": dict()}),
+        ("edges_ps", "P", {"weight": 43.0}),
         # edge does not currently have any properties, uses defaults
         ("edges_ps", "R", {"weight": 1.0}),
         # incidence has properties
