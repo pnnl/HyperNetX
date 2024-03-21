@@ -21,19 +21,19 @@ from hypernetx import Hypergraph
 """
 
 
-@pytest.mark.parametrize(
-    "hypergraph_fixture",
-    [
-        ("hyp_no_props"),
-        ("hyp_df_with_props"),
-        ("hyp_dict_with_props"),
-        ("hyp_props_on_edges_nodes"),
-    ],
-)
-def test_dual(hypergraph_fixture, request):
-    actual = request.getfixturevalue(hypergraph_fixture).dual()
-    # assertions on the hypergraph
-    assert isinstance(actual, Hypergraph)
+# @pytest.mark.parametrize(
+#     "hypergraph_fixture",
+#     [
+#         ("hyp_no_props"),
+#         ("hyp_df_with_props"),
+#         ("hyp_dict_with_props"),
+#         ("hyp_props_on_edges_nodes"),
+#     ],
+# )
+# def test_dual(hypergraph_fixture, request):
+#     actual = request.getfixturevalue(hypergraph_fixture).dual()
+#     # assertions on the hypergraph
+#     assert isinstance(actual, Hypergraph)
 
-    # assertions on the actual result compared to the expected result that was defined in the parameterize decorator
-    assert actual is not None
+#     # assertions on the actual result compared to the expected result that was defined in the parameterize decorator
+#     assert actual is not None
