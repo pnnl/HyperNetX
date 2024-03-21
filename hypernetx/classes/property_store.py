@@ -18,7 +18,7 @@ class PropertyStore:
 
     """
 
-    def __init__(self, data=None, default_weight=1.0):
+    def __init__(self, data=None, default_weight=1):
         """
         Parameters
         ----------

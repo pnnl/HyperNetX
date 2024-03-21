@@ -46,7 +46,7 @@ class Hypergraph:
             | Iterable[Iterable[T]]
             | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
-        default_cell_weight: float = 1.0,    ### we will no longer support a sequence
+        default_cell_weight: float | int = 1,    ### we will no longer support a sequence
         edge_col: str | int = 0,
         node_col: str | int = 1,
         cell_weight_col: Optional[str | int] = "weight",
@@ -73,7 +73,7 @@ class Hypergraph:
         ### How do we know which column to use for uid
         misc_edge_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
-        default_edge_weight: float = 1.0,
+        default_edge_weight: float | int = 1,
 
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
@@ -81,7 +81,7 @@ class Hypergraph:
         ### How do we know which column to use for uid
         misc_node_properties_col: Optional[str | int] = None,
         node_weight_prop_col: str | int = "weight",
-        default_node_weight: float = 1.0,
+        default_node_weight: float | int = 1,
 
         name: Optional[str] = None,
         **kwargs,
@@ -193,7 +193,7 @@ class Hypergraph:
         -------
         EntitySet
         """
-        return self._edges  ## HypergraphView
+        return self._edges  
 
     @property
     def nodes(self):
@@ -449,10 +449,10 @@ class Hypergraph:
 
         if edges: ### Amaplist needs a dictionary returned for properties.
             A, Amap = self.edge_adjacency_matrix(s=s, index=True)
-            Amaplst = [(k, self._edges.properties(k)) for k in Amap]
+            Amaplst = [(k, self._edges[k].properties) for k in Amap]
         else:
             A, Amap = self.adjacency_matrix(s=s, index=True)
-            Amaplst = [(k, self._nodes.properties(k)) for k in Amap]
+            Amaplst = [(k, self._nodes[k].properties) for k in Amap]
 
         ### TODO: add key function to compute weights lambda x,y : funcval
 
@@ -906,6 +906,22 @@ class Hypergraph:
         B.add_edges_from([(v,e) for v in self._nodes.memberships for e in self._nodes.memberships[v]])
         return B
 
+    def _construct_hyp_from_stores(self, df,
+                                   edges = None,
+                                   nodes = None,
+                                   name = None
+                                   ):
+        incidence_store = IncidenceStore(pd.DataFrame(df.index.tolist(),columns=['edges','nodes']))
+        incidence_ps = PropertyStore(df)
+        h = Hypergraph()
+        h._E = HypergraphView(incidence_store,2,incidence_ps)
+        h._edges = edges or HypergraphView(incidence_store,0,self._edges.property_store)
+        h._nodes = nodes or HypergraphView(incidence_store,1,self._nodes.property_store)
+        h._state_dict = h._set_default_state()
+        h.name = name
+        h._dataframe = h.dataframe
+        return h
+
     def dual(self, name=None, share_properties = True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
@@ -1000,14 +1016,14 @@ class Hypergraph:
             """
             warnings.warn(msg, DeprecationWarning)
 
-        temp = self.edges.collapse_identical_elements(
-            return_equivalence_classes=return_equivalence_classes
+        temp = self._E.incidence_store.collapse_identical_elements(
+            0,return_equivalence_classes=return_equivalence_classes
         )
 
         if return_equivalence_classes:
-            return Hypergraph(temp[0].incidence_dict, name), temp[1]
+            return Hypergraph(setsystem=temp[0], name=name), temp[1]
 
-        return Hypergraph(temp.incidence_dict, name)
+        return Hypergraph(setsystem=temp,name=name)
 
     def collapse_nodes(
         self,
@@ -1065,14 +1081,14 @@ class Hypergraph:
             """
             warnings.warn(msg, DeprecationWarning)
 
-        temp = self.dual().edges.collapse_identical_elements(
-            return_equivalence_classes=return_equivalence_classes
+        temp = self._E.incidence_store.collapse_identical_elements(
+            1,return_equivalence_classes=return_equivalence_classes
         )
 
         if return_equivalence_classes:
-            return Hypergraph(temp[0].incidence_dict).dual(), temp[1]
+            return Hypergraph(setsystem=temp[0],name=name), temp[1]
 
-        return Hypergraph(temp.incidence_dict, name).dual()
+        return Hypergraph(setsystem=temp, name=name)
 
     def collapse_nodes_and_edges(
         self,
@@ -1140,9 +1156,9 @@ class Hypergraph:
             )
             ntemp, eeq = temp.collapse_edges(name=name, return_equivalence_classes=True)
             return ntemp, neq, eeq
-
-        temp = self.collapse_nodes(name="temp")
-        return temp.collapse_edges(name=name)
+        else:
+            temp = self.collapse_nodes(name="temp")
+            return temp.collapse_edges(name=name)
 
 #### restrict_to methods should be handled in the incidence
 #### store and should preserve stores if inplace=True otherwise
@@ -1160,8 +1176,8 @@ class Hypergraph:
         : hnx. Hypergraph
 
         """
-        keys = set(self._state_dict["labels"]["nodes"]).difference(nodes)
-        return self.remove(keys, level=1)
+        keys = list(set(self._state_dict["labels"]["nodes"]).difference(nodes))
+        return self.remove_nodes(keys, name=name)
 
     def restrict_to_edges(self, edges, name=None):
         """New hypergraph gotten by restricting to edges
@@ -1176,30 +1192,41 @@ class Hypergraph:
         hnx.Hypergraph
 
         """
-        keys = set(self._state_dict["labels"]["edges"]).difference(edges)
-        return self.remove(keys, level=0)
+        keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
+        return self.remove_edges(keys, nmae = name)
 
 #### This should follow behavior of restrictions
     def remove_edges(self, keys, name=None):
-        return self.remove(keys, level=0, name=name)
-
+        if isinstance(keys,list):
+            return self.remove(keys, level=0, name=name)
+        else:
+            return self.remove([keys], level=0, name=name)
+        
     def remove_nodes(self, keys, name=None):
-        return self.remove(keys, level=1, name=name)
+        if isinstance(keys,list):
+            return self.remove(keys, level=1, name=name)
+        else:
+            return self.remove([keys], level=1, name=name)
+        
+    def remove_incidences(self, keys, name=None):
+        if isinstance(keys,list):
+            return self.remove(keys, name=name)
+        else:
+            return self.remove([keys], name=name)
 
-    def remove(self, keys, level=None, name=None):
+    def remove(self, uid_list, level=None, name=None):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
 
         Parameters
         ----------
-        keys : list | tuple | set | Hashable
-            node and/or edge id(s) to restrict to
+        uid_list : list
+            list of uids from edges, nodes, or incidence pairs(listed as tuples)
         level : None, optional
-            Enter 0 to remove edges with ids in keys.
-            Enter 1 to remove nodes with ids in keys.
-            If None then all objects in nodes and edges with the id will
-            be removed.
+            Enter 0 to remove edges.
+            Enter 1 to remove nodes.
+            Enter 2 to remove incidence pairs as tuples
         name : str, optional
             Name of new hypergraph
 
@@ -1208,43 +1235,16 @@ class Hypergraph:
         : hnx.Hypergraph
 
         """
-        rdfprop = self.properties.copy()
-        rdf = self.dataframe.copy()
-        if isinstance(keys, (list, tuple, set)):
-            nkeys = keys
-        elif isinstance(keys, Hashable):
-            nkeys = list()
-            nkeys.append(keys)
-        else:
-            raise TypeError("`keys` parameter must be list | tuple | set | Hashable")
-        if level == 0:
-            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["edges"]))
-            for k in kdx:
-                rdfprop = rdfprop.drop((0, k))
-            rdf = rdf.loc[~(rdf[self._edge_col].isin(kdx))]
-        elif level == 1:
-            kdx = set(nkeys).intersection(set(self._state_dict["labels"]["nodes"]))
-            for k in kdx:
-                rdfprop = rdfprop.drop((1, k))
-            rdf = rdf.loc[~(rdf[self._node_col].isin(kdx))]
-        else:
-            rdfprop = rdfprop.reset_index()
-            kdx = set(nkeys).intersection(rdfprop.id.unique())
-            rdfprop = rdfprop.set_index("id")
-            rdfprop = rdfprop.drop(index=kdx)
-            rdf = rdf.loc[~(rdf[self._edge_col].isin(kdx))]
-            rdf = rdf.loc[~(rdf[self._node_col].isin(kdx))]
 
-        return Hypergraph(
-            setsystem=rdf,
-            edge_col=self._edge_col,
-            node_col=self._node_col,
-            cell_weight_col=self._cell_weight_col,
-            misc_cell_properties_col=self.edges._misc_cell_props_col,
-            properties=rdfprop,
-            misc_properties_col=self.edges._misc_props_col,
-            name=name,
-        )
+        if level in [0,1]:
+            df = self.properties.copy(deep=True)
+            df = df.drop(labels=uid_list,level=level)
+            return self._construct_hyp_from_stores(df)
+        else:
+            df = self.properties.copy(deep=True)
+            df = df.drop(labels=uid_list)
+            return self._construct_hyp_from_stores(df)        # rdfprop = self.properties.copy()
+        
 #### this should follow behavior of restrictions
     def toplexes(self, name=None):
         """
@@ -2065,3 +2065,5 @@ class Hypergraph:
                 weights="cell_weights",
                 name=None,
             )
+        
+

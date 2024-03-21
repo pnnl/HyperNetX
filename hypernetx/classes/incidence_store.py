@@ -215,6 +215,8 @@ class IncidenceStore:
         elif level == 1:
             old_dict = self._memberships
             col = 'nodes'
+        else:
+            return self.data
 
         temp = defaultdict(list)
         for k,v in old_dict.items():
@@ -227,9 +229,9 @@ class IncidenceStore:
 
         df = self._data.loc[self._data[col].isin(eclasses.keys())]
         if return_equivalence_classes == True:
-            return IncidenceStore(df), eclasses
+            return IncidenceStore(df)._data, eclasses
         else:
-            return IncidenceStore(df)
+            return IncidenceStore(df)._data
         
 
         
