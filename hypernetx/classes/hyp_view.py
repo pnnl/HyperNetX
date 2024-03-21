@@ -90,6 +90,9 @@ class HypergraphView(object):
         else:
             return {}
         
+    def is_empty(self):
+        return len(self._items) == 0
+        
     @property
     def elements(self):
         if self._level == 0 or self._level == 2:
