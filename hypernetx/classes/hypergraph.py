@@ -189,7 +189,7 @@ class Hypergraph:
     @property
     def edges(self):
         """
-        Object associated with self._edges.
+        Object associated with edges.
 
         Returns
         -------
@@ -200,13 +200,25 @@ class Hypergraph:
     @property
     def nodes(self):
         """
-        Object associated with self._nodes.
+        Object associated with nodes.
 
         Returns
         -------
         EntitySet
         """
         return self._nodes
+    
+    @property
+    def incidences(self):
+        """
+        Object associated with incidence pairs
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
+        return self._E
 
     @property
     def dataframe(self):
