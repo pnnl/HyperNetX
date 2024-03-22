@@ -7,7 +7,8 @@ from scipy.sparse import csr_matrix
 from collections import defaultdict
 import numpy as np
 
-__all__=["IncidenceStore"]
+__all__ = ["IncidenceStore"]
+
 
 class IncidenceStore:
     """
@@ -29,18 +30,17 @@ class IncidenceStore:
         """
         # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
         self._data = data
-        self._elements = data.groupby('edges').agg(list).to_dict()['nodes']
-        self._memberships = data.groupby('nodes').agg(list).to_dict()['edges']
-
+        self._elements = data.groupby("edges").agg(list).to_dict()["nodes"]
+        self._memberships = data.groupby("nodes").agg(list).to_dict()["edges"]
 
     @property
     def data(self):
         return self._data
-    
+
     @property
     def elements(self):
         return self._elements
-    
+
     @property
     def memberships(self):
         return self._memberships
@@ -67,7 +67,7 @@ class IncidenceStore:
         array
              Returns an array of edge names
         """
-        return self._data['edges'].unique()
+        return self._data["edges"].unique()
 
     @property
     def nodes(self):
@@ -79,7 +79,7 @@ class IncidenceStore:
         array
              Returns an array of node names
         """
-        return self._data['nodes'].unique()
+        return self._data["nodes"].unique()
 
     def __iter__(self):
         """
@@ -90,11 +90,11 @@ class IncidenceStore:
         iter of tuples
             Iterator over incidence pairs (tuples) in the hypergraph.
         """
-        # itertuples provides iterator over rows in a dataframe 
+        # itertuples provides iterator over rows in a dataframe
         # with index as false to not return index
         # and name as None to return a standard tuple.
         return self._data.itertuples(index=False, name=None)
-    
+
     def __len__(self):
         """
         Total number of incidences
@@ -134,10 +134,12 @@ class IncidenceStore:
         #     return does_contain
         # else:
         #     return False
-        
-        return incidence_pair in self._data.values
 
-
+        # Numpy's __contains__ method does not work on non-scalars
+        # see https://github.com/numpy/numpy/issues/3016
+        # This implementation is workaround on numpy's __contains__ issue until it is resolved
+        store = [tuple(pair) for pair in self._data.values.tolist()]
+        return any(incidence_pair == pair for pair in store)
 
     def neighbors(self, level, key):
         """
@@ -157,14 +159,13 @@ class IncidenceStore:
         list
             Elements or memberships (depending on level) of a given edge or node, respectively.
         """
-        
+
         if level == 0:
-            return self._elements.get(key,[])
+            return self._elements.get(key, [])
         elif level == 1:
-            return self._memberships.get(key,[])
+            return self._memberships.get(key, [])
         else:
             return []
-        
 
     def restrict_to(self, level, items, inplace=False):
         ### TODO if inplace == True the constructor's attributes need to be
@@ -191,54 +192,56 @@ class IncidenceStore:
         list
             subset of incidence store given a restriction.
         """
-
-
         if level == 0:
-            column = 'edges'
+            column = "edges"
         elif level == 1:
-            column = 'nodes'
+            column = "nodes"
         else:
             raise ValueError("Invalid level provided. Must be 0 or 1.")
 
         if inplace:
-            self._data.drop(self._data[~self._data[column].isin(items)].index, inplace=True)
+            self._data.drop(
+                self._data[~self._data[column].isin(items)].index, inplace=True
+            )
             return self._data
 
-        else: #return a subset without editing the original dataframe.
+        else:  # return a subset without editing the original dataframe.
             df = self._data
             return df[df[column].isin(items)]
-        
-    def equivalence_classes(self,level=0):
+
+    def equivalence_classes(self, level=0):
         if level == 0:
             old_dict = self._elements
-            col = 'edges'
+            col = "edges"
         elif level == 1:
             old_dict = self._memberships
-            col = 'nodes'
+            col = "nodes"
         else:
             return self.data
 
         temp = defaultdict(list)
-        for k,v in old_dict.items():
+        for k, v in old_dict.items():
             temp[frozenset(v)] += [k]
         return list(temp.values())
-    
-    def collapse_identical_elements(self,level,use_keys = None, return_equivalence_classes=False):
+
+    def collapse_identical_elements(
+        self, level, use_keys=None, return_equivalence_classes=False
+    ):
         if level == 0:
-            col = 'edges'
+            col = "edges"
         elif level == 1:
-            col = 'nodes'
+            col = "nodes"
         else:
             return None
-        
+
         eclasses = self.equivalence_classes(level=level)
-        if use_keys == None:           
-            edict = {ec[0]:ec for ec in eclasses}
+        if use_keys == None:
+            edict = {ec[0]: ec for ec in eclasses}
         else:
             edict = dict()
             for ec in eclasses:
                 k = list(set(use_keys).intersection(ec))
-                if len(k)> 0:
+                if len(k) > 0:
                     edict[k[0]] = ec
                 else:
                     edict[ec[0]] = ec
@@ -247,18 +250,3 @@ class IncidenceStore:
             return df, edict
         else:
             return df
-        
-
-        
-
-
-    
-
-
-        
-            
-
-
-
-
-
