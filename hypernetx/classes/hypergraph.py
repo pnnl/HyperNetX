@@ -17,11 +17,14 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
-from hypernetx.classes.factory import dataframe_factory_method, dict_factory_method, list_factory_method
+from hypernetx.classes.factory import (
+    dataframe_factory_method,
+    dict_factory_method,
+    list_factory_method,
+)
 from hypernetx.classes.incidence_store import IncidenceStore
 from hypernetx.classes.property_store import PropertyStore
 from hypernetx.classes.hyp_view import HypergraphView
@@ -46,58 +49,59 @@ class Hypergraph:
             | Iterable[Iterable[T]]
             | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
-        default_cell_weight: float | int = 1,    ### we will no longer support a sequence
+        default_cell_weight: float | int = 1,  ### we will no longer support a sequence
         edge_col: str | int = 0,
         node_col: str | int = 1,
         cell_weight_col: Optional[str | int] = "weight",
-
         cell_properties: Optional[
             Sequence[str | int] | Mapping[T, Mapping[T, Mapping[str, Any]]]
         ] = None,
         misc_cell_properties_col: Optional[str | int] = None,
         aggregate_by: str | dict[str, str] = "first",
-
         ### Format for properties can be either a dataframe indexed on uid
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
         properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        prop_uid_col : str | int | None = None, ### this means the index will be used for uid
+        prop_uid_col: (
+            str | int | None
+        ) = None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_properties_col: Optional[str | int] = None,
         weight_prop_col: str | int = "weight",
-        default_weight: float = 1.0,   
-
+        default_weight: float = 1.0,
         ### these are just for properties on the edges - ignored if properties exists
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        edge_uid_col : str | int | None = None, ### this means the index will be used for uid
+        edge_uid_col: (
+            str | int | None
+        ) = None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_edge_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
         default_edge_weight: float | int = 1,
-
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        node_uid_col : str | int | None = None, ### this means the index will be used for uid
+        node_uid_col: (
+            str | int | None
+        ) = None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_node_properties_col: Optional[str | int] = None,
         node_weight_prop_col: str | int = "weight",
         default_node_weight: float | int = 1,
-
         name: Optional[str] = None,
         **kwargs,
-   ):
+    ):
 
         #### Use a Factory Method to create 4 stores
-            ## df = Incidence Store from structural data
-            ## edges,nodes,incidences = Property stores tied to ids in df
-            ## Incidences - uses df, dictionary - assigns keys to incidence
-            ## pairs and/or removes duplicates,
-            ## identifies keys for edges and nodes
+        ## df = Incidence Store from structural data
+        ## edges,nodes,incidences = Property stores tied to ids in df
+        ## Incidences - uses df, dictionary - assigns keys to incidence
+        ## pairs and/or removes duplicates,
+        ## identifies keys for edges and nodes
 
         ## Construct 3 HypergraphViews to tie these together?
-            ## Incidences - links keys from 3 stores, and incidences with properties
-            ## Edges - reconciles keys from Incidences against a Property Store
-            ## Nodes - reconciles keys from Incidences against a Property Store
+        ## Incidences - links keys from 3 stores, and incidences with properties
+        ## Edges - reconciles keys from Incidences against a Property Store
+        ## Nodes - reconciles keys from Incidences against a Property Store
 
         # decision tree to route data by type OR user specified type
         # to correct factory method for each of 3 property stores
@@ -105,33 +109,41 @@ class Hypergraph:
         # 3 calls to the different factory methods (data => df for Property Store)
         # 1 call to the incidence factory method (setsystem => df for Incidence Store)
 
-        type_dict = { 
-            'DataFrame' : dataframe_factory_method,
-            'dict' : dict_factory_method,
-            'OrderedDict' : dict_factory_method,
-            'defaultdict' : dict_factory_method,
-            'list' : list_factory_method,
+        type_dict = {
+            "DataFrame": dataframe_factory_method,
+            "dict": dict_factory_method,
+            "OrderedDict": dict_factory_method,
+            "defaultdict": dict_factory_method,
+            "list": list_factory_method,
         }
-    
-    ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
-    ## dataframe_factory_method(edge_properties_df,uid_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
 
-        
+        ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
+        ## dataframe_factory_method(edge_properties_df,uid_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
+
         if setsystem is None:
-            setsystem = pd.DataFrame(columns = ['edges','nodes','weight','misc_properties'])
+            setsystem = pd.DataFrame(
+                columns=["edges", "nodes", "weight", "misc_properties"]
+            )
         setsystem_type = type(setsystem).__name__
         if setsystem_type in type_dict:
-            df = type_dict[setsystem_type](setsystem,2,
-                                           uid_cols=[edge_col,node_col],
-                                           weight_col = cell_weight_col,
-                                           default_weight=default_cell_weight,
-                                           misc_properties_col=misc_cell_properties_col,
-                                           aggregate_by=aggregate_by)
-    ## dataframe_factory_method(edf,uid_cols=[uid_col],weight_col,default_weight,misc_properties)
+            df = type_dict[setsystem_type](
+                setsystem,
+                2,
+                uid_cols=[edge_col, node_col],
+                weight_col=cell_weight_col,
+                default_weight=default_cell_weight,
+                misc_properties_col=misc_cell_properties_col,
+                aggregate_by=aggregate_by,
+            )
+            ## dataframe_factory_method(edf,uid_cols=[uid_col],weight_col,default_weight,misc_properties)
             ## multi index set by uid_cols = [edge_col,node_col]
-            incidence_store = IncidenceStore(pd.DataFrame(list(df.index),columns=['edges','nodes']))
-            incidence_propertystore = PropertyStore(data=df,default_weight = default_cell_weight) 
-            self._E = HypergraphView(incidence_store,2,incidence_propertystore)
+            incidence_store = IncidenceStore(
+                pd.DataFrame(list(df.index), columns=["edges", "nodes"])
+            )
+            incidence_propertystore = PropertyStore(
+                data=df, default_weight=default_cell_weight
+            )
+            self._E = HypergraphView(incidence_store, 2, incidence_propertystore)
             ## if no properties PropertyStore should store in the most efficient way
         else:
             raise HyperNetXError("setsystem data type not supported")
@@ -140,51 +152,63 @@ class Hypergraph:
         if properties is not None:
             property_type = type(properties).__name__
             if property_type in type_dict:
-                dfp = type_dict[property_type](properties,0,
-                                               weight_col=weight_prop_col,
-                                               default_weight=default_weight,
-                                               misc_properties_col=misc_properties_col)
-                all_propertystore = PropertyStore(data=dfp, default_weight = default_weight)
-                self._edges = HypergraphView(incidence_store,0,all_propertystore)
-                self._nodes = HypergraphView(incidence_store,1,all_propertystore)
+                dfp = type_dict[property_type](
+                    properties,
+                    0,
+                    weight_col=weight_prop_col,
+                    default_weight=default_weight,
+                    misc_properties_col=misc_properties_col,
+                )
+                all_propertystore = PropertyStore(
+                    data=dfp, default_weight=default_weight
+                )
+                self._edges = HypergraphView(incidence_store, 0, all_propertystore)
+                self._nodes = HypergraphView(incidence_store, 1, all_propertystore)
         else:
             if edge_properties is not None:
                 edge_property_type = type(edge_properties).__name__
                 if edge_property_type in type_dict:
-                    edfp = type_dict[edge_property_type](edge_properties,0,
-                                                         weight_col=edge_weight_prop_col,
-                                                         default_weight=default_edge_weight,
-                                                         misc_properties_col=misc_edge_properties_col)
-                    edge_propertystore = PropertyStore(edfp, default_weight = default_edge_weight)
-                else: 
-                    edge_properties = PropertyStore(default_weight = default_edge_weight)
+                    edfp = type_dict[edge_property_type](
+                        edge_properties,
+                        0,
+                        weight_col=edge_weight_prop_col,
+                        default_weight=default_edge_weight,
+                        misc_properties_col=misc_edge_properties_col,
+                    )
+                    edge_propertystore = PropertyStore(
+                        edfp, default_weight=default_edge_weight
+                    )
+                else:
+                    edge_properties = PropertyStore(default_weight=default_edge_weight)
             else:
-                edge_propertystore = PropertyStore(default_weight = default_edge_weight)       
-            self._edges = HypergraphView(incidence_store,0,edge_propertystore) 
+                edge_propertystore = PropertyStore(default_weight=default_edge_weight)
+            self._edges = HypergraphView(incidence_store, 0, edge_propertystore)
 
             if node_properties is not None:
                 node_property_type = type(node_properties).__name__
                 if node_property_type in type_dict:
-                    ndfp = type_dict[node_property_type](node_properties,1,
-                                                         weight_col=node_weight_prop_col,
-                                                         default_weight=default_node_weight,
-                                                         misc_properties_col=misc_node_properties_col)
-                    node_propertystore = PropertyStore(ndfp, default_weight = default_node_weight)
+                    ndfp = type_dict[node_property_type](
+                        node_properties,
+                        1,
+                        weight_col=node_weight_prop_col,
+                        default_weight=default_node_weight,
+                        misc_properties_col=misc_node_properties_col,
+                    )
+                    node_propertystore = PropertyStore(
+                        ndfp, default_weight=default_node_weight
+                    )
                 else:
-                    node_propertystore = PropertyStore(default_weight = default_node_weight)       
+                    node_propertystore = PropertyStore(
+                        default_weight=default_node_weight
+                    )
             else:
-                node_propertystore = PropertyStore(default_weight = default_node_weight)        
-            self._nodes = HypergraphView(incidence_store,1,node_propertystore)  
-               
-                    
-                    
+                node_propertystore = PropertyStore(default_weight=default_node_weight)
+            self._nodes = HypergraphView(incidence_store, 1, node_propertystore)
 
         self._dataframe = self.dataframe
         self._set_default_state()
         self.name = name
         self.__dict__.update(locals())
-
-
 
     @property
     def edges(self):
@@ -195,7 +219,7 @@ class Hypergraph:
         -------
         EntitySet
         """
-        return self._edges  
+        return self._edges
 
     @property
     def nodes(self):
@@ -207,7 +231,7 @@ class Hypergraph:
         EntitySet
         """
         return self._nodes
-    
+
     @property
     def incidences(self):
         """
@@ -231,7 +255,7 @@ class Hypergraph:
         df = self._E.dataframe.reset_index()
         return df
 
-    @property ### TBD
+    @property  ### TBD
     def properties(self):
         """Returns dataframe of edge and node properties.
 
@@ -241,22 +265,26 @@ class Hypergraph:
         """
         return self._E.properties
 
-    def incidence_matrix(self, index = False, use_weights=False): 
-        
-        e,n = self._state_dict['data'].T
+    def incidence_matrix(self, index=False, use_weights=False):
+
+        e, n = self._state_dict["data"].T
         if use_weights == True:
             data = [self._E[d].weight for d in self._E]
         else:
             data = np.ones(len(e)).astype(int)
-        mat = csr_matrix((data,(n,e)))
+        mat = csr_matrix((data, (n, e)))
         if index == False:
             return mat
         else:
-            return mat, self._state_dict['labels']['nodes'], self._state_dict['labels']['edges']
-        
+            return (
+                mat,
+                self._state_dict["labels"]["nodes"],
+                self._state_dict["labels"]["edges"],
+            )
+
     def incidence_dataframe(self, use_weights=False):
-        mat, rindex, cindex = self.incidence_matrix( index = True, use_weights=use_weights)
-        return pd.DataFrame(mat.toarray(),columns=cindex,index=rindex)
+        mat, rindex, cindex = self.incidence_matrix(index=True, use_weights=use_weights)
+        return pd.DataFrame(mat.toarray(), columns=cindex, index=rindex)
 
     @property
     def edge_props(self):
@@ -291,7 +319,7 @@ class Hypergraph:
         dict
 
         """
-        return self._E.elements  
+        return self._E.elements
 
     @property
     def shape(self):
@@ -398,7 +426,9 @@ class Hypergraph:
             cell property value if `prop_name` is provided, otherwise ``dict`` of all
             cell properties and values
         """
-        return self._E.properties((edge,node),prop_name=prop_name)  ### get_property from hyp_view
+        return self._E.properties(
+            (edge, node), prop_name=prop_name
+        )  ### get_property from hyp_view
 
     def get_properties(self, uid, level=0, prop_name=None):
         """Returns an object's specific property or all properties
@@ -426,7 +456,7 @@ class Hypergraph:
             store = self._nodes
         elif level == 2:
             store = self._E
-        if prop_name is None: ## rewrite for edges and nodes.
+        if prop_name is None:  ## rewrite for edges and nodes.
             return store[uid].properties
         else:
             return store[uid].__getattr__(prop_name, None)
@@ -459,7 +489,7 @@ class Hypergraph:
         if s in d[key]:
             return d[key][s]
 
-        if edges: ### Amaplist needs a dictionary returned for properties.
+        if edges:  ### Amaplist needs a dictionary returned for properties.
             A, Amap = self.edge_adjacency_matrix(s=s, index=True)
             Amaplst = [(k, self._edges[k].properties) for k in Amap]
         else:
@@ -489,40 +519,37 @@ class Hypergraph:
         """
         self._state_dict.update(kwargs)
 
-    def _set_default_state(self,empty=False):
+    def _set_default_state(self, empty=False):
         """Populate state_dict with default values
         This may change with HypegraphView since data is no
         longer required to be in a specific structure
         """
         self._state_dict = {}
         df = self._E.incidence_store.data
-        self._state_dict["dataframe"] = df 
+        self._state_dict["dataframe"] = df
 
         if empty:
-            self._state_dict["labels"] = {
-                "edges": np.array([]),
-                "nodes": np.array([])
-                }
-            self._state_dict["data"] = np.array([[],[]])
+            self._state_dict["labels"] = {"edges": np.array([]), "nodes": np.array([])}
+            self._state_dict["data"] = np.array([[], []])
         else:
-            df.edges = df.edges.astype('category')
-            df.nodes = df.nodes.astype('category')
+            df.edges = df.edges.astype("category")
+            df.nodes = df.nodes.astype("category")
             self._state_dict["labels"] = {
-                "edges": np.array(df['edges'].cat.categories),
-                "nodes": np.array(df['nodes'].cat.categories),
+                "edges": np.array(df["edges"].cat.categories),
+                "nodes": np.array(df["nodes"].cat.categories),
             }
             self._state_dict["data"] = np.array(
-                [df['edges'].cat.codes, df['nodes'].cat.codes], dtype=int
+                [df["edges"].cat.codes, df["nodes"].cat.codes], dtype=int
             ).T
-
 
         self._state_dict["snodelg"] = dict()  ### s: nx.graph
         self._state_dict["sedgelg"] = dict()
         self._state_dict["neighbors"] = defaultdict(dict)  ### s: {node: neighbors}
-        self._state_dict["edge_neighbors"] = defaultdict(dict)  ### s: {edge: edge_neighbors}
+        self._state_dict["edge_neighbors"] = defaultdict(
+            dict
+        )  ### s: {edge: edge_neighbors}
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
-
 
     def edge_size_dist(self):
         """
@@ -568,7 +595,7 @@ class Hypergraph:
                 size = len(self.edges[edge])
                 if size >= s and (max_size is None or size <= max_size):
                     memberships.add(edge)
-### This could possibly be done more efficiently on the dataframe.
+            ### This could possibly be done more efficiently on the dataframe.
             return len(memberships)
 
     def size(self, edge, nodeset=None):
@@ -825,7 +852,7 @@ class Hypergraph:
         else:
             return B
 
-    def bipartite(self, keep_data = False, directed = False):  ## TODO share data with graph
+    def bipartite(self, keep_data=False, directed=False):  ## TODO share data with graph
         """
         Constructs the networkX bipartite graph associated to hypergraph.
 
@@ -848,43 +875,48 @@ class Hypergraph:
         if keep_data == False:
             B.add_nodes_from(self.edges, bipartite=0)
             B.add_nodes_from(self.nodes, bipartite=1)
-            B.add_edges_from([(e,v) for v in self._nodes.memberships for e in self._nodes.memberships[v]])    
+            B.add_edges_from(
+                [
+                    (e, v)
+                    for v in self._nodes.memberships
+                    for e in self._nodes.memberships[v]
+                ]
+            )
         else:
             for nd in self.nodes:
                 B.add_node(nd, bipartite=1, **self.nodes[nd].properties)
             for ed in self.edges:
                 B.add_node(ed, bipartite=0, **self.edges[ed].properties)
-            B.add_edges_from([(*d,self._E[d].properties) for d in self._E])       
+            B.add_edges_from([(*d, self._E[d].properties) for d in self._E])
         return B
 
+    def _construct_hyp_from_stores(
+        self, incidence_df, edge_ps=None, node_ps=None, name=None
+    ):
 
-    def _construct_hyp_from_stores(self, incidence_df,
-                                   edge_ps = None,
-                                   node_ps = None,
-                                   name = None
-                                   ):
-        
         h = Hypergraph()
-        
-        incidence_store = IncidenceStore(pd.DataFrame(incidence_df.index.tolist(),columns=['edges','nodes']))
+
+        incidence_store = IncidenceStore(
+            pd.DataFrame(incidence_df.index.tolist(), columns=["edges", "nodes"])
+        )
         incidence_ps = PropertyStore(incidence_df)
-        h._E = HypergraphView(incidence_store,2,incidence_ps)
+        h._E = HypergraphView(incidence_store, 2, incidence_ps)
 
         if edge_ps is None:
-            h._edges = HypergraphView(incidence_store,0,self._edges.property_store)
+            h._edges = HypergraphView(incidence_store, 0, self._edges.property_store)
         else:
             h._edges = HypergraphView(incidence_store, 0, edge_ps)
 
         if node_ps is None:
-            h._nodes = HypergraphView(incidence_store,1,self._nodes.property_store)
+            h._nodes = HypergraphView(incidence_store, 1, self._nodes.property_store)
         else:
-            h._nodes = HypergraphView(incidence_store,1,node_ps)
+            h._nodes = HypergraphView(incidence_store, 1, node_ps)
         h._set_default_state()
         h.name = name
         h._dataframe = h.dataframe
         return h
 
-    def dual(self, name=None, share_properties = True):
+    def dual(self, name=None, share_properties=True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -901,11 +933,15 @@ class Hypergraph:
         -------
         : hypergraph
 
-        """   
+        """
 
         C = self.dataframe.columns.tolist()
 
-        dsetsystem = self.dataframe[[C[1] , C[0]] + C[2:]].rename(columns={'edges':'nodes','nodes':'edges'}).set_index(['edges','nodes'])
+        dsetsystem = (
+            self.dataframe[[C[1], C[0]] + C[2:]]
+            .rename(columns={"edges": "nodes", "nodes": "edges"})
+            .set_index(["edges", "nodes"])
+        )
 
         if share_properties == False:
             edge_ps = PropertyStore(self._nodes.dataframe.copy(deep=True))
@@ -914,23 +950,25 @@ class Hypergraph:
             edge_ps = self._nodes
             node_ps = self._edges
 
-        hdual = self._construct_hyp_from_stores(dsetsystem, 
-                                                    edge_ps = edge_ps, 
-                                                    node_ps = node_ps, 
-                                                    name = name or str(self.name) + '_dual')
+        hdual = self._construct_hyp_from_stores(
+            dsetsystem,
+            edge_ps=edge_ps,
+            node_ps=node_ps,
+            name=name or str(self.name) + "_dual",
+        )
         return hdual
 
-###### Collapse methods now handled completely in the incidence store
+    ###### Collapse methods now handled completely in the incidence store
     def equivalence_classes(self, edges=True):
         level = 0 if edges == True else 1
-        return self._E.incidence_store.equivalence_classes(level = level)
+        return self._E.incidence_store.equivalence_classes(level=level)
 
     def collapse_edges(
         self,
         name=None,
-        use_uids = None,
+        use_uids=None,
         return_equivalence_classes=False,
-        share_properties = False
+        share_properties=False,
     ):
         """
         Constructs a new hypergraph gotten by identifying edges containing the
@@ -941,7 +979,7 @@ class Hypergraph:
         name : hashable, optional, default = None
 
         return_equivalence_classes: boolean, optional, default = False
-            Returns a dictionary of edge equivalence classes 
+            Returns a dictionary of edge equivalence classes
 
         Returns
         -------
@@ -966,9 +1004,7 @@ class Hypergraph:
 
         """
         df, eclasses = self._E.incidence_store.collapse_identical_elements(
-            0,
-            use_keys = use_uids,
-            return_equivalence_classes = True
+            0, use_keys=use_uids, return_equivalence_classes=True
         )
         incidence_pairs = [tuple(d) for d in df.values]
         incidence_df = self._E.properties.loc[incidence_pairs]
@@ -979,18 +1015,20 @@ class Hypergraph:
         else:
             edge_ps = PropertyStore(self.edges.properties.copy(deep=True).loc[ekeys])
             node_ps = PropertyStore(self.nodes.properties.copy(deep=True))
-            H = self._construct_hyp_from_stores(incidence_df, edge_ps = edge_ps, node_ps = node_ps, name=name)
+            H = self._construct_hyp_from_stores(
+                incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+            )
         if return_equivalence_classes == True:
             return H, eclasses
         else:
-            return H            
-        
+            return H
+
     def collapse_nodes(
         self,
         name=None,
-        use_uids = None,
+        use_uids=None,
         return_equivalence_classes=False,
-        share_properties = False
+        share_properties=False,
     ):
         """
         Constructs a new hypergraph gotten by identifying nodes contained in the
@@ -1001,7 +1039,7 @@ class Hypergraph:
         name : hashable, optional, default = None
 
         return_equivalence_classes: boolean, optional, default = False
-            Returns a dictionary of node equivalence classes 
+            Returns a dictionary of node equivalence classes
 
         Returns
         -------
@@ -1026,9 +1064,7 @@ class Hypergraph:
 
         """
         df, eclasses = self._E.incidence_store.collapse_identical_elements(
-            1,
-            use_keys = use_uids,
-            return_equivalence_classes = True
+            1, use_keys=use_uids, return_equivalence_classes=True
         )
         incidence_pairs = [tuple(d) for d in df.values]
         incidence_df = self._E.properties.loc[incidence_pairs]
@@ -1039,18 +1075,19 @@ class Hypergraph:
         else:
             node_ps = PropertyStore(self.nodes.properties.copy(deep=True).loc[ekeys])
             edge_ps = PropertyStore(self.edges.properties.copy(deep=True))
-            H = self._construct_hyp_from_stores(incidence_df, edge_ps = edge_ps, node_ps = node_ps, name=name)
+            H = self._construct_hyp_from_stores(
+                incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+            )
         if return_equivalence_classes == True:
             return H, eclasses
         else:
             return H
 
-
     def collapse_nodes_and_edges(
         self,
         name=None,
-        use_edge_ids = None,
-        use_node_ids = None,
+        use_edge_ids=None,
+        use_node_ids=None,
         return_equivalence_classes=False,
     ):
         """
@@ -1100,19 +1137,20 @@ class Hypergraph:
 
         if return_equivalence_classes:
             temp, neq = self.collapse_nodes(
-                use_uids = use_node_ids,
-                return_equivalence_classes=True
+                use_uids=use_node_ids, return_equivalence_classes=True
             )
-            ntemp, eeq = temp.collapse_edges(name = name, use_uids = use_edge_ids, return_equivalence_classes=True)
+            ntemp, eeq = temp.collapse_edges(
+                name=name, use_uids=use_edge_ids, return_equivalence_classes=True
+            )
             return ntemp, neq, eeq
         else:
-            temp = self.collapse_nodes(name="temp", use_uids = use_node_ids)
-            return temp.collapse_edges(name=name, use_uids = use_edge_ids)
+            temp = self.collapse_nodes(name="temp", use_uids=use_node_ids)
+            return temp.collapse_edges(name=name, use_uids=use_edge_ids)
 
-#### restrict_to methods should be handled in the incidence
-#### store and should preserve stores if inplace=True otherwise
-#### deepcopy should be returned and properties will be disconnected
-    def restrict_to_nodes(self, nodes, name=None, share_properties = False):
+    #### restrict_to methods should be handled in the incidence
+    #### store and should preserve stores if inplace=True otherwise
+    #### deepcopy should be returned and properties will be disconnected
+    def restrict_to_nodes(self, nodes, name=None, share_properties=False):
         """New hypergraph gotten by restricting to nodes
 
         Parameters
@@ -1128,7 +1166,7 @@ class Hypergraph:
         keys = list(set(self._state_dict["labels"]["nodes"]).difference(nodes))
         return self.remove_nodes(keys, name=name, share_properties=share_properties)
 
-    def restrict_to_edges(self, edges, name=None, share_properties = False):
+    def restrict_to_edges(self, edges, name=None, share_properties=False):
         """New hypergraph gotten by restricting to edges
 
         Parameters
@@ -1142,28 +1180,36 @@ class Hypergraph:
 
         """
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
-        return self.remove_edges(keys, name = name, share_properties = share_properties)
+        return self.remove_edges(keys, name=name, share_properties=share_properties)
 
-#### This should follow behavior of restrictions
-    def remove_edges(self, keys, name=None, share_properties = False):
-        if isinstance(keys,list):
-            return self.remove(keys, level=0, name=name, share_properties = share_properties)
+    #### This should follow behavior of restrictions
+    def remove_edges(self, keys, name=None, share_properties=False):
+        if isinstance(keys, list):
+            return self.remove(
+                keys, level=0, name=name, share_properties=share_properties
+            )
         else:
-            return self.remove([keys], level=0, name=name, share_properties = share_properties)
-        
-    def remove_nodes(self, keys, name=None, share_properties = False):
-        if isinstance(keys,list):
-            return self.remove(keys, level=1, name=name, share_properties = share_properties)
-        else:
-            return self.remove([keys], level=1, name=name, share_properties = share_properties)
-        
-    def remove_incidences(self, keys, name=None, share_properties = False):
-        if isinstance(keys,list):
-            return self.remove(keys, name=name, share_properties = share_properties)
-        else:
-            return self.remove([keys], name=name, share_properties = share_properties)
+            return self.remove(
+                [keys], level=0, name=name, share_properties=share_properties
+            )
 
-    def remove(self, uid_list, level=None, name=None, share_properties = False):
+    def remove_nodes(self, keys, name=None, share_properties=False):
+        if isinstance(keys, list):
+            return self.remove(
+                keys, level=1, name=name, share_properties=share_properties
+            )
+        else:
+            return self.remove(
+                [keys], level=1, name=name, share_properties=share_properties
+            )
+
+    def remove_incidences(self, keys, name=None, share_properties=False):
+        if isinstance(keys, list):
+            return self.remove(keys, name=name, share_properties=share_properties)
+        else:
+            return self.remove([keys], name=name, share_properties=share_properties)
+
+    def remove(self, uid_list, level=None, name=None, share_properties=False):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
@@ -1189,26 +1235,28 @@ class Hypergraph:
 
         """
 
-        if level in [0,1]:
+        if level in [0, 1]:
             df = self.properties.copy(deep=True)
-            df = df.drop(labels=uid_list,level=level, errors='ignore')
+            df = df.drop(labels=uid_list, level=level, errors="ignore")
         else:
             df = self.properties.copy(deep=True)
-            df = df.drop(labels=uid_list, errors='ignore')
+            df = df.drop(labels=uid_list, errors="ignore")
         if share_properties == True:
             return self._construct_hyp_from_stores(df, name=name)
         else:
             edgedf = self._edges.properties.copy(deep=True)
             nodedf = self._nodes.properties.copy(deep=True)
             if level == 0:
-                edge_ps = PropertyStore(edgedf.drop(labels=uid_list, errors = 'ignore'))
+                edge_ps = PropertyStore(edgedf.drop(labels=uid_list, errors="ignore"))
                 node_ps = PropertyStore(nodedf)
             if level == 1:
                 edge_ps = PropertyStore(edgedf)
-                node_ps = PropertyStore(nodedf.drop(labels=uid_list, errors = 'ignore'))
-            return self._construct_hyp_from_stores(df, edge_ps = edge_ps, node_ps = node_ps, name=name)
+                node_ps = PropertyStore(nodedf.drop(labels=uid_list, errors="ignore"))
+            return self._construct_hyp_from_stores(
+                df, edge_ps=edge_ps, node_ps=node_ps, name=name
+            )
 
-#### this should follow behavior of restrictions
+    #### this should follow behavior of restrictions
     def toplexes(self, name=None):
         """
         Returns a :term:`simple hypergraph` corresponding to self.
@@ -1243,7 +1291,7 @@ class Hypergraph:
                 tops += [e]
         return self.restrict_to_edges(tops, name=name)
 
-#### hypergraph method using linegraph gotten from incidence store
+    #### hypergraph method using linegraph gotten from incidence store
     def is_connected(self, s=1, edges=False):
         """
         Determines if hypergraph is :term:`s-connected <s-connected,
@@ -1713,10 +1761,9 @@ class Hypergraph:
 
         return edge_dist
 
-
-#### Needs to create stores then hypergraph.
+    #### Needs to create stores then hypergraph.
     @classmethod
-    @warn_nwhy #### Need to preserve graph properties
+    @warn_nwhy  #### Need to preserve graph properties
     def from_bipartite(cls, B, set_names=("edges", "nodes"), name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -1777,7 +1824,6 @@ class Hypergraph:
                 elist.append([e[1], e[0]])
         df = pd.DataFrame(elist, columns=set_names)
         return Hypergraph(df, name=name, **kwargs)
-
 
     @classmethod
     def from_incidence_matrix(
@@ -1994,5 +2040,3 @@ class Hypergraph:
                 weights="cell_weights",
                 name=None,
             )
-        
-

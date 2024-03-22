@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Mapping
 import numpy as np
 import pandas as pd
 from collections import UserList
 from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
-
-from hypernetx.classes.entityset import *
 
 
 class AttrList(UserList):

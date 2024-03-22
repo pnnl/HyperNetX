@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import warnings
+
 warnings.filterwarnings("default", category=DeprecationWarning)
 
 from copy import deepcopy
@@ -15,7 +16,6 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
-from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
 from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
@@ -24,6 +24,7 @@ from hypernetx.classes.property_store import PropertyStore
 
 __all__ = ["HypergraphView"]
 
+
 class HypergraphView(object):
     """
     Wrapper for Property and Incidence Stores holding structural and
@@ -31,7 +32,8 @@ class HypergraphView(object):
     methods in previous versions. Only nodes and edges in the Incidence
     Store will be seeable in this view.
     """
-    def __init__(self,incidence_store,level,property_store=None):
+
+    def __init__(self, incidence_store, level, property_store=None):
         """
         _summary_
 
@@ -48,13 +50,12 @@ class HypergraphView(object):
         self._level = level
         self._property_store = property_store
 
-
         ### incidence store needs index or columns
-        if level == 0 :
+        if level == 0:
             self._items = self._incidence_store.edges
-        elif level == 1 :
+        elif level == 1:
             self._items = self._incidence_store.nodes
-        elif level == 2 :
+        elif level == 2:
             self._items = self._incidence_store
 
         # self._properties = PropertyStore()
@@ -74,7 +75,7 @@ class HypergraphView(object):
     @property
     def property_store(self):
         return self._property_store
-    
+
     @property
     def dataframe(self):
         return self._property_store._data
@@ -89,15 +90,15 @@ class HypergraphView(object):
             return self.incidence_store.memberships
         else:
             return {}
-        
+
     def is_empty(self):
         return len(self._items) == 0
-    
+
     @property
     def incidence_dict(self):
-        if self._level in [0,2]:
+        if self._level in [0, 2]:
             return self.incidence_store.elements
-    
+
     @property
     def elements(self):
         if self._level == 0 or self._level == 2:
@@ -118,7 +119,7 @@ class HypergraphView(object):
         """
         return len(self._items)
 
-    def __contains__(self,item):
+    def __contains__(self, item):
         """
         Defined by incidence store
 
@@ -128,15 +129,14 @@ class HypergraphView(object):
             _description_
         """
         return item in self._items
-    
+
     def __call__(self):
         """
-        Returns iterator 
+        Returns iterator
         """
         return iter(self._items)
 
-
-    def __getitem__(self,uid):
+    def __getitem__(self, uid):
         """
         Returns incident objects (neighbors in bipartite graph)
         to keyed object as an AttrList.
@@ -153,9 +153,8 @@ class HypergraphView(object):
             _description_
         """
         if uid in self._items:
-            neighbors = self.incidence_store.neighbors(self.level,uid)
-            return NList(uid, self, initlist = neighbors)
-
+            neighbors = self.incidence_store.neighbors(self.level, uid)
+            return NList(uid, self, initlist=neighbors)
 
     # def properties(self,key=None,prop_name=None):
     #     """
@@ -202,8 +201,6 @@ class HypergraphView(object):
     #     """
     #     pass
 
-        
-
     # #### data,labels should be handled in the stores and accessible
     # #### here - if we want them??
     # def encoder(self,item=None):
@@ -219,7 +216,6 @@ class HypergraphView(object):
     #     """
 
 
-
 class NList(UserList):
     """Custom list wrapper for integrating PropertyStore data with
     IncidenceStore relationships
@@ -231,21 +227,16 @@ class NList(UserList):
 
     Returns
     -------
-        : NList object 
+        : NList object
     """
 
-    def __init__(
-        self,
-        uid,
-        hypergraph_view,
-        initlist = None
-    ):
+    def __init__(self, uid, hypergraph_view, initlist=None):
         self._hypergraph_view = hypergraph_view
         self._uid = uid
         if initlist == None:
-            initlist = hypergraph_view._incidence_store.neighbors(self._level,uid)
+            initlist = hypergraph_view._incidence_store.neighbors(self._level, uid)
         super().__init__(initlist)
-    
+
     def __getattr__(self, attr: str):
         """Get attribute value from properties of :attr:`entity`
 
@@ -273,9 +264,8 @@ class NList(UserList):
         else:
             return self._hypergraph_view._property_store.get_property(self._uid, attr)
 
-
     def __setattr__(self, attr, val):
-        """Set attribute value in properties 
+        """Set attribute value in properties
 
         Parameters
         ----------
@@ -288,13 +278,12 @@ class NList(UserList):
             self._hypergraph_view._property_store.set_property(self._uid, attr, val)
 
 
-
 def flatten(my_dict):
-    '''Recursive method to flatten dictionary for returning properties as
+    """Recursive method to flatten dictionary for returning properties as
     a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
     Redundant keys are kept in the order of hierarchy (first seen kept by default)
 
-    '''
+    """
     result = {}
     for key, value in my_dict.items():
         if isinstance(value, dict):
