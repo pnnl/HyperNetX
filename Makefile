@@ -129,3 +129,7 @@ test-deps:
 .PHONY: all-deps
 all-deps:
 	@$(PYTHON3) -m pip install .[all] --use-pep517
+
+.PHONY: install-develop
+install-develop:
+	@$(PYTHON3) -m pip install -e . --use-pep517
