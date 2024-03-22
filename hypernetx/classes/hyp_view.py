@@ -92,7 +92,12 @@ class HypergraphView(object):
         
     def is_empty(self):
         return len(self._items) == 0
-        
+    
+    @property
+    def incidence_dict(self):
+        if self._level in [0,2]:
+            return self.incidence_store.elements
+    
     @property
     def elements(self):
         if self._level == 0 or self._level == 2:

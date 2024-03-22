@@ -109,6 +109,7 @@ class Hypergraph:
             'DataFrame' : dataframe_factory_method,
             'dict' : dict_factory_method,
             'OrderedDict' : dict_factory_method,
+            'defaultdict' : dict_factory_method,
             'list' : list_factory_method,
         }
     
