@@ -244,7 +244,8 @@ class Hypergraph:
 
     @property
     def dataframe(self):
-        """Returns dataframe of incidence pairs and their properties.
+        """Returns dataframe of incidence properties
+        as dataframe with edges and nodes in columns.
 
         Returns
         -------
@@ -253,9 +254,9 @@ class Hypergraph:
         df = self._E.dataframe.reset_index()
         return df
 
-    @property  ### TBD
+    @property
     def properties(self):
-        """Returns dataframe of edge and node properties.
+        """Returns incidence properties
 
         Returns
         -------
@@ -263,9 +264,23 @@ class Hypergraph:
         """
         return self._E.properties
 
-    def incidence_matrix(self, index=False, use_weights=False):
+    def incidence_matrix(self, index = False, use_weights=False): 
+        """
+        _summary_
 
-        e, n = self._state_dict["data"].T
+        Parameters
+        ----------
+        index : bool, optional
+            _description_, by default False
+        use_weights : bool, optional
+            _description_, by default False
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
+        e,n = self._state_dict['data'].T
         if use_weights == True:
             data = [self._E[d].weight for d in self._E]
         else:
@@ -1760,8 +1775,8 @@ class Hypergraph:
 
     #### Needs to create stores then hypergraph.
     @classmethod
-    #### Need to preserve graph properties
-    def from_bipartite(cls, B, set_names=("edges", "nodes"), name=None, **kwargs):
+    @warn_nwhy #### Need to preserve graph properties in data
+    def from_bipartite(cls, B, node_id=1, name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
 
@@ -1773,9 +1788,9 @@ class Hypergraph:
             'bipartite' taking the value of 0 or 1 indicating a 2-coloring of
             the graph.
 
-        set_names: iterable of length 2, optional, default = ['edges','nodes']
-            Category names assigned to the graph nodes associated to each
-            bipartite set
+        node_col : int
+            bipartite value assigned to graph nodes that will be hypergraph
+            edges
 
         name: hashable, optional
 
@@ -1793,7 +1808,7 @@ class Hypergraph:
             >>> B.add_nodes_from(['a', 'b', 'c'], bipartite=1)
             >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), /
                 (3, 'c'), (4, 'a')])
-            >>> H = Hypergraph.from_bipartite(B)
+            >>> H = Hypergraph.from_bipartite(B, nodes=1)
             >>> H.nodes, H.edges
             # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), /
             # EntitySet(_:Edges,['b', 'c', 'a'],{}))
@@ -1803,7 +1818,7 @@ class Hypergraph:
         edges = []
         nodes = []
         for n, d in B.nodes(data=True):
-            if d["bipartite"] == 1:
+            if d["bipartite"] == node_id:
                 nodes.append(n)
             else:
                 edges.append(n)
@@ -1819,7 +1834,7 @@ class Hypergraph:
                 elist.append([e[0], e[1]])
             else:
                 elist.append([e[1], e[0]])
-        df = pd.DataFrame(elist, columns=set_names)
+        df = pd.DataFrame(elist)
         return Hypergraph(df, name=name, **kwargs)
 
     @classmethod
@@ -1853,8 +1868,6 @@ class Hypergraph:
         M,
         node_names=None,
         edge_names=None,
-        node_label="nodes",
-        edge_label="edges",
         name=None,
         key=None,
         **kwargs,
@@ -1932,8 +1945,6 @@ class Hypergraph:
         df,
         columns=None,
         rows=None,
-        edge_col: str = "edges",
-        node_col: str = "nodes",
         name=None,
         fillna=0,
         transpose=False,
@@ -2024,14 +2035,13 @@ class Hypergraph:
         c2 = [cols[c2[idx]] for idx in range(len(c2))]
         c3 = CM.data
 
-        dfnew = pd.DataFrame({edge_col: c2, node_col: c1, "cell_weights": c3})
+        dfnew = pd.DataFrame({'edges': c2, 'nodes': c1, 'weight': c3})
         if return_only_dataframe == True:
             return dfnew
         else:
             return Hypergraph(
                 dfnew,
-                edge_col=edge_col,
-                node_col=node_col,
-                weights="cell_weights",
-                name=None,
+                cell_weight_col="weight",
+                name=name,
+                **kwargs
             )
