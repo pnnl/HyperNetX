@@ -19,7 +19,6 @@ from scipy.sparse import coo_matrix, csr_matrix
 
 from hypernetx.classes import EntitySet
 from hypernetx.exception import HyperNetXError
-from hypernetx.utils.decorators import warn_nwhy
 from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 
 __all__ = ["Hypergraph"]
@@ -277,7 +276,6 @@ class Hypergraph:
 
     """
 
-    @warn_nwhy
     def __init__(
         self,
         setsystem: Optional[
@@ -328,18 +326,18 @@ class Hypergraph:
 
         #### Empty Case
         if setsystem is None or (len(setsystem) == 0):
-            df = pd.DataFrame(columns=['edges','nodes'])
+            df = pd.DataFrame(columns=["edges", "nodes"])
             self.E = EntitySet(df)
-            self._edges = self.E ##Edges(self.E) ##
-            self._nodes = self.E.restrict_to_levels([1]) ##Nodes(self.E) ##
+            self._edges = self.E  ##Edges(self.E) ##
+            self._nodes = self.E.restrict_to_levels([1])  ##Nodes(self.E) ##
             self._data_cols = data_cols = self.E._data_cols
 
             self._dataframe = self.E._dataframe
             self._set_default_state(empty=True)
             if self._dataframe is not None:
-                self._dataframe[self._data_cols] = self._dataframe[self._data_cols].astype(
-                    "category"
-                )
+                self._dataframe[self._data_cols] = self._dataframe[
+                    self._data_cols
+                ].astype("category")
 
             self.__dict__.update(locals())
 
@@ -797,7 +795,6 @@ class Hypergraph:
         else:
             return self.E.get_property(id, prop_name, level=level)
 
-    @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
         # method on hypergraph using incidence store and propertystore
         """
@@ -857,7 +854,7 @@ class Hypergraph:
         """
         self._state_dict.update(kwargs)
 
-    def _set_default_state(self,empty=False):
+    def _set_default_state(self, empty=False):
         # method on hypergraph use incidence and property stores
         """Populate state_dict with default values"""
         self._state_dict = {}
@@ -865,11 +862,8 @@ class Hypergraph:
         self._state_dict["dataframe"] = df = self.dataframe
 
         if empty:
-            self._state_dict["labels"] = {
-                "edges": np.array([]),
-                "nodes": np.array([])
-                }
-            self._state_dict["data"] = np.array([[],[]])
+            self._state_dict["labels"] = {"edges": np.array([]), "nodes": np.array([])}
+            self._state_dict["data"] = np.array([[], []])
 
         else:
             self._state_dict["labels"] = {
@@ -880,14 +874,14 @@ class Hypergraph:
                 [df[self._edge_col].cat.codes, df[self._node_col].cat.codes], dtype=int
             ).T
 
-
         self._state_dict["snodelg"] = dict()  ### s: nx.graph
         self._state_dict["sedgelg"] = dict()
         self._state_dict["neighbors"] = defaultdict(dict)  ### s: {node: neighbors}
-        self._state_dict["edge_neighbors"] = defaultdict(dict)  ### s: {edge: edge_neighbors}
+        self._state_dict["edge_neighbors"] = defaultdict(
+            dict
+        )  ### s: {edge: edge_neighbors}
         self._state_dict["adjacency_matrix"] = dict()  ### s: scipy.sparse.csr_matrix
         self._state_dict["edge_adjacency_matrix"] = dict()
-
 
     def edge_size_dist(self):
         # method on incidence store
@@ -2189,7 +2183,6 @@ class Hypergraph:
         return df
 
     @classmethod
-    @warn_nwhy
     def from_bipartite(cls, B, set_names=("edges", "nodes"), name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -2277,7 +2270,6 @@ class Hypergraph:
         )
 
     @classmethod
-    @warn_nwhy
     def from_numpy_array(
         cls,
         M,
@@ -2357,7 +2349,6 @@ class Hypergraph:
         return Hypergraph.from_incidence_dataframe(df, name=name)
 
     @classmethod
-    @warn_nwhy
     def from_incidence_dataframe(
         cls,
         df,

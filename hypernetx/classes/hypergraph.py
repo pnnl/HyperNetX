@@ -18,8 +18,6 @@ from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
 from hypernetx.exception import HyperNetXError
-from hypernetx.utils.decorators import warn_nwhy
-from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 from hypernetx.classes.factory import (
     dataframe_factory_method,
     dict_factory_method,
@@ -461,7 +459,6 @@ class Hypergraph:
         else:
             return store[uid].__getattr__(prop_name, None)
 
-    @warn_nwhy
     def get_linegraph(self, s=1, edges=True):
         """
         Creates an ::term::s-linegraph for the Hypergraph.
@@ -1763,7 +1760,7 @@ class Hypergraph:
 
     #### Needs to create stores then hypergraph.
     @classmethod
-    @warn_nwhy  #### Need to preserve graph properties
+    #### Need to preserve graph properties
     def from_bipartite(cls, B, set_names=("edges", "nodes"), name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -1851,7 +1848,6 @@ class Hypergraph:
         )
 
     @classmethod
-    @warn_nwhy
     def from_numpy_array(
         cls,
         M,
@@ -1931,7 +1927,6 @@ class Hypergraph:
         return Hypergraph.from_incidence_dataframe(df, name=name)
 
     @classmethod
-    @warn_nwhy
     def from_incidence_dataframe(
         cls,
         df,
