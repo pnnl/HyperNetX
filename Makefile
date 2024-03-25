@@ -11,7 +11,7 @@ lint: pylint flake8 mypy
 
 .PHONY: pylint
 pylint:
-	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx --exit-zero
+	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx
 
 .PHONY: mypy
 mypy:
@@ -27,27 +27,40 @@ format:
 
 
 ## Tests
+.PHONY: test
+test:
+	coverage run --source=hypernetx -m pytest
+	coverage report -m
 
 .PHONY: pre-commit
 pre-commit:
 	pre-commit install
 	pre-commit run --all-files
 
-.PHONY: test
-test:
-	coverage run --source=hypernetx -m pytest
-	coverage report -m
 
-.PHONY: test-ci
-test-ci:
-	@$(PYTHON3) -m tox
+## Tests using Tox
+## Includes linting, running tests on jupyter notebooks, building and checking the documentation
+.PHONY: test-tox
+test-tox:
+	@$(PYTHON3) -m tox --parallel
+
+### Tests using Poetry + Tox
+.PHONY: install-poetry
+install-poetry:
+	pip install poetry==1.8.2
+	poetry config virtualenvs.in-project true
+	poetry run pip install tox
 
 .PHONY: test-ci-stash
-test-ci-stash: lint-deps lint pre-commit test-deps test-ci
+test-ci-stash: install-poetry
+	poetry run tox --parallel
 
+.PHONY: github-ci-deps
+ci-github-deps:
+	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
 
 .PHONY: test-ci-github
-test-ci-github: lint-deps lint pre-commit ci-github-deps test-deps test-ci
+test-ci-github: ci-github-deps test-tox
 
 
 ## Continuous Deployment
@@ -82,7 +95,7 @@ version-deps:
 
 .PHONY: docs-deps
 docs-deps:
-	@$(PYTHON3) -m pip install .[documentation] --use-pep517
+	@$(PYTHON3) -m pip install .[docs] --use-pep517
 
 
 ## Tutorials
@@ -110,10 +123,6 @@ clean:
 venv: clean-venv
 	@$(PYTHON3) -m venv $(VENV);
 
-.PHONY: github-ci-deps
-ci-github-deps:
-	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
-
 .PHONY: lint-deps
 lint-deps:
 	@$(PYTHON3) -m pip install .[lint] --use-pep517
@@ -125,11 +134,3 @@ format-deps:
 .PHONY: test-deps
 test-deps:
 	@$(PYTHON3) -m pip install .[testing] --use-pep517
-
-.PHONY: all-deps
-all-deps:
-	@$(PYTHON3) -m pip install .[all] --use-pep517
-
-.PHONY: install-develop
-install-develop:
-	@$(PYTHON3) -m pip install -e . --use-pep517
