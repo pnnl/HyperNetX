@@ -1775,7 +1775,7 @@ class Hypergraph:
 
     #### Needs to create stores then hypergraph.
     @classmethod
-    @warn_nwhy  #### Need to preserve graph properties in data
+    #### Need to preserve graph properties in data
     def from_bipartite(cls, B, node_id=1, name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
