@@ -8,6 +8,7 @@ This module contains methods which compute various distributions for hypergraphs
 
 Also computes general hypergraph information: number of nodes, edges, cells, aspect ratio, incidence matrix density
 """
+
 from collections import Counter
 import numpy as np
 from hypernetx.utils.decorators import not_implemented_for

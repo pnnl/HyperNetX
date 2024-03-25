@@ -25,7 +25,7 @@ __version__ = "2.2.0"
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0 , os.path.abspath("../../hypernetx"))
+sys.path.insert(0, os.path.abspath("../../hypernetx"))
 
 
 # -- Project information -----------------------------------------------------
@@ -57,7 +57,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
-    'sphinx_copybutton',
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -79,7 +79,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -239,8 +239,8 @@ latex_documents = [
     (
         master_doc,
         "HyperNetX.tex",
-        u"HyperNetX Documentation",
-        u"Brenda Praggastis, Dustin Arendt",
+        "HyperNetX Documentation",
+        "Brenda Praggastis, Dustin Arendt",
         "manual",
     ),
 ]
@@ -270,7 +270,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "hypernetx", u"HyperNetX Documentation", [author], 1)]
+man_pages = [(master_doc, "hypernetx", "HyperNetX Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -285,7 +285,7 @@ texinfo_documents = [
     (
         master_doc,
         "HyperNetX",
-        u"HyperNetX Documentation",
+        "HyperNetX Documentation",
         author,
         "HyperNetX",
         "One line description of project.",
@@ -377,7 +377,7 @@ epub_exclude_files = ["search.html"]
 
 # Remove the command prompts such as >>> when copying code snippets from copybutton
 # see https://sphinx-copybutton.readthedocs.io/en/latest/use.html
-copybutton_exclude = '.linenos, .gp'
+copybutton_exclude = ".linenos, .gp"
 
 #  tables and code-blocks are automatically numbered if they have a caption.
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-numfig

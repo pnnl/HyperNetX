@@ -5,6 +5,7 @@ import hypernetx as hnx
 import random
 from scipy.sparse import coo_matrix
 
+
 # Test the generative model functions
 def test_erdos_renyi():
     random.seed(42)

@@ -12,6 +12,7 @@ from hypernetx.algorithms.contagion import (
 import hypernetx as hnx
 import random
 
+
 # Test the contagion functions
 def test_collective_contagion():
     status = {0: "S", 1: "I", 2: "I", 3: "S", 4: "R"}

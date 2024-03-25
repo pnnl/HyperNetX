@@ -264,7 +264,7 @@ class Hypergraph:
         """
         return self._E.properties
 
-    def incidence_matrix(self, index = False, use_weights=False): 
+    def incidence_matrix(self, index=False, use_weights=False):
         """
         _summary_
 
@@ -280,7 +280,7 @@ class Hypergraph:
         _type_
             _description_
         """
-        e,n = self._state_dict['data'].T
+        e, n = self._state_dict["data"].T
         if use_weights == True:
             data = [self._E[d].weight for d in self._E]
         else:
@@ -1775,7 +1775,7 @@ class Hypergraph:
 
     #### Needs to create stores then hypergraph.
     @classmethod
-    @warn_nwhy #### Need to preserve graph properties in data
+    @warn_nwhy  #### Need to preserve graph properties in data
     def from_bipartite(cls, B, node_id=1, name=None, **kwargs):
         """
         Static method creates a Hypergraph from a bipartite graph.
@@ -2035,13 +2035,8 @@ class Hypergraph:
         c2 = [cols[c2[idx]] for idx in range(len(c2))]
         c3 = CM.data
 
-        dfnew = pd.DataFrame({'edges': c2, 'nodes': c1, 'weight': c3})
+        dfnew = pd.DataFrame({"edges": c2, "nodes": c1, "weight": c3})
         if return_only_dataframe == True:
             return dfnew
         else:
-            return Hypergraph(
-                dfnew,
-                cell_weight_col="weight",
-                name=name,
-                **kwargs
-            )
+            return Hypergraph(dfnew, cell_weight_col="weight", name=name, **kwargs)

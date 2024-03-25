@@ -308,6 +308,7 @@ def majority_vote(node, status, edge):
 
 # Auxiliary functions
 
+
 # The ListDict class is copied from Joel Miller's Github repository Mathematics-of-Epidemics-on-Networks
 class _ListDict_(object):
     r"""

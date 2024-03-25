@@ -91,12 +91,13 @@ def test_remove_edges(sbs):
     H = H.remove_edges("O")
     assert H.shape == (6, 4)
 
+
 @pytest.mark.skip("reason=remove has a new signature")
 def test_remove(triloop2):
     H = triloop2.hypergraph
     k = "ACD2"
     assert H.shape == (5, 4)
-    newH = H.remove(k,level=0)
+    newH = H.remove(k, level=0)
     assert newH.shape == (5, 3)
     newH = H.remove("E", level=1)
     assert newH.shape == (4, 4)
@@ -308,6 +309,7 @@ def test_dual(sbs_hypergraph):
     assert set(H.nodes) == set(HD.edges)
     assert set(H.edges) == set(HD.nodes)
     assert list(H.dataframe.columns) == list(HD.dataframe.columns)
+
 
 @pytest.mark.skip("reason=edge_col and node_col used differently")
 def test_dual_again(sbs):

@@ -372,13 +372,14 @@ def scenes_dataframe(scenes):
 @pytest.fixture
 def hyp_no_props():
     return Hypergraph(
-        pd.DataFrame(np.array(
-            [
-                np.random.choice(list("ABCD"), 50),
-                np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
-            ]
-        ).T,  # creates a transposed ndarray
-        columns=['Club','Member']
+        pd.DataFrame(
+            np.array(
+                [
+                    np.random.choice(list("ABCD"), 50),
+                    np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
+                ]
+            ).T,  # creates a transposed ndarray
+            columns=["Club", "Member"],
         )
     )
 
