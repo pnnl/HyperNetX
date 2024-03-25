@@ -1,4 +1,3 @@
-.github/
 .DS_Store
 gitmerge.sh
 dist
@@ -41,3 +40,4 @@ coverage.xml
 cov.syspath.txt
 *.whl
 *dogsAndcats*
+pytest_notebooks.xml

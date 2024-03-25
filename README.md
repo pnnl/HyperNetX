@@ -190,29 +190,71 @@ Ensure that you have [git](https://git-scm.com/book/en/v2/Getting-Started-Instal
 ```shell
 git clone https://github.com/pnnl/HyperNetX.git
 cd HyperNetX
+
+# Create a virtual environment
 make venv
 source venv-hnx/bin/activate
-pip install .
+
+# install required dependencies
+make install
 ```
 
 Development
 ===========
 
 Install an editable version
----------------------------
-
 ```
 pip install -e .
 ```
 
-Install an editable version with supported applications
--------------------------------------------------------
+Install additional dependencies to support testing and jupyter notebooks:
+```
+pip install -r requirements.txt
+```
 
-```shell
-pip install -e .['all']
+You can also install all these requirements in one Make target:
 
-# for zsh users
-pip install -e .'[all]'
+```
+make install
+```
+
+Poetry
+======
+
+This library uses [Poetry](https://python-poetry.org/docs/) to manage dependencies and packaging. Poetry can also be
+used to manage your environment for development.
+
+Prerequisites
+-------------
+
+* [Install Poetry](https://python-poetry.org/docs/#installation)
+
+
+Configure Poetry
+----------------
+
+[Configure your Poetry](https://python-poetry.org/docs/configuration/) to create the virtual environment in your project directory:
+```
+poetry config virtualenvs.in-project true
+
+# check the poetry configuration
+poetry config --list
+```
+
+Set up virtual environment
+----------------------------
+
+Create and activate a virtual environment.
+```
+poetry shell
+```
+
+NOTE: If you plan to use Poetry to manage your virtual environment, you can activate the virtual environment
+using poerty: `poetry shell`. Another option is to directly
+
+Install required dependencies and HyperNetX in editable mode.
+```
+poetry install
 ```
 
 Install support for testing
@@ -221,7 +263,7 @@ Install support for testing
 > ℹ️ **NOTE:** This project has a pytest configuration file named 'pytest.ini'. By default, pytest will use those configuration settings to run tests.
 
 ```shell
-make test-deps
+poetry install --with test
 
 # run tests
 python -m pytest
@@ -237,16 +279,12 @@ open htmlcov/index.html
 Install support for tutorials
 -----------------------------
 
-``` shell
-make tutorial-deps
+```
+poetry install --with tutorials
 
 # open Jupyter notebooks in a browser
 make tutorials
 ```
-
-
-
-
 
 Code Quality
 ------------
@@ -257,12 +295,12 @@ HyperNetX uses a number of tools to maintain code quality:
 
 Before using these tools, ensure that you install Pylint in your environment:
 
-```shell
-make lint-deps
+```
+poetry install --with lint
 ```
 
-
-### Pylint
+Pylint
+------
 
 [Pylint](https://pylint.pycqa.org/en/latest/index.html) is a static code analyzer for Python-based projects. From the [Pylint docs](https://pylint.pycqa.org/en/latest/index.html#what-is-pylint):
 
@@ -282,37 +320,31 @@ pylint hypernetx --output=pylint-results.txt
 
 For more information on configuration, see https://pylint.pycqa.org/en/latest/user_guide/configuration/index.html
 
-### Black
-
+Black
+-----
 [Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
 
 
 ```shell
-make format-deps
 black hypernetx
 ```
 
 Documentation
-===============
+-------------
 
-Build and view documentation locally
----------------------------
+Build and view documentation locally:
 
 ```
-make docs-deps
+poetry install --with docs
 cd docs
 make html
 open docs/build/html/index.html
 ```
 
-Editing documentation
-----------------------
-
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
 live on the browser without having to rebuild every time you have a change.
 
 ```
-make docs-deps
 cd docs
 make livehtml
 ```
@@ -353,7 +385,7 @@ gh run list --workflow=ci.yml --repo pnnl/HyperNetX
 
 
 Versioning
-----------
+==========
 
 This project uses [`commitizen`](https://github.com/commitizen-tools/commitizen) to manage versioning.
 The files where "version" will be updated are listed in the '.cz.toml' file. To create a new version and the associated tag,
@@ -361,7 +393,7 @@ run the following commands:
 
 ```shell
 # Install commitizen tool to environment
-make version-deps
+pip install commitizen
 
 # Updates version; values for '--increment' can be MAJOR, MINOR, or PATCH
 # Autocreates a tag and commit for the updated version
