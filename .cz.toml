@@ -2,7 +2,7 @@
 name = "cz_conventional_commits"
 version = "2.2.0"
 version_files = [
-    "setup.py",
+    "pyproject.toml",
     "docs/source/conf.py",
     "hypernetx/__init__.py"
 ]

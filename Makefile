@@ -104,4 +104,4 @@ install-reqs:
 ## Clean
 .PHONY: clean
 clean:
-	rm -rf .out .pytest_cache .tox *.egg-info dist build
+	rm -rf .out .pytest_cache .tox *.egg-info dist build _build
