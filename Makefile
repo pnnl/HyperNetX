@@ -95,7 +95,7 @@ version-deps:
 
 .PHONY: docs-deps
 docs-deps:
-	@$(PYTHON3) -m pip install .[docs] --use-pep517
+	@$(PYTHON3) -m pip install .[documentation] --use-pep517
 
 
 ## Tutorials

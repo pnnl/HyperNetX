@@ -75,5 +75,5 @@ shutup = "^0.2.0"
 jupyter = "^1.0.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core", "setuptools >= 65.3.0"]
 build-backend = "poetry.core.masonry.api"
