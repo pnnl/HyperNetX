@@ -2511,7 +2511,6 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
-    {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
     {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
@@ -2872,8 +2871,7 @@ astroid = ">=3.1.0,<=3.2.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = [
     {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.7", markers = "python_version >= \"3.12\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
+    {version = ">=0.3.6", markers = "python_version >= \"3.11\""},
 ]
 isort = ">=4.2.5,<5.13.0 || >5.13.0,<6"
 mccabe = ">=0.6,<0.8"
@@ -4192,5 +4190,5 @@ modularity = ["igraph"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "51265f5c6dbed7420f104bdbf4f8ebabf2370df6583dc29bf2a40af5f48130d8"
+python-versions = "^3.9,<3.12"
+content-hash = "382a0f660ab3de10fdafd05ca0e4c44a7aefb3e675c4a1a921b66c6b4bbbe4ac"

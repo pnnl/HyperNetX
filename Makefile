@@ -27,7 +27,7 @@ test:
 	coverage report -m
 
 ## Tests using Tox
-## Includes linting, running tests on jupyter notebooks, building and checking the documentation
+## Includes linting, running tests on jupyter notebooks
 .PHONY: test-tox
 test-tox:
 	@$(PYTHON3) -m tox --parallel
@@ -40,40 +40,46 @@ install-poetry:
 	poetry config virtualenvs.in-project true
 	poetry run pip install tox
 
-.PHONY: test-ci-stash
-test-ci-stash: install-poetry
+.PHONY: run-poetry-tox
+run-poetry-tox:
 	poetry run tox --parallel
 
-.PHONY: docs-deps
-docs-deps: install-poetry
+.PHONY: clean-poetry
+clean-poetry:
+	poetry env remove --all
+
+.PHONY: test-ci-stash
+test-ci-stash: install-poetry run-poetry-tox clean-poetry
+
+.PHONY: test-ci-github
+test-ci-github: run-poetry-tox
+
+.PHONY: run-poetry-tox-build-docs
+run-poetry-tox-build-docs:
 	poetry run tox -e build-docs
 
-# TODO: fix/update Github Actions
-.PHONY: test-ci-github
-test-ci-github: ci-github-deps test-tox
-
-.PHONY: github-ci-deps
-ci-github-deps:
-	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
+.PHONY: build-docs
+build-docs: install-poetry run-poetry-tox-build-docs clean-poetry
 
 
 
-## Continuous Deployment
-## Assumes that scripts are run on a container or test server VM
-### Publish to PyPi
-
-.PHONY: build-dist
-build-dist: clean
-	@$(PYTHON3) -m pip install build twine
-	@$(PYTHON3) -m build --wheel --sdist
-	@$(PYTHON3) -m twine check dist/*
-
-## Assumes the following environment variables are set: TWINE_USERNAME, TWINE_PASSWORD, TWINE_REPOSITORY_URL,
-## See https://twine.readthedocs.io/en/stable/#environment-variables
+## Publish to PyPi
+## Targets are included as a backup in case the Github Workflows CI can't publish to PyPi and we need to do it manually
+## Assumes the following environment variables are set: PYPI_API_TOKEN
 .PHONY: publish-to-pypi
 publish-to-pypi: build-dist
 	@echo "Publishing to PyPi"
-	$(PYTHON3) -m twine upload dist/*
+	poetry config pypi-token.pypi PYPI_API_TOKEN
+	poetry config repositories.pypi https://pypi.org/simple/
+	poetry publish --dry-run
+	#poetry publish
+
+.PHONY: build-dist
+build-dist: clean
+	poetry run pip install twine
+	poetry build
+	poetry run twine check dist/*
+
 
 ## Tutorials
 .PHONY: tutorials

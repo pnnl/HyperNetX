@@ -1,5 +1,4 @@
-name: Continuous Integration
-
+name: Run tests, linters
 
 on:
   push:
@@ -21,18 +20,14 @@ env:
   LC_ALL: en_US.utf-8
 
 jobs:
-
   run-tests:
-
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python: ['3.8', '3.9', '3.10', '3.11']
-
     runs-on: ${{ matrix.os }}
 
     steps:
-
     - run: |
         echo "This workflow was triggered by: $TRIGGER_PERSON"
       env:
@@ -41,28 +36,35 @@ jobs:
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
-    - name: Checkout
-      uses: actions/checkout@v3
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+    - name: Check out repository
+      uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v4
+      id: setup-python
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
 
-    - name: Install Pylint
-      run: pip install pylint
-
-    # https://github.com/pre-commit/action
-    - name: Run pre-commit hooks
-      uses: pre-commit/action@v3.0.0
-
-    - name: Run tests
+      #----------------------------------------------
+      #  -----  install & configure poetry  -----
+      #----------------------------------------------
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+      #----------------------------------------------
+      # install tox
+      #----------------------------------------------
+    - name: Install tox, pytest-github
+      run: poetry run pip install 'tox>=4.4.11' 'pytest-github-actions-annotate-failures>=0.1.7'
+      #----------------------------------------------
+      #     Run tests, linters defined in Tox
+      #----------------------------------------------
+    - name: Run tests, linters
       run: |
-        make test-ci-github
-    - name: Install documentation dependencies
-      run: |
-        pip install sphinx sphinx_rtd_theme
-        pip install .'[documentation]'
-    - name:  Check documentation build
-      run: |
-        sphinx-build docs/source _build
+        poetry run make test-ci-github

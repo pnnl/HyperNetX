@@ -17,7 +17,6 @@ permissions:
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,39 +24,18 @@ jobs:
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
     - run: echo "Building wheel from tag ${{ github.ref_name }}"
+    - uses: actions/checkout@v4
 
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Build and publish distribution 📦 to Test PyPI
+      uses: JRubics/poetry-publish@v2.0
       with:
-        python-version: "3.11"
+        python_version: "3.11.18"
+        pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_name: "testpypi"
+        repository_url: "https://test.pypi.org/legacy/"
 
-    - name: Install pypa/build
-      run: >-
-        python3 -m
-        pip install
-        build
-        --user
-
-    - name: Build a binary wheel and a source tarball
-      run: >-
-        python3 -m
-        build
-        --sdist
-        --wheel
-        --outdir dist/
-        .
-
-    - name: Publish distribution 📦 to Test PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Build and publish distribution 📦 to PyPI
+      uses: JRubics/poetry-publish@v2.0
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository-url: https://test.pypi.org/legacy/
-
-    - name: Publish distribution 📦 to PyPI
-      if: startsWith(github.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
-        verbose: true
-        print-hash: true
+        python_version: "3.11.18"
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
