@@ -55,6 +55,11 @@ install-poetry:
 test-ci-stash: install-poetry
 	poetry run tox --parallel
 
+.PHONY: docs-deps
+docs-deps: install-poetry
+	poetry run tox -e build-docs
+
+
 .PHONY: github-ci-deps
 ci-github-deps:
 	@$(PYTHON3) -m pip install 'pytest-github-actions-annotate-failures>=0.1.7'
@@ -89,13 +94,6 @@ publish-to-pypi: publish-deps build-dist
 .PHONY: version-deps
 version-deps:
 	@$(PYTHON3) -m pip install .[releases] --use-pep517
-
-
-### Documentation
-
-.PHONY: docs-deps
-docs-deps:
-	@$(PYTHON3) -m pip install .[documentation] --use-pep517
 
 
 ## Tutorials
