@@ -124,7 +124,7 @@ def draw_hyper_edge_labels(
         s = labels.get(edge, edge)
 
         theta = 0
-        xy = pos[edge]
+        xy = None
 
         if edge_labels_on_edge:
             # calculate the xy location of the annotation
@@ -141,6 +141,8 @@ def draw_hyper_edge_labels(
                 theta -= 180
 
             xy = (x1 + x2) / 2
+        else:
+            xy = pos[edge]
 
         # the string is a comma separated list of the edge uid
         ax.annotate(s, xy, rotation=theta, ha="center", va="center", **params)
@@ -185,7 +187,7 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None):
 
     radii = {
         v: {v: i for i, v in enumerate(sorted(e, key=levels.get))}
-        for v, e in H.dual().edges.elements.items()
+        for v, e in H.nodes.memberships.items()
     }
 
     def get_padded_hull(uid, edge):

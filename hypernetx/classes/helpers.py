@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Mapping
 import numpy as np
 import pandas as pd
 from collections import UserList
@@ -8,12 +8,10 @@ from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
 
-from hypernetx.classes.entityset import *
-
 
 class AttrList(UserList):
     """Custom list wrapper for integrated property storage in :class:`Entity`
-
+    Can these be stored in statedict until a change is made to the stores?
     Parameters
     ----------
     entity : hypernetx.EntitySet
@@ -21,13 +19,23 @@ class AttrList(UserList):
         ``(level, item)``
     initlist : list, optional
         list of elements, passed to ``UserList`` constructor
+
+    # New Parameters
+    # --------------
+    # key :
+    # property_store :
+    # incidence_store :
+
+    # methods return curren view of properties and
+    # neighbors
     """
 
     def __init__(
         self,
-        entity: EntitySet,
+        entity: EntitySet,  ## Property Store
+        ## level: 0,1,2 will indicate where to look in inc. store
         key: tuple[int, str | int],
-        initlist: Optional[list] = None,
+        initlist: Optional[list] = None,  ## Incidence Store - look up each time.
     ):
         self._entity = entity
         self._key = key
@@ -63,6 +71,12 @@ class AttrList(UserList):
             object.__setattr__(self, attr, val)
         else:
             self._entity.set_property(self._key[1], attr, val, level=self._key[0])
+
+    def properties(self):
+        """
+        Return dict of properties associated with this AttrList as a dictionary.
+        """
+        pass
 
 
 def encode(data: pd.DataFrame):
@@ -122,10 +136,12 @@ def assign_weights(
 
 
 def create_properties(
-    props: pd.DataFrame
-    | dict[str | int, Iterable[str | int]]
-    | dict[str | int, dict[str | int, dict[Any, Any]]]
-    | None,
+    props: (
+        pd.DataFrame
+        | dict[str | int, Iterable[str | int]]
+        | dict[str | int, dict[str | int, dict[Any, Any]]]
+        | None
+    ),
     index_cols: list[str],
     misc_col: str,
 ) -> pd.DataFrame:

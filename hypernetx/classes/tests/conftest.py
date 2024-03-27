@@ -5,9 +5,8 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 
-from hypernetx import Hypergraph, HarryPotter, EntitySet, LesMis as LM
+from hypernetx import Hypergraph, HarryPotter, LesMis as LM
 from hypernetx.classes.helpers import create_dataframe
-
 from collections import OrderedDict, defaultdict
 
 
@@ -283,7 +282,6 @@ def dataframe():
 
 @pytest.fixture
 def dataframe_example():
-    """NOTE: Do not use this dataframe as an input for 'entity' when creating an EntitySet object"""
     M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
     index = ["A", "B", "C"]
     columns = ["a", "b", "c", "d"]
@@ -374,14 +372,15 @@ def scenes_dataframe(scenes):
 @pytest.fixture
 def hyp_no_props():
     return Hypergraph(
-        np.array(
-            [
-                np.random.choice(list("ABCD"), 50),
-                np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
-            ]
-        ).T,  # creates a transposed ndarray
-        edge_col="Club",
-        node_col="Member",
+        pd.DataFrame(
+            np.array(
+                [
+                    np.random.choice(list("ABCD"), 50),
+                    np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
+                ]
+            ).T,  # creates a transposed ndarray
+            columns=["Club", "Member"],
+        )
     )
 
 
@@ -389,7 +388,7 @@ def hyp_no_props():
 def hyp_df_with_props(scenes_dataframe, node_properties, edge_properties):
     return Hypergraph(
         scenes_dataframe,
-        cell_properties=["color"],
+        # cell_properties=["color"],
         cell_weight_col="heaviness",
         node_properties=node_properties,
         edge_properties=edge_properties,

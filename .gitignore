@@ -1,3 +1,4 @@
+.github/
 .DS_Store
 gitmerge.sh
 dist
@@ -39,3 +40,5 @@ docs/build
 coverage.xml
 cov.syspath.txt
 *.whl
+*dogsAndcats*
+.github/

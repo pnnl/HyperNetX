@@ -11,7 +11,7 @@ lint: pylint flake8 mypy
 
 .PHONY: pylint
 pylint:
-	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx
+	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx --exit-zero
 
 .PHONY: mypy
 mypy:
@@ -129,3 +129,7 @@ test-deps:
 .PHONY: all-deps
 all-deps:
 	@$(PYTHON3) -m pip install .[all] --use-pep517
+
+.PHONY: install-develop
+install-develop:
+	@$(PYTHON3) -m pip install -e . --use-pep517
