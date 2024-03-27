@@ -2041,7 +2041,7 @@ class Hypergraph:
         else:
             return Hypergraph(dfnew, cell_weight_col="weight", name=name, **kwargs)
 
-    def __add__(self,other):
+    def __add__(self, other):
         """
         Concatenate incidences from two hypergraphs, removing duplicates and
         dropping duplicate property data in the order of addition.
@@ -2053,11 +2053,11 @@ class Hypergraph:
         Returns
         -------
         Hypergraph
-            
-        """    
+
+        """
         return self.sum(other)
-    
-    def __sub__(self,other):
+
+    def __sub__(self, other):
         """
         Concatenate incidences from two hypergraphs, removing duplicates and
         dropping duplicate property data in the order of addition.
@@ -2069,11 +2069,11 @@ class Hypergraph:
         Returns
         -------
         Hypergraph
-            
-        """  
+
+        """
         return self.difference(other)
 
-    def sum(self,other):
+    def sum(self, other):
         """
         Concatenate incidences from two hypergraphs, removing duplicates and
         dropping duplicate property data in the order of addition.
@@ -2085,20 +2085,22 @@ class Hypergraph:
         Returns
         -------
         Hypergraph
-            
+
         """
         df = self.dataframe
         odf = other.dataframe
-        ndf = pd.concat([df,odf]).groupby(['edges','nodes']).agg('first')    
+        ndf = pd.concat([df, odf]).groupby(["edges", "nodes"]).agg("first")
         edf = self.edges.dataframe
         oedf = other.edges.dataframe
-        nedf = pd.concat([edf,oedf]).groupby('uid').agg('first')    
+        nedf = pd.concat([edf, oedf]).groupby("uid").agg("first")
         nddf = self.nodes.dataframe
         onddf = other.nodes.dataframe
-        nnddf = pd.concat([nddf,onddf]).groupby('uid').agg('first')    
-        return self._construct_hyp_from_stores(ndf,edge_ps=PropertyStore(nedf),node_ps=PropertyStore(nnddf))
+        nnddf = pd.concat([nddf, onddf]).groupby("uid").agg("first")
+        return self._construct_hyp_from_stores(
+            ndf, edge_ps=PropertyStore(nedf), node_ps=PropertyStore(nnddf)
+        )
 
-    def difference(self,other):
+    def difference(self, other):
         """
         Concatenate incidences from two hypergraphs, removing duplicates and
         dropping duplicate property data in the order of addition.
@@ -2110,19 +2112,17 @@ class Hypergraph:
         Returns
         -------
         Hypergraph
-            
+
         """
         df = self.incidences.properties
         odf = other.incidences.properties
-        ndf = df.loc[~df.index.isin(odf.index.tolist())]    
+        ndf = df.loc[~df.index.isin(odf.index.tolist())]
         edf = self.edges.properties
         oedf = other.edges.properties
-        nedf = edf.loc[~edf.index.isin(oedf.index.tolist())]    
+        nedf = edf.loc[~edf.index.isin(oedf.index.tolist())]
         nddf = self.nodes.properties
         onddf = other.nodes.properties
-        nnddf = nddf.loc[~nddf.index.isin(onddf.index.tolist())]   
-        return self._construct_hyp_from_stores(ndf,edge_ps=PropertyStore(nedf),node_ps=PropertyStore(nnddf))
-
-
-
-
+        nnddf = nddf.loc[~nddf.index.isin(onddf.index.tolist())]
+        return self._construct_hyp_from_stores(
+            ndf, edge_ps=PropertyStore(nedf), node_ps=PropertyStore(nnddf)
+        )
