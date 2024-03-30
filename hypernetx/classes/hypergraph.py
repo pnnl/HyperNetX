@@ -264,7 +264,7 @@ class Hypergraph:
         """
         return self._E.properties
 
-    def incidence_matrix(self, index=False, use_weights=False):
+    def incidence_matrix(self, index=False, weights=False):
         """
         _summary_
 
@@ -281,8 +281,8 @@ class Hypergraph:
             _description_
         """
         e, n = self._state_dict["data"].T
-        if use_weights == True:
-            data = [self._E[d].weight for d in self._E]
+        if weights == True:
+            data = self._E.dataframe['weight']
         else:
             data = np.ones(len(e)).astype(int)
         mat = csr_matrix((data, (n, e)))
@@ -295,8 +295,8 @@ class Hypergraph:
                 self._state_dict["labels"]["edges"],
             )
 
-    def incidence_dataframe(self, use_weights=False):
-        mat, rindex, cindex = self.incidence_matrix(index=True, use_weights=use_weights)
+    def incidence_dataframe(self, weights=False):
+        mat, rindex, cindex = self.incidence_matrix(index=True, weights=weights)
         return pd.DataFrame(mat.toarray(), columns=cindex, index=rindex)
 
     @property
@@ -1841,26 +1841,18 @@ class Hypergraph:
     def from_incidence_matrix(
         cls,
         M,
-        node_names=None,
-        edge_names=None,
-        node_label="nodes",
-        edge_label="edges",
         name=None,
-        key=None,
         **kwargs,
     ):
         """
-        Same as from_numpy_array.
+        Accepts numpy.matrix or scipy.sparse matrix
         """
-        return Hypergraph.from_numpy_array(
-            M,
-            node_names=node_names,
-            edge_names=edge_names,
-            node_label=node_label,
-            edge_label=edge_label,
-            name=name,
-            key=key,
-        )
+        mat = coo_matrix(M)
+        edges = mat.col
+        nodes = mat.row
+        weights = mat.data
+        df = pd.DataFrame({'edges':edges,'nodes':nodes,'weights':weights})
+        return Hypergraph(df,cell_weight_col='weights',name=name,**kwargs)
 
     @classmethod
     def from_numpy_array(
@@ -1873,7 +1865,7 @@ class Hypergraph:
         **kwargs,
     ):
         """
-        Create a hypergraph from a real valued matrix represented as a 2 dimensionsl numpy array.
+        Create a hypergraph from a real valued matrix represented as a 2 dimensional numpy array.
         The matrix is converted to a matrix of 0's and 1's so that any truthy cells are converted to 1's and
         all others to 0's.
 
