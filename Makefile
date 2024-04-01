@@ -45,9 +45,6 @@ test-tox:
 ### Tests using Poetry + Tox
 ### Used by Bamboo CI Pipeline, Github Workflows CI Pipeline
 
-.PHONY: test-ci-github
-test-ci-github: run-poetry-tox
-
 .PHONY: test-ci-stash
 test-ci-stash: install-poetry-stash run-poetry-tox clean-poetry-env
 

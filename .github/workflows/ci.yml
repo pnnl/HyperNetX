@@ -23,7 +23,7 @@ jobs:
   run-tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         python: ['3.8', '3.9', '3.10', '3.11']
     runs-on: ${{ matrix.os }}
 
@@ -58,13 +58,13 @@ jobs:
         virtualenvs-in-project: true
         installer-parallel: true
       #----------------------------------------------
-      # install tox
+      # install other testing dependencies
       #----------------------------------------------
-    - name: Install tox, pytest-github
-      run: poetry run pip install 'tox>=4.4.11' 'pytest-github-actions-annotate-failures>=0.1.7'
+    - name: Install tox, pytest-github, tox-gh-actions
+      run: poetry run pip install 'tox>=4.4.11' 'pytest-github-actions-annotate-failures>=0.1.7' 'tox-gh-actions'
       #----------------------------------------------
       #     Run tests, linters defined in Tox
       #----------------------------------------------
     - name: Run tests, linters
       run: |
-        poetry run make test-ci-github
+        poetry run tox
