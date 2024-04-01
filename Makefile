@@ -2,6 +2,76 @@ SHELL = /bin/bash
 VENV = venv-hnx
 PYTHON3 = python3
 
+############# Manage Environments #############
+
+## Environment using Pip
+.PHONY: venv
+venv: clean-venv
+	@$(PYTHON3) -m venv $(VENV);
+
+.PHONY: clean-venv
+clean-venv:
+	rm -rf $(VENV)
+
+.PHONY: install-reqs
+install-reqs:
+	@$(PYTHON3) -m pip install -r requirements.txt
+
+## Environment using Poetry
+
+.PHONY: develop
+develop: clean-poetry-env
+	poetry install --all-extras --with test
+	poetry shell
+
+.PHONY: requirements.txt
+requirements.txt:
+	poetry export --format requirements.txt --output requirements.txt --without-hashes --extras "contagion modularity"
+
+############# Running Tests, linters #############
+
+## Tests
+.PHONY: test
+test:
+	coverage run --source=hypernetx -m pytest
+	coverage report -m
+
+## Tests using Tox
+## Includes linting, running tests on jupyter notebooks
+.PHONY: test-tox
+test-tox:
+	@$(PYTHON3) -m tox --parallel
+
+### Tests using Poetry + Tox
+### Used by Bamboo CI Pipeline, Github Workflows CI Pipeline
+
+.PHONY: test-ci-github
+test-ci-github: run-poetry-tox
+
+.PHONY: test-ci-stash
+test-ci-stash: install-poetry-stash run-poetry-tox clean-poetry-env
+
+.PHONY: build-docs-stash
+build-docs-stash: install-poetry-stash run-build-docs clean-poetry-env
+
+.PHONY: install-poetry-stash
+install-poetry-stash:
+	pip install poetry==1.8.2
+	poetry config virtualenvs.in-project true
+	poetry run pip install tox
+
+.PHONY: run-poetry-tox
+run-poetry-tox:
+	poetry run tox --parallel
+
+.PHONY: run-build-docs
+run-build-docs:
+	poetry run tox -e build-docs
+
+.PHONY: clean-poetry-env
+clean-poetry-env:
+	poetry env remove --all
+
 ## Lint
 .PHONY: lint
 lint: pylint flake8
@@ -20,88 +90,32 @@ pre-commit:
 	pre-commit install
 	pre-commit run --all-files
 
-## Tests
-.PHONY: test
-test:
-	coverage run --source=hypernetx -m pytest
-	coverage report -m
-
-## Tests using Tox
-## Includes linting, running tests on jupyter notebooks
-.PHONY: test-tox
-test-tox:
-	@$(PYTHON3) -m tox --parallel
-
-### Tests using Poetry + Tox
-### Used by Bamboo CI Pipeline, Github Workflows CI Pipeline
-.PHONY: install-poetry
-install-poetry:
-	pip install poetry==1.8.2
-	poetry config virtualenvs.in-project true
-	poetry run pip install tox
-
-.PHONY: run-poetry-tox
-run-poetry-tox:
-	poetry run tox --parallel
-
-.PHONY: clean-poetry
-clean-poetry:
-	poetry env remove --all
-
-.PHONY: test-ci-stash
-test-ci-stash: install-poetry run-poetry-tox clean-poetry
-
-.PHONY: test-ci-github
-test-ci-github: run-poetry-tox
-
-.PHONY: run-poetry-tox-build-docs
-run-poetry-tox-build-docs:
-	poetry run tox -e build-docs
-
-.PHONY: build-docs
-build-docs: install-poetry run-poetry-tox-build-docs clean-poetry
-
-
-
-## Publish to PyPi
+############# Packaging and Publishing to PyPi #############
+## Uses Poetry to manage packaging and publishing
 ## Targets are included as a backup in case the Github Workflows CI can't publish to PyPi and we need to do it manually
 ## Assumes the following environment variables are set: PYPI_API_TOKEN
 .PHONY: publish-to-pypi
-publish-to-pypi: build-dist
+publish-to-pypi: build check-long-desc
 	@echo "Publishing to PyPi"
 	poetry config pypi-token.pypi PYPI_API_TOKEN
 	poetry config repositories.pypi https://pypi.org/simple/
 	poetry publish --dry-run
 	#poetry publish
 
-.PHONY: build-dist
-build-dist: clean
-	poetry run pip install twine
+.PHONY: build
+build: clean
 	poetry build
+
+.PHONY: check-long-desc
+check-long-desc:
+	poetry run pip install twine
 	poetry run twine check dist/*
 
-
-## Tutorials
+############# Misc #############
 .PHONY: tutorials
 tutorials:
 	jupyter notebook tutorials
 
-
-## Environment
-.PHONY: clean-venv
-clean-venv:
-	rm -rf $(VENV)
-
-.PHONY: venv
-venv: clean-venv
-	@$(PYTHON3) -m venv $(VENV);
-
-.PHONY: install-reqs
-install-reqs:
-	@$(PYTHON3) -m pip install -r requirements.txt
-
-
-## Clean
 .PHONY: clean
 clean:
 	rm -rf .out .pytest_cache .tox *.egg-info dist build _build
