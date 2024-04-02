@@ -40,3 +40,4 @@ coverage.xml
 cov.syspath.txt
 *.whl
 *dogsAndcats*
+pytest_notebooks.xml

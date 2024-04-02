@@ -61,10 +61,10 @@ jobs:
       # install other testing dependencies
       #----------------------------------------------
     - name: Install tox, pytest-github, tox-gh-actions
-      run: poetry run pip install 'tox>=4.4.11' 'pytest-github-actions-annotate-failures>=0.1.7' 'tox-gh-actions'
+      run: pip install 'tox>=4.4.11' 'pytest-github-actions-annotate-failures>=0.1.7' 'tox-gh-actions'
       #----------------------------------------------
       #     Run tests, linters defined in Tox
       #----------------------------------------------
     - name: Run tests, linters
       run: |
-        poetry run tox
+        tox
