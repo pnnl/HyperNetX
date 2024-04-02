@@ -15,7 +15,9 @@ clean-venv:
 
 .PHONY: install-reqs
 install-reqs:
+	pip install --upgrade pip
 	@$(PYTHON3) -m pip install -r requirements.txt
+	pip install pytest pytest-cov decorator
 
 ## Environment using Poetry
 
@@ -115,4 +117,4 @@ tutorials:
 
 .PHONY: clean
 clean:
-	rm -rf .out .pytest_cache .tox *.egg-info dist build _build
+	rm -rf .out .pytest_cache .tox *.egg-info dist build _build pytest.xml pytest_notebooks.xml .coverage

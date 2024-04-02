@@ -33,6 +33,13 @@ igraph = {version = "^0.11.4", optional = true}
 contagion = ["celluloid"]
 modularity = ["igraph"]
 
+[tool.poetry.group.widget]
+optional = true
+[tool.poetry.group.widget.dependencies]
+hnxwidget = "^0.1.1b3"
+jupyter-contrib-nbextensions = "^0.7.0"
+jupyter-nbextensions-configurator = "^0.6.3"
+
 [tool.poetry.group.test]
 optional = true
 [tool.poetry.group.test.dependencies]
@@ -67,13 +74,6 @@ sphinx-copybutton = "^0.5.2"
 optional = true
 [tool.poetry.group.release.dependencies]
 commitizen = {version = "^3.20.0", optional = true}
-
-[tool.poetry.group.widget]
-optional = true
-[tool.poetry.group.widget.dependencies]
-hnxwidget = "^0.1.1b3"
-jupyter-contrib-nbextensions = "^0.7.0"
-jupyter-nbextensions-configurator = "^0.6.3"
 
 [tool.poetry.group.tutorials]
 optional = true
