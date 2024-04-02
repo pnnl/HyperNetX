@@ -1,4 +1,4 @@
-name: Run tests, linters
+name: Run tests, linters, formatters
 
 on:
   push:
