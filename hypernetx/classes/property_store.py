@@ -71,36 +71,6 @@ class PropertyStore:
         """
         return self._data
 
-    def properties_uids(self, uids) -> DataFrame:
-        """Creates a new dataframe with the given list of uids. uids that are not in the underlying data will be
-        given default properties
-
-        Parameters
-        ----------
-        uids: list of Hashables
-            The list of uids
-
-        Returns
-        -------
-        out: pandas.DataFrame
-            a dataframe with the following columns:
-                uid, weight, properties, <optional props>
-                or
-                level, id, weight, properties, <optional props>
-        """
-        dfp_uids = self._data.copy(deep=True)
-        uids_not_in_data = self._uid_not_in_data(uids)
-
-        # Update the new dataframe with default properties for uids that aren't present in the underlying data
-        for uid in uids_not_in_data:
-            dfp_uids.loc[uid] = self._default_properties()
-        return dfp_uids
-
-    def _uid_not_in_data(self, uids) -> list:
-        """Filter the list of uids by removing uids already in the underlying data"""
-        df_indexes = self._data.index.tolist()
-        return list(set(uids) - set(df_indexes))
-
     def _custom_properties(self) -> list:
         """Create a list of custom properties from the underlying data"""
         properties = self._data.columns.tolist()
