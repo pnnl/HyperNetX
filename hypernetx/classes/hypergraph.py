@@ -282,7 +282,7 @@ class Hypergraph:
         """
         e, n = self._state_dict["data"].T
         if weights == True:
-            data = self._E.dataframe['weight']
+            data = self._E.dataframe["weight"]
         else:
             data = np.ones(len(e)).astype(int)
         mat = csr_matrix((data, (n, e)))
@@ -1851,8 +1851,8 @@ class Hypergraph:
         edges = mat.col
         nodes = mat.row
         weights = mat.data
-        df = pd.DataFrame({'edges':edges,'nodes':nodes,'weights':weights})
-        return Hypergraph(df,cell_weight_col='weights',name=name,**kwargs)
+        df = pd.DataFrame({"edges": edges, "nodes": nodes, "weights": weights})
+        return Hypergraph(df, cell_weight_col="weights", name=name, **kwargs)
 
     @classmethod
     def from_numpy_array(

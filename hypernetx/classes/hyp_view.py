@@ -86,14 +86,14 @@ class HypergraphView(object):
             _description_
         """
         newindex = list(set(self._items).difference(self.properties.index))
-        dfr =pd.DataFrame(index=newindex,columns=['weight'])
-        dfr['weight'] = self.property_store._default_weight
-        return pd.concat([self.dataframe,dfr])
+        dfr = pd.DataFrame(index=newindex, columns=["weight"])
+        dfr["weight"] = self.property_store._default_weight
+        return pd.concat([self.dataframe, dfr])
 
     @property  ### will remove this later
     def dataframe(self):
         return self._property_store.properties
-    
+
     @property
     def properties(self):
         """

@@ -199,10 +199,9 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
             ]
 
             if contain_hyper_edges:
-                points.append(cp*r0 + pos[uid])
+                points.append(cp * r0 + pos[uid])
 
             points = np.vstack(points)
-
 
         # if not, draw an empty edge centered around the location of the edge node (in the bipartite graph)
         else:
@@ -212,13 +211,12 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
 
         return hull.points[hull.vertices]
 
-    return [
-        get_padded_hull(uid, list(H.edges[uid]))
-        for uid in H.edges
-    ]
+    return [get_padded_hull(uid, list(H.edges[uid])) for uid in H.edges]
 
 
-def draw_hyper_edges(H, pos, ax=None, node_radius={}, contain_hyper_edges=False, dr=None, **kwargs):
+def draw_hyper_edges(
+    H, pos, ax=None, node_radius={}, contain_hyper_edges=False, dr=None, **kwargs
+):
     """
     Draws a convex hull around the nodes contained within each edge in H
 
@@ -242,7 +240,9 @@ def draw_hyper_edges(H, pos, ax=None, node_radius={}, contain_hyper_edges=False,
     PolyCollection
         a Matplotlib PolyCollection that can be further styled
     """
-    points = layout_hyper_edges(H, pos, node_radius=node_radius, dr=dr, contain_hyper_edges=contain_hyper_edges)
+    points = layout_hyper_edges(
+        H, pos, node_radius=node_radius, dr=dr, contain_hyper_edges=contain_hyper_edges
+    )
 
     polys = PolyCollection(points, **inflate_kwargs(H.edges, kwargs))
 
