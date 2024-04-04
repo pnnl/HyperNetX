@@ -177,7 +177,7 @@ class HypergraphView(object):
         """
         if uid in self._items:
             neighbors = self.incidence_store.neighbors(self.level, uid)
-            return NList(uid, self, initlist=neighbors)
+            return AttrList(uid, self, initlist=neighbors)
 
     # def properties(self,key=None,prop_name=None):
     #     """
@@ -239,7 +239,7 @@ class HypergraphView(object):
     #     """
 
 
-class NList(UserList):
+class AttrList(UserList):
     """Custom list wrapper for integrating PropertyStore data with
     IncidenceStore relationships
 
@@ -250,7 +250,7 @@ class NList(UserList):
 
     Returns
     -------
-        : NList object
+        : AttrList object
     """
 
     def __init__(self, uid, hypergraph_view, initlist=None):
