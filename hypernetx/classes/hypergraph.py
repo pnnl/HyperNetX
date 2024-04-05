@@ -439,9 +439,8 @@ class Hypergraph:
             cell property value if `prop_name` is provided, otherwise ``dict`` of all
             cell properties and values
         """
-        return self._E.properties(
-            (edge, node), prop_name=prop_name
-        )  ### get_property from hyp_view
+        return self._E.properties[(edge, node)][prop_name]
+
 
     def get_properties(self, uid, level=0, prop_name=None):
         """Returns an object's specific property or all properties
@@ -515,8 +514,8 @@ class Hypergraph:
         e2 = np.array([Amap[idx] for idx in A[1]])
         A = np.array([e1, e2]).T
         g = nx.Graph()
-        g.add_edges_from(A)
         g.add_nodes_from(Amaplst)
+        g.add_edges_from(A)
         d[key][s] = g
         return g
 

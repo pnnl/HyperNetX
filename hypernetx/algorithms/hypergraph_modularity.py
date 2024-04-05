@@ -571,7 +571,7 @@ def last_step(HG, A, wdc=linear, delta=0.01, verbose=False):
     ----------
     HG : Hypergraph
 
-    L : list of sets
+    A : list of sets
       some initial partition of the vertices in HG
 
     wdc : func, optional
