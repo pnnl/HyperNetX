@@ -78,17 +78,23 @@ class HypergraphView(object):
     @property
     def to_dataframe(self):
         """
-        Complete property dataframe for all items in hypergraph view
+        User-defined and non-user-defined (i.e. default) properties for all items in the HypergraphView.
 
         Returns
         -------
-        _type_
-            _description_
+        out: pd.DataFrame
         """
-        newindex = list(set(self._items).difference(self.properties.index))
-        dfr = pd.DataFrame(index=newindex, columns=["weight"])
-        dfr["weight"] = self.property_store._default_weight
-        return pd.concat([self.dataframe, dfr])
+        # Create a properties dataframe of non-user-defined items with default values
+        non_user_defined_items = list(
+            set(self._items).difference(self.properties.index)
+        )
+        default_data = self.property_store.default_properties_data()
+        non_user_defined_properties = pd.DataFrame(
+            index=non_user_defined_items, data=default_data
+        )
+
+        # Combine user-defined and non-user-defined properties into one dataframe
+        return pd.concat([self.properties, non_user_defined_properties])
 
     @property  ### will remove this later
     def dataframe(self):
@@ -98,12 +104,11 @@ class HypergraphView(object):
     def properties(self):
         """
         User-defined properties. Does not include items in the HypergraphView
-        that the user has not explicitely defined properties for.
+        that the user has not explicitly defined properties for.
 
         Returns
         -------
-        _type_
-            _description_
+        out: pd.DataFrame
         """
         return self._property_store.properties
 
