@@ -277,22 +277,22 @@ def test_contains(fixture, uid, expected, request):
     assert (uid in ps) == expected
 
 
-def test_properties_all_entities(edges_ps):
-    # Verifies current uids in property store
-    property_store_uids = ["I", "L", "O", "P"]
-    assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
+# def test_properties_all_entities(edges_ps):
+#     # Verifies current uids in property store
+#     property_store_uids = ["I", "L", "O", "P"]
+#     assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
 
-    # create a list of uids to include entities that don't have properties
-    subset_uids = property_store_uids + ["R", "S"]
+#     # create a list of uids to include entities that don't have properties
+#     subset_uids = property_store_uids + ["R", "S"]
 
-    properties_df = edges_ps.properties_uids(subset_uids)
+#     properties_df = edges_ps.properties_uids(subset_uids)
 
-    # check that the original data in PropertyStore did not change
-    assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
+#     # check that the original data in PropertyStore did not change
+#     assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
 
-    # check that the new properties dataframe have the original and added entities
-    assert all(uid in properties_df.index for uid in subset_uids)
+#     # check that the new properties dataframe have the original and added entities
+#     assert all(uid in properties_df.index for uid in subset_uids)
 
-    # check that the entities without properties have default properties
-    assert properties_df.loc["R"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
-    assert properties_df.loc["S"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
+#     # check that the entities without properties have default properties
+#     assert properties_df.loc["R"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
+#     assert properties_df.loc["S"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}

@@ -76,11 +76,40 @@ class HypergraphView(object):
         return self._property_store
 
     @property
+    def to_dataframe(self):
+        """
+        User-defined and non-user-defined (i.e. default) properties for all items in the HypergraphView.
+
+        Returns
+        -------
+        out: pd.DataFrame
+        """
+        # Create a properties dataframe of non-user-defined items with default values
+        non_user_defined_items = list(
+            set(self._items).difference(self.properties.index)
+        )
+        default_data = self.property_store.default_properties_data()
+        non_user_defined_properties = pd.DataFrame(
+            index=non_user_defined_items, data=default_data
+        )
+
+        # Combine user-defined and non-user-defined properties into one dataframe
+        return pd.concat([self.properties, non_user_defined_properties])
+
+    @property  ### will remove this later
     def dataframe(self):
-        return self._property_store._data
+        return self._property_store.properties
 
     @property
     def properties(self):
+        """
+        User-defined properties. Does not include items in the HypergraphView
+        that the user has not explicitly defined properties for.
+
+        Returns
+        -------
+        out: pd.DataFrame
+        """
         return self._property_store.properties
 
     @property
@@ -153,7 +182,7 @@ class HypergraphView(object):
         """
         if uid in self._items:
             neighbors = self.incidence_store.neighbors(self.level, uid)
-            return NList(uid, self, initlist=neighbors)
+            return AttrList(uid, self, initlist=neighbors)
 
     # def properties(self,key=None,prop_name=None):
     #     """
@@ -215,7 +244,7 @@ class HypergraphView(object):
     #     """
 
 
-class NList(UserList):
+class AttrList(UserList):
     """Custom list wrapper for integrating PropertyStore data with
     IncidenceStore relationships
 
@@ -226,7 +255,7 @@ class NList(UserList):
 
     Returns
     -------
-        : NList object
+        : AttrList object
     """
 
     def __init__(self, uid, hypergraph_view, initlist=None):

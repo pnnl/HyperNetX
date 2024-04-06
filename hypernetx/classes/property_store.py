@@ -1,5 +1,3 @@
-import pandas as pd
-
 from typing import Any
 from collections.abc import Hashable
 
@@ -38,7 +36,7 @@ class PropertyStore:
 
             Example of multiIndex dataframe (edgeid and nodeid are set as the multiIndex):
 
-             level     |  id         | weight | misc_properties | <additional property> | ...
+             edges     |  node         | weight | misc_properties | <additional property> | ...
             <edge1uid> | <node1uid>  | 1.0    | {}              | <property value>      | ...
                        | <node2uid>  | 1.5    | {}              | <property value>      | ...
             <edge2uid> | <node1uid>  | 1.0    | {}              | <property value>      | ...
@@ -56,6 +54,7 @@ class PropertyStore:
             self._data: DataFrame = data
 
         self._default_weight: int = default_weight
+        self._default_misc_properties: dict = {}
 
     @property
     def properties(self) -> DataFrame:
@@ -70,53 +69,6 @@ class PropertyStore:
                 level, id, weight, properties, <optional props>
         """
         return self._data
-
-    def properties_uids(self, uids) -> DataFrame:
-        """Creates a new dataframe with the given list of uids. uids that are not in the underlying data will be
-        given default properties
-
-        Parameters
-        ----------
-        uids: list of Hashables
-            The list of uids
-
-        Returns
-        -------
-        out: pandas.DataFrame
-            a dataframe with the following columns:
-                uid, weight, properties, <optional props>
-                or
-                level, id, weight, properties, <optional props>
-        """
-        dfp_uids = self._data.copy(deep=True)
-        uids_not_in_data = self._uid_not_in_data(uids)
-
-        # Update the new dataframe with default properties for uids that aren't present in the underlying data
-        for uid in uids_not_in_data:
-            dfp_uids.loc[uid] = self._default_properties()
-        return dfp_uids
-
-    def _uid_not_in_data(self, uids) -> list:
-        """Filter the list of uids by removing uids already in the underlying data"""
-        df_indexes = self._data.index.tolist()
-        return list(set(uids) - set(df_indexes))
-
-    def _custom_properties(self) -> list:
-        """Create a list of custom properties from the underlying data"""
-        properties = self._data.columns.tolist()
-        return [prop for prop in properties if prop not in DEFAULT_PROPERTIES]
-
-    def _default_properties(self) -> dict:
-        """Create a default properties dictionary; if custom properties are given, set those to None"""
-        data = {WEIGHT: self._default_weight, MISC_PROPERTIES: {}}
-        custom_properties = self._custom_properties()
-
-        if not custom_properties:
-            return data
-
-        for col in custom_properties:
-            data[col] = None
-        return data
 
     def get_properties(self, uid) -> dict:
         """Get all properties of an item
@@ -228,6 +180,29 @@ class PropertyStore:
             data = self._default_properties()
             data[MISC_PROPERTIES] = {prop_name: prop_val}
         self._data.loc[uid, :] = data
+
+    def _default_properties(self) -> dict:
+        """Create a default properties dictionary; if custom properties are given, set those to None"""
+        data = self.default_properties_data()
+        custom_properties = [
+            prop
+            for prop in self._data.columns.tolist()
+            if prop not in DEFAULT_PROPERTIES
+        ]
+
+        if not custom_properties:
+            return data
+
+        for col in custom_properties:
+            data[col] = None
+        return data
+
+    def default_properties_data(self):
+        """Returns a dictionary of default properties with default values"""
+        return {
+            WEIGHT: self._default_weight,
+            MISC_PROPERTIES: [self._default_misc_properties],
+        }
 
     def _get_properties(self) -> list:
         return self._data.columns.tolist()
