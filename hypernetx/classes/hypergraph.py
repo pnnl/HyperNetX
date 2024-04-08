@@ -438,7 +438,6 @@ class Hypergraph:
         """
         return self._E.properties[(edge, node)][prop_name]
 
-
     def get_properties(self, uid, level=0, prop_name=None):
         """Returns an object's specific property or all properties
         ### Change to level is 0,1,2 and call props from correct store
@@ -1190,10 +1189,9 @@ class Hypergraph:
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
         return self.remove_edges(keys, name=name, inplace=inplace)
 
-
     def add_edge(self, uid, data=None, inplace=True):
         return self._add_item(uid, level=0, data=data, inplace=inplace)
-    
+
     def add_edges_from(self, edges, inplace=True):
         """Edges must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
@@ -1211,29 +1209,29 @@ class Hypergraph:
         return self._add_item(uid, level=2, data=data, inplace=inplace)
 
     def add_incidences_from(self, incidences, inplace=True):
-        """Incidence pairs must be a list of uids of the form (edge_uid,node_uid) 
-        and/or tuples of the form ((edge_uid, node_uid),data) where data is a 
+        """Incidence pairs must be a list of uids of the form (edge_uid,node_uid)
+        and/or tuples of the form ((edge_uid, node_uid),data) where data is a
         dictionary"""
         return self._add_items_from(incidences, level=2, inplace=inplace)
-    
+
     def _add_item(self, uid, level=2, data=None, inplace=True):
         data = data or {}
-        self._add_items_from([(uid,data)], level=level, inplace=inplace)
+        self._add_items_from([(uid, data)], level=level, inplace=inplace)
 
     def _add_items_from(self, items, level=2, inplace=True):
         """Items must be a list of uids and/or tuples
-        of the form (uid,data) where data is dictionary"""  
-        if (inplace == True):
+        of the form (uid,data) where data is dictionary"""
+        if inplace == True:
             df = self.incidences._property_store
             ep = self.edges._property_store
-            np = self.nodes._property_store    
+            np = self.nodes._property_store
         else:
             df = self.incidences._property_store.copy(deep=True)
             ep = self.edges._property_store.copy(deep=True)
-            np = self.nodes._property_store.copy(deep=True)                         
-        hv = [ep,np,df][level]
+            np = self.nodes._property_store.copy(deep=True)
+        hv = [ep, np, df][level]
         for item in items:
-            if isinstance(item,tuple):
+            if isinstance(item, tuple):
                 uid = item[0]
                 data = item[1]
             else:
@@ -1241,37 +1239,27 @@ class Hypergraph:
                 data = {}
             hv._add_row(uid, **data)
         if inplace == True:
-            self = self._construct_hyp_from_stores(df.properties, 
-                                            edge_ps = ep,
-                                            node_ps = np,
-                                            name = self.name)
+            self = self._construct_hyp_from_stores(
+                df.properties, edge_ps=ep, node_ps=np, name=self.name
+            )
             return self
         else:
-            return self._construct_hyp_from_stores(df.properties, 
-                                    edge_ps = ep,
-                                    node_ps = np,
-                                    name = name)  
+            return self._construct_hyp_from_stores(
+                df.properties, edge_ps=ep, node_ps=np, name=name
+            )
 
     #### This should follow behavior of restrictions
     def remove_edges(self, keys, name=None, inplace=True):
         if isinstance(keys, list):
-            return self.remove(
-                keys, level=0, name=name, inplace=inplace
-            )
+            return self.remove(keys, level=0, name=name, inplace=inplace)
         else:
-            return self.remove(
-                [keys], level=0, name=name, inplace=inplace
-            )
+            return self.remove([keys], level=0, name=name, inplace=inplace)
 
     def remove_nodes(self, keys, name=None, inplace=True):
         if isinstance(keys, list):
-            return self.remove(
-                keys, level=1, name=name, inplace=inplace
-            )
+            return self.remove(keys, level=1, name=name, inplace=inplace)
         else:
-            return self.remove(
-                [keys], level=1, name=name, inplace=inplace
-            )
+            return self.remove([keys], level=1, name=name, inplace=inplace)
 
     def remove_incidences(self, keys, name=None, inplace=True):
         if isinstance(keys, list):
@@ -1317,29 +1305,27 @@ class Hypergraph:
             df = self.incidences._property_store.properties.copy(deep=True)
             ep = self.edges._property_store.copy(deep=True)
             np = self.nodes._property_store.copy(deep=True)
-        if level in [0,1]:
-            hv = [ep,np][level]
+        if level in [0, 1]:
+            hv = [ep, np][level]
             df = df.drop(labels=uid_list, level=level, errors="ignore")
             hv._data = hv._data.drop(labels=uid_list, errors="ignore")
         else:
             df = df.drop(labels=uid_list, errors="ignore")
         if inplace == True:
-            self = self._construct_hyp_from_stores(df, 
-                                                   edge_ps = ep,
-                                                   node_ps = np,
-                                                   name = self.name)
+            self = self._construct_hyp_from_stores(
+                df, edge_ps=ep, node_ps=np, name=self.name
+            )
             return self
         else:
-            return self._construct_hyp_from_stores(df, 
-                                                edge_ps = ep,
-                                                node_ps = np,
-                                                name = name)
+            return self._construct_hyp_from_stores(
+                df, edge_ps=ep, node_ps=np, name=name
+            )
 
     def toplexes(self, return_hyp=False, name=None):
         """
         Computes a maximal collection of toplexes for the hypergraph.
         A toplex is a hyperedge, which is not contained in any other
-        hyperedge. If return_hyp is set to True then  
+        hyperedge. If return_hyp is set to True then
         returns the :term:`simple hypergraph` gotten by restricting
         to the toplexes.
 
@@ -1348,18 +1334,21 @@ class Hypergraph:
         return_hyp: bool, optional, default = False
         name: str, optional, default = None
         """
-        def operate(a,b):
-            return np.mod(np.mod(a*b,2) + b,2)
+
+        def operate(a, b):
+            return np.mod(np.mod(a * b, 2) + b, 2)
 
         df = self.incidence_dataframe().T
         toplexes = []
         while True:
             edge_sizes = dict(df.sum(axis=1))
-            edges = np.array(sorted(df.index,key = lambda x : edge_sizes[x],reverse=True))
+            edges = np.array(
+                sorted(df.index, key=lambda x: edge_sizes[x], reverse=True)
+            )
             toplexes.append(edges[0])
             df = df.loc[edges]
             mat = df.values
-            df = df.loc[edges[operate(mat[0],mat).sum(axis=1).nonzero()]]
+            df = df.loc[edges[operate(mat[0], mat).sum(axis=1).nonzero()]]
             if len(df.index) == 0:
                 break
         if return_hyp == True:

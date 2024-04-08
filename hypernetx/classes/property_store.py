@@ -142,7 +142,7 @@ class PropertyStore:
         if uid in self._data.index:
             self._update_row(uid, prop_name, prop_val)
         else:
-            self._add_row(uid,  **{prop_name:prop_val})
+            self._add_row(uid, **{prop_name: prop_val})
 
     def _update_row(self, uid, prop_name, prop_val):
         """Updates a row in the underlying data table
@@ -179,13 +179,13 @@ class PropertyStore:
     #         # add the property to 'misc_properties'
     #         data = self._default_properties()
     #         data[MISC_PROPERTIES] = {prop_name: prop_val}
-        # self._data.loc[uid, :] = data
+    # self._data.loc[uid, :] = data
 
     def _add_row(self, uid, **kwargs):
         """Adds a new row to the underlying data table"""
         data = self._default_properties()
-        for prop_name,prop_val in kwargs.items():       
-            if prop_name in self._get_properties():            
+        for prop_name, prop_val in kwargs.items():
+            if prop_name in self._get_properties():
                 data[prop_name] = prop_val
             else:
                 # if the property to be added is not one of existing properties,
@@ -242,11 +242,11 @@ class PropertyStore:
     def __contains__(self, uid) -> bool:
         """Checks if the item is present in the data table"""
         return uid in self._data.index
-    
-    def copy(self,deep=False):
+
+    def copy(self, deep=False):
         data = self._data.copy(deep=deep)
         w = self._default_weight
-        return PropertyStore(data,default_weight=w)
+        return PropertyStore(data, default_weight=w)
 
 
 def flatten(my_dict):
