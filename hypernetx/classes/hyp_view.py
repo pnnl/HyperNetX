@@ -133,7 +133,10 @@ class HypergraphView(object):
             return self.incidence_store.elements
         else:
             return {}
-
+        
+    def isolates(self):
+        return set(self._property_store._data.index).difference(self._items)
+    
     def __iter__(self):
         """
         Defined by level store
