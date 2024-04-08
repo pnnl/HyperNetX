@@ -185,7 +185,7 @@ def test_remove_from_restriction(triloop):
 
 def test_toplexes(sbsd_hypergraph):
     H = sbsd_hypergraph
-    T = H.toplexes()
+    T = H.toplexes(return_hyp=True)
     assert len(T.nodes) == 8
     assert len(T.edges) == 5
     T = T.collapse_nodes()
