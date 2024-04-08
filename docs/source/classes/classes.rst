@@ -4,10 +4,10 @@ classes package
 Submodules
 ----------
 
-classes.entityset module
-------------------------
+classes.factory module
+----------------------
 
-.. automodule:: classes.entityset
+.. automodule:: classes.factory
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,10 +20,42 @@ classes.helpers module
    :undoc-members:
    :show-inheritance:
 
+classes.hyp\_view module
+------------------------
+
+.. automodule:: classes.hyp_view
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 classes.hypergraph module
 -------------------------
 
 .. automodule:: classes.hypergraph
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.hypergraph\_2 module
+----------------------------
+
+.. automodule:: classes.hypergraph_2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.incidence\_store module
+-------------------------------
+
+.. automodule:: classes.incidence_store
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.property\_store module
+------------------------------
+
+.. automodule:: classes.property_store
    :members:
    :undoc-members:
    :show-inheritance:
