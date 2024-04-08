@@ -1237,7 +1237,7 @@ class Hypergraph:
             else:
                 uid = item
                 data = {}
-            hv._add_row(uid, **data)
+            hv.set_properties(uid, data)
         if inplace == True:
             self = self._construct_hyp_from_stores(
                 df.properties, edge_ps=ep, node_ps=np, name=self.name
