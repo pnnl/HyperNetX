@@ -13,22 +13,23 @@ venv: clean-venv
 clean-venv:
 	rm -rf $(VENV)
 
-.PHONY: install-reqs
-install-reqs:
-	pip install --upgrade pip
+.PHONY: install
+install:
+	@$(PYTHON3) -m pip install --upgrade pip
+	@$(PYTHON3) -m pip install -e .
 	@$(PYTHON3) -m pip install -r requirements.txt
-	pip install pytest pytest-cov decorator
 
 ## Environment using Poetry
 
 .PHONY: develop
 develop: clean-poetry-env
-	poetry install --all-extras --with test
 	poetry shell
+	poetry install --with test
+
 
 .PHONY: requirements.txt
 requirements.txt:
-	poetry export --format requirements.txt --output requirements.txt --without-hashes --extras "contagion modularity"
+	poetry export --format requirements.txt --output requirements.txt --without-hashes --with test,widget,tutorials,docs
 
 ############# Running Tests, linters #############
 
@@ -55,17 +56,15 @@ build-docs-stash: install-poetry-stash run-build-docs clean-poetry-env
 
 .PHONY: install-poetry-stash
 install-poetry-stash:
-	pip install poetry==1.8.2
-	poetry config virtualenvs.in-project true
-	poetry run pip install tox
+	pip install poetry==1.8.2 tox
 
 .PHONY: run-poetry-tox
 run-poetry-tox:
-	poetry run tox --parallel
+	tox --parallel
 
 .PHONY: run-build-docs
 run-build-docs:
-	poetry run tox -e build-docs
+	tox -e build-docs
 
 .PHONY: clean-poetry-env
 clean-poetry-env:

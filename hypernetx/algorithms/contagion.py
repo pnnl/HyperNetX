@@ -574,7 +574,7 @@ def discrete_SIR(
     times = [t]
     newStatus = status.copy()
 
-    edge_neighbors = lambda node: H.edges.memberships[node]
+    edge_neighbors = lambda node: H.nodes.memberships[node]
 
     while t < tmax and I[-1] != 0:
         # Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes
@@ -724,7 +724,7 @@ def discrete_SIS(
     times = [t]
     newStatus = status.copy()
 
-    edge_neighbors = lambda node: H.edges.memberships[node]
+    edge_neighbors = lambda node: H.nodes.memberships[node]
 
     while t < tmax and I[-1] != 0:
         # Initialize the next step with the same numbers of S, I, and R as the last step before computing the changes
@@ -870,7 +870,7 @@ def Gillespie_SIR(
     R = [len(initial_recovereds)]
     S = [H.number_of_nodes() - I[-1] - R[-1]]
 
-    edge_neighbors = lambda node: H.edges.memberships[node]
+    edge_neighbors = lambda node: H.nodes.memberships[node]
 
     t = tmin
     times = [t]
@@ -1059,7 +1059,7 @@ def Gillespie_SIS(
     I = [len(initial_infecteds)]
     S = [H.number_of_nodes() - I[-1]]
 
-    edge_neighbors = lambda node: H.edges.memberships[node]
+    edge_neighbors = lambda node: H.nodes.memberships[node]
 
     t = tmin
     times = [t]

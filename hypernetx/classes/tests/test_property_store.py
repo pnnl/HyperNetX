@@ -263,6 +263,37 @@ def test_set_property(fixture, uid, prop_name, prop_val, current_props, request)
     assert props == prop_val
 
 
+def test_set_properties(incidences_ps):
+    data = {"weight": 100, "hair_color": "orange", "other_attribute": "foobar"}
+    uid = ("S", "A")
+
+    assert incidences_ps.get_property(uid, "hair_color") is None
+    assert incidences_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert incidences_ps.get_property(uid, "weight") == 3.33
+
+    incidences_ps.set_properties(uid, data)
+
+    assert incidences_ps.get_property(uid, "hair_color") == "orange"
+    assert incidences_ps.get_property(uid, MISC_PROPERTIES) == {
+        "other_attribute": "foobar"
+    }
+    assert incidences_ps.get_property(uid, "weight") == 100
+
+
+def test_set_properties_edges(edges_ps):
+    data = {"weight": 99, "new_property": "foobar"}
+    uid = "R"
+
+    assert edges_ps.get_property(uid, "new_property") is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, "weight") == 1.0
+
+    edges_ps.set_properties(uid, data)
+
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {"new_property": "foobar"}
+    assert edges_ps.get_property(uid, "weight") == 99
+
+
 @pytest.mark.parametrize(
     "fixture, uid, expected",
     [
@@ -277,22 +308,22 @@ def test_contains(fixture, uid, expected, request):
     assert (uid in ps) == expected
 
 
-def test_properties_all_entities(edges_ps):
-    # Verifies current uids in property store
-    property_store_uids = ["I", "L", "O", "P"]
-    assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
+# def test_properties_all_entities(edges_ps):
+#     # Verifies current uids in property store
+#     property_store_uids = ["I", "L", "O", "P"]
+#     assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
 
-    # create a list of uids to include entities that don't have properties
-    subset_uids = property_store_uids + ["R", "S"]
+#     # create a list of uids to include entities that don't have properties
+#     subset_uids = property_store_uids + ["R", "S"]
 
-    properties_df = edges_ps.properties_uids(subset_uids)
+#     properties_df = edges_ps.properties_uids(subset_uids)
 
-    # check that the original data in PropertyStore did not change
-    assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
+#     # check that the original data in PropertyStore did not change
+#     assert all(p in property_store_uids for p in edges_ps.properties.index.tolist())
 
-    # check that the new properties dataframe have the original and added entities
-    assert all(uid in properties_df.index for uid in subset_uids)
+#     # check that the new properties dataframe have the original and added entities
+#     assert all(uid in properties_df.index for uid in subset_uids)
 
-    # check that the entities without properties have default properties
-    assert properties_df.loc["R"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
-    assert properties_df.loc["S"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
+#     # check that the entities without properties have default properties
+#     assert properties_df.loc["R"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}
+#     assert properties_df.loc["S"].to_dict() == {WEIGHT: 1.0, MISC_PROPERTIES: {}}

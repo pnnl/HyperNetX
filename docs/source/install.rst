@@ -2,10 +2,6 @@
 Installing HyperNetX
 ********************
 
-
-Installation
-############
-
 The recommended installation method for most users is to create a virtual environment
 and install HyperNetX from PyPi.
 
@@ -56,13 +52,13 @@ To deactivate your environment, use:
     >>> .\env-hnx\Scripts\deactivate
 
 
-Installing Hypernetx
-####################
+Installation
+############
 
 Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.8.
 
 Installing from PyPi
-*************************
+********************
 
     >>> pip install hypernetx
 
@@ -70,14 +66,10 @@ If you want to use supported applications built upon HyperNetX (e.g. ``hypernetx
 ``hypernetx.algorithms.contagion``), you can install HyperNetX with those supported applications by using
 the following command:
 
-    >>> pip install hypernetx[all]
-
-If you are using zsh as your shell, use single quotation marks around the square brackets:
-
-    >>> pip install hypernetx'[all]'
+    >>> pip install igraph celluloid
 
 Installing from Source
-*************************
+**********************
 
 Ensure that you have ``git`` installed.
 
@@ -85,14 +77,14 @@ Ensure that you have ``git`` installed.
     >>> cd HyperNetX
     >>> make venv
     >>> source venv-hnx/bin/activate
-    >>> pip install .
+    >>> make install
 
 
 Post-Installation Actions
-##########################
+#########################
 
 Interact with HyperNetX in a REPL
-********************************************
+*********************************
 
 Ensure that your environment is activated and that you run ``python`` on your terminal to open a REPL:
 
@@ -108,7 +100,7 @@ Ensure that your environment is activated and that you run ``python`` on your te
 
 
 Other Actions if installed from source
-********************************************
+**************************************
 
 If you have installed HyperNetX from source, you can perform additional actions such as viewing the provided Jupyter notebooks
 or building the documentation locally.
@@ -121,7 +113,6 @@ Viewing jupyter notebooks
 
 The following command will automatically open the notebooks in a browser.
 
-    >>> make tutorial-deps
     >>> make tutorials
 
 
@@ -130,9 +121,7 @@ Building documentation
 
 The following commands will build and open a local version of the documentation in a browser:
 
-    >>> make docs-deps
+    >>> pip install sphinx sphinx-autobuild sphinx-rtd-theme sphinx-copybutton
     >>> cd docs
     >>> make html
     >>> open build/index.html
-
-
