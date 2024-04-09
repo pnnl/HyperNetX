@@ -2,8 +2,9 @@ import pandas as pd
 
 
 def mkdict(x):
-    #function to create a dictionary from object x if it is not already a dicitonary.
+    # function to create a dictionary from object x if it is not already a dicitonary.
     import ast, json
+
     if isinstance(x, dict):
         return x
     else:
@@ -30,24 +31,24 @@ def create_df(
     misc_properties_col=None,
     aggregation_methods=None,
 ):
-    
+
     if not isinstance(dfp, pd.DataFrame):
         raise TypeError("method requires a Pandas DataFrame")
     else:
-        #checks if the use index variable is called. if it is then use the existing indices. if it is not then an index is set based on the uid columns.
+        # checks if the use index variable is called. if it is then use the existing indices. if it is not then an index is set based on the uid columns.
         if use_index == False:
-            #if uid cols are specified make those columns the index columns
+            # if uid cols are specified make those columns the index columns
             if uid_cols != None:
-                #create chk function to check if the column specified is a string. if it is not a string then it assumes it is an integer and grabs that columns name.
+                # create chk function to check if the column specified is a string. if it is not a string then it assumes it is an integer and grabs that columns name.
                 chk = lambda c: c if isinstance(c, str) else dfp.columns[c]
-                #set indices using the column names in uid_cols using the chk function.
+                # set indices using the column names in uid_cols using the chk function.
                 dfp = dfp.set_index([chk(c) for c in uid_cols])
-            else: #if uid_cols are not specified then assume the first one or two columns (depending on level) are the index columns and set the index.
+            else:  # if uid_cols are not specified then assume the first one or two columns (depending on level) are the index columns and set the index.
                 if level == 2:
                     dfp = dfp.set_index([dfp.columns[0], dfp.columns[1]])
                 else:
                     dfp = dfp.set_index([dfp.columns[0]])
-        
+
         # if the misc prop col is in the column names
         if misc_properties_col in dfp.columns:
             # rename the misc properties column to the default name if it isn't
@@ -55,30 +56,32 @@ def create_df(
                 dfp = dfp.rename(columns={misc_properties_col: "misc_properties"})
             # force misc properties to be a dictionary if it is not.
             dfp.misc_properties = dfp.misc_properties.map(mkdict)
-        else:#if the column is not specified then create the misc properties column of empty dicitonaries.
+        else:  # if the column is not specified then create the misc properties column of empty dicitonaries.
             dfp["misc_properties"] = [{} for row in dfp.index]
-        
+
         # check if weight property column name was specified.
         if weight_prop in dfp.columns:
             # if it was specified and it exists then rename to default weight name and fill in the NA weights with the default.
             dfp = dfp.rename(columns={weight_prop: "weight"})
             dfp = dfp.fillna({"weight": default_weight})
-        #if weight column is not None and the weight column name was not in the column names then check in the misc properties.
+        # if weight column is not None and the weight column name was not in the column names then check in the misc properties.
         elif weight_prop is not None:
+
             def grabweight(cell):
-                #function to grab weights from the misc properties column.
+                # function to grab weights from the misc properties column.
                 if isinstance(cell, dict):
                     return cell.get(weight_prop, default_weight)
                 else:
                     return default_weight
-            #set the weight column to the weights grabbed from the misc properties dictionary (if any).
+
+            # set the weight column to the weights grabbed from the misc properties dictionary (if any).
             dfp["weight"] = dfp["misc_properties"].map(grabweight)
-    
+
     # reorder columns in standard order
     cols = [c for c in dfp.columns if c not in ["weight", "misc_properties"]]
     dfp = dfp[["weight"] + cols + ["misc_properties"]]
-    
-    #remove duplicate indices and aggregate using aggregation methods specified.
+
+    # remove duplicate indices and aggregate using aggregation methods specified.
     dfp = dfp[~dfp.index.duplicated(keep="first")]
     return dfp
 
@@ -146,9 +149,11 @@ def dataframe_factory_method(
             weight_prop=weight_col,
             misc_properties_col=misc_properties_col,
             default_weight=default_weight,
-            aggregation_methods=aggregate_by,)
+            aggregation_methods=aggregate_by,
+        )
 
     return PS
+
 
 def dict_factory_method(
     D,
@@ -224,9 +229,9 @@ def dict_factory_method(
                     attribute_data[weight_col] += [default_weight]
                 attribute_data[misc_properties_col] += [attributes_of_incidence_pair]
         attribute_df = pd.DataFrame(attribute_data)
-        DF = pd.concat([DF, attribute_df], axis=1)   
-        
-    #id the dataeframe is for edges or nodes.
+        DF = pd.concat([DF, attribute_df], axis=1)
+
+    # id the dataeframe is for edges or nodes.
     elif level == 1 or level == 0:
         attribute_data = []
         for key in D:
@@ -250,6 +255,7 @@ def dict_factory_method(
     )
 
     return PS
+
 
 def list_factory_method(
     L,
