@@ -88,7 +88,7 @@ class HypergraphView(object):
         non_user_defined_items = list(
             set(self._items).difference(self.properties.index)
         )
-        default_data = self.property_store.default_properties_data()
+        default_data = self.property_store.default_properties_df()
         non_user_defined_properties = pd.DataFrame(
             index=non_user_defined_items, data=default_data
         )
@@ -133,6 +133,9 @@ class HypergraphView(object):
             return self.incidence_store.elements
         else:
             return {}
+
+    def isolates(self):
+        return set(self._property_store._data.index).difference(self._items)
 
     def __iter__(self):
         """
