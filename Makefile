@@ -36,7 +36,7 @@ requirements.txt:
 ## Tests
 .PHONY: test
 test:
-	coverage run --source=hypernetx -m pytest
+	coverage run --source=hypernetx -m pytest tests
 	coverage report -m
 
 ## Tests using Tox

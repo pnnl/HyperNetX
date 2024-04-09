@@ -81,11 +81,9 @@ commitizen = {version = "^3.20.0", optional = true}
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra"
 testpaths = [
-    "hypernetx/classes/tests",
-    "hypernetx/algorithms/tests",
+    "tests"
 ]
