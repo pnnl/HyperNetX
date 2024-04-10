@@ -2117,8 +2117,7 @@ class Hypergraph:
 
     def difference(self, other):
         """
-        Concatenate incidences from two hypergraphs, removing duplicates and
-        dropping duplicate property data in the order of addition.
+        Remove incidence pairs from self that belong to other.
 
         Parameters
         ----------
@@ -2126,18 +2125,12 @@ class Hypergraph:
 
         Returns
         -------
-        Hypergraph
+         : Hypergraph
 
         """
         df = self.incidences.properties
         odf = other.incidences.properties
         ndf = df.loc[~df.index.isin(odf.index.tolist())]
-        edf = self.edges.properties
-        oedf = other.edges.properties
-        nedf = edf.loc[~edf.index.isin(oedf.index.tolist())]
-        nddf = self.nodes.properties
-        onddf = other.nodes.properties
-        nnddf = nddf.loc[~nddf.index.isin(onddf.index.tolist())]
         return self._construct_hyp_from_stores(
-            ndf, edge_ps=PropertyStore(nedf), node_ps=PropertyStore(nnddf)
+            ndf, edge_ps=self.edges._property_store, node_ps=self.nodes._property_store
         )
