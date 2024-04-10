@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import pytest
 import numpy as np
 import pandas as pd
@@ -371,3 +373,49 @@ def test_construct_hypergraph_empty_dict():
 def test_static_hypergraph_s_connected_components(lesmis):
     H = Hypergraph(lesmis.edgedict)
     assert {7, 8} in list(H.s_connected_components(edges=True, s=4))
+
+
+def test_difference_on_same_hypergraph(lesmis):
+    hg = Hypergraph(lesmis.edgedict)
+    hg_copy = Hypergraph(lesmis.edgedict)
+
+    hg_diff = hg - hg_copy
+
+    assert len(hg_diff) == 0
+    assert len(hg_diff.nodes) == 0
+    assert len(hg_diff.edges) == 0
+    assert hg_diff.shape == (0, 0)
+    assert hg_diff.incidence_dict == {}
+
+
+def test_difference_on_empty_hypergraph(sbs_hypergraph):
+    hg_empty = Hypergraph()
+
+    hg_diff = sbs_hypergraph - hg_empty
+
+    assert len(hg_diff) == 7
+    assert len(hg_diff.nodes) == 7
+    assert len(hg_diff.edges) == 6
+    assert hg_diff.shape == (7, 6)
+
+    edges = ["I", "L", "O", "P", "R", "S"]
+    assert all(uid in edges for uid in hg_diff.incidence_dict.keys())
+
+
+def test_difference_on_similar_hypergraph(sbs_hypergraph):
+    a, c, e, k, t1, t2, v = ("A", "C", "E", "K", "T1", "T2", "V")
+    l, o, p, r, s = ("L", "O", "P", "R", "S")
+    data = OrderedDict(
+        [(p, {a, c, k}), (r, {a, e}), (s, {a, k, t2, v}), (l, {c, e}), (o, {t1, t2})]
+    )
+    hg_similar = Hypergraph(data, edge_col="edges", node_col="nodes")
+
+    hg_diff = sbs_hypergraph - hg_similar
+
+    assert len(hg_diff) == 2
+    assert len(hg_diff.nodes) == 2
+    assert len(hg_diff.edges) == 1
+    assert hg_diff.shape == (2, 1)
+    print(hg_diff.incidence_dict.keys())
+    edges = ["I"]
+    assert all(uid in edges for uid in hg_diff.incidence_dict.keys())
