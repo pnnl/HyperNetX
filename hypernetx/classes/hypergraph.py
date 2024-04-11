@@ -950,12 +950,12 @@ class Hypergraph:
             .set_index(["edges", "nodes"])
         )
 
-        if inplace == False:
+        if inplace:
+            edge_ps = self._nodes.property_store
+            node_ps = self._edges.property_store
+        else:
             edge_ps = PropertyStore(self._nodes.dataframe.copy(deep=True))
             node_ps = PropertyStore(self._edges.dataframe.copy(deep=True))
-        else:
-            edge_ps = self._nodes
-            node_ps = self._edges
 
         hdual = self._construct_hyp_from_stores(
             dsetsystem,

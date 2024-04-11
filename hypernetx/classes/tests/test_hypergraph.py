@@ -7,6 +7,8 @@ from hypernetx.classes.hypergraph import Hypergraph
 
 from networkx.algorithms import bipartite
 
+from hypernetx.classes.property_store import PropertyStore
+
 
 def test_hypergraph_from_iterable_of_sets(sbs):
     H = Hypergraph(sbs.edges)
@@ -308,20 +310,11 @@ def test_bipartite(sbs_hypergraph):
 def test_dual(sbs_hypergraph):
     H = sbs_hypergraph
     HD = H.dual()
+    assert isinstance(HD.nodes.property_store, PropertyStore)
+    assert isinstance(HD.edges.property_store, PropertyStore)
     assert set(H.nodes) == set(HD.edges)
     assert set(H.edges) == set(HD.nodes)
     assert list(H.dataframe.columns) == list(HD.dataframe.columns)
-
-
-@pytest.mark.skip("reason=edge_col and node_col used differently")
-def test_dual_again(sbs):
-    H = Hypergraph(sbs.edgedict, edge_col="Types", node_col="Values")
-    assert list(H.dataframe.columns[0:2]) == ["Types", "Values"]
-    assert list(H.dual().dataframe.columns[0:2]) == ["Values", "Types"]
-    assert list(H.dual(switch_names=False).dataframe.columns[0:2]) == [
-        "Types",
-        "Values",
-    ]
 
 
 @pytest.mark.filterwarnings("ignore:No 3-path between ME and FN")
@@ -332,8 +325,6 @@ def test_distance(lesmis):
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
-# TODO: fix test once get_linegraph is fully tested
-@pytest.mark.filterwarnings("ignore:No 2-path between 1 and 4")
 def test_edge_distance(lesmis):
     h = lesmis.hypergraph
     assert h.edge_distance(1, 4) == 2
