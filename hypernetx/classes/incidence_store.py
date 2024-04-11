@@ -212,10 +212,8 @@ class IncidenceStore:
     def equivalence_classes(self, level=0):
         if level == 0:
             old_dict = self._elements
-            col = "edges"
         elif level == 1:
             old_dict = self._memberships
-            col = "nodes"
         else:
             return self.data
 
