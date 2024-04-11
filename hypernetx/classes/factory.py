@@ -242,15 +242,11 @@ def dict_factory_method(
 
     # if the dictionary is for edges or nodes.
     elif level == 1 or level == 0:
-        attribute_data = []
-        for key in D:
-            attributes_of_key = D[key]
-            attribute_data.append(attributes_of_key)
             
         attribute_data = {weight_col: [], misc_properties_col: []}
-        for uid in D.keys():
-            if isinstance(D[uid], dict):
-                attributes_of_uid = D[uid]
+        for data_uid in D.values():
+            if isinstance(data_uid, dict):
+                attributes_of_uid = data_uid
                 if weight_col in attributes_of_uid:
                     weight_val = attributes_of_uid.pop(weight_col)
                     attribute_data[weight_col] += [weight_val]
