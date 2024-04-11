@@ -83,6 +83,15 @@ def create_df(
 
     # remove duplicate indices and aggregate using aggregation methods specified.
     dfp = dfp[~dfp.index.duplicated(keep="first")]
+    
+    #rename index columns if necessary
+    if level == 0 or level == 1:
+        #rename index column to 'uid'
+        dfp.index.names = ['uid']
+    elif level == 2:
+        #rename index columns to 'edges' and 'nodes'
+        dfp.index.names = ['edges', 'nodes']
+        
     return dfp
 
 
@@ -231,17 +240,28 @@ def dict_factory_method(
         attribute_df = pd.DataFrame(attribute_data)
         DF = pd.concat([DF, attribute_df], axis=1)
 
-    # id the dataeframe is for edges or nodes.
+    # if the dictionary is for edges or nodes.
     elif level == 1 or level == 0:
         attribute_data = []
         for key in D:
             attributes_of_key = D[key]
             attribute_data.append(attributes_of_key)
+            
+        attribute_data = {weight_col: [], misc_properties_col: []}
+        for uid in D.keys():
+            if isinstance(D[uid], dict):
+                attributes_of_uid = D[uid]
+                if weight_col in attributes_of_uid:
+                    weight_val = attributes_of_uid.pop(weight_col)
+                    attribute_data[weight_col] += [weight_val]
+                else:
+                    attribute_data[weight_col] += [default_weight]
+                attribute_data[misc_properties_col] += [attributes_of_uid]
+                
         attribute_df = pd.DataFrame(attribute_data)
         DF = pd.concat(
-            [pd.DataFrame(list(D.keys()), columns=uid_cols), attribute_df], axis=1
-        )
-
+            [pd.DataFrame(list(D.keys())), attribute_df], axis=1)
+        
     # get property store from dataframe
     PS = dataframe_factory_method(
         DF,
