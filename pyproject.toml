@@ -87,5 +87,5 @@ minversion = "6.0"
 addopts = "-ra"
 testpaths = [
     "hypernetx/classes/tests",
-    "hypernetx/classes/algorithms",
+    "hypernetx/algorithms/tests",
 ]
