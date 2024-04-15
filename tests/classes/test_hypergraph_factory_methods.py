@@ -68,9 +68,7 @@ def test_from_dataframe_with_key():
     assert "C" not in h.edges["a"]
 
 
-def test_from_dataframe_with_transforms_and_fillna(dataframe):
-    df = dataframe.df
-
+def test_from_dataframe_with_transforms_and_fillna(sample_df):
     # @pytest.mark.skip()
     # def keymark.1(x):
     #     return x**2
@@ -81,10 +79,10 @@ def test_from_dataframe_with_transforms_and_fillna(dataframe):
     # def keymark.3(x):
     #     return (x > 0) * x
 
-    h = Hypergraph.from_incidence_dataframe(df)
+    h = Hypergraph.from_incidence_dataframe(sample_df)
     assert "A" in h.edges["a"]
     assert "A" not in h.edges["b"]
-    h = Hypergraph.from_incidence_dataframe(df, fillna=1)
+    h = Hypergraph.from_incidence_dataframe(sample_df, fillna=1)
     assert "A" in h.edges["b"]
     # h = Hypergraph.from_incidence_dataframe(df, transforms=[key1, key2])
     # assert "A" in h.edges["c"]

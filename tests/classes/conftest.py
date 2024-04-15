@@ -7,17 +7,33 @@ import numpy as np
 
 from hypernetx import Hypergraph, HarryPotter, LesMis as LM
 from hypernetx.classes.helpers import create_dataframe
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict, defaultdict, namedtuple
 
 
 class SevenBySix:
     """Example hypergraph with 7 nodes and 6 edges."""
 
-    def __init__(self, static=False):
+    def __init__(self):
+        # Nodes
+        SBS_Nodes = namedtuple("SBS_Nodes", "A C E K T1 T2 V")
         a, c, e, k, t1, t2, v = nd = ("A", "C", "E", "K", "T1", "T2", "V")
+        self.nodes = SBS_Nodes(a, c, e, k, t1, t2, v)
+
+        # Edges
+        SBS_Edges = namedtuple("SBS_Edges", "I L O P R S")
         i, l, o, p, r, s = ("I", "L", "O", "P", "R", "S")
-        self.edges = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
-        self.nodes = set(nd)
+        self.edges = SBS_Edges(i, l, o, p, r, s)
+
+        # Labels
+        self.labels = OrderedDict(
+            [
+                ("edges", list(self.edges)),
+                ("nodes", list(self.nodes)),
+            ]
+        )
+
+        # define edges
+        self.edges_list = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
         self.edgedict = OrderedDict(
             [
                 (p, {a, c, k}),
@@ -28,7 +44,10 @@ class SevenBySix:
                 (i, {k, t2}),
             ]
         )
+        self.dataframe = create_dataframe(self.edgedict)
 
+        # row = number of nodes = 6
+        # columns = number of edges = 7
         self.arr = np.array(
             [
                 [0, 0, 0, 1, 0, 1, 0],
@@ -37,12 +56,6 @@ class SevenBySix:
                 [1, 1, 0, 1, 0, 0, 0],
                 [1, 0, 1, 0, 0, 0, 0],
                 [1, 0, 0, 1, 0, 1, 1],
-            ]
-        )
-        self.labels = OrderedDict(
-            [
-                ("edges", [i, l, o, p, r, s]),
-                ("nodes", [a, c, e, k, t1, t2, v]),
             ]
         )
 
@@ -66,7 +79,10 @@ class SevenBySix:
             ]
         )
 
-        self.dataframe = create_dataframe(self.edgedict)
+
+@pytest.fixture
+def sbs() -> SevenBySix:
+    return SevenBySix()
 
 
 class TriLoop:
@@ -76,26 +92,47 @@ class TriLoop:
         A, B, C, D = "A", "B", "C", "D"
         AB, BC, ACD = "AB", "BC", "ACD"
         self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D}}
-        self.hypergraph = Hypergraph(self.edgedict, name="TriLoop")
+
+
+@pytest.fixture
+def triloop():
+    return TriLoop()
 
 
 class TriLoop2:
     """Triloop example with redundant node and edge"""
 
     def __init__(self):
+        # Nodes
         A, B, C, D, E = "A", "B", "C", "D", "E"
+        # Edges
         AB, BC, ACD, ACD2 = "AB", "BC", "ACD", "ACD2"
+        self.nodes = set([A, B, C, D, E])
+
         self.edgedict = {AB: {A, B}, BC: {B, C}, ACD: {A, C, D, E}, ACD2: {A, C, D, E}}
-        self.hypergraph = Hypergraph(self.edgedict, name="TriLoop2")
+        self.name = "TriLoop2"
+
+
+@pytest.fixture
+def triloop2():
+    return TriLoop2()
 
 
 class SBSDupes:
     def __init__(self):
+        # Nodes
+        a, c, e, f, k, t1, t2, v = nd = ("A", "C", "E", "F", "K", "T1", "T2", "V")
+        self.nodes = (a, c, e, f, k, t1, t2, v)
+
+        # Edges
+        i, l, m, o, p, r, s = ("I", "L", "M", "O", "P", "R", "S")
+        self.edges = (i, l, m, o, p, r, s)
+
         self.edgedict = OrderedDict(
             [
-                ("I", {"K", "T2"}),
-                ("L", {"C", "E", "F"}),
-                ("M", {"C", "E", "F"}),
+                (i, {k, t2}),
+                (l, {c, e, f}),
+                (m, {c, e, f}),
                 ("O", {"T1", "T2"}),
                 ("P", {"A", "C", "K"}),
                 ("R", {"A", "E", "F"}),
@@ -104,6 +141,11 @@ class SBSDupes:
         )
 
         self.dataframe = create_dataframe(self.edgedict)
+
+
+@pytest.fixture
+def sbs_dupes():
+    return SBSDupes()
 
 
 class LesMis:
@@ -136,13 +178,20 @@ class LesMis:
                 (8, {"FN", "JA", "JV", "PO", "SP", "SS"}),
             ]
         )
-        self.hypergraph = Hypergraph(self.edgedict)
 
 
-class Dataframe:
-    def __init__(self):
-        fname = os.path.join(os.path.dirname(__file__), "sample.csv")
-        self.df = pd.read_csv(fname, index_col=0)
+@pytest.fixture
+def lesmis():
+    return LesMis()
+
+
+@pytest.fixture
+def sample_df():
+    fname = os.path.join(os.path.dirname(__file__), "sample.csv")
+    return pd.read_csv(fname, index_col=0)
+
+
+#### Old fixtures not in use
 
 
 class CompleteBipartite:
@@ -152,104 +201,14 @@ class CompleteBipartite:
 
 
 @pytest.fixture
-def props_dataframe():
-    multi_index = pd.MultiIndex.from_tuples([(0, "P")], names=["level", "id"])
-    data = {
-        "properties": [{"prop1": "propval1", "prop2": "propval2"}],
-    }
-    return pd.DataFrame(data, index=multi_index)
-
-
-@pytest.fixture
-def cell_props_dataframe_multidx():
-    multi_index = pd.MultiIndex.from_tuples([("P", "A"), ("P", "C")], names=[0, 1])
-    data = {
-        "cell_properties": [
-            {"prop1": "propval1", "prop2": "propval2"},
-            {"prop1": "propval1", "prop2": "propval2"},
-        ]
-    }
-
-    return pd.DataFrame(data, index=multi_index)
-
-
-@pytest.fixture
-def cell_props_dataframe():
-    data = {
-        0: ["P", "P"],
-        1: ["A", "C"],
-        "cell_properties": [
-            {"prop1": "propval1", "prop2": "propval2"},
-            {"prop1": "propval1", "prop2": "propval2"},
-        ],
-    }
-    return pd.DataFrame(data)
-
-
-@pytest.fixture
-def sbs():
-    return SevenBySix()
-
-
-@pytest.fixture
-def sbs_dataframe(sbs):
-    return sbs.dataframe
-
-
-@pytest.fixture
-def sbs_dict(sbs):
-    return sbs.edgedict
-
-
-@pytest.fixture
-def sbs_data(sbs):
-    return np.asarray(sbs.data)
-
-
-@pytest.fixture
-def sbs_labels(sbs):
-    return sbs.labels
-
-
-@pytest.fixture
-def triloop():
-    return TriLoop()
-
-
-@pytest.fixture
-def triloop2():
-    return TriLoop2()
-
-
-@pytest.fixture
-def sbs_hypergraph(sbs):
-    return Hypergraph(sbs.edgedict, name="sbsh", edge_col="edges", node_col="nodes")
-
-
-@pytest.fixture
-def sbs_graph(sbs):
+def sbs_graph():
+    sbs = SevenBySix()
     edges = set()
     for _, e in sbs.edgedict.items():
         edges.update(it.combinations(e, 2))
     G = nx.Graph(name="sbsg")
     G.add_edges_from(edges)
     return G
-
-
-@pytest.fixture
-def sbsd():
-    return SBSDupes()
-
-
-@pytest.fixture
-def sbsd_hypergraph():
-    sbsd = SBSDupes()
-    return Hypergraph(sbsd.edgedict)
-
-
-@pytest.fixture
-def lesmis():
-    return LesMis()
 
 
 @pytest.fixture
@@ -276,11 +235,6 @@ def complete_bipartite_example():
 
 
 @pytest.fixture
-def dataframe():
-    return Dataframe()
-
-
-@pytest.fixture
 def dataframe_example():
     M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
     index = ["A", "B", "C"]
@@ -289,147 +243,7 @@ def dataframe_example():
 
 
 @pytest.fixture
-def harry_potter():
-    return HarryPotter()
-
-
-@pytest.fixture
 def array_example():
     return np.array(
         [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
     )
-
-
-####################Fixtures suite for test_hypergraph.py####################
-####################These fixtures are modular and thus have inter-dependencies####################
-@pytest.fixture
-def les_mis():
-    return LM()
-
-
-@pytest.fixture
-def scenes():
-    return {
-        "0": ("FN", "TH"),
-        "1": ("TH", "JV"),
-        "2": ("BM", "FN", "JA"),
-        "3": ("JV", "JU", "CH", "BM"),
-        "4": ("JU", "CH", "BR", "CN", "CC", "JV", "BM"),
-        "5": ("TH", "GP"),
-        "6": ("GP", "MP"),
-        "7": ("MA", "GP"),
-    }
-
-
-@pytest.fixture
-def edges(scenes):
-    return list(set(list(scenes.keys())))
-
-
-@pytest.fixture
-def nodes(scenes):
-    return list(set(list(np.concatenate([v for v in scenes.values()]))))
-
-
-@pytest.fixture
-def edge_properties(edges):
-    edge_properties = defaultdict(dict)
-    edge_properties.update(
-        {str(ed): {"weight": np.random.randint(2, 10)} for ed in range(0, 8, 2)}
-    )
-    for ed in edges:
-        edge_properties[ed].update({"color": np.random.choice(["red", "green"])})
-    return edge_properties
-
-
-@pytest.fixture
-def node_properties(les_mis, nodes):
-    return {
-        ch: {
-            "FullName": les_mis.dnames.loc[ch].FullName,
-            "Description": les_mis.dnames.loc[ch].Description,
-            "color": np.random.choice(["pink", "blue"]),
-        }
-        for ch in nodes
-    }
-
-
-@pytest.fixture
-def scenes_dataframe(scenes):
-    scenes_dataframe = (
-        pd.DataFrame(pd.Series(scenes).explode())
-        .reset_index()
-        .rename(columns={"index": "Scenes", 0: "Characters"})
-    )
-    scenes_dataframe["color"] = np.random.choice(
-        ["red", "green"], len(scenes_dataframe)
-    )
-    scenes_dataframe["heaviness"] = np.random.rand(len(scenes_dataframe))
-
-    return scenes_dataframe
-
-
-@pytest.fixture
-def hyp_no_props():
-    return Hypergraph(
-        pd.DataFrame(
-            np.array(
-                [
-                    np.random.choice(list("ABCD"), 50),
-                    np.random.choice(list("abcdefghijklmnopqrstuvwxyz"), 50),
-                ]
-            ).T,  # creates a transposed ndarray
-            columns=["Club", "Member"],
-        )
-    )
-
-
-@pytest.fixture
-def hyp_df_with_props(scenes_dataframe, node_properties, edge_properties):
-    return Hypergraph(
-        scenes_dataframe,
-        # cell_properties=["color"],
-        cell_weight_col="heaviness",
-        node_properties=node_properties,
-        edge_properties=edge_properties,
-    )
-
-
-@pytest.fixture
-def hyp_dict_with_props(scenes):
-    scenes_with_cellprops = {
-        ed: {
-            ch: {
-                "color": np.random.choice(["red", "green"]),
-                "cell_weight": np.random.rand(),
-            }
-            for ch in v
-        }
-        for ed, v in scenes.items()
-    }
-
-    return Hypergraph(
-        scenes_with_cellprops,
-        edge_col="Scenes",
-        node_col="Characters",
-        cell_weight_col="cell_weight",
-        cell_properties=scenes_with_cellprops,
-    )
-
-
-@pytest.fixture
-def hyp_props_on_edges_nodes(scenes_dataframe, edge_properties, node_properties):
-    return Hypergraph(
-        setsystem=scenes_dataframe,
-        edge_col="Scenes",
-        node_col="Characters",
-        cell_weight_col="cell_weight",
-        cell_properties=["color"],
-        edge_properties=edge_properties,
-        node_properties=node_properties,
-        default_edge_weight=2.5,
-        default_node_weight=6,
-    )
-
-
-####################Fixtures suite for test_hypergraph.py####################
