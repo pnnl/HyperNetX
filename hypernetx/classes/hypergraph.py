@@ -2,6 +2,7 @@
 # All rights reserved.
 from __future__ import annotations
 
+import random
 import warnings
 
 warnings.filterwarnings("default", category=DeprecationWarning)
@@ -1216,7 +1217,7 @@ class Hypergraph:
 
     def _add_item(self, uid, level=2, data=None, inplace=True):
         data = data or {}
-        self._add_items_from([(uid, data)], level=level, inplace=inplace)
+        return self._add_items_from([(uid, data)], level=level, inplace=inplace)
 
     def _add_items_from(self, items, level=2, inplace=True):
         """Items must be a list of uids and/or tuples
@@ -1243,10 +1244,12 @@ class Hypergraph:
                 df.properties, edge_ps=ep, node_ps=np, name=self.name
             )
             return self
-        else:
-            return self._construct_hyp_from_stores(
-                df.properties, edge_ps=ep, node_ps=np, name=name
-            )
+        return self._construct_hyp_from_stores(
+            df.properties,
+            edge_ps=ep,
+            node_ps=np,
+            name=f"{self.name}-{random.randint(1, 100)}",
+        )
 
     #### This should follow behavior of restrictions
     def remove_edges(self, keys, name=None, inplace=True):
