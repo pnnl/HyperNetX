@@ -69,20 +69,46 @@ def test_hypergraph_from_bipartite(sbsd_hypergraph):
     assert len(HB.nodes) == 8
 
 
-@pytest.mark.skip("Deprecated method; will support in later release")
-def test_add_node_to_edge(sbs):
-    H = Hypergraph(sbs.edgedict)
-    assert H.shape == (7, 6)
-    node = "B"
-    edge = "P"
-    H.add_node_to_edge(node, edge)
-    assert H.shape == (8, 6)
-    # add edge with nodes already in hypergraph
-    H.add_edge({"Z": ["A", "B"]})
-    assert H.shape == (8, 7)
-    # add edge not in hypergraph with nodes not in hypergraph
-    H.add_edge({"Y": ["M", "N"]})
-    assert H.shape == (10, 8)
+def test_add_edge_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+
+    # add a new edge in place; i.e. the current hypergraph should be mutated
+    new_edge = "X"
+    h.add_edge(new_edge)
+
+    # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
+    # an edge does not connect two or more nodes.
+    # In other words, adding an edge with no nodes
+    assert h.shape == (7, 6)
+    assert new_edge not in h.edges.elements
+
+    # the new edge has no user-defined property data, so it should not be listed in the PropertyStore
+    assert new_edge not in h.edges.properties
+
+    # However, the new_edge will be listed in the complete list of all user and non-user-define properties for all edges
+    assert new_edge in h.edges.to_dataframe.index.tolist()
+
+    assert new_edge in h.edges.to_dataframe.index.tolist()
+
+
+def test_add_edge_not_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+
+    # add a new edge not in place; the current hypergraph should be diffrent from the new hypergraph
+    # created from add_edge
+    new_edge = "X"
+    new_hg = h.add_edge(new_edge, inplace=False)
+
+    assert new_hg.shape == (7, 6)
+    assert new_edge not in new_hg.edges.elements
+
+    assert new_edge not in new_hg.edges.properties
+    assert new_edge in new_hg.edges.to_dataframe.index.tolist()
+
+    # verify that the new edge is not in the old HyperGraph
+    assert new_edge not in h.edges.to_dataframe.index.tolist()
 
 
 def test_remove_edges(sbs):
