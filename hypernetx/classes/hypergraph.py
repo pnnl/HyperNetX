@@ -924,7 +924,7 @@ class Hypergraph:
         h._dataframe = h.dataframe
         return h
 
-    def dual(self, name=None, inplace=True):
+    def dual(self, name=None, keep_properties=True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -951,7 +951,7 @@ class Hypergraph:
             .set_index(["edges", "nodes"])
         )
 
-        if inplace:
+        if keep_properties:
             edge_ps = self._nodes.property_store
             node_ps = self._edges.property_store
         else:
@@ -976,7 +976,6 @@ class Hypergraph:
         name=None,
         use_uids=None,
         return_equivalence_classes=False,
-        inplace=False,
     ):
         """
         Constructs a new hypergraph gotten by identifying edges containing the
@@ -1018,14 +1017,11 @@ class Hypergraph:
         incidence_df = self._E.properties.loc[incidence_pairs]
         ekeys = list(eclasses.keys())
         ekeys = list(set(ekeys).intersection(self.edges.properties.index))
-        if inplace == True:
-            H = _construct_hyp_from_stores(incidence_df)
-        else:
-            edge_ps = PropertyStore(self.edges.properties.copy(deep=True).loc[ekeys])
-            node_ps = PropertyStore(self.nodes.properties.copy(deep=True))
-            H = self._construct_hyp_from_stores(
-                incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
-            )
+        edge_ps = PropertyStore(self.edges.properties.copy(deep=True).loc[ekeys])
+        node_ps = PropertyStore(self.nodes.properties.copy(deep=True))
+        H = self._construct_hyp_from_stores(
+            incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+        )
         if return_equivalence_classes == True:
             return H, eclasses
         else:
@@ -1036,7 +1032,6 @@ class Hypergraph:
         name=None,
         use_uids=None,
         return_equivalence_classes=False,
-        inplace=False,
     ):
         """
         Constructs a new hypergraph gotten by identifying nodes contained in the
@@ -1078,14 +1073,12 @@ class Hypergraph:
         incidence_df = self._E.properties.loc[incidence_pairs]
         ekeys = list(eclasses.keys())
         ekeys = list(set(ekeys).intersection(self.nodes.properties.index))
-        if inplace == True:
-            H = _construct_hyp_from_stores(incidence_df)
-        else:
-            node_ps = PropertyStore(self.nodes.properties.copy(deep=True).loc[ekeys])
-            edge_ps = PropertyStore(self.edges.properties.copy(deep=True))
-            H = self._construct_hyp_from_stores(
-                incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
-            )
+
+        node_ps = PropertyStore(self.nodes.properties.copy(deep=True).loc[ekeys])
+        edge_ps = PropertyStore(self.edges.properties.copy(deep=True))
+        H = self._construct_hyp_from_stores(
+            incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+        )
         if return_equivalence_classes == True:
             return H, eclasses
         else:
@@ -1156,31 +1149,39 @@ class Hypergraph:
             return temp.collapse_edges(name=name, use_uids=use_edge_ids)
 
     #### restrict_to methods should be handled in the incidence
-    #### store and should preserve stores if inplace=True otherwise
+    #### store and should preserve stores if share_properties=True otherwise
     #### deepcopy should be returned and properties will be disconnected
-    def restrict_to_nodes(self, nodes, name=None, inplace=False):
-        """New hypergraph gotten by restricting to nodes
+    def restrict_to_nodes(self, nodes, name=None):
+        """
+        New hypergraph gotten by restricting to nodes
 
         Parameters
         ----------
         nodes : Iterable
-            nodeids to restrict to
+            node identifiers to restrict to
+        name : str | int, optional
+            node identifier, by default None
 
         Returns
         -------
-        : hnx. Hypergraph
-
+            : Hypergraph
         """
-        keys = list(set(self._state_dict["labels"]["nodes"]).difference(nodes))
-        return self.remove_nodes(keys, name=name, inplace=inplace)
 
-    def restrict_to_edges(self, edges, name=None, inplace=False):
+        keys = list(set(self._state_dict["labels"]["nodes"]).difference(nodes))
+        return self._remove(keys, 
+                            level=1, 
+                            name=name, 
+                            inplace=False)
+
+    def restrict_to_edges(self, edges, name=None):
         """New hypergraph gotten by restricting to edges
 
         Parameters
         ----------
         edges : Iterable
             edgeids to restrict to
+        name : str | int, optional
+            edge identifier, by default None
 
         Returns
         -------
@@ -1188,89 +1189,100 @@ class Hypergraph:
 
         """
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
-        return self.remove_edges(keys, name=name, inplace=inplace)
+        return self._remove(keys, 
+                            level=0, 
+                            name=name, 
+                            inplace=False)
 
-    def add_edge(self, uid, data=None, inplace=True):
-        return self._add_item(uid, level=0, data=data, inplace=inplace)
+    def add_edge(self, uid, **attr):
+        return self._add_item(uid, level=0, data=attr)
 
-    def add_edges_from(self, edges, inplace=True):
+    def add_edges_from(self, edges):
         """Edges must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
-        return self._add_items_from(edges, level=0, inplace=inplace)
+        newedges = list()
+        for e in edges:
+            if not isinstance(e,tuple):
+                newedges.append((e,{}))
+            else:
+                newedges.append(e)
+        return self._add_items_from(newedges, level=0)
 
-    def add_node(self, uid, data=None, inplace=True):
-        return self._add_item(uid, level=1, data=data, inplace=inplace)
+    def add_node(self, uid, **attr):
+        return self._add_item(uid, level=1, data=attr)
 
-    def add_nodes_from(self, nodes, inplace=True):
+    def add_nodes_from(self, nodes):
         """Nodes must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
-        return self._add_items_from(nodes, level=1, inplace=inplace)
+        newnodes = list()
+        for nd in nodes:
+            if not isinstance(nd,tuple):
+                newnodes.append((nd,{}))
+            else:
+                newnodes.append(nd)
+        return self._add_items_from(newnodes, level=1)
+    
+    def add_incidence(self, edge_id, node_id, **attr):
+        return self._add_item((edge_id, node_id), level=2, data=attr)
 
-    def add_incidence(self, uid, data=None, inplace=True):
-        return self._add_item(uid, level=2, data=data, inplace=inplace)
-
-    def add_incidences_from(self, incidences, inplace=True):
+    def add_incidences_from(self, incidences):
         """Incidence pairs must be a list of uids of the form (edge_uid,node_uid)
-        and/or tuples of the form ((edge_uid, node_uid),data) where data is a
+        and/or tuples of the form (edge_uid, node_uid,data) where data is a
         dictionary"""
-        return self._add_items_from(incidences, level=2, inplace=inplace)
+        newincidences = list()
+        for pr in incidences:
+            if len(pr) == 2:
+                newincidences.append((pr,{}))
+            else:
+                newincidences.append(((pr[0],pr[1]),pr[2]))
+        return self._add_items_from(newincidences, level=2)
 
-    def _add_item(self, uid, level=2, data=None, inplace=True):
+    def _add_item(self, uid, level=2, data=None):
         data = data or {}
-        return self._add_items_from([(uid, data)], level=level, inplace=inplace)
+        return self._add_items_from([(uid, data)], level=level)
+    
 
-    def _add_items_from(self, items, level=2, inplace=True):
-        """Items must be a list of uids and/or tuples
+    def _add_items_from(self, items, level=2):
+        """Items must be a list of tuples
         of the form (uid,data) where data is dictionary"""
-        if inplace == True:
-            df = self.incidences._property_store
-            ep = self.edges._property_store
-            np = self.nodes._property_store
-        else:
-            df = self.incidences._property_store.copy(deep=True)
-            ep = self.edges._property_store.copy(deep=True)
-            np = self.nodes._property_store.copy(deep=True)
+        df = self.incidences._property_store
+        ep = self.edges._property_store
+        np = self.nodes._property_store
         hv = [ep, np, df][level]
         for item in items:
-            if isinstance(item, tuple):
-                uid = item[0]
-                data = item[1]
-            else:
-                uid = item
-                data = {}
+            uid = item[0]
+            data = item[1]
             hv.set_properties(uid, data)
-        if inplace == True:
-            self = self._construct_hyp_from_stores(
-                df.properties, edge_ps=ep, node_ps=np, name=self.name
-            )
-            return self
-        return self._construct_hyp_from_stores(
-            df.properties,
-            edge_ps=ep,
-            node_ps=np,
-            name=f"{self.name}-{random.randint(1, 100)}",
+        self = self._construct_hyp_from_stores(
+            df.properties, edge_ps=ep, node_ps=np, name=self.name
         )
+        return self
+
 
     #### This should follow behavior of restrictions
-    def remove_edges(self, keys, name=None, inplace=True):
+    def remove_edges(self, keys, name=None):
         if isinstance(keys, list):
-            return self.remove(keys, level=0, name=name, inplace=inplace)
+            return self._remove(keys, level=0, name=name)
         else:
-            return self.remove([keys], level=0, name=name, inplace=inplace)
+            return self._remove([keys], level=0, name=name)
 
-    def remove_nodes(self, keys, name=None, inplace=True):
+    def remove_nodes(self, keys, name=None):
         if isinstance(keys, list):
-            return self.remove(keys, level=1, name=name, inplace=inplace)
+            return self._remove(keys, level=1, name=name)
         else:
-            return self.remove([keys], level=1, name=name, inplace=inplace)
+            return self._remove([keys], level=1, name=name)
 
-    def remove_incidences(self, keys, name=None, inplace=True):
+    def remove_incidences(self, keys, name=None):
         if isinstance(keys, list):
-            return self.remove(keys, name=name, inplace=inplace)
+            return self._remove(keys, name=name)
         else:
-            return self.remove([keys], name=name, inplace=inplace)
+            return self._remove([keys], name=name)
 
-    def remove(self, uid_list, level=2, name=None, inplace=True):
+    def _remove(self, 
+                uid_list, 
+                level=2, 
+                name=None, 
+                inplace=True,):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
@@ -1285,7 +1297,7 @@ class Hypergraph:
             Enter 2 to remove incidence pairs as tuples
         name : str, optional, default = None
             Name of new hypergraph
-        inplace : bool, default = False
+        inplace : bool, default = True
             Whether or not to replace the current hypergraph with the new one.
 
         Returns
