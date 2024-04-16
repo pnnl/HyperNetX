@@ -36,8 +36,14 @@ requirements.txt:
 ## Tests
 .PHONY: test
 test:
-	coverage run --source=hypernetx -m pytest
+	coverage run --source=hypernetx -m pytest tests
 	coverage report -m
+
+.PHONY: test-core
+test-core:
+	coverage run --source=hypernetx/classes -m pytest tests/classes --verbose
+	coverage report -m
+
 
 ## Tests using Tox
 ## Includes linting, running tests on jupyter notebooks
