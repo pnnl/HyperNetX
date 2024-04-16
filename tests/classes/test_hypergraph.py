@@ -99,50 +99,200 @@ def test_get_linegraph(sbs):
     assert len(diff) == 0
 
 
-def test_add_edge_inplace(sbs):
+def test_add_edge_on_default_properties(sbs):
     h = Hypergraph(sbs.edgedict)
-    new_edge = "X"
-
     assert h.shape == (7, 6)
+    new_edge = "X"
     assert new_edge not in list(h.edges)
 
-    # add a new edge in place; i.e. the current hypergraph should be mutated
-    h.add_edge(new_edge)
+    new_hg = h.add_edge(new_edge)
 
     # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
     # an edge does not connect two or more nodes.
     # In other words, adding an edge with no nodes
-    assert h.shape == (7, 6)
-    assert new_edge not in list(h.edges)
+    assert new_hg.shape == (7, 6)
+    assert new_edge not in list(new_hg.edges)
+    assert new_edge not in list(new_hg.incidences)
 
-    # the new edge has no user-defined property data, so it should not be listed in the PropertyStore
-    assert new_edge not in h.edges.properties
-
-    # However, the new_edge will be listed in the complete list of all user and non-user-define properties for all edges
-    assert new_edge in h.edges.to_dataframe.index.tolist()
-
-    assert new_edge in h.edges.to_dataframe.index.tolist()
+    # the new edge is saved under the Property Store with default properties
+    assert new_edge in new_hg.edges.property_store
+    assert new_edge in new_hg.edges.to_dataframe.index.tolist()
 
 
-def test_add_edge_not_inplace(sbs):
+def test_add_edge_on_user_defined_properties(sbs):
     h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
     new_edge = "X"
+    assert new_edge not in list(h.edges)
 
+    new_hg = h.add_edge(new_edge, hair_color="red", age=42)
+
+    # the Hypergraph should not increase its number of edges and incidences
+    # because adding a new edge does not connect two or more nodes.
+    # In other words, adding an edge with no nodes
+    assert new_hg.shape == (7, 6)
+    assert new_edge not in list(new_hg.edges)
+    assert new_edge not in list(new_hg.incidences)
+
+    # the new edge is saved under the Property Store with default properties
+    assert new_edge in new_hg.edges.property_store
+    assert new_edge in new_hg.edges.to_dataframe.index.tolist()
+
+    # check the properties of new_edge
+    props = new_hg.edges.property_store[new_edge]
+    assert props == {"hair_color": "red", "age": 42, "weight": 1}
+
+
+@pytest.mark.parametrize(
+    "new_edge, data, expected_props",
+    [
+        ("X", {}, {"weight": 1}),
+        (
+            "X",
+            {"hair_color": "orange", "age": 42},
+            {"hair_color": "orange", "age": 42, "weight": 1},
+        ),
+    ],
+)
+def test_add_edges_from_single_edge(sbs, new_edge, data, expected_props):
+    h = Hypergraph(sbs.edgedict)
     assert h.shape == (7, 6)
     assert new_edge not in list(h.edges)
 
-    # add a new edge not in place; the current hypergraph should be diffrent from the new hypergraph
-    # created from add_edge
-    new_hg = h.add_edge(new_edge, inplace=False)
+    edges = [(new_edge, data)]
+    new_hg = h.add_edges_from(edges)
 
     assert new_hg.shape == (7, 6)
     assert new_edge not in list(new_hg.edges)
+    assert new_edge not in list(new_hg.incidences)
 
-    assert new_edge not in new_hg.edges.properties
+    # the new edge is saved under the Property Store with default properties
+    assert new_edge in new_hg.edges.property_store
     assert new_edge in new_hg.edges.to_dataframe.index.tolist()
 
-    # verify that the new edge is not in the old HyperGraph
-    assert new_edge not in list(h.edges)
+    # check the properties of new_edge
+    props = new_hg.edges.property_store[new_edge]
+    assert props == expected_props
+
+
+@pytest.mark.parametrize(
+    "edges",
+    [
+        (
+            [
+                ("X", {}),
+                ("Y", {}),
+            ]
+        ),
+        ([("X", {"hair_color": "red"}), ("Y", {"age": "42"})]),
+    ],
+)
+def test_add_edges_from_multiple_edges(sbs, edges):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+    new_edges = [edge[0] for edge in edges]
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges)
+
+    new_hg = h.add_edges_from(edges)
+
+    assert new_hg.shape == (7, 6)
+
+    assert all(new_edge not in list(new_hg.edges) for new_edge in new_edges)
+    assert all(new_edge not in list(new_hg.incidences) for new_edge in new_edges)
+
+    # all new edges are saved under the Property Store with default properties
+    assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
+    assert all(
+        new_edge in new_hg.edges.to_dataframe.index.tolist() for new_edge in new_edges
+    )
+
+    # check the properties of all new edges
+    for edge in edges:
+        edge[1].update(
+            {"weight": 1}
+        )  # add the default weight to the expected properties
+        assert edge[1] == new_hg.edges.property_store[edge[0]]
+
+
+def test_add_edges_from_on_list_edges(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+    new_edges = ["X", "Y"]
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges)
+
+    new_hg = h.add_edges_from(new_edges)
+
+    assert new_hg.shape == (7, 6)
+
+    assert all(new_edge not in list(new_hg.edges) for new_edge in new_edges)
+    assert all(new_edge not in list(new_hg.incidences) for new_edge in new_edges)
+
+    # all new edges are saved under the Property Store with default properties
+    assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
+    assert all(
+        new_edge in new_hg.edges.to_dataframe.index.tolist() for new_edge in new_edges
+    )
+
+    # check the properties of all new edges
+    assert all(
+        {"weight": 1} == new_hg.edges.property_store[new_edge] for new_edge in new_edges
+    )
+
+
+def test_add_edges_from_on_list_edges_and_tuples_on_default_data(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+
+    new_edge1 = "X"
+    new_edge2 = "Y"
+    new_edges_ = [new_edge1, new_edge2]
+    new_edges = [new_edge1, (new_edge2, {})]
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges_)
+
+    new_hg = h.add_edges_from(new_edges)
+
+    assert new_hg.shape == (7, 6)
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges_)
+    assert all(new_edge not in list(new_hg.edges) for new_edge in new_edges_)
+
+    # all new edges are saved under the Property Store with default properties
+    assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges_)
+    assert all(
+        new_edge in new_hg.edges.to_dataframe.index.tolist() for new_edge in new_edges_
+    )
+
+    # check the properties of all new edges
+    assert all(
+        {"weight": 1} == new_hg.edges.property_store[new_edge]
+        for new_edge in new_edges_
+    )
+
+
+def test_add_edges_from_on_list_edges_and_tuples_on_user_defined_data(sbs):
+    h = Hypergraph(sbs.edgedict)
+    assert h.shape == (7, 6)
+
+    new_edge1 = "X"
+    new_edge2 = "Y"
+    new_edges_ = [new_edge1, new_edge2]
+    new_edges = [new_edge1, (new_edge2, {"hair_color": "red"})]
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges_)
+
+    new_hg = h.add_edges_from(new_edges)
+
+    assert new_hg.shape == (7, 6)
+    assert all(new_edge not in list(h.edges) for new_edge in new_edges_)
+    assert all(new_edge not in list(new_hg.edges) for new_edge in new_edges_)
+
+    # all new edges are saved under the Property Store with default properties
+    assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges_)
+    assert all(
+        new_edge in new_hg.edges.to_dataframe.index.tolist() for new_edge in new_edges_
+    )
+
+    # check the properties of all new edges
+    assert {"weight": 1} == new_hg.edges.property_store[new_edge1]
+    assert {"weight": 1, "hair_color": "red"} == new_hg.edges.property_store[new_edge2]
 
 
 def test_add_node_inplace(sbs):

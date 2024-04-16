@@ -280,7 +280,7 @@ def test_set_properties(incidences_ps):
     assert incidences_ps.get_property(uid, "weight") == 100
 
 
-def test_set_properties_edges(edges_ps):
+def test_set_properties_edges_existing_edge(edges_ps):
     data = {"weight": 99, "new_property": "foobar"}
     uid = "R"
 
@@ -292,6 +292,34 @@ def test_set_properties_edges(edges_ps):
 
     assert edges_ps.get_property(uid, MISC_PROPERTIES) == {"new_property": "foobar"}
     assert edges_ps.get_property(uid, "weight") == 99
+
+
+def test_set_properties_multiple_edges(edges_ps):
+    # existing edge
+    data = {"weight": 99, "new_property": "foobar"}
+    uid = "R"
+
+    assert edges_ps.get_property(uid, "new_property") is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, WEIGHT) == 1.0
+
+    edges_ps.set_properties(uid, data)
+
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {"new_property": "foobar"}
+    assert edges_ps.get_property(uid, WEIGHT) == 99
+
+    # new_edge
+    data = {"weight": 42, "new_property": "roma"}
+    uid = "X"
+
+    assert edges_ps.get_property(uid, "new_property") is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, WEIGHT) == 1.0
+
+    edges_ps.set_properties(uid, data)
+
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {"new_property": "roma"}
+    assert edges_ps.get_property(uid, WEIGHT) == 42
 
 
 @pytest.mark.parametrize(
