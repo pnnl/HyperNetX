@@ -101,17 +101,19 @@ def test_get_linegraph(sbs):
 
 def test_add_edge_inplace(sbs):
     h = Hypergraph(sbs.edgedict)
+    new_edge = "X"
+
     assert h.shape == (7, 6)
+    assert new_edge not in list(h.edges)
 
     # add a new edge in place; i.e. the current hypergraph should be mutated
-    new_edge = "X"
     h.add_edge(new_edge)
 
     # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
     # an edge does not connect two or more nodes.
     # In other words, adding an edge with no nodes
     assert h.shape == (7, 6)
-    assert new_edge not in h.edges.elements
+    assert new_edge not in list(h.edges)
 
     # the new edge has no user-defined property data, so it should not be listed in the PropertyStore
     assert new_edge not in h.edges.properties
@@ -124,21 +126,124 @@ def test_add_edge_inplace(sbs):
 
 def test_add_edge_not_inplace(sbs):
     h = Hypergraph(sbs.edgedict)
+    new_edge = "X"
+
     assert h.shape == (7, 6)
+    assert new_edge not in list(h.edges)
 
     # add a new edge not in place; the current hypergraph should be diffrent from the new hypergraph
     # created from add_edge
-    new_edge = "X"
     new_hg = h.add_edge(new_edge, inplace=False)
 
     assert new_hg.shape == (7, 6)
-    assert new_edge not in new_hg.edges.elements
+    assert new_edge not in list(new_hg.edges)
 
     assert new_edge not in new_hg.edges.properties
     assert new_edge in new_hg.edges.to_dataframe.index.tolist()
 
     # verify that the new edge is not in the old HyperGraph
-    assert new_edge not in h.edges.to_dataframe.index.tolist()
+    assert new_edge not in list(h.edges)
+
+
+def test_add_node_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+    new_node = "Y"
+
+    assert h.shape == (7, 6)
+    assert new_node not in list(h.nodes)
+
+    h.add_node(new_node)
+
+    # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
+    # a node does not add a node to the incidence store.
+    # In other words, adding an edge with no nodes
+    assert h.shape == (7, 6)
+    assert new_node not in list(h.nodes)
+
+    # the new node has no user-defined property data, so it should not be listed in the PropertyStore
+    assert new_node not in h.nodes.properties
+
+    # However, the new node will be listed in the complete list of all user and non-user-define properties for all nodes
+    assert new_node in h.nodes.to_dataframe.index.tolist()
+
+
+def test_add_node_not_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+    new_node = "Y"
+
+    assert h.shape == (7, 6)
+    assert new_node not in list(h.nodes)
+
+    new_hg = h.add_node(new_node, inplace=False)
+
+    # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
+    # a node does not add a node to the incidence store.
+    # In other words, adding an edge with no nodes
+    assert new_hg.shape == (7, 6)
+    assert new_node not in list(new_hg.nodes)
+
+    # the new node has no user-defined property data, so it should not be listed in the PropertyStore
+    assert new_node not in new_hg.nodes.properties
+
+    # However, the new node will be listed in the complete list of all user and non-user-define properties for all nodes
+    assert new_node in new_hg.nodes.to_dataframe.index.tolist()
+
+    # check that the new node is not in the old hypergraph
+    assert new_node not in list(h.nodes)
+
+
+def test_add_incidence_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+
+    # Case 1: Add a new incidence using an existing edge and
+    # exisiting node that are not currently associated with each other
+    new_incidence = ("P", "E")
+
+    assert h.shape == (7, 6)
+    assert new_incidence not in list(h.incidences)
+
+    h.add_incidence(new_incidence)
+
+    # the Hypergraph should not increase its number of edges and nodes because no new edges or nodes were added
+    assert h.shape == (7, 6)
+    assert new_incidence in list(h.incidences)
+
+    # the new incidence has no user-defined property data, so it should not be listed in the PropertyStore
+    assert new_incidence not in h.incidences.properties
+
+    # However, the new incidence will be listed in the complete list of all user and non-user-define properties
+    # for all incidences
+    assert new_incidence in h.incidences.to_dataframe.index.tolist()
+
+
+def test_add_incidence_not_inplace(sbs):
+    h = Hypergraph(sbs.edgedict)
+
+    # Case 1: Add a new incidence using an existing edge and
+    # exisiting node that are not currently associated with each other
+    new_incidence = ("P", "E")
+
+    assert h.shape == (7, 6)
+    assert new_incidence not in list(h.incidences)
+
+    new_hg = h.add_incidence(new_incidence, inplace=False)
+
+    # the Hypergraph should not increase its number of edges and nodes because no new edges or nodes were added
+    assert new_hg.shape == (7, 6)
+    assert new_incidence in list(new_hg.incidences)
+
+    # the new incidence has no user-defined property data, so it should not be listed in the PropertyStore
+    assert new_incidence not in new_hg.incidences.properties
+
+    # However, the new incidence will be listed in the complete list of all user and non-user-define properties
+    # for all incidences
+    assert new_incidence in new_hg.incidences.to_dataframe.index.tolist()
+
+    # check that node E has edge P in its memberships
+    # assert new_incidence[0] in h.incidences.memberships[new_incidence[1]]
+
+    # also check that the incidence is not in the old hypergraph
+    assert new_incidence not in list(h.incidences)
 
 
 def test_remove_edges(sbs):
