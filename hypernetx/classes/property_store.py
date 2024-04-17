@@ -53,7 +53,6 @@ class PropertyStore:
             self._data: DataFrame = data
 
         self._default_weight: int = default_weight
-        self._default_misc_properties: dict = {}
         self._columns = self._data.columns.tolist()
 
     @property
@@ -222,13 +221,13 @@ class PropertyStore:
         """
         return {
             WEIGHT: self._default_weight,
-            MISC_PROPERTIES: [self._default_misc_properties],
+            MISC_PROPERTIES: [{}],
         }
 
     def _required_properties(self) -> dict:
         return {
             WEIGHT: self._default_weight,
-            MISC_PROPERTIES: self._default_misc_properties,
+            MISC_PROPERTIES: {},
         }
 
     def __getitem__(self, uid) -> dict:
