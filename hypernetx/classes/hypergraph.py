@@ -414,7 +414,16 @@ class Hypergraph:
 
         """
         return self.neighbors(node)
-
+    
+    def clone(self,name=None):
+        df = self.incidences.to_dataframe.copy(deep=True)
+        eps = PropertyStore(self.edges.to_dataframe.copy(deep=True))
+        nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
+        return self._construct_hyp_from_stores(df, 
+                                               edge_ps=eps,
+                                               node_ps=nps,
+                                               name=name)
+ 
     def get_cell_properties(
         self, edge: str, node: str, prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
