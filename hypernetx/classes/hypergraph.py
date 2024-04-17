@@ -1224,6 +1224,17 @@ class Hypergraph:
                 new_items.append(item)
         return new_items
 
+    def add_nodes_to_edges(self,edge_dict):
+        items = list()
+        for ed,nodes in edge_dict.items():
+            if isinstance(nodes,dict):
+                for nd,data in nodes.items():
+                    items.append(((ed,nd),data))
+            else:
+                for nd in nodes:
+                    items.append(((ed,nd),{}))
+        return self._add_items_from(items)
+
     def add_incidence(self, edge_id, node_id, **attr):
         return self._add_items_from([((edge_id, node_id), attr)], 2)
 
