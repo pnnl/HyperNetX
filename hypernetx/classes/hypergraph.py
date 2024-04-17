@@ -1168,10 +1168,7 @@ class Hypergraph:
         """
 
         keys = list(set(self._state_dict["labels"]["nodes"]).difference(nodes))
-        return self._remove(keys, 
-                            level=1, 
-                            name=name, 
-                            inplace=False)
+        return self._remove(keys, level=1, name=name, inplace=False)
 
     def restrict_to_edges(self, edges, name=None):
         """New hypergraph gotten by restricting to edges
@@ -1189,41 +1186,37 @@ class Hypergraph:
 
         """
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
-        return self._remove(keys, 
-                            level=0, 
-                            name=name, 
-                            inplace=False)
+        return self._remove(keys, level=0, name=name, inplace=False)
 
     def add_edge(self, uid, **attr):
-        return self._add_item(uid, level=0, data=attr)
+        return self._add_items_from([(uid, attr)], 0)
 
     def add_edges_from(self, edges):
         """Edges must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
-        newedges = list()
-        for e in edges:
-            if not isinstance(e,tuple):
-                newedges.append((e,{}))
-            else:
-                newedges.append(e)
-        return self._add_items_from(newedges, level=0)
+        newedges = self._process_items(edges)
+        return self._add_items_from(newedges, 0)
 
     def add_node(self, uid, **attr):
-        return self._add_item(uid, level=1, data=attr)
+        return self._add_items_from([(uid, attr)], 1)
 
     def add_nodes_from(self, nodes):
         """Nodes must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
-        newnodes = list()
-        for nd in nodes:
-            if not isinstance(nd,tuple):
-                newnodes.append((nd,{}))
+        newnodes = self._process_items(nodes)
+        return self._add_items_from(newnodes, 1)
+
+    def _process_items(self, items):
+        new_items = list()
+        for item in items:
+            if not isinstance(item, tuple):
+                new_items.append((item, {}))
             else:
-                newnodes.append(nd)
-        return self._add_items_from(newnodes, level=1)
-    
+                new_items.append(item)
+        return new_items
+
     def add_incidence(self, edge_id, node_id, **attr):
-        return self._add_item((edge_id, node_id), level=2, data=attr)
+        return self._add_items_from([((edge_id, node_id), attr)], 2)
 
     def add_incidences_from(self, incidences):
         """Incidence pairs must be a list of uids of the form (edge_uid,node_uid)
@@ -1232,17 +1225,12 @@ class Hypergraph:
         newincidences = list()
         for pr in incidences:
             if len(pr) == 2:
-                newincidences.append((pr,{}))
+                newincidences.append((pr, {}))
             else:
-                newincidences.append(((pr[0],pr[1]),pr[2]))
-        return self._add_items_from(newincidences, level=2)
+                newincidences.append(((pr[0], pr[1]), pr[2]))
+        return self._add_items_from(newincidences, 2)
 
-    def _add_item(self, uid, level=2, data=None):
-        data = data or {}
-        return self._add_items_from([(uid, data)], level=level)
-    
-
-    def _add_items_from(self, items, level=2):
+    def _add_items_from(self, items, level):
         """Items must be a list of tuples
         of the form (uid,data) where data is dictionary"""
         df = self.incidences._property_store
@@ -1253,11 +1241,9 @@ class Hypergraph:
             uid = item[0]
             data = item[1]
             hv.set_properties(uid, data)
-        self = self._construct_hyp_from_stores(
+        return self._construct_hyp_from_stores(
             df.properties, edge_ps=ep, node_ps=np, name=self.name
         )
-        return self
-
 
     #### This should follow behavior of restrictions
     def remove_edges(self, keys, name=None):
@@ -1278,11 +1264,13 @@ class Hypergraph:
         else:
             return self._remove([keys], name=name)
 
-    def _remove(self, 
-                uid_list, 
-                level=2, 
-                name=None, 
-                inplace=True,):
+    def _remove(
+        self,
+        uid_list,
+        level=2,
+        name=None,
+        inplace=True,
+    ):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
@@ -1466,8 +1454,7 @@ class Hypergraph:
         if len(singletons) > len(self.edges):
             E = [e for e in self.edges if e not in singletons]
             return self.restrict_to_edges(E, name=name)
-        else:
-            return self.remove(singletons, level=0, name=name)
+        return self.remove_edges(singletons, name=name)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
