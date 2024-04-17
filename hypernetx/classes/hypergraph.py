@@ -414,16 +414,13 @@ class Hypergraph:
 
         """
         return self.neighbors(node)
-    
-    def clone(self,name=None):
+
+    def clone(self, name=None):
         df = self.incidences.to_dataframe.copy(deep=True)
         eps = PropertyStore(self.edges.to_dataframe.copy(deep=True))
         nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
-        return self._construct_hyp_from_stores(df, 
-                                               edge_ps=eps,
-                                               node_ps=nps,
-                                               name=name)
- 
+        return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
+
     def get_cell_properties(
         self, edge: str, node: str, prop_name: Optional[str] = None
     ) -> Any | dict[str, Any]:
@@ -1224,15 +1221,15 @@ class Hypergraph:
                 new_items.append(item)
         return new_items
 
-    def add_nodes_to_edges(self,edge_dict):
+    def add_nodes_to_edges(self, edge_dict):
         items = list()
-        for ed,nodes in edge_dict.items():
-            if isinstance(nodes,dict):
-                for nd,data in nodes.items():
-                    items.append(((ed,nd),data))
+        for ed, nodes in edge_dict.items():
+            if isinstance(nodes, dict):
+                for nd, data in nodes.items():
+                    items.append(((ed, nd), data))
             else:
                 for nd in nodes:
-                    items.append(((ed,nd),{}))
+                    items.append(((ed, nd), {}))
         return self._add_items_from(items)
 
     def add_incidence(self, edge_id, node_id, **attr):
