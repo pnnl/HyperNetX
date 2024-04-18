@@ -15,6 +15,7 @@ def test_len(G, H):
     """
     assert len(G) == len(H)
 
+
 def test_number_of_edges(G, H):
     """
     Confirm that the number of edges are the same

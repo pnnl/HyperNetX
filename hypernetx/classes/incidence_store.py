@@ -222,7 +222,7 @@ class IncidenceStore:
             temp[frozenset(v)] += [k]
         return list(temp.values())
 
-    def collapse_identical_elements( self, level, use_keys=None):
+    def collapse_identical_elements(self, level, use_keys=None):
         if level == 0:
             col = "edges"
         elif level == 1:
@@ -243,4 +243,3 @@ class IncidenceStore:
                     edict[ec[0]] = ec
         df = self._data.loc[self._data[col].isin(edict.keys())]
         return df, edict
-
