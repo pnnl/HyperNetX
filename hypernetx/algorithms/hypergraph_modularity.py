@@ -214,7 +214,7 @@ def modularity(HG, A, wdc=linear):
             for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
                 for Vol in VolA:
                     DT += Cnt * wdc(d, c) * binom.pmf(c, d, Vol)
-        return (EC - DT) / HG.number_of_edges()
+        return (EC - DT) / len(HG.edges)
     else:
         for d in range(len(Ctr)):
             Cnt = Ctr[d]
@@ -338,7 +338,7 @@ def kumar(HG, delta=0.01, verbose=False):
             reweight = (
                 sum([1 / (1 + HG.size(e, c)) for c in CH])
                 * (HG.size(e) + len(CH))
-                / HG.number_of_edges()
+                / len(HG.edges)
             )
             diff = max(diff, 0.5 * abs(edge.weight - reweight))
             edge.weight = 0.5 * edge.weight + 0.5 * reweight
