@@ -215,16 +215,14 @@ class IncidenceStore:
         elif level == 1:
             old_dict = self._memberships
         else:
-            return self.data
+            return None
 
         temp = defaultdict(list)
         for k, v in old_dict.items():
             temp[frozenset(v)] += [k]
         return list(temp.values())
 
-    def collapse_identical_elements(
-        self, level, use_keys=None, return_equivalence_classes=False
-    ):
+    def collapse_identical_elements( self, level, use_keys=None):
         if level == 0:
             col = "edges"
         elif level == 1:
@@ -244,7 +242,5 @@ class IncidenceStore:
                 else:
                     edict[ec[0]] = ec
         df = self._data.loc[self._data[col].isin(edict.keys())]
-        if return_equivalence_classes == True:
-            return df, edict
-        else:
-            return df
+        return df, edict
+
