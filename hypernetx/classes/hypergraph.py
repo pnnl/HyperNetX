@@ -34,6 +34,225 @@ T = TypeVar("T", bound=Union[str, int])
 
 
 class Hypergraph:
+    """
+    Parameters
+    ----------
+
+    setsystem : (optional) pandas.DataFrame, dict of iterables, dict of dicts, list of iterables,
+        pandas.DataFrame, default = None
+        See SetSystem above for additional setsystem requirements.
+
+    edge_col : (optional) str | int, default = 0
+        column index (or name) in pandas.DataFrame,
+        used for (hyper)edge ids. Only used when setsystem is a
+        pandas.DataFrame
+
+    node_col : (optional) str | int, default = 1
+        column index (or name) in pandas.dataframe,
+        used for node ids. Only used when setsystem is a
+        pandas.DataFrame
+
+    cell_weight_col : (optional) str | int, default = "weight"
+        column index (or name) in pandas.DataFrame used for
+        referencing cell weights. For a dict of dicts it will be
+        used as a key in the nested dictionary of properties.
+        These are the same as edge dependent node weights and
+        will populate the incidence matrix when `weights=True`.
+
+    default_cell_weight : (optional) int | float, default = 1
+        All incidence pairs in the Hypergraph are assigned a
+        default weight if weight is not specified in the setsystem.
+
+    misc_cell_properties_col : (optional) str | int, default = None
+        Used for Pandas Dataframe with one column containing dictionaries of
+        properties. Useful if objects have diverse property sets.
+        Ignored for other setsystem types.
+
+    properties : (optional) pd.DataFrame | dict, default = None
+        Concatenation/union of edge_properties and node_properties.
+        By default, the object id is used and should be the first column of
+        the dataframe, or key in the dict. If there are nodes and edges
+        with the same ids but distinct properties then separate them and
+        use the edge_properties and node_properties keywords.
+
+    weight_prop_col : (optional) str, default = None
+        Name of property in properties to use for weight
+
+    default_weight : (optional) int | float, default = 1
+        Used when weight property is missing or undefined
+
+    edge_properties : (optional) pd.DataFrame | dict, default = None
+        Properties associated with edge ids.
+        If a dataframe, the first column must be the names of the edges.
+        First column of dataframe or keys of dict link to edge ids in
+        setsystem.
+
+    edge_weight_prop_col : (optional) str, default = None,
+        Name of property in edge_properties to use for weight.
+
+    default_edge_weight : (optional) int | float, default = 1
+        Used when edge weight property is missing or undefined.
+
+    node_properties : (optional) pd.DataFrame | dict, default = None
+        Properties associated with node ids.
+        If a dataframe, the first column must be the names of the nodes.
+        First column of dataframe or keys of dict link to nodes ids in
+        setsystem.
+
+    node_weight_prop_col : (optional) str, default = None,
+        Name of property in node_properties to use for weight.
+
+    default_node_weight : (optional) int | float, default = 1
+        Used when node weight property is missing or undefined
+
+    misc_properties_col : (optional) str | int, default = None
+        Used for properties, edge_properties, and node_properties
+        Pandas Dataframes with one column containing dictionaries of
+        properties. Useful if objects have diverse property sets.
+        Ignored for other setsystem types.
+
+    name : (optional) str, default = None
+        Name assigned to hypergraph
+
+
+    ======================
+    Hypergraphs in HNX 2.3
+    ======================
+
+    An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
+    V = nodes (vertices) and E = (hyper)edges.
+
+    HNX allows for multi-edges by distinguishing edges by
+    their identifiers instead of their contents. For example, if
+    V = {1,2,3} and E = {e1,e2,e3},
+    where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3},
+    the edges e1 and e2 contain the same set of nodes and yet
+    are distinct and are distinguishable within H = (V,E).
+
+    New as of version 2.3, HNX provides methods to easily store and
+    access additional metadata such as cell, edge, and node weights.
+    Metadata associated with all edges, nodes, and (edge,node) incidence
+    pairs stored in the hypergraph are viewable using: ::
+
+        >>> H.edges.to_dataframe
+        >>> H.nodes.to_dataframe
+        >>> H.incidences.to_dataframe
+
+    The fundamental object needed to create a hypergraph is a **setsystem**. The
+    setsystem defines the many-to-many relationships between edges and nodes in
+    the hypergraph. Properties for the incidence pairs are defined within
+    the setsystem. Edge and node properties are defined with separate,
+    Pandas DataFrames or dictionaries.
+
+    At this time, a hypergraph is defined by its relationships. While the
+    nodes and edges are distinct objects with their own properties, it is only
+    when they are in relationship that they are viewable within the hypergraph
+    structure. This means that hypergraph metrics and combinatorics do not
+    use "isolated" nodes or "empty" edges. For example, while the node_properties could
+    contain any number of node identifiers, only nodes belonging to an edge
+    in the hypergraph are counted when computing the size and shape of the
+    hypergraph.
+
+    SetSystems
+    ----------
+    There are four types of setsystems currently accepted by the library.
+
+    1.  **list of iterables** : Barebones hypergraph uses Pandas default
+        indexing to generate hyperedge ids. Elements must be hashable.: ::
+
+        >>> H = Hypergraph([{1,2},{1,2},{1,2,3}])
+
+    2.  **dictionary of iterables** : the most basic way to express many-to-many
+        relationships providing edge ids. The elements of the iterables must be
+        hashable): ::
+
+        >>> H = Hypergraph({'e1':[1,2],'e2':[1,2],'e3':[1,2,3]})
+
+    3.  **dictionary of dictionaries**  : allows cell properties to be assigned
+        to a specific (edge, node) incidence. This is particularly useful when
+        there are variable length dictionaries assigned to each pair: ::
+
+        >>> d = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
+        >>>             2: {'w':0.1, 'name': 'related_to',
+        >>>                 'startdate': '05.13.2020'}},
+        >>>      'e2':{ 1: {'w':0.52, 'name': 'owned_by'},
+        >>>             2: {'w':0.2}},
+        >>>      'e3':{ 1: {'w':0.5, 'name': 'related_to'},
+        >>>             2: {'w':0.2, 'name': 'owner_of'},
+        >>>             3: {'w':1, 'type': 'relationship'}}
+
+        >>> H = Hypergraph(d, cell_weight_col='w')
+
+    4.  **pandas.DataFrame** For large datasets and for datasets with edge
+        dependent properties it is most efficient to construct a hypergraph
+        directly from a pandas.DataFrame.
+        The edges column and nodes column may be specified. By default
+        they are the first two columns of the dataframe.
+        Cell properties shared by all incidence pairs can be placed in their own
+        column of the dataframe. Variable length dictionaries of cell properties
+        particular to only some of the incidence pairs may be placed in a single
+        column of the dataframe. Representing the data above as a dataframe df:
+
+        +-----------+-----------+-----------+-----------------------------------+
+        |   col1    |   col2    |   w       |  col3                             |
+        +-----------+-----------+-----------+-----------------------------------+
+        |   e1      |   1       |   0.5     | {'name':'related_to'}             |
+        +-----------+-----------+-----------+-----------------------------------+
+        |   e1      |   2       |   0.1     | {"name":"related_to",             |
+        |           |           |           |  "startdate":"05.13.2020"}        |
+        +-----------+-----------+-----------+-----------------------------------+
+        |   e2      |   1       |   0.52    | {"name":"owned_by"}               |
+        +-----------+-----------+-----------+-----------------------------------+
+        |   e2      |   2       |   0.2     |                                   |
+        +-----------+-----------+-----------+-----------------------------------+
+        |   ...     |   ...     |   ...     | {...}                             |
+        +-----------+-----------+-----------+-----------------------------------+
+
+        The first row of the dataframe is used to reference each column. ::
+
+        >>> H = Hypergraph(df,edge_col="col1",node_col="col2",
+        >>>                 cell_weight_col="w",misc_cell_properties="col3")
+
+    Edge and Node Properties
+    ------------------------
+    Properties specific to a single edge or node are passed through the
+    keywords: **edge_properties, node_properties, or properties**.
+    Properties may be passed as dataframes or dictionaries.
+    The first column or index of the dataframe or the keys of the dictionary
+    correspond to the edge and/or node identifiers.
+    If identifiers are shared among edges and nodes, or are distinct
+    for edges and nodes, properties may be combined into a single
+    object and passed to the **properties** keyword. For example:
+
+    +-----------+-----------+---------------------------------------+
+    |   id      |   weight  |   properties                          |
+    +-----------+-----------+---------------------------------------+
+    |   e1      |   5.0     |   {'type':'event'}                    |
+    +-----------+-----------+---------------------------------------+
+    |   e2      |   0.52    |   {"name":"owned_by"}                 |
+    +-----------+-----------+---------------------------------------+
+    |   ...     |   ...     |   {...}                               |
+    +-----------+-----------+---------------------------------------+
+    |   1       |   1.2     |   {'color':'red'}                     |
+    +-----------+-----------+---------------------------------------+
+    |   2       |   .003    |   {'name':'Fido','color':'brown'}     |
+    +-----------+-----------+---------------------------------------+
+    |   3       |   1.0     |    {}                                 |
+    +-----------+-----------+---------------------------------------+
+
+    A properties dictionary should have the format: ::
+
+        dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
+
+
+    Weights
+    -------
+    The default key for the incidence pair, edge and node weights is "weight".
+    The default values are all set to 1.
+    The default key and values may be reset using the keywords:
+    `cell_weight_col`, `default_cell_weight`, `weight_col`, `default_weight`,
+    `edge_weight_col`, `default_edge_weight`, `node_weight_col`, `default_node_weight`.
+    """
 
     def __init__(
         self,
@@ -213,7 +432,7 @@ class Hypergraph:
 
         Returns
         -------
-        EntitySet
+        : HypergraphView
         """
         return self._edges
 
@@ -224,7 +443,7 @@ class Hypergraph:
 
         Returns
         -------
-        EntitySet
+        : HypergraphView
         """
         return self._nodes
 
@@ -235,8 +454,7 @@ class Hypergraph:
 
         Returns
         -------
-        _type_
-            _description_
+        : HypergraphView
         """
         return self._E
 
@@ -247,7 +465,7 @@ class Hypergraph:
 
         Returns
         -------
-        pd.DataFrame
+        : pandas.DataFrame
         """
         df = self._E.properties.reset_index()
         return df
@@ -258,25 +476,32 @@ class Hypergraph:
 
         Returns
         -------
-        pd.DataFrame or Dictionary?
+        : pandas.DataFrame
         """
         return self._E.properties
 
     def incidence_matrix(self, index=False, weights=False):
         """
-        _summary_
+        A sparse matrix indicating the existence of an incidence pair
+        in the hypergraph. Each row corresponds to a node v and each column
+        corresponds to an edge e. The entry corresponding to (row v, col e)
+        is nonzero if v is an element of e. If weights = True then the value
+        equals the weight given in the hypergraph incidence properties for
+        the incidence pair (e,v). Otherwise the value is 1.
 
         Parameters
         ----------
-        index : bool, optional
-            _description_, by default False
-        use_weights : bool, optional
-            _description_, by default False
+        index : bool, optional, default = False
+            If True will return the nodes and edges ordered to
+            correspond to the rows and columns of the matrix
+        use_weights : bool, optional, default = False
+            If True will use the incidence weights corresponding to
+            the row and column of the entry
 
         Returns
         -------
-        _type_
-            _description_
+        : scipy.sparse.csr_matrix
+
         """
         e, n = self._state_dict["data"].T
         if weights == True:
@@ -296,28 +521,6 @@ class Hypergraph:
     def incidence_dataframe(self, weights=False):
         mat, rindex, cindex = self.incidence_matrix(index=True, weights=weights)
         return pd.DataFrame(mat.toarray(), columns=cindex, index=rindex)
-
-    @property
-    def edge_props(self):
-        """Dataframe of edge properties
-        indexed on edge ids
-
-        Returns
-        -------
-        pd.DataFrame or Dictionary?
-        """
-        return self._edges.properties
-
-    @property
-    def node_props(self):
-        """Dataframe of node properties
-        indexed on node ids
-
-        Returns
-        -------
-        pd.DataFrame or Dictionary?
-        """
-        return self._nodes.properties
 
     @property
     def incidence_dict(self):
@@ -342,7 +545,7 @@ class Hypergraph:
         tuple
 
         """
-        return len(self._nodes), len(self._edges)  ## incidence store call?
+        return len(self._nodes), len(self._edges)
 
     def __str__(self):
         """
@@ -353,7 +556,7 @@ class Hypergraph:
         str
 
         """
-        return f"{self.name}, <class 'hypernetx.classes.hypergraph.Hypergraph'>"
+        return f"{self.name} <class 'hypernetx.classes.hypergraph.Hypergraph'>"
 
     def __repr__(self):
         """
@@ -364,7 +567,7 @@ class Hypergraph:
         str
 
         """
-        return f"{self.name}, hypernetx.classes.hypergraph.Hypergraph"
+        return f"{self.name} hypernetx.classes.hypergraph.Hypergraph"
 
     def __len__(self):
         """
@@ -399,9 +602,10 @@ class Hypergraph:
         """
         return item in self._nodes
 
-    def __getitem__(self, node):  ## TODO: Do we change all "cell" refs to "incidence"?
+    def __getitem__(self, node):
         """
-        Returns the neighbors of node
+        Returns the neighbors of node in the Hypergraph. These
+        will be the nodes sharing some edge with the node.
 
         Parameters
         ----------
@@ -416,52 +620,94 @@ class Hypergraph:
         return self.neighbors(node)
 
     def clone(self, name=None):
+        """
+        Create a deep copy of the hypergraph
+
+        Parameters
+        ----------
+        name : str, optional, default = None
+
+        Returns
+        -------
+        : Hypergraph
+        """
         df = self.incidences.to_dataframe.copy(deep=True)
         eps = PropertyStore(self.edges.to_dataframe.copy(deep=True))
         nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
         return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
 
-    def get_cell_properties(
-        self, edge: str, node: str, prop_name: Optional[str] = None
-    ) -> Any | dict[str, Any]:
+    def rename(self, edges=None, nodes=None, name=None):
+        """
+        _summary_
+
+        Parameters
+        ----------
+        edges : dict, optional, default = None
+            dictionary of replacement edge_uids
+        nodes : dict, optional, default = None
+            dictionary of replacement node_uids
+        name : str, optional, default = None
+
+        Returns
+        -------
+        : Hypergraph
+        """
+        if edges is None and nodes is None:
+            return self
+        else:
+            edf = self.edges.to_dataframe.copy(deep=True)
+            ndf = self.nodes.to_dataframe.copy(deep=True)
+            df = self.incidences.to_dataframe
+        if edges is not None:
+            edf = edf.rename(index=edges)
+            df = df.rename(index=edges, level=0)
+        if nodes is not None:
+            ndf = ndf.rename(index=nodes)
+            df = df.rename(index=nodes, level=1)
+        eps = PropertyStore(edf)
+        nps = PropertyStore(ndf)
+        return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
+
+    def get_cell_properties(edge_uid, node_uid, prop_name=None):
         """Get cell properties on a specified edge and node
 
         Parameters
         ----------
-        edge : str
+        edge_uid : str | int
             edgeid
-        node : str
+        node_uid : str | int
             nodeid
-        key : int, optional,
-            incidence store id, by default None
-        prop_name : str, optional
+        prop_name : str, optional, default = None
             name of a cell property; if None, all cell properties will be returned
 
         Returns
         -------
-        : int or str or dict of {str: any}
+        : Any
             cell property value if `prop_name` is provided, otherwise ``dict`` of all
             cell properties and values
         """
-        return self._E.properties[(edge, node)][prop_name]
+        if prop_name:
+            return self._E.properties[(edge_uid, node_uid)][prop_name]
+        else:
+            return self._E.properties[(edge_uid, node_uid)]
 
     def get_properties(self, uid, level=0, prop_name=None):
-        """Returns an object's specific property or all properties
-        ### Change to level is 0,1,2 and call props from correct store
+        """
+        Returns an object's specific property or all properties
+
         Parameters
         ----------
         uid : hashable
             edge or node id
         level : int | None , optional, default = None
-            if separate edge and node properties then enter 0 for edges
-            and 1 for nodes.
+            Enter 0 for edges and 1 for nodes.
         prop_name : str | None, optional, default = None
             if None then all properties associated with the object will  be
             returned.
 
         Returns
         -------
-        : str or dict
+        : Any
             single property or dictionary of properties
         """
 
@@ -484,7 +730,7 @@ class Hypergraph:
         corresponding hypergraph edges intersect in at least s hypergraph nodes.
         If edges=False, the hypergraph nodes will be the vertices of the line
         graph. Two vertices are connected if the nodes they correspond to share
-        at least s incident hyper edges.
+        at least s incident (hyper)edges.
 
         Parameters
         ----------
@@ -534,9 +780,8 @@ class Hypergraph:
         self._state_dict.update(kwargs)
 
     def _set_default_state(self, empty=False):
-        """Populate state_dict with default values
-        This may change with HypegraphView since data is no
-        longer required to be in a specific structure
+        """
+        Populate state_dict with default values
         """
         self._state_dict = {}
         df = self._E.incidence_store.data
@@ -582,14 +827,14 @@ class Hypergraph:
         else:
             return self._state_dict["edge_size_dist"]
 
-    def degree(self, node, s=1, max_size=None):
+    def degree(self, node_uid, s=1, max_size=None):
         """
         The number of edges of size at least s and at most
         max_size that contain the node.
 
         Parameters
         ----------
-        node : hashable
+        node_uid : hashable
             identifier for the node.
         s : positive integer, optional, default 1
             smallest size of edge to consider in degree
@@ -602,10 +847,10 @@ class Hypergraph:
 
         """
         if s == 1 and max_size == None:
-            return len(self._nodes.memberships[node])
+            return len(self._nodes.memberships[node_uid])
         else:
             memberships = set()
-            for edge in self._nodes.memberships[node]:
+            for edge in self._nodes.memberships[node_uid]:
                 size = len(self.edges[edge])
                 if size >= s and (max_size is None or size <= max_size):
                     memberships.add(edge)
@@ -631,43 +876,6 @@ class Hypergraph:
             return len(set(nodeset).intersection(set(self.edges[edge])))
 
         return len(self.edges[edge])
-
-    def number_of_nodes(self, nodeset=None):  ## TODO: Not sure if needed
-        """
-        The number of nodes in nodeset belonging to hypergraph.
-
-        Parameters
-        ----------
-        nodeset : an interable of Entities, optional, default = None
-            If None, then return the number of nodes in hypergraph.
-
-        Returns
-        -------
-        number_of_nodes : int
-
-        """
-        if nodeset is not None:
-            return len([n for n in self.nodes if n in nodeset])
-
-        return len(self.nodes)
-
-    def number_of_edges(self, edgeset=None):  ## TODO: Not sure what this was for
-        """
-        The number of edges in edgeset belonging to hypergraph.
-
-        Parameters
-        ----------
-        edgeset : an iterable of Entities, optional, default = None
-            If None, then return the number of edges in hypergraph.
-
-        Returns
-        -------
-        number_of_edges : int
-        """
-        if edgeset:
-            return len([e for e in self.edges if e in edgeset])
-
-        return len(self.edges)
 
     def order(self):
         """
@@ -760,7 +968,7 @@ class Hypergraph:
                 self._state_dict["edge_neighbors"][s][edge] = []
             return edge_neighbors
 
-    def adjacency_matrix(self, s=1, index=False, remove_empty_rows=False):
+    def adjacency_matrix(self, s=1, index=False):
         """
         The :term:`s-adjacency matrix` for the hypergraph.
 
@@ -866,22 +1074,26 @@ class Hypergraph:
         else:
             return B
 
-    def bipartite(self, keep_data=False, directed=False):  ## TODO share data with graph
+    def bipartite(self, keep_data=False, directed=False):
         """
-        Constructs the networkX bipartite graph associated to hypergraph.
+        Creates a bipartite NetworkX graph from hypergraph.
+        The nodes and (hyper)edges of hypergraph become the nodes of bipartite
+        graph. For every (hyper)edge e in the hypergraph and node v in e there
+        is an edge (e,v) in the graph.
+        Parameters
+        ----------
+        keep_data : bool, optional, default = False
+            If True the node and edge data from the hypergraph will be added to
+            the NetworkX graph
+        directed : bool, optional, default = False
+            If True the graph edges will be directed so that the hypergraph
+            edges are the sources and the hypergraph nodes are the targets
 
         Returns
         -------
-        bipartite : nx.Graph()
-
-        Notes
-        -----
-        Creates a bipartite networkx graph from hypergraph.
-        The nodes and (hyper)edges of hypergraph become the nodes of bipartite
-        graph. For every (hyper)edge e in the hypergraph and node n in e there
-        is an edge (n,e) in the graph.
-
+        : networkx.Graph or DiGraph
         """
+
         if directed == True:
             B = nx.DiGraph()
         else:
@@ -930,7 +1142,7 @@ class Hypergraph:
         h._dataframe = h.dataframe
         return h
 
-    def dual(self, name=None, keep_properties=True):
+    def dual(self, name=None, share_properties=True):
         """
         Constructs a new hypergraph with roles of edges and nodes of hypergraph
         reversed.
@@ -939,9 +1151,11 @@ class Hypergraph:
         ----------
         name : hashable, optional
 
-        switch_names : bool, optional, default = True
-            reverses edge_col and node_col names
-            unless edge_col = 'edges' and node_col = 'nodes'
+        share_properties : bool, optional, default = True
+            Whether or not to tie the edge and node properties of
+            objects in the dual to objects in the hypergraph.
+            If True, a change to edge and node properties in one will
+            be reflected in the other.
 
         Returns
         -------
@@ -957,7 +1171,7 @@ class Hypergraph:
             .set_index(["edges", "nodes"])
         )
 
-        if keep_properties:
+        if share_properties:
             edge_ps = self._nodes.property_store
             node_ps = self._edges.property_store
         else:
@@ -972,8 +1186,27 @@ class Hypergraph:
         )
         return hdual
 
-    ###### Collapse methods now handled completely in the incidence store
     def equivalence_classes(self, edges=True):
+        """
+        Returns the equivalence classes gotten by collapsing edges or
+        nodes.
+
+        Parameters
+        ----------
+        edges : bool, optional, default = True
+            If True collapses edges, otherwise collapses nodes.
+
+        Returns
+        -------
+        :list
+            A list of sets of edges or nodes
+
+        See Also
+        --------
+        collapse_edges
+        collapse_nodes
+        collapse_nodes_and_edges
+        """
         level = 0 if edges == True else 1
         return self._E.incidence_store.equivalence_classes(level=level)
 
@@ -981,55 +1214,103 @@ class Hypergraph:
         self,
         name=None,
         use_uids=None,
+        use_counts=False,
+        return_counts=True,
         return_equivalence_classes=False,
+        aggregate_edges_by={"weight": "sum"},
+        aggregate_cells_by={"weight": "sum"},
     ):
         """
-        Constructs a new hypergraph gotten by identifying edges containing the
-        same nodes
+        Returns a new hypergraph by collapsing edges.
 
         Parameters
         ----------
-        name : hashable, optional, default = None
+
+        name: str, optional, default = None
+
+        use_uids: list, optional, default = None
+            Specify the edge identifiers to use as representatives
+            for a single equivalence class. If two identifiers occur in the
+            same equivalence class, the first one found will be used.
+
+        use_counts: boolean, optional, default = False
+            Rename the equivalence class representatives as `<uid>:<size of class>`
+
+        return_counts: bool, optional, default = True
+            Add the size of the equivalence class to the properties
+            associated to the representative in the collapsed hypergraph using
+            keyword: `eclass_size`
 
         return_equivalence_classes: boolean, optional, default = False
-            Returns a dictionary of edge equivalence classes
+            Returns a dictionary of edge equivalence classes keyed by a
+            representative from each class
+
+        aggregate_edges_by, aggregate_cells_by : dict, optional, default = {'weight':'sum'}
+            dictionary of aggregation methods keyed by column names
+            in the properties dataframes, does not apply to misc_properties.
+            Defaults to 'first' on unlisted columns.
+            See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
+            dictionaries
+            ```
 
         Returns
         -------
         new hypergraph : Hypergraph
-            Equivalent edges are collapsed to a single edge named by a
-            representative of the equivalent edges followed by a colon and the
-            number of edges it represents.
-
-        equivalence_classes : dict
-            A dictionary keyed by representative edge names with values equal
-            to the edges in its equivalence class
 
         Notes
         -----
-        Two edges are identified if their respective elements are the same.
-        Using this as an equivalence relation, the uids of the edges are
-        partitioned into equivalence classes.
+        Collapses the edges of Hypergraph. Two edges are
+        duplicates if their respective elements are the same.
+        Using this as an equivalence relation, the uids of the edges
+        are partitioned into equivalence classes. A single member of the
+        equivalence class is chosen to represent the class.
 
-        A single edge from the collapsed edges followed by a colon and the
-        number of elements in its equivalence class as uid for the new edge
+        Example
+        -------
+
+            >>> data = {'E1': ('a', 'b'), 'E2': ('a', 'b')}
+            >>> h = Hypergraph(data)
+            >>> h.incidence_dict
+            {'E1': ['a', 'b'], 'E2': ['a', 'b']}
+            >>> h.collapse_edges().incidence_dict
+            {'E1': ['a'], 'E2': ['a']}
+            >>> h.collapse_edges(use_counts=True).incidence_dict
+            {'E1: ['a:2'], 'E2': ['a:2']}
+            >>> h.collapse_edges().properties.to_dict(orient='records')
+            [{'weight': 2, 'misc_properties': {'eclass_size': 2}}]
+
 
 
         """
         df, eclasses = self._E.incidence_store.collapse_identical_elements(
-            0, use_keys=use_uids, return_equivalence_classes=True
+            0, use_keys=use_uids
         )
-        incidence_pairs = [tuple(d) for d in df.values]
-        incidence_df = self._E.properties.loc[incidence_pairs]
-        ekeys = list(eclasses.keys())
-        ekeys = list(set(ekeys).intersection(self.edges.properties.index))
-        edge_ps = PropertyStore(self.edges.properties.copy(deep=True).loc[ekeys])
+
+        if use_counts:
+            mapper = {vv: f"{k}:{len(v)}" for k, v in eclasses.items() for vv in v}
+        else:
+            mapper = {vv: k for k, v in eclasses.items() for vv in v}
+
+        ndf = self.edges.to_dataframe
+        ndf = ndf.rename(index=mapper)
+        ndf = _agg_rows(ndf, ndf.index, aggregate_edges_by)
+        if return_counts:
+            for nd in ndf.index:
+                k = nd.split(":")[0]
+                ndf.loc[nd].misc_properties["eclass_size"] = len(eclasses[k])
+        edge_ps = PropertyStore(ndf)
+
+        df = self.incidences.to_dataframe
+        df = df.rename(index=mapper, level=0)
+        df = _agg_rows(df, ["edges", "nodes"], aggregate_cells_by)
+
         node_ps = PropertyStore(self.nodes.properties.copy(deep=True))
         H = self._construct_hyp_from_stores(
-            incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+            df, edge_ps=edge_ps, node_ps=node_ps, name=name
         )
+
         if return_equivalence_classes == True:
-            return H, eclasses
+            return H, {mapper[k]: eclasses[k] for k in eclasses}
         else:
             return H
 
@@ -1037,65 +1318,117 @@ class Hypergraph:
         self,
         name=None,
         use_uids=None,
+        use_counts=False,
+        return_counts=True,
         return_equivalence_classes=False,
+        aggregate_nodes_by={"weight": "sum"},
+        aggregate_cells_by={"weight": "sum"},
     ):
         """
-        Constructs a new hypergraph gotten by identifying nodes contained in the
-        same edges
+        Returns a new hypergraph by collapsing nodes.
 
         Parameters
         ----------
-        name : hashable, optional, default = None
+
+        name: str, optional, default = None
+
+        use_uids: list, optional, default = None
+            Specify the node identifiers to use as representatives
+            for a single equivalence class. If two identifiers occur in the
+            same equivalence class, the first one found will be used.
+
+        use_counts: boolean, optional, default = False
+            Rename the equivalence class representatives as `<uid>:<size of class>`
+
+        return_counts: bool, optional, default = True
+            Add the size of the equivalence class to the properties
+            associated to the representative in the collapsed hypergraph using
+            keyword: `eclass_size`
 
         return_equivalence_classes: boolean, optional, default = False
-            Returns a dictionary of node equivalence classes
+            Returns a dictionary of edge equivalence classes keyed by a
+            representative from each class
+
+        aggregate_nodes_by, aggregate_cells_by : dict, optional, default = {'weight':'sum'}
+            dictionary of aggregation methods keyed by column names
+            in the properties dataframes, does not apply to misc_properties.
+            Defaults to 'first' on unlisted columns.
+            See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
+            dictionaries
+            ```
 
         Returns
         -------
         new hypergraph : Hypergraph
-            Equivalent edges are collapsed to a single edge named by a
-            representative of the equivalent edges followed by a colon and the
-            number of edges it represents.
-
-        equivalence_classes : dict
-            A dictionary keyed by representative edge names with values equal
-            to the edges in its equivalence class
 
         Notes
         -----
-        Two edges are identified if their respective elements are the same.
-        Using this as an equivalence relation, the uids of the edges are
-        partitioned into equivalence classes.
+        Collapses the nodes of Hypergraph. Two nodes are
+        duplicates if their respective memberships are the same.
+        Using this as an equivalence relation, the uids of the nodes
+        are partitioned into equivalence classes. A single member of the
+        equivalence class is chosen to represent the class.
 
-        A single edge from the collapsed edges followed by a colon and the
-        number of elements in its equivalence class as uid for the new edge
+        Example
+        -------
+
+            >>> data = {'E1': ('a', 'b'), 'E2': ('a', 'b')}
+            >>> h = Hypergraph(data)
+            >>> h.incidence_dict
+            {'E1': ['a', 'b'], 'E2': ['a', 'b']}
+            >>> h.collapse_nodes().incidence_dict
+            {'E1': ['a'], 'E2': ['a']}
+            >>> h.collapse_nodes(use_counts=True).incidence_dict
+            {'E1: ['a:2'], 'E2': ['a:2']}
+            >>> h.collapse_nodes().properties.to_dict(orient='records')
+            [{'weight': 2, 'misc_properties': {'eclass_size': 2}}]
+
 
 
         """
         df, eclasses = self._E.incidence_store.collapse_identical_elements(
-            1, use_keys=use_uids, return_equivalence_classes=True
+            1, use_keys=use_uids
         )
-        incidence_pairs = [tuple(d) for d in df.values]
-        incidence_df = self._E.properties.loc[incidence_pairs]
-        ekeys = list(eclasses.keys())
-        ekeys = list(set(ekeys).intersection(self.nodes.properties.index))
 
-        node_ps = PropertyStore(self.nodes.properties.copy(deep=True).loc[ekeys])
+        if use_counts:
+            mapper = {vv: f"{k}:{len(v)}" for k, v in eclasses.items() for vv in v}
+        else:
+            mapper = {vv: k for k, v in eclasses.items() for vv in v}
+
+        ndf = self.nodes.to_dataframe
+        ndf = ndf.rename(index=mapper)
+        ndf = _agg_rows(ndf, ndf.index, aggregate_nodes_by)
+        if return_counts:
+            for nd in ndf.index:
+                k = nd.split(":")[0]
+                ndf.loc[nd].misc_properties["eclass_size"] = len(eclasses[k])
+        node_ps = PropertyStore(ndf)
+
+        df = self.incidences.to_dataframe
+        df = df.rename(index=mapper, level=1)
+        df = _agg_rows(df, ["edges", "nodes"], aggregate_cells_by)
+
         edge_ps = PropertyStore(self.edges.properties.copy(deep=True))
         H = self._construct_hyp_from_stores(
-            incidence_df, edge_ps=edge_ps, node_ps=node_ps, name=name
+            df, edge_ps=edge_ps, node_ps=node_ps, name=name
         )
+
         if return_equivalence_classes == True:
-            return H, eclasses
+            return H, {mapper[k]: eclasses[k] for k in eclasses}
         else:
             return H
 
     def collapse_nodes_and_edges(
         self,
         name=None,
-        use_edge_ids=None,
-        use_node_ids=None,
+        use_edge_uids=None,
+        use_node_uids=None,
+        use_counts=False,
+        return_counts=True,
         return_equivalence_classes=False,
+        aggregate_nodes_by={"weight": "sum"},
+        aggregate_edges_by={"weight": "sum"},
+        aggregate_cells_by={"weight": "sum"},
     ):
         """
         Returns a new hypergraph by collapsing nodes and edges.
@@ -1106,16 +1439,21 @@ class Hypergraph:
         name: str, optional, default = None
 
         return_equivalence_classes: boolean, optional, default = False
-            Returns a dictionary of edge equivalence classes keyed by frozen
-            sets of nodes
+            Returns a dictionary of edge equivalence classes keyed by a
+            representative from each class
 
-        use_reps: boolean, optional, default = None
-            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE] Choose a single element from the collapsed elements as a
-            representative. If use_reps is True, the new elements are keyed by a tuple of the
-            rep and the count.
+        use_edge_uids, use_node_uids: list, optional, default = None
+            Specify the edge and node identifiers to use as representatives
+            for a single equivalence class. If two identifiers occur in the
+            same equivalence class, the first one found will be used.
 
-        return_counts: boolean, optional, default = None
-            [DEPRECATED; WILL BE REMOVED IN NEXT RELEASE]
+        use_counts: boolean, optional, default = False
+            Rename the equivalence class representatives as `<uid>:<size of class>`
+
+        return_counts: bool, optional, default = True
+            Add the size of the equivalence class to the properties
+            associated to the representative in the collapsed hypergraph using
+            keyword: `eclass_size`
 
         Returns
         -------
@@ -1123,12 +1461,11 @@ class Hypergraph:
 
         Notes
         -----
-        Collapses the Nodes and Edges of EntitySets. Two nodes(edges) are
+        Collapses the Nodes and Edges of Hypergraph. Two nodes(edges) are
         duplicates if their respective memberships(elements) are the same.
         Using this as an equivalence relation, the uids of the nodes(edges)
         are partitioned into equivalence classes. A single member of the
-        equivalence class is chosen to represent the class followed by the
-        number of members of the class.
+        equivalence class is chosen to represent the class.
 
         Example
         -------
@@ -1138,25 +1475,48 @@ class Hypergraph:
             >>> h.incidence_dict
             {'E1': ['a', 'b'], 'E2': ['a', 'b']}
             >>> h.collapse_nodes_and_edges().incidence_dict
-            {'E1: 2': ['a: 2']}
+            {'E1': ['a']}
+            >>> h.collapse_nodes_and_edges(use_counts=True).incidence_dict
+            {'E1:2': ['a:2']}
 
         """
 
         if return_equivalence_classes:
             temp, neq = self.collapse_nodes(
-                use_uids=use_node_ids, return_equivalence_classes=True
+                return_equivalence_classes=True,
+                use_uids=use_node_uids,
+                use_counts=use_counts,
+                return_counts=return_counts,
+                aggregate_nodes_by=aggregate_nodes_by,
+                aggregate_cells_by=aggregate_cells_by,
             )
             ntemp, eeq = temp.collapse_edges(
-                name=name, use_uids=use_edge_ids, return_equivalence_classes=True
+                name=name,
+                return_equivalence_classes=True,
+                use_uids=use_edge_uids,
+                use_counts=use_counts,
+                return_counts=return_counts,
+                aggregate_edges_by=aggregate_edges_by,
+                aggregate_cells_by=aggregate_cells_by,
             )
             return ntemp, neq, eeq
         else:
-            temp = self.collapse_nodes(name="temp", use_uids=use_node_ids)
-            return temp.collapse_edges(name=name, use_uids=use_edge_ids)
+            temp = self.collapse_nodes(
+                use_uids=use_node_uids,
+                use_counts=use_counts,
+                return_counts=return_counts,
+                aggregate_nodes_by=aggregate_nodes_by,
+                aggregate_cells_by=aggregate_cells_by,
+            )
+            return temp.collapse_edges(
+                name=name,
+                use_uids=use_edge_uids,
+                use_counts=use_counts,
+                return_counts=return_counts,
+                aggregate_edges_by=aggregate_edges_by,
+                aggregate_cells_by=aggregate_cells_by,
+            )
 
-    #### restrict_to methods should be handled in the incidence
-    #### store and should preserve stores if share_properties=True otherwise
-    #### deepcopy should be returned and properties will be disconnected
     def restrict_to_nodes(self, nodes, name=None):
         """
         New hypergraph gotten by restricting to nodes
@@ -1195,6 +1555,20 @@ class Hypergraph:
         return self._remove(keys, level=0, name=name, inplace=False)
 
     def add_edge(self, uid, **attr):
+        """
+        Add a single edge with attributes to edge properties.
+        Does not add an incidence to the hypergraph.
+
+        Parameters
+        ----------
+        uid : int | str
+            edge_uid
+        **attr : key = value pairs to be properties
+
+        Returns
+        -------
+        Hypergraph
+        """
         return self._add_items_from([(uid, attr)], 0)
 
     def add_edges_from(self, edges):
@@ -2153,3 +2527,26 @@ class Hypergraph:
         return self._construct_hyp_from_stores(
             ndf, edge_ps=self.edges._property_store, node_ps=self.nodes._property_store
         )
+
+
+def _agg_rows(df, groupby, rule_dict=None):
+    """
+    Helper method for collapsing nodes and edges in hypergraph
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    groupby : index or columns aggregating on
+    rule_dict : dict, optional, defaults as 'first' for all keys
+        dictionary keyed by df columns where values are the
+        aggregation rules e.g. 'first', 'sum', 'last'
+
+    Returns
+    -------
+    : pandas.DataFrame
+    """
+    default_agg = {col: "first" for col in df.columns}
+    for k, v in rule_dict.items():
+        if k in default_agg:
+            default_agg[k] = v
+    return df.reset_index().groupby(groupby).agg(default_agg)

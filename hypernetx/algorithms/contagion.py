@@ -538,7 +538,7 @@ def discrete_SIR(
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes() * rho))
+            initial_number = int(round(len(H.nodes) * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -568,7 +568,7 @@ def discrete_SIR(
 
     I = [len(initial_infecteds)]
     R = [len(initial_recovereds)]
-    S = [H.number_of_nodes() - I[-1] - R[-1]]
+    S = [len(H.nodes) - I[-1] - R[-1]]
 
     t = tmin
     times = [t]
@@ -700,7 +700,7 @@ def discrete_SIS(
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes() * rho))
+            initial_number = int(round(len(H.nodes) * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -718,7 +718,7 @@ def discrete_SIS(
             transition_events[tmin].append(("I", node, None))
 
     I = [len(initial_infecteds)]
-    S = [H.number_of_nodes() - I[-1]]
+    S = [len(H.nodes) - I[-1]]
 
     t = tmin
     times = [t]
@@ -844,7 +844,7 @@ def Gillespie_SIR(
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes() * rho))
+            initial_number = int(round(len(H.nodes) * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -868,7 +868,7 @@ def Gillespie_SIR(
 
     I = [len(initial_infecteds)]
     R = [len(initial_recovereds)]
-    S = [H.number_of_nodes() - I[-1] - R[-1]]
+    S = [len(H.nodes) - I[-1] - R[-1]]
 
     edge_neighbors = lambda node: H.nodes.memberships[node]
 
@@ -1043,7 +1043,7 @@ def Gillespie_SIS(
         if rho is None:
             initial_number = 1
         else:
-            initial_number = int(round(H.number_of_nodes() * rho))
+            initial_number = int(round(len(H.nodes) * rho))
         initial_infecteds = random.sample(list(H.nodes), initial_number)
     else:
         # check to make sure that the initially infected nodes are in the hypergraph
@@ -1057,7 +1057,7 @@ def Gillespie_SIS(
         status[node] = "I"
 
     I = [len(initial_infecteds)]
-    S = [H.number_of_nodes() - I[-1]]
+    S = [len(H.nodes) - I[-1]]
 
     edge_neighbors = lambda node: H.nodes.memberships[node]
 
