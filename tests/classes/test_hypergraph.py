@@ -26,8 +26,6 @@ def test_constructor_on_various_set_systems(hg):
     sbs = SevenBySix()
     assert len(hg.edges) == len(sbs.edges)
     assert len(hg.nodes) == len(sbs.nodes)
-    assert hg.number_of_edges() == len(sbs.edges)
-    assert hg.number_of_nodes() == len(sbs.nodes)
 
     assert hg.degree(sbs.nodes.A) == 3
     assert hg.order() == len(sbs.nodes)

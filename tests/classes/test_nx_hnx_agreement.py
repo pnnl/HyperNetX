@@ -15,19 +15,11 @@ def test_len(G, H):
     """
     assert len(G) == len(H)
 
-
-def test_number_of_nodes(G, H):
-    """
-    Confirm that the number of nodes are the same
-    """
-    assert G.number_of_nodes() == H.number_of_nodes()
-
-
 def test_number_of_edges(G, H):
     """
     Confirm that the number of edges are the same
     """
-    assert G.number_of_edges() == H.number_of_edges()
+    assert len(G.edges) == len(H.edges)
 
 
 def test_is_iterable(G, H):
