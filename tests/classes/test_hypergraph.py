@@ -456,6 +456,12 @@ def test_add_incidence_on_new_edge_new_node(sbs):
     }
 
 
+def test_clone(sbs):
+    original_hg = Hypergraph(sbs.edgedict)
+    cloned_hg = original_hg.clone()
+    assert original_hg == cloned_hg
+
+
 def test_remove_edges(sbs):
     hg = Hypergraph(sbs.edgedict)
     # shape returns (#nodes, #edges)

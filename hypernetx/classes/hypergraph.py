@@ -636,6 +636,15 @@ class Hypergraph:
         nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
         return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
 
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return (
+                all(n in self.nodes for n in other.nodes)
+                and all(e in self.edges for e in other.edges)
+                and self.incidence_dict == other.incidence_dict
+            )
+        return False
+
     def rename(self, edges=None, nodes=None, name=None):
         """
         _summary_
@@ -846,7 +855,7 @@ class Hypergraph:
          : int
 
         """
-        if s == 1 and max_size == None:
+        if s == 1 and max_size is None:
             return len(self._nodes.memberships[node_uid])
         else:
             memberships = set()
