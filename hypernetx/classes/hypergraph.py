@@ -1859,8 +1859,8 @@ class Hypergraph:
         s : int, optional, default 1
 
         edges : boolean, optional, default = True
-            If True will return edge components, if False will return node
-            components
+            If True, return edge components; otherwise, return node components
+
         return_singletons : bool, optional, default = False
 
         Notes
@@ -1982,7 +1982,7 @@ class Hypergraph:
         --------
         s_connected_components
         """
-        return self.s_connected_components(s=1, edges=edges)
+        return self.s_connected_components(s=1, edges=edges, return_singletons=True)
 
     def component_subgraphs(self, return_singletons=False, name=None):
         """
