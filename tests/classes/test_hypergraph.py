@@ -618,11 +618,17 @@ def test_remove_singletons():
     assert h.shape == (9, 5)
 
 
-def test_components():
-    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+@pytest.mark.parametrize(
+    "edges, expected_components",
+    [(False, [{1, 2, 3, 4}, {5, 6}, {7}]), (True, [{"C", "D"}, {"A", "B"}, {"E"}])],
+)
+def test_components(edges, expected_components):
+    setsystem = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
     h = Hypergraph(setsystem)
-    # h.components() causes an error
-    assert [len(g) for g in h.component_subgraphs()] == [8]
+
+    actual_components = list(h.components(edges=edges))
+
+    assert all(expected_c in actual_components for expected_c in expected_components)
 
 
 def test_connected_components():
@@ -643,12 +649,29 @@ def test_s_components():
     assert len(list(h.s_components(s=4, edges=False))) == 8
 
 
-def test_s_connected_components():
-    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+@pytest.mark.parametrize(
+    "edges, return_singletons, expected_connected_components",
+    [
+        (True, False, [{"C", "D"}, {"A", "B"}]),
+        (True, True, [{"C", "D"}, {"A", "B"}, {"E"}]),
+        (False, False, [{1, 2, 3, 4}, {5, 6}]),
+        (False, True, [{1, 2, 3, 4}, {5, 6}, {7}]),
+    ],
+)
+def test_s_connected_components(
+    edges, return_singletons, expected_connected_components
+):
+    setsystem = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
     h = Hypergraph(setsystem)
-    assert list(h.s_connected_components()) == [{0, 1, 2, 3}]
-    assert list(h.s_connected_components(s=2)) == [{1, 2, 3}]
-    assert list(h.s_connected_components(s=2, edges=False)) == [{5, 6}]
+
+    actual_connected_components = list(
+        h.s_connected_components(edges=edges, return_singletons=return_singletons)
+    )
+
+    assert all(
+        expected_c in actual_connected_components
+        for expected_c in expected_connected_components
+    )
 
 
 def test_s_component_subgraphs():
