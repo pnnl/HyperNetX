@@ -165,8 +165,8 @@ def dataframe_factory_method(
 
 
 def dict_to_incidence_store_df(D):
-    L0 = []
-    L1 = []
+    L0 = [] #list of keys
+    L1 = [] #list of the values
     for edge in D:
         nodes = D[edge]
         for node in nodes:
