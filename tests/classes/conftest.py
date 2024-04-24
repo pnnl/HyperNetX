@@ -16,7 +16,7 @@ class SevenBySix:
     def __init__(self):
         # Nodes
         SBS_Nodes = namedtuple("SBS_Nodes", "A C E K T1 T2 V")
-        a, c, e, k, t1, t2, v = nd = ("A", "C", "E", "K", "T1", "T2", "V")
+        a, c, e, k, t1, t2, v = ("A", "C", "E", "K", "T1", "T2", "V")
         self.nodes = SBS_Nodes(a, c, e, k, t1, t2, v)
 
         # Edges
@@ -118,10 +118,10 @@ def triloop2():
     return TriLoop2()
 
 
-class SBSDupes:
+class SevenBySixDupes:
     def __init__(self):
         # Nodes
-        a, c, e, f, k, t1, t2, v = nd = ("A", "C", "E", "F", "K", "T1", "T2", "V")
+        a, c, e, f, k, t1, t2, v = ("A", "C", "E", "F", "K", "T1", "T2", "V")
         self.nodes = (a, c, e, f, k, t1, t2, v)
 
         # Edges
@@ -133,10 +133,10 @@ class SBSDupes:
                 (i, {k, t2}),
                 (l, {c, e, f}),
                 (m, {c, e, f}),
-                ("O", {"T1", "T2"}),
-                ("P", {"A", "C", "K"}),
-                ("R", {"A", "E", "F"}),
-                ("S", {"A", "K", "T2", "V"}),
+                (o, {t1, t2}),
+                (p, {a, c, k}),
+                (r, {a, e, f}),
+                (s, {a, k, t2, v}),
             ]
         )
 
@@ -144,8 +144,8 @@ class SBSDupes:
 
 
 @pytest.fixture
-def sbs_dupes():
-    return SBSDupes()
+def sevenbysix_dupes():
+    return SevenBySixDupes()
 
 
 class LesMis:
@@ -201,7 +201,7 @@ def hnx_graph_from_nx_graph(nx_graph):
     return Hypergraph({f"e{i}": e for i, e in enumerate(nx_graph.edges())})
 
 
-def create_dataframe(data: Mapping[str | int, Iterable[str | int]]) -> pd.DataFrame:
+def create_dataframe(data: Mapping[str, Iterable[str]]) -> pd.DataFrame:
     """Create a valid pandas Dataframe that can be used to create a Hypergraph"""
 
     # convert the dictionary, data, into a Series where the dictionary keys are the index and the values
