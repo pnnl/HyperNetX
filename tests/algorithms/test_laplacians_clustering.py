@@ -1,9 +1,5 @@
-import numpy as np
-import pytest
 import warnings
 from hypernetx.algorithms.laplacians_clustering import *
-import random
-import hypernetx as hnx
 
 warnings.simplefilter("ignore")
 

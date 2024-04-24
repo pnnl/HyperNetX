@@ -1,53 +1,53 @@
-import pytest
+def assert_are_same_sets(s1, s2):
+    assert set(s1) == set(s2)
 
 
-def assert_are_same_sets(S, T):
-    assert set(S) == set(T)
+def assert_are_same_set_of_sets(s1, s2):
+    assert_are_same_sets(map(frozenset, s1), map(frozenset, s2))
 
 
-def assert_are_same_set_of_sets(S, T):
-    assert_are_same_sets(map(frozenset, S), map(frozenset, T))
-
-
-def test_len(G, H):
+def test_len(nx_graph, hnx_graph_from_nx_graph):
     """
     Confirm that the length of the hypergraph returns the number of nodes
     """
-    assert len(G) == len(H)
+    assert len(nx_graph) == len(hnx_graph_from_nx_graph)
 
 
-def test_number_of_edges(G, H):
+def test_number_of_edges(nx_graph, hnx_graph_from_nx_graph):
     """
     Confirm that the number of edges are the same
     """
-    assert len(G.edges) == len(H.edges)
+    assert len(nx_graph.edges) == len(hnx_graph_from_nx_graph.edges)
 
 
-def test_is_iterable(G, H):
+def test_is_iterable(nx_graph, hnx_graph_from_nx_graph):
     """
     Confirm that the object itself is iterable, and returns the node set
     """
-    assert_are_same_sets(G, H)
+    assert_are_same_sets(nx_graph, hnx_graph_from_nx_graph)
 
 
-def test_is_subscriptable(G, H):
+def test_is_subscriptable(nx_graph, hnx_graph_from_nx_graph):
     """
-    Confirm that the graph is subscriptable, i.e., G[v], returns the neighbors of v
+    Confirm that the graph is subscriptable, i.e., hnx_graph_from_nx_graph[v], returns the neighbors of v
     """
-    for v in G.nodes():
-        assert_are_same_sets(G[v], H[v])
+    for v in nx_graph.nodes():
+        assert_are_same_sets(nx_graph[v], hnx_graph_from_nx_graph[v])
 
 
-def test_neighbors(G, H):
+def test_neighbors(nx_graph, hnx_graph_from_nx_graph):
     """
-    Confirm that G.neighbors(v) returns neighbors of vertex v.
-    This is the same as G[v] above.
+    Confirm that nx_graph.neighbors(v) returns neighbors of vertex v.
+    This is the same as nx_graph[v] above.
     """
-    for v in G.nodes():
-        assert_are_same_sets(G[v], H[v])
+    for v in nx_graph.nodes():
+        assert_are_same_sets(nx_graph[v], hnx_graph_from_nx_graph[v])
 
 
-@pytest.mark.xfail(reason="Hypergraph edges do not match edges in nx graph")
-def test_edges_iter(G, H):
-    # breakpoint()
-    assert_are_same_set_of_sets(G.edges(), H.edges())
+def test_edges_iter(nx_graph, hnx_graph_from_nx_graph):
+    """
+    Confirm that hnx_graph_from_nx_graph.edges returns the same edges as nx_graph.edges()
+    """
+    assert_are_same_set_of_sets(
+        nx_graph.edges(), hnx_graph_from_nx_graph.edges.elements.values()
+    )

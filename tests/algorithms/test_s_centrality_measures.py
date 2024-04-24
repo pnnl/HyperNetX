@@ -1,7 +1,8 @@
-import numpy as np
 import pytest
-import warnings
+
 from hypernetx.algorithms.s_centrality_measures import *
+
+import warnings
 
 warnings.simplefilter("ignore")
 

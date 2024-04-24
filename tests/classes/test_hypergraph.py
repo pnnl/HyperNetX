@@ -3,32 +3,42 @@ from collections import OrderedDict
 import pytest
 import numpy as np
 import pandas as pd
-from hypernetx.classes.hypergraph import Hypergraph
+import networkx as nx
 
 from networkx.algorithms import bipartite
 
 from hypernetx.classes.property_store import PropertyStore
-from tests.classes.conftest import SevenBySix
+from hypernetx.classes.hypergraph import Hypergraph
 
 
 #################Tests on constructors and from_<data type> ################################
 
 
-@pytest.mark.parametrize(
-    "hg",
-    [
-        Hypergraph(SevenBySix().edges_list),  # list of edges
-        Hypergraph(SevenBySix().edgedict),  # dictionary of edges to nodes
-        Hypergraph(SevenBySix().dataframe),  # dataframe of edges to nodes
-    ],
-)
-def test_constructor_on_various_set_systems(hg):
-    sbs = SevenBySix()
-    assert len(hg.edges) == len(sbs.edges)
-    assert len(hg.nodes) == len(sbs.nodes)
+def test_constructor_on_list_of_edges(sevenbysix):
+    hg = Hypergraph(sevenbysix.edges_list)
+    assert len(hg.edges) == len(sevenbysix.edges)
+    assert len(hg.nodes) == len(sevenbysix.nodes)
 
-    assert hg.degree(sbs.nodes.A) == 3
-    assert hg.order() == len(sbs.nodes)
+    assert hg.degree(sevenbysix.nodes.A) == 3
+    assert hg.order() == len(sevenbysix.nodes)
+
+
+def test_constructor_on_dict_of_edges_to_nodes(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert len(hg.edges) == len(sevenbysix.edges)
+    assert len(hg.nodes) == len(sevenbysix.nodes)
+
+    assert hg.degree(sevenbysix.nodes.A) == 3
+    assert hg.order() == len(sevenbysix.nodes)
+
+
+def test_constructor_on_dataframe(sevenbysix):
+    hg = Hypergraph(sevenbysix.dataframe)
+    assert len(hg.edges) == len(sevenbysix.edges)
+    assert len(hg.nodes) == len(sevenbysix.nodes)
+
+    assert hg.degree(sevenbysix.nodes.A) == 3
+    assert hg.order() == len(sevenbysix.nodes)
 
 
 @pytest.mark.parametrize("h", [Hypergraph(), Hypergraph({})])
@@ -39,7 +49,7 @@ def test_construct_empty_hypergraph(h):
     assert h.nodes.is_empty()
 
 
-def test_from_incidence_dataframe(lesmis):
+def test_from_incidence_dataframe_on_lesmis(lesmis):
     h = Hypergraph(lesmis.edgedict)
     df = h.incidence_dataframe()
     hg = Hypergraph.from_incidence_dataframe(df)
@@ -48,57 +58,140 @@ def test_from_incidence_dataframe(lesmis):
     assert hg.degree("JA") == 3
 
 
-def test_from_numpy_array(sbs):
-    hg = Hypergraph.from_numpy_array(sbs.arr)
-    assert len(hg.nodes) == len(sbs.arr)
-    assert len(hg.edges) == len(sbs.arr[0])
+def test_from_incidence_dataframe():
+    matrix = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
+    index = ["A", "B", "C"]
+    columns = ["a", "b", "c", "d"]
+    df = pd.DataFrame(matrix, index=index, columns=columns)
+
+    h = Hypergraph.from_incidence_dataframe(df)
+
+    assert "b" in h.edges()
+    assert "d" not in h.edges()
+    assert "C" in h.edges["a"]
+
+
+def test_from_incidence_dataframe_with_key():
+    matrix = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
+    index = ["A", "B", "C"]
+    columns = ["a", "b", "c", "d"]
+    df = pd.DataFrame(matrix, index=index, columns=columns)
+
+    h = Hypergraph.from_incidence_dataframe(df, key=lambda x: x > 4)
+
+    assert "A" in h.edges["a"]
+    assert "C" not in h.edges["a"]
+
+
+def test_from_incidence_dataframe_with_fillna(sample_df):
+    h = Hypergraph.from_incidence_dataframe(sample_df, fillna=1)
+    assert "A" in h.edges["b"]
+
+
+def test_from_numpy_array_on_sbs(sevenbysix):
+    hg = Hypergraph.from_numpy_array(sevenbysix.arr)
+
+    assert len(hg.nodes) == len(sevenbysix.arr)
+    assert len(hg.edges) == len(sevenbysix.arr[0])
     assert hg.dim("e5") == 2
     assert set(hg.neighbors("v2")) == {"v0", "v5"}
 
 
-def test_from_bipartite(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_from_numpy_array_with_node_edge_names():
+    matrix = np.array(
+        [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
+    )
+    node_names = ["A", "B", "C", "D"]
+    edge_names = ["a", "b", "c", "d", "e"]
+
+    h = Hypergraph.from_numpy_array(
+        matrix, node_names=node_names, edge_names=edge_names
+    )
+
+    assert "a" in h.edges()
+    assert "A" in h.nodes()
+    assert "B" in h.edges["a"]
+
+
+def test_from_numpy_array_with_key():
+    """
+    matrix should look like the following:
+        a  b  c  d
+     A  5  0  7  2
+     B  6  8  1  1
+     C  2  5  1  9
+
+     With key=lambda x: x > 4, the Hypergraph will only consider valid incidences to have values greater than 4
+    """
+    matrix = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
+    h = Hypergraph.from_numpy_array(
+        matrix,
+        node_names=["A", "B", "C"],
+        edge_names=["a", "b", "c", "d"],
+        key=lambda x: x > 4,
+    )
+    assert "A" in h.edges["a"]
+    assert "C" not in h.edges["a"]
+
+
+def test_from_bipartite_on_hnx_bipartite(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
     hg_b = Hypergraph.from_bipartite(hg.bipartite())
-    assert len(hg_b.edges) == len(sbs.edges)
+    assert len(hg_b.edges) == len(sevenbysix.edges)
     assert len(hg_b.nodes) == 7
 
 
+def test_from_bipartite_on_complete_bipartite():
+    g = nx.complete_bipartite_graph(2, 3)
+    left, right = nx.bipartite.sets(g)
+    h = Hypergraph.from_bipartite(g)
+    nodes = {*h.nodes}
+    edges = {*h.edges}
+    assert left.issubset(edges)
+    assert right.issubset(nodes)
+
+    with pytest.raises(Exception) as excinfo:
+        h.edge_diameter(s=4)
+    assert "Hypergraph is not s-connected." in str(excinfo.value)
+
+
 #################tests on methods ################################
-def test_len(sbs):
-    hg = Hypergraph(sbs.edgedict)
-    assert len(hg) == len(sbs.nodes)
+def test_len(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert len(hg) == len(sevenbysix.nodes)
 
 
-def test_contains(sbs):
-    hg = Hypergraph(sbs.edgedict)
-    assert sbs.nodes.A in hg
+def test_contains(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert sevenbysix.nodes.A in hg
 
 
-def test_iterator(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_iterator(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
     nodes = [key for key in hg]
-    assert sorted(nodes) == list(sbs.nodes)
+    assert sorted(nodes) == list(sevenbysix.nodes)
 
 
-def test_getitem(sbs):
-    hg = Hypergraph(sbs.edgedict)
-    nodes = hg[sbs.nodes.C]
-    assert sorted(nodes) == [sbs.nodes.A, sbs.nodes.E, sbs.nodes.K]
+def test_getitem(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    nodes = hg[sevenbysix.nodes.C]
+    assert sorted(nodes) == [sevenbysix.nodes.A, sevenbysix.nodes.E, sevenbysix.nodes.K]
 
 
-def test_get_linegraph(sbs):
-    hg = Hypergraph(sbs.edgedict)
-    assert len(hg.edges) == len(sbs.edges)
-    assert len(hg.nodes) == len(sbs.nodes)
+def test_get_linegraph(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert len(hg.edges) == len(sevenbysix.edges)
+    assert len(hg.nodes) == len(sevenbysix.nodes)
 
     lg = hg.get_linegraph(s=1)
 
-    diff = set(lg).difference(set(sbs.edges))
+    diff = set(lg).difference(set(sevenbysix.edges))
     assert len(diff) == 0
 
 
-def test_add_edge_no_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edge_no_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_edge = "X"
 
     assert h.shape == (7, 6)
@@ -117,8 +210,8 @@ def test_add_edge_no_attr(sbs):
     assert new_hg.edges.property_store[new_edge] == {"weight": 1}
 
 
-def test_add_edge_with_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edge_with_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_edge = "X"
 
     assert h.shape == (7, 6)
@@ -152,8 +245,10 @@ def test_add_edge_with_attr(sbs):
         ),
     ],
 )
-def test_add_edges_from_on_list_of_single_edge(sbs, new_edge, data, expected_props):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edges_from_on_list_of_single_edge(
+    sevenbysix, new_edge, data, expected_props
+):
+    h = Hypergraph(sevenbysix.edgedict)
     assert h.shape == (7, 6)
     assert new_edge not in h.edges
 
@@ -177,8 +272,8 @@ def test_add_edges_from_on_list_of_single_edge(sbs, new_edge, data, expected_pro
         ([("X", {"hair_color": "red"}), ("Y", {"age": "42"})]),
     ],
 )
-def test_add_edges_from_on_list_of_multiple_edges(sbs, edges):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edges_from_on_list_of_multiple_edges(sevenbysix, edges):
+    h = Hypergraph(sevenbysix.edgedict)
     new_edges = [edge[0] for edge in edges]
 
     assert h.shape == (7, 6)
@@ -200,8 +295,8 @@ def test_add_edges_from_on_list_of_multiple_edges(sbs, edges):
         assert new_hg.edges.property_store[edge] == expected_props
 
 
-def test_add_edges_from_on_list_of_edges_no_data(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edges_from_on_list_of_edges_no_data(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_edges = ["X", "Y"]
 
     assert h.shape == (7, 6)
@@ -222,8 +317,8 @@ def test_add_edges_from_on_list_of_edges_no_data(sbs):
     )
 
 
-def test_add_edges_from_on_list_of_edges_with_and_without_data(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_edges_from_on_list_of_edges_with_and_without_data(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_edge1 = "X"
     new_edge2 = "Y"
     new_edge3 = "Z"
@@ -247,8 +342,8 @@ def test_add_edges_from_on_list_of_edges_with_and_without_data(sbs):
     assert new_hg.edges.property_store[new_edge3] == {"weight": 1, "hair_color": "red"}
 
 
-def test_add_node_no_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_node_no_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_node = "Y"
 
     assert h.shape == (7, 6)
@@ -265,8 +360,8 @@ def test_add_node_no_attr(sbs):
     assert new_hg.nodes.property_store[new_node] == {"weight": 1}
 
 
-def test_add_node_with_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_node_with_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_node = "Y"
 
     assert h.shape == (7, 6)
@@ -298,8 +393,10 @@ def test_add_node_with_attr(sbs):
         ),
     ],
 )
-def test_add_nodes_from_on_list_of_single_node(sbs, new_node, data, expected_props):
-    h = Hypergraph(sbs.edgedict)
+def test_add_nodes_from_on_list_of_single_node(
+    sevenbysix, new_node, data, expected_props
+):
+    h = Hypergraph(sevenbysix.edgedict)
     assert h.shape == (7, 6)
     assert new_node not in h.nodes
 
@@ -320,8 +417,8 @@ def test_add_nodes_from_on_list_of_single_node(sbs, new_node, data, expected_pro
         ([("B", {"hair_color": "red"}), ("D", {"age": "42"})]),
     ],
 )
-def test_add_nodes_from_on_list_of_multiple_nodes(sbs, nodes):
-    h = Hypergraph(sbs.edgedict)
+def test_add_nodes_from_on_list_of_multiple_nodes(sevenbysix, nodes):
+    h = Hypergraph(sevenbysix.edgedict)
     new_nodes = [node[0] for node in nodes]
 
     assert h.shape == (7, 6)
@@ -339,8 +436,8 @@ def test_add_nodes_from_on_list_of_multiple_nodes(sbs, nodes):
         assert new_hg.nodes.property_store[node] == expected_props
 
 
-def test_add_nodes_from_on_list_of_nodes_no_data(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_nodes_from_on_list_of_nodes_no_data(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_nodes = ["B", "D"]
 
     assert h.shape == (7, 6)
@@ -357,8 +454,8 @@ def test_add_nodes_from_on_list_of_nodes_no_data(sbs):
     )
 
 
-def test_add_nodes_from_on_list_of_nodes_with_and_without_data(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_nodes_from_on_list_of_nodes_with_and_without_data(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     new_node1 = "B"
     new_node2 = "D"
     new_node3 = "F"
@@ -382,8 +479,8 @@ def test_add_nodes_from_on_list_of_nodes_with_and_without_data(sbs):
     assert new_hg.nodes.property_store[new_node3] == {"weight": 1, "hair_color": "red"}
 
 
-def test_add_incidence_on_existing_edges_node_no_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_incidence_on_existing_edges_node_no_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     edge = "P"
     node = "E"
     new_incidence = (edge, node)
@@ -404,8 +501,8 @@ def test_add_incidence_on_existing_edges_node_no_attr(sbs):
     assert new_hg.incidences.property_store[new_incidence] == {"weight": 1}
 
 
-def test_add_incidence_user_on_existing_edges_node_with_attr(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_incidence_user_on_existing_edges_node_with_attr(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     edge = "P"
     node = "E"
     new_incidence = (edge, node)
@@ -429,8 +526,8 @@ def test_add_incidence_user_on_existing_edges_node_with_attr(sbs):
     }
 
 
-def test_add_incidence_on_new_edge_new_node(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_add_incidence_on_new_edge_new_node(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     edge = "X"
     node = "B"
     new_incidence = (edge, node)
@@ -456,42 +553,42 @@ def test_add_incidence_on_new_edge_new_node(sbs):
     }
 
 
-def test_clone(sbs):
-    original_hg = Hypergraph(sbs.edgedict)
+def test_clone(sevenbysix):
+    original_hg = Hypergraph(sevenbysix.edgedict)
     cloned_hg = original_hg.clone()
     assert original_hg == cloned_hg
 
 
-def test_remove_edges(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_remove_edges(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
     # shape returns (#nodes, #edges)
-    assert hg.shape == (len(sbs.nodes), len(sbs.edges))
+    assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
 
     # remove an edge containing nodes that are in other edges
     # the number of nodes should not decrease
-    hg = hg.remove_edges(sbs.edges.P)
-    assert hg.shape == (len(sbs.nodes), len(sbs.edges) - 1)
+    hg = hg.remove_edges(sevenbysix.edges.P)
+    assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges) - 1)
 
     # remove an edge containing a singleton ear (i.e. a node not present in other edges)
     # the number of nodes should decrease by exactly one
-    hg = hg.remove_edges(sbs.edges.O)
-    assert hg.shape == (len(sbs.nodes) - 1, len(sbs.edges) - 2)
+    hg = hg.remove_edges(sevenbysix.edges.O)
+    assert hg.shape == (len(sevenbysix.nodes) - 1, len(sevenbysix.edges) - 2)
 
 
-def test_remove_nodes(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_remove_nodes(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
 
-    assert sbs.nodes.A in hg.nodes
-    assert sbs.nodes.A in hg.edges[sbs.edges.P]
-    assert sbs.nodes.A in hg.edges[sbs.edges.R]
-    assert sbs.nodes.A in hg.edges[sbs.edges.S]
+    assert sevenbysix.nodes.A in hg.nodes
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.P]
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.R]
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.S]
 
-    hg_new = hg.remove_nodes(sbs.nodes.A)
+    hg_new = hg.remove_nodes(sevenbysix.nodes.A)
 
-    assert sbs.nodes.A not in hg_new.nodes
-    assert sbs.nodes.A not in hg_new.edges[sbs.edges.P]
-    assert sbs.nodes.A not in hg_new.edges[sbs.edges.R]
-    assert sbs.nodes.A not in hg_new.edges[sbs.edges.S]
+    assert sevenbysix.nodes.A not in hg_new.nodes
+    assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.P]
+    assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.R]
+    assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.S]
 
 
 def test_remove_edges_nodes_incidences(triloop2):
@@ -522,10 +619,13 @@ def test_remove_edges_nodes_incidences(triloop2):
     assert newH.shape == (4, 2)
 
 
-def test_matrix(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_matrix(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
 
-    assert hg.incidence_matrix().todense().shape == (len(sbs.nodes), len(sbs.edges))
+    assert hg.incidence_matrix().todense().shape == (
+        len(sevenbysix.nodes),
+        len(sevenbysix.edges),
+    )
     assert hg.adjacency_matrix(s=2).todense().shape == (7, 7)
     assert hg.edge_adjacency_matrix().todense().shape == (6, 6)
 
@@ -559,15 +659,15 @@ def test_collapse_nodes_and_edges(sbs_dupes):
     assert len(hc2.nodes) == len(sbs_dupes.nodes) - 1
 
 
-def test_restrict_to_edges(sbs):
-    H = Hypergraph(sbs.edgedict)
+def test_restrict_to_edges(sevenbysix):
+    H = Hypergraph(sevenbysix.edgedict)
     HS = H.restrict_to_edges(["P", "O"])
     assert len(H.edges) == 6
     assert len(HS.edges) == 2
 
 
-def test_restrict_to_nodes(sbs):
-    H = Hypergraph(sbs.edgedict)
+def test_restrict_to_nodes(sevenbysix):
+    H = Hypergraph(sevenbysix.edgedict)
     assert len(H.nodes) == 7
     H1 = H.restrict_to_nodes(["A", "E", "K"])
     assert len(H.nodes) == 7
@@ -691,9 +791,9 @@ def test_s_component_subgraphs():
     )
 
 
-def test_size(sbs):
-    h = Hypergraph(sbs.edgedict)
-    assert h.size(sbs.edges.S) == len(sbs.edgedict[sbs.edges.S])
+def test_size(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
+    assert h.size(sevenbysix.edges.S) == len(sevenbysix.edgedict[sevenbysix.edges.S])
     assert h.size("S", {"T2", "V"}) == 2
     assert h.size("S", {"T1", "T2"}) == 1
     assert h.size("S", {"T2"}) == 1
@@ -701,26 +801,26 @@ def test_size(sbs):
     assert h.size("S", {}) == 0
 
 
-def test_diameter(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_diameter(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     assert h.diameter() == 3
 
 
-def test_diameter_should_raise_error(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_diameter_should_raise_error(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     with pytest.raises(Exception) as excinfo:
         h.diameter(s=2)
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
-def test_node_diameters(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_node_diameters(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     assert h.node_diameters()[0] == 3
-    assert h.node_diameters()[2] == [set(sbs.nodes)]
+    assert h.node_diameters()[2] == [set(sevenbysix.nodes)]
 
 
-def test_edge_diameter(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_edge_diameter(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     assert h.edge_diameter() == 3
     assert h.edge_diameters()[2] == [{"I", "L", "O", "P", "R", "S"}]
     with pytest.raises(Exception) as excinfo:
@@ -728,13 +828,13 @@ def test_edge_diameter(sbs):
     assert "Hypergraph is not s-connected." in str(excinfo.value)
 
 
-def test_bipartite(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_bipartite(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
     assert bipartite.is_bipartite(hg.bipartite())
 
 
-def test_dual(sbs):
-    h = Hypergraph(sbs.edgedict)
+def test_dual(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
     hd = h.dual()
     assert isinstance(hd.nodes.property_store, PropertyStore)
     assert isinstance(hd.edges.property_store, PropertyStore)
@@ -783,22 +883,22 @@ def test_difference_on_same_hypergraph(lesmis):
     assert hg_diff.incidence_dict == {}
 
 
-def test_difference_on_empty_hypergraph(sbs):
+def test_difference_on_empty_hypergraph(sevenbysix):
     hg_empty = Hypergraph()
-    hg = Hypergraph(sbs.edgedict)
+    hg = Hypergraph(sevenbysix.edgedict)
     hg_diff = hg - hg_empty
 
-    assert len(hg_diff) == len(sbs.nodes)
-    assert len(hg_diff.nodes) == len(sbs.nodes)
-    assert len(hg_diff.edges) == len(sbs.edges)
-    assert hg_diff.shape == (len(sbs.nodes), len(sbs.edges))
+    assert len(hg_diff) == len(sevenbysix.nodes)
+    assert len(hg_diff.nodes) == len(sevenbysix.nodes)
+    assert len(hg_diff.edges) == len(sevenbysix.edges)
+    assert hg_diff.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
 
-    assert all(e in sbs.edges for e in hg_diff.edges)
-    assert all(n in sbs.nodes for n in hg_diff.nodes)
+    assert all(e in sevenbysix.edges for e in hg_diff.edges)
+    assert all(n in sevenbysix.nodes for n in hg_diff.nodes)
 
 
-def test_difference_on_similar_hypergraph(sbs):
-    hg = Hypergraph(sbs.edgedict)
+def test_difference_on_similar_hypergraph(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
 
     # create a hypergraph based on hg, but remove the 'I' edge
     a, c, e, k, t1, t2, v = ("A", "C", "E", "K", "T1", "T2", "V")

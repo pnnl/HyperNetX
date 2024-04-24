@@ -1,8 +1,7 @@
 import pytest
-import itertools as it
-import networkx as nx
-import hypernetx as hnx
 import numpy as np
+
+import hypernetx as hnx
 
 
 class TriLoop:
