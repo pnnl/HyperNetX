@@ -165,14 +165,20 @@ def dataframe_factory_method(
 
 
 def dict_to_incidence_store_df(D):
-    L0 = [] #list of keys
-    L1 = [] #list of the values
+    L0 = []  # list of keys
+    L1 = []  # list of the values
     for edge in D:
         nodes = D[edge]
         for node in nodes:
             L0.append(edge)
             L1.append(node)
-    return pd.DataFrame({'level_0': L0, 'level_1': L1,})
+    return pd.DataFrame(
+        {
+            "level_0": L0,
+            "level_1": L1,
+        }
+    )
+
 
 def dict_factory_method(
     D,
@@ -232,7 +238,7 @@ def dict_factory_method(
     # if the dictionary data provided is for the setsystem (incidence data)
     elif level == 2:
         # explode list of lists into incidence pairs as a pandas dataframe using pandas series explode.
-        #DF = pd.DataFrame(pd.Series(D).explode()).reset_index()
+        # DF = pd.DataFrame(pd.Series(D).explode()).reset_index()
         DF = dict_to_incidence_store_df(D)
         # rename columns to correct column names for edges and nodes
         DF = DF.rename(columns=dict(zip(DF.columns, ["edges", "nodes"])))
