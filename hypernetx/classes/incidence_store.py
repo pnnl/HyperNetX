@@ -67,7 +67,7 @@ class IncidenceStore:
         array
              Returns an array of edge names
         """
-        return self._data["edges"].unique()
+        return list(self._data["edges"].unique())
 
     @property
     def nodes(self):
@@ -79,7 +79,7 @@ class IncidenceStore:
         array
              Returns an array of node names
         """
-        return self._data["nodes"].unique()
+        return list(self._data["nodes"].unique())
 
     def __iter__(self):
         """
