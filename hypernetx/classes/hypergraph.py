@@ -1303,6 +1303,7 @@ class Hypergraph:
                     ndf.loc[nd].misc_properties['eclass_size'] = len(eclasses[nd])
         edge_ps = PropertyStore(ndf)
         df = self.incidences.to_dataframe
+        ### TODO Keep representative's properties and aggregate where appropriate
         df = df.rename(index=mapper, level=0)
         df = _agg_rows(df,['edges','nodes'],aggregate_cells_by)
 
@@ -1663,7 +1664,7 @@ class Hypergraph:
         uid_list,
         level=2,
         name=None,
-        inplace=True,
+        inplace=False,
     ):
         """Creates a new hypergraph with nodes and/or edges indexed by keys
         removed. More efficient for creating a restricted hypergraph if the
@@ -1679,7 +1680,7 @@ class Hypergraph:
             Enter 2 to remove incidence pairs as tuples
         name : str, optional, default = None
             Name of new hypergraph
-        inplace : bool, default = True
+        inplace : bool, default = False
             Whether or not to replace the current hypergraph with the new one.
 
         Returns
