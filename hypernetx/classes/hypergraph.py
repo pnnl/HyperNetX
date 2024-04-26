@@ -636,6 +636,15 @@ class Hypergraph:
         nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
         return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
 
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return (
+                all(n in self.nodes for n in other.nodes)
+                and all(e in self.edges for e in other.edges)
+                and self.incidence_dict == other.incidence_dict
+            )
+        return False
+
     def rename(self, edges=None, nodes=None, name=None):
         """
         _summary_
@@ -846,7 +855,7 @@ class Hypergraph:
          : int
 
         """
-        if s == 1 and max_size == None:
+        if s == 1 and max_size is None:
             return len(self._nodes.memberships[node_uid])
         else:
             memberships = set()
@@ -1863,8 +1872,8 @@ class Hypergraph:
         s : int, optional, default 1
 
         edges : boolean, optional, default = True
-            If True will return edge components, if False will return node
-            components
+            If True, return edge components; otherwise, return node components
+
         return_singletons : bool, optional, default = False
 
         Notes
@@ -1986,7 +1995,7 @@ class Hypergraph:
         --------
         s_connected_components
         """
-        return self.s_connected_components(s=1, edges=edges)
+        return self.s_connected_components(s=1, edges=edges, return_singletons=True)
 
     def component_subgraphs(self, return_singletons=False, name=None):
         """
