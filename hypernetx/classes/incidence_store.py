@@ -23,10 +23,6 @@ class IncidenceStore:
         """
         Initiate data in self as the two column pandas dataframe provided through factory method.
 
-        Parameters
-        ----------
-        data : _type_
-            collection of ordered pairs
         """
         # initiate self with data (pandas dataframe) with duplicate incidence pairs removed.
         self._data = data
@@ -35,7 +31,7 @@ class IncidenceStore:
 
     @property
     def data(self):
-        return self._data
+        return self._data.copy(deep=True)
 
     @property
     def elements(self):
@@ -236,10 +232,12 @@ class IncidenceStore:
         else:
             edict = dict()
             for ec in eclasses:
-                k = list(set(use_keys).intersection(ec))
-                if len(k) > 0:
-                    edict[k[0]] = ec
+                klist = list(set(use_keys).intersection(ec))
+                if len(klist) > 0:
+                    k = klist[0]
                 else:
-                    edict[ec[0]] = ec
+                    k = ec[0]
+                ec.remove(k)
+                edict[k] = [k] + ec
         df = self._data.loc[self._data[col].isin(edict.keys())]
         return df, edict
