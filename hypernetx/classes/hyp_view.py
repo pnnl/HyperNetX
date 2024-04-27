@@ -78,13 +78,19 @@ class HypergraphView(object):
     @property
     def to_dataframe(self):
         """
-        User-defined and non-user-defined (i.e. default) properties for all items in the HypergraphView.
+        Dataframe of properties (user defined and default) for 
+        all items in the HypergraphView.
 
         Returns
         -------
         out: pd.DataFrame
         """
         # Create a properties dataframe of non-user-defined items with default values
+        df = self.properties.copy(deep=True)
+        ### deep copy dictionaries in the misc_properties column
+        temp = [deepcopy(d) for d in df.misc_properties.values]
+        df.misc_properties = temp
+
         non_user_defined_items = list(
             set(self._items).difference(self.properties.index)
         )
@@ -94,7 +100,7 @@ class HypergraphView(object):
         )
 
         # Combine user-defined and non-user-defined properties into one dataframe
-        return pd.concat([self.properties, non_user_defined_properties])
+        return pd.concat([df, non_user_defined_properties])
 
     @property  ### will remove this later
     def dataframe(self):
@@ -133,9 +139,6 @@ class HypergraphView(object):
             return self.incidence_store.elements
         else:
             return {}
-
-    def isolates(self):
-        return set(self._property_store._data.index).difference(self._items)
 
     def __iter__(self):
         """
