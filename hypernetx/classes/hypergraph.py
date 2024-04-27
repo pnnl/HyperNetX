@@ -1290,40 +1290,54 @@ class Hypergraph:
 
 
         """      
-        df, eclasses = self._E.incidence_store.collapse_identical_elements(
+        _, eclasses = self._E.incidence_store.collapse_identical_elements(
             0, use_keys=use_uids
         )
-        
+
+        ndf = self.edges.to_dataframe
+        df = self.incidences.to_dataframe
+
+        if use_uids is not None: ## then eclasses will reorder the dataframes
+            ## so the first occurence of the class is one of these uids.
+            newindex = []
+            for v in eclasses.values():
+                newindex += v
+            ndf = ndf.loc[newindex]
+            df = df.loc[newindex,:]
+
         if use_counts:
             mapper = {vv:f"{k}:{len(v)}" for k,v in eclasses.items() for vv in v}
         else:
             mapper = {vv:k for k,v in eclasses.items() for vv in v}
 
-        ndf = self.edges.to_dataframe
         ndf = ndf.rename(index=mapper)
         ndf = _agg_rows(ndf,ndf.index,aggregate_edges_by)
-        if return_counts:
-            if use_counts:
-                for nd in ndf.index:
-                    ndf.loc[nd].misc_properties['eclass_size'] = int(nd.split(':')[1])
-            else:
-                for nd in ndf.index:
-                    ndf.loc[nd].misc_properties['eclass_size'] = len(eclasses[nd])
         edge_ps = PropertyStore(ndf)
-        df = self.incidences.to_dataframe
-        ### TODO Keep representative's properties and aggregate where appropriate
+        
         df = df.rename(index=mapper, level=0)
         df = _agg_rows(df,['edges','nodes'],aggregate_cells_by)
 
-        node_ps = PropertyStore(self.nodes.properties.copy(deep=True))
+        node_ps = PropertyStore(self.nodes.to_dataframe)
         H = self._construct_hyp_from_stores(
             df, edge_ps=edge_ps, node_ps=node_ps, name=name
         )
+
+        if return_counts:
+            if use_counts:
+                for nd in H.edges:
+                    H.edges[nd].equivalence_class_size = int(nd.split(':')[1])
+            else:
+                for nd in H.edges:
+                    H.edges[nd].equivalence_class_size = len(eclasses[nd])
 
         if return_equivalence_classes == True:
             return H, {mapper[k]: eclasses[k] for k in eclasses}
         else:
             return H
+        
+
+
+
 
     def collapse_nodes(
         self,
@@ -1397,35 +1411,46 @@ class Hypergraph:
 
 
         """      
-        df, eclasses = self._E.incidence_store.collapse_identical_elements(
+        _, eclasses = self._E.incidence_store.collapse_identical_elements(
             1, use_keys=use_uids
         )
         
+        ndf = self.nodes.to_dataframe
+        df = self.incidences.to_dataframe
+
+        if use_uids is not None: ## then eclasses will reorder the dataframes
+            ## so the first occurence of the class is one of these uids.
+            newindex = []
+            for v in eclasses.values():
+                newindex += v
+            ndf = ndf.loc[newindex]
+            df = df.swaplevel().loc[newindex,:].swaplevel()
+
+
         if use_counts:
             mapper = {vv:f"{k}:{len(v)}" for k,v in eclasses.items() for vv in v}
         else:
             mapper = {vv:k for k,v in eclasses.items() for vv in v}
 
-        ndf = self.nodes.to_dataframe
         ndf = ndf.rename(index=mapper)
         ndf = _agg_rows(ndf,ndf.index,aggregate_nodes_by)
-        if return_counts:
-            if use_counts:
-                for nd in ndf.index:
-                    ndf.loc[nd].misc_properties['eclass_size'] = int(nd.split(':')[1])
-            else:
-                for nd in ndf.index:
-                    ndf.loc[nd].misc_properties['eclass_size'] = len(eclasses[nd])
         node_ps = PropertyStore(ndf)
 
-        df = self.incidences.to_dataframe
         df = df.rename(index=mapper, level=1)
         df = _agg_rows(df,['edges','nodes'],aggregate_cells_by)
 
-        edge_ps = PropertyStore(self.edges.properties.copy(deep=True))
+        edge_ps = PropertyStore(self.edges.to_dataframe)
         H = self._construct_hyp_from_stores(
             df, edge_ps=edge_ps, node_ps=node_ps, name=name
         )
+
+        if return_counts:
+            if use_counts:
+                for nd in H.nodes:
+                    H.nodes[nd].equivalence_class_size = int(nd.split(':')[1])
+            else:
+                for nd in H.nodes:
+                    H.nodes[nd].equivalence_class_size = len(eclasses[nd])
 
         if return_equivalence_classes == True:
             return H, {mapper[k]: eclasses[k] for k in eclasses}
@@ -1472,6 +1497,8 @@ class Hypergraph:
         Returns
         -------
         new hypergraph : Hypergraph
+        node equivalence classes : dict
+        edge equivalence classes : dict
 
         Notes
         -----
@@ -2507,14 +2534,14 @@ class Hypergraph:
         Hypergraph
 
         """
-        df = self.dataframe
-        odf = other.dataframe
+        df = self.to_dataframe
+        odf = other.to_dataframe
         ndf = pd.concat([df, odf]).groupby(["edges", "nodes"]).agg("first")
-        edf = self.edges.dataframe
-        oedf = other.edges.dataframe
+        edf = self.edges.to_dataframe
+        oedf = other.edges.to_dataframe
         nedf = pd.concat([edf, oedf]).groupby("uid").agg("first")
-        nddf = self.nodes.dataframe
-        onddf = other.nodes.dataframe
+        nddf = self.nodes.to_dataframe
+        onddf = other.nodes.to_dataframe
         nnddf = pd.concat([nddf, onddf]).groupby("uid").agg("first")
         return self._construct_hyp_from_stores(
             ndf, edge_ps=PropertyStore(nedf), node_ps=PropertyStore(nnddf)
