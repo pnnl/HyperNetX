@@ -631,9 +631,9 @@ class Hypergraph:
         -------
         : Hypergraph
         """
-        df = self.incidences.to_dataframe.copy(deep=True)
-        eps = PropertyStore(self.edges.to_dataframe.copy(deep=True))
-        nps = PropertyStore(self.nodes.to_dataframe.copy(deep=True))
+        df = self.incidences.to_dataframe
+        eps = PropertyStore(self.edges.to_dataframe)
+        nps = PropertyStore(self.nodes.to_dataframe)
         return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
 
     def __eq__(self, other):
@@ -664,8 +664,8 @@ class Hypergraph:
         if edges is None and nodes is None:
             return self
         else:
-            edf = self.edges.to_dataframe.copy(deep=True)
-            ndf = self.nodes.to_dataframe.copy(deep=True)
+            edf = self.edges.to_dataframe
+            ndf = self.nodes.to_dataframe
             df = self.incidences.to_dataframe
         if edges is not None:
             edf = edf.rename(index=edges)
@@ -1138,14 +1138,13 @@ class Hypergraph:
         h._E = HypergraphView(incidence_store, 2, incidence_ps)
 
         if edge_ps is None:
-            h._edges = HypergraphView(incidence_store, 0, self._edges.property_store)
-        else:
-            h._edges = HypergraphView(incidence_store, 0, edge_ps)
+            edge_ps = PropertyStore(df.edges.to_dataframe)
+        h._edges = HypergraphView(incidence_store, 0, edge_ps)
 
         if node_ps is None:
-            h._nodes = HypergraphView(incidence_store, 1, self._nodes.property_store)
-        else:
-            h._nodes = HypergraphView(incidence_store, 1, node_ps)
+            node_ps = PropertyStore(df.nodes.to_dataframe)
+        h._nodes = HypergraphView(incidence_store, 1, node_ps)
+        
         h._set_default_state()
         h.name = name
         h._dataframe = h.dataframe
@@ -1184,8 +1183,8 @@ class Hypergraph:
             edge_ps = self._nodes.property_store
             node_ps = self._edges.property_store
         else:
-            edge_ps = PropertyStore(self._nodes.dataframe.copy(deep=True))
-            node_ps = PropertyStore(self._edges.dataframe.copy(deep=True))
+            edge_ps = PropertyStore(self.nodes.to_dataframe)
+            node_ps = PropertyStore(self.edges.to_dataframe)
 
         hdual = self._construct_hyp_from_stores(
             dsetsystem,
