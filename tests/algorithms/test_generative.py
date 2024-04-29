@@ -1,7 +1,5 @@
 import numpy as np
-import pytest
 import hypernetx.algorithms.generative_models as gm
-import hypernetx as hnx
 import random
 from scipy.sparse import coo_matrix
 
