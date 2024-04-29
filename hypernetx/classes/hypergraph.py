@@ -2,19 +2,16 @@
 # All rights reserved.
 from __future__ import annotations
 
-import random
 import warnings
-
-warnings.filterwarnings("default", category=DeprecationWarning)
-
-from copy import deepcopy
-from collections import defaultdict
-from collections.abc import Sequence, Iterable
-from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+from collections import defaultdict
+from collections.abc import Iterable
+from typing import Optional, Any, TypeVar, Union, Mapping
+
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
@@ -27,6 +24,8 @@ from hypernetx.classes.factory import (
 from hypernetx.classes.incidence_store import IncidenceStore
 from hypernetx.classes.property_store import PropertyStore
 from hypernetx.classes.hyp_view import HypergraphView
+
+warnings.filterwarnings("default", category=DeprecationWarning)
 
 __all__ = ["Hypergraph"]
 
