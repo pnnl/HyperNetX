@@ -2,7 +2,6 @@ from hypernetx.utils.extras import (
     HNXCount,
     DefaultOrderedDict,
     remove_row_duplicates,
-    create_labels,
     reverse_dictionary,
 )
 from hypernetx.utils.decorators import not_implemented_for
@@ -15,7 +14,6 @@ __all__ = [
     "HNXCount",
     "DefaultOrderedDict",
     "remove_row_duplicates",
-    "create_labels",
     "reverse_dictionary",
     "not_implemented_for",
     "HarryPotter",

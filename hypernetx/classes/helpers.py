@@ -3,80 +3,9 @@ from __future__ import annotations
 from typing import Any, Optional, Mapping
 import numpy as np
 import pandas as pd
-from collections import UserList
 from collections.abc import Hashable, Iterable
 from pandas.api.types import CategoricalDtype
 from ast import literal_eval
-
-
-class AttrList(UserList):
-    """Custom list wrapper for integrated property storage in :class:`Entity`
-    Can these be stored in statedict until a change is made to the stores?
-    Parameters
-    ----------
-    entity : hypernetx.EntitySet
-    key : tuple of (int, str or int)
-        ``(level, item)``
-    initlist : list, optional
-        list of elements, passed to ``UserList`` constructor
-
-    # New Parameters
-    # --------------
-    # key :
-    # property_store :
-    # incidence_store :
-
-    # methods return curren view of properties and
-    # neighbors
-    """
-
-    def __init__(
-        self,
-        entity: EntitySet,  ## Property Store
-        ## level: 0,1,2 will indicate where to look in inc. store
-        key: tuple[int, str | int],
-        initlist: Optional[list] = None,  ## Incidence Store - look up each time.
-    ):
-        self._entity = entity
-        self._key = key
-        super().__init__(initlist)
-
-    def __getattr__(self, attr: str) -> Any:
-        """Get attribute value from properties of :attr:`entity`
-
-        Parameters
-        ----------
-        attr : str
-
-        Returns
-        -------
-        any
-            attribute value; None if not found
-        """
-        if attr == "uidset":
-            return frozenset(self.data)
-        if attr in ["memberships", "elements"]:
-            return self._entity.__getattribute__(attr).get(self._key[1])
-        return self._entity.get_property(self._key[1], attr, self._key[0])
-
-    def __setattr__(self, attr: str, val: Any) -> None:
-        """Set attribute value in properties of :attr:`entity`
-
-        Parameters
-        ----------
-        attr : str
-        val : any
-        """
-        if attr in ["_entity", "_key", "data"]:
-            object.__setattr__(self, attr, val)
-        else:
-            self._entity.set_property(self._key[1], attr, val, level=self._key[0])
-
-    def properties(self):
-        """
-        Return dict of properties associated with this AttrList as a dictionary.
-        """
-        pass
 
 
 def encode(data: pd.DataFrame):

@@ -597,7 +597,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        item : hashable or EntitySet
+        item : hashable
 
         """
         return item in self._nodes
@@ -609,7 +609,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : EntitySet or hashable
+        node : hashable
             If hashable, then must be uid of node in hypergraph
 
         Returns
@@ -2310,13 +2310,10 @@ class Hypergraph:
             >>> B = nx.Graph()
             >>> B.add_nodes_from([1, 2, 3, 4], bipartite=0)
             >>> B.add_nodes_from(['a', 'b', 'c'], bipartite=1)
-            >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), /
-                (3, 'c'), (4, 'a')])
+            >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
             >>> H = Hypergraph.from_bipartite(B, nodes=1)
-            >>> H.nodes, H.edges
-            # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), /
-            # EntitySet(_:Edges,['b', 'c', 'a'],{}))
-
+            >>> list(H.nodes), list(H.edges)
+            # output: (['a', 'b', 'c'], [1, 2, 3, 4])
         """
 
         edges = []

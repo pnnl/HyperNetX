@@ -27,7 +27,7 @@ __all__ = ["HypergraphView"]
 class HypergraphView(object):
     """
     Wrapper for Property and Incidence Stores holding structural and
-    meta data for hypergraph. Provides methods matching EntitySet
+    metadata for hypergraph. Provides methods matching EntitySet
     methods in previous versions. Only nodes and edges in the Incidence
     Store will be seeable in this view.
     """
