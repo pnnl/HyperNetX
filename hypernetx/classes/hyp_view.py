@@ -78,7 +78,7 @@ class HypergraphView(object):
     @property
     def to_dataframe(self):
         """
-        Dataframe of properties (user defined and default) for 
+        Dataframe of properties (user defined and default) for
         all items in the HypergraphView.
 
         Returns
