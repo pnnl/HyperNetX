@@ -64,6 +64,10 @@ class HypergraphView(object):
         ### and empty properties otherwise.
 
     @property
+    def items(self):
+        return set(self._items)
+
+    @property
     def level(self):
         return self._level
 
