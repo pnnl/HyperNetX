@@ -1093,7 +1093,8 @@ class Hypergraph:
 
         Returns
         -------
-        : networkx.Graph or DiGraph
+        networkx.Graph or DiGraph
+
         """
 
         if directed == True:

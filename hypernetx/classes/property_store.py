@@ -264,7 +264,7 @@ class PropertyStore:
 def flatten(my_dict):
     """
     Recursive method to flatten dictionary for returning properties as
-    a dictionary instead of a Series, from [StackOverflow](https://stackoverflow.com/a/71952620)
+    a dictionary instead of a Series, from https://stackoverflow.com/a/71952620
     """
     result = {}
     for key, value in my_dict.items():

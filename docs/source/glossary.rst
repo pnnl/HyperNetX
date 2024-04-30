@@ -14,9 +14,9 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 
 	.. // scan hypergraph.py
 
-	Entity and Entity set
-		Class in entity.py. 
-		HNX stores many of its data structures inside objects of type Entity.  Entities help to insure safe behavior, but their use is primarily technical, not mathematical.
+	HypergraphView
+		Class in hyp_view.py.
+		HNX stores many of its data structures inside objects of type HypergraphView.  HypergraphView helps to ensure safe behavior, but their use is primarily technical not mathematical.
 
 	hypergraph
 		The term *hypergraph* can have many different meanings.  In HNX, it means a tuple (Nodes, Edges, Incidence), where Nodes and Edges are sets, and Incidence is a function that assigns a value of True or False to every pair (n,e) in the Cartesian product Nodes x Edges.  We call 

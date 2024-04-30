@@ -12,13 +12,6 @@ classes.factory module
    :undoc-members:
    :show-inheritance:
 
-classes.helpers module
-----------------------
-
-.. automodule:: classes.helpers
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 classes.hyp\_view module
 ------------------------
@@ -36,13 +29,6 @@ classes.hypergraph module
    :undoc-members:
    :show-inheritance:
 
-classes.hypergraph\_2 module
-----------------------------
-
-.. automodule:: classes.hypergraph_2
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 classes.incidence\_store module
 -------------------------------

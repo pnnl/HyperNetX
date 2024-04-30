@@ -55,7 +55,7 @@ available on `GitHub <https://github.com/pnnl/HyperNetX>`_.
           <span >Tutorial 6 - Homology mod2 for TriLoop Example</span>
       </a>
    </br>
-   <span>Additional Tutorials may be found on in the Tutorials Folder.
+   <span>Additional Tutorials may be found in the Tutorials Folder.
    </br></br>
    </div>
 
