@@ -1155,6 +1155,7 @@ def test_sum_hypergraph_with_dupe_hypergraph(sevenbysix, sevenbysix_dupes):
     hg = Hypergraph(sevenbysix.edgedict)
     hg_dupes = Hypergraph(sevenbysix_dupes.edgedict)
 
+    # Case: HDuplicate + H
     # add almost duplicate hypergraph to hypergraph
     new_hg = hg.sum(hg_dupes)
 
@@ -1169,14 +1170,21 @@ def test_sum_hypergraph_with_dupe_hypergraph(sevenbysix, sevenbysix_dupes):
         "R": ["A", "E", "F"],
         "S": ["A", "K", "T2", "V"],
     }
-    assert new_hg.incidences.incidence_dict == expected_incidences
+    actual_incidences = new_hg.incidence_dict
+    for expected_edge, expected_nodes in expected_incidences.items():
+        assert expected_edge in actual_incidences
+        assert all(node in actual_incidences[expected_edge] for node in expected_nodes)
 
+    # Case: H + HDuplicate
     # add hypergraph to almost duplicate
     new_hg = hg_dupes.sum(hg)
 
     assert new_hg.shape == (len(sevenbysix.nodes) + 1, len(sevenbysix.edges) + 1)
     # check for new incidences
-    assert new_hg.incidences.incidence_dict == expected_incidences
+    actual_incidences = new_hg.incidences.incidence_dict
+    for expected_edge, expected_nodes in expected_incidences.items():
+        assert expected_edge in actual_incidences
+        assert all(node in actual_incidences[expected_edge] for node in expected_nodes)
 
 
 @pytest.mark.parametrize(

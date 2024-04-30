@@ -1135,11 +1135,11 @@ class Hypergraph:
         h._E = HypergraphView(incidence_store, 2, incidence_ps)
 
         if edge_ps is None:
-            edge_ps = PropertyStore(incidence_df.edges.properties)
+            edge_ps = self.edges.property_store.copy()
         h._edges = HypergraphView(incidence_store, 0, edge_ps)
 
         if node_ps is None:
-            node_ps = PropertyStore(incidence_df.nodes.properties)
+            node_ps = self.nodes.property_store.copy()
         h._nodes = HypergraphView(incidence_store, 1, node_ps)
 
         h._set_default_state()
@@ -2539,8 +2539,8 @@ class Hypergraph:
 
     def sum(self, other):
         """
-        Concatenate incidences from two hypergraphs, removing duplicates and
-        dropping duplicate property data in the order of addition.
+        Hypergraph obtained by joining incidences from self and other.
+        Removes duplicates and uses properties of self.
 
         Parameters
         ----------
@@ -2551,33 +2551,29 @@ class Hypergraph:
         Hypergraph
 
         """
-        df = self.incidences.to_dataframe
-        other_df = other.incidences.to_dataframe
-        combined_incidences_df = (
-            pd.concat([df, other_df]).groupby(["edges", "nodes"]).agg("first")
+        incidence_df = self._combine_properties_dataframes(
+            self.incidences.to_dataframe, other.incidences.to_dataframe
         )
-
-        edges_df = self.edges.to_dataframe
-        other_edges_df = other.edges.to_dataframe
-        combined_edges_df = (
-            pd.concat([edges_df, other_edges_df]).groupby("uid").agg("first")
+        edges_data = self._combine_properties_dataframes(
+            self.edges.to_dataframe, other.edges.to_dataframe
         )
-
-        nodes_df = self.nodes.to_dataframe
-        other_nodes_df = other.nodes.to_dataframe
-        combined_nodes_df = (
-            pd.concat([nodes_df, other_nodes_df]).groupby("uid").agg("first")
+        nodes_data = self._combine_properties_dataframes(
+            self.nodes.to_dataframe, other.nodes.to_dataframe
         )
 
         return self._construct_hyp_from_stores(
-            combined_incidences_df,
-            edge_ps=PropertyStore(combined_edges_df),
-            node_ps=PropertyStore(combined_nodes_df),
+            incidence_df,
+            edge_ps=PropertyStore(edges_data),
+            node_ps=PropertyStore(nodes_data),
         )
 
-    def difference(self, other):
+    def _combine_properties_dataframes(self, df1, df2):
+        df = pd.concat([df1, df2])
+        return df[~df.index.duplicated(keep="first")]
+
+    def difference(self, other, name=None):
         """
-        Remove incidence pairs from self that belong to other.
+        Hypergraph obtained by restricting to incidences in self but not in other.
 
         Parameters
         ----------
@@ -2588,12 +2584,48 @@ class Hypergraph:
          : Hypergraph
 
         """
-        df = self.incidences.properties
-        odf = other.incidences.properties
-        ndf = df.loc[~df.index.isin(odf.index.tolist())]
-        return self._construct_hyp_from_stores(
-            ndf, edge_ps=self.edges._property_store, node_ps=self.nodes._property_store
-        )
+        ndx = list(self.incidences.items.difference(other.incidences.items))
+        ndf = self.incidences.to_dataframe.loc[ndx]
+        return self._construct_hyp_from_stores(ndf, name=name)
+
+    def intersection(self, other, name=None):
+        """
+        The hypergraph gotten by restricting to incidence pairs contained in
+            both self and other. Properties inherited from self.
+
+        Parameters
+        ----------
+        other : Hypergraph
+        name : str, optional
+             by default None
+
+        Returns
+        -------
+        : Hypergraph
+
+        """
+        ndx = list(self.incidences.items.intersection(other.incidences.items))
+        ndf = self.incidences.to_dataframe.loc[ndx]
+        return self._construct_hyp_from_stores(ndf, name=name)
+
+    def union(self, other, name=None):
+        """
+        The hypergraph gotten by joining incidence pairs contained in
+            self and other. Duplicates removed. Properties inherited from self.
+            Same as sum.
+
+        Parameters
+        ----------
+        other : Hypergraph
+        name : str, optional
+             by default None
+
+        Returns
+        -------
+        : Hypergraph
+
+        """
+        return self.sum(other)
 
 
 def _agg_rows(df, groupby, rule_dict=None):
