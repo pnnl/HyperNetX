@@ -102,6 +102,7 @@ class HypergraphView(object):
         non_user_defined_properties = pd.DataFrame(
             index=non_user_defined_items, data=default_data
         )
+        non_user_defined_properties.index.rename("uid", inplace=True)
 
         # Combine user-defined and non-user-defined properties into one dataframe
         return pd.concat([df, non_user_defined_properties])

@@ -695,10 +695,11 @@ class Hypergraph:
             cell property value if `prop_name` is provided, otherwise ``dict`` of all
             cell properties and values
         """
-        if prop_name:
-            return self.incidences[(edge_uid, node_uid)].properties[prop_name]
-        else:
-            return self.incidences[(edge_uid, node_uid)].properties
+        if prop_name is None:
+            return self.incidences.property_store.get_properties((edge_uid, node_uid))
+        return self.incidences.property_store.get_property(
+            (edge_uid, node_uid), prop_name
+        )
 
     def get_properties(self, uid, level=0, prop_name=None):
         """
@@ -711,8 +712,7 @@ class Hypergraph:
         level : int | None , optional, default = None
             Enter 0 for edges and 1 for nodes.
         prop_name : str | None, optional, default = None
-            if None then all properties associated with the object will  be
-            returned.
+            if None then all properties associated with the object will be returned.
 
         Returns
         -------
@@ -727,9 +727,8 @@ class Hypergraph:
         elif level == 2:
             store = self._E
         if prop_name is None:  ## rewrite for edges and nodes.
-            return store[uid].properties
-        else:
-            return store[uid].__getattr__(prop_name, None)
+            return store.property_store.get_properties(uid)
+        return store.property_store.get_property(uid, prop_name)
 
     def get_linegraph(self, s=1, edges=True):
         """
@@ -821,20 +820,17 @@ class Hypergraph:
 
     def edge_size_dist(self):
         """
-        Returns the size for each edge
+        Returns the size for each edge.
 
         Returns
         -------
-        np.array
-
+        list
+            a list of sizes of each edge.
         """
-
         if "edge_size_dist" not in self._state_dict:
             dist = np.array(np.sum(self.incidence_matrix(), axis=0))[0].tolist()
             self.set_state(edge_size_dist=dist)
-            return dist
-        else:
-            return self._state_dict["edge_size_dist"]
+        return self._state_dict["edge_size_dist"]
 
     def degree(self, node_uid, s=1, max_size=None):
         """
@@ -844,27 +840,28 @@ class Hypergraph:
         Parameters
         ----------
         node_uid : hashable
-            identifier for the node.
-        s : positive integer, optional, default 1
-            smallest size of edge to consider in degree
-        max_size : positive integer or None, optional, default = None
-            largest size of edge to consider in degree
+            Identifier for the node.
+        s : int, optional, default=1
+            The smallest size (must be positive) of an edge to consider in degree.
+        max_size : int or None, optional, default=None
+            The largest size (must be positive) of edge to consider in degree.
 
         Returns
         -------
-         : int
-
+        int
+            The number of edges of size at least s and at most
+            max_size that contain the node.
         """
         if s == 1 and max_size is None:
             return len(self._nodes.memberships[node_uid])
-        else:
-            memberships = set()
-            for edge in self._nodes.memberships[node_uid]:
-                size = len(self.edges[edge])
-                if size >= s and (max_size is None or size <= max_size):
-                    memberships.add(edge)
-            ### This could possibly be done more efficiently on the dataframe.
-            return len(memberships)
+
+        ### This could possibly be done more efficiently on the dataframe.
+        memberships = set()
+        for edge in self._nodes.memberships[node_uid]:
+            size = len(self.edges[edge])
+            if size >= s and (max_size is None or size <= max_size):
+                memberships.add(edge)
+        return len(memberships)
 
     def size(self, edge, nodeset=None):
         """
@@ -908,8 +905,8 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : hashable or EntitySet
-            uid for a node in hypergraph or the node Entity
+        node : hashable
+            uid for a node in hypergraph
 
         s : int, list, optional, default = 1
             Minimum number of edges shared by neighbors with node.
@@ -921,23 +918,23 @@ class Hypergraph:
 
         """
         if node not in self.nodes:
-            print(f"{node} is not in hypergraph {self.name}.")
-            return None
+            warnings.warn(f"{node} is not in hypergraph {self.name}.")
+            return []
         if node in self._state_dict["neighbors"][s]:
             return self._state_dict["neighbors"][s][node]
+
+        inc_matrix = self.incidence_matrix()
+        rdx = self._state_dict["labels"]["nodes"]
+        jdx = np.where(rdx == node)
+        idx = (inc_matrix[jdx].dot(inc_matrix.T) >= s) * 1
+        idx = np.nonzero(idx)[1]
+        neighbors = list(rdx[idx])
+        if len(neighbors) > 0:
+            neighbors.remove(node)
+            self._state_dict["neighbors"][s][node] = neighbors
         else:
-            M = self.incidence_matrix()
-            rdx = self._state_dict["labels"]["nodes"]
-            jdx = np.where(rdx == node)
-            idx = (M[jdx].dot(M.T) >= s) * 1
-            idx = np.nonzero(idx)[1]
-            neighbors = list(rdx[idx])
-            if len(neighbors) > 0:
-                neighbors.remove(node)
-                self._state_dict["neighbors"][s][node] = neighbors
-            else:
-                self._state_dict["neighbors"][s][node] = []
-        return neighbors
+            self._state_dict["neighbors"][s][node] = []
+        return self._state_dict["neighbors"][s][node]
 
     def edge_neighbors(self, edge, s=1):
         """
@@ -945,37 +942,37 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : hashable or EntitySet
-            uid for a edge in hypergraph or the edge Entity
+        edge : hashable
+            uid for a edge in hypergraph
 
         s : int, list, optional, default = 1
             Minimum number of nodes shared by neighbors edge node.
 
         Returns
         -------
-         : list
-            List of edge neighbors
+        list
+            a list of edge neighbors
 
         """
 
         if edge not in self.edges:
-            print(f"Edge is not in hypergraph {self.name}.")
-            return None
+            warnings.warn(f"Edge is not in hypergraph {self.name}.")
+            return []
         if edge in self._state_dict["edge_neighbors"][s]:
             return self._state_dict["edge_neighbors"][s][edge]
+
+        inc_matrix = self.incidence_matrix()
+        cdx = self._state_dict["labels"]["edges"]
+        jdx = np.where(cdx == edge)
+        idx = (inc_matrix.T[jdx].dot(inc_matrix) >= s) * 1
+        idx = np.nonzero(idx)[1]
+        edge_neighbors = list(cdx[idx])
+        if len(edge_neighbors) > 0:
+            edge_neighbors.remove(edge)
+            self._state_dict["edge_neighbors"][s][edge] = edge_neighbors
         else:
-            M = self.incidence_matrix()
-            cdx = self._state_dict["labels"]["edges"]
-            jdx = np.where(cdx == edge)
-            idx = (M.T[jdx].dot(M) >= s) * 1
-            idx = np.nonzero(idx)[1]
-            edge_neighbors = list(cdx[idx])
-            if len(edge_neighbors) > 0:
-                edge_neighbors.remove(edge)
-                self._state_dict["edge_neighbors"][s][edge] = edge_neighbors
-            else:
-                self._state_dict["edge_neighbors"][s][edge] = []
-            return edge_neighbors
+            self._state_dict["edge_neighbors"][s][edge] = []
+        return self._state_dict["edge_neighbors"][s][edge]
 
     def adjacency_matrix(self, s=1, index=False):
         """
@@ -1138,11 +1135,11 @@ class Hypergraph:
         h._E = HypergraphView(incidence_store, 2, incidence_ps)
 
         if edge_ps is None:
-            edge_ps = PropertyStore(self.edges.to_dataframe)
+            edge_ps = self.edges.property_store.copy()
         h._edges = HypergraphView(incidence_store, 0, edge_ps)
 
         if node_ps is None:
-            node_ps = PropertyStore(self.nodes.to_dataframe)
+            node_ps = self.nodes.property_store.copy()
         h._nodes = HypergraphView(incidence_store, 1, node_ps)
 
         h._set_default_state()
@@ -1196,17 +1193,16 @@ class Hypergraph:
 
     def equivalence_classes(self, edges=True):
         """
-        Returns the equivalence classes gotten by collapsing edges or
-        nodes.
+        Returns the equivalence classes created by collapsing edges or nodes.
 
         Parameters
         ----------
-        edges : bool, optional, default = True
+        edges : bool, optional, default=True
             If True collapses edges, otherwise collapses nodes.
 
         Returns
         -------
-        :list
+        list
             A list of sets of edges or nodes
 
         See Also
@@ -1215,7 +1211,7 @@ class Hypergraph:
         collapse_nodes
         collapse_nodes_and_edges
         """
-        level = 0 if edges == True else 1
+        level = 0 if edges else 1
         return self._E.incidence_store.equivalence_classes(level=level)
 
     def collapse_edges(
@@ -1330,7 +1326,7 @@ class Hypergraph:
                 for nd in H.edges:
                     H.edges[nd].equivalence_class_size = len(eclasses[nd])
 
-        if return_equivalence_classes == True:
+        if return_equivalence_classes:
             return H, {mapper[k]: eclasses[k] for k in eclasses}
         else:
             return H
@@ -1447,7 +1443,7 @@ class Hypergraph:
                 for nd in H.nodes:
                     H.nodes[nd].equivalence_class_size = len(eclasses[nd])
 
-        if return_equivalence_classes == True:
+        if return_equivalence_classes:
             return H, {mapper[k]: eclasses[k] for k in eclasses}
         else:
             return H
@@ -1632,6 +1628,18 @@ class Hypergraph:
         return new_items
 
     def add_nodes_to_edges(self, edge_dict):
+        """
+        Parameters
+        ----------
+        edge_dict: dict[str, list[str | int] | dict[str, dict]]
+            The edge dictionary must be a dictionary of edges as the keys and a list of nodes or a dictionary
+            of nodes to properties as the values.
+
+        Returns
+        -------
+        Hypergraph
+            A new Hypergraph with the updated edges and their newly added nodes
+        """
         items = list()
         for ed, nodes in edge_dict.items():
             if isinstance(nodes, dict):
@@ -1646,9 +1654,21 @@ class Hypergraph:
         return self._add_items_from([((edge_id, node_id), attr)], 2)
 
     def add_incidences_from(self, incidences):
-        """Incidence pairs must be a list of uids of the form (edge_uid,node_uid)
-        and/or tuples of the form (edge_uid, node_uid,data) where data is a
-        dictionary"""
+        """
+        Adds incidences to Hypergraph
+
+        Parameters
+        ----------
+        incidences: list[str | int, str | int], list[tuple[str | int, str | int, dict[str, Any]]
+            Incidence pairs must be a list of uids of the form (edge_uid,node_uid)
+            and/or tuples of the form (edge_uid, node_uid,data) where data is a
+            dictionary.
+
+        Returns
+        -------
+        Hypergraph
+            A new Hypergraph with incidences added.
+        """
         newincidences = list()
         for pr in incidences:
             if len(pr) == 2:
@@ -1662,14 +1682,14 @@ class Hypergraph:
         of the form (uid,data) where data is dictionary"""
         df = self.incidences._property_store
         ep = self.edges._property_store
-        np = self.nodes._property_store
-        hv = [ep, np, df][level]
+        ndp = self.nodes._property_store
+        hv = [ep, ndp, df][level]
         for item in items:
             uid = item[0]
             data = item[1]
             hv.set_properties(uid, data)
         return self._construct_hyp_from_stores(
-            df.properties, edge_ps=ep, node_ps=np, name=self.name
+            df.properties, edge_ps=ep, node_ps=ndp, name=self.name
         )
 
     #### This should follow behavior of restrictions
@@ -1706,14 +1726,14 @@ class Hypergraph:
         ----------
         uid_list : list
             list of uids from edges, nodes, or incidence pairs(listed as tuples)
-        level : None, optional, default = 2
+        level : int, optional, default = 2
             Enter 0 to remove edges.
             Enter 1 to remove nodes.
             Enter 2 to remove incidence pairs as tuples
         name : str, optional, default = None
             Name of new hypergraph
         inplace : bool, default = False
-            Whether or not to replace the current hypergraph with the new one.
+            Whether to replace the current hypergraph with the new one.
 
         Returns
         -------
@@ -1724,31 +1744,31 @@ class Hypergraph:
         Removal of a node or edge from the hypergraph will remove all
         instances of these objects from incidence pairs and from the data.
         Removal of an incidence pair, only removes that pair but does not
-        effect the user data attached to the edge and node in the pair.
+        affect the user data attached to the edge and node in the pair.
 
         """
         if inplace:
-            df = self.incidences._property_store.properties
-            ep = self.edges._property_store
-            np = self.nodes._property_store
+            df = self.incidences.properties
+            ep = self.edges.property_store
+            ndp = self.nodes.property_store
         else:
-            df = self.incidences._property_store.properties.copy(deep=True)
-            ep = self.edges._property_store.copy(deep=True)
-            np = self.nodes._property_store.copy(deep=True)
+            df = self.incidences.properties.copy(deep=True)
+            ep = self.edges.property_store.copy(deep=True)
+            ndp = self.nodes.property_store.copy(deep=True)
         if level in [0, 1]:
-            hv = [ep, np][level]
+            hv = [ep, ndp][level]
             df = df.drop(labels=uid_list, level=level, errors="ignore")
             hv._data = hv._data.drop(labels=uid_list, errors="ignore")
         else:
             df = df.drop(labels=uid_list, errors="ignore")
-        if inplace == True:
+        if inplace:
             self = self._construct_hyp_from_stores(
-                df, edge_ps=ep, node_ps=np, name=self.name
+                df, edge_ps=ep, node_ps=ndp, name=self.name
             )
             return self
         else:
             return self._construct_hyp_from_stores(
-                df, edge_ps=ep, node_ps=np, name=name
+                df, edge_ps=ep, node_ps=ndp, name=name
             )
 
     def toplexes(self, return_hyp=False, name=None):

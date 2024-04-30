@@ -293,16 +293,6 @@ def dict_depth(dic, level=0):
     return min(dict_depth(dic[key], level + 1) for key in dic)
 
 
-def create_dataframe(data: Mapping[str | int, Iterable[str | int]]) -> pd.DataFrame:
-    """Create a valid pandas Dataframe that can be used for the 'entity' param in EntitySet"""
-
-    validate_mapping_for_dataframe(data)
-
-    # creates a Series of all edge-node pairs (i.e. all the non-zero cells from an incidence matrix)
-    data_t = pd.Series(data=data).explode()
-    return pd.DataFrame(data={0: data_t.index.to_list(), 1: data_t.values})
-
-
 def validate_mapping_for_dataframe(
     data: Mapping[str | int, Iterable[str | int]]
 ) -> None:

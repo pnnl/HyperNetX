@@ -91,7 +91,6 @@ class PropertyStore:
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
             return {WEIGHT: self._default_weight}
-            # return self._required_properties()
         return flatten(self._data.loc[uid].to_dict())
 
     def set_properties(self, uid, props) -> None:

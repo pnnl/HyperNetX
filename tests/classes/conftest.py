@@ -1,13 +1,13 @@
+from typing import Mapping, Iterable
+
 import pytest
 import os
-import itertools as it
 import networkx as nx
 import pandas as pd
 import numpy as np
 
-from hypernetx import Hypergraph, HarryPotter, LesMis as LM
-from hypernetx.classes.helpers import create_dataframe
-from collections import OrderedDict, defaultdict, namedtuple
+from hypernetx import Hypergraph
+from collections import OrderedDict, namedtuple
 
 
 class SevenBySix:
@@ -16,7 +16,7 @@ class SevenBySix:
     def __init__(self):
         # Nodes
         SBS_Nodes = namedtuple("SBS_Nodes", "A C E K T1 T2 V")
-        a, c, e, k, t1, t2, v = nd = ("A", "C", "E", "K", "T1", "T2", "V")
+        a, c, e, k, t1, t2, v = ("A", "C", "E", "K", "T1", "T2", "V")
         self.nodes = SBS_Nodes(a, c, e, k, t1, t2, v)
 
         # Edges
@@ -81,7 +81,7 @@ class SevenBySix:
 
 
 @pytest.fixture
-def sbs() -> SevenBySix:
+def sevenbysix() -> SevenBySix:
     return SevenBySix()
 
 
@@ -118,10 +118,10 @@ def triloop2():
     return TriLoop2()
 
 
-class SBSDupes:
+class SevenBySixDupes:
     def __init__(self):
         # Nodes
-        a, c, e, f, k, t1, t2, v = nd = ("A", "C", "E", "F", "K", "T1", "T2", "V")
+        a, c, e, f, k, t1, t2, v = ("A", "C", "E", "F", "K", "T1", "T2", "V")
         self.nodes = (a, c, e, f, k, t1, t2, v)
 
         # Edges
@@ -133,10 +133,10 @@ class SBSDupes:
                 (i, {k, t2}),
                 (l, {c, e, f}),
                 (m, {c, e, f}),
-                ("O", {"T1", "T2"}),
-                ("P", {"A", "C", "K"}),
-                ("R", {"A", "E", "F"}),
-                ("S", {"A", "K", "T2", "V"}),
+                (o, {t1, t2}),
+                (p, {a, c, k}),
+                (r, {a, e, f}),
+                (s, {a, k, t2, v}),
             ]
         )
 
@@ -144,8 +144,8 @@ class SBSDupes:
 
 
 @pytest.fixture
-def sbs_dupes():
-    return SBSDupes()
+def sevenbysix_dupes():
+    return SevenBySixDupes()
 
 
 class LesMis:
@@ -191,59 +191,27 @@ def sample_df():
     return pd.read_csv(fname, index_col=0)
 
 
-#### Old fixtures not in use
-
-
-class CompleteBipartite:
-    def __init__(self, n1, n2):
-        self.g = nx.complete_bipartite_graph(n1, n2)
-        self.left, self.right = nx.bipartite.sets(self.g)
-
-
 @pytest.fixture
-def sbs_graph():
-    sbs = SevenBySix()
-    edges = set()
-    for _, e in sbs.edgedict.items():
-        edges.update(it.combinations(e, 2))
-    G = nx.Graph(name="sbsg")
-    G.add_edges_from(edges)
-    return G
-
-
-@pytest.fixture
-def G():
+def nx_graph():
     return nx.karate_club_graph()
 
 
 @pytest.fixture
-def H():
-    G = nx.karate_club_graph()
-    return Hypergraph({f"e{i}": e for i, e in enumerate(G.edges())})
+def hnx_graph_from_nx_graph(nx_graph):
+    return Hypergraph({f"e{i}": e for i, e in enumerate(nx_graph.edges())})
 
 
-@pytest.fixture
-def bipartite_example():
-    from networkx.algorithms import bipartite
+def create_dataframe(data: Mapping[str, Iterable[str]]) -> pd.DataFrame:
+    """Create a valid pandas Dataframe that can be used to create a Hypergraph"""
 
-    return bipartite.random_graph(10, 5, 0.4, 0)
+    # convert the dictionary, data, into a Series where the dictionary keys are the index and the values
+    # are the values of the Series
+    # In addition, for any values that are list-like, transform each element of a list-like value into its own row
+    # In other words, `explode()`, will enumerate all the incidences from `data`
+    data_t = pd.Series(data=data).explode()
 
+    # create a Dataframe from `data_t` with two columns labeled 0 and 1
+    # the indexes from `data_t`, which is the keys of the original dictionary `data`, will be assigned to column 0
+    # the values from `data_t`, which is the values from the original dictionary `data`, will be assigned to column 1
 
-@pytest.fixture
-def complete_bipartite_example():
-    return CompleteBipartite(2, 3).g
-
-
-@pytest.fixture
-def dataframe_example():
-    M = np.array([[1, 1, 0, 0], [0, 1, 1, 0], [1, 0, 1, 0]])
-    index = ["A", "B", "C"]
-    columns = ["a", "b", "c", "d"]
-    return pd.DataFrame(M, index=index, columns=columns)
-
-
-@pytest.fixture
-def array_example():
-    return np.array(
-        [[0, 1, 1, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0], [0, 0, 0, 0, 1]]
-    )
+    return pd.DataFrame(data={0: data_t.index.to_list(), 1: data_t.values})
