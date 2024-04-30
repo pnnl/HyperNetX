@@ -2551,24 +2551,25 @@ class Hypergraph:
         Hypergraph
 
         """
-        df = self.incidences.to_dataframe
-        odf = other.incidences.to_dataframe
-        ndf = pd.concat([df, odf])
-        ndf = ndf[~ndf.index.duplicated(keep="first")]
-
-        edf = self.edges.to_dataframe
-        oedf = other.edges.to_dataframe
-        nedf = pd.concat([edf, oedf])
-        nedf = nedf[~nedf.index.duplicated(keep="first")]
-
-        nddf = self.nodes.to_dataframe
-        onddf = other.nodes.to_dataframe
-        nnddf = pd.concat([nddf, onddf])
-        nnddf[~nnddf.index.duplicated(keep="first")]
+        incidence_df = self._combine_properties_dataframes(
+            self.incidences.to_dataframe, other.incidences.to_dataframe
+        )
+        edges_data = self._combine_properties_dataframes(
+            self.edges.to_dataframe, other.edges.to_dataframe
+        )
+        nodes_data = self._combine_properties_dataframes(
+            self.nodes.to_dataframe, other.nodes.to_dataframe
+        )
 
         return self._construct_hyp_from_stores(
-            ndf, edge_ps=PropertyStore(nedf), node_ps=PropertyStore(nnddf)
+            incidence_df,
+            edge_ps=PropertyStore(edges_data),
+            node_ps=PropertyStore(nodes_data),
         )
+
+    def _combine_properties_dataframes(self, df1, df2):
+        df = pd.concat([df1, df2])
+        return df[~df.index.duplicated(keep="first")]
 
     def difference(self, other, name=None):
         """
