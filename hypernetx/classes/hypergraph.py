@@ -632,20 +632,14 @@ class Hypergraph:
         : Hypergraph
         """
         df = self.incidences.to_dataframe
-        eps = PropertyStore(self.edges.to_dataframe)
-        nps = PropertyStore(self.nodes.to_dataframe)
-        return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
+        return self._construct_hyp_from_stores(df, name=f"{self.name}_clone")
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return (
-                all(n in self.nodes for n in other.nodes)
-                and all(e in self.edges for e in other.edges)
-                and self.incidence_dict == other.incidence_dict
-            )
+            return self.incidences.items == other.incidences.items
         return False
 
-    def rename(self, edges=None, nodes=None, name=None):
+    def rename(self, edges=None, nodes=None, name=None, inplace=True):
         """
         _summary_
 
@@ -675,7 +669,9 @@ class Hypergraph:
             df = df.rename(index=nodes, level=1)
         eps = PropertyStore(edf)
         nps = PropertyStore(ndf)
-        return self._construct_hyp_from_stores(df, edge_ps=eps, node_ps=nps, name=name)
+        return self._construct_hyp_from_stores(
+            df, edge_ps=eps, node_ps=nps, name=name, inplace=inplace
+        )
 
     def get_cell_properties(self, edge_uid, node_uid, prop_name=None):
         """Get cell properties on a specified edge and node
@@ -1123,23 +1119,32 @@ class Hypergraph:
         return B
 
     def _construct_hyp_from_stores(
-        self, incidence_df, edge_ps=None, node_ps=None, name=None
+        self, incidence_df, edge_ps=None, node_ps=None, name=None, inplace=False
     ):
-
-        h = Hypergraph()
+        if inplace:
+            h = self
+            name = self.name
+        else:
+            h = Hypergraph()
 
         incidence_store = IncidenceStore(
             pd.DataFrame(incidence_df.index.tolist(), columns=["edges", "nodes"])
         )
-        incidence_ps = PropertyStore(incidence_df)
+        incidence_ps = PropertyStore(
+            incidence_df, default_weight=self.incidences.default_weight
+        )
         h._E = HypergraphView(incidence_store, 2, incidence_ps)
 
         if edge_ps is None:
-            edge_ps = self.edges.property_store.copy()
+            edge_ps = PropertyStore(
+                self.edges.to_dataframe, default_weight=self.edges.default_weight
+            )
         h._edges = HypergraphView(incidence_store, 0, edge_ps)
 
         if node_ps is None:
-            node_ps = self.nodes.property_store.copy()
+            node_ps = PropertyStore(
+                self.nodes.to_dataframe, default_weight=self.nodes.default_weight
+            )
         h._nodes = HypergraphView(incidence_store, 1, node_ps)
 
         h._set_default_state()
@@ -1586,7 +1591,7 @@ class Hypergraph:
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
         return self._remove(keys, level=0, name=name, inplace=False)
 
-    def add_edge(self, uid, **attr):
+    def add_edge(self, uid, inplace=True, **attr):
         """
         Add a single edge with attributes to edge properties.
         Does not add an incidence to the hypergraph.
@@ -1601,22 +1606,22 @@ class Hypergraph:
         -------
         Hypergraph
         """
-        return self._add_items_from([(uid, attr)], 0)
+        return self._add_items_from([(uid, attr)], 0, inplace=inplace)
 
-    def add_edges_from(self, edges):
+    def add_edges_from(self, edges, inplace=True):
         """Edges must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
         newedges = self._process_items(edges)
-        return self._add_items_from(newedges, 0)
+        return self._add_items_from(newedges, 0, inplace=inplace)
 
-    def add_node(self, uid, **attr):
-        return self._add_items_from([(uid, attr)], 1)
+    def add_node(self, uid, inplace=True, **attr):
+        return self._add_items_from([(uid, attr)], 1, inplace=inplace)
 
-    def add_nodes_from(self, nodes):
+    def add_nodes_from(self, nodes, inplace=True):
         """Nodes must be a list of uids and/or tuples
         of the form (uid,data) where data is dictionary"""
         newnodes = self._process_items(nodes)
-        return self._add_items_from(newnodes, 1)
+        return self._add_items_from(newnodes, 1, inplace=inplace)
 
     def _process_items(self, items):
         new_items = list()
@@ -1627,7 +1632,7 @@ class Hypergraph:
                 new_items.append(item)
         return new_items
 
-    def add_nodes_to_edges(self, edge_dict):
+    def add_nodes_to_edges(self, edge_dict, inplace=True):
         """
         Parameters
         ----------
@@ -1648,12 +1653,12 @@ class Hypergraph:
             else:
                 for nd in nodes:
                     items.append(((ed, nd), {}))
-        return self._add_items_from(items, 2)
+        return self._add_items_from(items, 2, inplace=inplace)
 
-    def add_incidence(self, edge_id, node_id, **attr):
-        return self._add_items_from([((edge_id, node_id), attr)], 2)
+    def add_incidence(self, edge_id, node_id, inplace=True, **attr):
+        return self._add_items_from([((edge_id, node_id), attr)], 2, inplace=inplace)
 
-    def add_incidences_from(self, incidences):
+    def add_incidences_from(self, incidences, inplace=True):
         """
         Adds incidences to Hypergraph
 
@@ -1675,9 +1680,9 @@ class Hypergraph:
                 newincidences.append((pr, {}))
             else:
                 newincidences.append(((pr[0], pr[1]), pr[2]))
-        return self._add_items_from(newincidences, 2)
+        return self._add_items_from(newincidences, 2, inplace=inplace)
 
-    def _add_items_from(self, items, level):
+    def _add_items_from(self, items, level, inplace=True):
         """Items must be a list of tuples
         of the form (uid,data) where data is dictionary"""
         df = self.incidences._property_store
@@ -1689,7 +1694,7 @@ class Hypergraph:
             data = item[1]
             hv.set_properties(uid, data)
         return self._construct_hyp_from_stores(
-            df.properties, edge_ps=ep, node_ps=ndp, name=self.name
+            df.properties, edge_ps=ep, node_ps=ndp, name=self.name, inplace=inplace
         )
 
     #### This should follow behavior of restrictions
@@ -1752,7 +1757,7 @@ class Hypergraph:
             ep = self.edges.property_store
             ndp = self.nodes.property_store
         else:
-            df = self.incidences.properties.copy(deep=True)
+            df = self.incidences.to_dataframe
             ep = self.edges.property_store.copy(deep=True)
             ndp = self.nodes.property_store.copy(deep=True)
         if level in [0, 1]:
@@ -1761,15 +1766,9 @@ class Hypergraph:
             hv._data = hv._data.drop(labels=uid_list, errors="ignore")
         else:
             df = df.drop(labels=uid_list, errors="ignore")
-        if inplace:
-            self = self._construct_hyp_from_stores(
-                df, edge_ps=ep, node_ps=ndp, name=self.name
-            )
-            return self
-        else:
-            return self._construct_hyp_from_stores(
-                df, edge_ps=ep, node_ps=ndp, name=name
-            )
+        return self._construct_hyp_from_stores(
+            df, edge_ps=ep, node_ps=ndp, name=self.name, inplace=inplace
+        )
 
     def toplexes(self, return_hyp=False, name=None):
         """
