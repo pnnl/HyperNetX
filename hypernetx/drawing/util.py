@@ -88,7 +88,7 @@ def get_line_graph(H, collapse=True):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     collapse: bool
         True if edges should be added if hyper edges are identical
@@ -123,7 +123,7 @@ def get_set_layering(H, collapse=True):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     collapse: bool
         True if edges should be added if hyper edges are identical

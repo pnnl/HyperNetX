@@ -23,7 +23,7 @@ def layout_two_column(H, spacing=2):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     spacing: float
         amount of whitespace between disconnected components
@@ -63,7 +63,7 @@ def draw_hyper_edges(H, pos, ax=None, **kwargs):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -101,7 +101,7 @@ def draw_hyper_labels(
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -157,7 +157,7 @@ def draw(
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     with_node_labels: bool
         False to disable node labels

@@ -11,7 +11,6 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 .. glossary::
 	:sorted:
 
-
 	.. // scan hypergraph.py
 
 	HypergraphView
@@ -53,12 +52,6 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 
 	simple hypergraph
 		A hypergraph for which no edge is completely contained in another.
-
--------------
-S-line graphs
--------------
-
-HNX offers a variety of tool sets for network analysis, including s-line graphs.
 
 	s-adjacency matrix
 		For a hypergraph (Nodes, Edges, Incidence) and positive integer s, a square matrix where the elements of Nodes index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if node i and node j are incident to at least s edges in common.  If it is nonzero, then it is equal to the number of shared edges (if weighted) or 1 (if unweighted).

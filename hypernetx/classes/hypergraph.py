@@ -1044,7 +1044,7 @@ class Hypergraph:
 
     def auxiliary_matrix(self, s=1, node=True, index=False):
         """
-        The unweighted :term:`s-edge or node auxiliary matrix` for hypergraph
+        The unweighted :term:`s-auxiliary matrix` for hypergraph
 
         Parameters
         ----------
@@ -1082,6 +1082,7 @@ class Hypergraph:
         The nodes and (hyper)edges of hypergraph become the nodes of bipartite
         graph. For every (hyper)edge e in the hypergraph and node v in e there
         is an edge (e,v) in the graph.
+
         Parameters
         ----------
         keep_data : bool, optional, default = False
@@ -1094,9 +1095,7 @@ class Hypergraph:
         Returns
         -------
         networkx.Graph or DiGraph
-
         """
-
         if directed == True:
             B = nx.DiGraph()
         else:
@@ -1261,7 +1260,6 @@ class Hypergraph:
             Defaults to 'first' on unlisted columns.
             See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
             dictionaries
-            ```
 
         Returns
         -------
@@ -1378,7 +1376,6 @@ class Hypergraph:
             Defaults to 'first' on unlisted columns.
             See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
             dictionaries
-            ```
 
         Returns
         -------
@@ -1405,9 +1402,6 @@ class Hypergraph:
             {'E1: ['a:2'], 'E2': ['a:2']}
             >>> h.collapse_nodes().properties.to_dict(orient='records')
             [{'weight': 2, 'misc_properties': {'eclass_size': 2}}]
-
-
-
         """
         _, eclasses = self._E.incidence_store.collapse_identical_elements(
             1, use_keys=use_uids
@@ -1516,7 +1510,6 @@ class Hypergraph:
             {'E1': ['a']}
             >>> h.collapse_nodes_and_edges(use_counts=True).incidence_dict
             {'E1:2': ['a:2']}
-
         """
 
         if return_equivalence_classes:
