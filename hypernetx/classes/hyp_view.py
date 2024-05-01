@@ -57,12 +57,6 @@ class HypergraphView(object):
         elif level == 2:
             self._items = self._incidence_store
 
-        # self._properties = PropertyStore()
-        ### if no properties and level 0 or 1,
-        ### create property store that
-        ### returns weight 1 on every call for a weight
-        ### and empty properties otherwise.
-
     @property
     def items(self):
         return set(self._items)
@@ -80,6 +74,10 @@ class HypergraphView(object):
         return self._property_store
 
     @property
+    def default_weight(self):
+        return self._property_store._default_weight
+
+    @property
     def to_dataframe(self):
         """
         Dataframe of properties (user defined and default) for
@@ -90,7 +88,9 @@ class HypergraphView(object):
         out: pd.DataFrame
         """
         # Create a properties dataframe of non-user-defined items with default values
-        df = self.properties.copy(deep=True)
+
+        df = self.properties.copy(deep=True)  # .loc[list(self.items)]
+
         ### deep copy dictionaries in the misc_properties column
         temp = [deepcopy(d) for d in df.misc_properties.values]
         df.misc_properties = temp
@@ -104,7 +104,7 @@ class HypergraphView(object):
         )
 
         # Combine user-defined and non-user-defined properties into one dataframe
-        return pd.concat([df, non_user_defined_properties])
+        return pd.concat([df, non_user_defined_properties]).loc[list(self.items)]
 
     @property  ### will remove this later
     def dataframe(self):
