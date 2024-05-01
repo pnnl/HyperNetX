@@ -89,7 +89,7 @@ class HypergraphView(object):
         """
         # Create a properties dataframe of non-user-defined items with default values
 
-        df = self.properties.copy(deep=True)  # .loc[list(self.items)]
+        df = self.properties.copy(deep=True)
 
         ### deep copy dictionaries in the misc_properties column
         temp = [deepcopy(d) for d in df.misc_properties.values]

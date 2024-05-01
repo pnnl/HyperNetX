@@ -258,8 +258,7 @@ class PropertyStore:
         if deep:
             temp = [deepcopy(d) for d in data.misc_properties.values]
             data["misc_properties"] = temp
-        w = self._default_weight
-        return PropertyStore(data, default_weight=w)
+        return PropertyStore(data, default_weight=self._default_weight)
 
 
 def flatten(my_dict):

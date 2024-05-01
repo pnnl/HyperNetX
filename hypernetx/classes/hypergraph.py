@@ -631,8 +631,9 @@ class Hypergraph:
         -------
         : Hypergraph
         """
-        df = self.incidences.to_dataframe
-        return self._construct_hyp_from_stores(df, name=f"{self.name}_clone")
+        return self._construct_hyp_from_stores(
+            self.incidences.to_dataframe, name=f"{self.name}_clone"
+        )
 
     def __eq__(self, other):
         if type(other) is type(self):
