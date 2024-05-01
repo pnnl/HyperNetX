@@ -1,6 +1,7 @@
 from typing import Any
 from collections.abc import Hashable
 from pandas import DataFrame
+from copy import deepcopy
 
 
 UID = "uid"
@@ -41,8 +42,7 @@ class PropertyStore:
             <edge2uid> | <node1uid>  | 1.0    | {}              | <property value>      | ...
                        | <node3uid>  | 1.0    | {}              | <property value>      | ...
 
-        default_weight: int
-
+        default_weight: int | float
             optional parameter that holds the specified default weight of the weight property
         """
         # If no dataframe is provided, create an empty dataframe
@@ -52,7 +52,7 @@ class PropertyStore:
         else:
             self._data: DataFrame = data
 
-        self._default_weight: int = default_weight
+        self._default_weight: int | float = default_weight
         self._columns = self._data.columns.tolist()
 
     @property
@@ -255,8 +255,10 @@ class PropertyStore:
 
     def copy(self, deep=False):
         data = self._data.copy(deep=deep)
-        w = self._default_weight
-        return PropertyStore(data, default_weight=w)
+        if deep:
+            temp = [deepcopy(d) for d in data.misc_properties.values]
+            data["misc_properties"] = temp
+        return PropertyStore(data, default_weight=self._default_weight)
 
 
 def flatten(my_dict):
