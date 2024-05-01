@@ -1,6 +1,7 @@
 from typing import Any
 from collections.abc import Hashable
 from pandas import DataFrame
+from copy import deepcopy
 
 
 UID = "uid"
