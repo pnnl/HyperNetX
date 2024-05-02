@@ -5,7 +5,7 @@ Publications
 ============
 
 
-**Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE; Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi, Ignacio J: (2021)** `Hypernetwork Science: From Multidimensional Networks to Computational Topology <https://doi.org/10.1007/978-3-030-67318-5_25>`_, in: `Unifying Themes in Complex systems X: Proc. 10th Int. Conf. Complex Systems*, ed. D. Braha et al., pp. 377-392, Springer, https://doi.org/10.1007/978-3-030-67318-5_25
+**Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE; Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi, Ignacio J: (2021)** "Hypernetwork Science: From Multidimensional Networks to Computational Topology", https://doi.org/10.1007/978-3-030-67318-5_25, in: Unifying Themes in Complex systems X: Proc. 10th Int. Conf. Complex Systems*, ed. D. Braha et al., pp. 377-392, Springer, https://doi.org/10.1007/978-3-030-67318-5_25
 
 
 **Aksoy, Sinan G; Joslyn, Cliff A; Marrero, Carlos O; Praggastis, B; Purvine, Emilie AH: (2020)** "Hypernetwork Science via High-Order Hypergraph Walks" , *EPJ Data Science*, v. **9**:16, 

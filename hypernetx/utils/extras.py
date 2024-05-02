@@ -1,4 +1,4 @@
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from collections.abc import Callable
 import numpy as np
 import pandas as pd
@@ -8,7 +8,6 @@ __all__ = [
     "HNXCount",
     "DefaultOrderedDict",
     "remove_row_duplicates",
-    "create_labels",
     "reverse_dictionary",
 ]
 
@@ -151,42 +150,6 @@ def remove_row_duplicates(data, weights=None, aggregateby="sum"):
         data = np.array(list(G.keys()))
 
     return data, G
-
-
-def create_labels(
-    num_edges,
-    num_nodes,
-    edgeprefix="e",
-    nodeprefix="v",
-    edgelabel="Edges",
-    nodelabel="Nodes",
-):
-    """
-    Creates default labels for static entity sets derived without labels
-
-    Parameters
-    ----------
-    num_edges : int
-
-    num_nodes : int
-
-    edgeprefix : str, optional, default : 'e'
-
-    nodeprefix : str, optional, default : 'v'
-
-    edgelabel : str, optional, default : 'Edges'
-
-    nodelabel : str, optional, default : 'Nodes'
-
-
-    Returns
-    -------
-    OrderedDict
-        used for labels in constructing a EntitySet
-    """
-    enames = np.array([f"{edgeprefix}{idx}" for idx in range(num_edges)])
-    nnames = np.array([f"{nodeprefix}{jdx}" for jdx in range(num_nodes)])
-    return OrderedDict([(edgelabel, enames), (nodelabel, nnames)])
 
 
 def reverse_dictionary(d):

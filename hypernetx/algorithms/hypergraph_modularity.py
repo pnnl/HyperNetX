@@ -148,7 +148,7 @@ def modularity(HG, A, wdc=linear):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
         The hypergraph with some precomputed attributes via: precompute_attributes(HG)
     A : list of sets
         Partition of the vertices in HG
@@ -230,7 +230,7 @@ def conductance(H, A):
 
     Parameters
     ----------
-    H : Hypergraph
+    H : hnx.Hypergraph
         The hypergraph
     A : set
         Partition of the vertices in H
@@ -265,7 +265,7 @@ def two_section(HG):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
     Returns
     -------
@@ -304,7 +304,7 @@ def kumar(HG, delta=0.01, verbose=False):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
     delta : float, optional
         convergence stopping criterion
@@ -569,7 +569,7 @@ def last_step(HG, A, wdc=linear, delta=0.01, verbose=False):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
     A : list of sets
       some initial partition of the vertices in HG

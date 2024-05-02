@@ -39,7 +39,7 @@ def layout_node_link(H, G=None, layout=nx.spring_layout, **kwargs):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     G: Graph
         an additional set of links to consider during the layout process
@@ -72,7 +72,7 @@ def get_default_radius(H, pos):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -104,7 +104,7 @@ def draw_hyper_edge_labels(
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     polys: PolyCollection
         collection of polygons returned by draw_hyper_edges
@@ -159,7 +159,7 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -222,7 +222,7 @@ def draw_hyper_edges(
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -264,7 +264,7 @@ def draw_hyper_nodes(H, pos, node_radius={}, r0=None, ax=None, **kwargs):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -314,7 +314,7 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
@@ -417,7 +417,7 @@ def draw(
 
     Parameters
     ----------
-    H: Hypergraph
+    H: hnx.Hypergraph
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2

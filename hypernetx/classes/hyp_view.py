@@ -17,7 +17,8 @@ from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
 from hypernetx.exception import HyperNetXError
-from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
+
+# from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
 from hypernetx.classes.incidence_store import IncidenceStore as IS
 from hypernetx.classes.property_store import PropertyStore
 
@@ -27,7 +28,7 @@ __all__ = ["HypergraphView"]
 class HypergraphView(object):
     """
     Wrapper for Property and Incidence Stores holding structural and
-    meta data for hypergraph. Provides methods matching EntitySet
+    metadata for hypergraph. Provides methods matching EntitySet
     methods in previous versions. Only nodes and edges in the Incidence
     Store will be seeable in this view.
     """

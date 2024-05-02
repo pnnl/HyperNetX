@@ -11,12 +11,11 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 .. glossary::
 	:sorted:
 
-
 	.. // scan hypergraph.py
 
-	Entity and Entity set
-		Class in entity.py. 
-		HNX stores many of its data structures inside objects of type Entity.  Entities help to insure safe behavior, but their use is primarily technical, not mathematical.
+	HypergraphView
+		Class in hyp_view.py.
+		HNX stores many of its data structures inside objects of type HypergraphView.  HypergraphView helps to ensure safe behavior, but their use is primarily technical not mathematical.
 
 	hypergraph
 		The term *hypergraph* can have many different meanings.  In HNX, it means a tuple (Nodes, Edges, Incidence), where Nodes and Edges are sets, and Incidence is a function that assigns a value of True or False to every pair (n,e) in the Cartesian product Nodes x Edges.  We call 
@@ -53,12 +52,6 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 
 	simple hypergraph
 		A hypergraph for which no edge is completely contained in another.
-
--------------
-S-line graphs
--------------
-
-HNX offers a variety of tool sets for network analysis, including s-line graphs.
 
 	s-adjacency matrix
 		For a hypergraph (Nodes, Edges, Incidence) and positive integer s, a square matrix where the elements of Nodes index both rows and columns. The matrix can be weighted or unweighted. Entry (i,j) is nonzero if and only if node i and node j are incident to at least s edges in common.  If it is nonzero, then it is equal to the number of shared edges (if weighted) or 1 (if unweighted).

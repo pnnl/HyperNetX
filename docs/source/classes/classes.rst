@@ -1,6 +1,11 @@
 classes package
 ===============
 
+.. automodule:: classes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -8,14 +13,6 @@ classes.factory module
 ----------------------
 
 .. automodule:: classes.factory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-classes.helpers module
-----------------------
-
-.. automodule:: classes.helpers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,14 +33,6 @@ classes.hypergraph module
    :undoc-members:
    :show-inheritance:
 
-classes.hypergraph\_2 module
-----------------------------
-
-.. automodule:: classes.hypergraph_2
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 classes.incidence\_store module
 -------------------------------
 
@@ -56,14 +45,6 @@ classes.property\_store module
 ------------------------------
 
 .. automodule:: classes.property_store
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: classes
    :members:
    :undoc-members:
    :show-inheritance:

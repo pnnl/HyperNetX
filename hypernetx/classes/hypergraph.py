@@ -2,19 +2,16 @@
 # All rights reserved.
 from __future__ import annotations
 
-import random
 import warnings
-
-warnings.filterwarnings("default", category=DeprecationWarning)
-
-from copy import deepcopy
-from collections import defaultdict
-from collections.abc import Sequence, Iterable
-from typing import Optional, Any, TypeVar, Union, Mapping, Hashable
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+from collections import defaultdict
+from collections.abc import Iterable
+from typing import Optional, Any, TypeVar, Union, Mapping
+
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
@@ -27,6 +24,8 @@ from hypernetx.classes.factory import (
 from hypernetx.classes.incidence_store import IncidenceStore
 from hypernetx.classes.property_store import PropertyStore
 from hypernetx.classes.hyp_view import HypergraphView
+
+warnings.filterwarnings("default", category=DeprecationWarning)
 
 __all__ = ["Hypergraph"]
 
@@ -597,7 +596,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        item : hashable or EntitySet
+        item : hashable
 
         """
         return item in self._nodes
@@ -609,7 +608,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        node : EntitySet or hashable
+        node : hashable
             If hashable, then must be uid of node in hypergraph
 
         Returns
@@ -1045,7 +1044,7 @@ class Hypergraph:
 
     def auxiliary_matrix(self, s=1, node=True, index=False):
         """
-        The unweighted :term:`s-edge or node auxiliary matrix` for hypergraph
+        The unweighted :term:`s-auxiliary matrix` for hypergraph
 
         Parameters
         ----------
@@ -1083,6 +1082,7 @@ class Hypergraph:
         The nodes and (hyper)edges of hypergraph become the nodes of bipartite
         graph. For every (hyper)edge e in the hypergraph and node v in e there
         is an edge (e,v) in the graph.
+
         Parameters
         ----------
         keep_data : bool, optional, default = False
@@ -1094,9 +1094,8 @@ class Hypergraph:
 
         Returns
         -------
-        : networkx.Graph or DiGraph
+        networkx.Graph or DiGraph
         """
-
         if directed == True:
             B = nx.DiGraph()
         else:
@@ -1261,7 +1260,6 @@ class Hypergraph:
             Defaults to 'first' on unlisted columns.
             See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
             dictionaries
-            ```
 
         Returns
         -------
@@ -1378,7 +1376,6 @@ class Hypergraph:
             Defaults to 'first' on unlisted columns.
             See pandas.core.groupby.DataFrameGroupBy.agg for usage examples with
             dictionaries
-            ```
 
         Returns
         -------
@@ -1405,9 +1402,6 @@ class Hypergraph:
             {'E1: ['a:2'], 'E2': ['a:2']}
             >>> h.collapse_nodes().properties.to_dict(orient='records')
             [{'weight': 2, 'misc_properties': {'eclass_size': 2}}]
-
-
-
         """
         _, eclasses = self._E.incidence_store.collapse_identical_elements(
             1, use_keys=use_uids
@@ -1516,7 +1510,6 @@ class Hypergraph:
             {'E1': ['a']}
             >>> h.collapse_nodes_and_edges(use_counts=True).incidence_dict
             {'E1:2': ['a:2']}
-
         """
 
         if return_equivalence_classes:
@@ -2310,13 +2303,10 @@ class Hypergraph:
             >>> B = nx.Graph()
             >>> B.add_nodes_from([1, 2, 3, 4], bipartite=0)
             >>> B.add_nodes_from(['a', 'b', 'c'], bipartite=1)
-            >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), /
-                (3, 'c'), (4, 'a')])
+            >>> B.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
             >>> H = Hypergraph.from_bipartite(B, nodes=1)
-            >>> H.nodes, H.edges
-            # output: (EntitySet(_:Nodes,[1, 2, 3, 4],{}), /
-            # EntitySet(_:Edges,['b', 'c', 'a'],{}))
-
+            >>> list(H.nodes), list(H.edges)
+            # output: (['a', 'b', 'c'], [1, 2, 3, 4])
         """
 
         edges = []
