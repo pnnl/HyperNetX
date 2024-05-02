@@ -28,7 +28,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 html: clean
-	$(SPHINXAPIDOC) -f -o "$(SOURCEDIR)"/classes ../hypernetx/classes
+	$(SPHINXAPIDOC) --module-first -f -o "$(SOURCEDIR)"/classes ../hypernetx/classes
 	$(SPHINXAPIDOC) -f -o "$(SOURCEDIR)"/algorithms ../hypernetx/algorithms
 	$(SPHINXAPIDOC) -f -o "$(SOURCEDIR)"/drawing ../hypernetx/drawing
 	$(SPHINXAPIDOC) -f -o "$(SOURCEDIR)"/reports ../hypernetx/reports
