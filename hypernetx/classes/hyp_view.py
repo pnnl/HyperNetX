@@ -98,6 +98,11 @@ class HypergraphView(object):
         non_user_defined_items = list(
             set(self._items).difference(self.properties.index)
         )
+
+        # skip combining df and non_user_defined_items if non_user_defined_items is empty
+        if not non_user_defined_items:
+            return df.loc[list(self._items)]
+
         default_data = self.property_store.default_properties_df()
         non_user_defined_properties = pd.DataFrame(
             index=non_user_defined_items, data=default_data
