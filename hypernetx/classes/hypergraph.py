@@ -20,6 +20,7 @@ from hypernetx.classes.factory import (
     dataframe_factory_method,
     dict_factory_method,
     list_factory_method,
+    ndarray_factory_method,
 )
 from hypernetx.classes.incidence_store import IncidenceStore
 from hypernetx.classes.property_store import PropertyStore
@@ -37,9 +38,9 @@ class Hypergraph:
     Parameters
     ----------
 
-    setsystem : (optional) pandas.DataFrame, dict of iterables, dict of dicts, list of iterables,
-        pandas.DataFrame, default = None
-        See SetSystem above for additional setsystem requirements.
+    setsystem : (optional) pandas.DataFrame, dict of iterables, dict of dicts,
+        list of iterables, numpy.ndarray, default = None
+        See SetSystem below for additional setsystem requirements.
 
     edge_col : (optional) str | int, default = 0
         column index (or name) in pandas.DataFrame,
@@ -154,7 +155,7 @@ class Hypergraph:
 
     SetSystems
     ----------
-    There are four types of setsystems currently accepted by the library.
+    There are five types of setsystems currently accepted by the library.
 
     1.  **list of iterables** : Barebones hypergraph uses Pandas default
         indexing to generate hyperedge ids. Elements must be hashable.: ::
@@ -211,6 +212,17 @@ class Hypergraph:
 
         >>> H = Hypergraph(df,edge_col="col1",node_col="col2",
         >>>                 cell_weight_col="w",misc_cell_properties="col3")
+
+    5.  **numpy.ndarray** The array must have shape (N,2) for some positive
+        integer N. The array describes the incidence tuples for the
+        hypergraph. By default the first element of the tuple will reference
+        the edge uid and the second the node uid. By specifying edge_col = 1
+        and node_col = 0 this can be reversed. The default weight can be assigned
+        but other cell attributes will have to be assigned to each individual tuple
+        after the hypegraph as been created. If more cell properties are
+        available on creation, consider using a Pandas DataFrame.
+
+        >>> H = Hypergraph(np.random.randint(0,10,(8,2)))
 
     Edge and Node Properties
     ------------------------
@@ -276,28 +288,18 @@ class Hypergraph:
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
         properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        prop_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_properties_col: Optional[str | int] = None,
         weight_prop_col: str | int = "weight",
-        default_weight: float = 1.0,
+        default_weight: float | int = 1,
         ### these are just for properties on the edges - ignored if properties exists
         edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        edge_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
         misc_edge_properties_col: Optional[str | int] = None,
         edge_weight_prop_col: str | int = "weight",
         default_edge_weight: float | int = 1,
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        node_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
-        ### How do we know which column to use for uid
         misc_node_properties_col: Optional[str | int] = None,
         node_weight_prop_col: str | int = "weight",
         default_node_weight: float | int = 1,
@@ -305,7 +307,7 @@ class Hypergraph:
         **kwargs,
     ):
 
-        #### Use a Factory Method to create 4 stores
+        #### Use a Factory Method to create 5 stores
         ## df = Incidence Store from structural data
         ## edges,nodes,incidences = Property stores tied to ids in df
         ## Incidences - uses df, dictionary - assigns keys to incidence
@@ -329,6 +331,7 @@ class Hypergraph:
             "OrderedDict": dict_factory_method,
             "defaultdict": dict_factory_method,
             "list": list_factory_method,
+            "ndarray": ndarray_factory_method,
         }
 
         ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)

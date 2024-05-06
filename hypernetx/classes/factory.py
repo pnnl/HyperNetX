@@ -359,3 +359,12 @@ def list_factory_method(
         )
 
     return PS
+
+
+def ndarray_factory_method(arr, level, *args, **kwargs):
+    shape = arr.shape
+    if len(shape) == 2 and shape[1] == 2 and level == 2:
+        DF = pd.DataFrame(arr)
+        return dataframe_factory_method(DF, 2, *args, **kwargs)
+    else:
+        raise HNXError("An ndarray of shape (N,2) can only be used as a setsystem")
