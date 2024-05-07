@@ -160,26 +160,26 @@ class Hypergraph:
     1.  **list of iterables** : Barebones hypergraph uses Pandas default
         indexing to generate hyperedge ids. Elements must be hashable.: ::
 
-        >>> H = Hypergraph([{1,2},{1,2},{1,2,3}])
+        >>> H = Hypergraph([{v1,v2},{v1,v2},{v1,v2,v3}])
 
     2.  **dictionary of iterables** : the most basic way to express many-to-many
         relationships providing edge ids. The elements of the iterables must be
         hashable): ::
 
-        >>> H = Hypergraph({'e1':[1,2],'e2':[1,2],'e3':[1,2,3]})
+        >>> H = Hypergraph({'e1':[v1,v2],'e2':[v1,v2],'e3':[v1,v2,v3]})
 
     3.  **dictionary of dictionaries**  : allows cell properties to be assigned
         to a specific (edge, node) incidence. This is particularly useful when
         there are variable length dictionaries assigned to each pair: ::
 
-        >>> d = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
-        >>>             2: {'w':0.1, 'name': 'related_to',
+        >>> d = {'e1':{ v1: {'w':0.5, 'name': 'related_to'},
+        >>>             v2: {'w':0.1, 'name': 'related_to',
         >>>                 'startdate': '05.13.2020'}},
-        >>>      'e2':{ 1: {'w':0.52, 'name': 'owned_by'},
-        >>>             2: {'w':0.2}},
-        >>>      'e3':{ 1: {'w':0.5, 'name': 'related_to'},
-        >>>             2: {'w':0.2, 'name': 'owner_of'},
-        >>>             3: {'w':1, 'type': 'relationship'}}
+        >>>      'e2':{ v1: {'w':0.52, 'name': 'owned_by'},
+        >>>             v2: {'w':0.2}},
+        >>>      'e3':{ v1: {'w':0.5, 'name': 'related_to'},
+        >>>             v2: {'w':0.2, 'name': 'owner_of'},
+        >>>             v3: {'w':1, 'type': 'relationship'}}
 
         >>> H = Hypergraph(d, cell_weight_col='w')
 
@@ -194,23 +194,24 @@ class Hypergraph:
         column of the dataframe. Representing the data above as a dataframe df:
 
         +-----------+-----------+-----------+-----------------------------------+
-        |   col1    |   col2    |   w       |  col3                             |
+        |   edges   |   nodes   |   w       |  col3                             |
         +-----------+-----------+-----------+-----------------------------------+
-        |   e1      |   1       |   0.5     | {'name':'related_to'}             |
+        |   e1      |   v1      |   0.5     | {'name':'related_to'}             |
         +-----------+-----------+-----------+-----------------------------------+
-        |   e1      |   2       |   0.1     | {"name":"related_to",             |
+        |   e1      |   v2      |   0.1     | {"name":"related_to",             |
         |           |           |           |  "startdate":"05.13.2020"}        |
         +-----------+-----------+-----------+-----------------------------------+
-        |   e2      |   1       |   0.52    | {"name":"owned_by"}               |
+        |   e2      |   v1      |   0.52    | {"name":"owned_by"}               |
         +-----------+-----------+-----------+-----------------------------------+
-        |   e2      |   2       |   0.2     |                                   |
+        |   e2      |   v2      |   0.2     |                                   |
         +-----------+-----------+-----------+-----------------------------------+
         |   ...     |   ...     |   ...     | {...}                             |
         +-----------+-----------+-----------+-----------------------------------+
 
-        The first row of the dataframe is used to reference each column. ::
+        The first row (header row) of the dataframe is used to reference each
+        column. ::
 
-        >>> H = Hypergraph(df,edge_col="col1",node_col="col2",
+        >>> H = Hypergraph(df,edge_col=0,node_col=1,
         >>>                 cell_weight_col="w",misc_cell_properties="col3")
 
     5.  **numpy.ndarray** The array must have shape (N,2) for some positive
@@ -222,7 +223,8 @@ class Hypergraph:
         after the hypegraph as been created. If more cell properties are
         available on creation, consider using a Pandas DataFrame.
 
-        >>> H = Hypergraph(np.random.randint(0,10,(8,2)))
+        >>> arr = np.array([['e1','v1'],['e1','v2'],['e2','v1'],['e2','v3']])
+        >>> H = Hypergraph(arr)
 
     Edge and Node Properties
     ------------------------
@@ -236,7 +238,7 @@ class Hypergraph:
     object and passed to the **properties** keyword. For example:
 
     +-----------+-----------+---------------------------------------+
-    |   id      |   weight  |   properties                          |
+    |   uid      |   weight  |   properties                          |
     +-----------+-----------+---------------------------------------+
     |   e1      |   5.0     |   {'type':'event'}                    |
     +-----------+-----------+---------------------------------------+
@@ -253,7 +255,7 @@ class Hypergraph:
 
     A properties dictionary should have the format: ::
 
-        dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
+        dp = {uid1 : {prop1:val1, prop2,val2,...}, uid2 : ... }
 
 
     Weights
