@@ -1,5 +1,7 @@
 import pandas as pd
 
+from hypernetx import HyperNetXError
+
 
 def mkdict(x):
     # function to create a dictionary from object x if it is not already a dicitonary.
@@ -364,7 +366,5 @@ def list_factory_method(
 def ndarray_factory_method(arr, level, *args, **kwargs):
     shape = arr.shape
     if len(shape) == 2 and shape[1] == 2 and level == 2:
-        DF = pd.DataFrame(arr)
-        return dataframe_factory_method(DF, 2, *args, **kwargs)
-    else:
-        raise HNXError("An ndarray of shape (N,2) can only be used as a setsystem")
+        return dataframe_factory_method(pd.DataFrame(arr), 2, *args, **kwargs)
+    raise HyperNetXError("An ndarray of shape (N,2) can only be used as a setsystem")
