@@ -257,48 +257,37 @@ class Hypergraph:
         ### format for properties must follow from incidence pairs
         ### so that properties are provided either in the dataframe
         ### or as part of a nested dictionary.
-        setsystem: Optional[
-            Iterable[Iterable[T]]
-            | Mapping[T, Iterable[T]]
-            | Mapping[T, Mapping[T, Mapping[str, Any]]]
-            | pd.DataFrame
-        ] = None,
-        default_cell_weight: float | int = 1,  ### we will no longer support a sequence
-        edge_col: str | int = 0,
-        node_col: str | int = 1,
-        cell_weight_col: Optional[str | int] = "weight",
-        misc_cell_properties_col: Optional[str | int] = None,
-        aggregate_by: str | dict[str, str] = "first",
+        setsystem=None,
+        default_cell_weight=1,  ### we will no longer support a sequence
+        edge_col=0,
+        node_col=1,
+        cell_weight_col="weight",
+        misc_cell_properties_col=None,
+        aggregate_by="first",
         ### Format for properties can be either a dataframe indexed on uid
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
-        properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        prop_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
+        properties=None,
+        prop_uid_col=None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
-        misc_properties_col: Optional[str | int] = None,
-        weight_prop_col: str | int = "weight",
-        default_weight: float = 1.0,
+        misc_properties_col=None,
+        weight_prop_col="weight",
+        default_weight=1.0,
         ### these are just for properties on the edges - ignored if properties exists
-        edge_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        edge_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
+        edge_properties=None,
+        edge_uid_col=None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
-        misc_edge_properties_col: Optional[str | int] = None,
-        edge_weight_prop_col: str | int = "weight",
-        default_edge_weight: float | int = 1,
+        misc_edge_properties_col=None,
+        edge_weight_prop_col="weight",
+        default_edge_weight=1,
         ### these are just for properties on the nodes - ignored if properties exists
-        node_properties: Optional[pd.DataFrame | dict[T, dict[Any, Any]]] = None,
-        node_uid_col: (
-            str | int | None
-        ) = None,  ### this means the index will be used for uid
+        node_properties=None,
+        node_uid_col=None,  ### this means the index will be used for uid
         ### How do we know which column to use for uid
-        misc_node_properties_col: Optional[str | int] = None,
-        node_weight_prop_col: str | int = "weight",
-        default_node_weight: float | int = 1,
-        name: Optional[str] = None,
+        misc_node_properties_col=None,
+        node_weight_prop_col="weight",
+        default_node_weight=1,
+        name=None,
         **kwargs,
     ):
 
