@@ -45,6 +45,24 @@ class SevenBySix:
             ]
         )
         self.dataframe = create_dataframe(self.edgedict)
+        np_data = [
+            [p, a],
+            [p, c],
+            [p, k],
+            [r, a],
+            [r, e],
+            [s, a],
+            [s, k],
+            [s, t2],
+            [s, v],
+            [l, c],
+            [l, e],
+            [o, t1],
+            [o, t2],
+            [i, k],
+            [i, t2],
+        ]
+        self.ndarray = np.array(np_data)
 
         # row = number of nodes = 6
         # columns = number of edges = 7

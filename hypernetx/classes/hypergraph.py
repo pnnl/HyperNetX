@@ -216,11 +216,11 @@ class Hypergraph:
 
     5.  **numpy.ndarray** The array must have shape (N,2) for some positive
         integer N. The array describes the incidence tuples for the
-        hypergraph. By default the first element of the tuple will reference
+        hypergraph. By default, the first element of the tuple will reference
         the edge uid and the second the node uid. By specifying edge_col = 1
         and node_col = 0 this can be reversed. The default weight can be assigned
         but other cell attributes will have to be assigned to each individual tuple
-        after the hypegraph as been created. If more cell properties are
+        after the hypegraph has been created. If more cell properties are
         available on creation, consider using a Pandas DataFrame.
 
         >>> arr = np.array([['e1','v1'],['e1','v2'],['e2','v1'],['e2','v3']])

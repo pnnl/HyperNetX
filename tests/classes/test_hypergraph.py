@@ -42,6 +42,15 @@ def test_constructor_on_dataframe(sevenbysix):
     assert hg.order() == len(sevenbysix.nodes)
 
 
+def test_constructor_on_ndarray(sevenbysix):
+    hg = Hypergraph(sevenbysix.ndarray)
+    assert len(hg.edges) == len(sevenbysix.edges)
+    assert len(hg.nodes) == len(sevenbysix.nodes)
+
+    assert hg.degree(sevenbysix.nodes.A) == 3
+    assert hg.order() == len(sevenbysix.nodes)
+
+
 @pytest.mark.parametrize("h", [Hypergraph(), Hypergraph({})])
 def test_construct_empty_hypergraph(h):
     h = Hypergraph()
