@@ -748,8 +748,12 @@ def test_clone(sevenbysix):
     assert cloned_hg != HypergraphView(None, None)
 
 
-def test_remove_edges(sevenbysix):
-    hg = Hypergraph(sevenbysix.edgedict)
+@pytest.mark.parametrize("edges_to_remove", ["O", ["O"]])
+def test_remove_edges_inplace(sevenbysix, edges_to_remove):
+    hg = Hypergraph(sevenbysix.edgedict, name="sbs")
+    original_hg_id = id(hg)
+    original_hg_name = hg.name
+
     # shape returns (#nodes, #edges)
     assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
 
@@ -757,55 +761,168 @@ def test_remove_edges(sevenbysix):
     # the number of nodes should not decrease
     hg = hg.remove_edges(sevenbysix.edges.P)
     assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges) - 1)
+    assert id(hg) == original_hg_id
+    assert hg.name == original_hg_name
 
     # remove an edge containing a singleton ear (i.e. a node not present in other edges)
     # the number of nodes should decrease by exactly one
-    hg = hg.remove_edges(sevenbysix.edges.O)
+    hg = hg.remove_edges(edges_to_remove)
     assert hg.shape == (len(sevenbysix.nodes) - 1, len(sevenbysix.edges) - 2)
+    assert id(hg) == original_hg_id
+    assert hg.name == original_hg_name
 
 
-def test_remove_nodes(sevenbysix):
-    hg = Hypergraph(sevenbysix.edgedict)
+@pytest.mark.parametrize("edges_to_remove", ["O", ["O"]])
+def test_remove_edges_not_inplace(sevenbysix, edges_to_remove):
+    hg = Hypergraph(sevenbysix.edgedict, name="sbs")
+    original_hg_id = id(hg)
+    original_hg_name = hg.name
+    new_name = "sbs_new"
+
+    # shape returns (#nodes, #edges)
+    assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
+
+    # remove an edge containing nodes that are in other edges
+    # the number of nodes should not decrease, number of edges should decrease by exactly one
+    hg = hg.remove_edges(sevenbysix.edges.P, name=new_name, inplace=False)
+    assert hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges) - 1)
+    assert id(hg) != original_hg_id
+    assert original_hg_name != hg.name
+    assert hg.name == new_name
+
+    # remove an edge containing a singleton ear (i.e. a node not present in other edges)
+    # the number of nodes should decrease by exactly one, number of edges should decrease by exactly two
+    hg = hg.remove_edges(edges_to_remove, name=new_name, inplace=False)
+    assert hg.shape == (len(sevenbysix.nodes) - 1, len(sevenbysix.edges) - 2)
+    assert id(hg) != original_hg_id
+    assert original_hg_name != hg.name
+    assert hg.name == new_name
+
+
+@pytest.mark.parametrize("nodes_to_remove", ["A", ["A"]])
+def test_remove_nodes_inplace(sevenbysix, nodes_to_remove):
+    hg = Hypergraph(sevenbysix.edgedict, name="sbs")
+    original_hg_id = id(hg)
+    original_hg_name = hg.name
 
     assert sevenbysix.nodes.A in hg.nodes
     assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.P]
     assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.R]
     assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.S]
 
-    hg_new = hg.remove_nodes(sevenbysix.nodes.A)
+    hg_new = hg.remove_nodes(nodes_to_remove)
 
     assert sevenbysix.nodes.A not in hg_new.nodes
     assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.P]
     assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.R]
     assert sevenbysix.nodes.A not in hg_new.edges[sevenbysix.edges.S]
 
+    assert id(hg) == original_hg_id
+    assert hg_new.name == original_hg_name
 
-def test_remove_edges_nodes_incidences(triloop2):
-    H = Hypergraph(triloop2.edgedict, name=triloop2.name)
 
-    assert H.shape == (5, 4)
+@pytest.mark.parametrize("nodes_to_remove", ["A", ["A"]])
+def test_remove_nodes_not_inplace(sevenbysix, nodes_to_remove):
+    hg = Hypergraph(sevenbysix.edgedict, name="sbs")
+    original_hg_id = id(hg)
+    original_hg_name = hg.name
+    new_name = "sbs_new"
+
+    assert sevenbysix.nodes.A in hg.nodes
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.P]
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.R]
+    assert sevenbysix.nodes.A in hg.edges[sevenbysix.edges.S]
+
+    hg = hg.remove_nodes(nodes_to_remove, name=new_name, inplace=False)
+
+    assert sevenbysix.nodes.A not in hg.nodes
+    assert sevenbysix.nodes.A not in hg.edges[sevenbysix.edges.P]
+    assert sevenbysix.nodes.A not in hg.edges[sevenbysix.edges.R]
+    assert sevenbysix.nodes.A not in hg.edges[sevenbysix.edges.S]
+
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
+
+
+def test_remove_edges_nodes_incidences_inplace(triloop2):
+    # triloop2 is a hypergraph of the following shape:
+    # {AB: {A, B}, BC: {B, C}, ACD: {A, C, D, E}, ACD2: {A, C, D, E}}
+    hg = Hypergraph(triloop2.edgedict, name=triloop2.name)
+    assert hg.shape == (5, 4)
+    original_hg_id = id(hg)
+
+    # removing a duplicate edge should not affect the number of nodes
     duplicate_edge = ["ACD2"]
-    newH = H.remove_edges(duplicate_edge)
-    assert newH.shape == (5, 3)
+    hg = hg.remove_edges(duplicate_edge)
+    assert hg.shape == (5, 3)
+    assert id(hg) == original_hg_id
 
-    assert H.shape == (5, 4)
-    newH = H.remove_nodes(["E"])
-    assert newH.shape == (4, 4)
+    # number of nodes should drop by 1
+    hg = hg.remove_nodes(["E"])
+    assert hg.shape == (4, 3)
+    assert id(hg) == original_hg_id
 
-    assert H.shape == (5, 4)
-    newH = H.remove_edges(["ACD"])
-    assert newH.shape == (5, 3)
+    # number of edges should drop by 1
+    hg = hg.remove_edges(["ACD"])
+    assert hg.shape == (3, 2)
+    assert id(hg) == original_hg_id
 
-    # remove incidence in which the node is associated with other edges
-    assert H.shape == (5, 4)
-    newH = H.remove_incidences([("ACD", "E")])
-    assert newH.shape == (5, 4)
+    # remove an incidence that no longer exists; no change
+    hg = hg.remove_incidences([("ACD", "E")])
+    assert hg.shape == (3, 2)
+    assert id(hg) == original_hg_id
 
-    # removing 2 edges that have the node B. Node B is not associated with any other edge
-    # new hypergraph should have 4 nodes and 2 edges
-    assert H.shape == (5, 4)
-    newH = H.remove_edges(["AB", "BC"])
-    assert newH.shape == (4, 2)
+    # removing the last two remaining edges will remove all the nodes from the hypergraph
+    hg = hg.remove_edges(["AB", "BC"])
+    assert hg.shape == (0, 0)
+    assert id(hg) == original_hg_id
+
+
+def test_remove_edges_nodes_incidences_not_inplace(triloop2):
+    # triloop2 is a hypergraph of the following shape:
+    # {AB: {A, B}, BC: {B, C}, ACD: {A, C, D, E}, ACD2: {A, C, D, E}}
+    hg = Hypergraph(triloop2.edgedict, name=triloop2.name)
+    assert hg.shape == (5, 4)
+    original_hg_id = id(hg)
+    original_hg_name = hg.name
+    new_name = f"{triloop2.name}_new"
+
+    # removing a duplicate edge should not affect the number of nodes
+    duplicate_edge = ["ACD2"]
+    hg = hg.remove_edges(duplicate_edge, name=new_name, inplace=False)
+    assert hg.shape == (5, 3)
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
+
+    # number of nodes should drop by 1
+    hg = hg.remove_nodes(["E"], name=new_name, inplace=False)
+    assert hg.shape == (4, 3)
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
+
+    # number of edges should drop by 1
+    hg = hg.remove_edges(["ACD"], name=new_name, inplace=False)
+    assert hg.shape == (3, 2)
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
+
+    # remove an incidence that no longer exists; no change
+    hg = hg.remove_incidences([("ACD", "E")], name=new_name, inplace=False)
+    assert hg.shape == (3, 2)
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
+
+    # removing the last two remaining edges will remove all the nodes from the hypergraph
+    hg = hg.remove_edges(["AB", "BC"], name=new_name, inplace=False)
+    assert hg.shape == (0, 0)
+    assert id(hg) != original_hg_id
+    assert hg.name != original_hg_name
+    assert hg.name == new_name
 
 
 @pytest.mark.parametrize(
@@ -825,13 +942,49 @@ def test_remove_edges_nodes_incidences(triloop2):
         ),  # Removes the complete hyperedge L; edges reduced by 1, nodes remain unchanged
     ],
 )
-def test_remove_incidences(sevenbysix, keys, expected_shape):
+def test_remove_incidences_inplace(sevenbysix, keys, expected_shape):
     hg = Hypergraph(sevenbysix.edgedict)
+    original_hg_id = id(hg)
+
     assert hg.shape == (7, 6)
 
-    new_hg = hg.remove_incidences(keys)
+    hg = hg.remove_incidences(keys)
 
-    assert new_hg.shape == expected_shape
+    assert hg.shape == expected_shape
+    assert id(hg) == original_hg_id
+
+
+@pytest.mark.parametrize(
+    "keys, expected_shape",
+    [
+        (
+            ("O", "T1"),
+            (6, 6),
+        ),  # T1 is the only node associated with an edge; nodes reduced by 1
+        (
+            ("R", "A"),
+            (7, 6),
+        ),  # Removing this incidence does not remove either edge or node; no change
+        (
+            [("L", "C"), ("L", "E")],
+            (7, 5),
+        ),  # Removes the complete hyperedge L; edges reduced by 1, nodes remain unchanged
+    ],
+)
+def test_remove_incidences_not_inplace(sevenbysix, keys, expected_shape):
+    hg = Hypergraph(sevenbysix.edgedict, name="sbs")
+    original_hg_id = id(hg)
+    original_name = hg.name
+    new_name = "sbs_new"
+
+    assert hg.shape == (7, 6)
+
+    hg = hg.remove_incidences(keys, name=new_name, inplace=False)
+
+    assert hg.shape == expected_shape
+    assert id(hg) != original_hg_id
+    assert hg.name != original_name
+    assert hg.name == new_name
 
 
 def test_matrix(sevenbysix):
@@ -931,12 +1084,15 @@ def test_singletons():
 
 
 def test_remove_singletons():
-    E = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
-    h = Hypergraph(E)
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+    h = Hypergraph(edges_dict)
     assert h.shape == (9, 5)
+
     h1 = h.remove_singletons()
+
     assert h1.shape == (7, 3)
     assert h.shape == (9, 5)
+    assert id(h) != id(h1)
 
 
 @pytest.mark.parametrize(

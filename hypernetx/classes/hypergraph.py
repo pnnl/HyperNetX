@@ -945,7 +945,7 @@ class Hypergraph:
         edge : hashable
             uid for an edge in hypergraph
 
-        s : int, list, optional, default=1
+        s : int, optional, default=1
             Minimum number of nodes shared by neighbors edge node.
 
         Returns
@@ -1129,7 +1129,7 @@ class Hypergraph:
         node_ps: PropertyStore, default=None
         name : str, optional, default=None
         inplace : bool, optional, default=False
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
@@ -1137,7 +1137,6 @@ class Hypergraph:
         """
         if inplace:
             h = self
-            name = self.name
         else:
             h = Hypergraph()
 
@@ -1162,8 +1161,9 @@ class Hypergraph:
         h._nodes = HypergraphView(incidence_store, 1, node_ps)
 
         h._set_default_state()
-        h.name = name
         h._dataframe = h.dataframe
+        if not inplace:
+            h.name = name
         return h
 
     def dual(self, name=None, share_properties=True):
@@ -1594,7 +1594,7 @@ class Hypergraph:
         keys = list(set(self._state_dict["labels"]["edges"]).difference(edges))
         return self._remove(keys, level=0, name=name, inplace=False)
 
-    def add_edge(self, uid, inplace=True, **attr):
+    def add_edge(self, edge_uid, inplace=True, **attr):
         """
         Add a single edge with attributes to edge properties.
         Does not add an incidence to the hypergraph.
@@ -1602,10 +1602,10 @@ class Hypergraph:
         Parameters
         ----------
 
-        uid : int | str
+        edge_uid : int | str
             edge_uid
         inplace : bool, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
         **attr : dict, optional
             Properties to add to edges as key=value pairs.
 
@@ -1613,38 +1613,38 @@ class Hypergraph:
         -------
         Hypergraph
         """
-        return self._add_items_from([(uid, attr)], 0, inplace=inplace)
+        return self._add_items_from([(edge_uid, attr)], 0, inplace=inplace)
 
-    def add_edges_from(self, edges, inplace=True):
+    def add_edges_from(self, edge_uids, inplace=True):
         """
         Add a collection of edges with attributes to edge properties.
         Does not add an incidence to the hypergraph.
 
         Parameters
         ----------
-        edges : list[int | str] | list[tuple[int | str, dict]], list[int | str | tuple[int | str, dict]]
-            Edges must be a list of uids and/or tuples of the form (uid,data) where data is dictionary
+        edge_uids : list[int | str] | list[tuple[int | str, dict]], list[int | str | tuple[int | str, dict]]
+            edge_uids must be a list of uids and/or tuples of the form (uid,data) where data is dictionary
         inplace : bool, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
         Hypergraph
         """
-        newedges = self._process_items(edges)
-        return self._add_items_from(newedges, 0, inplace=inplace)
+        edge_uids = self._process_uids(edge_uids)
+        return self._add_items_from(edge_uids, 0, inplace=inplace)
 
-    def add_node(self, uid, inplace=True, **attr):
+    def add_node(self, node_uid, inplace=True, **attr):
         """
         Add a single node with attributes to node properties.
         Does not add an incidence to the hypergraph.
 
         Parameters
         ----------
-        uid : int | str
+        node_uid : int | str
             node_uid
         inplace : bool, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
         **attr : dict, optional
             Properties to add to edges as key=value pairs.
 
@@ -1652,31 +1652,31 @@ class Hypergraph:
         -------
         Hypergraph
         """
-        return self._add_items_from([(uid, attr)], 1, inplace=inplace)
+        return self._add_items_from([(node_uid, attr)], 1, inplace=inplace)
 
-    def add_nodes_from(self, nodes, inplace=True):
+    def add_nodes_from(self, node_uids, inplace=True):
         """
         Add a collection of nodes with attributes to nodes properties.
         Does not add an incidence to the hypergraph.
 
         Parameters
         ----------
-        nodes : list[int | str] | list[tuple[int | str, dict]], list[int | str | tuple[int | str, dict]]
-            Nodes must be a list of uids and/or tuples of the form (uid,data) where data is dictionary
+        node_uids : list[int | str] | list[tuple[int | str, dict]], list[int | str | tuple[int | str, dict]]
+            node_uids must be a list of uids and/or tuples of the form (uid,data) where data is dictionary
         inplace : bool, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
         Hypergraph
         """
-        newnodes = self._process_items(nodes)
-        return self._add_items_from(newnodes, 1, inplace=inplace)
+        node_uids = self._process_uids(node_uids)
+        return self._add_items_from(node_uids, 1, inplace=inplace)
 
-    def _process_items(self, items):
+    def _process_uids(self, uids):
         """Returns a list of items in the form of list[tuple[int | str, dict]"""
         new_items = list()
-        for item in items:
+        for item in uids:
             if not isinstance(item, tuple):
                 new_items.append((item, {}))
             else:
@@ -1693,7 +1693,7 @@ class Hypergraph:
             The edge dictionary must be a dictionary of edges as the keys and a list of nodes or a dictionary
             of nodes to properties as the values.
         inplace : bool, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
@@ -1710,18 +1710,18 @@ class Hypergraph:
                     items.append(((ed, nd), {}))
         return self._add_items_from(items, 2, inplace=inplace)
 
-    def add_incidence(self, edge_id, node_id, inplace=True, **attr):
+    def add_incidence(self, edge_uid, node_uid, inplace=True, **attr):
         """
         Add a single incidence with attributes to Hypergraph.
 
         Parameters
         ----------
-        edge_id : int | str
+        edge_uid : int | str
             edge_uid
-        node_id : int | str
+        node_uid : int | str
             node_uid
         inplace : bool, optional, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
         **attr : dict, optional
             Properties to add to incidences as key=value pairs.
 
@@ -1730,7 +1730,7 @@ class Hypergraph:
         Hypergraph
             Hypergraph with incidences added.
         """
-        return self._add_items_from([((edge_id, node_id), attr)], 2, inplace=inplace)
+        return self._add_items_from([((edge_uid, node_uid), attr)], 2, inplace=inplace)
 
     def add_incidences_from(self, incidences, inplace=True):
         """
@@ -1743,7 +1743,7 @@ class Hypergraph:
             and/or tuples of the form (edge_uid, node_uid,data) where data is a
             dictionary.
         inplace : bool, optional, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
@@ -1760,6 +1760,8 @@ class Hypergraph:
 
     def _add_items_from(self, items, level, inplace=True):
         """
+        Helper method to add items to Hypergraph
+
         Parameters
         ----------
         items : list[tuple[str | int, dict[str, Any]]]
@@ -1767,7 +1769,7 @@ class Hypergraph:
         level : int
             the level to add the items to; 0=edges, 1=nodes, 2=incidences
         inplace : bool, optional, default=True
-            If True, mutates the Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+            If True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
 
         Returns
         -------
@@ -1786,75 +1788,90 @@ class Hypergraph:
         )
 
     #### This should follow behavior of restrictions
-    def remove_edges(self, keys, name=None):
+    def remove_edges(self, edge_uids, name=None, inplace=True):
         """
+        Removes the edges from the Hypergraph.
+        If inplace=True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+
         Parameters
         ----------
-        keys : str | int | list[str | int]
+        edge_uids : str | int | list[str | int]
+            edge_uids
         name : str, optional, default=None
+            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+        inplace : bool, optional, default=True
+            Whether to replace the current hypergraph with a new one.
 
         Returns
         -------
         Hypergraph
         """
-        if isinstance(keys, list):
-            return self._remove(keys, level=0, name=name)
-        else:
-            return self._remove([keys], level=0, name=name)
+        if not isinstance(edge_uids, list):
+            edge_uids = [edge_uids]
+        return self._remove(edge_uids, level=0, name=name, inplace=inplace)
 
-    def remove_nodes(self, keys, name=None):
+    def remove_nodes(self, node_uids, name=None, inplace=True):
         """
+        Removes the nodes from the Hypergraph.
+        If inplace=True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+
         Parameters
         ----------
-        keys : str | int | list[str | int]
+        node_uids : str | int | list[str | int]
+            node_uids
         name : str, optional, default=None
+            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+        inplace : bool, optional, default=True
+            Whether to replace the current hypergraph with a new one.
 
         Returns
         -------
         Hypergraph
         """
-        if isinstance(keys, list):
-            return self._remove(keys, level=1, name=name)
-        else:
-            return self._remove([keys], level=1, name=name)
+        if not isinstance(node_uids, list):
+            node_uids = [node_uids]
+        return self._remove(node_uids, level=1, name=name, inplace=inplace)
 
-    def remove_incidences(self, keys, name=None):
+    def remove_incidences(self, incidence_uids, name=None, inplace=True):
         """
+        Removes the incidences from the Hypergraph.
+        If inplace=True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+
         Parameters
         ----------
-        keys : str | int | list[str | int]
+        incidence_uids : tuple[str | int] | list[tuple[str | int]]
+            incidence_uids
         name : str, optional, default=None
+            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+        inplace : bool, optional, default=True
+            Whether to replace the current hypergraph with a new one.
 
         Returns
         -------
         Hypergraph
         """
-        if isinstance(keys, list):
-            return self._remove(keys, name=name)
-        else:
-            return self._remove([keys], name=name)
+        if not isinstance(incidence_uids, list):
+            incidence_uids = [incidence_uids]
+        return self._remove(incidence_uids, name=name, inplace=inplace)
 
-    def _remove(
-        self,
-        uid_list,
-        level=2,
-        name=None,
-        inplace=False,
-    ):
-        """Creates a new hypergraph with nodes and/or edges indexed by keys
-        removed. More efficient for creating a restricted hypergraph if the
+    def _remove(self, uids, level=2, name=None, inplace=False):
+        """
+        Creates a hypergraph with nodes and/or edges indexed by keys removed.
+        More efficient for creating a restricted hypergraph if the
         restricted set is greater than what is being removed.
+        If inplace=True, changes the existing Hypergraph.
+        Otherwise, creates a new Hypergraph with the requested changes.
 
         Parameters
         ----------
-        uid_list : list
+        uids : list
             list of uids from edges, nodes, or incidence pairs(listed as tuples)
         level : int, optional, default=2
             Enter 0 to remove edges.
             Enter 1 to remove nodes.
             Enter 2 to remove incidence pairs as tuples
         name : str, optional, default=None
-            Name of new hypergraph
+            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
         inplace : bool, default=False
             Whether to replace the current hypergraph with the new one.
 
@@ -1868,7 +1885,6 @@ class Hypergraph:
         instances of these objects from incidence pairs and from the data.
         Removal of an incidence pair, only removes that pair but does not
         affect the user data attached to the edge and node in the pair.
-
         """
         if inplace:
             df = self.incidences.properties
@@ -1880,15 +1896,15 @@ class Hypergraph:
             ndp = self.nodes.property_store.copy(deep=True)
         if level in [0, 1]:
             hv = [ep, ndp][level]
-            df = df.drop(labels=uid_list, level=level, errors="ignore")
-            hv._data = hv._data.drop(labels=uid_list, errors="ignore")
+            df = df.drop(labels=uids, level=level, errors="ignore")
+            hv._data = hv._data.drop(labels=uids, errors="ignore")
         else:
-            df = df.drop(labels=uid_list, errors="ignore")
+            df = df.drop(labels=uids, errors="ignore")
         return self._construct_hyp_from_stores(
-            df, edge_ps=ep, node_ps=ndp, name=self.name, inplace=inplace
+            df, edge_ps=ep, node_ps=ndp, name=name, inplace=inplace
         )
 
-    def toplexes(self, return_hyp=False, name=None):
+    def toplexes(self, return_hyp=False):
         """
         Computes a maximal collection of toplexes for the hypergraph.
         A :term:`toplex` is a hyperedge, which is not contained in any other
@@ -1898,7 +1914,6 @@ class Hypergraph:
         Parameters
         ----------
         return_hyp: bool, optional, default=False
-        name: str, optional, default=None
 
         Returns
         -------
@@ -1921,10 +1936,9 @@ class Hypergraph:
             df = df.loc[edges[operate(mat[0], mat).sum(axis=1).nonzero()]]
             if len(df.index) == 0:
                 break
-        if return_hyp == True:
+        if return_hyp:
             return self.restrict_to_edges(toplexes)
-        else:
-            return toplexes
+        return toplexes
 
     #### hypergraph method using linegraph gotten from incidence store
     def is_connected(self, s=1, edges=False):
@@ -2022,9 +2036,9 @@ class Hypergraph:
         """
         singletons = self.singletons()
         if len(singletons) > len(self.edges):
-            E = [e for e in self.edges if e not in singletons]
-            return self.restrict_to_edges(E, name=name)
-        return self.remove_edges(singletons, name=name)
+            edges = [e for e in self.edges if e not in singletons]
+            return self.restrict_to_edges(edges, name=name)
+        return self.remove_edges(singletons, name=name, inplace=False)
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
