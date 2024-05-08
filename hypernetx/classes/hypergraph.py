@@ -12,6 +12,7 @@ from collections import defaultdict
 from collections.abc import Iterable
 from typing import Optional, Any, TypeVar, Union, Mapping
 
+import scipy
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
@@ -471,36 +472,41 @@ class Hypergraph:
         corresponds to an edge e. The entry corresponding to (row v, col e)
         is nonzero if v is an element of e. If weights = True then the value
         equals the weight given in the hypergraph incidence properties for
-        the incidence pair (e,v). Otherwise the value is 1.
+        the incidence pair (e,v). Otherwise, the value is 1.
 
         Parameters
         ----------
         index : bool, optional, default = False
-            If True will return the nodes and edges ordered to
-            correspond to the rows and columns of the matrix
-        use_weights : bool, optional, default = False
-            If True will use the incidence weights corresponding to
-            the row and column of the entry
+            If index=True, returns a tuple containing the incidence matrix, an np.ndarray containing the row and column
+            index of node_uids, and an np.ndarray containing the row and column index of edge_uids.
+            Otherwise, returns the incidence matrix.
+        weights : bool, optional, default = False
+            If True, use the incidence weights corresponding to
+            the row and column of the entry.
 
         Returns
         -------
-        scipy.sparse.csr_matrix
-
+        incidence matrix: scipy.sparse.csr_matrix
+        node indexes: np.ndarray
+            an np.ndarray containing the row and column index of node_uids
+        edge indexes: np.ndarray
+            an np.ndarray containing the row and column index of edge_uids
         """
         e, n = self._state_dict["data"].T
-        if weights == True:
+
+        if weights:
             data = self._E.dataframe["weight"]
         else:
             data = np.ones(len(e)).astype(int)
         mat = csr_matrix((data, (n, e)))
-        if index == False:
-            return mat
-        else:
+
+        if index:
             return (
                 mat,
                 self._state_dict["labels"]["nodes"],
                 self._state_dict["labels"]["edges"],
             )
+        return mat
 
     def incidence_dataframe(self, weights=False):
         mat, rindex, cindex = self.incidence_matrix(index=True, weights=weights)
@@ -969,30 +975,43 @@ class Hypergraph:
 
         Parameters
         ----------
-        s : int, optional, default = 1
+        s : int, optional, default=1
 
-        index: boolean, optional, default = False
-            if True, will return the index of ids for rows and columns
+        index: boolean, optional, default=False
+            If True, returns both the adjacency matrix and an array containing the row and column index of node_uids
 
         Returns
         -------
-        adjacency_matrix : scipy.sparse.csr.csr_matrix
+        adjacency matrix: scipy.sparse.csr_matrix
 
-        node_index : list
-            index of ids for rows and columns
+        node indexes: np.ndarray
+            an np.ndarray containing the row and column index of node_uids.
         """
-        try:
-            A = self._state_dict["adjacency_matrix"][s]
-        except:
-            M = self.incidence_matrix()
-            A = M @ (M.T)
-            A.setdiag(0)
-            A = (A >= s) * 1
-            self._state_dict["adjacency_matrix"][s] = A
-        if index == True:
-            return A, self._state_dict["labels"]["nodes"]
-        else:
-            return A
+        # if the adjacency_matrix for size s is not in the state_dict, create the adjacency matrix
+        # and add it to the state_dict
+        if (
+            "adjacency_matrix" not in self._state_dict
+            or s not in self._state_dict["adjacency_matrix"]
+        ):
+            incidence_matrix = self.incidence_matrix()
+
+            # calculates the square of the incidence matrix by multiplying it with its transpose.
+            s_adj_matrix = incidence_matrix @ incidence_matrix.T
+
+            # sets the diagonal elements of s_adj_matrix to zero to remove self-loops.
+            s_adj_matrix.setdiag(0)
+
+            # sets all values in s_adj_matrix that are greater than or equal to a threshold 's' to 1, and all other values to 0.
+            s_adj_matrix = (s_adj_matrix >= s) * 1
+
+            self._state_dict["adjacency_matrix"][s] = s_adj_matrix
+
+        if index:
+            return (
+                self._state_dict["adjacency_matrix"][s],
+                self._state_dict["labels"]["nodes"],
+            )
+        return self._state_dict["adjacency_matrix"][s]
 
     def edge_adjacency_matrix(self, s=1, index=False):
         """
@@ -1003,32 +1022,36 @@ class Hypergraph:
         s : int, optional, default=1
 
         index: boolean, optional, default=False
-            If True, will return the index of ids for rows and columns
+            If True, returns both the adjacency matrix and an array containing the row and column index of edge_uids
 
         Returns
         -------
-        edge_adjacency_matrix : scipy.sparse.csr.csr_matrix
+        edge adjacency matrix : scipy.sparse.csr_matrix
 
-        edge_index : list
-            index of ids for rows and columns
+        edge indexes : np.ndarray
+            an np.ndarray containing the row and column index of edge_uids.
 
         Notes
         -----
         This is also the adjacency matrix for the line graph.
         Two edges are s-adjacent if they share at least `s` nodes.
         """
-        try:
-            A = self._state_dict["edge_adjacency_matrix"][s]
-        except:
-            M = self.incidence_matrix()
-            A = (M.T) @ (M)
-            A.setdiag(0)
-            A = (A >= s) * 1
-            self._state_dict["edge_adjacency_matrix"][s] = A
-        if index == True:
-            return A, self._state_dict["labels"]["edges"]
-        else:
-            return A
+        if (
+            "edge_adjacency_matrix" not in self._state_dict
+            or s not in self._state_dict["edge_adjacency_matrix"]
+        ):
+            incidence_matrix = self.incidence_matrix()
+            s_adj_matrix = incidence_matrix.T @ incidence_matrix
+            s_adj_matrix.setdiag(0)
+            s_adj_matrix = (s_adj_matrix >= s) * 1
+            self._state_dict["edge_adjacency_matrix"][s] = s_adj_matrix
+
+        if index:
+            return (
+                self._state_dict["edge_adjacency_matrix"][s],
+                self._state_dict["labels"]["edges"],
+            )
+        return self._state_dict["edge_adjacency_matrix"][s]
 
     def auxiliary_matrix(self, s=1, node=True, index=False):
         """
@@ -1036,33 +1059,40 @@ class Hypergraph:
 
         Parameters
         ----------
-
         s : int, optional, default=1
+
         node : bool, optional, default=True
             whether to return based on node or edge adjacencies
+
         index : bool, optional, default=False
+            If True, returns both the auxiliary matrix and an array containing the row and column index of node or edge_uids
 
         Returns
         -------
-        auxiliary_matrix : scipy.sparse.csr.csr_matrix
+        auxiliary matrix : scipy.sparse.csr_matrix
             Node/Edge adjacency matrix with empty rows and columns removed
-        index : np.array
-            row and column index of userids
-        """
-        if node == True:
-            A, Amap = self.adjacency_matrix(s, index=True)
-        else:
-            A, Amap = self.edge_adjacency_matrix(s, index=True)
 
-        idx = np.nonzero(np.sum(A, axis=1))[0]
-        if len(idx) < A.shape[0]:
-            B = A[idx][:, idx]
+        index : np.ndarray
+            row and column index of node or edge uids
+        """
+        if node:
+            adj_matrix, indexes = self.adjacency_matrix(s, index=True)
         else:
-            B = A
+            adj_matrix, indexes = self.edge_adjacency_matrix(s, index=True)
+
+        # sum up the values in each row of the matrix, resulting in a 1D array where each element corresponds to the sum of a row.
+        adj_matrix_sum = np.sum(adj_matrix, axis=1)
+        # returns a tuple of arrays with the first tuple being an array of the indices of rows whose sum is non-zero.
+        indices = np.nonzero(np.sum(adj_matrix_sum, axis=1))
+        non_zero_indices = indices[0]
+        if len(non_zero_indices) < adj_matrix.shape[0]:
+            adj_matrix_res = adj_matrix[non_zero_indices][:, non_zero_indices]
+        else:
+            adj_matrix_res = adj_matrix
+
         if index:
-            return B, Amap[idx]
-        else:
-            return B
+            return adj_matrix_res, indexes[non_zero_indices]
+        return adj_matrix_res
 
     def bipartite(self, keep_data=False, directed=False):
         """

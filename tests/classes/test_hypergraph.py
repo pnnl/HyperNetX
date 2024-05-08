@@ -4,6 +4,7 @@ import pytest
 import numpy as np
 import pandas as pd
 import networkx as nx
+import scipy
 
 from networkx.algorithms import bipartite
 
@@ -987,18 +988,67 @@ def test_remove_incidences_not_inplace(sevenbysix, keys, expected_shape):
     assert hg.name == new_name
 
 
-def test_matrix(sevenbysix):
+def test_incidence_matrix(sevenbysix):
     hg = Hypergraph(sevenbysix.edgedict)
 
-    assert hg.incidence_matrix().todense().shape == (
+    incidence_matrix, nodes_idx, edges_idx = hg.incidence_matrix(index=True)
+
+    # check the incidence matrix elements and shape
+    assert incidence_matrix.todense().shape == (
         len(sevenbysix.nodes),
         len(sevenbysix.edges),
     )
-    assert hg.adjacency_matrix(s=2).todense().shape == (7, 7)
-    assert hg.edge_adjacency_matrix().todense().shape == (6, 6)
+    assert np.allclose(incidence_matrix.A, sevenbysix.incidence_matrix.A)
 
-    aux_matrix = hg.auxiliary_matrix(node=False)
-    assert aux_matrix.todense().shape == (6, 6)
+    # check the edge and node indexes
+    assert nodes_idx.tolist() == list(sevenbysix.nodes)
+    assert edges_idx.tolist() == list(sevenbysix.edges)
+
+
+def test_adjacency_matrix(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
+    adjacency_matrix, node_idx = hg.adjacency_matrix(index=True)
+
+    assert adjacency_matrix.todense().shape == (
+        len(sevenbysix.nodes),
+        len(sevenbysix.nodes),
+    )
+    assert np.allclose(adjacency_matrix.A, sevenbysix.s1_adjacency_matrx.A)
+    assert node_idx.tolist() == list(sevenbysix.nodes)
+
+
+def test_edge_adjacency_matrix(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
+    adjacency_matrix, node_idx = hg.edge_adjacency_matrix(index=True)
+
+    assert adjacency_matrix.todense().shape == (
+        len(sevenbysix.edges),
+        len(sevenbysix.edges),
+    )
+    assert np.allclose(adjacency_matrix.A, sevenbysix.s1_edge_adjacency_matrx.A)
+    assert node_idx.tolist() == list(sevenbysix.edges)
+
+
+def test_auxiliary_matrix_on_nodes(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
+    aux_matrix, indexes = hg.auxiliary_matrix(index=True)
+
+    assert aux_matrix.todense().shape == (len(sevenbysix.nodes), len(sevenbysix.nodes))
+    assert np.allclose(aux_matrix.A, sevenbysix.s1_adjacency_matrx.A)
+    assert indexes.tolist() == list(sevenbysix.nodes)
+
+
+def test_auxiliary_matrix_on_edges(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
+    aux_matrix, indexes = hg.auxiliary_matrix(node=False, index=True)
+
+    assert aux_matrix.todense().shape == (len(sevenbysix.edges), len(sevenbysix.edges))
+    assert np.allclose(aux_matrix.A, sevenbysix.s1_edge_adjacency_matrx.A)
+    assert indexes.tolist() == list(sevenbysix.edges)
 
 
 def test_collapse_edges(sevenbysix_dupes):

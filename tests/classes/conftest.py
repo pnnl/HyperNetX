@@ -5,6 +5,7 @@ import os
 import networkx as nx
 import pandas as pd
 import numpy as np
+import scipy
 
 from hypernetx import Hypergraph
 from collections import OrderedDict, namedtuple
@@ -45,7 +46,40 @@ class SevenBySix:
             ]
         )
         self.dataframe = create_dataframe(self.edgedict)
-
+        # row corresponds to self.nodes (7)
+        # columns corresponds to self.edges (6)
+        self.incidence_matrix = scipy.sparse.csr_matrix(
+            [
+                [0, 0, 0, 1, 1, 1],
+                [0, 1, 0, 1, 0, 0],
+                [0, 1, 0, 0, 1, 0],
+                [1, 0, 0, 1, 0, 1],
+                [0, 0, 1, 0, 0, 0],
+                [1, 0, 1, 0, 0, 1],
+                [0, 0, 0, 0, 0, 1],
+            ]
+        )
+        self.s1_adjacency_matrx = scipy.sparse.csr_matrix(
+            [
+                [0, 1, 1, 1, 0, 1, 1],
+                [1, 0, 1, 1, 0, 0, 0],
+                [1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 1, 1],
+                [0, 0, 0, 0, 0, 1, 0],
+                [1, 0, 0, 1, 1, 0, 1],
+                [1, 0, 0, 1, 0, 1, 0],
+            ]
+        )
+        self.s1_edge_adjacency_matrx = scipy.sparse.csr_matrix(
+            [
+                [0, 0, 1, 1, 0, 1],
+                [0, 0, 0, 1, 1, 0],
+                [1, 0, 0, 0, 0, 1],
+                [1, 1, 0, 0, 1, 1],
+                [0, 1, 0, 1, 0, 1],
+                [1, 0, 1, 1, 1, 0],
+            ]
+        )
         # row = number of nodes = 6
         # columns = number of edges = 7
         self.arr = np.array(
