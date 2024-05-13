@@ -2599,9 +2599,11 @@ class Hypergraph:
         : Hypergraph
 
         """
-        ndx = list(self.incidences.items.intersection(other.incidences.items))
-        ndf = self.incidences.to_dataframe.loc[ndx]
-        return self._construct_hyp_from_stores(ndf, name=name)
+        nodes_intersection = list(
+            self.incidences.items.intersection(other.incidences.items)
+        )
+        incidence_df = self.incidences.to_dataframe.loc[nodes_intersection]
+        return self._construct_hyp_from_stores(incidence_df, name=name)
 
     def union(self, other, name=None):
         """
