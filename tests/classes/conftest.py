@@ -6,8 +6,8 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 import scipy
-
 from hypernetx import Hypergraph
+from hypernetx.classes.factory import dict_factory_method
 from collections import OrderedDict, namedtuple
 
 
@@ -70,6 +70,7 @@ class SevenBySix:
             [i, t2],
         ]
         self.ndarray = np.array(np_data)
+        self.properties = dict_factory_method(self.edgedict, 2)
 
         # data for testing
         # row corresponds to self.nodes (7)

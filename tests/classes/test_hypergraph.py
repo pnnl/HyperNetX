@@ -8,6 +8,7 @@ import scipy
 
 from networkx.algorithms import bipartite
 
+from hypernetx import HyperNetXError
 from hypernetx.classes.hyp_view import HypergraphView
 from hypernetx.classes.property_store import PropertyStore
 from hypernetx.classes.hypergraph import Hypergraph
@@ -94,6 +95,11 @@ def test_from_incidence_dataframe_with_key():
     assert "C" not in h.edges["a"]
 
 
+def test_from_incidence_dataframe_raises_error():
+    with pytest.raises(HyperNetXError):
+        Hypergraph.from_incidence_dataframe(None)
+
+
 def test_from_incidence_dataframe_with_fillna(sample_df):
     h = Hypergraph.from_incidence_dataframe(sample_df, fillna=1)
     assert "A" in h.edges["b"]
@@ -143,6 +149,34 @@ def test_from_numpy_array_with_key():
     )
     assert "A" in h.edges["a"]
     assert "C" not in h.edges["a"]
+
+
+def test_from_numpy_array_raises_error_incorrect_dimensions():
+    with pytest.raises(HyperNetXError):
+        np_data = np.array([])
+        Hypergraph.from_numpy_array(np_data)
+
+
+def test_from_numpy_array_raises_error_incorrect_nodenames():
+    with pytest.raises(HyperNetXError):
+        matrix = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
+        Hypergraph.from_numpy_array(
+            matrix,
+            node_names=["r", "o", "m", "a"],
+            edge_names=["a", "b", "c", "d"],
+            key=lambda x: x > 4,
+        )
+
+
+def test_from_numpy_array_raises_error_incorrect_edgenames():
+    with pytest.raises(HyperNetXError):
+        matrix = np.array([[5, 0, 7, 2], [6, 8, 1, 1], [2, 5, 1, 9]])
+        Hypergraph.from_numpy_array(
+            matrix,
+            node_names=["A", "B", "C"],
+            edge_names=["F", "O", "O"],
+            key=lambda x: x > 4,
+        )
 
 
 def test_from_bipartite_on_hnx_bipartite(sevenbysix):
@@ -1087,21 +1121,21 @@ def test_collapse_nodes_and_edges(sevenbysix_dupes):
 
 
 def test_restrict_to_edges(sevenbysix):
-    H = Hypergraph(sevenbysix.edgedict)
-    HS = H.restrict_to_edges(["P", "O"])
-    assert len(H.edges) == 6
-    assert len(HS.edges) == 2
+    hg = Hypergraph(sevenbysix.edgedict)
+    new_hg = hg.restrict_to_edges(["P", "O"])
+    assert len(hg.edges) == 6
+    assert len(new_hg.edges) == 2
 
 
 def test_restrict_to_nodes(sevenbysix):
-    H = Hypergraph(sevenbysix.edgedict)
-    assert len(H.nodes) == 7
-    H1 = H.restrict_to_nodes(["A", "E", "K"])
-    assert len(H.nodes) == 7
-    assert len(H1.nodes) == 3
-    assert len(H1.edges) == 5
-    assert "C" in H.edges["P"]
-    assert "C" not in H1.edges["P"]
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert len(hg.nodes) == 7
+    new_hg = hg.restrict_to_nodes(["A", "E", "K"])
+    assert len(hg.nodes) == 7
+    assert len(new_hg.nodes) == 3
+    assert len(new_hg.edges) == 5
+    assert "C" in hg.edges["P"]
+    assert "C" not in new_hg.edges["P"]
 
 
 def test_remove_from_restriction(triloop):
@@ -1115,31 +1149,33 @@ def test_remove_from_restriction(triloop):
 
 def test_toplexes(sevenbysix_dupes):
     h = Hypergraph(sevenbysix_dupes.edgedict)
-    T = h.toplexes(return_hyp=True)
-    assert len(T.nodes) == 8
-    assert len(T.edges) == 5
-    T = T.collapse_nodes()
-    assert len(T.nodes) == 7
+
+    toplex = h.toplexes(return_hyp=True)
+    assert len(toplex.nodes) == 8
+    assert len(toplex.edges) == 5
+
+    toplex = toplex.collapse_nodes()
+    assert len(toplex.nodes) == 7
 
 
 def test_is_connected():
-    setsystem = [{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
-    h = Hypergraph(setsystem)
+    edges_list = [{1, 2, 3, 4}, {3, 4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+    h = Hypergraph(edges_list)
+
     assert h.is_connected() is True
     assert h.is_connected(s=2) is False
     assert h.is_connected(s=2, edges=True) is True
-    # test case below will raise nx.NetworkXPointlessConcept
     assert h.is_connected(s=3, edges=True) is False
 
 
 def test_singletons():
-    E = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
-    h = Hypergraph(E)
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+
+    h = Hypergraph(edges_dict)
     assert h.shape == (9, 5)
+
     singles = h.singletons()
-    assert len(singles) == 2
-    h = h.remove_edges(singles)
-    assert h.shape == (7, 3)
+    assert singles == [10, 12]
 
 
 def test_remove_singletons():
@@ -1159,8 +1195,9 @@ def test_remove_singletons():
     [(False, [{1, 2, 3, 4}, {5, 6}, {7}]), (True, [{"C", "D"}, {"A", "B"}, {"E"}])],
 )
 def test_components(edges, expected_components):
-    setsystem = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
-    h = Hypergraph(setsystem)
+    edges_dict = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
+
+    h = Hypergraph(edges_dict)
 
     actual_components = list(h.components(edges=edges))
 
@@ -1168,16 +1205,18 @@ def test_components(edges, expected_components):
 
 
 def test_connected_components():
-    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
-    h = Hypergraph(setsystem)
+    edges_list = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+
+    h = Hypergraph(edges_list)
+
     assert len(list(h.connected_components())) == 1
     assert list(h.connected_components(edges=True)) == [{0, 1, 2, 3}]
     assert [len(g) for g in h.connected_component_subgraphs()] == [8]
 
 
 def test_s_components():
-    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
-    h = Hypergraph(setsystem)
+    edges_dict = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
+    h = Hypergraph(edges_dict)
     assert len(list(h.s_components())) == 1
     assert len(list(h.s_components(s=2))) == 2
     assert len(list(h.s_components(s=3))) == 4
@@ -1197,8 +1236,8 @@ def test_s_components():
 def test_s_connected_components(
     edges, return_singletons, expected_connected_components
 ):
-    setsystem = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
-    h = Hypergraph(setsystem)
+    edges_dict = {"A": {1, 2, 3}, "B": {2, 3, 4}, "C": {5, 6}, "D": {6}, "E": {7}}
+    h = Hypergraph(edges_dict)
 
     actual_connected_components = list(
         h.s_connected_components(edges=edges, return_singletons=return_singletons)
@@ -1211,14 +1250,80 @@ def test_s_connected_components(
 
 
 def test_s_component_subgraphs():
-    setsystem = [{1, 2, 3, 4}, {4, 5, 6}, {5, 6, 7}, {5, 6, 8}]
-    h = Hypergraph(setsystem)
-    assert {5, 4}.issubset(
-        [len(g) for g in h.s_component_subgraphs(s=2, return_singletons=True)]
-    )
-    assert {3, 4}.issubset(
-        [len(g) for g in h.s_component_subgraphs(s=3, return_singletons=True)]
-    )
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+
+    h = Hypergraph(edges_dict)
+
+    hg = list(h.s_component_subgraphs())
+
+    assert len(hg) == 1
+
+    hg = hg.pop()
+    assert all(e in hg.edges for e in [1, 6, 14])
+    assert all(n in hg.nodes for n in [2, 3, 4, 5, 7, 8, 9])
+    assert hg.incidence_dict == {1: [2, 3, 4, 5], 6: [2, 5, 7, 8, 9], 14: [7]}
+
+
+def test_s_component_subgraphs_on_nodes():
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+
+    h = Hypergraph(edges_dict)
+
+    hg = list(h.s_component_subgraphs(edges=False))
+
+    assert len(hg) == 1
+
+    hg = hg.pop()
+    assert all(e in hg.edges for e in [1, 6, 14])
+    assert all(n in hg.nodes for n in [2, 3, 4, 5, 7, 8, 9])
+    assert hg.incidence_dict == {1: [2, 3, 4, 5], 6: [2, 5, 7, 8, 9], 14: [7]}
+
+
+def test_component_subgraphs():
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+
+    h = Hypergraph(edges_dict)
+
+    hg = list(h.component_subgraphs())
+
+    assert len(hg) == 1
+    hg = hg.pop()
+    assert hg.shape == (7, 3)
+    assert all(e in hg.edges for e in [1, 6, 14])
+    assert all(n in hg.nodes for n in [2, 3, 4, 5, 7, 8, 9])
+    assert hg.incidence_dict == {1: [2, 3, 4, 5], 6: [2, 5, 7, 8, 9], 14: [7]}
+
+
+def test_component_subgraphs_on_return_singletons_true():
+    # two edges are singletons
+    edges_dict = {1: {2, 3, 4, 5}, 6: {2, 5, 7, 8, 9}, 10: {11}, 12: {13}, 14: {7}}
+
+    h = Hypergraph(edges_dict)
+
+    hg = list(h.component_subgraphs(return_singletons=True))
+    assert len(hg) == 3
+
+    # check component subgraph
+    sb = hg[0]
+    assert sb.shape == (7, 3)
+    assert all(e in sb.edges for e in [1, 6, 14])
+    assert all(n in sb.nodes for n in [2, 3, 4, 5, 7, 8, 9])
+    assert sb.incidence_dict.get(1) == [2, 3, 4, 5]
+    assert sb.incidence_dict.get(6) == [2, 5, 7, 8, 9]
+    assert sb.incidence_dict.get(14) == [7]
+
+    # check singletons
+    singleton1 = hg[1]
+    assert singleton1.shape == (1, 1)
+    assert list(singleton1.edges) == [10]
+    assert list(singleton1.nodes) == [11]
+    assert singleton1.incidence_dict == {10: [11]}
+
+    singleton2 = hg[2]
+    assert singleton2.shape == (1, 1)
+    assert list(singleton2.edges) == [12]
+    assert list(singleton2.nodes) == [13]
+    assert singleton2.incidence_dict == {12: [13]}
 
 
 def test_size(sevenbysix):
@@ -1359,11 +1464,11 @@ def test_sum_hypergraph_empty_hypergraph(sevenbysix):
 
     # add empty hypergraph to hypergraph
     new_hg = hg.sum(hg_to_add)
-    assert new_hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
+    assert new_hg == hg
 
     # add hypergraph to empty hypergraph
     new_hg = hg_to_add.sum(hg)
-    assert new_hg.shape == (len(sevenbysix.nodes), len(sevenbysix.edges))
+    assert new_hg == hg
 
 
 def test_sum_hypergraph_with_dupe_hypergraph(sevenbysix, sevenbysix_dupes):
@@ -1397,9 +1502,102 @@ def test_sum_hypergraph_with_dupe_hypergraph(sevenbysix, sevenbysix_dupes):
     assert new_hg.shape == (len(sevenbysix.nodes) + 1, len(sevenbysix.edges) + 1)
     # check for new incidences
     actual_incidences = new_hg.incidences.incidence_dict
-    for expected_edge, expected_nodes in expected_incidences.items():
-        assert expected_edge in actual_incidences
-        assert all(node in actual_incidences[expected_edge] for node in expected_nodes)
+    assert actual_incidences.keys() == expected_incidences.keys()
+    assert all(
+        set(nodes) == set(actual_incidences[edge])
+        for edge, nodes in expected_incidences.items()
+    )
+
+
+def test_add_hypergraph_to_empty_hypergraph(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    hg_to_add = Hypergraph()
+
+    new_hg = hg + hg_to_add
+
+    assert new_hg == hg
+
+
+def test_union(sevenbysix, sevenbysix_dupes):
+    hg = Hypergraph(sevenbysix.edgedict)
+    hg_dupes = Hypergraph(sevenbysix_dupes.edgedict)
+
+    # Case: HDuplicate + H
+    # add almost duplicate hypergraph to hypergraph
+    new_hg = hg.union(hg_dupes)
+
+    assert new_hg.shape == (len(sevenbysix.nodes) + 1, len(sevenbysix.edges) + 1)
+    # check for new incidences
+    expected_incidences = {
+        "I": ["K", "T2"],
+        "L": ["C", "E", "F"],
+        "M": ["C", "E", "F"],
+        "O": ["T1", "T2"],
+        "P": ["A", "C", "K"],
+        "R": ["A", "E", "F"],
+        "S": ["A", "K", "T2", "V"],
+    }
+    actual_incidences = new_hg.incidence_dict
+    assert actual_incidences.keys() == expected_incidences.keys()
+    assert all(
+        set(nodes) == set(actual_incidences[edge])
+        for edge, nodes in expected_incidences.items()
+    )
+
+    # Case: H + HDuplicate
+    # add hypergraph to almost duplicate
+    new_hg = hg_dupes.union(hg)
+
+    assert new_hg.shape == (len(sevenbysix.nodes) + 1, len(sevenbysix.edges) + 1)
+    # check for new incidences
+    actual_incidences = new_hg.incidence_dict
+    assert all(
+        set(nodes) == set(actual_incidences[edge])
+        for edge, nodes in expected_incidences.items()
+    )
+
+
+def test_intersection(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    edge_dict = {
+        sevenbysix.edges.P: {sevenbysix.nodes.A, sevenbysix.nodes.C, sevenbysix.nodes.K}
+    }
+    other = Hypergraph(edge_dict)
+
+    new_hg = hg.intersection(other)
+
+    assert new_hg.shape == (3, 1)
+    assert list(new_hg.edges) == [sevenbysix.edges.P]
+    assert set(new_hg.nodes) == {
+        sevenbysix.nodes.A,
+        sevenbysix.nodes.C,
+        sevenbysix.nodes.K,
+    }
+
+
+def test_intersection_on_empty_hypergraph(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    other = Hypergraph()
+
+    new_hg = hg.intersection(other)
+
+    assert new_hg.shape == (0, 0)
+
+
+def test_intersection_on_itself(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    other = Hypergraph(sevenbysix.edgedict)
+
+    new_hg = hg.intersection(other)
+
+    assert new_hg.shape == (7, 6)
+    assert all(n in new_hg.nodes for n in sevenbysix.nodes)
+    assert all(e in new_hg.edges for e in sevenbysix.edges)
+    incidences = new_hg.incidence_dict
+    assert incidences.keys() == sevenbysix.edgedict.keys()
+    assert all(
+        nodes == set(incidences[edge]) for edge, nodes in sevenbysix.edgedict.items()
+    )
 
 
 @pytest.mark.parametrize(
@@ -1579,3 +1777,13 @@ def test_equivalence_classes(sevenbysix_dupes, edges, groupings):
     res = hg.equivalence_classes(edges=edges)
 
     assert res == groupings
+
+
+def test_properties(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+
+    props = hg.properties
+
+    df_differences = props.compare(sevenbysix.properties)
+
+    assert df_differences.empty
