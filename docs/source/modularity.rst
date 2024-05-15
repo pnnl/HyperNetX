@@ -38,27 +38,27 @@ Modularity
 
 Given hypergraph HG and a partition A of its vertices, hypergraph modularity is a measure of the quality of this partition.
 Random partitions typically yield modularity near zero (it can be negative) while positive modularity is indicative of the presence
-of dense communities, or modules. There are several variations for the definition of hypergraph modularity, and the main difference lies in the
-weight given to different edges given their size $d$ and purity $c$. Modularity is computed via::
+of dense communities or modules. There are several variations for the definition of hypergraph modularity, and the main difference lies in the
+weight given to different edges given their size :math:`d` and purity :math:`c`. Modularity is computed via::
 
-   q = hmod.modularity(HG, A, wdc=hmod.linear)
+    q = hmod.modularity(HG, A, wdc=hmod.linear)
 
-where the 'wdc' parameter points to a function that controls the weights (details below).
+where the `wdc` parameter points to a function that controls the weights (details below).
 
-In a graph, an edge only links 2 nodes, so given partition A, an edge is either within a community (which increases the modularity)
-or between communities. With hypergraphs, we consider edges of size $d=2$ or more. Given some vertex partition A and some $d$-edge $e$, let $c$ be the number of nodes
-that belong to the most represented part in $e$; if $c > d/2$, we consider this edge to be within the part.
-Hyper-parameters $0 \le w(d,c) \le 1$ control the weight
+In a graph, an edge only links two nodes; so given partition A, an edge is either within a community (which increases the modularity)
+or between communities. With hypergraphs, we consider edges of size :math:`d=2` or more. Given some vertex partition A and some :math:`d`-edge :math:`e`, let :math:`c` be the number of nodes
+that belong to the most represented part in :math:`e`; if :math:`c > d/2`, we consider this edge to be within the part.
+Hyper-parameters :math:`0 \le w(d,c) \le 1` control the weight
 given to such edges. Three functions are supplied in this submodule, namely:
 
 **linear**
-  $w(d,c) = c/d$ if $c > d/2$, else $0$.
+  :math:`w(d,c) = c/d` if :math:`c > d/2`, else :math:`0`.
 **majority**
-  $w(d,c) = 1$ if $c > d/2$, else $0$.
+  :math:`w(d,c) = 1` if :math:`c > d/2`, else :math:`0`.
 **strict**
-  $w(d,c) = 1$ iff $c = d$, else $0$.
+  :math:`w(d,c) = 1` iff :math:`c = d`, else :math:`0`.
 
-The 'linear' function is used by default. Other functions $w(d,c)$ can be supplied as long as $0 \le w(d,c) \le 1$ and $w(d,c)=0$ when $c \le d$.
+The 'linear' function is used by default. Other functions :math:`w(d,c)` can be supplied as long as :math:`0 \le w(d,c) \le 1` and :math:`w(d,c)=0` when :math:`c \le d`.
 More details can be found in [2].
 
 Two-section graph

@@ -4,7 +4,7 @@ from hypernetx import HyperNetXError
 
 
 def mkdict(x):
-    # function to create a dictionary from object x if it is not already a dicitonary.
+    # function to create a dictionary from object x if it is not already a dictionary.
     import ast, json
 
     if isinstance(x, dict):
