@@ -201,6 +201,9 @@ class HypergraphView(object):
             neighbors = self.incidence_store.neighbors(self.level, uid)
             return AttrList(uid, self, initlist=neighbors)
 
+    def set_defaults(self, defaults):
+        self.property_store.set_defaults(defaults)
+
     # def properties(self,key=None,prop_name=None):
     #     """
     #     Return dictionary of properties or single property for key

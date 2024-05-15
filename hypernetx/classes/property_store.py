@@ -207,6 +207,23 @@ class PropertyStore:
             # add the unique property to 'misc_properties'
             self._data.at[uid, MISC_PROPERTIES].update({prop_name: prop_val})
 
+    def set_defaults(self, defaults):
+        self._defaults.update(defaults)
+        new_cols = []
+        for k, v in defaults.items():
+            if k in self._columns:
+                self._data.fillna({k: v})
+            else:
+
+                def grabprop(cell):
+                    return cell.get(k, v)
+
+                self._data[k] = self._data["misc_properties"].map(grabprop)
+                new_cols.append(k)
+        self._columns = list(self._columns[:-1]) + new_cols + ["misc_properties"]
+        self._data = self._data[self._columns]
+        self._default_weight = self._defaults["weight"]
+
     # def _default_properties(self) -> dict:
     #     """Create a default properties dictionary; if custom properties are present, add them and set to None"""
     #     # Get the required property fields
