@@ -54,6 +54,8 @@ class PropertyStore:
 
         self._default_weight: int | float = default_weight
         self._columns = self._data.columns.tolist()
+        self._defaults = {col: None for col in self._columns}
+        self._defaults.update({WEIGHT: self._default_weight, MISC_PROPERTIES: {}})
 
     @property
     def properties(self) -> DataFrame:
@@ -69,6 +71,21 @@ class PropertyStore:
         """
         return self._data
 
+    @property
+    def default_properties(self) -> dict:
+        """
+        Returns copy of default dictionary of properties
+
+        Returns
+        -------
+        dict
+            Dictionary of properties automatically given to objects either
+            in the property store if no user defined values have been
+            assigned to them or objects that have not yet been added to
+            the Property Store.
+        """
+        return deepcopy(self._defaults)
+
     def get_properties(self, uid) -> dict:
         """Get all properties of an item
 
@@ -79,7 +96,7 @@ class PropertyStore:
 
         Returns
         -------
-        out : dict
+        dict
             Output dictionary containing all properties of the uid.
             ``{named property: property value, ...,
             properties: {property name: property value}}``
@@ -90,26 +107,8 @@ class PropertyStore:
         """
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
-            return {WEIGHT: self._default_weight}
+            return self.default_properties
         return flatten(self._data.loc[uid].to_dict())
-
-    def set_properties(self, uid, props) -> None:
-        """
-        Parameters
-        ----------
-        uid : Hashable
-            uid is the index used to set its property
-        props : a dictionary containing user-defined properties
-
-        See Also
-        --------
-        get_property, get_properties, set_property
-        """
-        if uid not in self._data.index:
-            self._data.loc[uid, :] = self._default_properties()
-
-        for prop_name, prop_val in props.items():
-            self._set_property(uid, prop_name, prop_val)
 
     def get_property(self, uid, prop_name) -> Any:
         """Get a property of an item
@@ -140,6 +139,24 @@ class PropertyStore:
             return self._data.loc[uid][MISC_PROPERTIES]
         return self.get_properties(uid).get(prop_name, None)
 
+    def set_properties(self, uid, props) -> None:
+        """
+        Parameters
+        ----------
+        uid : Hashable
+            uid is the index used to set its property
+        props : a dictionary containing user-defined properties
+
+        See Also
+        --------
+        get_property, get_properties, set_property
+        """
+        if uid not in self._data.index:
+            self._data.loc[uid, :] = self.default_properties
+
+        for prop_name, prop_val in props.items():
+            self._set_property(uid, prop_name, prop_val)
+
     def set_property(self, uid, prop_name, prop_val) -> None:
         """Set a property of an item in the 'properties' collection
 
@@ -158,8 +175,7 @@ class PropertyStore:
         """
         # if the uid is not present, add the uid with default properties to the dataframe
         if uid not in self._data.index:
-            self._data.loc[uid, :] = self._default_properties()
-
+            self._data.loc[uid, :] = self.default_properties
         self._set_property(uid, prop_name, prop_val)
 
     def _set_property(self, uid, prop_name, prop_val):
@@ -190,44 +206,44 @@ class PropertyStore:
             # add the unique property to 'misc_properties'
             self._data.at[uid, MISC_PROPERTIES].update({prop_name: prop_val})
 
-    def _default_properties(self) -> dict:
-        """Create a default properties dictionary; if custom properties are present, add them and set to None"""
-        # Get the required property fields
-        properties = self._required_properties()
-        # add user-defined properties
-        user_defined_properties = [
-            prop
-            for prop in self._data.columns.tolist()
-            if prop not in DEFAULT_PROPERTIES
-        ]
+    # def _default_properties(self) -> dict:
+    #     """Create a default properties dictionary; if custom properties are present, add them and set to None"""
+    #     # Get the required property fields
+    #     properties = self._required_properties()
+    #     # add user-defined properties
+    #     user_defined_properties = [
+    #         prop
+    #         for prop in self._data.columns.tolist()
+    #         if prop not in DEFAULT_PROPERTIES
+    #     ]
 
-        if not user_defined_properties:
-            return properties
+    #     if not user_defined_properties:
+    #         return properties
 
-        # Add user-defined properties to data
-        for prop in user_defined_properties:
-            properties[prop] = None
-        return properties
+    #     # Add user-defined properties to data
+    #     for prop in user_defined_properties:
+    #         properties[prop] = None
+    #     return properties
 
-    def default_properties_df(self) -> dict:
-        """Returns a dictionary of only default properties with default values; this data is used as the value for
-        the parameter 'data' to create a Dataframe
+    # def default_properties_df(self) -> dict:
+    #     """Returns a dictionary of only default properties with default values; this data is used as the value for
+    #     the parameter 'data' to create a Dataframe
 
-        MISC_PROPERTIES is a list of exactly one dictionary
-        The dictionary must be put into a list so that Pandas uses the entire value in the entire location
+    #     MISC_PROPERTIES is a list of exactly one dictionary
+    #     The dictionary must be put into a list so that Pandas uses the entire value in the entire location
 
-        See HypergraphView.to_dataframe
-        """
-        return {
-            WEIGHT: self._default_weight,
-            MISC_PROPERTIES: [{}],
-        }
+    #     See HypergraphView.to_dataframe
+    #     """
+    #     return {
+    #         WEIGHT: self._default_weight,
+    #         MISC_PROPERTIES: [{}],
+    #     }
 
-    def _required_properties(self) -> dict:
-        return {
-            WEIGHT: self._default_weight,
-            MISC_PROPERTIES: {},
-        }
+    # def _required_properties(self) -> dict:
+    #     return {
+    #         WEIGHT: self._default_weight,
+    #         MISC_PROPERTIES: {},
+    #     }
 
     def __getitem__(self, uid) -> dict:
         """Gets all the properties of an item
