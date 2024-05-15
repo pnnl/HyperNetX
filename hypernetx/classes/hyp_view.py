@@ -7,20 +7,8 @@ import warnings
 warnings.filterwarnings("default", category=DeprecationWarning)
 
 from copy import deepcopy
-from collections import defaultdict, UserList
-from collections.abc import Sequence, Iterable
-
-import networkx as nx
-import numpy as np
+from collections import UserList
 import pandas as pd
-from networkx.algorithms import bipartite
-from scipy.sparse import coo_matrix, csr_matrix
-
-from hypernetx.exception import HyperNetXError
-
-# from hypernetx.classes.helpers import merge_nested_dicts, dict_depth
-from hypernetx.classes.incidence_store import IncidenceStore as IS
-from hypernetx.classes.property_store import PropertyStore
 
 __all__ = ["HypergraphView"]
 
@@ -39,12 +27,12 @@ class HypergraphView(object):
 
         Parameters
         ----------
-        incidence_store : _type_
-            _description_
-        level : _type_
-            _description_
-        property_store : _type_, optional
-            _description_, by default None
+        incidence_store : IncidenceStore
+            All incidence pairs stored as a dataframe
+        level : int
+            Which type of store: 0 = Edges, 1 = Nodes, 2 = Incidences
+        property_store : PropertyStore, optional
+            Properties assigned to object in this view, by default None
         """
         self._incidence_store = incidence_store
         self._level = level
@@ -90,14 +78,14 @@ class HypergraphView(object):
         """
         # Create a properties dataframe of non-user-defined items with default values
 
-        df = self.properties.copy(deep=True)
+        df = self.user_defined_properties.copy(deep=True)
 
         ### deep copy dictionaries in the misc_properties column
         temp = [deepcopy(d) for d in df.misc_properties.values]
         df.misc_properties = temp
 
         non_user_defined_items = list(
-            set(self._items).difference(self.properties.index)
+            set(self._items).difference(self.user_defined_properties.index)
         )
 
         # skip combining df and non_user_defined_items if non_user_defined_items is empty
@@ -119,6 +107,18 @@ class HypergraphView(object):
 
     @property
     def properties(self):
+        """
+        User-defined properties. Does not include items in the HypergraphView
+        that the user has not explicitly defined properties for.
+
+        Returns
+        -------
+        out: pd.DataFrame
+        """
+        return self._property_store.properties
+
+    @property
+    def user_defined_properties(self):
         """
         User-defined properties. Does not include items in the HypergraphView
         that the user has not explicitly defined properties for.
@@ -203,65 +203,6 @@ class HypergraphView(object):
 
     def set_defaults(self, defaults):
         self.property_store.set_defaults(defaults)
-
-    # def properties(self,key=None,prop_name=None):
-    #     """
-    #     Return dictionary of properties or single property for key
-    #     Currently ties into AttrList object in utils.
-    #     Uses getitem from property stores
-
-    #     Parameters
-    #     ----------
-    #     key : _type_
-    #         _description_
-    #     prop_name : _type_, optional
-    #         _description_, by default None
-
-    #     Returns
-    #     -------
-    #     if key=None and prop=None, dictionary key:properties OR
-    #     elif prop=None, dictionary prop: value for key
-    #     elif key = None, dictionary of keys: prop value
-    #     else property value
-    #     """
-    #     # If a dfp style dataframe use .to_dict()
-    #     pass
-
-    # def __call__(self):
-    #     """
-    #     Iterator over keys in store -
-    #     level 0 = edges, 1 = nodes, 2 = incidence pairs
-    #     Uses incidence store.
-    #     """
-    #     pass
-
-    # def __getattribute__(self, __name: str) -> Any:
-    #     pass
-
-    # def __setattr__(self, __name: str, __value: Any) -> None:
-    #     pass
-
-    # def to_json(self):
-    #     """
-    #     Returns jsonified data. For levels 0,1 this will be the edge and nodes
-    #     properties and for level 2 this will be the incidence pairs and their
-    #     properties
-    #     """
-    #     pass
-
-    # #### data,labels should be handled in the stores and accessible
-    # #### here - if we want them??
-    # def encoder(self,item=None):
-    #     """
-    #     returns integer encoded data and labels for use with fast
-    #     processing methods in form of label:int dictionaries
-    #     """
-    #     pass
-
-    # def decoder(self):
-    #     """
-    #     returns int:label dictionaries
-    #     """
 
 
 class AttrList(UserList):
