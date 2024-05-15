@@ -108,7 +108,8 @@ class PropertyStore:
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
             return self.default_properties
-        return flatten(self._data.loc[uid].to_dict())
+        t = self._data.loc[uid].to_dict()
+        return flatten(t)
 
     def get_property(self, uid, prop_name) -> Any:
         """Get a property of an item
@@ -284,8 +285,6 @@ def flatten(my_dict):
     """
     result = {}
     for key, value in my_dict.items():
-        if value == {}:
-            continue
         if isinstance(value, dict):
             temp = flatten(value)
             # if temp is an empty dictionary, we still want to include the empty dictionary in the

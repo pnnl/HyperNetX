@@ -252,7 +252,7 @@ def test_add_edge_no_attr(sevenbysix):
 
     # The new edge will be saved in PropertyStore
     assert new_edge in new_hg.edges.property_store
-    assert new_hg.edges.property_store[new_edge] == {"weight": 1}
+    assert new_hg.edges.property_store[new_edge] == {"weight": 1, "misc_properties": {}}
 
 
 def test_add_edge_with_attr(sevenbysix):
@@ -282,7 +282,7 @@ def test_add_edge_with_attr(sevenbysix):
 @pytest.mark.parametrize(
     "new_edge, data, expected_props",
     [
-        ("X", {}, {"weight": 1}),
+        ("X", {}, {"weight": 1, "misc_properties": {}}),
         (
             "X",
             {"hair_color": "orange", "age": 42},
@@ -1664,7 +1664,7 @@ def test_rename_on_no_op(sevenbysix):
 @pytest.mark.parametrize(
     "prop_name, expected_property",
     [
-        (None, {"weight": 1.0}),
+        (None, {"weight": 1.0, "misc_properties": {}}),
         ("weight", 1),
         ("misc_properties", {}),
         ("not-a-prop-return-None", None),
@@ -1683,13 +1683,13 @@ def test_get_cell_properties(sevenbysix, prop_name, expected_property):
 @pytest.mark.parametrize(
     "uid, level, prop_name, expected_property",
     [
-        ("P", 0, None, {"weight": 1.0}),
+        ("P", 0, None, {"weight": 1.0, "misc_properties": {}}),
         ("P", 0, "weight", 1.0),
         ("P", 0, "not-a-prop", None),
-        ("A", 1, None, {"weight": 1.0}),
+        ("A", 1, None, {"weight": 1.0, "misc_properties": {}}),
         ("A", 1, "weight", 1.0),
         ("A", 1, "not-a-prop", None),
-        (("P", "A"), 2, None, {"weight": 1.0}),
+        (("P", "A"), 2, None, {"weight": 1.0, "misc_properties": {}}),
         (("P", "A"), 2, "weight", 1.0),
         (("P", "A"), 2, "not-a-prop", None),
     ],
@@ -1698,7 +1698,7 @@ def test_get_properties(sevenbysix, uid, level, prop_name, expected_property):
     hg = Hypergraph(sevenbysix.edgedict)
 
     props = hg.get_properties(uid, level=level, prop_name=prop_name)
-
+    print(props)
     assert props == expected_property
 
 
