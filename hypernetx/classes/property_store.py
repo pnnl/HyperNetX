@@ -224,45 +224,6 @@ class PropertyStore:
         self._data = self._data[self._columns]
         self._default_weight = self._defaults["weight"]
 
-    # def _default_properties(self) -> dict:
-    #     """Create a default properties dictionary; if custom properties are present, add them and set to None"""
-    #     # Get the required property fields
-    #     properties = self._required_properties()
-    #     # add user-defined properties
-    #     user_defined_properties = [
-    #         prop
-    #         for prop in self._data.columns.tolist()
-    #         if prop not in DEFAULT_PROPERTIES
-    #     ]
-
-    #     if not user_defined_properties:
-    #         return properties
-
-    #     # Add user-defined properties to data
-    #     for prop in user_defined_properties:
-    #         properties[prop] = None
-    #     return properties
-
-    # def default_properties_df(self) -> dict:
-    #     """Returns a dictionary of only default properties with default values; this data is used as the value for
-    #     the parameter 'data' to create a Dataframe
-
-    #     MISC_PROPERTIES is a list of exactly one dictionary
-    #     The dictionary must be put into a list so that Pandas uses the entire value in the entire location
-
-    #     See HypergraphView.to_dataframe
-    #     """
-    #     return {
-    #         WEIGHT: self._default_weight,
-    #         MISC_PROPERTIES: [{}],
-    #     }
-
-    # def _required_properties(self) -> dict:
-    #     return {
-    #         WEIGHT: self._default_weight,
-    #         MISC_PROPERTIES: {},
-    #     }
-
     def __getitem__(self, uid) -> dict:
         """Gets all the properties of an item
 
