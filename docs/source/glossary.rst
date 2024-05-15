@@ -7,6 +7,12 @@ Glossary of HNX terms
 
 The HNX library centers around the idea of a :term:`hypergraph`.  This glossary provides a few key terms and definitions.
 
+The term *hypergraph* can have many different meanings.  In HNX, it means a tuple (Nodes, Edges, Incidence), where Nodes and Edges are sets, and Incidence is a function that assigns a value of True or False to every pair (n,e) in the Cartesian product Nodes x Edges.  We call 
+- Nodes the set of nodes
+- Edges the set of edges
+- Incidence the incidence function
+*Note* Another term for this type of object is a *multihypergraph*.  The ability to work with multihypergraphs efficiently is a distinguishing feature of HNX!
+
 
 .. glossary::
 	:sorted:
@@ -104,13 +110,6 @@ The HNX library centers around the idea of a :term:`hypergraph`.  This glossary 
 		The edge s-linegraph is a graph on the set Edges. Two edges in Edges are incident in the edge s-linegraph if they
 		share at least s incident nodes in Nodes; that is, the edges intersect in at least s nodes in Nodes.
 
-	.. Bipartite Condition
-	.. 	Condition imposed on instances of the class EntitySet.
-	..     *Entities that are elements of the same EntitySet, may not contain each other as elements.* 
-	..     The elements and children of an EntitySet generate a specific partition for a bipartite graph. 
-	..     The partition is isomorphic to a Hypergraph where the elements correspond to hyperedges and
-	..     the children correspond to the nodes. EntitySets are the basic objects used to construct dynamic hypergraphs
-	..     in HNX. See methods :py:meth:`classes.hypergraph.Hypergraph.bipartite` and :py:meth:`classes.hypergraph.Hypergraph.from_bipartite`.
 
 
 
