@@ -310,15 +310,9 @@ def test_add_edges_from_on_list_of_single_edge(
     assert new_hg.edges.property_store[new_edge] == expected_props
 
 
-@pytest.mark.parametrize(
-    "edges",
-    [
-        ([("X", {}), ("Y", {})]),
-        ([("X", {"hair_color": "red"}), ("Y", {"age": "42"})]),
-    ],
-)
-def test_add_edges_from_on_list_of_multiple_edges(sevenbysix, edges):
+def test_add_edges_from_on_list_of_multiple_edges_no_properties(sevenbysix):
     h = Hypergraph(sevenbysix.edgedict)
+    edges = [("X", {}), ("Y", {})]
     new_edges = [edge[0] for edge in edges]
 
     assert h.shape == (7, 6)
@@ -334,10 +328,32 @@ def test_add_edges_from_on_list_of_multiple_edges(sevenbysix, edges):
 
     # The new edge will be saved in PropertyStore
     assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
-    for edge, expected_props in edges:
-        # add the default weight to the expected properties
-        expected_props.update({"weight": 1})
-        assert new_hg.edges.property_store[edge] == expected_props
+    assert all(
+        new_hg.edges.property_store[new_edge] == {"weight": 1, "misc_properties": {}}
+        for new_edge in new_edges
+    )
+
+
+def test_add_edges_from_on_list_of_multiple_edges_with_properties(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
+    edges = [("X", {"hair_color": "red"}), ("Y", {"age": "42"})]
+    new_edges = [edge[0] for edge in edges]
+
+    assert h.shape == (7, 6)
+    assert all(new_edge not in h.edges for new_edge in new_edges)
+
+    new_hg = h.add_edges_from(edges)
+
+    # the Hypergraph should not increase its number of edges and incidences because the current behavior of adding
+    # an edge does not connect two or more nodes.
+    assert new_hg.shape == (7, 6)
+    assert all(new_edge not in new_hg.edges for new_edge in new_edges)
+    assert all(new_edge not in new_hg.incidences for new_edge in new_edges)
+
+    # The new edge will be saved in PropertyStore
+    assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
+    assert new_hg.edges.property_store["X"] == {"hair_color": "red", "weight": 1}
+    assert new_hg.edges.property_store["Y"] == {"age": "42", "weight": 1}
 
 
 def test_add_edges_from_on_list_of_edges_no_data(sevenbysix):
@@ -358,7 +374,8 @@ def test_add_edges_from_on_list_of_edges_no_data(sevenbysix):
     # The new edge will be saved in PropertyStore
     assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
     assert all(
-        {"weight": 1} == new_hg.edges.property_store[new_edge] for new_edge in new_edges
+        {"weight": 1, "misc_properties": {}} == new_hg.edges.property_store[new_edge]
+        for new_edge in new_edges
     )
 
 
@@ -382,8 +399,14 @@ def test_add_edges_from_on_list_of_edges_with_and_without_data(sevenbysix):
     # The new edge will be saved in PropertyStore
     assert all(new_edge in new_hg.edges.property_store for new_edge in new_edges)
 
-    assert new_hg.edges.property_store[new_edge1] == {"weight": 1}
-    assert new_hg.edges.property_store[new_edge2] == {"weight": 1}
+    assert new_hg.edges.property_store[new_edge1] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
+    assert new_hg.edges.property_store[new_edge2] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
     assert new_hg.edges.property_store[new_edge3] == {"weight": 1, "hair_color": "red"}
 
 
@@ -402,7 +425,7 @@ def test_add_node_no_attr(sevenbysix):
 
     # Check PropertyStore
     assert new_node in new_hg.nodes.property_store
-    assert new_hg.nodes.property_store[new_node] == {"weight": 1}
+    assert new_hg.nodes.property_store[new_node] == {"weight": 1, "misc_properties": {}}
 
 
 def test_add_node_with_attr(sevenbysix):
@@ -430,7 +453,7 @@ def test_add_node_with_attr(sevenbysix):
 @pytest.mark.parametrize(
     "new_node, data, expected_props",
     [
-        ("B", {}, {"weight": 1}),
+        ("B", {}, {"weight": 1, "misc_properties": {}}),
         (
             "B",
             {"hair_color": "orange", "age": 42},
@@ -455,15 +478,9 @@ def test_add_nodes_from_on_list_of_single_node(
     assert new_hg.nodes.property_store[new_node] == expected_props
 
 
-@pytest.mark.parametrize(
-    "nodes",
-    [
-        ([("B", {}), ("D", {})]),
-        ([("B", {"hair_color": "red"}), ("D", {"age": "42"})]),
-    ],
-)
-def test_add_nodes_from_on_list_of_multiple_nodes(sevenbysix, nodes):
+def test_add_nodes_from_on_list_of_multiple_nodes_no_properties(sevenbysix):
     h = Hypergraph(sevenbysix.edgedict)
+    nodes = [("B", {}), ("D", {})]
     new_nodes = [node[0] for node in nodes]
 
     assert h.shape == (7, 6)
@@ -475,10 +492,28 @@ def test_add_nodes_from_on_list_of_multiple_nodes(sevenbysix, nodes):
     assert all(new_node not in new_hg.nodes for new_node in new_nodes)
 
     assert all(new_node in new_hg.nodes.property_store for new_node in new_nodes)
-    for node, expected_props in nodes:
-        # add the default weight to the expected properties
-        expected_props.update({"weight": 1})
-        assert new_hg.nodes.property_store[node] == expected_props
+    assert all(
+        new_hg.nodes.property_store[node] == {"weight": 1, "misc_properties": {}}
+        for node in new_nodes
+    )
+
+
+def test_add_nodes_from_on_list_of_multiple_nodes_with_properties(sevenbysix):
+    h = Hypergraph(sevenbysix.edgedict)
+    nodes = [("B", {"hair_color": "red"}), ("D", {"age": "42"})]
+    new_nodes = [node[0] for node in nodes]
+
+    assert h.shape == (7, 6)
+    assert all(new_node not in h.nodes for new_node in new_nodes)
+
+    new_hg = h.add_nodes_from(nodes)
+
+    assert new_hg.shape == (7, 6)
+    assert all(new_node not in new_hg.nodes for new_node in new_nodes)
+
+    assert all(new_node in new_hg.nodes.property_store for new_node in new_nodes)
+    assert new_hg.nodes.property_store["B"] == {"hair_color": "red", "weight": 1}
+    assert new_hg.nodes.property_store["D"] == {"age": "42", "weight": 1}
 
 
 def test_add_nodes_from_on_list_of_nodes_no_data(sevenbysix):
@@ -495,7 +530,8 @@ def test_add_nodes_from_on_list_of_nodes_no_data(sevenbysix):
 
     assert all(new_node in new_hg.nodes.property_store for new_node in new_nodes)
     assert all(
-        {"weight": 1} == new_hg.nodes.property_store[new_node] for new_node in new_nodes
+        {"weight": 1, "misc_properties": {}} == new_hg.nodes.property_store[new_node]
+        for new_node in new_nodes
     )
 
 
@@ -519,8 +555,14 @@ def test_add_nodes_from_on_list_of_nodes_with_and_without_data(sevenbysix):
     # The new edge will be saved in PropertyStore
     assert all(new_node in new_hg.nodes.property_store for new_node in new_nodes)
 
-    assert new_hg.nodes.property_store[new_node1] == {"weight": 1}
-    assert new_hg.nodes.property_store[new_node2] == {"weight": 1}
+    assert new_hg.nodes.property_store[new_node1] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
+    assert new_hg.nodes.property_store[new_node2] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
     assert new_hg.nodes.property_store[new_node3] == {"weight": 1, "hair_color": "red"}
 
 
@@ -543,7 +585,10 @@ def test_add_incidence_on_existing_edges_node_no_attr(sevenbysix):
 
     # Check PropertyStore
     assert new_incidence in new_hg.incidences.property_store
-    assert new_hg.incidences.property_store[new_incidence] == {"weight": 1}
+    assert new_hg.incidences.property_store[new_incidence] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
 
 
 def test_add_incidence_user_on_existing_edges_node_with_attr(sevenbysix):
@@ -649,6 +694,7 @@ def test_add_incidences_from_on_new_edge_new_node(sevenbysix):
     assert new_incidence in new_hg.incidences.property_store
     assert new_hg.incidences.property_store[new_incidence] == {
         "weight": 1,
+        "misc_properties": {},
     }
 
 
@@ -727,7 +773,10 @@ def test_add_nodes_to_edges_on_existing_nodes_edges(sevenbysix):
 
     # Check PropertyStore
     assert new_incidence in new_hg.incidences.property_store
-    assert new_hg.incidences.property_store[new_incidence] == {"weight": 1}
+    assert new_hg.incidences.property_store[new_incidence] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
 
 
 def test_add_nodes_to_edges_on_new_edge_new_node_with_attr(sevenbysix):
@@ -782,7 +831,10 @@ def test_add_nodes_to_edges_on_new_edge_new_node(sevenbysix):
 
     # Check PropertyStore
     assert new_incidence in new_hg.incidences.property_store
-    assert new_hg.incidences.property_store[new_incidence] == {"weight": 1}
+    assert new_hg.incidences.property_store[new_incidence] == {
+        "weight": 1,
+        "misc_properties": {},
+    }
 
 
 def test_clone(sevenbysix):

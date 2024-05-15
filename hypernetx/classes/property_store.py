@@ -108,8 +108,7 @@ class PropertyStore:
         # if the item is not in the data table, return defaults for properties
         if uid not in self._data.index:
             return self.default_properties
-        t = self._data.loc[uid].to_dict()
-        return flatten(t)
+        return flatten(self._data.loc[uid].to_dict())
 
     def get_property(self, uid, prop_name) -> Any:
         """Get a property of an item
