@@ -5,7 +5,7 @@ import os
 import networkx as nx
 import pandas as pd
 import numpy as np
-
+import scipy
 from hypernetx import Hypergraph
 from hypernetx.classes.factory import dict_factory_method
 from collections import OrderedDict, namedtuple
@@ -33,8 +33,10 @@ class SevenBySix:
             ]
         )
 
-        # define edges
+        # list of iterables for setsystem param
         self.edges_list = [{a, c, k}, {a, e}, {a, k, t2, v}, {c, e}, {t1, t2}, {k, t2}]
+
+        # dict of dict for setsystem param
         self.edgedict = OrderedDict(
             [
                 (p, {a, c, k}),
@@ -45,7 +47,11 @@ class SevenBySix:
                 (i, {k, t2}),
             ]
         )
+
+        # dataframe for setsystem param
         self.dataframe = create_dataframe(self.edgedict)
+
+        # np.ndarray for setsystem param
         np_data = [
             [p, a],
             [p, c],
@@ -64,8 +70,43 @@ class SevenBySix:
             [i, t2],
         ]
         self.ndarray = np.array(np_data)
-
         self.properties = dict_factory_method(self.edgedict, 2)
+
+        # data for testing
+        # row corresponds to self.nodes (7)
+        # columns corresponds to self.edges (6)
+        self.incidence_matrix = scipy.sparse.csr_matrix(
+            [
+                [0, 0, 0, 1, 1, 1],
+                [0, 1, 0, 1, 0, 0],
+                [0, 1, 0, 0, 1, 0],
+                [1, 0, 0, 1, 0, 1],
+                [0, 0, 1, 0, 0, 0],
+                [1, 0, 1, 0, 0, 1],
+                [0, 0, 0, 0, 0, 1],
+            ]
+        )
+        self.s1_adjacency_matrx = scipy.sparse.csr_matrix(
+            [
+                [0, 1, 1, 1, 0, 1, 1],
+                [1, 0, 1, 1, 0, 0, 0],
+                [1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 1, 1],
+                [0, 0, 0, 0, 0, 1, 0],
+                [1, 0, 0, 1, 1, 0, 1],
+                [1, 0, 0, 1, 0, 1, 0],
+            ]
+        )
+        self.s1_edge_adjacency_matrx = scipy.sparse.csr_matrix(
+            [
+                [0, 0, 1, 1, 0, 1],
+                [0, 0, 0, 1, 1, 0],
+                [1, 0, 0, 0, 0, 1],
+                [1, 1, 0, 0, 1, 1],
+                [0, 1, 0, 1, 0, 1],
+                [1, 0, 1, 1, 1, 0],
+            ]
+        )
 
         # row = number of nodes = 6
         # columns = number of edges = 7
