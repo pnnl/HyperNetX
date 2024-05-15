@@ -142,9 +142,9 @@ def test_properties_on_incidences_ps(incidences_ps):
     "property_store, uid, expected",
     [
         # edge has properties
-        ("edges_ps", "P", {"weight": 43.0}),
+        ("edges_ps", "P", {"weight": 43.0, "misc_properties": {}}),
         # edge does not currently have any properties, uses defaults
-        ("edges_ps", "R", {"weight": 1.0}),
+        ("edges_ps", "R", {"weight": 1, "misc_properties": {}}),
         # incidence has properties
         (
             "incidences_ps",
@@ -157,7 +157,16 @@ def test_properties_on_incidences_ps(incidences_ps):
             },
         ),
         # incidence does not currently have any properties
-        ("incidences_ps", ("R", "A"), {"weight": 3.33}),
+        (
+            "incidences_ps",
+            ("R", "A"),
+            {
+                "weight": 3.33,
+                "misc_properties": {},
+                "hair_color": None,
+                "strength": None,
+            },
+        ),
     ],
 )
 def test_get_properties(property_store, uid, expected, request):
@@ -172,9 +181,9 @@ def test_get_properties(property_store, uid, expected, request):
     "property_store, uid, expected",
     [
         # edge has properties
-        ("edges_ps", "P", {"weight": 43.0}),
+        ("edges_ps", "P", {"weight": 43.0, "misc_properties": {}}),
         # edge does not currently have any properties, uses defaults
-        ("edges_ps", "R", {"weight": 1.0}),
+        ("edges_ps", "R", {"weight": 1.0, "misc_properties": {}}),
         # incidence has properties
         (
             "incidences_ps",
@@ -187,7 +196,16 @@ def test_get_properties(property_store, uid, expected, request):
             },
         ),
         # incidence does not currently have any properties
-        ("incidences_ps", ("R", "A"), {"weight": 3.33}),
+        (
+            "incidences_ps",
+            ("R", "A"),
+            {
+                "weight": 3.33,
+                "misc_properties": {},
+                "hair_color": None,
+                "strength": None,
+            },
+        ),
     ],
 )
 def test_getitem(property_store, uid, expected, request):
@@ -207,7 +225,7 @@ def test_getitem(property_store, uid, expected, request):
         ("edges_ps", "P", "NOT A PROPERTY", None),
         # edge does not currently have any properties, uses defaults
         ("edges_ps", "S", WEIGHT, 1.0),
-        ("edges_ps", "S", MISC_PROPERTIES, None),
+        ("edges_ps", "S", MISC_PROPERTIES, {}),
         ("edges_ps", "S", "NOT A PROPERTY", None),
         # incidence does have properties
         ("incidences_ps", ("I", "K"), WEIGHT, 1.23),
@@ -217,7 +235,7 @@ def test_getitem(property_store, uid, expected, request):
         ("incidences_ps", ("I", "K"), "not a property", None),
         # incidence does not have any properties, uses defaults
         ("incidences_ps", ("S", "A"), WEIGHT, 3.33),
-        ("incidences_ps", ("S", "A"), MISC_PROPERTIES, None),
+        ("incidences_ps", ("S", "A"), MISC_PROPERTIES, {}),
         ("incidences_ps", ("S", "A"), "not a property", None),
     ],
 )
@@ -268,7 +286,7 @@ def test_set_properties(incidences_ps):
     uid = ("S", "A")
 
     assert incidences_ps.get_property(uid, "hair_color") is None
-    assert incidences_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert incidences_ps.get_property(uid, MISC_PROPERTIES) == {}
     assert incidences_ps.get_property(uid, "weight") == 3.33
 
     incidences_ps.set_properties(uid, data)
@@ -285,7 +303,7 @@ def test_set_properties_edges_existing_edge(edges_ps):
     uid = "R"
 
     assert edges_ps.get_property(uid, "new_property") is None
-    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {}
     assert edges_ps.get_property(uid, "weight") == 1.0
 
     edges_ps.set_properties(uid, data)
@@ -300,7 +318,7 @@ def test_set_properties_multiple_edges(edges_ps):
     uid = "R"
 
     assert edges_ps.get_property(uid, "new_property") is None
-    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {}
     assert edges_ps.get_property(uid, WEIGHT) == 1.0
 
     edges_ps.set_properties(uid, data)
@@ -313,7 +331,7 @@ def test_set_properties_multiple_edges(edges_ps):
     uid = "X"
 
     assert edges_ps.get_property(uid, "new_property") is None
-    assert edges_ps.get_property(uid, MISC_PROPERTIES) is None
+    assert edges_ps.get_property(uid, MISC_PROPERTIES) == {}
     assert edges_ps.get_property(uid, WEIGHT) == 1.0
 
     edges_ps.set_properties(uid, data)
