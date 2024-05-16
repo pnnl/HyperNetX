@@ -35,28 +35,39 @@ There are five types of setsystems currently accepted by the library.
 1.  **iterable of iterables** : Barebones hypergraph, which uses Pandas default
     indexing to generate hyperedge ids. Elements must be hashable.: ::
 
-    >>> H = Hypergraph([{1,2},{1,2},{1,2,3}])
+    >>> list_of_lists = [['book','candle','cat'],['book','coffee cup'],['coffee cup','radio']]
+    >>> H = Hypergraph(list_of_lists)
 
 2.  **dictionary of iterables** : The most basic way to express many-to-many
     relationships providing edge ids. The elements of the iterables must be
     hashable): ::
 
-    >>> H = Hypergraph({'e1':[1,2],'e2':[1,2],'e3':[1,2,3]})
+    >>> scenes_dictionary = {
+    >>> 	0: ('FN', 'TH'),
+    >>> 	1: ('TH', 'JV'),
+    >>> 	2: ('BM', 'FN', 'JA'),
+    >>> 	3: ('JV', 'JU', 'CH', 'BM'),
+    >>> 	4: ('JU', 'CH', 'BR', 'CN', 'CC', 'JV', 'BM'),
+    >>> 	5: ('TH', 'GP'),
+    >>> 	6: ('GP', 'MP'),
+    >>> 	7: ('MA', 'GP'),
+    >>> 	8: ('FN', 'TH')}
+    >>> H = hnx.Hypergraph(scenes_dictionary)
 
 3.  **dictionary of dictionaries**  : allows cell properties to be assigned
     to a specific (edge, node) incidence. This is particularly useful when
     there are variable length dictionaries assigned to each pair: ::
 
-    >>> d = {'e1':{ 1: {'w':0.5, 'name': 'related_to'},
-    >>>             2: {'w':0.1, 'name': 'related_to',
-    >>>                 'startdate': '05.13.2020'}},
-    >>>      'e2':{ 1: {'w':0.52, 'name': 'owned_by'},
-    >>>             2: {'w':0.2}},
-    >>>      'e3':{ 1: {'w':0.5, 'name': 'related_to'},
-    >>>             2: {'w':0.2, 'name': 'owner_of'},
-    >>>             3: {'w':1, 'type': 'relationship'}}
-
-    >>> H = Hypergraph(d, cell_weight_col='w')
+    >>> nested_dictionary =  {
+    >>> 	0: {'FN':{'time':'early', 'weight': 7}, 'TH':{'time':'late'}},
+    >>> 	1: {'TH':{'subject':'war'}, 'JV':{'observed_by':'someone'}},
+    >>> 	2: {'BM':{}, 'FN':{}, 'JA':{'role':'policeman'}},
+    >>> 	3: {'JV':{'was_carrying':'stick'}, 'JU':{}, 'CH':{}, 'BM':{'state':'intoxicated', 'color':'pinkish'}},
+    >>> 	4: {'JU':{'weight':15}, 'CH':{}, 'BR':{'state':'worried'}, 'CN':{}, 'CC':{}, 'JV':{}, 'BM':{}},
+    >>> 	5: {'TH':{}, 'GP':{}},
+    >>> 	6: {'GP':{}, 'MP':{}},
+    >>> 	7: {'MA':{}, 'GP':{'accompanied_by':'dog', 'weight':15, 'was_singing': 'Frère Jacques'}}}
+    >>> H = hnx.Hypergraph(nested_dictionary)
 
 4.  **pandas.DataFrame** For large datasets and for datasets with cell
     properties it is most efficient to construct a hypergraph directly from
@@ -76,15 +87,17 @@ There are five types of setsystems currently accepted by the library.
     +-----------+-----------+-----------+-----------------------------------+
     |   e2      |   1       |   0.52    | {"name":"owned_by"}               |
     +-----------+-----------+-----------+-----------------------------------+
-    |   e2      |   2       |   0.2     |                                   |
-    +-----------+-----------+-----------+-----------------------------------+
-    |   ...     |   ...     |   ...     | {...}                             |
-    +-----------+-----------+-----------+-----------------------------------+
 
     The first row of the dataframe is used to reference each column. ::
 
-    >>> H = Hypergraph(df,edge_col="col1",node_col="col2",
-    >>>                 cell_weight_col="w",misc_cell_properties="col3")
+    >>> import pandas as pd
+    >>> d = {'col1': ['e1', 'e1', 'e2'],
+    >>>      'col2': [1, 2, 1],
+    >>>      'w': [0.5, 0.1, 0.52],
+    >>>      'col3':[{'name': 'related_to'}, {'name': 'related_to', 'startdate':'05.13.2020'}, {'name': 'owned_by'}]}
+    >>> df = pd.DataFrame(d)
+    >>> H = hnx.Hypergraph(df, edge_col="col1", node_col="col2",
+    >>>                    cell_weight_col="w", misc_cell_properties_col="col3")
 
 5.  **numpy.ndarray** For homogeneous datasets given in a *n x 2* ndarray a
     pandas dataframe is generated and column names are added from the
@@ -92,10 +105,9 @@ There are five types of setsystems currently accepted by the library.
     types are added with a separate dataframe or dict and passed through the
     cell_properties keyword. ::
 
-    >>> arr = np.array([['e1','1'],['e1','2'],
-    >>>                 ['e2','1'],['e2','2'],
-    >>>                 ['e3','1'],['e3','2'],['e3','3']])
-    >>> H = hnx.Hypergraph(arr, column_names=['col1','col2'])
+    >>> import bumpy as np
+    >>> np_array = np.array([['A','a'],['A','b'],['A','c'],['B','a'],['B','d'],['C','c'],['C','d']])
+    >>> H = hnx.Hypergraph(np_array)
 
 
 Edge and Node Properties

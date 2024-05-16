@@ -7,8 +7,12 @@ from hypernetx.classes.property_store import PropertyStore
 
 def test_to_dataframe_with_no_user_defined_properties():
     # Create a HypergraphView with no user-defined properties
-    incidence_store =IncidenceStore( pd.DataFrame(incidences(), columns=["edges", "nodes"]))
-    hyp_view_0 = HypergraphView(incidence_store, level=0, property_store=PropertyStore())
+    incidence_store = IncidenceStore(
+        pd.DataFrame(incidences(), columns=["edges", "nodes"])
+    )
+    hyp_view_0 = HypergraphView(
+        incidence_store, level=0, property_store=PropertyStore()
+    )
 
     # Create the expected dataframe
     expected_dfp = hyp_view_0.user_defined_properties
