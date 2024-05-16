@@ -1,26 +1,8 @@
 .. _glossary:
 
-=====================
-Glossary of HNX terms
-=====================
-
-
-The HNX library centers around the idea of a :term:`hypergraph`.  This glossary provides a few key terms and definitions.
-
-A Hypergraph in HNX
-There are many definitions of a *hypergraph*. In HNX a hypergraph
-is a tuple of three sets, :math:`H =  (V, E, \mathcal{I})`. 
-
-- :math:`V`, a set of *nodes* (aka hypernodes, vertices), distinguished by unique identifiers
-- :math:`E` a set of *edges* (aka hyperedges), distinguished by  unique identifiers
-- :math:`\mathcal{I}`, a set of *incidences*, which form a subset of :math:`E \times V`, distinguished by the pairing of unique identifiers of edges in :math:`E` and nodes in :math:`V`
-
-The incidences :math:`\mathcal{I}` may be though of as a boolean function, :math:`\mathcal{I} : E \times V \rightarrow \{0, 1\}`, indicating whether or not a pair is included in the hypergraph.
-The :term:`incidence matrix` defines the function in terms of the cross product of the two sets.
-
-**Note: For all definitions below, assume** :math:`H =  (V, E, \mathcal{I})` **is a
-hypergraph.**
-
+===================
+HNX Data Structures
+===================
 
 ..  figure:: images/code_structure.png
    :width: 300px
@@ -28,9 +10,30 @@ hypergraph.**
    
    Code structure for HNX.
 
+The HNX library centers around the idea of a :term:`hypergraph`.  
+There are many definitions of a *hypergraph*. In HNX a hypergraph
+is a tuple of three sets, :math:`H =  (V, E, \mathcal{I})`. 
 
-These hypergraph components are instantiate with three hypergraph objects for the nodes, edges, and incidences in HyperNetxX hypergraph object. We refer to these as the *hypergraph views.* We can visualize this through a high level diagram of our current code structure shown in Fig. 1. Here we begin with data (e.g., data frame, dictionary, list of lists, etc.) that is digested via the appropriate factory method to construct property stores for nodes, edges, and incidences as well as an incidence store that captures the hypergraph structure. These four objects are then used to create three hypergraph views that the hypergraph object uses to access and analyze the hypergraph structure and attributes.
+- :math:`V`, a set of *nodes* (aka hypernodes, vertices), distinguished by unique identifiers
+- :math:`E` a set of *edges* (aka hyperedges), distinguished by  unique identifiers
+- :math:`\mathcal{I}`, a set of *incidences*, which form a subset of :math:`E \times V`, distinguished by the pairing of unique identifiers of edges in :math:`E` and nodes in :math:`V`
 
+The incidences :math:`\mathcal{I}` can be described by a Boolean function, :math:`\mathcal{I}_B : E \times V \rightarrow \{0, 1\}`, indicating whether or not a pair is included in the hypergraph.
+
+In HNX we instantiate :math:`H =  (V, E, \mathcal{I})` using three *hypergraph views.* We can visualize this through a high 
+level diagram of our current code structure shown in Fig. 1. Here we begin with data (e.g., data frame, dictionary, 
+list of lists, etc.) that is digested via the appropriate factory method to construct property stores for nodes, 
+edges, and incidences as well as an incidence store that captures the hypergraph structure. 
+These four objects are then used to create three hypergraph views that the hypergraph object 
+uses to access and analyze the hypergraph structure and attributes.
+
+
+=====================
+Glossary of HNX terms
+=====================
+
+**Note: For all definitions below, assume** :math:`H =  (V, E, \mathcal{I})` **is a
+hypergraph.**
 
 .. glossary::
 	:sorted:
@@ -53,52 +56,66 @@ These hypergraph components are instantiate with three hypergraph objects for th
 		edges incident with the same set of nodes or nodes incident with the same set of edges are collapsed to single objects.
 
 	IncidenceStore
-		Class in incidence_store.py. A set of ordered pairs of Edges and Nodes, i.e. a subset of Edges :math:`\times` Nodes. 
-		The minimal amount of data required to instantiate a hypergraph is a set of Incidences, :math:`\mathcal{I}`. The
-		Edges and Nodes of a Hypergraph can be inferred from the pairs :math:`(e,v)` in the Incidences.
-			
-		Each ordered pair uniquely identifies a single
-		incidence. Each incidence has metadata assigned to it. Incidences
-		in a hypergraph are assigned a weight either by default or specified by a user.
+		Class in incidence_store.py holding the set of ordered pairs of Edges and Nodes belonging to the hypergraph. The :term:`elements` and 
+		:term:`memberships` are inferred from the :term:`incidences` held in the IncidenceStore.
+
+	PropertyStore
+		Class in property_store.py holding the metadata associate with each of the edges, nodes, and incidences found in the hypergraph.
+
+	HypergraphView
+		Class in hyp_view.py tying the properties of hypergraph objects held in the :term:`PropertyStore` class, which holds metadata, with their ids 
+		held in the :term:`IncidenceStore` class, which holds the Hypergraph relationships.
+		The PropertyStores are unaware of the IncidenceStore and vice versa.
 
 	elements
-		The set of nodes incident to the edge in the Hypergraph.
+		The elements of an edge is the set of nodes incident to the edge in the Hypergraph.
 
 	memberships   
-		The set of edges incident to the node in the Hypergraph.
+		The memberships of a node is the set of edges incident to the node in the Hypergraph.
+
+	incidences
+		The ordered pairs in :math:`\mathcal{I} \subset E \times V`, which defining the relationships in the hypergraph.
+		The incidences :math:`\mathcal{I}` of a hypergraph provide the minimal amount of data required to instantiate the hypergraph. 
+		The Edges :math:`E` and Nodes :math:`V` of a Hypergraph can be inferred from the pairs :math:`(e,v)` in the Incidences.
+			
+		Each incidence uniquely identifies a single edge and node.
+		Each incidence has metadata assigned to it. Incidences
+		in a hypergraph are assigned a weight either by default or specified by a user.
+		If :math:`(e,v) \in \mathcal{I}` then :math:`e` *contains* :math:`v`, :math:`v` is an
+		:term:`element <elements>` of :math:`e`, and :math:`v` has :term:`membership <memberships>` in :math:`e`.
 		
 	incidence matrix
-		A rectangular matrix constructed from a hypergraph, :math:`H =  (V, E, \mathcal{I})`. The rows of the matrix are indexed and ordering of :math:`V`. The columns of the matrix are indexed by an ordering of :math:`E`. An entry in the matrix at
-		position :math:`(v,e)` for some :math:`v \in V`  and :math:`e \in E :math:` is nonzero if and only if :math:`(e,v) \in I`. 	
+		A rectangular matrix constructed from a hypergraph, :math:`H =  (V, E, \mathcal{I})`. The rows of the matrix are indexed by :math:`V`. 
+		The columns of the matrix are indexed by :math:`E`. An entry in the matrix at
+		position :math:`(v,e)` for some :math:`v \in V`  and :math:`e \in E` is nonzero if and only if :math:`(e,v) \in I`. 	
 		A *weighted* incidence matrix uses the incidence weight associated with :math:`(e,v)` for the nonzero entry. An *unweighted* incidence
 		matrix has the integer :math:`1` in all nonzero entries.
-		If :math:`(e,v) \in \mathcal{I}` then :math:`e` *contains* :math:`v`, :math:`v` is an
-		`element` of :math:`e`, and :math:`v` has membership in :math:`e`.
+		
 
 	edges
 	hyperedges
 		A set of objects distinguished by unique identifiers (uids). Each edge has 
 		metadata associated with it. Edges are assigned a weight either by default or
-		specified by the user.
+		specified by the user. Edges contain nodes. Nodes are :term:`elements` of edges.
 
 	nodes
 	vertices
 	hypernodes
 		A set of objects distinguished by unique identifiers (uids). Each node has 
 		metadata associated with it. Nodes are assigned a weight either by default or
-		specified by the user.
+		specified by the user. Nodes belong to edges. Nodes have :term:`memberships` in edges.
 
 	subhypergraph
 		A subhypergraph of a hypergraph, :math:`H =  (V, E, \mathcal{I})`, is a hypergraph, :math:`H' =  (V', E', \mathcal{I'})` such that :math:`(e',v') \in \mathcal{I'}` if and only if :math:`e' \in E' \subset E`, :math:`v' \in V' \subset V` and :math:`(e,v) \in \mathcal{I}`.
 
 	degree
-		Given a hypergraph (Nodes, Edges, Incidence), the degree of a node in Nodes is the number of edges in Edges to which the node is incident.
+		Given a hypergraph :math:`H =  (V, E, \mathcal{I})`, the degree of a node in :math:`V` is the number of edges in :math:`E` to which the node is incident.
 		See also: :term:`s-degree`		
 
 	dual
 		The dual of a hypergraph exchanges the roles of the edges and nodes in the hypergraph.
 		For a hypergraph :math:`H =  (V, E, \mathcal{I})` the dual is
-		`H_D = (E, V, \mathcal{I}^T)` where the ordered pairs in :math:`\mathcal{I}^T)` are the transposes of the ordered pairs in :math:`\mathcal{I}`.  The :term:`incidence matrix` of :math:`H_D` is the transpose of the incidence matrix of :math:`H`.
+		:math:`H_D = (E, V, \mathcal{I}^T)` where the ordered pairs in :math:`\mathcal{I}^T` are the transposes of the ordered pairs in :math:`\mathcal{I}`.  The :term:`incidence matrix` of :math:`H_D` is the transpose of the incidence matrix of :math:`H`.
 
 	toplex
 		A toplex in a hypergraph, :math:`H =  (V, E, \mathcal{I})`, is an edge :math:`e \in E` whose set of elements is not properly contained in any other edge in :math:`E`. That is, if :math:`f \in E` and the elements of :math:`e` are all elements of :math:`f` then the elements of :math:`f` are all elements of :math:`e`. 
