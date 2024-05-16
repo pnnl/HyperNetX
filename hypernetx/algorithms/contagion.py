@@ -70,7 +70,7 @@ def contagion_animation(
     except ModuleNotFoundError as e:
         raise Exception(
             f"If you need to use {__name__}, please install additional packages by running the "
-            f"following command: pip install .['all']"
+            f"following command: pip install celluloid"
         ) from e
 
     nodeState = defaultdict(lambda: "S")
