@@ -37,7 +37,12 @@ Our shared values as software developers guide us in our day-to-day interactions
 Contact us
 ----------
 
-Questions and comments are welcome! Contact us at
+Questions and comments are welcome! 
+
+Add discussion topics and comments at
+	https://github.com/pnnl/HyperNetX/discussions
+
+Contact us directly at
 	hypernetx@pnnl.gov
 
 Contents
