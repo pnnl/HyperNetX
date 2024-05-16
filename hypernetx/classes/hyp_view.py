@@ -103,19 +103,25 @@ class HypergraphView(object):
 
     @property  ### will remove this later
     def dataframe(self):
-        return self._property_store.properties
-
-    @property
-    def properties(self):
         """
-        User-defined properties. Does not include items in the HypergraphView
-        that the user has not explicitly defined properties for.
+        All properties for objects in the HypergraphView. Same as to_dataframe.
 
         Returns
         -------
         out: pd.DataFrame
         """
-        return self._property_store.properties
+        return self.to_dataframe
+
+    @property
+    def properties(self):
+        """
+        All properties for objects in the HypergraphView. Same as to_dataframe.
+
+        Returns
+        -------
+        out: pd.DataFrame
+        """
+        return self.to_dataframe
 
     @property
     def user_defined_properties(self):
