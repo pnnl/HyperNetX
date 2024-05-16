@@ -23,11 +23,11 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10,<=3.12.3"
-networkx = "^3.3"
-pandas = "^2.2.2"
-scikit-learn = "^1.4.2"
-celluloid = "^0.2.0"
-igraph = "^0.11.4"
+networkx = ">=3.3"
+pandas = ">=2.2.2"
+scikit-learn = ">=1.4.2"
+celluloid = ">=0.2.0"
+igraph = ">=0.11.4"
 
 [tool.poetry.group.widget]
 optional = true
