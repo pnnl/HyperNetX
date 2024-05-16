@@ -179,7 +179,7 @@ def modularity(HG, A, wdc=linear):
         EC = sum([wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2])
     else:
         _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-        _vals = list(HG.edges.dataframe["weight"]) 
+        _vals = list(HG.edges.dataframe["weight"])
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
