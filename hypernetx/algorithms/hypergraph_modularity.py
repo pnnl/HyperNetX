@@ -179,7 +179,7 @@ def modularity(HG, A, wdc=linear):
         EC = sum([wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2])
     else:
         _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-        _vals = list(HG.edge_props["weight"])  ## Thanks Brenda!!
+        _vals = list(HG.edges.dataframe["weight"]) 
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
@@ -397,7 +397,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
 
             ## ec portion before move
             _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-            _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+            _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
             _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
             _df = _df.groupby(by="key").sum()
             ec = sum(
@@ -425,7 +425,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
                 L = [[dct_A[i] for i in x] for x in H_id]
                 ## EC
                 _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-                _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+                _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
                 _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
                 _df = _df.groupby(by="key").sum()
                 ecp = sum(
