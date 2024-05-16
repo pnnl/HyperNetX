@@ -2070,8 +2070,8 @@ class Hypergraph:
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
-        Returns a generator for the :term:`s-edge-connected components`
-        or the :term:`s-node-connected components` of the hypergraph.
+        Returns a generator for the :term:`s-edge-connected component`
+        or the :term:`s-node-connected component` of the hypergraph.
 
         Parameters
         ----------

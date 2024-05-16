@@ -41,10 +41,6 @@ These hypergraph components are instantiate with three hypergraph objects for th
 		PropertyStore. By storing the data and metadata in a single place, updates and references have a single source of
 		truth.
 
-	IncidenceStore
-		Class in icidence_store.py. The minimal amount of data required to instantiate a hypergraph is a set of Incidences, :math:`\mathcal{I}`. The
-		Edges and Nodes can be inferred from the pairs :math:`(e,v)` in the Incidences.
-
 	hypergraph
 		A hypergraph is a tuple of three sets, :math:`H =  (V, E, \mathcal{I})`. 
 
@@ -57,8 +53,10 @@ These hypergraph components are instantiate with three hypergraph objects for th
 		edges incident with the same set of nodes or nodes incident with the same set of edges are collapsed to single objects.
 
 	IncidenceStore
-		A set of ordered pairs of Edges and Nodes. 
-		A subset of Edges :math:`\times` Nodes.
+		Class in incidence_store.py. A set of ordered pairs of Edges and Nodes, i.e. a subset of Edges :math:`\times` Nodes. 
+		The minimal amount of data required to instantiate a hypergraph is a set of Incidences, :math:`\mathcal{I}`. The
+		Edges and Nodes of a Hypergraph can be inferred from the pairs :math:`(e,v)` in the Incidences.
+			
 		Each ordered pair uniquely identifies a single
 		incidence. Each incidence has metadata assigned to it. Incidences
 		in a hypergraph are assigned a weight either by default or specified by a user.
