@@ -72,41 +72,42 @@ Google Colab
 ------------
 
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%201%20-%20HNX%20Basics.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 1 - HNX Basics</span>
-      </a>
-      </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 2 - Visualization Methods</span>
-      </a>
-      </br>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%201%20-%20HNX%20Basics.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 1 - HNX Basics</span>
+</a>
+</br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 3 - LesMis Case Study</span>
-      </a>
-      </br>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 2 - Visualization Methods</span>
+</a>
+</br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 4 - LesMis Visualizations-Book Tour</span>
-      </a>
-      </br>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 3 - LesMis Case Study</span>
+</a>
+</br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 5 - HNX attributed hypergraph</span>
-      </a>
-      </br>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 4 - LesMis Visualizations-Book Tour</span>
+</a>
+</br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
-      </a>
-   </br>
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 5 - HNX attributed hypergraph</span>
+</a>
+</br>
+
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/pre-release-v2.3/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
+</a>
+</br>
 
 Jupyter Notebooks
 -----------------
