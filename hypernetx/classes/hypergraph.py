@@ -1972,8 +1972,7 @@ class Hypergraph:
     #### hypergraph method using linegraph gotten from incidence store
     def is_connected(self, s=1, edges=False):
         """
-        Determines if hypergraph is :term:`s-connected <s-connected,
-        s-node-connected>`.
+        Determines if hypergraph is :term:`s-connected`.
 
         Parameters
         ----------
@@ -2071,10 +2070,8 @@ class Hypergraph:
 
     def s_connected_components(self, s=1, edges=True, return_singletons=False):
         """
-        Returns a generator for the :term:`s-edge-connected components
-        <s-edge-connected component>`
-        or the :term:`s-node-connected components <s-connected component,
-        s-node-connected component>` of the hypergraph.
+        Returns a generator for the :term:`s-edge-connected components`
+        or the :term:`s-node-connected components` of the hypergraph.
 
         Parameters
         ----------
