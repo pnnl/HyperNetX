@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import warnings
-
-warnings.filterwarnings("default", category=DeprecationWarning)
-
 from copy import deepcopy
 from collections import UserList
 import pandas as pd
+
+warnings.filterwarnings("default", category=DeprecationWarning)
 
 __all__ = ["HypergraphView"]
 
@@ -71,12 +70,13 @@ class HypergraphView(object):
         """
         Dataframe of properties (user defined and default) for
         all items in the HypergraphView.
+        Creates a properties dataframe of non-user-defined items with default values.
+        Combines user-defined and non-user-defined properties into one dataframe.
 
         Returns
         -------
-        out: pd.DataFrame
+        : pd.DataFrame
         """
-        # Create a properties dataframe of non-user-defined items with default values
 
         df = self.user_defined_properties.copy(deep=True)
 
@@ -98,7 +98,6 @@ class HypergraphView(object):
             index=non_user_defined_items, data=default_data
         )
 
-        # Combine user-defined and non-user-defined properties into one dataframe
         return pd.concat([df, non_user_defined_properties]).loc[list(self.items)]
 
     @property  ### will remove this later
@@ -119,7 +118,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        out: pd.DataFrame
+        : pd.DataFrame
         """
         return self.to_dataframe
 
@@ -131,7 +130,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        out: pd.DataFrame
+        : pd.DataFrame
         """
         return self._property_store.properties
 
@@ -178,12 +177,18 @@ class HypergraphView(object):
         ----------
         item : _type_
             _description_
+
+        Returns
+        -------
+        : bool
         """
         return item in self._items
 
     def __call__(self):
         """
-        Returns iterator
+        Returns
+        -------
+        : iterator
         """
         return iter(self._items)
 
@@ -200,15 +205,30 @@ class HypergraphView(object):
 
         Parameters
         ----------
-        uid : _type_
-            _description_
+        uid : hashable
+            unique identifier for object in HypergraphView
+
+        Returns
+        -------
+        : AttrList
+            UserList of incident objects (neighbors in the bipartite graph)
+
         """
         if uid in self._items:
             neighbors = self.incidence_store.neighbors(self.level, uid)
             return AttrList(uid, self, initlist=neighbors)
 
-    def set_defaults(self, defaults):
-        self.property_store.set_defaults(defaults)
+    def set_defaults(self, defaults_dict):
+        """
+        Creates or updates default values in PropertyStore associated with this
+        HypergraphView. Does not overwrite existing user-defined properties
+
+        Parameters
+        ----------
+        defaults_dict : dict
+            Dictionary of prop_names to their default values
+        """
+        self.property_store.set_defaults(defaults_dict)
 
 
 class AttrList(UserList):
@@ -228,7 +248,7 @@ class AttrList(UserList):
     def __init__(self, uid, hypergraph_view, initlist=None):
         self._hypergraph_view = hypergraph_view
         self._uid = uid
-        if initlist == None:
+        if initlist is None:
             initlist = hypergraph_view._incidence_store.neighbors(self._level, uid)
         super().__init__(initlist)
 
