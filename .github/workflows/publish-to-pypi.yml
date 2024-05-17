@@ -29,7 +29,7 @@ jobs:
     - name: Build and publish distribution 📦 to Test PyPI
       uses: JRubics/poetry-publish@v2.0
       with:
-        python_version: "3.11.8"
+        python_version: "3.11"
         pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_name: "testpypi"
         repository_url: "https://test.pypi.org/legacy/"
@@ -37,5 +37,5 @@ jobs:
     - name: Build and publish distribution 📦 to PyPI
       uses: JRubics/poetry-publish@v2.0
       with:
-        python_version: "3.11.18"
+        python_version: "3.11"
         pypi_token: ${{ secrets.PYPI_API_TOKEN }}
