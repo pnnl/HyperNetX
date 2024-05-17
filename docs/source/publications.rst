@@ -4,6 +4,8 @@
 Publications
 ============
 
+**Praggastis, Brenda; Aksoy, Sinan; Arendt, Dustin; Bonicillo, Mark; Joslyn, Cliff; Purvine, Emilie; Shapiro, Madelyn; Yun, Ji Young: (2024)** 
+"HyperNetX: A Python package for modeling complex network data as hypergraphs", *Journal of Open Source Software, 9(95), 6016*, https://doi.org/10.21105/joss.06016
 
 **Joslyn, Cliff A; Aksoy, Sinan; Callahan, Tiffany J; Hunter, LE; Jefferson, Brett; Praggastis, Brenda; Purvine, Emilie AH; Tripodi, Ignacio J: (2021)** "Hypernetwork Science: From Multidimensional Networks to Computational Topology", https://doi.org/10.1007/978-3-030-67318-5_25, in: Unifying Themes in Complex systems X: Proc. 10th Int. Conf. Complex Systems*, ed. D. Braha et al., pp. 377-392, Springer, https://doi.org/10.1007/978-3-030-67318-5_25
 
@@ -34,4 +36,5 @@ https://ieeexplore.ieee.org/document/9820632
 
 **Liu, Xu T; Firoz, Jesun; Lumsdaine, Andrew; Joslyn, CA; Aksoy, Sinan; Praggastis, Brenda; Gebremedhin, Assefaw: (2021)** "Parallel Algorithms for Efficient Computation of High-Order Line Graphs of Hypergraphs", in: *2021 IEEE 28th International Conference on High Performance Computing, Data, and Analytics (HiPC 2021)*,
 https://doi.ieeecomputersociety.org/10.1109/HiPC53243.2021.00045
+
 

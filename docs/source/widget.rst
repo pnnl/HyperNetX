@@ -17,7 +17,7 @@ the hypergraph visualization and the nodes & edges panel.
 You may `demo the widget here <https://pnnl.github.io/hypernetx-widget/>`_.
 
 The HypernetxWidget is open source and
-available on `GitHub <https://github.com/pnnl/hypernetx-widget>`_ It is also `published on PyPi
+available on `GitHub <https://github.com/pnnl/hypernetx-widget>`_ It is also `published on PyPI
 <https://pypi.org/project/hnxwidget/>`_
 
 **The HyperNetX widget is currently in beta with limitations on the Jupyter environment in which it may be used.

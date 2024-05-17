@@ -114,7 +114,7 @@ if the vertex :math:`v_i` is in edge :math:`e_j`.
      - 0
 
 
-.. _label3:
+.. _f2:
 .. figure:: images/biblio_hg.png
     :class: with-border
     :width: 400
@@ -296,7 +296,7 @@ can also measure the size of the intersection
 define its **width** :math:`s(W) = \min_{0 \le i \le N} s_i` as the size
 of the smallest such intersection. When a walk :math:`W` has width
 :math:`s`, we call it an :math:`s`-walk. It follows that all walks
-in a graph are 1-walks with width 1. In Fig. `5 <#swalks>`__ we see two
+in a graph are 1-walks with width 1. In :numref:`f5` we see two
 walks in a hypergraph. While both have length 2 (counting edgewise, and
 recalling origin zero), the one on the left has width 1, and that on the
 right width 3.
@@ -369,7 +369,7 @@ one is included in the other, or their intersection is included in both.
 This creates a partial order, establishing a further one-to-one mapping
 to a variety of lattice structures and dual lattice structures relating
 how groups of vertices are included in groups of edges, and vice versa.
-Fig. refex shows the **concept lattice** [3], perhaps the most important
+:numref:`f7`  shows the **concept lattice** [3], perhaps the most important
 of these structures, determined by our example.
 
 .. _f7:

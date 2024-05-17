@@ -59,9 +59,6 @@ hypergraph.**
 		Class in incidence_store.py holding the set of ordered pairs of Edges and Nodes belonging to the hypergraph. The :term:`elements` and 
 		:term:`memberships` are inferred from the :term:`incidences` held in the IncidenceStore.
 
-	PropertyStore
-		Class in property_store.py holding the metadata associate with each of the edges, nodes, and incidences found in the hypergraph.
-
 	HypergraphView
 		Class in hyp_view.py tying the properties of hypergraph objects held in the :term:`PropertyStore` class, which holds metadata, with their ids 
 		held in the :term:`IncidenceStore` class, which holds the Hypergraph relationships.
@@ -74,7 +71,7 @@ hypergraph.**
 		The memberships of a node is the set of edges incident to the node in the Hypergraph.
 
 	incidences
-		The ordered pairs in :math:`\mathcal{I} \subset E \times V`, which defining the relationships in the hypergraph.
+		The ordered pairs in :math:`\mathcal{I} \subset E \times V`, which define the relationships in the hypergraph.
 		The incidences :math:`\mathcal{I}` of a hypergraph provide the minimal amount of data required to instantiate the hypergraph. 
 		The Edges :math:`E` and Nodes :math:`V` of a Hypergraph can be inferred from the pairs :math:`(e,v)` in the Incidences.
 			
@@ -124,18 +121,21 @@ hypergraph.**
 		A hypergraph for which no edge is completely contained in another.
 
 	s-adjacent
+		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s,
+		two nodes in :math:`V` are s-adjacent if there are at least s edges in :math:`E`, which contain both of them.
+
 	s-edge-adjacent
 		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s,
-		two nodes in :math:`V` are s-adjacent if there are at least s edges in :math:`E`, which contain both of them. Two edges are s-edge-adjacent if
+		two edges in :math:`E` are s-edge-adjacent if
 		they there are at least s nodes in :math:`V` belonging to both of them.
 		Another way of saying this is two edges are s-edge-adjacent if 
 		they are s-adjacent in the dual of :math:`H`.
 
 	s-adjacency matrix
-	s-edge-adjacency matrix
 		For a positive integer s, a square matrix for a hypergraph, :math:`H =  (V, E, \mathcal{I})`, indexed by :math:`V` such that an
 		entry :math:`(v_1,v_2)` is nonzero if only if :math:`v_1, v_2 \in V` are s-adjacent. An s-adjacency matrix can be weighted or unweighted, in which case all entries are 0's and 1's.
 
+	s-edge-adjacency matrix
 		An s-edge-adjacency matrix is the s-adjacency matrix for the dual
 		of :math:`H`.
 
@@ -175,12 +175,15 @@ hypergraph.**
 		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-degree of a node, :math:`v \in V` is the number of edges in :math:`E` of size at least s to which :math:`v` belongs. See also: :term:`degree`
 
 	s-distance
+		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-distances between two nodes in :math:`V` is the length of the shortest :term:`s-node-walk` between them. 
+		If no s-node-walk between the pair of nodes exists, the s-distance between them is infinite. 
+		
 	s-edge-distance
-		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-distances between two nodes in :math:`V` is the length of the shortest :term:`s-node-walk` between them. If no s-node-walk between the pair of nodes exists, the s-distance between them is infinite. The s-edge-distance
-		between edges is the length of the shortest :term:`s-edge-walk` between them. If no s-edge-walk between the pair of edges exists, then s-distance between them is infinite.
+		The s-edge-distance
+		between two edges in :matm:`E` is the length of the shortest :term:`s-edge-walk` between them. If no s-edge-walk between the pair of edges exists, then s-distance between them is infinite.
 
 	s-diameter
-		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-diameter is the maximum s-distance over all pairs of nodes in Nodes.
+		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-diameter is the maximum s-distance over all pairs of nodes in :math:`V`.
 
 
 	s-edge

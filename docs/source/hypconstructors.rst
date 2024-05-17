@@ -9,7 +9,7 @@ An hnx.Hypergraph H = (V,E) references a pair of disjoint sets:
 V = nodes (vertices) and E = (hyper)edges.
 
 HNX allows for multi-edges by distinguishing edges by
-their identifiers instead of their contents. For example, if
+their unique identifiers instead of their contents. For example, if
 V = {1,2,3} and E = {e1,e2,e3},
 where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3},
 the edges e1 and e2 contain the same set of nodes and yet
@@ -27,6 +27,15 @@ setsystem defines the many-to-many relationships between edges and nodes in
 the hypergraph. Cell properties for the incidence pairs can be defined within
 the setsystem or in a separate pandas.Dataframe or dict.
 Edge and node properties are defined with a pandas.DataFrame or dict.
+
+A hypergraph is defined by its relationships. While the
+nodes and edges are distinct objects with their own properties, it is only
+when they are in a relationship (i.e. incidence pair) that nodes and egdges are viewable
+within the hypergraph structure. Consequently, hypergraph metrics and combinatorics do not
+use "isolated" nodes or "empty" edges. For example, while `node_properties` could
+contain any number of node identifiers, only nodes belonging to an edge
+in the hypergraph are counted when computing the size and shape of the
+hypergraph.
 
 SetSystems
 ----------
@@ -100,14 +109,16 @@ There are five types of setsystems currently accepted by the library.
     >>>                    cell_weight_col="w", misc_cell_properties_col="col3")
 
 5.  **numpy.ndarray** For homogeneous datasets given in a *n x 2* ndarray a
-    pandas dataframe is generated and column names are added from the
-    edge_col and node_col arguments. Cell properties containing multiple data
-    types are added with a separate dataframe or dict and passed through the
-    cell_properties keyword. ::
+    pandas dataframe is generated. In this case, the constructor will
+    only accept properties for the edges and nodes using the
+    edge and node uids listed in the array, although incidence properties can
+    be added after construction::
 
-    >>> import bumpy as np
+    >>> import numpy as np
     >>> np_array = np.array([['A','a'],['A','b'],['A','c'],['B','a'],['B','d'],['C','c'],['C','d']])
     >>> H = hnx.Hypergraph(np_array)
+    >>> H.incidences[('A','a')].color = 'red'
+    >>> H.dataframe
 
 
 Edge and Node Properties
@@ -117,11 +128,11 @@ keywords: **edge_properties, node_properties, properties**.
 Properties may be passed as dataframes or dicts.
 The first column or index of the dataframe or keys of the dict keys
 correspond to the edge and/or node identifiers.
-If properties are specific to an id, they may be stored in a single
+If properties are specific to a unique id, they may be stored in a single
 object and passed to the **properties** keyword. For example:
 
 +-----------+-----------+---------------------------------------+
-|   id      |   weight  |   properties                          |
+|   uid     |   weight  |   properties                          |
 +-----------+-----------+---------------------------------------+
 |   e1      |   5.0     |   {'type':'event'}                    |
 +-----------+-----------+---------------------------------------+
@@ -138,34 +149,15 @@ object and passed to the **properties** keyword. For example:
 
 A properties dictionary should have the format: ::
 
-    dp = {id1 : {prop1:val1, prop2,val2,...}, id2 : ... }
-
-A properties dataframe may be used for nodes and edges sharing ids
-but differing in cell properties by adding a level index using 0
-for edges and 1 for nodes:
-
-+-----------+-----------+-----------+---------------------------+
-|  level    |   id      |   weight  |       properties          |
-+-----------+-----------+-----------+---------------------------+
-|   0       |   e1      |   5.0     |   {'type':'event'}        |
-+-----------+-----------+-----------+---------------------------+
-|   0       |   e2      |    0.52   |   {"name":"owned_by"}     |
-+-----------+-----------+-----------+---------------------------+
-|   ...     |   ...     |    ...    |          {...}            |
-+-----------+-----------+-----------+---------------------------+
-|   1       |   1.2     |   {'color':'red'}                     |
-+-----------+-----------+-----------+---------------------------+
-|   2       |   .003    |   {'name':'Fido','color':'brown'}     |
-+-----------+-----------+-----------+---------------------------+
-|   ...     |   ...     |    ...    |          {...}            |
-+-----------+-----------+-----------+---------------------------+
-
+    dp = {uid1 : {prop1:val1, prop2,val2,...}, uid2 : ... }
 
 
 Weights
 -------
 The default key for cell and object weights is "weight". The default value
-is 1. Weights may be assigned and/or a new default prescribed in the
-constructor using **cell_weight_col** and **cell_weights** for incidence pairs,
-and using **edge_weight_prop, node_weight_prop, weight_prop,
-default_edge_weight,** and **default_node_weight** for node and edge weights.
+is 1. Weights may be assigned from a column in the dataframe by specifying the
+column and/or a new default in the
+constructor using **cell_weight_col** and **default_cell_weight** for incidence pairs,
+and using **edge_weight_prop_col, default_edge_weight** for edges,
+**node_weight_prop_col, default_node_weight** for nodes,
+and **weight_prop_col, default_weight** for a shared property dataframe.
