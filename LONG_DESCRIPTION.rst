@@ -24,28 +24,27 @@ Documentation is available at: https://pnnl.github.io/HyperNetX
 
 For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
-Summary - Release highlights - HNX 2.3
---------------------------------------
+HyperNetX 2.3
+=============
 
 HyperNetX 2.3. is the latest, stable release. The core library has been refactored to take better advantage
 of Pandas Dataframes, improve readability and maintainability, address bugs, and make it easier to change.
-New features have been added, most notably the ability to add and remove edges, nodes, and incidences.
+New features have been added, most notably the ability to add and remove edges, nodes, and incidences. Updating is recommended.
 
 **Version 2.3 is not backwards compatible. Objects constructed using earlier versions
 can be imported using their incidence dictionaries and/or property datafames.**
 
 What's New
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-#. Hypergraph now supports adding and removing edges, nodes, and incidences
-#. Hypergraph also supports the sum, difference, union, and intersection of a Hypergraph to another Hypergraph
-#. New factory methods to support the Hypergraph constructor
-#. EntitySet has been replaced by HypergraphView
-#. IncidenceStore and PropertyStore are new classes that maintain the structure and attributes of a Hypergraph
-#. Hypergraph constructors accept cell, edge, and node metadata.
-
+#. We've added new functionality to Hypergraphs; you can add and remove nodes, edges, and incidences on Hypergraph.
+#. Arithmetic operations have also been added to Hypergraph: sum, difference, union, intersection
+#. We've also added a new tutorial on basic hypergraph arithmetic operations
+#. Under the hood, the EntitySet has been replaced by HypergraphView, new factory methods have been created to support
+the Hypergraph constructor, and internal classes such as IncidenceStore and PropertyStore help maintain the structure
+and attributes of a Hypergraph
 
 What's Changed
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+#. Documentation has received a major update; the Glossary and docstrings of Hypergraph have been updated.
 #. HNX now requires Python ^3.10,<=3.12
-#. HNX core libraries have been updated
-#. Updated tutorials
+#. We've upgraded all the underlying core libraries to the latest versions.
