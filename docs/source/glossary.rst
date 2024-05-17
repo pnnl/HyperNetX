@@ -180,7 +180,7 @@ hypergraph.**
 		
 	s-edge-distance
 		The s-edge-distance
-		between two edges in :matm:`E` is the length of the shortest :term:`s-edge-walk` between them. If no s-edge-walk between the pair of edges exists, then s-distance between them is infinite.
+		between two edges in :math:`E` is the length of the shortest :term:`s-edge-walk` between them. If no s-edge-walk between the pair of edges exists, then s-distance between them is infinite.
 
 	s-diameter
 		For a hypergraph, :math:`H =  (V, E, \mathcal{I})`, and positive integer s, the s-diameter is the maximum s-distance over all pairs of nodes in :math:`V`.
