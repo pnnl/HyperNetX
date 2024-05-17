@@ -47,22 +47,57 @@ class HypergraphView(object):
 
     @property
     def items(self):
+        """
+        If level 0 or 1, the list of edges or nodes, respectively. If level 2, the IncidenceStore
+
+        Returns
+        -------
+        IncidenceStore | array
+        """
         return set(self._items)
 
     @property
     def level(self):
+        """
+        The type of store: 0 = Edges, 1 = Nodes, 2 = Incidences
+
+        Returns
+        -------
+        int
+        """
         return self._level
 
     @property
     def incidence_store(self):
+        """
+        IncidenceStore
+
+        Returns
+        -------
+        IncidenceStore
+        """
         return self._incidence_store
 
     @property
     def property_store(self):
+        """
+        PropertyStore
+
+        Returns
+        -------
+        PropertyStore
+        """
         return self._property_store
 
     @property
     def default_weight(self):
+        """
+        Default weight for an edge, node, or incidence
+
+        Returns
+        -------
+        int | float
+        """
         return self._property_store._default_weight
 
     @property
@@ -75,7 +110,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        : pd.DataFrame
+        pd.DataFrame
         """
 
         df = self.user_defined_properties.copy(deep=True)
@@ -107,7 +142,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        out: pd.DataFrame
+        pd.DataFrame
         """
         return self.to_dataframe
 
@@ -118,7 +153,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        : pd.DataFrame
+        pd.DataFrame
         """
         return self.to_dataframe
 
@@ -130,27 +165,55 @@ class HypergraphView(object):
 
         Returns
         -------
-        : pd.DataFrame
+        pd.DataFrame
         """
         return self._property_store.properties
 
     @property
     def memberships(self):
+        """
+        See :term:`memberships`
+
+        Returns
+        -------
+        dict
+        """
         if self._level == 1 or self._level == 2:
             return self.incidence_store.memberships
         else:
             return {}
 
     def is_empty(self):
+        """
+        Returns true if HypergraphView has no edges, nodes, or incidences depending on the level; otherwise, false
+
+        Returns
+        -------
+        bool
+        """
         return len(self._items) == 0
 
     @property
     def incidence_dict(self):
+        """
+        incidence dictionary
+
+        Returns
+        -------
+        dict | None
+        """
         if self._level in [0, 2]:
             return self.incidence_store.elements
 
     @property
     def elements(self):
+        """
+        See :term:`elements`
+
+        Returns
+        -------
+        dict
+        """
         if self._level == 0 or self._level == 2:
             return self.incidence_store.elements
         else:
@@ -180,7 +243,7 @@ class HypergraphView(object):
 
         Returns
         -------
-        : bool
+        bool
         """
         return item in self._items
 
@@ -188,7 +251,7 @@ class HypergraphView(object):
         """
         Returns
         -------
-        : iterator
+        iterator
         """
         return iter(self._items)
 
@@ -210,9 +273,8 @@ class HypergraphView(object):
 
         Returns
         -------
-        : AttrList
+        AttrList
             UserList of incident objects (neighbors in the bipartite graph)
-
         """
         if uid in self._items:
             neighbors = self.incidence_store.neighbors(self.level, uid)
@@ -227,6 +289,10 @@ class HypergraphView(object):
         ----------
         defaults_dict : dict
             Dictionary of prop_names to their default values
+
+        Returns
+        -------
+        None
         """
         self.property_store.set_defaults(defaults_dict)
 
@@ -242,7 +308,7 @@ class AttrList(UserList):
 
     Returns
     -------
-        : AttrList object
+    AttrList
     """
 
     def __init__(self, uid, hypergraph_view, initlist=None):
