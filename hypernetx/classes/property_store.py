@@ -1,7 +1,6 @@
 from typing import Any
-from collections.abc import Hashable
-from pandas import DataFrame
 from copy import deepcopy
+from pandas import DataFrame
 
 
 UID = "uid"
@@ -63,7 +62,7 @@ class PropertyStore:
 
         Returns
         -------
-        out: pandas.DataFrame
+        pandas.DataFrame
             a dataframe with the following columns:
                 uid, weight, properties, <optional props>
                 or
@@ -147,6 +146,10 @@ class PropertyStore:
             uid is the index used to set its property
         props : a dictionary containing user-defined properties
 
+        Returns
+        -------
+        None
+
         See Also
         --------
         get_property, get_properties, set_property
@@ -168,6 +171,10 @@ class PropertyStore:
             name of the property to set
         prop_val : any
             value of the property to set
+
+        Returns
+        -------
+        None
 
         See Also
         --------
@@ -206,7 +213,18 @@ class PropertyStore:
             # add the unique property to 'misc_properties'
             self._data.at[uid, MISC_PROPERTIES].update({prop_name: prop_val})
 
-    def set_defaults(self, defaults):
+    def set_defaults(self, defaults) -> None:
+        """
+        Set default values for properties
+
+        Parameters
+        ----------
+        defaults: dict
+
+        Returns
+        -------
+        None
+        """
         self._defaults.update(defaults)
         new_cols = []
         for k, v in defaults.items():
@@ -248,6 +266,18 @@ class PropertyStore:
         return uid in self._data.index
 
     def copy(self, deep=False):
+        """
+        Create a copy of the PropertyStore. If deep=True, create a copy of the underlying data table.
+        Otherwise, use the same underlying data table from the original PropertyStore
+
+        Parameters
+        ----------
+        deep: bool, optional, default=False
+
+        Returns
+        -------
+        PropertyStore
+        """
         data = self._data.copy(deep=deep)
         if deep:
             temp = [deepcopy(d) for d in data.misc_properties.values]

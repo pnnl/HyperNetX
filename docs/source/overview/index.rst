@@ -15,44 +15,44 @@ Overview
 COLAB Tutorials
 ================
 The following tutorials may be run in your browser using Google Colab. Additional tutorials are
-available on `GitHub <https://github.com/pnnl/HyperNetX>`_.
+available on `GitHub <https://colab.research.google.com/github/pnnl/HyperNetX>`_.
 
 .. raw:: html
 
    <div>
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%201%20-%20HNX%20Basics.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 1 - HNX Basics</span>
+          <span >Basic 1 - HNX Basics</span>
       </a>
       </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 2 - Visualization Methods</span>
+          <span >Basic 2 - Visualization Methods</span>
       </a>
       </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 3 - LesMis Case Study</span>
+          <span >Basic 3 - LesMis Case Study</span>
       </a>
       </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 4 - LesMis Visualizations-Book Tour</span>
+          <span >Basic 4 - LesMis Visualizations-Book Tour</span>
       </a>
       </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20s-Centrality.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 5 - s-Centrality</span>
+          <span >Basic 5 - HNX attributed hypergraph</span>
       </a>
       </br>
 
-      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%206%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
+      <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-          <span >Tutorial 6 - Homology mod2 for TriLoop Example</span>
+          <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
       </a>
    </br>
    <span>Additional Tutorials may be found in the Tutorials Folder.
@@ -99,5 +99,5 @@ HyperNetX is released under the 3-Clause BSD license (see :ref:`license`)
    :maxdepth: 2
 
 
-.. _HyperNetX: https://github.com/pnnl/HyperNetX
-.. _HNX: https://github.com/pnnl/HyperNetX
+.. _HyperNetX: https://colab.research.google.com/github/pnnl/HyperNetX
+.. _HNX: https://colab.research.google.com/github/pnnl/HyperNetX

@@ -3,15 +3,12 @@
 from __future__ import annotations
 
 import warnings
+from collections import defaultdict
+from typing import TypeVar, Union
 
 import networkx as nx
 import numpy as np
 import pandas as pd
-
-from collections import defaultdict
-from collections.abc import Iterable
-from typing import TypeVar, Union
-
 from networkx.algorithms import bipartite
 from scipy.sparse import coo_matrix, csr_matrix
 
@@ -119,7 +116,7 @@ class Hypergraph:
     V = nodes (vertices) and E = (hyper)edges.
 
     HNX allows for multi-edges by distinguishing edges by
-    their identifiers instead of their contents. For example, if
+    their unique identifiers instead of their contents. For example, if
     V = {1,2,3} and E = {e1,e2,e3},
     where e1 = {1,2}, e2 = {1,2}, and e3 = {1,2,3},
     the edges e1 and e2 contain the same set of nodes and yet
@@ -221,14 +218,16 @@ class Hypergraph:
         >>>                    cell_weight_col="w", misc_cell_properties_col="col3")
 
     5.  **numpy.ndarray** For homogeneous datasets given in a *n x 2* ndarray a
-        pandas dataframe is generated and column names are added from the
-        edge_col and node_col arguments. Cell properties containing multiple data
-        types are added with a separate dataframe or dict and passed through the
-        cell_properties keyword. ::
+        pandas dataframe is generated. In this case, the constructor will
+        only accept properties for the edges and nodes using the
+        edge and node uids listed in the array, although incidence properties can
+        be added after construction::
 
-        >>> import bumpy as np
+        >>> import numpy as np
         >>> np_array = np.array([['A','a'],['A','b'],['A','c'],['B','a'],['B','d'],['C','c'],['C','d']])
         >>> H = hnx.Hypergraph(np_array)
+        >>> H.incidences[('A','a')].color = 'red'
+        >>> H.dataframe
 
     Edge and Node Properties
     ------------------------
@@ -266,11 +265,13 @@ class Hypergraph:
 
     Weights
     -------
-    The default key for the incidence pair, edge and node weights is "weight".
-    The default values are all set to 1.
-    The default key and values may be reset using the keywords:
-    `cell_weight_col`, `default_cell_weight`, `weight_prop_col`, `default_weight`,
-    `edge_weight_prop_col`, `default_edge_weight`, `node_weight_prop_col`, `default_node_weight`.
+    The default key for cell and object weights is "weight". The default value
+    is 1. Weights may be assigned from a column in the dataframe by specifying the
+    column and/or a new default in the
+    constructor using **cell_weight_col** and **default_cell_weight** for incidence pairs,
+    and using **edge_weight_prop_col, default_edge_weight** for edges,
+    **node_weight_prop_col, default_node_weight** for nodes,
+    and **weight_prop_col, default_weight** for a shared property dataframe.
     """
 
     def __init__(
@@ -290,43 +291,23 @@ class Hypergraph:
         ### or with first column equal to uid or a dictionary
         ### use these for a single properties list
         properties=None,
-        ### How do we know which column to use for uid
+        ### How do we know which column to use for uid? Always the first column.
         misc_properties_col=None,
         weight_prop_col="weight",
         default_weight: float | int = 1,
         ### these are just for properties on the edges - ignored if properties exists
         edge_properties=None,
-        ### How do we know which column to use for uid
         misc_edge_properties_col=None,
         edge_weight_prop_col="weight",
         default_edge_weight=1,
         ### these are just for properties on the nodes - ignored if properties exists
         node_properties=None,
-        ### How do we know which column to use for uid
         misc_node_properties_col=None,
         node_weight_prop_col="weight",
         default_node_weight=1,
         name=None,
-        **kwargs,
+        **kwargs,  ## these are ignored but allow for some backwards compatibility
     ):
-
-        #### Use a Factory Method to create 5 stores
-        ## df = Incidence Store from structural data
-        ## edges,nodes,incidences = Property stores tied to ids in df
-        ## Incidences - uses df, dictionary - assigns keys to incidence
-        ## pairs and/or removes duplicates,
-        ## identifies keys for edges and nodes
-
-        ## Construct 3 HypergraphViews to tie these together?
-        ## Incidences - links keys from 3 stores, and incidences with properties
-        ## Edges - reconciles keys from Incidences against a Property Store
-        ## Nodes - reconciles keys from Incidences against a Property Store
-
-        # decision tree to route data by type OR user specified type
-        # to correct factory method for each of 3 property stores
-        # and 1 incidence store
-        # 3 calls to the different factory methods (data => df for Property Store)
-        # 1 call to the incidence factory method (setsystem => df for Incidence Store)
 
         type_dict = {
             "DataFrame": dataframe_factory_method,
@@ -336,9 +317,6 @@ class Hypergraph:
             "list": list_factory_method,
             "ndarray": ndarray_factory_method,
         }
-
-        ## dataframe_factory_method(setsystem_df,uid_cols=[edge_col,node_col],weight_col,default_weight,misc_properties,aggregate_by)
-        ## dataframe_factory_method(edge_properties_df,uid_cols=[edge_uid_col],edge_weight_col,default_edge_weight,misc_edge_properties)
 
         if setsystem is None:
             setsystem = pd.DataFrame(
@@ -367,7 +345,6 @@ class Hypergraph:
             ## if no properties PropertyStore should store in the most efficient way
         else:
             raise HyperNetXError("setsystem data type not supported")
-        ## check if there is another constructor they could use.
 
         if properties is not None:
             property_type = type(properties).__name__
@@ -640,7 +617,7 @@ class Hypergraph:
         : Hypergraph
         """
         return self._construct_hyp_from_stores(
-            self.incidences.to_dataframe, name=f"{self.name}_clone"
+            self.incidences.to_dataframe, name=f"{name}_clone"
         )
 
     def __eq__(self, other):
@@ -1020,7 +997,9 @@ class Hypergraph:
             # sets the diagonal elements of s_adj_matrix to zero to remove self-loops.
             s_adj_matrix.setdiag(0)
 
-            # sets all values in s_adj_matrix that are greater than or equal to a threshold 's' to 1, and all other values to 0.
+            # sets all values in s_adj_matrix that are greater than or equal to a
+            # threshold 's' to 1, and all other values to 0.
+
             s_adj_matrix = (s_adj_matrix >= s) * 1
 
             self._state_dict["adjacency_matrix"][s] = s_adj_matrix
@@ -1084,7 +1063,8 @@ class Hypergraph:
             whether to return based on node or edge adjacencies
 
         index : bool, optional, default=False
-            If True, returns both the auxiliary matrix and an array containing the row and column index of node or edge_uids
+            If True, returns both the auxiliary matrix and an array containing
+            the row and column index of node or edge_uids
 
         Returns
         -------
@@ -1099,7 +1079,9 @@ class Hypergraph:
         else:
             adj_matrix, indexes = self.edge_adjacency_matrix(s, index=True)
 
-        # sum up the values in each row of the matrix, resulting in a 1D array where each element corresponds to the sum of a row.
+        # sum up the values in each row of the matrix, resulting in a 1D array
+        # where each element corresponds to the sum of a row.
+
         adj_matrix_sum = np.sum(adj_matrix, axis=1)
         # returns a tuple of arrays with the first tuple being an array of the indices of rows whose sum is non-zero.
         indices = np.nonzero(np.sum(adj_matrix_sum, axis=1))
@@ -1133,11 +1115,11 @@ class Hypergraph:
         -------
         networkx.Graph or DiGraph
         """
-        if directed == True:
+        if directed is True:
             B = nx.DiGraph()
         else:
             B = nx.Graph()
-        if keep_data == False:
+        if keep_data is False:
             B.add_nodes_from(self.edges, bipartite=0)
             B.add_nodes_from(self.nodes, bipartite=1)
             B.add_edges_from(
@@ -1277,8 +1259,8 @@ class Hypergraph:
         use_counts=False,
         return_counts=True,
         return_equivalence_classes=False,
-        aggregate_edges_by={"weight": "sum"},
-        aggregate_cells_by={"weight": "sum"},
+        aggregate_edges_by=None,
+        aggregate_cells_by=None,
     ):
         """
         Returns a new hypergraph by collapsing edges.
@@ -1342,6 +1324,9 @@ class Hypergraph:
             0, use_keys=use_uids
         )
 
+        aggregate_edges_by = aggregate_edges_by or {"weight": "sum"}
+        aggregate_cells_by = aggregate_cells_by or {"weight": "sum"}
+
         ndf = self.edges.to_dataframe
         df = self.incidences.to_dataframe
 
@@ -1390,8 +1375,8 @@ class Hypergraph:
         use_counts=False,
         return_counts=True,
         return_equivalence_classes=False,
-        aggregate_nodes_by={"weight": "sum"},
-        aggregate_cells_by={"weight": "sum"},
+        aggregate_nodes_by=None,
+        aggregate_cells_by=None,
     ):
         """
         Returns a new hypergraph by collapsing nodes.
@@ -1455,6 +1440,9 @@ class Hypergraph:
             1, use_keys=use_uids
         )
 
+        aggregate_nodes_by = aggregate_nodes_by or {"weight": "sum"}
+        aggregate_cells_by = aggregate_cells_by or {"weight": "sum"}
+
         ndf = self.nodes.to_dataframe
         df = self.incidences.to_dataframe
 
@@ -1504,9 +1492,9 @@ class Hypergraph:
         use_counts=False,
         return_counts=True,
         return_equivalence_classes=False,
-        aggregate_nodes_by={"weight": "sum"},
-        aggregate_edges_by={"weight": "sum"},
-        aggregate_cells_by={"weight": "sum"},
+        aggregate_nodes_by=None,
+        aggregate_edges_by=None,
+        aggregate_cells_by=None,
     ):
         """
         Returns a new hypergraph by collapsing nodes and edges.
@@ -1532,6 +1520,11 @@ class Hypergraph:
             Add the size of the equivalence class to the properties
             associated to the representative in the collapsed hypergraph using
             keyword: `eclass_size`
+
+        aggregate_nodes_by, aggregate_edges_by, aggregate_cells_by: optional
+            default = {'weight' = 'sum'}, all
+            Method to combine duplicate rows of data for the same uids
+
 
         Returns
         -------
@@ -1559,6 +1552,10 @@ class Hypergraph:
             >>> h.collapse_nodes_and_edges(use_counts=True).incidence_dict
             {'E1:2': ['a:2']}
         """
+
+        aggregate_nodes_by = aggregate_nodes_by or {"weight": "sum"}
+        aggregate_cells_by = aggregate_cells_by or {"weight": "sum"}
+        aggregate_edges_by = aggregate_edges_by or {"weight": "sum"}
 
         if return_equivalence_classes:
             temp, neq = self.collapse_nodes(
@@ -1829,14 +1826,16 @@ class Hypergraph:
     def remove_edges(self, edge_uids, name=None, inplace=True):
         """
         Removes the edges from the Hypergraph.
-        If inplace=True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+        If inplace=True, changes the existing Hypergraph. Otherwise,
+        creates a new Hypergraph with the requested changes.
 
         Parameters
         ----------
         edge_uids : str | int | list[str | int]
             edge_uids
         name : str, optional, default=None
-            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+            The name of the new Hypergraph. Used only when inplace=False;
+            ignored if inplace=True.
         inplace : bool, optional, default=True
             Whether to replace the current hypergraph with a new one.
 
@@ -1873,14 +1872,16 @@ class Hypergraph:
     def remove_incidences(self, incidence_uids, name=None, inplace=True):
         """
         Removes the incidences from the Hypergraph.
-        If inplace=True, changes the existing Hypergraph. Otherwise, creates a new Hypergraph with the requested changes.
+        If inplace=True, changes the existing Hypergraph. Otherwise,
+        creates a new Hypergraph with the requested changes.
 
         Parameters
         ----------
         incidence_uids : tuple[str | int] | list[tuple[str | int]]
             incidence_uids
         name : str, optional, default=None
-            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+            The name of the new Hypergraph. Used only when inplace=False;
+            ignored if inplace=True.
         inplace : bool, optional, default=True
             Whether to replace the current hypergraph with a new one.
 
@@ -1909,7 +1910,8 @@ class Hypergraph:
             Enter 1 to remove nodes.
             Enter 2 to remove incidence pairs as tuples
         name : str, optional, default=None
-            The name of the new Hypergraph. Used only when inplace=False; ignored if inplace=True.
+            The name of the new Hypergraph. Used only when inplace=False;
+            ignored if inplace=True.
         inplace : bool, default=False
             Whether to replace the current hypergraph with the new one.
 
@@ -2658,7 +2660,7 @@ class Hypergraph:
         c3 = CM.data
 
         dfnew = pd.DataFrame({"edges": c2, "nodes": c1, "weight": c3})
-        if return_only_dataframe == True:
+        if return_only_dataframe is True:
             return dfnew
         else:
             return Hypergraph(dfnew, cell_weight_col="weight", name=name, **kwargs)
@@ -2695,7 +2697,7 @@ class Hypergraph:
         """
         return self.difference(other)
 
-    def sum(self, other):
+    def sum(self, other, name=None):
         """
         Hypergraph obtained by joining incidences from self and other.
         Removes duplicates and uses properties of self.
@@ -2723,6 +2725,7 @@ class Hypergraph:
             incidence_df,
             edge_ps=PropertyStore(edges_data),
             node_ps=PropertyStore(nodes_data),
+            name=name,
         )
 
     def _combine_properties_dataframes(self, df1, df2):
@@ -2781,7 +2784,7 @@ class Hypergraph:
         -------
         Hypergraph
         """
-        return self.sum(other)
+        return self.sum(other, name=name)
 
 
 def _agg_rows(df, groupby, rule_dict=None):

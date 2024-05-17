@@ -31,8 +31,8 @@ HyperNetX 2.3. is the latest, stable release. The core library has been refactor
 of Pandas Dataframes, improve readability and maintainability, address bugs, and make it easier to change.
 New features have been added, most notably the ability to add and remove edges, nodes, and incidences.
 
-**Version ^2.0 is not backwards compatible. Objects constructed using version
-1.x can be imported from their incidence dictionaries.**
+**Version 2.3 is not backwards compatible. Objects constructed using earlier versions
+can be imported using their incidence dictionaries and/or property datafames.**
 
 What's New
 ~~~~~~~~~~~~~~~~~~~~~~~~~

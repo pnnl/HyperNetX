@@ -1,7 +1,7 @@
-<img src="docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
-
 HyperNetX
 ==========
+<img src="docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
+
 [![Pytest](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
@@ -28,35 +28,31 @@ Documentation is available at: https://pnnl.github.io/HyperNetX
 
 For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
-New Features in Version 2.0
-===========================
+Summary - Release highlights - HNX 2.3
+--------------------------------------
 
-HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a
-hypergraph. While the library continues to accept lists, dictionaries and
-dataframes as basic inputs for hypergraph constructions, both cell
-properties and edge and node properties can now be easily added for
-retrieval as object attributes.
+HyperNetX 2.3. is the latest, stable release. The core library has been refactored to take better advantage
+of Pandas Dataframes, improve readability and maintainability, address bugs, and make it easier to change.
+New features have been added, most notably the ability to add and remove edges, nodes, and incidences.
 
-The core library has been rebuilt to take advantage of the flexibility and speed of Pandas Dataframes.
-Dataframes offer the ability to store and easily access hypergraph metadata. Metadata can be used for filtering objects, and characterize their
-distributions by their attributes.
-
-**Version 2.0 is not backwards compatible. Objects constructed using version
-1.x can be imported from their incidence dictionaries.**
+**Version 2.3 is not backwards compatible. Objects constructed using earlier versions
+can be imported using their incidence dictionaries and/or property datafames.**
 
 What's New
-----------
-1. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
-1. Additional constructors accept incidence matrices and incidence dataframes.
-1. Hypergraph constructors accept cell, edge, and node metadata.
-1. Metadata available as attributes on the cells, edges, and nodes.
-1. User-defined cell weights and default weights available to incidence matrix.
-1. Meta data persists with restrictions and removals.
-1. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-1. New hnxwidget available using  `pip install hnxwidget`.
+~~~~~~~~~~~~~~~~~~~~~~~~~
+#. Hypergraph now supports adding and removing edges, nodes, and incidences
+#. Hypergraph also supports the sum, difference, union, and intersection of a Hypergraph to another Hypergraph
+#. New factory methods to support the Hypergraph constructor
+#. EntitySet has been replaced by HypergraphView
+#. IncidenceStore and PropertyStore are new classes that maintain the structure and attributes of a Hypergraph
+#. Hypergraph constructors accept cell, edge, and node metadata.
 
 
 What's Changed
+~~~~~~~~~~~~~~~~~~~~~~~~~
+#. HNX now requires Python ^3.10,<=3.12
+#. HNX core libraries have been updated
+#. Updated tutorials
 --------------
 1. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
 1. Methods for adding nodes and hyperedges are currently not supported.
@@ -65,48 +61,48 @@ What's Changed
 
 
 
-Tutorials
-=========
+Tutorials Available for Colab
+=============================
 
 Google Colab
 ------------
 
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%201%20-%20HNX%20Basics.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%201%20-%20HNX%20Basics.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 1 - HNX Basics</span>
+    <span >Basic 1 - HNX Basics</span>
 </a>
-<br>
+</br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%202%20-%20Visualization%20Methods.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 2 - Visualization Methods</span>
+    <span >Basic 2 - Visualization Methods</span>
 </a>
-<br>
+</br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 3 - LesMis Case Study</span>
+    <span >Basic 3 - LesMis Case Study</span>
 </a>
-<br>
+</br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Tutorial%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 4 - LesMis Visualizations-Book Tour</span>
+    <span >Basic 4 - LesMis Visualizations-Book Tour</span>
 </a>
-<br>
+</br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/Tutorial%205%20-%20s-Centrality.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 5 - s-Centrality</span>
+    <span >Basic 5 - HNX attributed hypergraph</span>
 </a>
-<br>
+</br>
 
-<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/advanced/Tutorial%206%20-%20Homology%20mod%202%20for%20TriLoop%20Example.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    <span >Tutorial 6 - Homology mod2 for TriLoop Example</span>
+    <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
 </a>
-<br>
+</br>
 
 
 Jupyter Notebooks
