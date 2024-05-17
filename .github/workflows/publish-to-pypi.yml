@@ -11,6 +11,12 @@ name: Upload Python Package
 on:
   release:
     types: [published]
+    
+  workflow_dispatch:
+    inputs:
+      triggeredBy:
+        description: 'Name of team member who is manually triggering this workflow'
+        required: true
 
 permissions:
   contents: read
