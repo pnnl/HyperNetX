@@ -151,20 +151,17 @@ def s_closeness_centrality(H, s=1, edges=True, return_singletons=True, source=No
     in the component minus 1.
 
     $V$ = the set of vertices in the linegraph.
-    $n = |V|$
+    $n = \|V\|$
     $d$ = shortest path distance
 
     .. math::
 
         C(u) = \frac{n - 1}{\sum_{v \neq u \in V} d(v, u)}
 
-
     Parameters
     ----------
     H : hnx.Hypergraph
-
     s : int, optional
-
     edges : bool, optional
         Indicates if method should compute edge linegraph (default) or node linegraph.
     return_singletons : bool, optional
@@ -243,7 +240,6 @@ def s_harmonic_centrality(
         returns the s-harmonic closeness centrality value of the edges, a number between 0 and 1 inclusive.
         If source=None a dictionary of values for each s-edge in H is returned.
         If source then a single value is returned.
-
     """
 
     # func = partial(nx.harmonic_centrality)

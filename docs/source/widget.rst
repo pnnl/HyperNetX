@@ -17,7 +17,7 @@ the hypergraph visualization and the nodes & edges panel.
 You may `demo the widget here <https://pnnl.github.io/hypernetx-widget/>`_.
 
 The HypernetxWidget is open source and
-available on `GitHub <https://github.com/pnnl/hypernetx-widget>`_ It is also `published on PyPi
+available on `GitHub <https://github.com/pnnl/hypernetx-widget>`_ It is also `published on PyPI
 <https://pypi.org/project/hnxwidget/>`_
 
 **The HyperNetX widget is currently in beta with limitations on the Jupyter environment in which it may be used.
@@ -41,8 +41,8 @@ Specifically, users will need to set the Kernel to use a custom environment. For
 read and follow this guide: `How to add your Conda environment to your jupyter notebook in just 4 steps <https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084>`_.
 
 
-**Do not use python's built-in venv module or virtualenv to create a virtual environment; the widget will not render on
-Jupyter notebook.**
+**It is highly recommended to use Anaconda to setup your virtual environment. Using python's built-in venv module or
+virtualenv to create your virtual environment may result in the widget will not rendering on Jupyter notebook.**
 
 Prerequisites
 ^^^^^^^^^^^^^

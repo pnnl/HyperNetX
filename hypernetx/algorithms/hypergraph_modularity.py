@@ -148,7 +148,7 @@ def modularity(HG, A, wdc=linear):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
         The hypergraph with some precomputed attributes via: precompute_attributes(HG)
     A : list of sets
         Partition of the vertices in HG
@@ -179,7 +179,7 @@ def modularity(HG, A, wdc=linear):
         EC = sum([wdc(k[1], k[0]) * _ctr[k] for k in _ctr.keys() if k[0] > k[1] / 2])
     else:
         _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-        _vals = list(HG.edge_props["weight"])  ## Thanks Brenda!!
+        _vals = list(HG.edges.dataframe["weight"])
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
@@ -214,7 +214,7 @@ def modularity(HG, A, wdc=linear):
             for c in np.arange(int(np.floor(d / 2 + 1)), d + 1):
                 for Vol in VolA:
                     DT += Cnt * wdc(d, c) * binom.pmf(c, d, Vol)
-        return (EC - DT) / HG.number_of_edges()
+        return (EC - DT) / len(HG.edges)
     else:
         for d in range(len(Ctr)):
             Cnt = Ctr[d]
@@ -230,7 +230,7 @@ def conductance(H, A):
 
     Parameters
     ----------
-    H : Hypergraph
+    H : hnx.Hypergraph
         The hypergraph
     A : set
         Partition of the vertices in H
@@ -265,7 +265,7 @@ def two_section(HG):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
     Returns
     -------
@@ -304,7 +304,7 @@ def kumar(HG, delta=0.01, verbose=False):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
     delta : float, optional
         convergence stopping criterion
@@ -338,7 +338,7 @@ def kumar(HG, delta=0.01, verbose=False):
             reweight = (
                 sum([1 / (1 + HG.size(e, c)) for c in CH])
                 * (HG.size(e) + len(CH))
-                / HG.number_of_edges()
+                / len(HG.edges)
             )
             diff = max(diff, 0.5 * abs(edge.weight - reweight))
             edge.weight = 0.5 * edge.weight + 0.5 * reweight
@@ -397,7 +397,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
 
             ## ec portion before move
             _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-            _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+            _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
             _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
             _df = _df.groupby(by="key").sum()
             ec = sum(
@@ -425,7 +425,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
                 L = [[dct_A[i] for i in x] for x in H_id]
                 ## EC
                 _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-                _vals = [H.edge_props["weight"][x] for x in H.nodes[v].memberships]
+                _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
                 _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
                 _df = _df.groupby(by="key").sum()
                 ecp = sum(
@@ -569,9 +569,9 @@ def last_step(HG, A, wdc=linear, delta=0.01, verbose=False):
 
     Parameters
     ----------
-    HG : Hypergraph
+    HG : hnx.Hypergraph
 
-    L : list of sets
+    A : list of sets
       some initial partition of the vertices in HG
 
     wdc : func, optional

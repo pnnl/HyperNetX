@@ -1,21 +1,26 @@
 classes package
 ===============
 
-Submodules
-----------
-
-classes.entityset module
-------------------------
-
-.. automodule:: classes.entityset
+.. automodule:: classes
    :members:
    :undoc-members:
    :show-inheritance:
 
-classes.helpers module
+Submodules
+----------
+
+classes.factory module
 ----------------------
 
-.. automodule:: classes.helpers
+.. automodule:: classes.factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.hyp\_view module
+------------------------
+
+.. automodule:: classes.hyp_view
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,10 +33,18 @@ classes.hypergraph module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+classes.incidence\_store module
+-------------------------------
 
-.. automodule:: classes
+.. automodule:: classes.incidence_store
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+classes.property\_store module
+------------------------------
+
+.. automodule:: classes.property_store
    :members:
    :undoc-members:
    :show-inheritance:

@@ -24,37 +24,27 @@ Documentation is available at: https://pnnl.github.io/HyperNetX
 
 For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
-New Features in Version 2.0
----------------------------
+HyperNetX 2.3
+=============
 
-HNX 2.0 now accepts metadata as core attributes of the edges and nodes of a
-hypergraph. While the library continues to accept lists, dictionaries and
-dataframes as basic inputs for hypergraph constructions, both cell
-properties and edge and node properties can now be easily added for
-retrieval as object attributes.
+HyperNetX 2.3. is the latest, stable release. The core library has been refactored to take better advantage
+of Pandas Dataframes, improve readability and maintainability, address bugs, and make it easier to change.
+New features have been added, most notably the ability to add and remove edges, nodes, and incidences. Updating is recommended.
 
-The core library has been rebuilt to take advantage of the flexibility and speed of Pandas Dataframes.
-Dataframes offer the ability to store and easily access hypergraph metadata. Metadata can be used for filtering objects, and characterize their
-distributions by their attributes.
-
-**Version 2.0 is not backwards compatible. Objects constructed using version
-1.x can be imported from their incidence dictionaries.**
+**Version 2.3 is not backwards compatible. Objects constructed using earlier versions
+can be imported using their incidence dictionaries and/or property datafames.**
 
 What's New
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-#. The Hypergraph constructor now accepts nested dictionaries with incidence cell properties, pandas.DataFrames, and 2-column Numpy arrays.
-#. Additional constructors accept incidence matrices and incidence dataframes.
-#. Hypergraph constructors accept cell, edge, and node metadata.
-#. Metadata available as attributes on the cells, edges, and nodes.
-#. User-defined cell weights and default weights available to incidence matrix.
-#. Meta data persists with restrictions and removals.
-#. Meta data persists onto s-linegraphs as node attributes of Networkx graphs.
-#. New hnxwidget available using  `pip install hnxwidget`.
-
+#. We've added new functionality to Hypergraphs; you can add and remove nodes, edges, and incidences on Hypergraph.
+#. Arithmetic operations have also been added to Hypergraph: sum, difference, union, intersection
+#. We've also added a new tutorial on basic hypergraph arithmetic operations
+#. Under the hood, the EntitySet has been replaced by HypergraphView, new factory methods have been created to support
+the Hypergraph constructor, and internal classes such as IncidenceStore and PropertyStore help maintain the structure
+and attributes of a Hypergraph
 
 What's Changed
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-#. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
-#. Methods for adding nodes and hyperedges are currently not supported.
-#. The `nwhy` optimizations are no longer supported.
-#. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.
+#. Documentation has received a major update; the Glossary and docstrings of Hypergraph have been updated.
+#. HNX now requires Python ^3.10,<=3.12
+#. We've upgraded all the underlying core libraries to the latest versions.

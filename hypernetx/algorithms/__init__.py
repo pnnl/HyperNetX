@@ -100,7 +100,7 @@ __all__ = [
     "erdos_renyi_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
-    # s_centreality_measures API's
+    # s_centrality_measures API's
     "s_betweenness_centrality",
     "s_harmonic_closeness_centrality",
     "s_harmonic_centrality",

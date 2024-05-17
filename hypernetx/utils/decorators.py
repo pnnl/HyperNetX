@@ -4,9 +4,9 @@ from functools import wraps
 from decorator import decorator
 
 import hypernetx as hnx
-from hypernetx.exception import NWHY_WARNING
 
-__all__ = ["not_implemented_for", "warn_nwhy", "warn_to_be_deprecated"]
+
+__all__ = ["not_implemented_for", "warn_to_be_deprecated"]
 
 
 def not_implemented_for(*object_types):
@@ -60,32 +60,6 @@ def not_implemented_for(*object_types):
             return not_implemented_for_func(*args, **kwargs)
 
     return _not_implemented_for
-
-
-def warn_nwhy(func):
-    """Decorator for methods that allow the deprecated `use_nwhy` kwarg
-
-    As of HyperNetX v2.0.0, NWHy C++ backend is no longer supported.
-    Public references to the deprecated NWHy add-on will be removed from the Hypergraph
-    API in a future release.
-
-    Warns
-    -----
-    FutureWarning
-        If kwargs contain ``use_nwhy=True``
-    """
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if kwargs.get("use_nwhy"):
-            kwargs.update(use_nwhy=False)
-            warnings.simplefilter("always", FutureWarning)
-            warnings.warn(NWHY_WARNING, FutureWarning, stacklevel=2)
-            warnings.simplefilter("default", FutureWarning)
-
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def warn_to_be_deprecated(func):

@@ -1,0 +1,25 @@
+col1,col2,col3,col4
+0,FN,7,{'time': 'early'}
+0,TH,1,{'time': 'late'}
+1,TH,1,{'subject': 'war'}
+1,JV,1,{'observed_by': 'someone'}
+2,BM,1,{}
+2,FN,1,{}
+2,JA,1,{'role': 'policeman'}
+3,JV,1,{'was_carrying': 'stick'}
+3,JU,1,{}
+3,CH,1,{}
+3,BM,1,"{'state': 'intoxicated', 'color': 'pinkish'}"
+4,JU,15,{}
+4,CH,1,{}
+4,BR,1,{'state': 'worried'}
+4,CN,1,{}
+4,CC,1,{}
+4,JV,1,{}
+4,BM,1,{}
+5,TH,1,{}
+5,GP,1,{}
+6,GP,1,{}
+6,MP,1,{}
+7,MA,1,{}
+7,GP,15,"{'accompanied_by': 'dog', 'was_singing': 'Frère Jacques'}"
