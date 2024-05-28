@@ -8,7 +8,7 @@ Date: 22.5.2024
 
 from hypernetx.classes.hypergraph import Hypergraph
 
-def greedy_d_approximation(hypergraph: Hypergraph, d: int) -> int:
+def greedy_d_approximation(hypergraph: Hypergraph, int: Hypergraph.degree()) -> list:
     """
     Algorithm 1: Greedy d-Approximation for Hypergraph Matching
     Finds a greedy d-approximation for hypergraph matching.
@@ -18,28 +18,31 @@ def greedy_d_approximation(hypergraph: Hypergraph, d: int) -> int:
     d (int): The size of each hyperedge, assuming the hypergraph is d-uniform.
 
     Returns:
-    int: The size of the d-approximate matching.
+    list: the edges of the graph for the approximate matching.
 
     Examples:
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6)})
     >>> greedy_d_approximation(hypergraph, 3)
-    2
+    [(1, 2, 3), (4, 5, 6)]
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6), 2: (7, 8, 9), 3: (1, 4, 7), 4: (2, 5, 8), 5: (3, 6, 9)})
     >>> greedy_d_approximation(hypergraph, 3)
-    3
+    [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
+
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5), 3: (5, 6, 7), 4: (6, 7, 8), 5: (7, 8, 9)})
     >>> greedy_d_approximation(hypergraph, 3)
-    2
+    [(1, 2, 3), (5, 6, 7)]
+
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6, 7, 8), 2: (9, 10, 11, 12), 3: (13, 14, 15, 1), 4: (2, 6, 10, 14), 5: (3, 7, 11, 15), 6: (4, 8, 12, 1), 7: (5, 9, 13, 2), 8: (6, 10, 14, 3), 9: (7, 11, 15, 4)})
     >>> greedy_d_approximation(hypergraph, 4)
-    4
+    [(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 1)]
+
     """
     return 0  # Empty implementation
 
-def hedcs_based_approximation(hypergraph: Hypergraph, d: int, epsilon: float) -> int:
+def hedcs_based_approximation(hypergraph: Hypergraph, d: int, s: int) -> list:
     """
     Algorithm 2: HEDCS-Based Approximation for Hypergraph Matching
     Computes an approximation to the maximum matching in hypergraphs using HyperEdge Degree Constrained Subgraph (HEDCS).
@@ -47,19 +50,19 @@ def hedcs_based_approximation(hypergraph: Hypergraph, d: int, epsilon: float) ->
     Parameters:
     hypergraph (Hypergraph): A Hypergraph object.
     d (int): The uniform size of each hyperedge in the hypergraph.
-    epsilon (float): A parameter influencing the trade-off between approximation quality and computational complexity.
+    s (int): The amount of memory available for the computer.
 
     Returns:
-    int: The size of the approximate maximum matching.
+    list: The edges of the graph for the approximate matching.
 
     Examples:
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6)})
-    >>> hedcs_based_approximation(hypergraph, 3, 0.1)
-    2
+    >>> hedcs_based_approximation(hypergraph, 3, 1)
+    [(1, 2, 3), (4, 5, 6)]
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6), 2: (7, 8, 9), 3: (1, 4, 7), 4: (2, 5, 8), 5: (3, 6, 9)})
-    >>> hedcs_based_approximation(hypergraph, 3, 0.1)
-    3
+    >>> hedcs_based_approximation(hypergraph, 3, 2)
+    [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5), 3: (5, 6, 7), 4: (6, 7, 8), 5: (7, 8, 9)})
     >>> hedcs_based_approximation(hypergraph, 3, 0.1)
