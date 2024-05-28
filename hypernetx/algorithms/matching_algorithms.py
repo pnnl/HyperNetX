@@ -40,7 +40,7 @@ def greedy_d_approximation(hypergraph: Hypergraph, int: Hypergraph.degree()) -> 
     [(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 1)]
 
     """
-    return 0  # Empty implementation
+    return []  # Empty implementation
 
 def hedcs_based_approximation(hypergraph: Hypergraph, d: int, s: int) -> list:
     """
@@ -65,14 +65,14 @@ def hedcs_based_approximation(hypergraph: Hypergraph, d: int, s: int) -> list:
     [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5), 3: (5, 6, 7), 4: (6, 7, 8), 5: (7, 8, 9)})
-    >>> hedcs_based_approximation(hypergraph, 3, 0.1)
-    2
+    >>> hedcs_based_approximation(hypergraph, 3, 2)
+    [(1, 2, 3), (5, 6, 7)]
 
     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6, 7, 8), 2: (9, 10, 11, 12), 3: (13, 14, 15, 1), 4: (2, 6, 10, 14), 5: (3, 7, 11, 15), 6: (4, 8, 12, 1), 7: (5, 9, 13, 2), 8: (6, 10, 14, 3), 9: (7, 11, 15, 4)})
-    >>> hedcs_based_approximation(hypergraph, 4, 0.1)
-    4
+    >>> hedcs_based_approximation(hypergraph, 4, 3)
+    [(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12)]
     """
-    return 0  # Empty implementation
+    return []  # Empty implementation
 
 def iterated_sampling(hypergraph: Hypergraph, d: int ,s: int) -> list:
     """
