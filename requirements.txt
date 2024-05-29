@@ -11,7 +11,6 @@ beautifulsoup4==4.12.3
 black==24.4.2
 bleach==6.1.0
 cachetools==5.3.3
-celluloid==0.2.0
 certifi==2024.2.2
 cffi==1.16.0
 cfgv==3.4.0
@@ -38,7 +37,6 @@ fonttools==4.51.0
 h11==0.14.0
 identify==2.5.36
 idna==3.7
-igraph==0.11.4
 imagesize==1.4.1
 iniconfig==2.0.0
 ipykernel==6.29.4
