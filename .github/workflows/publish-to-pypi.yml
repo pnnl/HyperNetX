@@ -8,7 +8,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Publish HNX
 
 on:
   release:
@@ -24,14 +24,18 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  publish-to-pypi:
     runs-on: ubuntu-latest
-
     steps:
+    - run: |
+        echo "This workflow was triggered by: $TRIGGER_PERSON"
+      env:
+        TRIGGER_PERSON: ${{ inputs.triggeredBy }}
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-    - run: echo "Building wheel from tag ${{ github.ref_name }}"
+    - run: echo "Building wheel from branch ${{ github.ref_name }}"
+
     - uses: actions/checkout@v4
 
     - name: Build and publish distribution 📦 to Test PyPI
