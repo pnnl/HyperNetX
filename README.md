@@ -72,37 +72,37 @@ Google Colab
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 1 - HNX Basics</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 2 - Visualization Methods</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 3 - LesMis Case Study</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 4 - LesMis Visualizations-Book Tour</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 5 - HNX attributed hypergraph</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
 </a>
-</br>
+<br>
 
 
 Jupyter Notebooks
@@ -115,7 +115,7 @@ Installation
 
 The recommended installation method for most users is to create a virtual environment and install HyperNetX from PyPi.
 
-HyperNetX may be cloned or forked from [Github](https://github.com/pnnl/HyperNetX).
+HyperNetX may be cloned or forked from [GitHub](https://github.com/pnnl/HyperNetX).
 
 Prerequisites
 -------------
@@ -168,7 +168,7 @@ To deactivate your environment, use:
 Installing HyperNetX
 ====================
 
-Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.8.
+Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.10.
 
 
 Installing from PyPi
@@ -261,6 +261,9 @@ Install support for testing
 ```shell
 poetry install --with test
 
+# activate your virtual environment created by poetry
+poetry shell
+
 # run tests
 python -m pytest
 
@@ -275,8 +278,11 @@ open htmlcov/index.html
 Install support for tutorials
 -----------------------------
 
-```
+```shell
 poetry install --with tutorials
+
+# activate your virtual environment created by poetry
+poetry shell
 
 # open Jupyter notebooks in a browser
 make tutorials
@@ -291,8 +297,10 @@ HyperNetX uses a number of tools to maintain code quality:
 
 Before using these tools, ensure that you install Pylint in your environment:
 
-```
+```shell
 poetry install --with lint
+# activate your virtual environment created by poetry
+poetry shell
 ```
 
 Pylint
@@ -325,13 +333,30 @@ Black
 black hypernetx
 ```
 
+Pre-commit
+---------
+
+Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
+It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
+pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
+automatically run the formatter Black on your code changes.
+
+```shell
+pre-commit install
+
+# Once installed, pre-commit will be triggered every time you make a commit in your environment
+```
+
 Documentation
 -------------
 
 Build and view documentation locally:
 
-```
+```shell
 poetry install --with docs
+# activate your virtual environment created by poetry
+poetry shell
+
 cd docs
 make html
 open docs/build/html/index.html
@@ -340,7 +365,7 @@ open docs/build/html/index.html
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
 live on the browser without having to rebuild every time you have a change.
 
-```
+```shell
 cd docs
 make livehtml
 ```
@@ -360,49 +385,12 @@ Click on `http://127.0.0.1:8000/install.html` to open the docs on your browser. 
 you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
 
 
-Continuous Integration
-======================
-
-This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
-on pull requests, pushes to certain branches, and other events.
-
-Maintainers of the GitHub repository can manually trigger CI using [GitHub CLI](https://cli.github.com/). See instructions below on how to manually trigger CI on GitHub Actions:
-
-```commandline
-# login to Github
-gh auth login --with-token <  ~/.ssh/tokens/<path to my personal access token>
-
-# Trigger CI
-gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want CI to run on> --field triggeredBy="<Your name>"
-
-# Get the status of the workflow
-gh run list --workflow=ci.yml --repo pnnl/HyperNetX
-```
-
-
-Versioning
-==========
-
-This project uses [`commitizen`](https://github.com/commitizen-tools/commitizen) to manage versioning.
-The files where "version" will be updated are listed in the '.cz.toml' file. To create a new version and the associated tag,
-run the following commands:
-
-```shell
-# Install commitizen tool to environment
-pip install commitizen
-
-# Updates version; values for '--increment' can be MAJOR, MINOR, or PATCH
-# Autocreates a tag and commit for the updated version
-cz bump  --increment MAJOR  --dry-run
-cz bump  --increment MAJOR
-```
-
 Notice
 ======
 This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
 Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
 
-   <div align=center>
+   <div>
    <pre style="align-text:center;font-size:10pt">
    PACIFIC NORTHWEST NATIONAL LABORATORY
    operated by
