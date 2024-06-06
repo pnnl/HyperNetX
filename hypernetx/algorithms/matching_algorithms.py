@@ -164,6 +164,7 @@ def parallel_iterated_sampling(hypergraph: Hypergraph, d: int, s: int, max_itera
             M.extend(maximal_matching(hnx.Hypergraph({f'e{i}': tuple(edge) for i, edge in enumerate(induced_edges)})))
             break
         S = hnx.Hypergraph({f'e{i}': tuple(edge) for i, edge in enumerate(induced_edges)})
+        p = s / (5 * len(S.edges) * d) if len(S.edges) > 0 else 0
         if debug:
             print(f"New size of S: {len(S.edges)}")
 
@@ -224,6 +225,7 @@ def iterated_sampling(hypergraph: Hypergraph, s: int) -> list:
     >>> result = iterated_sampling(hypergraph, 4)
     >>> result is None or all(len(edge) >= 2 for edge in result)
     True
+
 
 
 
@@ -288,23 +290,13 @@ def HEDCS(G: Hypergraph, beta: int, beta_complement: int) -> Hypergraph:
         edge = G.edges[edge_id]
         add_edge = True
         # Check if all vertices in the edge have a degree less than or equal to beta
-        for vertex in edge:
-            degree_v = len(G.nodes.memberships[vertex])
-            if degree_v > beta:
-                add_edge = False
-                break
+        degree_sum=sum(len(G.nodes.memberships[vertex]) for vertex in edge)
+        if degree_sum > beta:
+            add_edge = False
+        elif degree_sum < beta_complement:
+            add_edge = True
         if add_edge:
             H.add_edge(edge_id, edge)
-        else:
-            add_edge = True
-            # Check if any vertex in the edge has a degree greater than beta_complement
-            for vertex in edge:
-                degree_v = len(G.nodes.memberships[vertex])
-                if degree_v < beta_complement:
-                    add_edge = False
-                    break
-            if add_edge:
-                H.add_edge(edge_id, edge)
 
     return H
 
@@ -369,10 +361,8 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
         raise MemoryLimitExceededError("Insufficient memory available for the matching process.")
 
     k = math.ceil(m / (s * math.log(n)))
-    epsilon = 1 / (2 * n * math.log(n))
+    gamma = 1 / (2 * n * math.log2(n))
 
-    if debug:
-        print(f"Total edges (m): {m}, Nodes (n): {n}, Partitions (k): {k}, Epsilon: {epsilon}")
 
     # Step 2: Partition G into k subgraphs
     edges_list = list(hypergraph.incidence_dict.items())
@@ -382,8 +372,8 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
     # Step 3: Compute C(i) = HEDCS(G(i), 1 - epsilon) on each machine in parallel
     def compute_Ci(partition, results, index):
         try:
-            beta = len(hypergraph.nodes)
-            beta_complement = beta - (d - 1)
+            beta = 500 * (d ** 3) * (n ** 2) * (math.log2(n) ** 3)
+            beta_complement = (1 - gamma) * beta
             results[index] = HEDCS(partition, beta, beta_complement)
         except MemoryLimitExceededError:
             results[index] = None
@@ -402,7 +392,7 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
     combined_matching = set()
     for result in results:
         if result is None:
-            return None
+            continue
         combined_matching.update(tuple(edge) for edge in result)
 
     # Step 6: Compute and output a maximal matching on C
