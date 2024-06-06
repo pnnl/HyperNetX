@@ -225,6 +225,41 @@ def iterated_sampling(hypergraph: Hypergraph, s: int) -> list:
     >>> result = iterated_sampling(hypergraph, 4)
     >>> result is None or all(len(edge) >= 2 for edge in result)
     True
+    >>> s=10
+    >>> # Test with d=4
+    >>> edges_d4 = {'e1': [1, 2, 3, 4], 'e2': [2, 3, 4, 5], 'e3': [3, 4, 5, 6], 'e4': [4, 5, 6, 7]}
+    >>> hypergraph_d4 = hnx.Hypergraph(edges_d4)
+    >>> optimal_matching_d4 = ['e1', 'e3']
+    >>> approximate_matching_d4 = iterated_sampling(hypergraph_d4, s)
+    >>> d = 4
+    >>> len(approximate_matching_d4) <= d * len(optimal_matching_d4)
+    True
+
+    >>> # Test with d=5
+    >>> edges_d5 = {'e1': [1, 2, 3, 4, 5], 'e2': [2, 3, 4, 5, 6], 'e3': [3, 4, 5, 6, 7]}
+    >>> hypergraph_d5 = hnx.Hypergraph(edges_d5)
+    >>> optimal_matching_d5 = ['e1']
+    >>> approximate_matching_d5 = iterated_sampling(hypergraph_d5, s)
+    >>> d = 5
+    >>> len(approximate_matching_d5) <= d * len(optimal_matching_d5)
+    True
+
+    >>> # Test with d=6
+    >>> edges_d6 = {'e1': [1, 2, 3, 4, 5, 6], 'e2': [2, 3, 4, 5, 6, 7], 'e3': [3, 4, 5, 6, 7, 8]}
+    >>> hypergraph_d6 = hnx.Hypergraph(edges_d6)
+    >>> optimal_matching_d6 = ['e1']
+    >>> approximate_matching_d6 = iterated_sampling(hypergraph_d6, s)
+    >>> d = 6
+    >>> len(approximate_matching_d6) <= d * len(optimal_matching_d6)
+    True
+    >>> # Test with a larger hypergraph
+    >>> edges_large = {f'e{i}': [i, i+1, i+2] for i in range(1, 101)}
+    >>> hypergraph_large = Hypergraph(edges_large)
+    >>> optimal_matching_large = [edges_large[f'e{i}'] for i in range(1, 101,3)]
+    >>> approximate_matching_large = iterated_sampling(hypergraph_large, s)
+    >>> len(approximate_matching_large) <= d * len(optimal_matching_large)
+    True
+
 
 
 
