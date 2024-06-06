@@ -16,9 +16,9 @@ ENV DOCKER_STACKS_JUPYTER_CMD=notebook
 
 # Only copy the Jupyter notebooks
 # notebooks will be copied into '/home/jovyan' in the container
-COPY --from=builder /source/Basic* .
-COPY --from=builder /source/Advanced* .
-COPY --from=builder /source/Demo* .
+COPY --from=builder /source/Basic* ./
+COPY --from=builder /source/Advanced* ./
+COPY --from=builder /source/Demo* ./
 
 # Install the latest versions of HyperNetX and HNXWidget from PyPi
 RUN pip install --no-cache-dir hypernetx hnxwidget
