@@ -5,7 +5,6 @@ Programmer: Shira Rot, Niv
 Date: 22.5.2024
 """
 import numpy as np
-
 import hypernetx as hnx
 import threading
 import random
@@ -66,7 +65,16 @@ class MemoryLimitExceededError(Exception):
     pass
 
 
-def maximal_matching(hypergraph):
+def maximal_matching(hypergraph: Hypergraph) -> list:
+    """
+    Finds a maximal matching in the given hypergraph.
+
+    Parameters:
+    hypergraph (Hypergraph): The input hypergraph.
+
+    Returns:
+    list: The edges of the maximal matching.
+    """
     matching = []
     matched_vertices = set()
 
@@ -77,17 +85,58 @@ def maximal_matching(hypergraph):
 
     return matching
 
-def sample_edges(hypergraph, p):
+
+def sample_edges(hypergraph: Hypergraph, p: float) -> Hypergraph:
+    """
+    Samples edges from the hypergraph with probability p.
+
+    Parameters:
+    hypergraph (Hypergraph): The input hypergraph.
+    p (float): The probability of sampling each edge.
+
+    Returns:
+    Hypergraph: A new hypergraph containing the sampled edges.
+    """
     sampled_edges = [edge for edge in hypergraph.incidence_dict.values() if random.random() < p]
     return hnx.Hypergraph({f'e{i}': tuple(edge) for i, edge in enumerate(sampled_edges)})
 
-def sampling_round(S, p, s):
+
+def sampling_round(S: Hypergraph, p: float, s: int) -> tuple:
+    """
+    Performs a single sampling round on the hypergraph.
+
+    Parameters:
+    S (Hypergraph): The input hypergraph.
+    p (float): The probability of sampling each edge.
+    s (int): The maximum number of edges to include in the matching.
+
+    Returns:
+    tuple: A tuple containing the maximal matching and the sampled hypergraph.
+    """
     E_prime = sample_edges(S, p)
     if len(E_prime.incidence_dict.values()) > s:
         return None, E_prime
     return maximal_matching(E_prime), E_prime
 
-def parallel_iterated_sampling(hypergraph, d, s, max_iterations=100, debug=False):
+
+def parallel_iterated_sampling(hypergraph: Hypergraph, d: int, s: int, max_iterations: int = 100,
+                               debug: bool = False) -> list:
+    """
+    Performs parallel iterated sampling to find a matching in the hypergraph.
+
+    Parameters:
+    hypergraph (Hypergraph): The input hypergraph.
+    d (int): Degree of the hypergraph.
+    s (int): The amount of memory available per machine.
+    max_iterations (int): The maximum number of iterations.
+    debug (bool): Flag to print debug information.
+
+    Returns:
+    list: The edges of the approximate matching.
+
+    Raises:
+    MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
+    """
     M = []
     S = hypergraph
     p = s / (5 * len(S.edges) * d) if len(S.edges) > 0 else 0
@@ -213,156 +262,131 @@ def iterated_sampling(hypergraph: Hypergraph, s: int) -> list:
 
     return final_matching
 
-# def HEDCS(G, epsilon):
-#     H = Hypergraph()  # Initialize an empty hypergraph
-#     beta = len(G.nodes)
-#     d = max(len(edge) for edge in G.edges) if G.edges else 0
-#     beta_complement = beta - (d - 1)
-#
-#     for edge in G.edges:
-#         add_edge = True
-#         for vertex in edge:
-#             degree_v = G.degree(vertex)
-#             if degree_v > beta:
-#                 add_edge = False
-#                 break
-#         if add_edge:
-#             H.add_edge(edge)
-#         else:
-#             add_edge = True
-#             for vertex in edge:
-#                 degree_v = G.degree(vertex)
-#                 if degree_v < beta_complement:
-#                     add_edge = False
-#                     break
-#             if add_edge:
-#                 H.add_edge(edge)
-#
-#     return H
-#
-# def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
-#     """
-#     Algorithm 3: HEDCS-Matching for Hypergraph Matching
-#     This algorithm constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) to find
-#     a maximal matching in a d-uniform hypergraph.
-#
-#     Parameters:
-#     hypergraph (Hypergraph): A Hypergraph object.
-#     s (int): The amount of memory available per machine.
-#
-#     Returns:
-#     list: The edges of the graph for the approximate matching.
-#
-#     Raises:
-#     MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
-#
-#     The HEDCS-Matching algorithm leverages the concept of Hyper-Edge Degree Constrained Subgraph
-#     (HEDCS) to compute a (d(d-1+1/d)^2)-approximation for the d-Uniform Hypergraph Matching problem
-#     in 3 rounds of MPC (Massively Parallel Computation) using machines with Õ(n√nm) memory.
-#
-#     Examples:
-#     >>> hypergraph = Hypergraph({0: (1, 2), 1: (2, 3), 2: (3, 4), 3: (4, 5)})
-#     >>> try:
-#     ...     result = HEDCS_matching(hypergraph, 1)
-#     ... except MemoryLimitExceededError:
-#     ...     result = None
-#     >>> result is None or all(len(edge) >= 2 for edge in result)  # Each edge in the result should have at least 2 vertices
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6), 2: (6, 7), 3: (7, 8)})
-#     >>> try:
-#     ...     result = HEDCS_matching(hypergraph, 2)
-#     ... except MemoryLimitExceededError:
-#     ...     result = None
-#     >>> result is None or len(result) <= 2  # The result should fit within the memory constraint
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5)})
-#     >>> result = None
-#     >>> try:
-#     ...     result = HEDCS_matching(hypergraph, 0)  # Insufficient memory, expect failure
-#     ... except MemoryLimitExceededError:
-#     ...     pass
-#     >>> result is None
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2), 1: (3, 4), 2: (5, 6), 3: (7, 8), 4: (9, 10)})
-#     >>> result = HEDCS_matching(hypergraph, 10)  # Large enough memory, expect a result
-#     >>> result is not None
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (3, 4, 5), 2: (5, 6, 7), 3: (7, 8, 9), 4: (9, 10, 11)})
-#     >>> try:
-#     ...     result = HEDCS_matching(hypergraph, 3)
-#     ... except MemoryLimitExceededError:
-#     ...     result = None
-#     >>> result is None or all(len(edge) >= 2 for edge in result) or False  # Allowing for approximation
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6, 7, 8), 2: (9, 10, 11, 12), 3: (13, 14, 15, 1), 4: (2, 6, 10, 14), 5: (3, 7, 11, 15), 6: (4, 8, 12, 1), 7: (5, 9, 13, 2), 8: (6, 10, 14, 3), 9: (7, 11, 15, 4)})
-#     >>> try:
-#     ...     result = HEDCS_matching(hypergraph, 4)
-#     ... except MemoryLimitExceededError:
-#     ...     result = None
-#     >>> result is None or all(len(edge) >= 2 for edge in result) or False  # Allowing for approximation
-#     True
-#     """
-#     import math
-#
-#     n = len(hypergraph.nodes)
-#     m = len(hypergraph.edges)
-#
-#     if s <= 0:
-#         raise MemoryLimitExceededError("Insufficient memory available for the matching process.")
-#
-#     k = math.ceil(m / (s * math.log(n)))
-#     epsilon = 1 / (2 * n * math.log(n))
-#
-#     if debug:
-#         print(f"Total edges (m): {m}, Nodes (n): {n}, Partitions (k): {k}, Epsilon: {epsilon}")
-#
-#     # Step 2: Partition G into k subgraphs
-#     edges_list = list(hypergraph.incidence_dict.values())
-#     partitions = [edges_list[i::k] for i in range(k)]
-#     hypergraph_partitions = [hnx.Hypergraph({f'e{j}': edge for j, edge in enumerate(partitions[i])}) for i in range(k)]
-#
-#     # Step 3: Compute C(i) = HEDCS(G(i), 1 - epsilon) on each machine in parallel
-#     def compute_Ci(partition, results, index):
-#         try:
-#             results[index] = HEDCS(partition, 1 - epsilon)
-#         except MemoryLimitExceededError:
-#             results[index] = None
-#
-#     results = [None] * k
-#     threads = []
-#
-#     for i in range(k):
-#         thread = threading.Thread(target=compute_Ci, args=(hypergraph_partitions[i], results, i))
-#         threads.append(thread)
-#         thread.start()
-#
-#     for thread in threads:
-#         thread.join()
-#
-#     combined_matching = set()
-#     for result in results:
-#         if result is None:
-#             return None
-#         combined_matching.update(tuple(edge) for edge in result)
-#
-#     # Step 6: Compute and output a maximal matching on C
-#     final_hypergraph = hnx.Hypergraph({f'e{i}': edge for i, edge in enumerate(combined_matching)})
-#     final_matching = maximal_matching(final_hypergraph)
-#
-#     if len(final_matching) > s:
-#         raise MemoryLimitExceededError("Result exceeds memory constraint.")
-#
-#     return final_matching
 
+
+def HEDCS(G: Hypergraph, beta: int, beta_complement: int) -> Hypergraph:
+    """
+    Constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) from the given hypergraph G.
+
+    Parameters:
+    G (Hypergraph): The input hypergraph.
+    beta (int): Degree threshold for adding edges.
+    beta_complement (int): Complementary degree threshold for adding edges.
+
+    Returns:
+    Hypergraph: The constructed HEDCS.
+    """
+    H = Hypergraph()  # Initialize an empty hypergraph
+
+    for edge_id in G.edges:
+        edge = G.edges[edge_id]
+        add_edge = True
+        # Check if all vertices in the edge have a degree less than or equal to beta
+        for vertex in edge:
+            degree_v = len(G.nodes.memberships[vertex])
+            if degree_v > beta:
+                add_edge = False
+                break
+        if add_edge:
+            H.add_edge(edge_id, edge)
+        else:
+            add_edge = True
+            # Check if any vertex in the edge has a degree greater than beta_complement
+            for vertex in edge:
+                degree_v = len(G.nodes.memberships[vertex])
+                if degree_v < beta_complement:
+                    add_edge = False
+                    break
+            if add_edge:
+                H.add_edge(edge_id, edge)
+
+    return H
+
+
+#
+def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
+    """
+    Algorithm 3: HEDCS-Matching for Hypergraph Matching
+    This algorithm constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) to find
+    a maximal matching in a d-uniform hypergraph.
+
+    Parameters:
+    hypergraph (Hypergraph): A Hypergraph object.
+    s (int): The amount of memory available per machine.
+
+    Returns:
+    list: The edges of the graph for the approximate matching.
+
+    Raises:
+    MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
+
+    Examples:
+    >>> hypergraph = Hypergraph({0: (1, 2)})
+    >>> result = HEDCS_matching(hypergraph, 10)
+    >>> result is not None and all(len(edge) >= 2 for edge in result)
+    True
+
+    >>> hypergraph = Hypergraph({0: (1, 2), 1: (3, 4)})
+    >>> result = HEDCS_matching(hypergraph, 10)
+    >>> result is not None and all(len(edge) >= 2 for edge in result)
+    True
+    """
+    import math
+    d = max((len(edge) for edge in hypergraph.incidence_dict.values()), default=0)
+    n = len(hypergraph.nodes)
+    m = len(hypergraph.edges)
+
+    if s <= 0:
+        raise MemoryLimitExceededError("Insufficient memory available for the matching process.")
+
+    k = math.ceil(m / (s * math.log(n)))
+    epsilon = 1 / (2 * n * math.log(n))
+
+    if debug:
+        print(f"Total edges (m): {m}, Nodes (n): {n}, Partitions (k): {k}, Epsilon: {epsilon}")
+
+    # Step 2: Partition G into k subgraphs
+    edges_list = list(hypergraph.incidence_dict.items())
+    partitions = [edges_list[i::k] for i in range(k)]
+    hypergraph_partitions = [hnx.Hypergraph({f'e{j}': edge for j, (edge_id, edge) in enumerate(partitions[i])}) for i in range(k)]
+
+    # Step 3: Compute C(i) = HEDCS(G(i), 1 - epsilon) on each machine in parallel
+    def compute_Ci(partition, results, index):
+        try:
+            beta = len(hypergraph.nodes)
+            beta_complement = beta - (d - 1)
+            results[index] = HEDCS(partition, beta, beta_complement)
+        except MemoryLimitExceededError:
+            results[index] = None
+
+    results = [None] * k
+    threads = []
+
+    for i in range(k):
+        thread = threading.Thread(target=compute_Ci, args=(hypergraph_partitions[i], results, i))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    combined_matching = set()
+    for result in results:
+        if result is None:
+            return None
+        combined_matching.update(tuple(edge) for edge in result)
+
+    # Step 6: Compute and output a maximal matching on C
+    final_hypergraph = hnx.Hypergraph({f'e{i}': edge for i, edge in enumerate(combined_matching)})
+    final_matching = maximal_matching(final_hypergraph)
+
+    if len(final_matching) > s:
+        raise MemoryLimitExceededError("Result exceeds memory constraint.")
+
+    return final_matching
 
 if __name__ == '__main__':
     import doctest
 
     doctest.testmod()
-
 
