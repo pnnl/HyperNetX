@@ -36,7 +36,7 @@ def test_greedy_d_approximation():
     assert all(edge in [{f'e{i}': {i, i+1, i+2}} for i in range(1, 100, 3)] for edge in result)
 
 
-#
+
 # def test_iterated_sampling():
 #     random.seed(0)
 #
