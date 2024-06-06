@@ -1,6 +1,7 @@
 HyperNetX
 ==========
-<img src="docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
+
+<img src="https://raw.githubusercontent.com/pnnl/HyperNetX/master/docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
 
 [![Pytest](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
