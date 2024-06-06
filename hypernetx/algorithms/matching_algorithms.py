@@ -64,6 +64,9 @@ class MemoryLimitExceededError(Exception):
     """Custom exception to indicate memory limit exceeded during hypergraph matching."""
     pass
 
+class NonUniformHypergraphError(Exception):
+    """Custom exception to un d-uniform exceeded during hypergraph matching."""
+    pass
 
 def maximal_matching(hypergraph: Hypergraph) -> list:
     """
@@ -221,6 +224,9 @@ def iterated_sampling(hypergraph: Hypergraph, s: int) -> list:
     >>> result = iterated_sampling(hypergraph, 4)
     >>> result is None or all(len(edge) >= 2 for edge in result)
     True
+
+
+
     """
     debug = False
     # Fetch the degree 'd' from the hypergraph
@@ -330,9 +336,32 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
     >>> result = HEDCS_matching(hypergraph, 10)
     >>> result is not None and all(len(edge) >= 2 for edge in result)
     True
+
+
+    >>> edges = {'e1': [1, 2, 3], 'e2': [2, 3, 4], 'e3': [1, 4, 5]}
+    >>> hypergraph = hnx.Hypergraph(edges)
+    >>> s = 10
+    >>> optimal_matching = ['e1']  # Assuming we know the optimal matching
+    >>> approximate_matching = HEDCS_matching(hypergraph, s)
+    >>> d = 3
+    >>> len(approximate_matching) <= d**3 * len(optimal_matching)
+    True
+
+
+    >>> # Test with a larger hypergraph
+    >>> edges_large = {f'e{i}': [i, i+1, i+2] for i in range(1, 101)}
+    >>> hypergraph_large = Hypergraph(edges_large)
+    >>> optimal_matching_large = [edges_large[f'e{i}'] for i in range(1, 101,3)]
+    >>> approximate_matching_large = HEDCS_matching(hypergraph_large, s)
+    >>> len(approximate_matching_large) <= d**3 * len(optimal_matching_large)
+    True
+
     """
     import math
     d = max((len(edge) for edge in hypergraph.incidence_dict.values()), default=0)
+    for edge in hypergraph.incidence_dict.values():
+        if len(edge) != d:
+            raise NonUniformHypergraphError("The hypergraph is not d-uniform.")
     n = len(hypergraph.nodes)
     m = len(hypergraph.edges)
 
