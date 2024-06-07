@@ -192,6 +192,49 @@ source venv-hnx/bin/activate
 make install
 ```
 
+# Using HyperNetX on Docker
+
+As an alternative to installing HyperNetX, you can use the officially supported HyperNetX Docker image maintained at
+[DockerHub](https://hub.docker.com/r/hypernetx/hypernetx). Use the image to quickly start HyperNetX in a Docker container.
+The container starts a Jupyter Notebook that has the latest version of HyperNetX and HNXWidget installed;
+it also contains all the HyperNetX tutorials.
+
+## Run the Container
+
+* Using Docker CLI, run the container in the foreground:
+
+```
+docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest
+```
+
+* Alternatively, you can create a `docker-compose.yml` file with the following:
+```
+version: '3'
+
+services:
+  hypernetx:
+    image: hypernetx/hypernetx:latest
+    ports:
+      - "8888:8888"
+    tty: true
+    stdin_open: true
+    volumes:
+      - "${PWD}:/home/jovyan/work"
+```
+
+Once `docker-compose.yml` is created, run the container:
+
+```
+docker-compose up
+```
+
+## Open Jupyter Notebook
+
+After the container has started, access the HyperNetX Jupyter Notebooks by opening the following URL in a browser:
+
+[http://localhost:8888/tree](http://localhost:8888/tree)
+
+
 Development
 ===========
 
@@ -378,6 +421,17 @@ The HTML pages are in docs/html.
 
 Click on [http://127.0.0.1:8000/install.html](http://127.0.0.1:8000/install.html) to open the docs on your browser. Since this will auto-rebuild, every time
 you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
+
+Testing the Docker Image
+------------------------
+
+If you want to test the Docker image after making any source code changes, follow this workflow:
+
+1. Make a change in the HNX codebase
+2. Build image: `docker build --rm --tag hypernetx/hypernetx:latest`
+3. Test image: `docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest`
+4. Open a browser to [http://localhost:8888/tree](http://localhost:8888/tree). Check that tutorials still work and/or open a notebook and test the changes that you made.
+5. Once finished testing, kill the container using Ctrl-C
 
 
 Notice

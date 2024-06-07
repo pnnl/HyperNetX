@@ -1,3 +1,6 @@
+# This Dockerfile uses multistage-build to copy only the tutorial notebooks into the image
+# See https://stackoverflow.com/questions/49939960/docker-copy-files-using-glob-pattern
+
 # Stage 1: Copy all tutorial folders into first stage
 FROM quay.io/jupyter/base-notebook:python-3.11 AS builder
 
