@@ -11,9 +11,9 @@ HyperNetX may be cloned or forked from Github_.
 
 
 Prerequisites
-######################
+#############
 
-HyperNetX officially supports Python 3.10, 3.11, and 3.12.
+HyperNetX officially supports Python >=3.10,<4.0.0.
 
 
 Create a virtual environment
@@ -22,21 +22,27 @@ Create a virtual environment
 Using Anaconda
 *************************
 
-    >>> conda create -n venv-hnx python=3.11 -y
-    >>> conda activate venv-hnx
+.. code-block:: bash
+
+    conda create -n venv-hnx python=3.11 -y
+    conda activate venv-hnx
 
 Using venv
 *************************
 
-    >>> python -m venv venv-hnx
-    >>> source venv-hnx/bin/activate
+.. code-block:: bash
+
+    python -m venv venv-hnx
+    source venv-hnx/bin/activate
 
 
 Using virtualenv
 *************************
 
-    >>> virtualenv venv-hnx
-    >>> source venv-hnx/bin/activate
+.. code-block:: bash
+
+    virtualenv venv-hnx
+    source venv-hnx/bin/activate
 
 
 For Windows Users
@@ -44,23 +50,29 @@ For Windows Users
 
 On both Windows PowerShell or Command Prompt, you can use the following command to activate your virtual environment:
 
-    >>> .\env-hnx\Scripts\activate
+.. code-block::
+
+    .\env-hnx\Scripts\activate
 
 
 To deactivate your environment, use:
 
-    >>> .\env-hnx\Scripts\deactivate
+.. code-block::
+
+    .\env-hnx\Scripts\deactivate
 
 
 Installation
 ############
 
-Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python ^3.10,<=3.12.
+After activating your virtual environment, install HyperNetX.
 
 Installing from PyPi
 ********************
 
-    >>> pip install hypernetx
+.. code-block:: bash
+
+    pip install hypernetx
 
 
 Installing from Source
@@ -68,12 +80,14 @@ Installing from Source
 
 The source code provides a Makefile to simplify the installation process. Ensure that you have ``make`` and ``git`` installed.
 
+.. code-block:: bash
 
-    >>> git clone https://github.com/pnnl/HyperNetX.git
-    >>> cd HyperNetX
-    >>> make venv
-    >>> source venv-hnx/bin/activate
-    >>> make install
+    git clone https://github.com/pnnl/HyperNetX.git
+    cd HyperNetX
+    make venv
+    source venv-hnx/bin/activate
+    make install
+
 
 
 Post-Installation Actions
@@ -109,7 +123,9 @@ Viewing jupyter notebooks
 
 The following command will automatically open the notebooks in a browser.
 
-    >>> make tutorials
+.. code-block:: bash
+
+    make tutorials
 
 
 Building documentation
@@ -117,6 +133,73 @@ Building documentation
 
 The following commands will build and open a local version of the documentation in a browser:
 
-    >>> cd docs
-    >>> make html
-    >>> open build/index.html
+.. code-block:: bash
+
+    cd docs
+    make html
+    open build/index.html
+
+
+
+Using HyperNetX on Docker
+#########################
+
+.. _DockerHub: https://hub.docker.com/r/hypernetx/hypernetx
+
+As an alternative to installing HyperNetX, you can use the officially supported HyperNetX Docker image maintained at DockerHub_.
+Use the image to quickly start HyperNetX in a Docker container. The container starts a Jupyter Notebook that has the
+latest version of HyperNetX and HNXWidget installed; it also contains all the HyperNetX tutorials.
+
+Prerequisites
+*************
+
+.. _Docker: https://docs.docker.com/engine/install/
+.. _Docker-Compose: https://docs.docker.com/compose/install/
+
+* Docker_
+* Docker-Compose_
+
+Steps
+*****
+
+#. Run the container
+
+   #. Using Docker CLI, run the container in the foreground:
+
+      .. code-block:: bash
+
+        docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest
+
+
+
+   #. Alternatively, create a `docker-compose.yml` file with the following:
+
+      .. code-block:: yaml
+
+        version: '3'
+
+        services:
+          hypernetx:
+            image: hypernetx/hypernetx:latest
+            ports:
+              - "8888:8888"
+            tty: true
+            stdin_open: true
+            volumes:
+              - "${PWD}:/home/jovyan/work"
+
+    Once `docker-compose.yml` is created, run the container:
+
+    .. code-block:: bash
+
+        docker-compose up
+
+
+#. Open Jupyter Notebook
+
+After the container has started, access the HyperNetX Jupyter Notebooks by opening the following URL in a browser:
+
+
+* http://localhost:8888/tree
+
+
