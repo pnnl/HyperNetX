@@ -36,7 +36,8 @@ jobs:
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
     - run: echo "Building wheel from branch ${{ github.ref_name }}"
 
-    - uses: actions/checkout@v4
+    - name: Check out the repo
+      uses: actions/checkout@v4
 
     - name: Build and publish distribution 📦 to Test PyPI
       uses: JRubics/poetry-publish@v2.0
