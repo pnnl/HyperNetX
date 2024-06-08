@@ -19,6 +19,7 @@ on:
       triggeredBy:
         description: 'Name of team member who is manually triggering this workflow'
         required: true
+        default: ''
 
 jobs:
 
@@ -31,12 +32,11 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - run: |
-          echo "This workflow was triggered by: $TRIGGER_PERSON"
+      - if: ${{ inputs.triggeredBy != '' }}
+        run: |
+          echo "This workflow was triggered by: $TEAM_MEMBER"
         env:
-          TRIGGER_PERSON: ${{ inputs.triggeredBy }}
-          IMAGE_NAME: hypernetx/hypernetx:latest
-
+          TEAM_MEMBER: ${{ inputs.triggeredBy }}
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
@@ -57,7 +57,7 @@ jobs:
         id: push
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ env.IMAGE_NAME }}
+          tags: hypernetx/hypernetx:latest
           push: true
 
       - name: Generate artifact attestation
