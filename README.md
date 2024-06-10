@@ -235,41 +235,57 @@ After the container has started, access the HyperNetX Jupyter Notebooks by openi
 [http://localhost:8888/tree](http://localhost:8888/tree)
 
 
-Development
-===========
+# Development
 
-Install an editable version
+As a developer, set up your environment using either the standard `pip` tool or [`Poetry`](https://python-poetry.org/).
+
+## Using Pip
+
+### Setup virtual environment and install HNX
+
+Create a virtual environement. Then install an editable version of HNX and also install additional dependencies to support testing and jupyter notebooks:
 ```
+python -m venv venv-hnx
+source venv-hnx/bin/activate
 pip install -e .
-```
-
-Install additional dependencies to support testing and jupyter notebooks:
-```
 pip install -r requirements.txt
 ```
 
-You can also install all these requirements in one Make target:
+As an alternative, you can also install all these requirements in one Make target:
 
 ```
+make venv
+source venv-hnx/bin/activate
 make install
 ```
 
-Poetry
-======
+### Setup pre-commit
+
+Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
+It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
+pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
+automatically run the formatter Black on your code changes.
+
+```shell
+# Once installed, pre-commit will be triggered every time you make a commit in your environment
+pre-commit install
+```
+
+
+## Using Poetry
 
 This library uses [Poetry](https://python-poetry.org/docs/) to manage dependencies and packaging. Poetry can also be
 used to manage your environment for development.
 
-Prerequisites
--------------
+### Prerequisites
 
 * [Install Poetry](https://python-poetry.org/docs/#installation)
 
 
-Configure Poetry
-----------------
+### Configure Poetry
 
-[Configure your Poetry](https://python-poetry.org/docs/configuration/) to create the virtual environment in your project directory:
+[Configure your Poetry](https://python-poetry.org/docs/configuration/) to ensure that the virtual environment gets created in your project directory (this is not necessary but recommended for convenience):
+
 ```
 poetry config virtualenvs.in-project true
 
@@ -277,21 +293,38 @@ poetry config virtualenvs.in-project true
 poetry config --list
 ```
 
-Set up virtual environment
-----------------------------
+### Setup virtual environment and install HNX
 
 Create and activate a virtual environment.
+
 ```
 poetry shell
 ```
 
-Install required dependencies and HyperNetX in editable mode.
+Install HyperNetX in editable mode, the library's core/required dependencies, and the optional dependencies to support development.
+
 ```
-poetry install
+poetry install --with test,lint,docs,release,tutorials
 ```
 
-Install support for testing
------------------------------
+Details about these dependencies are defined in [pyproject.toml](pyproject.toml).
+
+### Setup Pre-commit
+
+Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
+It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
+pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
+automatically run the formatter Black on your code changes.
+
+```shell
+# Once installed, pre-commit will be triggered every time you make a commit in your environment
+pre-commit install
+```
+
+### Details about optional dependencies
+
+#### Install support for testing
+
 
 > ℹ️ **NOTE:** This project has pytest configuration contained in pyproject.toml. By default, pytest will use those configuration settings to run tests.
 
@@ -312,8 +345,7 @@ coverage html
 open htmlcov/index.html
 ```
 
-Install support for tutorials
------------------------------
+#### Install support for tutorials
 
 ```shell
 poetry install --with tutorials
@@ -325,8 +357,8 @@ poetry shell
 make tutorials
 ```
 
-Code Quality
-------------
+#### Code Quality: Pylint, Black
+
 HyperNetX uses a number of tools to maintain code quality:
 
 * Pylint
@@ -341,8 +373,6 @@ poetry install --with lint
 poetry shell
 ```
 
-Pylint
-------
 
 [Pylint](https://pylint.pycqa.org/en/latest/index.html) is a static code analyzer for Python-based projects. From the [Pylint docs](https://pylint.pycqa.org/en/latest/index.html#what-is-pylint):
 
@@ -362,8 +392,6 @@ pylint hypernetx --output=pylint-results.txt
 
 For more information on configuration, see https://pylint.pycqa.org/en/latest/user_guide/configuration/index.html
 
-Black
------
 [Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
 
 
@@ -371,21 +399,7 @@ Black
 black hypernetx
 ```
 
-Pre-commit
----------
-
-Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
-It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
-pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
-automatically run the formatter Black on your code changes.
-
-```shell
-# Once installed, pre-commit will be triggered every time you make a commit in your environment
-pre-commit install
-```
-
-Documentation
--------------
+### Documentation
 
 Build and view documentation locally:
 
@@ -422,8 +436,8 @@ The HTML pages are in docs/html.
 Click on [http://127.0.0.1:8000/install.html](http://127.0.0.1:8000/install.html) to open the docs on your browser. Since this will auto-rebuild, every time
 you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
 
-Testing the Docker Image
-------------------------
+
+## Developing and Testing the Docker Image
 
 If you want to test the Docker image after making any source code changes, follow this workflow:
 
