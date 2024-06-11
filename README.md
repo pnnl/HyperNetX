@@ -442,7 +442,8 @@ you change a document file, it will automatically render on your browser, allowi
 If you want to test the Docker image after making any source code changes, follow this workflow:
 
 1. Make a change in the HNX codebase
-2. Build image: `docker build --rm --tag hypernetx/hypernetx:latest`
+2. Build image for multi-platforms (i.e.ARM64, x86): `docker build --platform linux/amd64,linux/arm64 --rm --tag hypernetx/hypernetx:latest .`
+   3. If you're having issues building, see https://docs.docker.com/desktop/containerd/
 3. Test image: `docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest`
 4. Open a browser to [http://localhost:8888/tree](http://localhost:8888/tree). Check that tutorials still work and/or open a notebook and test the changes that you made.
 5. Once finished testing, kill the container using Ctrl-C
