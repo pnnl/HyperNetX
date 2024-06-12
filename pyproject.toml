@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hypernetx"
-version = "2.3.4"
+version = "2.3.5"
 description = "HyperNetX is a Python library for the creation and study of hypergraphs."
 authors = ["Brenda Praggastis <Brenda.Praggastis@pnnl.gov>", "Dustin Arendt <dustin.arendt@pnnl.gov>",
     "Sinan Aksoy <sinan.aksoy@pnnl.gov>", "Emilie Purvine <Emilie.Purvine@pnnl.gov>",
