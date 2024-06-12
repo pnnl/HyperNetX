@@ -28,52 +28,68 @@ def approximation_matching_checking(optimal: list, approx: list):
     return True
 
 
-def greedy_d_approximation(hypergraph: Hypergraph) -> list:
+def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     """
-    Algorithm 1: Greedy d-Approximation for Hypergraph Matching
-    Finds a greedy d-approximation for hypergraph matching.
+    Greedy algorithm for hypergraph matching
+    This algorithm constructs a random k-partitioning of G and finds a maximal matching.
 
     Parameters:
-    hypergraph (Hypergraph): A Hypergraph object.
+    hypergraph (hnx.Hypergraph): A Hypergraph object.
+    k (int): The number of partitions.
 
     Returns:
-    list: the edges of the graph for the approximate matching.
+    list: The edges of the graph for the greedy matching.
 
-    Examples:
-    >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6)})
-    >>> greedy_d_approximation(hypergraph)
-    [{0: {1, 2, 3}}, {1: {4, 5, 6}}]
+    Example:
+    >>> edges = {'e1': [1, 2, 3], 'e2': [2, 3, 4], 'e3': [1, 4, 5]}
+    >>> hypergraph = Hypergraph(edges)
+    >>> k = 2
+    >>> matching = greedy_matching(hypergraph, k)
+    >>> optimal_sol=[(1,2,3)]# Example output, actual output may vary
+    >>> approximation_matching_checking(optimal_sol,matching)
+    True
 
-    >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6), 2: (7, 8, 9), 3: (1, 4, 7), 4: (2, 5, 8), 5: (3, 6, 9)})
-    >>> greedy_d_approximation(hypergraph)
-    [{0: {1, 2, 3}}, {1: {4, 5, 6}}, {2: {8, 9, 7}}]
+    >>> # Test with a large hypergraph
+    >>> edges_large = {f'e{i}': list(range(i, i + 3)) for i in range(1, 50)}
+    >>> hypergraph_large = Hypergraph(edges_large)
+    >>> k = 5
+    >>> optimal_sol=[edges_large[f'e{i}'] for i in range(1,50,3)]
+    >>> matching_large = greedy_matching(hypergraph_large, k)
+    >>> approximation_matching_checking(optimal_sol,matching_large)
+    True
 
-
-    >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5), 3: (5, 6, 7), 4: (6, 7, 8), 5: (7, 8, 9)})
-    >>> greedy_d_approximation(hypergraph)
-    [{0: {1, 2, 3}}, {3: {5, 6, 7}}]
-
-
-    >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6, 7, 8), 2: (9, 10, 11, 12), 3: (13, 14, 15, 1), 4: (2, 6, 10, 14), 5: (3, 7, 11, 15), 6: (4, 8, 12, 1), 7: (5, 9, 13, 2), 8: (6, 10, 14, 3), 9: (7, 11, 15, 4)})
-    >>> greedy_d_approximation(hypergraph)
-    [{0: {1, 2, 3, 4}}, {1: {8, 5, 6, 7}}, {2: {9, 10, 11, 12}}]
-
+    >>> # Test with non-uniform hypergraph (should raise an error)
+    >>> edges_non_uniform = {'e1': [1, 2, 3], 'e2': [4, 5], 'e3': [6, 7, 8, 9]}
+    >>> hypergraph_non_uniform = Hypergraph(edges_non_uniform)
+    >>> try:
+    ...     greedy_matching(hypergraph_non_uniform, k)
+    ... except NonUniformHypergraphError:
+    ...     print("NonUniformHypergraphError raised")
+    NonUniformHypergraphError raised
     """
+    # Check if the hypergraph is d-uniform
+    edge_sizes = {len(edge) for edge in hypergraph.incidence_dict.values()}
+    if len(edge_sizes) > 1:
+        raise NonUniformHypergraphError("The hypergraph is not d-uniform.")
 
-    matching = []
-    available_vertices = set(hypergraph.nodes)
-    for edge in hypergraph.edges:
-        edge_vertices = hypergraph.edges[edge]
-        if len(edge_vertices) < 2:
-            print("Error: Hyperedge with fewer than 2 vertices detected:", edge_vertices)
-            raise ValueError("Hyperedge must have at least 2 vertices")
+    # Partition the hypergraph into k subgraphs
+    partitions = partition_hypergraph(hypergraph, k)
 
-        if all(v in available_vertices for v in edge_vertices):
-            matching.append({edge: set(edge_vertices)})
-            for v in edge_vertices:
-                available_vertices.remove(v)
+    # Find maximum matching for each partition in parallel
+    with ThreadPoolExecutor() as executor:
+        MM_list = list(executor.map(maximal_matching, partitions))
 
-    return matching
+    # Initialize the matching set
+    M = set()
+
+    # Process each partition's matching
+    for MM_Gi in MM_list:
+        # Add edges to M if they do not violate the matching property
+        for edge in MM_Gi:
+            if not any(set(edge) & set(matching_edge) for matching_edge in M):
+                M.add(tuple(edge))
+
+    return list(M)
 
 
 class MemoryLimitExceededError(Exception):
@@ -251,170 +267,23 @@ def iterated_sampling(hypergraph: Hypergraph, s: int, max_iterations: int = 100)
     return M
 
 
-# def iterated_sampling(hypergraph: Hypergraph, s: int) -> list:
-#     """
-#     Algorithm 2: Iterated Sampling for Hypergraph Matching
-#     Uses iterated sampling to find a maximal matching in a d-uniform hypergraph.
-#
-#     Parameters:
-#     hypergraph (Hypergraph): A Hypergraph object.
-#     s (int): The amount of memory available for the computer.
-#
-#     Returns:
-#     list: The edges of the graph for the approximate matching.
-#
-#     Raises:
-#     MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
-#
-#     Examples:
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5)})
-#     >>> result = iterated_sampling(hypergraph, 1)
-#     >>> result is None or all(len(edge) >= 2 for edge in result)  # Each edge in the result should have at least 2 vertices
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (2, 3, 4, 5), 2: (3, 4, 5, 6)})
-#     >>> result = iterated_sampling(hypergraph, 2)
-#     >>> result is None or len(result) <= 2  # The result should fit within the memory constraint
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6)})
-#     >>> result = None
-#     >>> try:
-#     ...     result = iterated_sampling(hypergraph, 0)  # Insufficient memory, expect failure
-#     ... except MemoryLimitExceededError:
-#     ...     pass
-#     >>> result is None
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (4, 5, 6)})
-#     >>> result = iterated_sampling(hypergraph, 10)  # Large enough memory, expect a result
-#     >>> result is not None
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3), 1: (2, 3, 4), 2: (3, 4, 5), 3: (5, 6, 7), 4: (6, 7, 8), 5: (7, 8, 9)})
-#     >>> result = iterated_sampling(hypergraph, 3)
-#     >>> result is None or all(len(edge) >= 2 for edge in result)
-#     True
-#
-#     >>> hypergraph = Hypergraph({0: (1, 2, 3, 4), 1: (5, 6, 7, 8), 2: (9, 10, 11, 12), 3: (13, 14, 15, 1), 4: (2, 6, 10, 14), 5: (3, 7, 11, 15), 6: (4, 8, 12, 1), 7: (5, 9, 13, 2), 8: (6, 10, 14, 3), 9: (7, 11, 15, 4)})
-#     >>> result = iterated_sampling(hypergraph, 4)
-#     >>> result is None or all(len(edge) >= 2 for edge in result)
-#     True
-#     >>> s=10
-#     >>> # Test with d=4
-#     >>> edges_d4 = {'e1': [1, 2, 3, 4], 'e2': [2, 3, 4, 5], 'e3': [3, 4, 5, 6], 'e4': [4, 5, 6, 7]}
-#     >>> hypergraph_d4 = hnx.Hypergraph(edges_d4)
-#     >>> optimal_matching_d4 = ['e1', 'e3']
-#     >>> approximate_matching_d4 = iterated_sampling(hypergraph_d4, s)
-#     >>> d = 4
-#     >>> len(approximate_matching_d4) <= d * len(optimal_matching_d4)
-#     True
-#
-#     >>> # Test with d=5
-#     >>> edges_d5 = {'e1': [1, 2, 3, 4, 5], 'e2': [2, 3, 4, 5, 6], 'e3': [3, 4, 5, 6, 7]}
-#     >>> hypergraph_d5 = hnx.Hypergraph(edges_d5)
-#     >>> optimal_matching_d5 = ['e1']
-#     >>> approximate_matching_d5 = iterated_sampling(hypergraph_d5, s)
-#     >>> d = 5
-#     >>> len(approximate_matching_d5) <= d * len(optimal_matching_d5)
-#     True
-#
-#     >>> # Test with d=6
-#     >>> edges_d6 = {'e1': [1, 2, 3, 4, 5, 6], 'e2': [2, 3, 4, 5, 6, 7], 'e3': [3, 4, 5, 6, 7, 8]}
-#     >>> hypergraph_d6 = hnx.Hypergraph(edges_d6)
-#     >>> optimal_matching_d6 = ['e1']
-#     >>> approximate_matching_d6 = iterated_sampling(hypergraph_d6, s)
-#     >>> d = 6
-#     >>> len(approximate_matching_d6) <= d * len(optimal_matching_d6)
-#     True
-#     >>> # Test with a larger hypergraph
-#     >>> edges_large = {f'e{i}': [i, i+1, i+2] for i in range(1, 101)}
-#     >>> hypergraph_large = Hypergraph(edges_large)
-#     >>> optimal_matching_large = [edges_large[f'e{i}'] for i in range(1, 101,3)]
-#     >>> approximate_matching_large = iterated_sampling(hypergraph_large, s)
-#     >>> len(approximate_matching_large) <= d * len(optimal_matching_large)
-#     True
-#
-#
-#
-#
-#
-#     """
-#     debug = False
-#     # Fetch the degree 'd' from the hypergraph
-#     d = max((len(edge) for edge in hypergraph.incidence_dict.values()), default=0)
-#
-#     if d == 0:
-#         return []
-#
-#     def process_partition(partition, results, index):
-#         try:
-#             results[index] = parallel_iterated_sampling(partition, d, s, debug=debug)
-#         except MemoryLimitExceededError:
-#             results[index] = None
-#
-#     num_threads = 3
-#     edges_list = list(hypergraph.incidence_dict.values())
-#     partitions = [edges_list[i::num_threads] for i in range(num_threads)]
-#     hypergraph_partitions = [hnx.Hypergraph({f'e{j}': edge for j, edge in enumerate(partitions[i])}) for i in range(num_threads)]
-#     threads = []
-#     results = [None] * num_threads
-#
-#     for i in range(num_threads):
-#         thread = threading.Thread(target=process_partition, args=(hypergraph_partitions[i], results, i))
-#         threads.append(thread)
-#         thread.start()
-#
-#     for thread in threads:
-#         thread.join()
-#
-#     combined_matching = set()
-#     for result in results:
-#         if result is None:
-#             return None
-#         combined_matching.update(tuple(edge) for edge in result)
-#
-#     # Ensure the final matching is maximal
-#     final_hypergraph = hnx.Hypergraph({f'e{i}': edge for i, edge in enumerate(combined_matching)})
-#     final_matching = maximal_matching(final_hypergraph)
-#
-#     return final_matching
-#
-
-
-def HEDCS(G: Hypergraph, beta: int, beta_complement: int) -> Hypergraph:
-    """
-    Constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) from the given hypergraph G.
-
-    Parameters:
-    G (Hypergraph): The input hypergraph.
-    beta (int): Degree threshold for adding edges.
-    beta_complement (int): Complementary degree threshold for adding edges.
-
-    Returns:
-    Hypergraph: The constructed HEDCS.
-    """
-    H = Hypergraph()  # Initialize an empty hypergraph
-
-    for edge_id in G.edges:
-        edge = G.edges[edge_id]
-        add_edge = True
-        # Check if all vertices in the edge have a degree less than or equal to beta
-        degree_sum = sum(len(G.nodes.memberships[vertex]) for vertex in edge)
-        if degree_sum > beta:
-            add_edge = False
-        elif degree_sum < beta_complement:
-            add_edge = True
-        if add_edge:
-            H.add_edge(edge_id, edge)
-
-    return H
 
 
 def check_beta_condition(beta, beta_minus, d):
     return (beta - beta_minus) >= (d - 1)
 
 def build_HEDCS(hypergraph, beta, beta_minus):
+    """
+    Constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) from the given hypergraph G.
+
+    Parameters:
+    G (Hypergraph): The input hypergraph.
+    beta (int): Degree threshold for adding edges.
+    beta_minus (int): Complementary degree threshold for adding edges.
+
+    Returns:
+    Hypergraph: The constructed HEDCS.
+    """
     H = hnx.Hypergraph(hypergraph.incidence_dict)  # Initialize H to be equal to G
     degrees = {node: 0 for node in hypergraph.nodes}  # Initialize vertex degrees
 
@@ -452,7 +321,7 @@ def partition_hypergraph(hypergraph, k):
     random.shuffle(edges)
     partitions = [edges[i::k] for i in range(k)]
     return [hnx.Hypergraph(dict(part)) for part in partitions]
-def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
+def HEDCS_matching(hypergraph: Hypergraph, s: int) -> list:
     """
     Algorithm 3: HEDCS-Matching for Hypergraph Matching
     This algorithm constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) to find
@@ -481,12 +350,11 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
 
 
     >>> edges = {'e1': [1, 2, 3], 'e2': [2, 3, 4], 'e3': [1, 4, 5]}
-    >>> hypergraph = hnx.Hypergraph(edges)
+    >>> hypergraph = Hypergraph(edges)
     >>> s = 10
-    >>> optimal_matching = ['e1']  # Assuming we know the optimal matching
+    >>> optimal_matching = [[1,2,3]]  # Assuming we know the optimal matching
     >>> approximate_matching = HEDCS_matching(hypergraph, s)
-    >>> d = 3
-    >>> len(approximate_matching) <= d**3 * len(optimal_matching)
+    >>> approximation_matching_checking(optimal_matching,approximate_matching)
     True
 
 
@@ -495,7 +363,7 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
     >>> hypergraph_large = Hypergraph(edges_large)
     >>> optimal_matching_large = [edges_large[f'e{i}'] for i in range(1, 101,3)]
     >>> approximate_matching_large = HEDCS_matching(hypergraph_large, s)
-    >>> len(approximate_matching_large) <= d**3 * len(optimal_matching_large)
+    >>> approximation_matching_checking(optimal_matching_large,approximate_matching_large)
     True
 
     """
@@ -509,7 +377,7 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int, debug=False) -> list:
 
     beta = 500 * d**3 * n**2 * (math.log(n)**3)
     gamma = 1 / (2 * n * math.log(n))
-    k = int(m / (s * math.log(n)))
+    k = math.ceil(m / (s * math.log(n)))
     beta_minus = (1 - gamma) * beta
 
     if not check_beta_condition(beta, beta_minus, d):
