@@ -27,7 +27,6 @@ def approximation_matching_checking(optimal: list, approx: list):
             return False
     return True
 
-
 def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     """
     Greedy algorithm for hypergraph matching
@@ -67,6 +66,10 @@ def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     ...     print("NonUniformHypergraphError raised")
     NonUniformHypergraphError raised
     """
+    # Check if the hypergraph is empty
+    if not hypergraph.incidence_dict:
+        return []
+
     # Check if the hypergraph is d-uniform
     edge_sizes = {len(edge) for edge in hypergraph.incidence_dict.values()}
     if len(edge_sizes) > 1:
@@ -90,6 +93,7 @@ def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
                 M.add(tuple(edge))
 
     return list(M)
+
 
 
 class MemoryLimitExceededError(Exception):
