@@ -4,6 +4,8 @@ An implementation of the algorithms in:
 Programmer: Shira Rot, Niv
 Date: 22.5.2024
 """
+from datetime import time
+from functools import lru_cache
 
 import numpy as np
 import hypernetx as hnx
@@ -110,16 +112,18 @@ class NonUniformHypergraphError(Exception):
     pass
 
 
-def maximal_matching(hypergraph: Hypergraph) -> list:
-    """
-    Finds a maximal matching in the given hypergraph.
 
-    Parameters:
-    hypergraph (Hypergraph): The input hypergraph.
 
-    Returns:
-    list: The edges of the maximal matching.
-    """
+# Helper functions
+def edge_tuple(hypergraph):
+    """Convert hypergraph edges to a hashable tuple."""
+    return tuple((edge, tuple(sorted(hypergraph.edges[edge]))) for edge in sorted(hypergraph.edges))
+
+
+@lru_cache(maxsize=None)
+def cached_maximal_matching(edges):
+    """Cached version of maximal matching calculation."""
+    hypergraph = hnx.Hypergraph(dict(edges))
     matching = []
     matched_vertices = set()
 
@@ -127,9 +131,13 @@ def maximal_matching(hypergraph: Hypergraph) -> list:
         if not any(vertex in matched_vertices for vertex in edge):
             matching.append(sorted(edge))
             matched_vertices.update(edge)
-            logging.debug(f"Added edge {edge} to matching. Current matching: {matching}")
-
     return matching
+
+
+def maximal_matching(hypergraph: Hypergraph) -> list:
+    """Find a maximal matching in the hypergraph."""
+    edges = edge_tuple(hypergraph)
+    return cached_maximal_matching(edges)
 
 
 def sample_edges(hypergraph: Hypergraph, p: float) -> Hypergraph:
