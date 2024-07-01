@@ -260,10 +260,11 @@ def iterated_sampling(hypergraph: Hypergraph, s: int, max_iterations: int = 100)
             raise MemoryLimitExceededError("Memory limit exceeded during hypergraph matching")
 
         M.extend(M_prime)
-        logger.debug(f"After iteration {iterations}, matching: {M}")
+        logger.debug(f"After iteration {iterations}, matching has {len(M)} edges: {M}")
 
         unmatched_vertices = set(S.nodes) - set(v for edge in M_prime for v in edge)
         induced_edges = [edge for edge in S.incidence_dict.values() if all(v in unmatched_vertices for v in edge)]
+        logger.debug(f"After iteration {iterations}, {len(unmatched_vertices)} unmatched_vertices: {unmatched_vertices}, {len(induced_edges)} remaining edges: {induced_edges}")
         if len(induced_edges) <= s:
             M.extend(maximal_matching(hnx.Hypergraph({f'e{i}': tuple(edge) for i, edge in enumerate(induced_edges)})))
             break
@@ -271,7 +272,7 @@ def iterated_sampling(hypergraph: Hypergraph, s: int, max_iterations: int = 100)
         p = s / (5 * len(S.edges) * d) if len(S.edges) > 0 else 0
 
     if iterations >= max_iterations:
-        raise MemoryLimitExceededError("Max iterations reached without finding a solution")
+        raise MemoryLimitExceededError("Max iterations %d reached without finding a solution. Edges: %s", max_iterations, hypergraph.incidence_dict)
 
     logger.debug(f"Final matching result: {M}")
     return M

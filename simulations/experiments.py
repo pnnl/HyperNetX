@@ -18,13 +18,15 @@ from hypernetx.algorithms.matching_algorithms import (
     MemoryLimitExceededError,
     NonUniformHypergraphError,
     partition_hypergraph,
-    approximation_matching_checking,
     greedy_matching,
+    logger as matching_logger
 )
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# matching_logger.setLevel(logging.DEBUG)
 
 # Function to generate random d-uniform hypergraphs
 def generate_random_hypergraph(n, d, m):
@@ -62,15 +64,14 @@ def define_experiment():
     m = 100
     s = 10
 
-    for n in sizes:
-        input_ranges = {
-            "algorithm": [iterated_sampling, HEDCS_matching, greedy_matching],
-            "n": [n],
-            "d": [d],
-            "m": [m],
-            "s": [s]
-        }
-        experiment.run(run_experiment, input_ranges)
+    input_ranges = {
+        "algorithm": [iterated_sampling, HEDCS_matching, greedy_matching],
+        "n": sizes,
+        "d": [d],
+        "m": [m],
+        "s": [15, 20]
+    }
+    experiment.run(run_experiment, input_ranges)
 
     return experiment
 
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     sns.set(style="whitegrid")
     plt.figure(figsize=(14, 7))
 
-    sns.lineplot(data=df, x="n", y="run_time", hue="algorithm", marker="o")
+    sns.lineplot(data=df, x="s", y="run_time", hue="algorithm", marker="o")
     plt.title("Running Time of Hypergraph Matching Algorithms")
     plt.xlabel("Number of Vertices (n)")
     plt.ylabel("Running Time (seconds)")
@@ -91,7 +92,7 @@ if __name__ == "__main__":
     plt.show()
 
     plt.figure(figsize=(14, 7))
-    sns.lineplot(data=df, x="n", y="match_size", hue="algorithm", marker="o")
+    sns.lineplot(data=df, x="s", y="match_size", hue="algorithm", marker="o")
     plt.title("Matching Size of Hypergraph Matching Algorithms")
     plt.xlabel("Number of Vertices (n)")
     plt.ylabel("Matching Size")
