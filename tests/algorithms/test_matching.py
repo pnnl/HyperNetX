@@ -1,9 +1,22 @@
 import pytest
 from hypernetx.classes.hypergraph import Hypergraph
 from hypernetx.algorithms.matching_algorithms import greedy_matching, HEDCS_matching, \
-    MemoryLimitExceededError, approximation_matching_checking
+    MemoryLimitExceededError
 from hypernetx.algorithms.matching_algorithms import iterated_sampling
 
+def approximation_matching_checking(optimal: list, approx: list) -> bool:
+    for e in optimal:
+        count = 0
+        e_checks = set(e)
+        for e_m in approx:
+            e_m_checks = set(e_m)
+            common_elements = e_checks.intersection(e_m_checks)
+            checking = bool(common_elements)
+            if checking:
+                count += 1
+        if count < 1:
+            return False
+    return True
 
 def test_greedy_d_approximation_empty_input():
     """
