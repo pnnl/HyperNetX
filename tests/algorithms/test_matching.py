@@ -1,22 +1,17 @@
+"""
+An implementation of the algorithms in:
+"Distributed Algorithms for Matching in Hypergraphs", by Oussama Hanguir and Clifford Stein (2020), https://arxiv.org/abs/2009.09605v1
+Programmer: Shira Rot, Niv
+Date: 22.5.2024
+"""
+
+
 import pytest
 from hypernetx.classes.hypergraph import Hypergraph
 from hypernetx.algorithms.matching_algorithms import greedy_matching, HEDCS_matching, \
-    MemoryLimitExceededError
+    MemoryLimitExceededError, approximation_matching_checking
 from hypernetx.algorithms.matching_algorithms import iterated_sampling
 
-def approximation_matching_checking(optimal: list, approx: list) -> bool:
-    for e in optimal:
-        count = 0
-        e_checks = set(e)
-        for e_m in approx:
-            e_m_checks = set(e_m)
-            common_elements = e_checks.intersection(e_m_checks)
-            checking = bool(common_elements)
-            if checking:
-                count += 1
-        if count < 1:
-            return False
-    return True
 
 def test_greedy_d_approximation_empty_input():
     """
