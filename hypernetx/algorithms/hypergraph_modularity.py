@@ -183,7 +183,7 @@ def modularity(HG, A, wdc=linear):
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
-            [wdc(k[1], k[0]) * v[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
+            [wdc(k[1], k[0]) * v.iloc[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
         )
 
     ## Degree Tax
@@ -402,7 +402,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
             _df = _df.groupby(by="key").sum()
             ec = sum(
                 [
-                    wdc(k[1], k[0]) * val[0]
+                    wdc(k[1], k[0]) * val.iloc[0]
                     for (k, val) in _df.iterrows()
                     if k[0] > k[1] / 2
                 ]
@@ -430,7 +430,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
                 _df = _df.groupby(by="key").sum()
                 ecp = sum(
                     [
-                        wdc(k[1], k[0]) * val[0]
+                        wdc(k[1], k[0]) * val.iloc[0]
                         for (k, val) in _df.iterrows()
                         if k[0] > k[1] / 2
                     ]
