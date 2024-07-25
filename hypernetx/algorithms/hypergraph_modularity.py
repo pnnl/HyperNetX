@@ -392,12 +392,12 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
             dct_A_v = dct_A[v]
-            H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
+            H_id = [H.incidence_dict[x] for x in H.nodes[v]]
             L = [[dct_A[i] for i in x] for x in H_id]
 
             ## ec portion before move
             _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-            _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
+            _vals = [H.edges[x].weight for x in H.nodes[v]]
             _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
             _df = _df.groupby(by="key").sum()
             ec = sum(
@@ -425,7 +425,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
                 L = [[dct_A[i] for i in x] for x in H_id]
                 ## EC
                 _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-                _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
+                _vals = [H.edges[x].weight for x in H.nodes[v]]
                 _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
                 _df = _df.groupby(by="key").sum()
                 ecp = sum(
@@ -491,7 +491,7 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
             dct_A_v = dct_A[v]
-            H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
+            H_id = [H.incidence_dict[x] for x in H.nodes[v]]
             L = [[dct_A[i] for i in x] for x in H_id]
             deg_v = H.degree(v)
 
