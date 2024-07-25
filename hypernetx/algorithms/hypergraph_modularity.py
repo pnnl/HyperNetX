@@ -292,6 +292,12 @@ def two_section(HG):
                 w = 1 / (len(E) - 1)
             s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
     G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges="sum")
+
+    ## add isolates if any
+    isolates = list(set([v for v in HG.nodes]) - set(G.vs['name']))
+    if len(isolates)>0:
+        G.add_vertices(isolates)
+
     return G
 
 
