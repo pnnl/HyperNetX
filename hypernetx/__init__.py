@@ -12,3 +12,4 @@ from hypernetx.utils import *
 from hypernetx.utils.toys import *
 
 __version__ = "2.3.5"
+

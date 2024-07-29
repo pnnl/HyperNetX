@@ -1,6 +1,7 @@
 HyperNetX
 ==========
-<img src="docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
+
+<img src="https://raw.githubusercontent.com/pnnl/HyperNetX/master/docs/source/images/harrypotter_basic_hyp.png" align="right" width="300pt">
 
 [![Pytest](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -39,26 +40,22 @@ New features have been added, most notably the ability to add and remove edges, 
 can be imported using their incidence dictionaries and/or property datafames.**
 
 What's New
-~~~~~~~~~~~~~~~~~~~~~~~~~
-#. Hypergraph now supports adding and removing edges, nodes, and incidences
-#. Hypergraph also supports the sum, difference, union, and intersection of a Hypergraph to another Hypergraph
-#. New factory methods to support the Hypergraph constructor
-#. EntitySet has been replaced by HypergraphView
-#. IncidenceStore and PropertyStore are new classes that maintain the structure and attributes of a Hypergraph
-#. Hypergraph constructors accept cell, edge, and node metadata.
+----------
+1. Hypergraph now supports adding and removing edges, nodes, and incidences
+1. Hypergraph also supports the sum, difference, union, and intersection of a Hypergraph to another Hypergraph
+1. New factory methods to support the Hypergraph constructor
+1. EntitySet has been replaced by HypergraphView
+1. IncidenceStore and PropertyStore are new classes that maintain the structure and attributes of a Hypergraph
+1. Hypergraph constructors accept cell, edge, and node metadata.
 
 
 What's Changed
-~~~~~~~~~~~~~~~~~~~~~~~~~
-#. HNX now requires Python ^3.10,<=3.12
-#. HNX core libraries have been updated
-#. Updated tutorials
 --------------
+1. HNX now requires Python ">=3.10,<4.0.0"
+1. HNX core libraries have been updated
+1. Updated tutorials
 1. The `static` and `dynamic` distinctions no longer exist. All hypergraphs use the same underlying data structure, supported by Pandas dataFrames. All hypergraphs maintain a `state_dict` to avoid repeating computations.
-1. Methods for adding nodes and hyperedges are currently not supported.
 1. The `nwhy` optimizations are no longer supported.
-1. Entity and EntitySet classes are being moved to the background. The Hypergraph constructor does not accept either.
-
 
 
 Tutorials Available for Colab
@@ -72,37 +69,37 @@ Google Colab
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 1 - HNX Basics</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%202%20-%20Visualization%20Methods.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 2 - Visualization Methods</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%203%20-%20LesMis%20Case%20Study.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 3 - LesMis Case Study</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%204%20-%20LesMis%20Visualizations-BookTour.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 4 - LesMis Visualizations-Book Tour</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%205%20-%20HNX%20attributed%20hypergraph.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 5 - HNX attributed hypergraph</span>
 </a>
-</br>
+<br>
 
 <a href="https://colab.research.google.com/github/pnnl/HyperNetX/blob/master/tutorials/basic/Basic%206%20-%20Hypergraph%20Arithmetic.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
     <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
 </a>
-</br>
+<br>
 
 
 Jupyter Notebooks
@@ -115,11 +112,11 @@ Installation
 
 The recommended installation method for most users is to create a virtual environment and install HyperNetX from PyPi.
 
-HyperNetX may be cloned or forked from [Github](https://github.com/pnnl/HyperNetX).
+HyperNetX may be cloned or forked from [GitHub](https://github.com/pnnl/HyperNetX).
 
 Prerequisites
 -------------
-HyperNetX officially supports Python 3.8, 3.9, 3.10 and 3.11.
+HyperNetX officially supports Python >=3.10,<4.0.0
 
 Create a virtual environment
 ----------------------------
@@ -168,7 +165,7 @@ To deactivate your environment, use:
 Installing HyperNetX
 ====================
 
-Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python >=3.8.
+Regardless of how you install HyperNetX, ensure that your environment is activated and that you are running Python ">=3.10,<4.0.0".
 
 
 Installing from PyPi
@@ -195,41 +192,100 @@ source venv-hnx/bin/activate
 make install
 ```
 
-Development
-===========
+# Using HyperNetX on Docker
 
-Install an editable version
+As an alternative to installing HyperNetX, you can use the officially supported HyperNetX Docker image maintained at
+[DockerHub](https://hub.docker.com/r/hypernetx/hypernetx). Use the image to quickly start HyperNetX in a Docker container.
+The container starts a Jupyter Notebook that has the latest version of HyperNetX and HNXWidget installed;
+it also contains all the HyperNetX tutorials.
+
+## Run the Container
+
+* Using Docker CLI, run the container in the foreground:
+
 ```
+docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest
+```
+
+* Alternatively, you can create a `docker-compose.yml` file with the following:
+```
+version: '3'
+
+services:
+  hypernetx:
+    image: hypernetx/hypernetx:latest
+    ports:
+      - "8888:8888"
+    tty: true
+    stdin_open: true
+    volumes:
+      - "${PWD}:/home/jovyan/work"
+```
+
+Once `docker-compose.yml` is created, run the container:
+
+```
+docker-compose up
+```
+
+## Open Jupyter Notebook
+
+After the container has started, access the HyperNetX Jupyter Notebooks by opening the following URL in a browser:
+
+[http://localhost:8888/tree](http://localhost:8888/tree)
+
+
+# Development
+
+As a developer, set up your environment using either the standard `pip` tool or [`Poetry`](https://python-poetry.org/).
+
+## Using Pip
+
+### Setup virtual environment and install HNX
+
+Create a virtual environement. Then install an editable version of HNX and also install additional dependencies to support testing and jupyter notebooks:
+```
+python -m venv venv-hnx
+source venv-hnx/bin/activate
 pip install -e .
-```
-
-Install additional dependencies to support testing and jupyter notebooks:
-```
 pip install -r requirements.txt
 ```
 
-You can also install all these requirements in one Make target:
+As an alternative, you can also install all these requirements in one Make target:
 
 ```
+make venv
+source venv-hnx/bin/activate
 make install
 ```
 
-Poetry
-======
+### Setup pre-commit
+
+Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
+It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
+pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
+automatically run the formatter Black on your code changes.
+
+```shell
+# Once installed, pre-commit will be triggered every time you make a commit in your environment
+pre-commit install
+```
+
+
+## Using Poetry
 
 This library uses [Poetry](https://python-poetry.org/docs/) to manage dependencies and packaging. Poetry can also be
 used to manage your environment for development.
 
-Prerequisites
--------------
+### Prerequisites
 
 * [Install Poetry](https://python-poetry.org/docs/#installation)
 
 
-Configure Poetry
-----------------
+### Configure Poetry
 
-[Configure your Poetry](https://python-poetry.org/docs/configuration/) to create the virtual environment in your project directory:
+[Configure your Poetry](https://python-poetry.org/docs/configuration/) to ensure that the virtual environment gets created in your project directory (this is not necessary but recommended for convenience):
+
 ```
 poetry config virtualenvs.in-project true
 
@@ -237,29 +293,46 @@ poetry config virtualenvs.in-project true
 poetry config --list
 ```
 
-Set up virtual environment
-----------------------------
+### Setup virtual environment and install HNX
 
 Create and activate a virtual environment.
+
 ```
 poetry shell
 ```
 
-NOTE: If you plan to use Poetry to manage your virtual environment, you can activate the virtual environment
-using poerty: `poetry shell`. Another option is to directly
+Install HyperNetX in editable mode, the library's core/required dependencies, and the optional dependencies to support development.
 
-Install required dependencies and HyperNetX in editable mode.
 ```
-poetry install
+poetry install --with test,lint,docs,release,tutorials
 ```
 
-Install support for testing
------------------------------
+Details about these dependencies are defined in [pyproject.toml](pyproject.toml).
 
-> ℹ️ **NOTE:** This project has a pytest configuration file named 'pytest.ini'. By default, pytest will use those configuration settings to run tests.
+### Setup Pre-commit
+
+Use the [pre-commit framework](https://pre-commit.com/) to automatically point out issues and resolve those issues before code review.
+It is highly recommended to install pre-commit in your development environment so that issues with your code can be found before you submit a
+pull request. More importantly, using pre-commit will automatically format your code changes so that they pass the CI build. For example, pre-commit will
+automatically run the formatter Black on your code changes.
+
+```shell
+# Once installed, pre-commit will be triggered every time you make a commit in your environment
+pre-commit install
+```
+
+### Details about optional dependencies
+
+#### Install support for testing
+
+
+> ℹ️ **NOTE:** This project has pytest configuration contained in pyproject.toml. By default, pytest will use those configuration settings to run tests.
 
 ```shell
 poetry install --with test
+
+# activate your virtual environment created by poetry
+poetry shell
 
 # run tests
 python -m pytest
@@ -272,18 +345,20 @@ coverage html
 open htmlcov/index.html
 ```
 
-Install support for tutorials
------------------------------
+#### Install support for tutorials
 
-```
+```shell
 poetry install --with tutorials
+
+# activate your virtual environment created by poetry
+poetry shell
 
 # open Jupyter notebooks in a browser
 make tutorials
 ```
 
-Code Quality
-------------
+#### Code Quality: Pylint, Black
+
 HyperNetX uses a number of tools to maintain code quality:
 
 * Pylint
@@ -291,12 +366,13 @@ HyperNetX uses a number of tools to maintain code quality:
 
 Before using these tools, ensure that you install Pylint in your environment:
 
-```
+```shell
 poetry install --with lint
+
+# activate your virtual environment created by poetry
+poetry shell
 ```
 
-Pylint
-------
 
 [Pylint](https://pylint.pycqa.org/en/latest/index.html) is a static code analyzer for Python-based projects. From the [Pylint docs](https://pylint.pycqa.org/en/latest/index.html#what-is-pylint):
 
@@ -316,8 +392,6 @@ pylint hypernetx --output=pylint-results.txt
 
 For more information on configuration, see https://pylint.pycqa.org/en/latest/user_guide/configuration/index.html
 
-Black
------
 [Black](https://black.readthedocs.io/en/stable/) is a PEP 8 compliant formatter for Python-based project. This tool is highly opinionated about how Python should be formatted and will automagically reformat your code.
 
 
@@ -325,13 +399,16 @@ Black
 black hypernetx
 ```
 
-Documentation
--------------
+### Documentation
 
 Build and view documentation locally:
 
-```
+```shell
 poetry install --with docs
+
+# activate your virtual environment created by poetry
+poetry shell
+
 cd docs
 make html
 open docs/build/html/index.html
@@ -340,7 +417,7 @@ open docs/build/html/index.html
 When editing documentation, you can auto-rebuild the documentation locally so that you can view your document changes
 live on the browser without having to rebuild every time you have a change.
 
-```
+```shell
 cd docs
 make livehtml
 ```
@@ -356,65 +433,41 @@ The HTML pages are in docs/html.
 [I 230324 09:51:02 handlers:135] Browser Connected: http://127.0.0.1:8000/
 ```
 
-Click on `http://127.0.0.1:8000/install.html` to open the docs on your browser. Since this will auto-rebuild, every time
+Click on [http://127.0.0.1:8000/install.html](http://127.0.0.1:8000/install.html) to open the docs on your browser. Since this will auto-rebuild, every time
 you change a document file, it will automatically render on your browser, allowing you to verify your document changes.
 
 
-Continuous Integration
-======================
+## Developing and Testing the Docker Image
 
-This project runs Continuous Integration (CI) using GitHub Actions. Normally, CI runs
-on pull requests, pushes to certain branches, and other events.
+If you want to test the Docker image after making any source code changes, follow this workflow:
 
-Maintainers of the GitHub repository can manually trigger CI using [GitHub CLI](https://cli.github.com/). See instructions below on how to manually trigger CI on GitHub Actions:
+1. Make a change in the HNX codebase
+2. Build image for multi-platforms (i.e.ARM64, x86): `docker build --platform linux/amd64,linux/arm64 --rm --tag hypernetx/hypernetx:latest .`
+   3. If you're having issues building, see https://docs.docker.com/desktop/containerd/
+3. Test image: `docker run -it --rm -p 8888:8888 -v "${PWD}":/home/jovyan/work hypernetx/hypernetx:latest`
+4. Open a browser to [http://localhost:8888/tree](http://localhost:8888/tree). Check that tutorials still work and/or open a notebook and test the changes that you made.
+5. Once finished testing, kill the container using Ctrl-C
 
-```commandline
-# login to Github
-gh auth login --with-token <  ~/.ssh/tokens/<path to my personal access token>
-
-# Trigger CI
-gh workflow run ci.yml --repo pnnl/HyperNetX --ref <name of branch that you want CI to run on> --field triggeredBy="<Your name>"
-
-# Get the status of the workflow
-gh run list --workflow=ci.yml --repo pnnl/HyperNetX
-```
-
-
-Versioning
-==========
-
-This project uses [`commitizen`](https://github.com/commitizen-tools/commitizen) to manage versioning.
-The files where "version" will be updated are listed in the '.cz.toml' file. To create a new version and the associated tag,
-run the following commands:
-
-```shell
-# Install commitizen tool to environment
-pip install commitizen
-
-# Updates version; values for '--increment' can be MAJOR, MINOR, or PATCH
-# Autocreates a tag and commit for the updated version
-cz bump  --increment MAJOR  --dry-run
-cz bump  --increment MAJOR
-```
 
 Notice
 ======
 This material was prepared as an account of work sponsored by an agency of the United States Government.  Neither the United States Government nor the United States Department of Energy, nor Battelle, nor any of their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.
 Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.
 
-   <div align=center>
-   <pre style="align-text:center;font-size:10pt">
-   PACIFIC NORTHWEST NATIONAL LABORATORY
-   operated by
-   BATTELLE
-   for the
-   UNITED STATES DEPARTMENT OF ENERGY
-   under Contract DE-AC05-76RL01830
-   </pre>
-   </div>
+<div>
+  <pre style="text-align: center; font-size: 10pt;">
+    PACIFIC NORTHWEST NATIONAL LABORATORY
+    operated by
+    BATTELLE
+    for the
+    UNITED STATES DEPARTMENT OF ENERGY
+    under Contract DE-AC05-76RL01830
+  </pre>
+</div>
+
 
 
 License
 =======
 
-Released under the 3-Clause BSD license (see License.rst)
+Released under the [3-Clause BSD license](LICENSE.rst)

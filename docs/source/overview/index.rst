@@ -54,7 +54,7 @@ available on `GitHub <https://colab.research.google.com/github/pnnl/HyperNetX>`_
         <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
           <span >Basic 6 - Hypergraph Arithmetic.ipynb</span>
       </a>
-   </br>
+   </br></br>
    <span>Additional Tutorials may be found in the Tutorials Folder.
    </br></br>
    </div>
