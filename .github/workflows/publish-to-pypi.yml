@@ -1,12 +1,14 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
+# This workflow uses the Github Action, poetry-publish.
+# It will build the HNX package into a wheel and sdist and then publish those artifacts to TestPyPi and PyPi using poetry.
+# Documentation for this action is at: https://github.com/marketplace/actions/publish-python-poetry-package
+# For building and publishing to PyPi in Github Workflows, see https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Publish HNX
 
 on:
   release:
@@ -17,28 +19,35 @@ on:
       triggeredBy:
         description: 'Name of team member who is manually triggering this workflow'
         required: true
+        default: ''
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
+  publish-to-pypi:
     runs-on: ubuntu-latest
-
     steps:
+    - if: ${{ inputs.triggeredBy != '' }}
+      run: |
+        echo "This workflow was triggered by: $TEAM_MEMBER"
+      env:
+        TEAM_MEMBER: ${{ inputs.triggeredBy }}
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-    - run: echo "Building wheel from tag ${{ github.ref_name }}"
-    - uses: actions/checkout@v4
+    - run: echo "Building wheel from branch ${{ github.ref_name }}"
 
-    # - name: Build and publish distribution 📦 to Test PyPI
-    #   uses: JRubics/poetry-publish@v2.0
-    #   with:
-    #     python_version: "3.11"
-    #     pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
-    #     repository_name: "testpypi"
-    #     repository_url: "https://test.pypi.org/legacy/"
+    - name: Check out the repo
+      uses: actions/checkout@v4
+
+    - name: Build and publish distribution 📦 to Test PyPI
+      uses: JRubics/poetry-publish@v2.0
+      with:
+        python_version: "3.11"
+        pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_name: "testpypi"
+        repository_url: "https://test.pypi.org/legacy/"
 
     - name: Build and publish distribution 📦 to PyPI
       uses: JRubics/poetry-publish@v2.0

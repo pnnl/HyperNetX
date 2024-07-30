@@ -1,10 +1,12 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.3.1"
+version = "2.3.5"
+version_provider = "poetry"
 version_files = [
     "pyproject.toml",
     "docs/source/conf.py",
-    "hypernetx/__init__.py"
+    "hypernetx/__init__.py",
+    ".cz.toml"
 ]
 tag_format = "v$major.$minor.$patch$prerelease"
 update_changelog_on_bump = false
