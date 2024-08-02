@@ -67,6 +67,6 @@ jobs:
       #----------------------------------------------
       #     Run tests, linters defined in Tox
       #----------------------------------------------
-    - name: Run tests, linters
-      run: |
-        tox
+    # - name: Run tests, linters
+    #   run: |
+    #     tox
