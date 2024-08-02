@@ -183,7 +183,7 @@ def modularity(HG, A, wdc=linear):
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
-            [wdc(k[1], k[0]) * v[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
+            [wdc(k[1], k[0]) * v.iloc[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
         )
 
     ## Degree Tax
@@ -292,6 +292,12 @@ def two_section(HG):
                 w = 1 / (len(E) - 1)
             s.extend([(k[0], k[1], w) for k in itertools.combinations(E, 2)])
     G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges="sum")
+
+    ## add isolates if any
+    isolates = list(set([v for v in HG.nodes]) - set(G.vs['name']))
+    if len(isolates)>0:
+        G.add_vertices(isolates)
+
     return G
 
 
@@ -392,17 +398,17 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
             dct_A_v = dct_A[v]
-            H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
+            H_id = [H.incidence_dict[x] for x in H.nodes[v]]
             L = [[dct_A[i] for i in x] for x in H_id]
 
             ## ec portion before move
             _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-            _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
+            _vals = [H.edges[x].weight for x in H.nodes[v]]
             _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
             _df = _df.groupby(by="key").sum()
             ec = sum(
                 [
-                    wdc(k[1], k[0]) * val[0]
+                    wdc(k[1], k[0]) * val.iloc[0]
                     for (k, val) in _df.iterrows()
                     if k[0] > k[1] / 2
                 ]
@@ -425,12 +431,12 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
                 L = [[dct_A[i] for i in x] for x in H_id]
                 ## EC
                 _keys = [(Counter(l).most_common(1)[0][1], len(l)) for l in L]
-                _vals = [H.edges[x].weight for x in H.nodes[v].memberships]
+                _vals = [H.edges[x].weight for x in H.nodes[v]]
                 _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
                 _df = _df.groupby(by="key").sum()
                 ecp = sum(
                     [
-                        wdc(k[1], k[0]) * val[0]
+                        wdc(k[1], k[0]) * val.iloc[0]
                         for (k, val) in _df.iterrows()
                         if k[0] > k[1] / 2
                     ]
@@ -491,7 +497,7 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
         n_moves = 0
         for v in list(np.random.permutation(list(H.nodes))):
             dct_A_v = dct_A[v]
-            H_id = [H.incidence_dict[x] for x in H.nodes[v].memberships]
+            H_id = [H.incidence_dict[x] for x in H.nodes[v]]
             L = [[dct_A[i] for i in x] for x in H_id]
             deg_v = H.degree(v)
 
