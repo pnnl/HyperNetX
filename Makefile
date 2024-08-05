@@ -66,7 +66,7 @@ lint: pylint flake8
 
 .PHONY: pylint
 pylint:
-	@$(PYTHON3) -m pylint --recursive=y --persistent=n --exit-zero --verbose hypernetx
+	@$(PYTHON3) -m pylint --recursive=y --persistent=n --verbose hypernetx
 
 # Todo: fix flake8 errors and remove --exit-zero
 .PHONY: flake8
