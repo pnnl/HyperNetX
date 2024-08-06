@@ -62,7 +62,7 @@ test-tox:
 
 ## Lint
 .PHONY: lint
-lint: pylint 
+lint: pylint flake8
 
 .PHONY: pylint
 pylint:
@@ -71,10 +71,10 @@ pylint:
 # Todo: fix flake8 errors and remove --exit-zero
 .PHONY: flake8
 flake8:
-	@$(PYTHON3) -m flake8 hypernetx --exit-zero
+	@$(PYTHON3) -m flake8 --exit-zero hypernetx
 
 ## precommit hooks that include formatter (Black)
 .PHONY: pre-commit
 pre-commit:
 	pre-commit install
-	pre-commit run --all-files
+	pre-commit run --all-files --verbose
