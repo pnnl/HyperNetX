@@ -62,7 +62,7 @@ nbmake = "^1.5.3"
 [tool.poetry.group.lint]
 optional = true
 [tool.poetry.group.lint.dependencies]
-pylint = "3.2.2"
+pylint = "^3.1.0"
 black = "^24.3.0"
 flake8 = {version = "^7.0.0", python = "^3.9"}
 pylint-exit = "^1.2.0"
