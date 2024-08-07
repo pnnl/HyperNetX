@@ -1,7 +1,7 @@
 .. _long_description:
 
 HyperNetX
-=================
+=========
 
 The HyperNetX library provides classes and methods for the analysis
 and visualization of complex network data modeled as hypergraphs.
@@ -25,7 +25,7 @@ Documentation is available at: https://pnnl.github.io/HyperNetX
 For questions and comments contact the developers directly at: hypernetx@pnnl.gov
 
 HyperNetX 2.3
-=============
+~~~~~~~~~~~~~
 
 HyperNetX 2.3. is the latest, stable release. The core library has been refactored to take better advantage
 of Pandas Dataframes, improve readability and maintainability, address bugs, and make it easier to change.

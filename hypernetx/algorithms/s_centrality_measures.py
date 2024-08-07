@@ -77,7 +77,7 @@ def _s_centrality(func, H, s=1, edges=True, f=None, return_singletons=True, **kw
             vertices = h.nodes
 
         if h.shape[edges * 1] == 1:
-            stats = {v: 0 for v in vertices}
+            stats.update({v: 0 for v in vertices})
         else:
             g = h.get_linegraph(s=s, edges=edges)
             stats.update({k: v for k, v in func(g, **kwargs).items()})

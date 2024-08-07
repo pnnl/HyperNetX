@@ -57,12 +57,6 @@ jobs:
         id: push
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           tags: hypernetx/hypernetx:latest
           push: true
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: hypernetx/hypernetx
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
