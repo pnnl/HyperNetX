@@ -9,13 +9,14 @@ Contributing New Modules
 ============================
 
 We happily accept the contribution of new modules or methods to the HyperNetX library. We will do our best to keep modules functioning with new release but may ask contributors to update code when possible. 
+Contributions can be slow, but the closer the pull request is to our guidelines the faster this process will be. 
 The required new files for any new module are listed below and an example file structure of the additional files is shown in the figure below. 
 
 .. image:: ./images/module_addition_file_structure.png
    :width: 300px
    :align: right
 
-* Python file: Create a new Python file named **<module_name>.py** under the folder **hypernetx/hypernetx/algorithms/.**. This file will contain the core functionalities of your module.
+* Python file: Create a new Python file named **<module_name>.py** under the folder **hypernetx/hypernetx/algorithms/.**. This file will contain the core functionalities of your module. All methods need to have docstrings in the new module.
 
 * Jupyter Notebook: Create a Jupyter notebook under in the folder **hypernetx/tutorials/advanced/.** that demonstrates usage examples of your module. This notebook should be named **Advanced <module number> - <module_name>.ipynb**. Please look at the current advanced module number and choose an appropriate number.
 
@@ -30,7 +31,7 @@ Step-by-Step Process
 
 #. Documentation: Write docstrings for your code to explain the purpose and usage of functions and classes. Additionally provide an overview description of the module in the python file. For an example of the correct docstring format please see the module **hypernetx/hypernetx/algorithms/s_centrality_measures.py**.
 
-#. Jupyter Notebook Creation: Create a Jupyter notebook named **Advanced <module number> - <module_name>.ipynb** under advanced tutorials folder **hypernetx/tutorials/advanced/.**. This notebook should showcase how to use your module and demonstrate its capabilities with thorough documentation. Additionally, please provide clear documentation on any new dependencies outside of core HNX that are required.
+#. Jupyter Notebook Creation: Create a Jupyter notebook named **Advanced <module number> - <module_name>.ipynb** under advanced tutorials folder **hypernetx/tutorials/advanced/.**. This notebook should showcase how to use your module and demonstrate its capabilities with thorough documentation. Additionally, in the notebook and any other documentation please provide clear documentation on any new dependencies outside of core HNX that are required.
 
 #. Testing: Write unit tests in the test_<module_name>.py file to ensure your module functions as expected. This should be located in the algorithm tests folder. In the top hypernetx directory you can use the makefile and the command ``make test`` to validate everything is passing. Please see other tests and follow a similar format.
 
@@ -46,5 +47,6 @@ Additional Notes
 * Make sure your code adheres to PEP 8 style guidelines for Python code.
 * Please add comments to your code to explain complex logic or non-obvious functionalities.
 * During the review process, address any feedback or suggestions from reviewers promptly.
+* Any dependencies in core HNX should not be changed for new modules. Also please list any additionally dependencies thoroughly.
 
 By following these guidelines, you can ensure a smooth and efficient contribution process for adding new modules to HyperNetX. We appreciate your contributions to the project!
