@@ -62,7 +62,7 @@ test-tox:
 
 ## Lint
 .PHONY: lint
-lint: pylint 
+lint: flake8
 
 .PHONY: pylint
 pylint:
