@@ -66,7 +66,7 @@ pylint = "^3.1.0"
 black = "^24.3.0"
 flake8 = {version = "^7.0.0", python = "^3.9"}
 pylint-exit = "^1.2.0"
-pre-commit = {version = "^3.7.0", python = "^3.9"}
+pre-commit = {version = "3.7.1", python = "^3.9"}
 mypy = "^1.9.0"
 
 [tool.poetry.group.docs]
