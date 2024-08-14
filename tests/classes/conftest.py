@@ -86,7 +86,7 @@ class SevenBySix:
                 [0, 0, 0, 0, 0, 1],
             ]
         )
-        self.s1_adjacency_matrx = scipy.sparse.csr_matrix(
+        self.s1_adjacency_matrix = scipy.sparse.csr_matrix(
             [
                 [0, 1, 1, 1, 0, 1, 1],
                 [1, 0, 1, 1, 0, 0, 0],
@@ -97,7 +97,7 @@ class SevenBySix:
                 [1, 0, 0, 1, 0, 1, 0],
             ]
         )
-        self.s1_edge_adjacency_matrx = scipy.sparse.csr_matrix(
+        self.s1_edge_adjacency_matrix = scipy.sparse.csr_matrix(
             [
                 [0, 0, 1, 1, 0, 1],
                 [0, 0, 0, 1, 1, 0],
