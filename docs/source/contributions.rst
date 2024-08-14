@@ -13,7 +13,7 @@ Contributions can be slow, but the closer the pull request is to our guidelines 
 The required new files for any new module are listed below and an example file structure of the additional files is shown in the figure below. 
 
 .. image:: ./images/module_addition_file_structure.png
-   :width: 300px
+   :width: 330px
    :align: right
 
 * Python file: Create a new Python file named **<module_name>.py** under the folder **hypernetx/hypernetx/algorithms/.**. This file will contain the core functionalities of your module. All methods need to have docstrings in the new module.
@@ -21,6 +21,8 @@ The required new files for any new module are listed below and an example file s
 * Jupyter Notebook: Create a Jupyter notebook under in the folder **hypernetx/tutorials/advanced/.** that demonstrates usage examples of your module. This notebook should be named **Advanced <module number> - <module_name>.ipynb**. Please look at the current advanced module number and choose an appropriate number.
 
 * Test file: Write unit tests for your module in a file named **test_<module_name>.py** under the tests folder located at **hypernetx/tests/algorithms/.**. These tests should ensure the correctness and functionality of your code.
+
+* Documentation: Write an rst file named **<module_name>.rst** under the algorithms documentation folder located at **hypernetx/docs/source/algorithms/.**. This documentations should focus on the mathematics or theory behind your module with citations to relevant papers and documents. Additionally it should provide code snippets demonstrating usage that parallel the tutorial.
 
 Step-by-Step Process
 ~~~~~~~~~~~~~~~~~~~~
@@ -34,6 +36,8 @@ Step-by-Step Process
 #. Jupyter Notebook Creation: Create a Jupyter notebook named **Advanced <module number> - <module_name>.ipynb** under advanced tutorials folder **hypernetx/tutorials/advanced/.**. This notebook should showcase how to use your module and demonstrate its capabilities with thorough documentation. Additionally, in the notebook and any other documentation please provide clear documentation on any new dependencies outside of core HNX that are required.
 
 #. Testing: Write unit tests in the test_<module_name>.py file to ensure your module functions as expected. This should be located in the algorithm tests folder. In the top hypernetx directory you can use the makefile and the command ``make test`` to validate everything is passing. Please see other tests and follow a similar format.
+
+# Read the Docs: Include your rst file in the algorithms folder of the source docs overviewing the theory/mathematics of the new module with example code. See other rst files as examples of formatting.
 
 #. __init__.py Update: Update the __init__.py file in the **hypernetx/hypernetx/algorithms/** folder to import your new module. Please follow the style of importing used by the other modules.
 
