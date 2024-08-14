@@ -1093,7 +1093,9 @@ def test_incidence_matrix(sevenbysix):
         len(sevenbysix.nodes),
         len(sevenbysix.edges),
     )
-    assert np.allclose(incidence_matrix.toarray(), sevenbysix.incidence_matrix.toarray())
+    assert np.allclose(
+        incidence_matrix.toarray(), sevenbysix.incidence_matrix.toarray()
+    )
 
     # check the edge and node indexes
     assert nodes_idx.tolist() == list(sevenbysix.nodes)
@@ -1109,7 +1111,9 @@ def test_adjacency_matrix(sevenbysix):
         len(sevenbysix.nodes),
         len(sevenbysix.nodes),
     )
-    assert np.allclose(adjacency_matrix.toarray(), sevenbysix.s1_adjacency_matrix.toarray())
+    assert np.allclose(
+        adjacency_matrix.toarray(), sevenbysix.s1_adjacency_matrix.toarray()
+    )
     assert node_idx.tolist() == list(sevenbysix.nodes)
 
 
@@ -1122,7 +1126,9 @@ def test_edge_adjacency_matrix(sevenbysix):
         len(sevenbysix.edges),
         len(sevenbysix.edges),
     )
-    assert np.allclose(adjacency_matrix.toarray(), sevenbysix.s1_edge_adjacency_matrix.toarray())
+    assert np.allclose(
+        adjacency_matrix.toarray(), sevenbysix.s1_edge_adjacency_matrix.toarray()
+    )
     assert node_idx.tolist() == list(sevenbysix.edges)
 
 
@@ -1142,7 +1148,9 @@ def test_auxiliary_matrix_on_edges(sevenbysix):
     aux_matrix, indexes = hg.auxiliary_matrix(node=False, index=True)
 
     assert aux_matrix.todense().shape == (len(sevenbysix.edges), len(sevenbysix.edges))
-    assert np.allclose(aux_matrix.toarray(), sevenbysix.s1_edge_adjacency_matrix.toarray())
+    assert np.allclose(
+        aux_matrix.toarray(), sevenbysix.s1_edge_adjacency_matrix.toarray()
+    )
     assert indexes.tolist() == list(sevenbysix.edges)
 
 
