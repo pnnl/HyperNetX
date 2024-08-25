@@ -59,6 +59,13 @@ from hypernetx.algorithms.hypergraph_modularity import (
     kumar,
     last_step,
 )
+from hypernetx.algorithms.matching_algorithms import (
+    greedy_matching,
+    maximal_matching,
+    iterated_sampling,
+    HEDCS_matching,
+    approximation_matching_checking,
+)
 
 __all__ = [
     # homology_mod2 API's
@@ -116,4 +123,11 @@ __all__ = [
     "two_section",
     "kumar",
     "last_step",
+    # matching_algorithms API's
+    "greedy_matching",
+    "maximal_matching",
+    "iterated_sampling",
+    "HEDCS_matching",
+    "approximation_matching_checking",
 ]
+
