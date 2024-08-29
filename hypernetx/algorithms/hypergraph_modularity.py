@@ -183,7 +183,11 @@ def modularity(HG, A, wdc=linear):
         _df = pd.DataFrame(zip(_keys, _vals), columns=["key", "val"])
         _df = _df.groupby(by="key").sum()
         EC = sum(
-            [wdc(k[1], k[0]) * v.iloc[0] for (k, v) in _df.iterrows() if k[0] > k[1] / 2]
+            [
+                wdc(k[1], k[0]) * v.iloc[0]
+                for (k, v) in _df.iterrows()
+                if k[0] > k[1] / 2
+            ]
         )
 
     ## Degree Tax
@@ -294,8 +298,8 @@ def two_section(HG):
     G = ig.Graph.TupleList(s, weights=True).simplify(combine_edges="sum")
 
     ## add isolates if any
-    isolates = list(set([v for v in HG.nodes]) - set(G.vs['name']))
-    if len(isolates)>0:
+    isolates = list(set([v for v in HG.nodes]) - set(G.vs["name"]))
+    if len(isolates) > 0:
         G.add_vertices(isolates)
 
     return G
