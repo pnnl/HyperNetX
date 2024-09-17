@@ -12,13 +12,6 @@ from hypernetx.classes.hypergraph import Hypergraph
 import math
 import random
 from concurrent.futures import ThreadPoolExecutor
-import logging
-
-# Configure logging
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
 
 def approximation_matching_checking(optimal: list, approx: list) -> bool:
     for e in optimal:
@@ -75,8 +68,6 @@ def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     ...     print("NonUniformHypergraphError raised")
     NonUniformHypergraphError raised
     """
-    logging.debug("Running Greedy Matching Algorithm")
-
     # Check if the hypergraph is empty
     if not hypergraph.incidence_dict:
         return []
@@ -166,7 +157,6 @@ def sample_edges(hypergraph: Hypergraph, p: float) -> Hypergraph:
     sampled_edges = [
         edge for edge in hypergraph.incidence_dict.values() if random.random() < p
     ]
-    logging.debug(f"Sampled edges: {sampled_edges}")
     return hnx.Hypergraph(
         {f"e{i}": tuple(edge) for i, edge in enumerate(sampled_edges)}
     )
@@ -188,9 +178,6 @@ def sampling_round(S: Hypergraph, p: float, s: int) -> tuple:
     if len(E_prime.incidence_dict.values()) > s:
         return None, E_prime
     matching = maximal_matching(E_prime)
-    logging.debug(
-        f"Sampled hypergraph: {E_prime.incidence_dict}, Maximal matching: {matching}"
-    )
     return matching, E_prime
 
 
@@ -280,8 +267,6 @@ def iterated_sampling(
     >>> len(approximate_matching_large)
     26
     """
-    logging.debug("Running Iterated Sampling Algorithm")
-
     d = max((len(edge) for edge in hypergraph.incidence_dict.values()), default=0)
     M = []
     S = hypergraph
@@ -297,8 +282,6 @@ def iterated_sampling(
             )
 
         M.extend(M_prime)
-        logging.debug(f"After iteration {iterations}, matching: {M}")
-
         unmatched_vertices = set(S.nodes) - set(v for edge in M_prime for v in edge)
         induced_edges = [
             edge
@@ -324,7 +307,6 @@ def iterated_sampling(
             "Max iterations reached without finding a solution"
         )
 
-    logging.debug(f"Final matching result: {M}")
     return M
 
 
@@ -351,8 +333,6 @@ def build_HEDCS(hypergraph, beta, beta_minus):
         for node in H.edges[edge]:
             degrees[node] += 1
 
-    logging.debug("Initial degrees: %s", degrees)
-
     while True:
         violating_edge = None
         for edge in list(H.edges):
@@ -362,9 +342,6 @@ def build_HEDCS(hypergraph, beta, beta_minus):
                 H.remove_edge(violating_edge)
                 for node in H.edges[violating_edge]:
                     degrees[node] -= 1
-                logging.debug(
-                    f"Removed edge {violating_edge} from HEDCS. Current degrees: {degrees}"
-                )
                 break
 
         for edge in list(hypergraph.edges):
@@ -375,14 +352,10 @@ def build_HEDCS(hypergraph, beta, beta_minus):
                     H.add_edge(violating_edge, hypergraph.edges[violating_edge])
                     for node in H.edges[violating_edge]:
                         degrees[node] += 1
-                    logging.debug(
-                        f"Added edge {violating_edge} to HEDCS. Current degrees: {degrees}"
-                    )
                     break
 
         if violating_edge is None:
             break
-    logging.debug(f"Final HEDCS: {H.incidence_dict}")
     return H
 
 
@@ -390,7 +363,6 @@ def partition_hypergraph(hypergraph, k):
     edges = list(hypergraph.incidence_dict.items())
     random.shuffle(edges)
     partitions = [edges[i::k] for i in range(k)]
-    logging.debug(f"Partitions: {partitions}")
     return [hnx.Hypergraph(dict(part)) for part in partitions]
 
 
@@ -443,7 +415,6 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int) -> list:
     >>> len(approximate_matching_large)
     34
     """
-    logging.debug("Running HEDCS Matching Algorithm")
 
     edge_sizes = {len(edge) for edge in hypergraph.incidence_dict.values()}
     if len(edge_sizes) > 1:
@@ -480,7 +451,6 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int) -> list:
     # Find the maximum matching in the combined hypergraph
     max_matching = maximal_matching(combined_hypergraph)
 
-    logging.debug(f"Final HEDCS Matching result: {max_matching}")
     return max_matching
 
 
