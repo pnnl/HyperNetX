@@ -14,6 +14,21 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 
 def approximation_matching_checking(optimal: list, approx: list) -> bool:
+    """
+    Checks if the approximate list contains at least one element that is a subset of each element in the optimal list.
+
+    Parameters
+    ----------
+    optimal : list of lists
+        A list of lists representing the optimal solutions.
+    approx : list of lists
+        A list of lists representing the approximate solutions.
+
+    Returns
+    -------
+    bool
+        True if the approximate list contains at least one element that is a subset of each element in the optimal list, False otherwise.
+    """
     for e in optimal:
         count = 0
         e_checks = set(e)
@@ -30,17 +45,29 @@ def approximation_matching_checking(optimal: list, approx: list) -> bool:
 
 def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     """
-    Greedy algorithm for hypergraph matching
+    Greedy algorithm for hypergraph matching.
+
     This algorithm constructs a random k-partitioning of G and finds a maximal matching.
 
-    Parameters:
-    hypergraph (hnx.Hypergraph): A Hypergraph object.
-    k (int): The number of partitions.
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        A Hypergraph object.
+    k : int
+        The number of partitions.
 
-    Returns:
-    list: The edges of the graph for the greedy matching.
+    Returns
+    -------
+    list
+        The edges of the graph for the greedy matching.
 
-    Example:
+    Raises
+    ------
+    NonUniformHypergraphError
+        If the hypergraph is not uniform (i.e., if the edges have different sizes).
+
+    Examples
+    -------
     >>> import numpy as np
     >>> np.random.seed(42)
     >>> random.seed(42)
@@ -68,6 +95,7 @@ def greedy_matching(hypergraph: Hypergraph, k: int) -> list:
     ...     print("NonUniformHypergraphError raised")
     NonUniformHypergraphError raised
     """
+
     # Check if the hypergraph is empty
     if not hypergraph.incidence_dict:
         return []
@@ -112,7 +140,19 @@ class NonUniformHypergraphError(Exception):
 # necessary because Python's lru_cache decorator
 # requires hashable inputs to cache function results.
 def edge_tuple(hypergraph):
-    """Convert hypergraph edges to a hashable tuple."""
+    """
+    Converts hypergraph edges to a hashable tuple.
+
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        A Hypergraph object.
+
+    Returns
+    -------
+    tuple
+        A tuple representing the hypergraph edges, where each element is a tuple containing the edge name and its sorted vertices.
+    """
     return tuple(
         (edge, tuple(sorted(hypergraph.edges[edge])))
         for edge in sorted(hypergraph.edges)
@@ -121,7 +161,19 @@ def edge_tuple(hypergraph):
 
 @lru_cache(maxsize=None)  # to cache the results of this function
 def cached_maximal_matching(edges):
-    """Cached version of maximal matching calculation."""
+    """
+    Cached version of maximal matching calculation.
+
+    Parameters
+    ----------
+    edges : tuple
+        A tuple representing the hypergraph edges, where each element is a tuple containing the edge name and its sorted vertices.
+
+    Returns
+    -------
+    list
+        A list of matching edges.
+    """
     hypergraph = hnx.Hypergraph(
         dict(edges)
     )  # Converts the tuple of edges back into a hypergraph.
@@ -138,7 +190,19 @@ def cached_maximal_matching(edges):
 
 
 def maximal_matching(hypergraph: Hypergraph) -> list:
-    """Find a maximal matching in the hypergraph."""
+    """
+    Finds a maximal matching in the hypergraph.
+
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        A Hypergraph object.
+
+    Returns
+    -------
+    list
+        A list of matching edges.
+    """
     edges = edge_tuple(hypergraph)
     return cached_maximal_matching(edges)
 
@@ -147,12 +211,17 @@ def sample_edges(hypergraph: Hypergraph, p: float) -> Hypergraph:
     """
     Samples edges from the hypergraph with probability p.
 
-    Parameters:
-    hypergraph (Hypergraph): The input hypergraph.
-    p (float): The probability of sampling each edge.
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        The input hypergraph.
+    p : float
+        The probability of sampling each edge.
 
-    Returns:
-    Hypergraph: A new hypergraph containing the sampled edges.
+    Returns
+    -------
+    hnx.Hypergraph
+        A new hypergraph containing the sampled edges.
     """
     sampled_edges = [
         edge for edge in hypergraph.incidence_dict.values() if random.random() < p
@@ -166,13 +235,19 @@ def sampling_round(S: Hypergraph, p: float, s: int) -> tuple:
     """
     Performs a single sampling round on the hypergraph.
 
-    Parameters:
-    S (Hypergraph): The input hypergraph.
-    p (float): The probability of sampling each edge.
-    s (int): The maximum number of edges to include in the matching.
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        The input hypergraph.
+    p : float
+        The probability of sampling each edge.
+    s : int
+        The maximum number of edges to include in the matching.
 
-    Returns:
-    tuple: A tuple containing the maximal matching and the sampled hypergraph.
+    Returns
+    -------
+    tuple
+        A tuple containing the maximal matching and the sampled hypergraph. If the sampled hypergraph has more than s edges, None and the sampled hypergraph are returned.
     """
     E_prime = sample_edges(S, p)
     if len(E_prime.incidence_dict.values()) > s:
@@ -185,20 +260,31 @@ def iterated_sampling(
     hypergraph: Hypergraph, s: int, max_iterations: int = 100
 ) -> list:
     """
-    Algorithm 2: Iterated Sampling for Hypergraph Matching
+    Iterated Sampling for Hypergraph Matching.
+
     Uses iterated sampling to find a maximal matching in a d-uniform hypergraph.
 
-    Parameters:
-    hypergraph (Hypergraph): A Hypergraph object.
-    s (int): The amount of memory available for the computer.
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        A Hypergraph object.
+    s : int
+        The amount of memory available for the computer.
+    max_iterations : int, optional
+        The maximum number of iterations to perform. Defaults to 100.
 
-    Returns:
-    list: The edges of the graph for the approximate matching.
+    Returns
+    -------
+    list
+        The edges of the graph for the approximate matching.
 
-    Raises:
-    MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
+    Raises
+    ------
+    MemoryLimitExceededError
+        If the memory limit is exceeded during the matching process.
 
-    Examples:
+    Examples
+    -------
     >>> import numpy as np
     >>> np.random.seed(42)
     >>> random.seed(42)
@@ -239,7 +325,6 @@ def iterated_sampling(
     >>> result
     [[2, 3, 4], [5, 6, 7]]
 
-
     >>> np.random.seed(42)
     >>> random.seed(42)
     >>> s = 10
@@ -267,6 +352,7 @@ def iterated_sampling(
     >>> len(approximate_matching_large)
     26
     """
+
     d = max((len(edge) for edge in hypergraph.incidence_dict.values()), default=0)
     M = []
     S = hypergraph
@@ -311,20 +397,43 @@ def iterated_sampling(
 
 
 def check_beta_condition(beta, beta_minus, d):
+    """
+    Checks if the beta condition is satisfied.
+
+    Parameters
+    ----------
+    beta : int
+        The current beta value.
+    beta_minus : int
+        The previous beta value.
+    d : int
+        The degree of the hypergraph.
+
+    Returns
+    -------
+    bool
+        True if the beta condition is satisfied, False otherwise.
+    """
     return (beta - beta_minus) >= (d - 1)
 
 
 def build_HEDCS(hypergraph, beta, beta_minus):
     """
-    Constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) from the given hypergraph G.
+    Constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) from the given hypergraph.
 
-    Parameters:
-    G (Hypergraph): The input hypergraph.
-    beta (int): Degree threshold for adding edges.
-    beta_minus (int): Complementary degree threshold for adding edges.
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        The input hypergraph.
+    beta : int
+        Degree threshold for adding edges.
+    beta_minus : int
+        Complementary degree threshold for adding edges.
 
-    Returns:
-    Hypergraph: The constructed HEDCS.
+    Returns
+    -------
+    hnx.Hypergraph
+        The constructed HEDCS.
     """
     H = hnx.Hypergraph(hypergraph.incidence_dict)  # Initialize H to be equal to G
     degrees = {node: 0 for node in hypergraph.nodes}  # Initialize vertex degrees
@@ -360,6 +469,21 @@ def build_HEDCS(hypergraph, beta, beta_minus):
 
 
 def partition_hypergraph(hypergraph, k):
+    """
+    Partitions a hypergraph into k approximately equal-sized subgraphs.
+
+    Parameters
+    ----------
+    hypergraph : hnx.Hypergraph
+        The input hypergraph.
+    k : int
+        The number of partitions.
+
+    Returns
+    -------
+    list[hnx.Hypergraph]
+        A list of k partitioned hypergraphs.
+    """
     edges = list(hypergraph.incidence_dict.items())
     random.shuffle(edges)
     partitions = [edges[i::k] for i in range(k)]
@@ -368,21 +492,33 @@ def partition_hypergraph(hypergraph, k):
 
 def HEDCS_matching(hypergraph: Hypergraph, s: int) -> list:
     """
-    Algorithm 3: HEDCS-Matching for Hypergraph Matching
-    This algorithm constructs a Hyper-Edge Degree Constrained Subgraph (HEDCS) to find
-    a maximal matching in a d-uniform hypergraph.
+    HEDCS-Matching for Approximate Hypergraph Matching.
 
-    Parameters:
-    hypergraph (Hypergraph): A Hypergraph object.
-    s (int): The amount of memory available per machine.
+    This algorithm constructs Hyper-Edge Degree Constrained Subgraphs (HEDCS) 
+    to find an approximate maximal matching in a d-uniform hypergraph. It leverages 
+    parallelization to efficiently handle larger hypergraphs.
 
-    Returns:
-    list: The edges of the graph for the approximate matching.
+    Parameters
+    ----------
+    hypergraph : Hypergraph
+        The input hypergraph.
+    s : int
+        The amount of memory available per machine.
 
-    Raises:
-    MemoryLimitExceededError: If the memory limit is exceeded during the matching process.
+    Returns
+    -------
+    list
+        The edges of the graph for the approximate matching.
 
-    Examples:
+    Raises
+    -------
+    NonUniformHypergraphError
+        If the hypergraph is not d-uniform (all edges don't have the same size).
+    ValueError
+        If the calculated beta and beta_minus values do not satisfy the beta condition.
+
+    Examples
+    -------
     >>> import numpy as np
     >>> np.random.seed(42)
     >>> random.seed(42)
