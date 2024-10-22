@@ -13,6 +13,7 @@ import math
 import random
 from concurrent.futures import ThreadPoolExecutor
 
+
 def approximation_matching_checking(optimal: list, approx: list) -> bool:
     """
     Checks if the approximate list contains at least one element that is a subset of each element in the optimal list.
@@ -494,8 +495,8 @@ def HEDCS_matching(hypergraph: Hypergraph, s: int) -> list:
     """
     HEDCS-Matching for Approximate Hypergraph Matching.
 
-    This algorithm constructs Hyper-Edge Degree Constrained Subgraphs (HEDCS) 
-    to find an approximate maximal matching in a d-uniform hypergraph. It leverages 
+    This algorithm constructs Hyper-Edge Degree Constrained Subgraphs (HEDCS)
+    to find an approximate maximal matching in a d-uniform hypergraph. It leverages
     parallelization to efficiently handle larger hypergraphs.
 
     Parameters
