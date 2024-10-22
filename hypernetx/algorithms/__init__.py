@@ -19,6 +19,13 @@ from hypernetx.algorithms.homology_mod2 import (
     hypergraph_homology_basis,
     interpret,
 )
+from hypernetx.algorithms.matching_algorithms import (
+    greedy_matching,
+    maximal_matching,
+    iterated_sampling,
+    HEDCS_matching,
+    approximation_matching_checking,
+)
 from hypernetx.algorithms.s_centrality_measures import (
     s_betweenness_centrality,
     s_harmonic_closeness_centrality,
@@ -116,4 +123,10 @@ __all__ = [
     "two_section",
     "kumar",
     "last_step",
+    # matching_algorithms API's
+    "greedy_matching",
+    "maximal_matching",
+    "iterated_sampling",
+    "HEDCS_matching",
+    "approximation_matching_checking",
 ]

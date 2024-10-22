@@ -61,6 +61,7 @@ Contents
    Visualization Widget <widget>
    Algorithms: Modularity and Clustering <modularity>
    Publications <publications>
+   Contributors Guide <contributions>
    license
 
 
