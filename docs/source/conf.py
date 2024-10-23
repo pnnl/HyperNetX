@@ -19,7 +19,7 @@ import sys
 import os
 
 
-__version__ = "2.3.7"
+__version__ = "2.3.8"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

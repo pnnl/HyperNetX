@@ -1,6 +1,6 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.3.7"
+version = "2.3.8"
 version_provider = "poetry"
 version_files = [
     "pyproject.toml",
