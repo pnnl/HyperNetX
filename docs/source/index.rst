@@ -59,7 +59,7 @@ Contents
    A Gentle Introduction to Hypergraph Mathematics <hypergraph101>
    Hypergraph Constructors <hypconstructors>
    Visualization Widget <widget>
-   Algorithms: Modularity and Clustering <modularity>
+   Modules <modules>
    Publications <publications>
    Contributors Guide <contributions>
    license
