@@ -35,24 +35,23 @@ These algorithms are crucial for applications that require scalable parallel pro
 
 Usage Example
 -------------
-Below is an example of how to use the matching algorithms module.
-
-```python
-from hypernetx.algorithms import matching_algorithms as ma
-
-# Example hypergraph data
-hypergraph = ... # Assume this is a d-uniform hypergraph
-
-# Compute a matching using the O(d²)-approximation algorithm
-matching = ma.matching_approximation_d_squared(hypergraph)
-
-# Compute a matching using the d-approximation algorithm
-matching_d = ma.matching_approximation_d(hypergraph)
-
-# Compute a matching using the d(d−1 + 1/d)²-approximation algorithm
-matching_d_squared = ma.matching_approximation_dd(hypergraph)
-
-print(matching, matching_d, matching_d_squared)
+Below is an example of how to use the matching algorithms module.::
+	
+	from hypernetx.algorithms import matching_algorithms as ma
+	
+	# Example hypergraph data
+	hypergraph = ... # Assume this is a d-uniform hypergraph
+	
+	# Compute a matching using the O(d²)-approximation algorithm
+	matching = ma.matching_approximation_d_squared(hypergraph)
+	
+	# Compute a matching using the d-approximation algorithm
+	matching_d = ma.matching_approximation_d(hypergraph)
+	
+	# Compute a matching using the d(d−1 + 1/d)²-approximation algorithm
+	matching_d_squared = ma.matching_approximation_dd(hypergraph)
+	
+	print(matching, matching_d, matching_d_squared)
 
 
 References
