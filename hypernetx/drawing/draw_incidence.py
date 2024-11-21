@@ -6,16 +6,19 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.patheffects as path_effects
 
-from .util import inflate_kwargs, transpose_inflated_kwargs
+from .util import inflate_kwargs, transpose_inflated_kwargs, inflate
 
 def draw_incidence_upset(
     H,
     ax = None,
+    node_labels=None,
+    edge_labels=None,
     edge_order = None,
     node_order = None,
     edges_kwargs={},
     nodes_kwargs={},
-    node_labels_kwargs={}
+    node_labels_kwargs={},
+    edge_epsilon=0.05
 ):
     default_edge_color = 'lightgray'
     default_node_color = 'black'
@@ -77,8 +80,8 @@ def draw_incidence_upset(
         H.edges, 
         [
             (
-                (edge_pos[v], edge_extent[v][0]),
-                (edge_pos[v], edge_extent[v][1])
+                (edge_pos[v], edge_extent[v][0] - edge_epsilon),
+                (edge_pos[v], edge_extent[v][1] + edge_epsilon)
             )
             for v in H.edges
         ],
@@ -103,14 +106,17 @@ def draw_incidence_upset(
 
     # node labels
 
+    node_labels_inflated = H.nodes if node_labels is None else inflate(H.nodes, node_labels)
+
     if len(node_labels_kwargs) > 0:
         node_labels_kwargs_inflated = transpose_inflated_kwargs(inflate_kwargs(H.nodes, node_labels_kwargs))
     else:
         node_labels_kwargs_inflated = [{}]*len(H.nodes)
         
-    for v, kwargs in zip(H.nodes, node_labels_kwargs_inflated):
+    for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
+        xy = (node_extent[v][0], node_pos[v])
         ax.annotate(
-            v, (node_extent[v][0], node_pos[v]),
+            s, xy,
             ha='right',
             va='center',
             xytext=(-default_edge_width/2 - 4, 0),
@@ -118,10 +124,14 @@ def draw_incidence_upset(
             **kwargs
         )
 
+    edge_labels_inflated = H.edges if edge_labels is None else inflate(H.edges, edge_labels)
+
     ax.set_xticks(
-        np.arange(len(edge_order)),
-        edge_order
+        [edge_pos[e] for e in H.edges],
+        edge_labels_inflated
     )
+
+    ax.set_yticks([], [])
 
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
