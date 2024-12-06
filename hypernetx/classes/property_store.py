@@ -233,7 +233,7 @@ class PropertyStore:
             else:
 
                 def grabprop(cell):
-                    return cell.get(k, v)
+                    return cell.pop(k, v)
 
                 self._data[k] = self._data["misc_properties"].map(grabprop)
                 new_cols.append(k)
