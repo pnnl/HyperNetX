@@ -370,7 +370,7 @@ class Hypergraph:
                         0,
                         weight_col=edge_weight_prop_col,
                         default_weight=default_edge_weight,
-                        misc_properties_col=misc_edge_properties_col,
+                        misc_properties_col=misc_properties_col,
                     )
                     edge_propertystore = PropertyStore(
                         edfp, default_weight=default_edge_weight
