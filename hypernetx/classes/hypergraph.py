@@ -389,7 +389,7 @@ class Hypergraph:
                         1,
                         weight_col=node_weight_prop_col,
                         default_weight=default_node_weight,
-                        misc_properties_col=misc_node_properties_col,
+                        misc_properties_col=misc_properties_col,
                     )
                     node_propertystore = PropertyStore(
                         ndfp, default_weight=default_node_weight

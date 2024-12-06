@@ -44,6 +44,14 @@ algorithms.laplacians\_clustering module
    :undoc-members:
    :show-inheritance:
 
+algorithms.matching\_algorithms module
+--------------------------------------
+
+.. automodule:: algorithms.matching_algorithms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 algorithms.s\_centrality\_measures module
 -----------------------------------------
 
