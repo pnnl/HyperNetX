@@ -3,7 +3,7 @@ from hypernetx.exception import (
     HyperNetXError,
     HyperNetXNotImplementedError,
 )
-from hypernetx.read_write import to_hif, from_hif
+from hypernetx.hif import to_hif, from_hif
 from hypernetx.classes import *
 from hypernetx.reports import *
 from hypernetx.drawing import *
