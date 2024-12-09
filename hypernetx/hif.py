@@ -1,4 +1,4 @@
-# Copyright © 2018 Battelle Memorial Institute
+# Copyright © 2024 Battelle Memorial Institute
 # All rights reserved.
 
 import hypernetx as hnx
@@ -16,6 +16,19 @@ validator = fastjsonschema.compile(schema)
 
 
 def normalize_dataframe(df):
+    """
+    Moves common attributes into misc_properties for translating into HIF.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        HypergraphView.dataframe
+
+    Returns
+    -------
+    pd.DataFrame
+        allowed columns are limited to HIF keys
+    """
     default_cols = ['weight'] + list(set(df.columns).intersection(['direction'])) + ['misc_properties']
     cols = list(set(df.columns).difference(default_cols))
     dfdict = df[cols].T.to_dict()
@@ -38,6 +51,11 @@ def to_hif(hg,filename=None, network_type='undirected', metadata=None):
         One of 'undirected','directed','asc', by default 'undirected'
     metadata : dict, optional
         Additional information to store, by default None
+
+    Returns
+    -------
+    hif : dict
+        format is defined by HIF schema
     """
     hyp_objs = ['nodes','edges','incidences']
     defaults = {part:dict(getattr(hg,part).property_store._defaults) for part in hyp_objs}
@@ -82,6 +100,24 @@ def to_hif(hg,filename=None, network_type='undirected', metadata=None):
 
 
 def from_hif(hif=None, filename=None):
+    """
+    Reads HIF formatted string or dictionary and returns corresponding 
+    hnx.Hypergraph
+
+    Parameters
+    ----------
+    hif : dict, optional
+        Useful if file is read by json and inspected before turning into a hypergraph,
+        by default None
+    filename : str, optional
+        Full path to location of HIF formatted JSON in storage,
+        by default None
+
+    Returns
+    -------
+    hnx.Hypergraph
+        
+    """
     if hif is not None:
         try:
             validator(hif)
