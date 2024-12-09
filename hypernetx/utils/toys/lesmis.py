@@ -2,6 +2,7 @@
 # All rights reserved.
 
 import pandas as pd
+import numpy as np
 from itertools import islice, chain, repeat
 
 import matplotlib.pyplot as plt
@@ -41,6 +42,32 @@ class LesMis(object):
     @property
     def dnames(self):
         return self.df_names.set_index("Symbol")
+    
+    def hypergraph_example(self):
+
+        names = self.df_names
+        scenes = self.df_scenes
+        scenes["edge"] = [
+            ".".join([str(scenes.loc[idx][col]) for col in scenes.columns[:-2]])
+            for idx in scenes.index
+        ]
+        scenes["node"] = scenes["Characters"]
+        df = scenes[["edge", "node"]]
+        cell_weights = df.groupby(["edge"]).count().to_dict()["node"]
+        df["weight"] = df.edge.map(lambda e: np.round(1 / cell_weights.get(e, 1), 2))
+        nprops = names
+        nprops["weight"] = np.round(np.random.uniform(0, 1, len(names)), 2)
+        lm = hnx.Hypergraph(
+            df,
+            cell_weight_col="weight",
+            node_properties=nprops,
+            node_weight_prop_col="weight",
+            name="LesMis example from HNX"
+        )
+        lm.nodes['JV'].job = 'mayor'
+        lm.nodes['MY'].avocation = 'to be kind'
+        lm.nodes['BS'].vocation = 'explorer'
+        return lm
 
 
 def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
@@ -52,6 +79,32 @@ def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
             for t, dft in df.groupby(cols[: cols.index(by) + 1])[on]
         }
     )
+
+def lesmis_hypergraph():
+    lesmis = LesMis()
+    names = lesmis.df_names
+    scenes = lesmis.df_scenes
+    scenes["edge"] = [
+        ".".join([str(scenes.loc[idx][col]) for col in scenes.columns[:-2]])
+        for idx in scenes.index
+    ]
+    scenes["node"] = scenes["Characters"]
+    df = scenes[["edge", "node"]]
+    cell_weights = df.groupby(["edge"]).count().to_dict()["node"]
+    df["weight"] = df.edge.map(lambda e: np.round(1 / cell_weights.get(e, 1), 2))
+    nprops = names
+    nprops["weight"] = np.round(np.random.uniform(0, 1, len(names)), 2)
+    lm = hnx.Hypergraph(
+        df,
+        cell_weight_col="weight",
+        node_properties=nprops,
+        node_weight_prop_col="weight",
+    )
+    lm.nodes['JV'].job = 'mayor'
+    lm.nodes['MY'].avocation = 'to be kind'
+    lm.nodes['BS'].vocation = 'explorer'
+    return lm
+     
 
 
 def book_tour(df, xlabel="Book", ylabel="Volume", s=3.5):
