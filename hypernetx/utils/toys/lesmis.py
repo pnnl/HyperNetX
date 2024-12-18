@@ -42,7 +42,7 @@ class LesMis(object):
     @property
     def dnames(self):
         return self.df_names.set_index("Symbol")
-    
+
     def hypergraph_example(self):
 
         names = self.df_names
@@ -62,11 +62,11 @@ class LesMis(object):
             cell_weight_col="weight",
             node_properties=nprops,
             node_weight_prop_col="weight",
-            name="LesMis example from HNX"
+            name="LesMis example from HNX",
         )
-        lm.nodes['JV'].job = 'mayor'
-        lm.nodes['MY'].avocation = 'to be kind'
-        lm.nodes['BS'].vocation = 'explorer'
+        lm.nodes["JV"].job = "mayor"
+        lm.nodes["MY"].avocation = "to be kind"
+        lm.nodes["BS"].vocation = "explorer"
         return lm
 
 
@@ -79,6 +79,7 @@ def lesmis_hypergraph_from_df(df, by="Chapter", on="Characters"):
             for t, dft in df.groupby(cols[: cols.index(by) + 1])[on]
         }
     )
+
 
 def lesmis_hypergraph():
     lesmis = LesMis()
@@ -100,11 +101,10 @@ def lesmis_hypergraph():
         node_properties=nprops,
         node_weight_prop_col="weight",
     )
-    lm.nodes['JV'].job = 'mayor'
-    lm.nodes['MY'].avocation = 'to be kind'
-    lm.nodes['BS'].vocation = 'explorer'
+    lm.nodes["JV"].job = "mayor"
+    lm.nodes["MY"].avocation = "to be kind"
+    lm.nodes["BS"].vocation = "explorer"
     return lm
-     
 
 
 def book_tour(df, xlabel="Book", ylabel="Volume", s=3.5):
