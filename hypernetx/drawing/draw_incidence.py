@@ -21,6 +21,11 @@ def draw_incidence_upset(
     node_labels_kwargs={},
     edge_epsilon=0.05,
 ):
+    if 'facecolors' in edges_kwargs:
+        edges_kwargs = dict(edges_kwargs)
+        edges_kwargs['colors'] = edges_kwargs['facecolors']
+        del edges_kwargs['facecolors']
+
     default_edge_color = 'lightgray'
     default_node_color = 'black'
     default_edge_width = 15
