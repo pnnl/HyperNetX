@@ -4,42 +4,34 @@ import networkx as nx
 import hypernetx as hnx
 
 
-def rebalance(B, pos, side=None):
+def rebalance(B, pos, side):
     new_pos = {}
 
-    if side is None:
-        side = B
-
+    y = -1
     for u in side:
         x = pos[u][0]
-        y = np.mean([pos[v][1] for v in B[u]])
+        y = max(y + 1, min([pos[v][1] for v in B[u]]))
         new_pos[u] = (x, y)
 
     return {**pos, **new_pos}
 
 
-def bipartite_layout(B, left_side, width=1):
-    B = B.to_undirected()
-    left_side = set(left_side)
-    right_side = set()
+def bipartite_layout(B, left_side, right_side, width=1):
 
     pos = {}
-    n = 0
-    m = 0
 
-    for v in nx.spectral_ordering(B):
-        if v in left_side:
-            pos[v] = (0, m)
-            m += 1
-        else:
-            right_side.add(v)
-            pos[v] = (width, n)
-            n += 1
+    for i, v in enumerate(left_side):
+        pos[v] = (0, i)
+
+    for i, v in enumerate(right_side):
+        pos[v] = (width, i)
 
     if len(left_side) < len(right_side):
         pos = rebalance(B, pos, left_side)
+        pos = rebalance(B, pos, right_side)
     elif len(left_side) > len(right_side):
         pos = rebalance(B, pos, right_side)
+        pos = rebalance(B, pos, left_side)
 
     return pos
 
@@ -47,8 +39,18 @@ def bipartite_layout(B, left_side, width=1):
 def draw_bipartite_using_euler(
     H, node_order=None, edge_order=None, edge_labels_kwargs={}, **kwargs
 ):
-    B = H.bipartite()
-    pos = bipartite_layout(B, H.edges, width=0.5 * max(len(H.nodes), len(H.edges)))
+    B = H.bipartite().to_undirected()
+    if node_order is None or edge_order is None:
+        order = nx.spectral_ordering(B, seed=1234567890)
+        if node_order is None:
+            node_order = list(filter(H.nodes.__contains__, order))
+
+        if edge_order is None:
+            edge_order = list(filter(H.edges.__contains__, order))
+
+    print(node_order, edge_order)
+    pos = bipartite_layout(B, edge_order, node_order, width=0.5 * max(len(H.nodes), len(H.edges)))
+    print(pos)
 
     return hnx.drawing.draw(
         H,
@@ -57,8 +59,8 @@ def draw_bipartite_using_euler(
         contain_hyper_edges=True,
         edge_labels_on_edge=False,
         edge_labels_kwargs={
-            "xytext": (-10, 0),
-            "textcoords": "offset points",
+            'xytext': (-10, 0),
+            'textcoords': 'offset points',
             **edge_labels_kwargs,
         },
         **kwargs
