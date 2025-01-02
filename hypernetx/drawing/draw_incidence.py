@@ -18,7 +18,10 @@ def draw_incidence_upset(
     node_order=None,
     edges_kwargs={},
     nodes_kwargs={},
+    edge_labels_kwargs={},
     node_labels_kwargs={},
+    edge_labels_on_axis=True,
+    node_labels_on_axis=False,
     edge_epsilon=0.05,
 ):
     if 'facecolors' in edges_kwargs:
@@ -34,7 +37,7 @@ def draw_incidence_upset(
     ax = ax or plt.gca()
 
     if node_order is None or edge_order is None:
-        order = nx.spectral_ordering(H.bipartite())
+        order = nx.spectral_ordering(H.bipartite(), seed=1234567890)
 
         if node_order is None:
             node_order = list(filter(H.nodes.__contains__, order))
@@ -104,36 +107,65 @@ def draw_incidence_upset(
         H.nodes if node_labels is None else inflate(H.nodes, node_labels)
     )
 
-    if len(node_labels_kwargs) > 0:
-        node_labels_kwargs_inflated = transpose_inflated_kwargs(
-            inflate_kwargs(H.nodes, node_labels_kwargs)
-        )
+    if node_labels_on_axis:
+        ax.set_yticks([node_pos[v] for v in H.nodes], node_labels_inflated)
     else:
-        node_labels_kwargs_inflated = [{}] * len(H.nodes)
+        ax.set_yticks([], [])
+        ax.spines['left'].set_visible(False)
 
-    for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
-        xy = (node_extent[v][0], node_pos[v])
-        ax.annotate(
-            s,
-            xy,
-            ha='right',
-            va='center',
-            xytext=(-default_edge_width / 2 - 4, 0),
-            textcoords='offset pixels',
-            **kwargs
-        )
+        if len(node_labels_kwargs) > 0:
+            node_labels_kwargs_inflated = transpose_inflated_kwargs(
+                inflate_kwargs(H.nodes, node_labels_kwargs)
+            )
+        else:
+            node_labels_kwargs_inflated = [{}] * len(H.nodes)
+
+        for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
+            xy = (node_extent[v][0], node_pos[v])
+            ax.annotate(
+                s,
+                xy,
+                ha='right',
+                va='center',
+                xytext=(-default_edge_width / 2 - 4, 0),
+                textcoords='offset pixels',
+                **kwargs
+            )
+
+    # edge labels
 
     edge_labels_inflated = (
         H.edges if edge_labels is None else inflate(H.edges, edge_labels)
     )
 
-    ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)
+    if edge_labels_on_axis:
+        ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)
+    else:
+        ax.set_xticks([], [])
+        ax.spines['bottom'].set_visible(False)
 
-    ax.set_yticks([], [])
+        if len(edge_labels_kwargs) > 0:
+            edge_labels_kwargs_inflated = transpose_inflated_kwargs(
+                inflate_kwargs(H.edges, edge_labels_kwargs)
+            )
+        else:
+            edge_labels_kwargs_inflated = [{}] * len(H.edges)
 
-    ax.spines['right'].set_visible(False)
+        for v, s, kwargs in zip(H.edges, edge_labels_inflated, edge_labels_kwargs_inflated):
+            xy = (edge_pos[v], edge_extent[v][0])
+            ax.annotate(
+                s,
+                xy,
+                ha='center',
+                va='top',
+                xytext=(0, -default_edge_width / 2 - 6),
+                textcoords='offset pixels',
+                **kwargs
+            )
+
+        
     ax.spines['top'].set_visible(False)
-    ax.spines['left'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
     ax.add_collection(node_lines)
     ax.autoscale_view()
