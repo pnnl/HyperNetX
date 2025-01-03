@@ -261,8 +261,6 @@ class Hedge2Vec(HypergraphVectorizer):
         """
         if any([len(str(n).split()) > 1 for n in H.nodes()] + [len(str(e).split()) > 1 for e in H.edges()]):
             raise Exception('Hypergraph node or edge names contain whitespace - please remove whitespace in the names')
-        else:
-            print('no whitespace issues')
     
     def connectedness(self, H):
         """

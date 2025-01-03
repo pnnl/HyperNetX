@@ -1,0 +1,228 @@
+{
+	"groups":[
+		{
+			"name":"Stark",
+			"characters":[
+				"Arya Stark",
+				"Benjen Stark",
+				"Bran Stark",
+				"Catelyn Stark",
+				"Eddard Stark",
+				"Ghost",
+				"Grey Wind",
+				"Jon Snow",
+				"Lady",
+				"Nymeria",
+				"Rickon Stark",
+				"Robb Stark",
+				"Sansa Stark",
+				"Shaggydog",
+				"Summer"
+			]
+		},
+		{
+			"name":"Targaryen",
+			"characters":[
+				"Daenerys Targaryen",
+				"Drogon",
+				"Rhaegal",
+				"Viserion",
+				"Viserys Targaryen"
+			]
+		},
+		{
+			"name":"Baratheon",
+			"characters":[
+				"Joffrey Baratheon",
+				"Myrcella Baratheon",
+				"Renly Baratheon",
+				"Robert Baratheon",
+				"Selyse Baratheon",
+				"Shireen Baratheon",
+				"Stannis Baratheon",
+				"Tommen Baratheon",
+				"Gendry"
+			]
+		},
+		{
+			"name":"Lannister",
+			"characters":[
+				"Cersei Lannister",
+				"Jaime Lannister",
+				"Kevan Lannister",
+				"Lancel Lannister",
+				"Tyrion Lannister",
+				"Tywin Lannister"
+			]
+		},
+		{
+			"name":"Night's Watch",
+			"characters":[
+				"Alliser Thorne",
+				"Eddison Tollett",
+				"Grenn",
+				"Jeor Mormont",
+				"Karl Tanner",
+				"Maester Aemon",
+				"Olly",
+				"Othell Yarwyck",
+				"Pypar",
+				"Qhorin Halfhand",
+				"Rast",
+				"Samwell Tarly",
+				"Yoren"
+			]
+		},
+		{
+			"name":"Dothraki",
+			"characters":[
+				"Doreah",
+				"Irri",
+				"Khal Drogo",
+				"Rakharo",
+				"Qhono"
+			]
+		},
+		{
+			"name":"Greyjoy",
+			"characters":[
+				"Balon Greyjoy",
+				"Euron Greyjoy",
+				"Theon Greyjoy",
+				"Yara Greyjoy"
+			]
+		},
+		{
+			"name":"Tyrell",
+			"characters":[
+				"Loras Tyrell",
+				"Mace Tyrell",
+				"Margaery Tyrell",
+				"Olenna Tyrell"
+			]
+		},
+		{
+			"name":"Wildlings",
+			"characters":[
+				"Baby Sam",
+				"Craster",
+				"Gilly",
+				"Mag the Mighty",
+				"Mance Rayder",
+				"Osha",
+				"Rattleshirt",
+				"Thenn Warg",
+				"Tormund Giantsbane",
+				"Wun Wun",
+				"Ygritte"
+			]
+		},
+		{
+			"name":"Martell",
+			"characters":[
+				"Doran Martell",
+				"Ellaria Sand",
+				"Nymeria Sand",
+				"Obara Sand",
+				"Oberyn Martell",
+				"Trystane Martell",
+				"Tyene Sand"
+			]
+		},
+		{
+			"name":"Frey",
+			"characters":[
+				"Black Walder Rivers",
+				"Lothar Frey",
+				"Walder Frey"
+			]
+		},
+		{
+			"name":"Tully",
+			"characters":[
+				"Brynden Tully",
+				"Edmure Tully"
+			]
+		},
+		{
+			"name":"White Walkers",
+			"characters":[
+				"Mag the Mighty Wight",
+				"The Night King",
+				"White Walker",
+				"Wight Wildling Girl",
+				"Wun Wun Wight"
+			]
+		},
+		{
+			"name":"Include",
+			"characters":[
+				"Archmaester Ebrose",
+				"Barristan Selmy",
+				"Beric Dondarrion",
+				"Brienne of Tarth",
+				"Bronn",
+				"Daario Naharis",
+				"Davos Seaworth",
+				"Gendry",
+				"Grand Maester Pycelle",
+				"Greatjon Umber",
+				"Gregor Clegane",
+				"Greizhen mo Ullhor",
+				"Grey Worm",
+				"Hallyne",
+				"High Sparrow",
+				"Hizdahr zo Loraq",
+				"Hodor",
+				"Hot Pie",
+				"Janos Slynt",
+				"Jaqen H'ghar",
+				"Jojen Reed",
+				"Jorah Mormont",
+				"Jory Cassel",
+				"Kraznys mo Nakloz",
+				"Lady Crane",
+				"Leaf",
+				"Locke",
+				"Lommy Greenhands",
+				"Lord Varys",
+				"Lyanna Mormont",
+				"Lysa Arryn",
+				"Maester Luwin",
+				"Matthos Seaworth",
+				"Meera Reed",
+				"Melisandre",
+				"Mirri Maz Duur",
+				"Missandei",
+				"Olyvar",
+				"Petyr Baelish",
+				"Podrick Payne",
+				"Prendahl na Ghezn",
+				"Pyat Pree",
+				"Qyburn",
+				"Ramsay Snow",
+				"Razdal mo Eraz",
+				"Rickard Karstark",
+				"Robin Arryn",
+				"Rodrik Cassel",
+				"Roose Bolton",
+				"Ros",
+				"Salladhor Saan",
+				"Sandor Clegane",
+				"Septa Mordane",
+				"Septa Unella",
+				"Shae",
+				"Silk King",
+				"Smalljon Umber",
+				"Syrio Forel",
+				"Talisa Maegyr",
+				"The Waif",
+				"Thoros of Myr",
+				"Three-Eyed Raven",
+				"Xaro Xhoan Daxos",
+				"Yezzan zo Qaggaz",
+				"Yohn Royce"
+			]
+		}
+	]
+}
