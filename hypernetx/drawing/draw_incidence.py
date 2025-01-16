@@ -33,6 +33,8 @@ def draw_incidence_upset(
         edges_kwargs['colors'] = edges_kwargs['facecolors']
         del edges_kwargs['facecolors']
 
+    edges_kwargs.setdefault('colors', plt.cm.tab10(np.arange(len(H.edges)) % 10) + np.array([0, 0, 0, -.5]))
+
     default_edge_color = 'lightgray'
     default_node_color = 'black'
     default_edge_width = 15
