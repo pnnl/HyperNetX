@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.patheffects as path_effects
 
-from .util import inflate_kwargs, transpose_inflated_kwargs, inflate
+from .util import inflate_kwargs, transpose_inflated_kwargs, inflate, get_frozenset_label
 
 
 def draw_incidence_upset(
@@ -16,6 +16,8 @@ def draw_incidence_upset(
     edge_labels=None,
     with_node_labels=True,
     with_edge_labels=True,
+    with_node_counts=False,
+    with_edge_counts=False,
     edge_order=None,
     node_order=None,
     edges_kwargs={},
@@ -115,9 +117,11 @@ def draw_incidence_upset(
     # node labels
     
     if with_node_labels:
-        node_labels_inflated = (
-            H.nodes if node_labels is None else inflate(H.nodes, node_labels)
-        )
+        node_labels_inflated = H.nodes 
+        if with_node_counts:
+            node_labels = get_frozenset_label(H.nodes, count=True, override=node_labels)
+        elif node_labels is not None:
+            node_labels = inflate(H.nodes, node_labels)
 
         if node_labels_on_axis:
             ax.set_yticks([node_pos[v] for v in H.nodes], node_labels_inflated)
@@ -148,9 +152,13 @@ def draw_incidence_upset(
     # edge labels
 
     if with_edge_labels:
-        edge_labels_inflated = (
-            H.edges if edge_labels is None else inflate(H.edges, edge_labels)
-        )
+        edge_labels_inflated = H.edges 
+        if with_edge_counts:
+            edge_labels_inflated = get_frozenset_label(H.edges, count=True, override=edge_labels)
+        elif edge_labels is not None:
+            edge_labels_inflated = inflate(H.edges, edge_labels)
+            
+        print(edge_labels_inflated)
 
         if edge_labels_on_axis:
             ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)

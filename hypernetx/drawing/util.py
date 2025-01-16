@@ -52,7 +52,7 @@ def get_collapsed_size(v):
     return 1
 
 
-def get_frozenset_label(S, count=False, override={}):
+def get_frozenset_label(S, count=False, override=None):
     """
     Helper function for rendering the labels of possibly collapsed nodes and edges
 
@@ -68,6 +68,9 @@ def get_frozenset_label(S, count=False, override={}):
     dict
         mapping of entity to its string representation
     """
+
+    if override is None:
+        override = {}
 
     def helper(v):
         if type(v) == str:
