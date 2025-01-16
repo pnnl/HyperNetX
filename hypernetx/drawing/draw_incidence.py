@@ -14,6 +14,8 @@ def draw_incidence_upset(
     ax=None,
     node_labels=None,
     edge_labels=None,
+    with_node_labels=True,
+    with_edge_labels=True,
     edge_order=None,
     node_order=None,
     edges_kwargs={},
@@ -101,67 +103,80 @@ def draw_incidence_upset(
         color=[node_colors[v] for v, e in incidences],
     )
 
-    # node labels
-
-    node_labels_inflated = (
-        H.nodes if node_labels is None else inflate(H.nodes, node_labels)
-    )
-
-    if node_labels_on_axis:
-        ax.set_yticks([node_pos[v] for v in H.nodes], node_labels_inflated)
-    else:
+    def clear_y_axis():
         ax.set_yticks([], [])
         ax.spines['left'].set_visible(False)
 
-        if len(node_labels_kwargs) > 0:
-            node_labels_kwargs_inflated = transpose_inflated_kwargs(
-                inflate_kwargs(H.nodes, node_labels_kwargs)
-            )
-        else:
-            node_labels_kwargs_inflated = [{}] * len(H.nodes)
 
-        for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
-            xy = (node_extent[v][0], node_pos[v])
-            ax.annotate(
-                s,
-                xy,
-                ha='right',
-                va='center',
-                xytext=(-default_edge_width / 2 - 4, 0),
-                textcoords='offset pixels',
-                **kwargs
-            )
-
-    # edge labels
-
-    edge_labels_inflated = (
-        H.edges if edge_labels is None else inflate(H.edges, edge_labels)
-    )
-
-    if edge_labels_on_axis:
-        ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)
-    else:
+    def clear_x_axis():
         ax.set_xticks([], [])
         ax.spines['bottom'].set_visible(False)
 
-        if len(edge_labels_kwargs) > 0:
-            edge_labels_kwargs_inflated = transpose_inflated_kwargs(
-                inflate_kwargs(H.edges, edge_labels_kwargs)
-            )
-        else:
-            edge_labels_kwargs_inflated = [{}] * len(H.edges)
+    # node labels
+    
+    if with_node_labels:
+        node_labels_inflated = (
+            H.nodes if node_labels is None else inflate(H.nodes, node_labels)
+        )
 
-        for v, s, kwargs in zip(H.edges, edge_labels_inflated, edge_labels_kwargs_inflated):
-            xy = (edge_pos[v], edge_extent[v][0])
-            ax.annotate(
-                s,
-                xy,
-                ha='center',
-                va='top',
-                xytext=(0, -default_edge_width / 2 - 6),
-                textcoords='offset pixels',
-                **kwargs
-            )
+        if node_labels_on_axis:
+            ax.set_yticks([node_pos[v] for v in H.nodes], node_labels_inflated)
+        else:
+            clear_y_axis()
+
+            if len(node_labels_kwargs) > 0:
+                node_labels_kwargs_inflated = transpose_inflated_kwargs(
+                    inflate_kwargs(H.nodes, node_labels_kwargs)
+                )
+            else:
+                node_labels_kwargs_inflated = [{}] * len(H.nodes)
+
+            for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
+                xy = (node_extent[v][0], node_pos[v])
+                ax.annotate(
+                    s,
+                    xy,
+                    ha='right',
+                    va='center',
+                    xytext=(-default_edge_width / 2 - 4, 0),
+                    textcoords='offset pixels',
+                    **kwargs
+                )
+    else:
+        clear_y_axis()
+
+    # edge labels
+
+    if with_edge_labels:
+        edge_labels_inflated = (
+            H.edges if edge_labels is None else inflate(H.edges, edge_labels)
+        )
+
+        if edge_labels_on_axis:
+            ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)
+        else:
+            clear_x_axis()
+
+            if len(edge_labels_kwargs) > 0:
+                edge_labels_kwargs_inflated = transpose_inflated_kwargs(
+                    inflate_kwargs(H.edges, edge_labels_kwargs)
+                )
+            else:
+                edge_labels_kwargs_inflated = [{}] * len(H.edges)
+
+            for v, s, kwargs in zip(H.edges, edge_labels_inflated, edge_labels_kwargs_inflated):
+                xy = (edge_pos[v], edge_extent[v][0])
+                ax.annotate(
+                    s,
+                    xy,
+                    ha='center',
+                    va='top',
+                    xytext=(0, -default_edge_width / 2 - 6),
+                    textcoords='offset pixels',
+                    **kwargs
+                )
+    else:
+        clear_x_axis()
 
         
     ax.spines['top'].set_visible(False)
