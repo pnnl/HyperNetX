@@ -405,8 +405,11 @@ def create_rubber_band(nodes_pos, edge_nodes, buffer_distance=0.1, alpha=0.5, of
     for node in non_edge_nodes:
         point = Point(nodes_pos[node])
         if hull.contains(point):
+            # could fix the upper bound on the random buffer
+            # based on the distance between the nodes
+            # TODO: implement this
             # Add random variation to the buffer distance for each excluded point
-            random_buffer = buffer_distance * (1 + np.random.uniform(0, 0.5))
+            random_buffer = buffer_distance * (1 + np.random.uniform(0, 0.7))
             included_points.append(point.buffer(random_buffer))
     
     if included_points:
@@ -603,9 +606,9 @@ def draw(
             if isinstance(color, np.ndarray):
                 color = tuple(color)
                 
-            # Draw only the boundary line, no fill
+            # Draw only the boundary line with smaller linewidth
             ax.plot(x, y, color=color, 
-                   linewidth=edges_kwargs.get('linewidth', 2),
+                   linewidth=edges_kwargs.get('linewidth', 1),
                    linestyle=edges_kwargs.get('linestyle', '-'),
                    alpha=edges_kwargs.get('alpha', 1.0))
     else:
