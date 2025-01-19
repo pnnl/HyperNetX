@@ -401,7 +401,15 @@ def create_rubber_band(nodes_pos, edge_nodes, buffer_distance=0.1, alpha=0.5, of
     # Verify and adjust if any non-edge nodes are included
     non_edge_nodes = set(nodes_pos.keys()) - set(edge_nodes)
     included_points = []
+    to_include = []
     
+    # Handle nodes in the edge
+    for node in edge_nodes:
+        point = Point(nodes_pos[node])
+        random_buffer = buffer_distance * (1 + np.random.uniform(0, 0.7))
+        to_include.append(point.buffer(random_buffer))
+
+    # Handle nodes not in the edge
     for node in non_edge_nodes:
         point = Point(nodes_pos[node])
         if hull.contains(point):
@@ -414,9 +422,11 @@ def create_rubber_band(nodes_pos, edge_nodes, buffer_distance=0.1, alpha=0.5, of
     
     if included_points:
         # Subtract any areas containing non-edge nodes
+        include_area = unary_union(to_include)
+        hull = hull.union(include_area)
         excluded_area = unary_union(included_points)
         hull = hull.difference(excluded_area)
-    
+
     return hull
 
 
