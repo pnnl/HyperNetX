@@ -374,29 +374,39 @@ def create_rubber_band(nodes_pos, edge_nodes, buffer_distance=0.1, alpha=0.5, of
     Args:
         nodes_pos: Dict of node positions {node: (x, y)}
         edge_nodes: List of nodes in the hyperedge
-        buffer_distance: Distance to expand the shape around nodes
+        buffer_distance: Base distance to expand the shape around nodes
         alpha: Controls the concaveness (lower = more concave)
-    
-    Returns:
-        Polygon representing the rubber band
+        offset_scale: Additional scaling factor for the buffer
     """
     # Get positions of nodes in the edge
     edge_points = np.array([nodes_pos[n] for n in edge_nodes])
+    
+    # Calculate adaptive buffer based on node distances
+    if len(edge_points) > 1:
+        # Calculate pairwise distances between nodes in the edge
+        distances = pdist(edge_points)
+        # Use mean distance between nodes to scale the buffer
+        mean_distance = np.mean(distances)
+        # Scale buffer_distance by mean distance (using 10% of mean distance as default)
+        adaptive_buffer = buffer_distance * mean_distance
+    else:
+        # For single nodes, use the base buffer_distance
+        adaptive_buffer = buffer_distance
     
     if len(edge_points) < 3:
         # Handle special cases for 1 or 2 nodes
         if len(edge_points) == 1:
             point = Point(edge_points[0])
-            return point.buffer(buffer_distance)
+            return point.buffer(adaptive_buffer)
         else:
             line = LineString(edge_points)
-            return line.buffer(buffer_distance)
+            return line.buffer(adaptive_buffer)
     
     # Create initial concave hull
     hull = get_concave_hull(edge_points, alpha)
     
-    # Expand slightly to create padding around nodes
-    hull = hull.buffer(buffer_distance)
+    # Expand using adaptive buffer
+    hull = hull.buffer(adaptive_buffer)
     
     # Verify and adjust if any non-edge nodes are included
     non_edge_nodes = set(nodes_pos.keys()) - set(edge_nodes)
@@ -406,18 +416,16 @@ def create_rubber_band(nodes_pos, edge_nodes, buffer_distance=0.1, alpha=0.5, of
     # Handle nodes in the edge
     for node in edge_nodes:
         point = Point(nodes_pos[node])
-        random_buffer = buffer_distance * (1 + np.random.uniform(0, 0.7))
+        # Scale random buffer by adaptive_buffer
+        random_buffer = adaptive_buffer * (1 + np.random.uniform(0, 0.7))
         to_include.append(point.buffer(random_buffer))
 
     # Handle nodes not in the edge
     for node in non_edge_nodes:
         point = Point(nodes_pos[node])
         if hull.contains(point):
-            # could fix the upper bound on the random buffer
-            # based on the distance between the nodes
-            # TODO: implement this
-            # Add random variation to the buffer distance for each excluded point
-            random_buffer = buffer_distance * (1 + np.random.uniform(0, 0.7))
+            # Scale random buffer by adaptive_buffer
+            random_buffer = adaptive_buffer * (1 + np.random.uniform(0, 0.7))
             included_points.append(point.buffer(random_buffer))
     
     if included_points:
@@ -610,17 +618,25 @@ def draw(
             hull = create_rubber_band(pos, H.edges[edge], 
                                     buffer_distance=edges_kwargs.get('buffer_distance', 0.1),
                                     alpha=edges_kwargs.get('alpha', 0.5))
-            x, y = hull.exterior.xy
             
             color = colors[idx]
             if isinstance(color, np.ndarray):
                 color = tuple(color)
-                
-            # Draw only the boundary line with smaller linewidth
-            ax.plot(x, y, color=color, 
-                   linewidth=edges_kwargs.get('linewidth', 1),
-                   linestyle=edges_kwargs.get('linestyle', '-'),
-                   alpha=edges_kwargs.get('alpha', 1.0))
+            
+            # Handle both Polygon and MultiPolygon cases
+            if hull.geom_type == 'MultiPolygon':
+                for polygon in hull.geoms:
+                    x, y = polygon.exterior.xy
+                    ax.plot(x, y, color=color,
+                           linewidth=edges_kwargs.get('linewidth', 1),
+                           linestyle=edges_kwargs.get('linestyle', '-'),
+                           alpha=edges_kwargs.get('alpha', 1.0))
+            else:
+                x, y = hull.exterior.xy
+                ax.plot(x, y, color=color,
+                       linewidth=edges_kwargs.get('linewidth', 1),
+                       linestyle=edges_kwargs.get('linestyle', '-'),
+                       alpha=edges_kwargs.get('alpha', 1.0))
     else:
         # Original convex hull visualization code
         edges_kwargs = edges_kwargs.copy()
