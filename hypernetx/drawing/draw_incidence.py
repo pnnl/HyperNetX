@@ -78,10 +78,10 @@ def draw_incidence_upset(
             ((node_extent[v][0], node_pos[v]), (node_extent[v][1], node_pos[v]))
             for v in H.nodes
         ],
-        {'color': default_node_color, **nodes_kwargs},
+        {'colors': nodes_kwargs.get('edgecolors', default_node_color)},
     )
 
-    node_colors = dict(zip(H.nodes, node_lines.get_colors()))
+    node_edgecolors = dict(zip(H.nodes, node_lines.get_colors()))
 
     edge_lines = create_collection(
         H.edges,
@@ -99,12 +99,18 @@ def draw_incidence_upset(
 
     ax.add_collection(edge_lines)
 
+    node_facecolors = dict(zip(
+        H.nodes,
+        inflate(H.nodes, nodes_kwargs.get('facecolors', default_node_color))
+    ))
+
     ax.scatter(
         [edge_pos[e] for v, e in incidences],
         [node_pos[v] for v, e in incidences],
         s=np.pi * node_radius**2,
-        zorder=2,
-        color=[node_colors[v] for v, e in incidences],
+        zorder=3,
+        facecolors=[node_facecolors[v] for v, e in incidences],
+        edgecolors=[node_edgecolors[v] for v, e in incidences] if 'edgecolors' in nodes_kwargs else None
     )
 
     def clear_y_axis():
@@ -160,8 +166,6 @@ def draw_incidence_upset(
         elif edge_labels is not None:
             edge_labels_inflated = inflate(H.edges, edge_labels)
             
-        print(edge_labels_inflated)
-
         if edge_labels_on_axis:
             ax.set_xticks([edge_pos[e] for e in H.edges], edge_labels_inflated)
         else:
