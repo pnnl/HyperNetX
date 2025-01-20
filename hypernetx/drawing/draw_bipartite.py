@@ -48,9 +48,7 @@ def draw_bipartite_using_euler(
         if edge_order is None:
             edge_order = list(filter(H.edges.__contains__, order))
 
-    print(node_order, edge_order)
     pos = bipartite_layout(B, edge_order, node_order, width=0.5 * max(len(H.nodes), len(H.edges)))
-    print(pos)
 
     return hnx.drawing.draw(
         H,
