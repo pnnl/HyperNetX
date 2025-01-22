@@ -37,18 +37,19 @@ def bipartite_layout(B, left_side, right_side, width=1):
 
 
 def draw_bipartite_using_euler(
-    H, node_order=None, edge_order=None, edge_labels_kwargs={}, **kwargs
+    H, pos=None, node_order=None, edge_order=None, edge_labels_kwargs={}, **kwargs
 ):
     B = H.bipartite().to_undirected()
-    if node_order is None or edge_order is None:
-        order = nx.spectral_ordering(B, seed=1234567890)
-        if node_order is None:
-            node_order = list(filter(H.nodes.__contains__, order))
+    if pos is None:
+        if node_order is None or edge_order is None:
+            order = nx.spectral_ordering(B, seed=1234567890)
+            if node_order is None:
+                node_order = list(filter(H.nodes.__contains__, order))
 
-        if edge_order is None:
-            edge_order = list(filter(H.edges.__contains__, order))
+            if edge_order is None:
+                edge_order = list(filter(H.edges.__contains__, order))
 
-    pos = bipartite_layout(B, edge_order, node_order, width=0.5 * max(len(H.nodes), len(H.edges)))
+        pos = bipartite_layout(B, edge_order, node_order, width=0.5 * max(len(H.nodes), len(H.edges)))
 
     return hnx.drawing.draw(
         H,
