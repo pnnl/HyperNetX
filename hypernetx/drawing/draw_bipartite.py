@@ -15,6 +15,11 @@ def rebalance(B, pos, side):
 
     return {**pos, **new_pos}
 
+def sort_left_by_right(B, left, right):
+    pos = {v: i for i, v in enumerate(right)}
+    print(left, right)
+
+    return sorted(left, key=lambda u: np.mean([pos[v] for v in B[u]]))
 
 def bipartite_layout(B, left_side, right_side, width=1):
 
@@ -41,13 +46,14 @@ def draw_bipartite_using_euler(
 ):
     B = H.bipartite().to_undirected()
     if pos is None:
-        if node_order is None or edge_order is None:
+        if node_order is None and edge_order is not None:
+            node_order = sort_left_by_right(B, H.nodes, edge_order)
+        elif node_order is not None and edge_order is None:
+            edge_order = sort_left_by_right(B, H.edges, node_order)
+        elif node_order is None and edge_order is None:
             order = nx.spectral_ordering(B, seed=1234567890)
-            if node_order is None:
-                node_order = list(filter(H.nodes.__contains__, order))
-
-            if edge_order is None:
-                edge_order = list(filter(H.edges.__contains__, order))
+            node_order = list(filter(H.nodes.__contains__, order))
+            edge_order = list(filter(H.edges.__contains__, order))
 
         pos = bipartite_layout(B, edge_order, node_order, width=0.5 * max(len(H.nodes), len(H.edges)))
 
