@@ -5,7 +5,19 @@ Introduction
 ------------
 This module implements methods for vectorizing nodes and edges in a hypergraph. It utilizes an implementation of the Node2Vec [1] algorithm to generalize the method to the context of hypergraphs.
 
-The Node2Vec algorithm is applied independently on the line graphs associated to the nodes/edges of the hypergraph to create separate embedding spaces to account for the difference in meaning between the values of the nodes and edges. For a complete hyperedge embedding, we concatenate the Node2Vec embedding of the hyperedge with the centroid of the Node2Vec embeddings of all nodes contained in the hyperedge. Alternatively, when performing a hypernode embedding, we concatenate the Node2Vec embedding of the hypernode with the centroid of the Node2Vec embeddings of all edges that contain the hypernode.
+The Node2Vec algorithm is applied independently on the line graphs associated to the nodes/edges of the hypergraph to create separate embedding spaces to account for the difference in meaning between the values of the nodes and edges. 
+
+.. image:: ../images/bip2line.png
+   :width: 300px
+   :align: center
+
+For a complete hyperedge embedding, we concatenate the Node2Vec embedding of the hyperedge with the centroid of the Node2Vec embeddings of all nodes contained in the hyperedge. 
+
+.. image:: ../images/complete_h2v_embedding.png
+   :width: 300px
+   :align: center
+
+Alternatively, when performing a hypernode embedding, we concatenate the Node2Vec embedding of the hypernode with the centroid of the Node2Vec embeddings of all edges that contain the hypernode.
 
 Usage Example
 -------------
@@ -28,7 +40,15 @@ h2v.fit(hypergraph)
 
 # Create a dictionary keyed by node/edge names with values embedding vector
 embedding_dict = dict(zip(h2v._train_names, h2v._train_matrix))
+print(embedding_dict)
 
+# Apply dimensionality reduction and plot results
+emb_2d = h2v.dim_red_embeddings(dim_red='umap')
+h2v.plot_embeddings(emb_2d)
+
+.. image:: ../images/h2v_example_plot.png
+   :width: 300px
+   :align: center
 
 References
 -------------
