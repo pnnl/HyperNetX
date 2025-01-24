@@ -5,7 +5,7 @@
 Modularity and Clustering
 =========================
 
-.. image:: images/ModularityScreenShot.png
+.. image:: ../images/ModularityScreenShot.png
    :width: 300px
    :align: right
 
