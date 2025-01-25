@@ -8,26 +8,41 @@ HyperNetX
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 [![CITATION.cff](https://github.com/pnnl/HyperNetX/actions/workflows/cff.yml/badge.svg)](https://github.com/pnnl/HyperNetX/actions/workflows/cff.yml)
 
-The HyperNetX library provides classes and methods for the analysis
+The HyperNetX (HNX) library provides classes and methods for the analysis
 and visualization of complex network data modeled as hypergraphs.
 The library generalizes traditional graph metrics.
+Documentation for HNX is available at: https://hypernetx.readthedocs.io/
 
-HypernetX was developed by the Pacific Northwest National Laboratory for the
+HNX was originally developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
+It is currently maintained by scientists at PNNL, but contributions and bug fixes
+from the community are welcome and encouraged.  
+Please see our [Contributor's Guide](https://hypernetx.readthedocs.io/en/latest/contributions.html)
+for more information.
+
 PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830.
 
 * Principal Developer and Designer: Brenda Praggastis
-* Development Team: Audun Myers, Mark Bonicillo
+* Development Team: Brenda Praggastis, Audun Myers, Greg Roek, Ryan Danehy
 * Visualization: Dustin Arendt, Ji Young Yun
 * Principal Investigator: Cliff Joslyn
 * Program Manager: Brian Kritzstein
-* Principal Contributors (Design, Theory, Code): Sinan Aksoy, Dustin Arendt, Mark Bonicillo, Helen Jenne, Cliff Joslyn, Nicholas Landry, Audun Myers, Christopher Potvin, Brenda Praggastis, Emilie Purvine, Greg Roek, Mirah Shi, Francois Theberge, Ji Young Yun
+* Principal Contributors (Design, Theory, Code): Sinan Aksoy, Dustin Arendt, Mark Bonicillo, Ryan Danehy, Helen Jenne, Cliff Joslyn, Nicholas Landry, Audun Myers, Christopher Potvin, Brenda Praggastis, Emilie Purvine, Greg Roek, Mirah Shi, Francois Theberge, Ji Young Yun
 
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
-Documentation is available at: https://pnnl.github.io/HyperNetX
+HNX is a primary contributor to the 
+Hypergraph Interchange Format (HIF), a json schema for sharing data
+modeled as hypergraphs. The specification and sample notebooks may be found
+here: https://github.com/pszufe/HIF-standard/tree/main
+Other hypergraph libraries using this standard are listed below: 
 
-For questions and comments contact the developers directly at: hypernetx@pnnl.gov
+- [HypergraphX (HGX)](https://github.com/HGX-Team/hypergraphx) (Python)
+- [CompleX Group Interactions (XGI)](https://github.com/xgi-org/xgi) (Python)
+- [SimpleHypergraphs.jl](https://github.com/pszufe/SimpleHypergraphs.jl) (Julia)
+- [Hypergraph-Analysis-Toolbox(HAT)](https://github.com/Jpickard1/Hypergraph-Analysis-Toolbox) (Python)
+
+For questions and comments about HNX contact the developers directly at: hypernetx@pnnl.gov.
 
 Summary - Release highlights - HNX 2.3
 --------------------------------------
