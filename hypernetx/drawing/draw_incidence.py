@@ -3,7 +3,7 @@ import numpy as np
 import networkx as nx
 
 import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
+from matplotlib.collections import PolyCollection, LineCollection
 import matplotlib.patheffects as path_effects
 
 from .util import inflate_kwargs, transpose_inflated_kwargs, inflate, get_frozenset_label
@@ -26,16 +26,13 @@ def draw_incidence_upset(
     node_labels_kwargs={},
     edge_labels_on_axis=True,
     node_labels_on_axis=False,
-    edge_epsilon=0.05,
 ):
-    if 'facecolors' in edges_kwargs:
-        edges_kwargs = dict(edges_kwargs)
-        edges_kwargs['colors'] = edges_kwargs['facecolors']
-        del edges_kwargs['facecolors']
 
-    edges_kwargs.setdefault('colors', plt.cm.tab10(np.arange(len(H.edges)) % 10) + np.array([0, 0, 0, -.5]))
+    default_edge_color = plt.cm.tab10(np.arange(len(H.edges)) % 10)
+    edges_kwargs.setdefault('edgecolors', default_edge_color)
+    edges_kwargs.setdefault('facecolors', 'white')
 
-    default_edge_color = 'lightgray'
+
     default_node_color = 'black'
     default_edge_width = 15
     node_radius = default_edge_width / 3
@@ -83,19 +80,18 @@ def draw_incidence_upset(
 
     node_edgecolors = dict(zip(H.nodes, node_lines.get_colors()))
 
-    edge_lines = create_collection(
-        H.edges,
-        [
-            (
-                (edge_pos[v], edge_extent[v][0] - edge_epsilon),
-                (edge_pos[v], edge_extent[v][1] + edge_epsilon),
-            )
-            for v in H.edges
-        ],
-        {'linewidth': default_edge_width, 'color': default_edge_color, **edges_kwargs},
-    )
 
-    incidences = [(v, e) for v in H for e in H.nodes[v]]
+    r = 1/3
+    theta = np.linspace(0, np.pi, 50)
+    half_circle = np.vstack([r*np.cos(theta), r*np.sin(theta)]).T
+
+    def make_points(x, y1, y2):
+        return np.vstack([-half_circle - [0, r] + [x, y1], half_circle + [0, r] + [x, y2]])
+
+    edge_lines = PolyCollection([
+        make_points(edge_pos[v], *edge_extent[v])
+        for v in H.edges
+    ], **inflate_kwargs(H.edges, edges_kwargs))
 
     ax.add_collection(edge_lines)
 
@@ -103,6 +99,8 @@ def draw_incidence_upset(
         H.nodes,
         inflate(H.nodes, nodes_kwargs.get('facecolors', default_node_color))
     ))
+
+    incidences = [(v, e) for v in H for e in H.nodes[v]]
 
     ax.scatter(
         [edge_pos[e] for v, e in incidences],
