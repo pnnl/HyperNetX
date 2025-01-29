@@ -7,6 +7,7 @@ from matplotlib.collections import PolyCollection, LineCollection
 import matplotlib.patheffects as path_effects
 
 from .util import inflate_kwargs, transpose_inflated_kwargs, inflate, get_frozenset_label
+from .rubber_band import add_edge_defaults
 
 
 def draw_incidence_upset(
@@ -28,10 +29,7 @@ def draw_incidence_upset(
     node_labels_on_axis=False,
 ):
 
-    default_edge_color = plt.cm.tab10(np.arange(len(H.edges)) % 10)
-    edges_kwargs.setdefault('edgecolors', default_edge_color)
-    edges_kwargs.setdefault('facecolors', 'white')
-
+    edges_kwargs = add_edge_defaults(H, edges_kwargs)
 
     default_node_color = 'black'
     default_edge_width = 15
@@ -195,4 +193,6 @@ def draw_incidence_upset(
     ax.spines['right'].set_visible(False)
 
     ax.add_collection(node_lines)
+
+    ax.axis('equal')
     ax.autoscale_view()
