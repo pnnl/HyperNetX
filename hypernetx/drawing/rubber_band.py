@@ -32,10 +32,9 @@ cp = np.vstack((np.cos(theta), np.sin(theta))).T
 def add_edge_defaults(H, edges_kwargs):
     edges_kwargs = edges_kwargs.copy()
 
-    if 'edgecolors' not in edges_kwargs and 'facecolors' not in edges_kwargs:
-        colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
-        edges_kwargs["edgecolors"] = colors
-        edges_kwargs["facecolors"] = colors + np.array([0, 0, 0, -.5])
+    colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
+    edges_kwargs.setdefault("edgecolors", colors)
+    edges_kwargs.setdefault("facecolors", colors + np.array([0, 0, 0, -.5]))
 
     edges_kwargs.setdefault('linewidth', 1)
 
@@ -519,12 +518,11 @@ def draw(
             H,
             pos,
             polys,
-            color=edges_kwargs["edgecolors"],
             backgroundcolor=(1, 1, 1, edge_label_alpha),
             labels=labels,
             ax=ax,
             edge_labels_on_edge=edge_labels_on_edge,
-            **edge_labels_kwargs
+            **{'color': polys.get_edgecolors(), **edge_labels_kwargs}
         )
 
     if with_node_labels:
