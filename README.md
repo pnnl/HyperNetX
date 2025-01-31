@@ -16,7 +16,7 @@ Documentation for HNX is available at: https://hypernetx.readthedocs.io/
 HNX was originally developed by the Pacific Northwest National Laboratory for the
 Hypernets project as part of its High Performance Data Analytics (HPDA) program.
 It is currently maintained by scientists at PNNL, but contributions and bug fixes
-from the community are welcome and encouraged.  
+from the community are welcome and encouraged.
 Please see our [Contributor's Guide](https://hypernetx.readthedocs.io/en/latest/contributions.html)
 for more information.
 
@@ -31,11 +31,11 @@ PNNL is operated by Battelle Memorial Institute under Contract DE-ACO5-76RL01830
 
 The code in this repository is intended to support researchers modeling data
 as hypergraphs. We have a growing community of users and contributors.
-HNX is a primary contributor to the 
+HNX is a primary contributor to the
 Hypergraph Interchange Format (HIF), a json schema for sharing data
 modeled as hypergraphs. The specification and sample notebooks may be found
 here: https://github.com/pszufe/HIF-standard/tree/main
-Other hypergraph libraries using this standard are listed below: 
+Other hypergraph libraries using this standard are listed below:
 
 - [HypergraphX (HGX)](https://github.com/HGX-Team/hypergraphx) (Python)
 - [CompleX Group Interactions (XGI)](https://github.com/xgi-org/xgi) (Python)
