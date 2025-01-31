@@ -12,7 +12,6 @@ from .exception import HyperNetXError
 schema_url = "https://raw.githubusercontent.com/pszufe/HIF_validators/main/schemas/hif_schema_v0.1.0.json"
 
 
-
 def normalize_dataframe(df):
     """
     Moves common attributes into misc_properties for translating into HIF.
@@ -137,7 +136,7 @@ def from_hif(hif=None, filename=None):
     resp = requests.get(schema_url)
     schema = json.loads(resp.text)
     validator = fastjsonschema.compile(schema)
-    
+
     if hif is not None:
         try:
             validator(hif)
