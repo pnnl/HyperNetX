@@ -10,9 +10,7 @@ from copy import deepcopy
 from .exception import HyperNetXError
 
 schema_url = "https://raw.githubusercontent.com/pszufe/HIF_validators/main/schemas/hif_schema_v0.1.0.json"
-resp = requests.get(schema_url)
-schema = json.loads(resp.text)
-validator = fastjsonschema.compile(schema)
+
 
 
 def normalize_dataframe(df):
@@ -62,6 +60,11 @@ def to_hif(hg, filename=None, network_type="undirected", metadata=None):
     hif : dict
         format is defined by HIF schema
     """
+
+    resp = requests.get(schema_url)
+    schema = json.loads(resp.text)
+    validator = fastjsonschema.compile(schema)
+
     hyp_objs = ["nodes", "edges", "incidences"]
     defaults = {
         part: dict(getattr(hg, part).property_store._defaults) for part in hyp_objs
@@ -130,6 +133,11 @@ def from_hif(hif=None, filename=None):
     hnx.Hypergraph
 
     """
+
+    resp = requests.get(schema_url)
+    schema = json.loads(resp.text)
+    validator = fastjsonschema.compile(schema)
+    
     if hif is not None:
         try:
             validator(hif)
