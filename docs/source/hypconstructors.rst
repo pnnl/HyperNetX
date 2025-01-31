@@ -1,6 +1,8 @@
 
 .. _hypconstructors:
 
+
+
 =======================
 Hypergraph Constructors
 =======================
