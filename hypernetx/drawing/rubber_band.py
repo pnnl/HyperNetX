@@ -347,14 +347,7 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
         ax.annotate(
             labels.get(v, v),
             xy,
-            **{
-                k: (
-                    d[v]
-                    if hasattr(d, "__getitem__") and type(d) not in {str, tuple}
-                    else d
-                )
-                for k, d in kwargs.items()
-            }
+            **v_kwargs
         )
 
 
