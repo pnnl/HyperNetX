@@ -156,6 +156,9 @@ def draw_incidence_upset(
     # edge labels
 
     if with_edge_labels:
+        colors = edge_lines.get_edgecolors()
+        edge_labels_kwargs_inflated = inflate_kwargs(H.edges, {'color': colors, **edge_labels_kwargs})
+
         edge_labels_inflated = H.edges 
         if with_edge_counts:
             edge_labels_inflated = get_frozenset_label(H.edges, count=True, override=edge_labels)
@@ -167,14 +170,7 @@ def draw_incidence_upset(
         else:
             clear_x_axis()
 
-            if len(edge_labels_kwargs) > 0:
-                edge_labels_kwargs_inflated = transpose_inflated_kwargs(
-                    inflate_kwargs(H.edges, edge_labels_kwargs)
-                )
-            else:
-                edge_labels_kwargs_inflated = [{}] * len(H.edges)
-
-            for v, s, kwargs in zip(H.edges, edge_labels_inflated, edge_labels_kwargs_inflated):
+            for v, s, kwargs in zip(H.edges, edge_labels_inflated, transpose_inflated_kwargs(edge_labels_kwargs_inflated)):
                 xy = (edge_pos[v], edge_extent[v][0])
                 ax.annotate(
                     s,
