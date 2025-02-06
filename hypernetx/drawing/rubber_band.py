@@ -3,7 +3,7 @@
 
 from hypernetx import Hypergraph
 from hypernetx.drawing.util import (
-    get_frozenset_label,
+    inflate,
     get_collapsed_size,
     get_set_layering,
     inflate_kwargs,
@@ -101,7 +101,7 @@ def get_default_radius(H, pos):
 
 
 def draw_hyper_edge_labels(
-    H, pos, polys, labels={}, edge_labels_on_edge=True, ax=None, **kwargs
+    H, pos, labels, polys, edge_labels_on_edge=True, ax=None, **kwargs
 ):
     """
     Draws a label on the hyper edge boundary.
@@ -130,8 +130,7 @@ def draw_hyper_edge_labels(
 
     params = transpose_inflated_kwargs(inflate_kwargs(H.edges, kwargs))
 
-    for edge, path, params in zip(H.edges, polys.get_paths(), params):
-        s = labels.get(edge, edge)
+    for edge, s, path, params in zip(H.edges, labels, polys.get_paths(), params):
 
         theta = 0
         xy = None
@@ -308,7 +307,7 @@ def draw_hyper_nodes(H, pos, node_radius={}, r0=None, ax=None, **kwargs):
     return circles
 
 
-def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
+def draw_hyper_labels(H, pos, labels, node_radius={}, ax=None,  **kwargs):
     """
     Draws text labels for the hypergraph nodes.
 
@@ -342,10 +341,10 @@ def draw_hyper_labels(H, pos, node_radius={}, ax=None, labels={}, **kwargs):
 
     params = transpose_inflated_kwargs(inflate_kwargs(H.nodes, kwargs))
 
-    for v, v_kwargs in zip(H.nodes, params):
+    for v, s, v_kwargs in zip(H.nodes, labels, params):
         xy = np.array([node_radius.get(v, 0), 0]) + pos[v]
         ax.annotate(
-            labels.get(v, v),
+            s,
             xy,
             **v_kwargs
         )
@@ -364,9 +363,9 @@ def draw(
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_on_edge=True,
-    edge_labels={},
+    edge_labels=None,
     edge_labels_kwargs={},
-    node_labels={},
+    node_labels=None,
     node_labels_kwargs={},
     with_edge_labels=True,
     with_node_labels=True,
@@ -503,31 +502,23 @@ def draw(
         )
 
     if with_edge_labels:
-        labels = get_frozenset_label(
-            H.edges, count=with_edge_counts, override=edge_labels
-        )
-
         draw_hyper_edge_labels(
             H,
             pos,
+            inflate(H.edges, list(H.edges) if edge_labels is None else edge_labels),
             polys,
             backgroundcolor=(1, 1, 1, edge_label_alpha),
-            labels=labels,
             ax=ax,
             edge_labels_on_edge=edge_labels_on_edge,
             **{'color': polys.get_edgecolors(), **edge_labels_kwargs}
         )
 
     if with_node_labels:
-        labels = get_frozenset_label(
-            H.nodes, count=with_node_counts, override=node_labels
-        )
-
         draw_hyper_labels(
             H,
             pos,
+            inflate(H.nodes, list(H.nodes) if node_labels is None else node_labels),
             node_radius=node_radius,
-            labels=labels,
             ax=ax,
             va="center",
             xytext=(5, 0),

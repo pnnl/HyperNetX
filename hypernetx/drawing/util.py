@@ -83,6 +83,28 @@ def get_frozenset_label(S, count=False, override=None):
 
     return {v: override.get(v, helper(v)) for v in S}
 
+def create_labels(equivalence_classes, with_counts=True, include_singletons=False, with_labels=True, as_set=False):
+    def get_label(k, v):
+        if as_set:
+            return str(set(v))
+
+        s = []
+
+        if with_labels:
+            s.append(str(k))
+
+        if with_counts:
+            n = len(v)
+            if n > 1 or include_singletons:
+                s.append(f'x{n}')
+
+        return ' '.join(s)
+            
+    return {
+        k: get_label(k, v)
+        for k, v in equivalence_classes.items()
+    }
+
 
 def get_line_graph(H, collapse=True):
     """
