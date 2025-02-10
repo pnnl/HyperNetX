@@ -44,6 +44,32 @@ def bipartite_layout(B, left_side, right_side, width=1):
 def draw_bipartite_using_euler(
     H, pos=None, node_order=None, edge_order=None, edge_labels_kwargs={}, **kwargs
 ):
+    """
+        Draw a hypergraph as a two column bipartite graph using hypernetx.draw.
+
+        This function calculates the x- and y-coordinates of nodes and edges by placing
+        edges in the left column and nodes in the right column. The ordering of edges
+        and nodes is determined by default using the networkx.spectral_order method
+        on the bipartite representation of the hypergraph. Node and edge order can 
+        also be specified by the user. If one or the other is specified, then the 
+        unspecified column (nodes or edges) are sorted using the barycenter method.
+        Additional minor adjustment of node and edge height is performed to improve
+        readability.
+
+        Additional encoding kwargs are passed through to the hypernetx.draw method.
+        
+        Parameters
+        ----------
+        H: hnx.Hypergraph
+            the entity to be drawn
+        pos: dict
+            the positioning of the hypergraph
+        node_order: list
+            specify to override the order of the nodes in the drawing
+        edge_order: list
+            specify to override the order of the edges in the drawing
+    """
+    
     B = H.bipartite().to_undirected()
     if pos is None:
         if node_order is None and edge_order is not None:

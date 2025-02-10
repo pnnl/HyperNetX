@@ -13,12 +13,12 @@ from .rubber_band import add_edge_defaults
 def draw_incidence_upset(
     H,
     ax=None,
+    edge_order=None,
+    node_order=None,
     node_labels=None,
     edge_labels=None,
     with_node_labels=True,
     with_edge_labels=True,
-    edge_order=None,
-    node_order=None,
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_kwargs={},
@@ -26,6 +26,58 @@ def draw_incidence_upset(
     edge_labels_on_axis=True,
     node_labels_on_axis=False,
 ):
+    """
+    Draw a hypergraph as an incidence matrix within a Matplotlib figure 
+
+    This will draw a colorful visualization inspired by the UpSet [1] approach for 
+    drawing set systems.
+
+    Node and edge visual encodings are specified the same way as hypernetx.draw.
+
+    The default layout algorithm is based on the nx.spectral_order ordering of the
+    nodes in the bipartite representation of the hypergraph. You may specifiy custom
+    node or edge orderings, e.g. if nodes have timestamps they should be ordered by.
+
+    Edges are assigned a coordinate on the x-axis, and nodes are assigned a
+    coordinate on the y-axis. To reverse this, use hypernetx.Hypergraph.dual() on 
+    the input, and swap arguments as appropriate.
+
+    References
+    ----------
+    [1] Lex, Alexander, et al. "UpSet: visualization of intersecting sets." IEEE
+        transactions on visualization and computer graphics 20.12 (2014): 1983-1992.
+
+    Parameters
+    ----------
+    H: hnx.Hypergraph
+        the entity to be drawn
+    ax: Axis
+        matplotlib axis on which the plot is rendered
+    edge_order: list
+        the order to show edges (on the x-axis), overriding the layout algorithm
+    node_order: list
+        the order to show nodes (on the y-axis), overriding the layout algorithm
+    node_labels: function, dict, list, string, float, or int
+        determines the text drawn for nodes
+    edge_labels: function, dict, list, string, float, or int
+        determines the text drawn for edges
+    with_node_labels: bool
+        set to True to disable showing labels for nodes
+    with_edge_labels: bool
+        set to True to disable showing labels for edges
+    edges_kwargs: dict
+        keyword arguments passed to matplotlib.collections.PolyCollection for edges
+    nodes_kwargs: dict
+        keyword arguments passed to matplotlib.collections.PolyCollection for nodes
+    edge_labels_kwargs: dict
+        keyword arguments passed to matplotlib.annotate for edge labels
+    node_labels_kwargs: dict
+        keyword arguments passed to matplotlib.annotate for node labels
+    edge_labels_on_axis: bool
+        show edge label on the matplotlib x-axis instead of next to the edge
+    node_labels_on_axis: bool
+        show node label on the matplotlib y-axis instead of next to the edge
+    """
 
     edges_kwargs = add_edge_defaults(H, edges_kwargs)
 

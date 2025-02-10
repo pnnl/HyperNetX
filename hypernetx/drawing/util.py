@@ -83,7 +83,29 @@ def get_frozenset_label(S, count=False, override=None):
 
     return {v: override.get(v, helper(v)) for v in S}
 
+
 def create_labels(equivalence_classes, with_counts=True, include_singletons=False, with_labels=True, as_set=False):
+    """
+    Convenience function to format labels for collapsed hyper graphs.
+    
+    Use hypernetx.Hypergraph.collapse_nodes(return_equivalence_classes=True),
+    for example, to generate the collapsed hypergraph and equivalence classes
+    to input to this function.
+
+    Parameters
+    ----------
+    equivalence_classes: dict
+        equivalence classes mapping an entity to a list of entities to be labeled
+    with_counts: bool
+        show the number of items in the equivalence class
+    include_singletons: bool
+        show the number even if the number of items is 1
+    with_labels: bool
+        show the representative of the equivalence class (the key in the dictionary)
+    as_set: bool
+        show the label as a set of all the members
+    """
+    
     def get_label(k, v):
         if as_set:
             return str(set(v))

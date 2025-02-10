@@ -353,9 +353,6 @@ def draw_hyper_labels(H, pos, labels, node_radius={}, ax=None,  **kwargs):
 def draw(
     H,
     pos=None,
-    with_color=True,
-    with_node_counts=False,
-    with_edge_counts=False,
     layout=nx.spring_layout,
     layout_kwargs={},
     ax=None,
@@ -423,12 +420,6 @@ def draw(
         the entity to be drawn
     pos: dict
         mapping of node and edge positions to R^2
-    with_color: bool
-        set to False to disable color cycling of edges
-    with_node_counts: bool
-        set to True to replace the label for collapsed nodes with the number of elements
-    with_edge_counts: bool
-        set to True to label collapsed edges with number of elements
     layout: function
         layout algorithm to compute
     layout_kwargs: dict
