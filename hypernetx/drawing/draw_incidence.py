@@ -3,7 +3,7 @@ import numpy as np
 import networkx as nx
 
 import matplotlib.pyplot as plt
-from matplotlib.collections import PolyCollection, LineCollection
+from matplotlib.collections import PolyCollection, LineCollection, EllipseCollection
 import matplotlib.patheffects as path_effects
 
 from .util import inflate_kwargs, transpose_inflated_kwargs, inflate, get_frozenset_label
@@ -82,8 +82,7 @@ def draw_incidence_upset(
     edges_kwargs = add_edge_defaults(H, edges_kwargs)
 
     default_node_color = 'black'
-    default_edge_width = 15
-    node_radius = default_edge_width / 3
+    node_radius = 5
 
     ax = ax or plt.gca()
 
@@ -128,7 +127,6 @@ def draw_incidence_upset(
 
     node_edgecolors = dict(zip(H.nodes, node_lines.get_colors()))
 
-
     r = 1/3
     theta = np.linspace(0, np.pi, 50)
     half_circle = np.vstack([r*np.cos(theta), r*np.sin(theta)]).T
@@ -150,14 +148,22 @@ def draw_incidence_upset(
 
     incidences = [(v, e) for v in H for e in H.nodes[v]]
 
-    ax.scatter(
-        [edge_pos[e] for v, e in incidences],
-        [node_pos[v] for v, e in incidences],
-        s=np.pi * node_radius**2,
-        zorder=3,
+    offsets = [
+        (edge_pos[e], node_pos[v])
+        for v, e in incidences
+    ]
+
+    circles = EllipseCollection(
+        widths=1.5*r,
+        heights=1.5*r,
+        angles=0,
+        units='xy',
+        offsets=offsets,
+        transOffset=ax.transData,
         facecolors=[node_facecolors[v] for v, e in incidences],
         edgecolors=[node_edgecolors[v] for v, e in incidences] if 'edgecolors' in nodes_kwargs else None
     )
+    ax.add_collection(circles)
 
     def clear_y_axis():
         ax.set_yticks([], [])
