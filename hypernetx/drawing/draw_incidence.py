@@ -186,14 +186,14 @@ def draw_incidence_upset(
                 node_labels_kwargs_inflated = [{}] * len(H.nodes)
 
             for v, s, kwargs in zip(H.nodes, node_labels_inflated, node_labels_kwargs_inflated):
-                xy = (node_extent[v][0], node_pos[v])
+                xy = np.array([node_extent[v][0], node_pos[v]])
                 ax.annotate(
                     s,
-                    xy,
+                    np.array([-r, 0]) + xy,
+                    xytext=(-2, 0),
+                    textcoords='offset pixels',
                     ha='right',
                     va='center',
-                    xytext=(-default_edge_width / 2 - 4, 0),
-                    textcoords='offset pixels',
                     **kwargs
                 )
     else:
@@ -213,13 +213,13 @@ def draw_incidence_upset(
             clear_x_axis()
 
             for v, s, kwargs in zip(H.edges, edge_labels_inflated, transpose_inflated_kwargs(edge_labels_kwargs_inflated)):
-                xy = (edge_pos[v], edge_extent[v][0])
+                xy = np.array([edge_pos[v], edge_extent[v][0]])
                 ax.annotate(
                     s,
-                    xy,
+                    np.array([0, -2*r]) + xy,
                     ha='center',
                     va='top',
-                    xytext=(0, -default_edge_width / 2 - 6),
+                    xytext=(0, -2),
                     textcoords='offset pixels',
                     **kwargs
                 )
