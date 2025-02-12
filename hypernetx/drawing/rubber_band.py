@@ -154,7 +154,15 @@ def draw_hyper_edge_labels(
             xy = pos[edge]
 
         # the string is a comma separated list of the edge uid
-        ax.annotate(s, xy, rotation=theta, ha="center", va="center", **params)
+        ax.annotate(
+            s, xy,
+            **{
+                'rotation': theta,
+                'ha': "center",
+                'va': "center",
+                **params
+            }
+        )
 
 
 def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=False):
@@ -511,11 +519,13 @@ def draw(
             inflate(H.nodes, list(H.nodes) if node_labels is None else node_labels),
             node_radius=node_radius,
             ax=ax,
-            va="center",
-            xytext=(5, 0),
-            textcoords="offset points",
-            backgroundcolor=(1, 1, 1, node_label_alpha),
-            **node_labels_kwargs
+            **{
+                'va': "center",
+                'xytext': (5, 0),
+                'textcoords': "offset points",
+                'backgroundcolor': (1, 1, 1, node_label_alpha),
+                **node_labels_kwargs
+            }
         )
 
     draw_hyper_nodes(H, pos, node_radius=node_radius, ax=ax, **nodes_kwargs)

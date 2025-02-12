@@ -196,11 +196,13 @@ def draw_incidence_upset(
                 ax.annotate(
                     s,
                     np.array([-r, 0]) + xy,
-                    xytext=(-2, 0),
-                    textcoords='offset pixels',
-                    ha='right',
-                    va='center',
-                    **kwargs
+                    **{
+                        'xytext': (-2, 0),
+                        'textcoords': 'offset pixels',
+                        'ha': 'right',
+                        'va': 'center',
+                        **kwargs
+                    }
                 )
     else:
         clear_y_axis()
@@ -223,11 +225,13 @@ def draw_incidence_upset(
                 ax.annotate(
                     s,
                     np.array([0, -2*r]) + xy,
-                    ha='center',
-                    va='top',
-                    xytext=(0, -2),
-                    textcoords='offset pixels',
-                    **kwargs
+                    **{
+                        'ha': 'center',
+                        'va': 'top',
+                        'xytext': (0, -2),
+                        'textcoords': 'offset pixels',
+                        **kwargs
+                    }
                 )
     else:
         clear_x_axis()
