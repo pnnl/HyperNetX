@@ -108,7 +108,7 @@ def create_labels(equivalence_classes, with_counts=True, include_singletons=Fals
     
     def get_label(k, v):
         if as_set:
-            return str(set(v))
+            return f'{{{", ".join(v)}}}'
 
         s = []
 
