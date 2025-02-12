@@ -13,6 +13,7 @@ from .rubber_band import add_edge_defaults
 def draw_incidence_upset(
     H,
     ax=None,
+    node_radius=None,
     edge_order=None,
     node_order=None,
     node_labels=None,
@@ -82,7 +83,6 @@ def draw_incidence_upset(
     edges_kwargs = add_edge_defaults(H, edges_kwargs)
 
     default_node_color = 'black'
-    node_radius = 5
 
     ax = ax or plt.gca()
 
@@ -153,9 +153,12 @@ def draw_incidence_upset(
         for v, e in incidences
     ]
 
+    node_radius_dict = {} if node_radius is None else dict(zip(H.nodes, inflate(H.nodes, node_radius)))
+    sizes = [1.5*r*node_radius_dict.get(v, 1) for v, _ in incidences]
+
     circles = EllipseCollection(
-        widths=1.5*r,
-        heights=1.5*r,
+        widths=sizes,
+        heights=sizes,
         angles=0,
         units='xy',
         offsets=offsets,
