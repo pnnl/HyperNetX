@@ -11,7 +11,7 @@ from hypernetx.drawing.util import (
 )
 
 import matplotlib.pyplot as plt
-from matplotlib.collections import PolyCollection
+from matplotlib.collections import PolyCollection, EllipseCollection
 
 import networkx as nx
 
@@ -301,16 +301,22 @@ def draw_hyper_nodes(H, pos, node_radius={}, r0=None, ax=None, **kwargs):
     """
 
     ax = ax or plt.gca()
-
-    r0 = r0 or get_default_radius(H, pos)
-
-    points = [node_radius.get(v, r0) * cp + pos[v] for v in H.nodes]
-
     kwargs.setdefault("facecolors", "black")
 
-    circles = PolyCollection(points, **inflate_kwargs(H, kwargs))
+    r0 = r0 or get_default_radius(H, pos)
+    offsets = [pos[v] for v in H.nodes]
+    sizes = [2*node_radius.get(v, r0) for v in H.nodes]
 
-    ax.add_collection(circles)
+    circles = EllipseCollection(
+        widths=sizes,
+        heights=sizes,
+        angles=0,
+        units='xy',
+        offsets=offsets,
+        transOffset=ax.transData,
+        **inflate_kwargs(H, kwargs)
+    )
+    ax.add_collection(circles)    
 
     return circles
 
@@ -466,18 +472,9 @@ def draw(
     if pos is None:
         pos = layout_node_link(H, with_additional_edges, layout=layout, **layout_kwargs)
 
-    r0 = get_default_radius(H, pos)
-    a0 = np.pi * r0**2
-
-    def get_node_radius(v):
-        if node_radius is None:
-            return np.sqrt(a0 * get_collapsed_size(v) / np.pi)
-        elif hasattr(node_radius, "get"):
-            return node_radius.get(v, 1) * r0
-        return node_radius * r0
-
     # guarantee that node radius is a dictionary mapping nodes to values
-    node_radius = {v: get_node_radius(v) for v in H.nodes}
+    r0 = get_default_radius(H, pos)
+    node_radius = dict(zip(H.nodes, [r0*r for r in inflate(H.nodes, 1 if node_radius is None else node_radius)]))
 
     # for convenience, we are using setdefault to mutate the argument
     # however, we need to copy this to prevent side-effects
