@@ -153,8 +153,14 @@ def draw_incidence_upset(
         for v, e in incidences
     ]
 
-    node_radius_dict = {} if node_radius is None else dict(zip(H.nodes, inflate(H.nodes, node_radius)))
-    sizes = [1.5*r*node_radius_dict.get(v, 1) for v, _ in incidences]
+    node_radius_dict = {} 
+    rmax = 1
+    
+    if node_radius is not None:
+        node_radius_dict = dict(zip(H.nodes, inflate(H.nodes, node_radius)))
+        rmax = max(node_radius_dict.values())
+
+    sizes = [1.5*r*node_radius_dict.get(v, 1)/rmax for v, _ in incidences]
 
     circles = EllipseCollection(
         widths=sizes,
