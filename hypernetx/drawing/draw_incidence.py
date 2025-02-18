@@ -21,6 +21,7 @@ def draw_incidence_upset(
     with_node_labels=True,
     with_edge_labels=True,
     fill_edges=False,
+    fill_edge_alpha=-.5,
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_kwargs={},
@@ -83,7 +84,7 @@ def draw_incidence_upset(
         show node label on the matplotlib y-axis instead of next to the edge
     """
 
-    edges_kwargs = add_edge_defaults(H, edges_kwargs, fill_edges)
+    edges_kwargs = add_edge_defaults(H, edges_kwargs)
 
     default_node_color = 'black'
 
@@ -141,6 +142,10 @@ def draw_incidence_upset(
         make_points(edge_pos[v], *edge_extent[v])
         for v in H.edges
     ], **inflate_kwargs(H.edges, edges_kwargs))
+
+    if fill_edges:
+        color = edge_lines.get_edgecolors() + np.array([0, 0, 0, fill_edge_alpha])
+        edge_lines.set_facecolors(color)
 
     ax.add_collection(edge_lines)
 

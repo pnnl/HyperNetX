@@ -28,16 +28,12 @@ theta = np.linspace(0, 2 * np.pi, N_CONTROL_POINTS + 1)[:-1]
 
 cp = np.vstack((np.cos(theta), np.sin(theta))).T
 
-def add_edge_defaults(H, edges_kwargs, fill_edges=False):
+def add_edge_defaults(H, edges_kwargs):
     edges_kwargs = edges_kwargs.copy()
 
     colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
     edges_kwargs.setdefault("edgecolors", colors)
-    
-    if fill_edges:
-        edges_kwargs.setdefault("facecolors", colors + np.array([0, 0, 0, -.5]))
-    else:
-        edges_kwargs.setdefault("facecolors", 'none')
+    edges_kwargs.setdefault("facecolors", 'none')
 
     edges_kwargs.setdefault('linewidth', 1)
 
@@ -235,7 +231,9 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
 
 
 def draw_hyper_edges(
-    H, pos, ax=None, node_radius={}, contain_hyper_edges=False, dr=None, **kwargs
+    H, pos, ax=None, node_radius={}, contain_hyper_edges=False, dr=None,
+    fill_edges=False, fill_edge_alpha=-0.5,
+    **kwargs
 ):
     """
     Draws a convex hull around the nodes contained within each edge in H
@@ -265,6 +263,9 @@ def draw_hyper_edges(
     )
 
     polys = PolyCollection(points, **inflate_kwargs(H.edges, kwargs))
+    if fill_edges:
+        color = polys.get_edgecolors() + np.array([0, 0, 0, fill_edge_alpha])
+        polys.set_facecolors(color)
 
     (ax or plt.gca()).add_collection(polys)
 
@@ -375,6 +376,7 @@ def draw(
     ax=None,
     node_radius=None,
     fill_edges=False,
+    fill_edge_alpha=-0.5,
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_on_edge=True,
@@ -446,6 +448,8 @@ def draw(
         matplotlib axis on which the plot is rendered
     fill_edges: bool
         set to True to fill set the facecolor of edges to a lighter version of the edgecolor if no facecolor is otherwise specified
+    fill_edge_alpha: float
+        amount to add to the alpha channel when filling edges. Should be between -1 and 0, causing a decrease in alpha
     edges_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for edges
     node_radius: None, int, float, or dict
@@ -484,7 +488,7 @@ def draw(
 
     # for convenience, we are using setdefault to mutate the argument
     # however, we need to copy this to prevent side-effects
-    edges_kwargs = add_edge_defaults(H, edges_kwargs, fill_edges)
+    edges_kwargs = add_edge_defaults(H, edges_kwargs)
 
     polys = draw_hyper_edges(
         H,
@@ -492,6 +496,8 @@ def draw(
         node_radius=node_radius,
         ax=ax,
         contain_hyper_edges=contain_hyper_edges,
+        fill_edges=fill_edges,
+        fill_edge_alpha=fill_edge_alpha,
         **edges_kwargs
     )
 
