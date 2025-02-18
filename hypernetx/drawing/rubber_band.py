@@ -29,12 +29,16 @@ theta = np.linspace(0, 2 * np.pi, N_CONTROL_POINTS + 1)[:-1]
 
 cp = np.vstack((np.cos(theta), np.sin(theta))).T
 
-def add_edge_defaults(H, edges_kwargs):
+def add_edge_defaults(H, edges_kwargs, fill_edges=False):
     edges_kwargs = edges_kwargs.copy()
 
     colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
     edges_kwargs.setdefault("edgecolors", colors)
-    edges_kwargs.setdefault("facecolors", colors + np.array([0, 0, 0, -.5]))
+    
+    if fill_edges:
+        edges_kwargs.setdefault("facecolors", colors + np.array([0, 0, 0, -.5]))
+    else:
+        edges_kwargs.setdefault("facecolors", 'none')
 
     edges_kwargs.setdefault('linewidth', 1)
 
@@ -371,6 +375,7 @@ def draw(
     layout_kwargs={},
     ax=None,
     node_radius=None,
+    fill_edges=False,
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_on_edge=True,
@@ -440,6 +445,8 @@ def draw(
         keyword arguments passed to layout function
     ax: Axis
         matplotlib axis on which the plot is rendered
+    fill_edges: bool
+        set to True to fill set the facecolor of edges to a lighter version of the edgecolor if no facecolor is otherwise specified
     edges_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for edges
     node_radius: None, int, float, or dict
@@ -478,7 +485,7 @@ def draw(
 
     # for convenience, we are using setdefault to mutate the argument
     # however, we need to copy this to prevent side-effects
-    edges_kwargs = add_edge_defaults(H, edges_kwargs)
+    edges_kwargs = add_edge_defaults(H, edges_kwargs, fill_edges)
 
     polys = draw_hyper_edges(
         H,

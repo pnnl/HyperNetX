@@ -20,6 +20,7 @@ def draw_incidence_upset(
     edge_labels=None,
     with_node_labels=True,
     with_edge_labels=True,
+    fill_edges=False,
     edges_kwargs={},
     nodes_kwargs={},
     edge_labels_kwargs={},
@@ -66,6 +67,8 @@ def draw_incidence_upset(
         set to True to disable showing labels for nodes
     with_edge_labels: bool
         set to True to disable showing labels for edges
+    fill_edges: bool
+        set to True to fill set the facecolor of edges to a lighter version of the edgecolor if no facecolor is otherwise specified
     edges_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for edges
     nodes_kwargs: dict
@@ -80,7 +83,7 @@ def draw_incidence_upset(
         show node label on the matplotlib y-axis instead of next to the edge
     """
 
-    edges_kwargs = add_edge_defaults(H, edges_kwargs)
+    edges_kwargs = add_edge_defaults(H, edges_kwargs, fill_edges)
 
     default_node_color = 'black'
 
