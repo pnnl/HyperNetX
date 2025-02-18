@@ -4,7 +4,6 @@
 from hypernetx import Hypergraph
 from hypernetx.drawing.util import (
     inflate,
-    get_collapsed_size,
     get_set_layering,
     inflate_kwargs,
     transpose_inflated_kwargs,
