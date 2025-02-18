@@ -70,6 +70,8 @@ def draw_incidence_upset(
         set to True to disable showing labels for edges
     fill_edges: bool
         set to True to fill set the facecolor of edges to a lighter version of the edgecolor if no facecolor is otherwise specified
+    fill_edge_alpha: float
+        amount to add to the alpha channel when filling edges. Should be between -1 and 0, causing a decrease in alpha
     edges_kwargs: dict
         keyword arguments passed to matplotlib.collections.PolyCollection for edges
     nodes_kwargs: dict
