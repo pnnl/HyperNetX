@@ -214,7 +214,7 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
         # make sure the edge contains at least one node
         if len(edge):
             points = [
-                cp * (node_radius.get(v, r0) + dr * (2 + radii[v][uid])) + pos[v]
+                cp * (node_radius.get(v, r0) + dr * (1 + radii[v][uid])) + pos[v]
                 for v in edge
             ]
 
