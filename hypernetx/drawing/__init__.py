@@ -1,5 +1,5 @@
 from .rubber_band import draw
-from .draw_incidence import draw_incidence_upset as draw_incidence
-from .draw_bipartite import draw_bipartite_using_euler as draw_bipartite
+from .draw_incidence import draw_incidence_upset
+from .draw_bipartite import draw_bipartite_using_euler
 
-__all__ = ["draw", "draw_incidence", "draw_bipartite"]
+__all__ = ["draw", "draw_incidence_upset", "draw_bipartite_using_euler"]
