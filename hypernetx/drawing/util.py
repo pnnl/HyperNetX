@@ -84,10 +84,16 @@ def get_frozenset_label(S, count=False, override=None):
     return {v: override.get(v, helper(v)) for v in S}
 
 
-def create_labels(equivalence_classes, with_counts=True, include_singletons=False, with_labels=True, as_set=False):
+def create_labels(
+    equivalence_classes,
+    with_counts=True,
+    include_singletons=False,
+    with_labels=True,
+    as_set=False,
+):
     """
     Convenience function to format labels for collapsed hyper graphs.
-    
+
     Use hypernetx.Hypergraph.collapse_nodes(return_equivalence_classes=True),
     for example, to generate the collapsed hypergraph and equivalence classes
     to input to this function.
@@ -105,7 +111,7 @@ def create_labels(equivalence_classes, with_counts=True, include_singletons=Fals
     as_set: bool
         show the label as a set of all the members
     """
-    
+
     def get_label(k, v):
         if as_set:
             return f'{{{", ".join(v)}}}'
@@ -118,14 +124,11 @@ def create_labels(equivalence_classes, with_counts=True, include_singletons=Fals
         if with_counts:
             n = len(v)
             if n > 1 or include_singletons:
-                s.append(f'x{n}')
+                s.append(f"x{n}")
 
-        return ' '.join(s)
-            
-    return {
-        k: get_label(k, v)
-        for k, v in equivalence_classes.items()
-    }
+        return " ".join(s)
+
+    return {k: get_label(k, v) for k, v in equivalence_classes.items()}
 
 
 def get_line_graph(H, collapse=True):

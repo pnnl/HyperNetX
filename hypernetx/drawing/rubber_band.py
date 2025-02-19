@@ -28,16 +28,18 @@ theta = np.linspace(0, 2 * np.pi, N_CONTROL_POINTS + 1)[:-1]
 
 cp = np.vstack((np.cos(theta), np.sin(theta))).T
 
+
 def add_edge_defaults(H, edges_kwargs):
     edges_kwargs = edges_kwargs.copy()
 
     colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
     edges_kwargs.setdefault("edgecolors", colors)
-    edges_kwargs.setdefault("facecolors", 'none')
+    edges_kwargs.setdefault("facecolors", "none")
 
-    edges_kwargs.setdefault('linewidth', 1)
+    edges_kwargs.setdefault("linewidth", 1)
 
     return edges_kwargs
+
 
 def layout_node_link(H, G=None, layout=nx.spring_layout, **kwargs):
     """
@@ -154,13 +156,7 @@ def draw_hyper_edge_labels(
 
         # the string is a comma separated list of the edge uid
         ax.annotate(
-            s, xy,
-            **{
-                'rotation': theta,
-                'ha': "center",
-                'va': "center",
-                **params
-            }
+            s, xy, **{"rotation": theta, "ha": "center", "va": "center", **params}
         )
 
 
@@ -231,8 +227,14 @@ def layout_hyper_edges(H, pos, node_radius={}, dr=None, contain_hyper_edges=Fals
 
 
 def draw_hyper_edges(
-    H, pos, ax=None, node_radius={}, contain_hyper_edges=False, dr=None,
-    fill_edges=False, fill_edge_alpha=-0.5,
+    H,
+    pos,
+    ax=None,
+    node_radius={},
+    contain_hyper_edges=False,
+    dr=None,
+    fill_edges=False,
+    fill_edge_alpha=-0.5,
     **kwargs
 ):
     """
@@ -309,23 +311,23 @@ def draw_hyper_nodes(H, pos, node_radius={}, r0=None, ax=None, **kwargs):
 
     r0 = r0 or get_default_radius(H, pos)
     offsets = [pos[v] for v in H.nodes]
-    sizes = [2*node_radius.get(v, r0) for v in H.nodes]
+    sizes = [2 * node_radius.get(v, r0) for v in H.nodes]
 
     circles = EllipseCollection(
         widths=sizes,
         heights=sizes,
         angles=0,
-        units='xy',
+        units="xy",
         offsets=offsets,
         transOffset=ax.transData,
         **inflate_kwargs(H, kwargs)
     )
-    ax.add_collection(circles)    
+    ax.add_collection(circles)
 
     return circles
 
 
-def draw_hyper_labels(H, pos, labels, node_radius={}, ax=None,  **kwargs):
+def draw_hyper_labels(H, pos, labels, node_radius={}, ax=None, **kwargs):
     """
     Draws text labels for the hypergraph nodes.
 
@@ -361,11 +363,7 @@ def draw_hyper_labels(H, pos, labels, node_radius={}, ax=None,  **kwargs):
 
     for v, s, v_kwargs in zip(H.nodes, labels, params):
         xy = np.array([node_radius.get(v, 0), 0]) + pos[v]
-        ax.annotate(
-            s,
-            xy,
-            **v_kwargs
-        )
+        ax.annotate(s, xy, **v_kwargs)
 
 
 def draw(
@@ -484,7 +482,15 @@ def draw(
 
     # guarantee that node radius is a dictionary mapping nodes to values
     r0 = get_default_radius(H, pos)
-    node_radius = dict(zip(H.nodes, [r0*r for r in inflate(H.nodes, 1 if node_radius is None else node_radius)]))
+    node_radius = dict(
+        zip(
+            H.nodes,
+            [
+                r0 * r
+                for r in inflate(H.nodes, 1 if node_radius is None else node_radius)
+            ],
+        )
+    )
 
     # for convenience, we are using setdefault to mutate the argument
     # however, we need to copy this to prevent side-effects
@@ -518,7 +524,7 @@ def draw(
             backgroundcolor=(1, 1, 1, edge_label_alpha),
             ax=ax,
             edge_labels_on_edge=edge_labels_on_edge,
-            **{'color': polys.get_edgecolors(), **edge_labels_kwargs}
+            **{"color": polys.get_edgecolors(), **edge_labels_kwargs}
         )
 
     if with_node_labels:
@@ -529,11 +535,11 @@ def draw(
             node_radius=node_radius,
             ax=ax,
             **{
-                'va': "center",
-                'xytext': (5, 0),
-                'textcoords': "offset points",
-                'backgroundcolor': (1, 1, 1, node_label_alpha),
-                **node_labels_kwargs
+                "va": "center",
+                "xytext": (5, 0),
+                "textcoords": "offset points",
+                "backgroundcolor": (1, 1, 1, node_label_alpha),
+                **node_labels_kwargs,
             }
         )
 
