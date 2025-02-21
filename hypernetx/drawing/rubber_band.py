@@ -41,18 +41,6 @@ def add_edge_defaults(H, edges_kwargs):
     return edges_kwargs
 
 
-def add_edge_defaults(H, edges_kwargs):
-    edges_kwargs = edges_kwargs.copy()
-
-    colors = plt.cm.tab10(np.arange(len(H.edges)) % 10)
-    edges_kwargs.setdefault("edgecolors", colors)
-    edges_kwargs.setdefault("facecolors", "none")
-
-    edges_kwargs.setdefault("linewidth", 1)
-
-    return edges_kwargs
-
-
 def layout_node_link(H, G=None, layout=nx.spring_layout, **kwargs):
     """
     Helper function to use a NetwrokX-like graph layout algorithm on a Hypergraph
