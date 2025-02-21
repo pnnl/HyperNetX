@@ -3,9 +3,9 @@
 These tutorials cover advanced topics in hypergraphs such as hypergraph metrics, homology, generating hypergraphs from
 random models, modeling contagion with hypergraphs, and hypergraph modularity.
 
-# How to run the tutorials on Jupyter Notebook
+# How to run the tutorials on Jupyter Notebook using a virtual environment
 
-Create a virtual environment:
+To create a virtual environment:
 
 `make venv`
 
