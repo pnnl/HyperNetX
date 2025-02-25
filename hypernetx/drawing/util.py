@@ -194,6 +194,7 @@ def get_set_layering(H, collapse=True):
 
     return levels
 
+
 def layout_with_radius(B, node_and_edge_radius=1, **kwargs):
     """
     Convenience function allowing the user to specify ideal radii for nodes and edges in the drawing
@@ -217,17 +218,16 @@ def layout_with_radius(B, node_and_edge_radius=1, **kwargs):
     dict
         mapping of node and edge positions to R^2
     """
-    
+
     # get radii encodings and convert to dictionary
     radius_dict = dict(zip(B, inflate(B, node_and_edge_radius)))
-    
+
     # edges weights are the sum of the radii of the edge endpoints
     for u, v, d in B.edges(data=True):
-        d['weight'] = radius_dict.get(u, 0) + radius_dict.get(v, 0)
-        
+        d["weight"] = radius_dict.get(u, 0) + radius_dict.get(v, 0)
+
     # compute all pairs shortest path (APSP)
     dist = dict(nx.all_pairs_dijkstra_path_length(B))
 
     # compute and return layout using above APSP; pass through arguments
     return nx.kamada_kawai_layout(B, dist=dist, **kwargs)
-
