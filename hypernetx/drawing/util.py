@@ -52,7 +52,7 @@ def get_collapsed_size(v):
     return 1
 
 
-def get_frozenset_label(S, count=False, override={}):
+def get_frozenset_label(S, count=False, override=None):
     """
     Helper function for rendering the labels of possibly collapsed nodes and edges
 
@@ -69,6 +69,9 @@ def get_frozenset_label(S, count=False, override={}):
         mapping of entity to its string representation
     """
 
+    if override is None:
+        override = {}
+
     def helper(v):
         if type(v) == str:
             n = get_collapsed_size(v)
@@ -79,6 +82,53 @@ def get_frozenset_label(S, count=False, override={}):
         return str(v)
 
     return {v: override.get(v, helper(v)) for v in S}
+
+
+def create_labels(
+    equivalence_classes,
+    with_counts=True,
+    include_singletons=False,
+    with_labels=True,
+    as_set=False,
+):
+    """
+    Convenience function to format labels for collapsed hyper graphs.
+
+    Use hypernetx.Hypergraph.collapse_nodes(return_equivalence_classes=True),
+    for example, to generate the collapsed hypergraph and equivalence classes
+    to input to this function.
+
+    Parameters
+    ----------
+    equivalence_classes: dict
+        equivalence classes mapping an entity to a list of entities to be labeled
+    with_counts: bool
+        show the number of items in the equivalence class
+    include_singletons: bool
+        show the number even if the number of items is 1
+    with_labels: bool
+        show the representative of the equivalence class (the key in the dictionary)
+    as_set: bool
+        show the label as a set of all the members
+    """
+
+    def get_label(k, v):
+        if as_set:
+            return f'{{{", ".join(v)}}}'
+
+        s = []
+
+        if with_labels:
+            s.append(str(k))
+
+        if with_counts:
+            n = len(v)
+            if n > 1 or include_singletons:
+                s.append(f"x{n}")
+
+        return " ".join(s)
+
+    return {k: get_label(k, v) for k, v in equivalence_classes.items()}
 
 
 def get_line_graph(H, collapse=True):
@@ -143,3 +193,41 @@ def get_set_layering(H, collapse=True):
         levels[v] = max(parent_levels) + 1 if len(parent_levels) else 0
 
     return levels
+
+
+def layout_with_radius(B, node_and_edge_radius=1, **kwargs):
+    """
+    Convenience function allowing the user to specify ideal radii for nodes and edges in the drawing
+
+    The Kamada-Kawai (networkx.kamada_kawai_layout) algorithm is used. The algorithm is passed
+    a all pairs shorteset path matrix that is calculated from the bipartite graph input. The
+    shortest path is determined
+
+
+    Parameters
+    ----------
+    B: nx.Graph
+        a bipartite graph representing the hypergraph
+    node_and_edge_radius: float, int, dict, list, or function
+        encoding of the radii of nodes in B, which are hyper-edges or hyper-nodes (0 by default)
+    kwargs: dict
+        Keyword arguments are passed through to the networkx.kamada_kawai_layout function
+
+    Returns
+    -------
+    dict
+        mapping of node and edge positions to R^2
+    """
+
+    # get radii encodings and convert to dictionary
+    radius_dict = dict(zip(B, inflate(B, node_and_edge_radius)))
+
+    # edges weights are the sum of the radii of the edge endpoints
+    for u, v, d in B.edges(data=True):
+        d["weight"] = radius_dict.get(u, 0) + radius_dict.get(v, 0)
+
+    # compute all pairs shortest path (APSP)
+    dist = dict(nx.all_pairs_dijkstra_path_length(B))
+
+    # compute and return layout using above APSP; pass through arguments
+    return nx.kamada_kawai_layout(B, dist=dist, **kwargs)
