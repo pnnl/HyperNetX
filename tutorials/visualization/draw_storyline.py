@@ -115,12 +115,12 @@ class Storyline:
         }
       
         self.G = get_storyline_graph(self.H, self.x)
-
-        def merge_equivalent_left(u, v):
-            return self.G.out_degree(v) <= 1 and self.G.in_degree(v) <= 1 and\
+            
+        def merge_equivalent_by_degree(u, v):
+            return self.G.out_degree(u) == 1 and self.G.in_degree(v) == 1 and\
                 set(self.H.edges[u]) == set(self.H.edges[v])
             
-        Gp, self.parents = get_parent_graph(self.G, merge_equivalent_left)
+        Gp, self.parents = get_parent_graph(self.G, merge_equivalent_by_degree)
         setup_lines(self.H, Gp)
         
         self.Gp = setup_bounds(
