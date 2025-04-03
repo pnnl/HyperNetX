@@ -334,7 +334,8 @@ def draw_storyline(
     edge_labels_kwargs={},
     node_labels_kwargs={},
     edge_labels_on_axis=True,
-    node_labels_on_axis=False
+    node_labels_on_axis=False,
+    y_cap_scale=4
 ):
     ax = ax or plt.gca()
 
@@ -352,7 +353,7 @@ def draw_storyline(
     y = self.layout_graphviz()
         
     edges = self.get_edges(
-        y,
+        y, y_cap_scale=y_cap_scale,
         **inflate_kwargs(H, edges_kwargs)
     )
 
