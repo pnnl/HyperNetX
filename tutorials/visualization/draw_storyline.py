@@ -8,6 +8,8 @@ from matplotlib.collections import LineCollection, PolyCollection
 
 from collections import defaultdict
 
+EDGE_WIDTH = .5
+
 def get_storyline_graph(H, x):
     G = nx.DiGraph()
     
@@ -117,7 +119,8 @@ class Storyline:
         
         self.Gp = setup_bounds(
             Gp,
-            self.x
+            self.x,
+            radius=EDGE_WIDTH/2
         )
 
         sort_storylines(self.Gp, ({v: i for i, v in enumerate(self.node_order)}).get)
@@ -212,6 +215,27 @@ class Storyline:
             ],
             **kwargs
         )
+    
+    def get_edges(self, y, y_spacing, y_cap_scale=4, **kwargs):
+        r = EDGE_WIDTH/2
+
+        theta = np.linspace(0, np.pi, 21)
+        half_circle = np.array([
+            r*np.cos(theta),
+            r*y_cap_scale*y_spacing*np.sin(theta)
+        ]).T
+
+        def make_edge(v):
+            x = self.x[v]
+            y1 = y[self.parents[v]]
+            y2 = y1 + y_spacing*(len(self.H.edges[v]) - 1)
+
+            return np.vstack([
+                half_circle*np.array([1, -1]) + np.array([x, y1]),
+                (half_circle + np.array([x, y2]))[::-1]
+            ])
+        
+        return PolyCollection(map(make_edge, self.G), **kwargs)
 
     def get_parent_graph_nodes(self, y, y_spacing=1, **kwargs):
         return PolyCollection(
