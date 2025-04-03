@@ -1,10 +1,19 @@
 import hypernetx as hnx
+from hypernetx.drawing.util import (
+    inflate_kwargs,
+    transpose_inflated_kwargs,
+    inflate,
+    get_frozenset_label,
+)
+
+from hypernetx.drawing.rubber_band import add_edge_defaults
+
 import matplotlib.pyplot as plt
 import networkx as nx
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from matplotlib.collections import LineCollection, PolyCollection
+from matplotlib.collections import LineCollection, PolyCollection, EllipseCollection
 
 from collections import defaultdict
 
@@ -84,13 +93,10 @@ def sort_storylines(Gp, key):
     for _, d in Gp.nodes(data=True):
         d['lines'] = sorted(d['lines'], key=key)
         
-def storyline_layout_graphviz(G):
-    G.graph['rankdir'] = 'LR'
-    return nx.nx_agraph.graphviz_layout(G, prog='dot')
-
 class Storyline:
-    def __init__(self, H, edge_order=None, node_order=None):
+    def __init__(self, H, edge_order=None, node_order=None, y_spacing=1):
         self.H = H
+        self.y_spacing = y_spacing
 
         combined_order = nx.spectral_ordering(H.bipartite())
         
@@ -146,7 +152,6 @@ class Storyline:
 
             return True
                 
-            
         return {
             v
             for v, d in self.Gp.nodes(data=True)
@@ -160,10 +165,12 @@ class Storyline:
         if return_pos:
             return pos
         
-        return {
+        self.y = {
             k: yk
             for k, (_, yk) in pos.items()
         }
+
+        return self.y
     
     def validate_parent_graph_direction(self):
         return {
@@ -172,7 +179,6 @@ class Storyline:
             if self.Gp.nodes[u]['end'] > self.Gp.nodes[v]['start']
         }
             
-
     def get_line_coordinates(self, y):
         lines = defaultdict(list)
 
@@ -185,7 +191,7 @@ class Storyline:
             for v in self.H.nodes()
         ]
 
-    def get_storylines(self, y, y_spacing=1, **kwargs):
+    def get_storylines(self, y, **kwargs):
 
         def interpolate(points):
             smooth = PchipInterpolator(*points.T)
@@ -200,14 +206,20 @@ class Storyline:
 
                     points_interp.append(np.vstack((X, Y)).T)
 
-            return np.vstack(points_interp)
+            points_interp = np.vstack(points_interp)
+
+            # adjust first and last x coordinate on storyline so it starts in the center of the edge
+            points_interp[0, 0] += EDGE_WIDTH/2
+            points_interp[-1, 0] -= EDGE_WIDTH/2
+
+            return points_interp
         
         return LineCollection(
             [
                 interpolate(np.vstack([
                     np.array([
-                        (x1, y + y_spacing*dy),
-                        (x2, y + y_spacing*dy)
+                        (x1, y + self.y_spacing*dy),
+                        (x2, y + self.y_spacing*dy)
                     ])
                     for x1, x2, y, dy in c
                 ]))
@@ -216,19 +228,19 @@ class Storyline:
             **kwargs
         )
     
-    def get_edges(self, y, y_spacing, y_cap_scale=4, **kwargs):
+    def get_edges(self, y, y_cap_scale=4, **kwargs):
         r = EDGE_WIDTH/2
 
         theta = np.linspace(0, np.pi, 21)
         half_circle = np.array([
             r*np.cos(theta),
-            r*y_cap_scale*y_spacing*np.sin(theta)
+            r*y_cap_scale*self.y_spacing*np.sin(theta)
         ]).T
 
         def make_edge(v):
             x = self.x[v]
             y1 = y[self.parents[v]]
-            y2 = y1 + y_spacing*(len(self.H.edges[v]) - 1)
+            y2 = y1 + self.y_spacing*(len(self.H.edges[v]) - 1)
 
             return np.vstack([
                 half_circle*np.array([1, -1]) + np.array([x, y1]),
@@ -236,24 +248,59 @@ class Storyline:
             ])
         
         return PolyCollection(map(make_edge, self.G), **kwargs)
+    
+    def get_incidences(self, y, ax=None, return_index=False, **kwargs):
 
-    def get_parent_graph_nodes(self, y, y_spacing=1, **kwargs):
+        ax = ax or plt.gca()
+
+        index = [
+            (p, e, v, i)
+            for p, d in self.Gp.nodes(data=True)
+            for e in d['children']
+            for i, v in enumerate(d['lines'])
+        ]
+
+        offsets = np.array([
+            (self.x[e], y[p] + self.y_spacing*i)
+            for (p, e, v, i) in index
+        ])
+
+        sizes = EDGE_WIDTH/3
+
+        circles = EllipseCollection(
+            widths=sizes,
+            heights=sizes,
+            angles=0,
+            units="x",
+            offsets=offsets,
+            transOffset=ax.transData,
+        )
+
+        if return_index:
+            return circles, index
+        
+        return circles
+
+    
+    # visualizations for debugging
+
+    def get_parent_graph_nodes(self, y, **kwargs):
         return PolyCollection(
             [
                 [
-                    (d['start'], y[v] - y_spacing/2),
-                    (d['start'], y[v] + y_spacing*(len(d['lines']) - .5)),
-                    (d['end'], y[v] + y_spacing*(len(d['lines']) - .5)),
-                    (d['end'], y[v] - y_spacing/2)
+                    (d['start'], y[v] - self.y_spacing/2),
+                    (d['start'], y[v] + self.y_spacing*(len(d['lines']) - .5)),
+                    (d['end'], y[v] + self.y_spacing*(len(d['lines']) - .5)),
+                    (d['end'], y[v] - self.y_spacing/2)
                 ]
                 for v, d in self.Gp.nodes(data=True)
             ],
             **kwargs
         )
         
-    def get_parent_graph_links(self, y, y_spacing=1, **kwargs):
+    def get_parent_graph_links(self, y, **kwargs):
         def midpoint(v):
-            return y[v] + y_spacing*(len(self.Gp.nodes[v]['lines']) - 1)/2
+            return y[v] + self.y_spacing*(len(self.Gp.nodes[v]['lines']) - 1)/2
         
         return LineCollection(
             [
@@ -265,7 +312,78 @@ class Storyline:
             ],
             **kwargs
         )
-        
-    def suggest_size(self, inches_per_edge=.5, inches_per_node=.25):
-        return (inches_per_edge*len(self.H.edges), inches_per_node*len(self.H.nodes))
+    
+def suggest_size(H, inches_per_edge=.5, inches_per_node=.25):
+    return (inches_per_edge*len(H.edges), inches_per_node*len(H.nodes))
 
+def draw_storyline(
+    H,
+    ax=None,
+    y_spacing=1,
+    node_radius=None,
+    edge_order=None,
+    node_order=None,
+    node_labels=None,
+    edge_labels=None,
+    with_node_labels=True,
+    with_edge_labels=True,
+    fill_edges=False,
+    fill_edge_alpha=-0.5,
+    edges_kwargs={},
+    nodes_kwargs={},
+    edge_labels_kwargs={},
+    node_labels_kwargs={},
+    edge_labels_on_axis=True,
+    node_labels_on_axis=False
+):
+    ax = ax or plt.gca()
+
+    edges_kwargs = add_edge_defaults(H, edges_kwargs)
+
+    default_node_color = "black"
+    
+    self = Storyline(
+        H,
+        edge_order=edge_order,
+        node_order=node_order,
+        y_spacing=y_spacing
+    )
+    
+    y = self.layout_graphviz()
+        
+    edges = self.get_edges(
+        y,
+        **inflate_kwargs(H, edges_kwargs)
+    )
+
+    if fill_edges:
+        color = edges.get_edgecolors() + np.array([0, 0, 0, fill_edge_alpha])
+        edges.set_facecolors(color)
+    
+    storylines = self.get_storylines(
+        y,
+        **inflate_kwargs(H, {'edgecolors': default_node_color, **nodes_kwargs})
+    )
+
+    incidences, index = self.get_incidences(
+        y,
+        ax = ax,
+        return_index=True
+    )
+    
+    node_edgecolor_dict = dict(zip(self.H.nodes, storylines.get_edgecolors()))
+    
+    incidences.set_edgecolors([
+        node_edgecolor_dict[v]
+        for p, e, v, i in index
+    ])
+
+    # todo: facecolors could be specified in nodes_kwargs
+    incidences.set_facecolors(incidences.get_edgecolors())
+
+    for c in (edges, storylines, incidences):
+        ax.add_collection(c)
+
+    ax.autoscale_view()
+
+    return self
