@@ -315,9 +315,11 @@ class Storyline:
         
         def get_left_coord(v):
             p = self.parents[min(self.H.nodes[v], key=self.x.get)]
+            d = self.Gp.nodes[p]
+
             return (
-                self.Gp.nodes[p]['start'] + EDGE_WIDTH/2,
-                y[p]
+                d['start'] + EDGE_WIDTH/2,
+                y[p] + self.y_spacing*d['lines'].index(v)
             )
         
         return np.array(list(map(get_left_coord, self.H.nodes())))
