@@ -349,7 +349,6 @@ def draw_storyline(
     edge_labels_kwargs={},
     node_labels_kwargs={},
     edge_labels_on_axis=True,
-    node_labels_on_axis=False,
     y_cap_scale=4
 ):
     ax = ax or plt.gca()
@@ -426,8 +425,15 @@ def draw_storyline(
         edge_xy = self.get_edge_labels_xy(y)
         edge_labels_and_kwargs = inflate_labels(list(H.edges), edge_labels, edge_labels_kwargs)
 
-        for (s, kwargs), xy in zip(edge_labels_and_kwargs, edge_xy):
-            ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
+        if edge_labels_on_axis:
+            ax.xaxis.set_ticks(
+                edge_xy[:, 0],
+                [labels for labels, _ in edge_labels_and_kwargs],
+                **edge_labels_kwargs
+            )
+        else:
+            for (s, kwargs), xy in zip(edge_labels_and_kwargs, edge_xy):
+                ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
 
     ax.autoscale_view()
 
