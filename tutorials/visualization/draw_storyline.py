@@ -313,6 +313,23 @@ class Storyline:
             **kwargs
         )
     
+    def get_node_labels_xy(self, y):
+        
+        def get_left_coord(v):
+            p = self.parents[min(self.H.nodes[v], key=self.x.get)]
+            return (
+                self.Gp.nodes[p]['start'] + EDGE_WIDTH/2,
+                y[p]
+            )
+        
+        return np.array(list(map(get_left_coord, self.H.nodes())))
+
+    def get_edge_labels_xy(self, y):
+        return np.array([
+            (self.x[e], y[self.parents[e]])
+            for e in self.H.edges()
+        ])
+
 def suggest_size(H, inches_per_edge=.5, inches_per_node=.25):
     return (inches_per_edge*len(H.edges), inches_per_node*len(H.nodes))
 
