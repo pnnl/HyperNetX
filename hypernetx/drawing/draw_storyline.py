@@ -436,7 +436,11 @@ def draw_storyline(
         else:
             for (s, kwargs), xy in zip(edge_labels_and_kwargs, edge_xy):
                 ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
+        
+            ax.xaxis.set_ticks([], [])
 
     ax.autoscale_view()
+
+    ax.yaxis.set_ticks([], [])
 
     return self
