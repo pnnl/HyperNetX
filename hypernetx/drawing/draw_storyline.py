@@ -329,7 +329,7 @@ class Storyline:
         ])
 
 def suggest_size(H, inches_per_edge=.5, inches_per_node=.25):
-    return (inches_per_edge*len(H.edges), inches_per_node*len(H.nodes))
+    return np.array((inches_per_edge*len(H.edges), inches_per_node*len(H.nodes)))
 
 def draw_storyline(
     H,
