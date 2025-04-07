@@ -1,9 +1,7 @@
 import hypernetx as hnx
 from hypernetx.drawing.util import (
     inflate_kwargs,
-    transpose_inflated_kwargs,
-    inflate,
-    get_frozenset_label,
+    inflate_labels
 )
 
 from hypernetx.drawing.rubber_band import add_edge_defaults
@@ -401,6 +399,35 @@ def draw_storyline(
 
     for c in (edges, storylines, incidences):
         ax.add_collection(c)
+
+    if with_node_labels:
+        default_text_kwargs = {
+            'ha': 'right',
+            'va': 'center',
+            'xytext': (-3, 0),
+            'textcoords': 'offset pixels'
+        }
+        offset_xy = np.array([-.5*EDGE_WIDTH, 0])
+        node_xy = self.get_node_labels_xy(y)
+        node_labels_and_kwargs = inflate_labels(list(H.nodes), node_labels, node_labels_kwargs)
+
+        for (s, kwargs), xy in zip(node_labels_and_kwargs, node_xy):
+            ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
+
+    if with_edge_labels:
+        default_text_kwargs = {
+            'ha': 'center',
+            'va': 'top',
+            'xytext': (0, -2),
+            'textcoords': 'offset pixels'
+        }
+
+        offset_xy = np.array([0, -y_cap_scale*EDGE_WIDTH/2*self.y_spacing])
+        edge_xy = self.get_edge_labels_xy(y)
+        edge_labels_and_kwargs = inflate_labels(list(H.edges), edge_labels, edge_labels_kwargs)
+
+        for (s, kwargs), xy in zip(edge_labels_and_kwargs, edge_xy):
+            ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
 
     ax.autoscale_view()
 
