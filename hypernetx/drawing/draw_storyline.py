@@ -245,7 +245,7 @@ class Storyline:
                 (half_circle + np.array([x, y2]))[::-1]
             ])
         
-        return PolyCollection(map(make_edge, self.G), **kwargs)
+        return PolyCollection(map(make_edge, self.H.edges), **kwargs)
     
     def get_incidences(self, y, ax=None, return_index=False, **kwargs):
 
