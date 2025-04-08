@@ -379,7 +379,11 @@ def draw_storyline(
     
     storylines = self.get_storylines(
         y,
-        **inflate_kwargs(H, {'edgecolors': default_node_color, **nodes_kwargs})
+        **inflate_kwargs(H, {
+            'edgecolors': default_node_color,
+            **nodes_kwargs,
+            'facecolors': 'none' # storylines should never have a face color
+        })
     )
 
     incidences, index = self.get_incidences(
