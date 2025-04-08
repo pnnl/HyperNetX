@@ -370,7 +370,7 @@ def draw_storyline(
         
     edges = self.get_edges(
         y, y_cap_scale=y_cap_scale,
-        **inflate_kwargs(H, edges_kwargs)
+        **inflate_kwargs(H.edges, edges_kwargs)
     )
 
     if fill_edges:
