@@ -314,6 +314,7 @@ class AttrList(UserList):
     def __init__(self, uid, hypergraph_view, initlist=None):
         self._hypergraph_view = hypergraph_view
         self._uid = uid
+        self._level = hypergraph_view._level
         if initlist is None:
             initlist = hypergraph_view._incidence_store.neighbors(self._level, uid)
         super().__init__(initlist)
