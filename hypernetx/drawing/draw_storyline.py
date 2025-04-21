@@ -333,7 +333,7 @@ class Storyline:
     
 
 class SvenStoryline:
-    def __init__(self, H, edge_order=None, node_order=None):
+    def __init__(self, H, edge_order=None, node_order=None, debug=False):
         self.H = H
 
         combined_order = nx.spectral_ordering(H.bipartite())
@@ -374,6 +374,10 @@ class SvenStoryline:
 
         self.parents = get_parents(self.levels)
         self.Gp = get_parent_graph(self.levels, self.parents)
+
+        if debug:
+            plt.figure(); self.draw_initial_layout()
+            plt.figure(); self.draw_parent_graph()
 
         self.yp = network_simplex(self.Gp)
         self.y = {
