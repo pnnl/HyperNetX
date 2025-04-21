@@ -571,24 +571,12 @@ def get_parents(levels):
 def get_parent_graph(levels, parents):
 
     G = nx.DiGraph()
-    for i, right in enumerate(levels):
-        right = list(right)
-        
-        if len(right) == 1:
-            G.add_node(parents[(right[0], i)])
-    
-        for u, v in zip(right[:-1], right[1:]):
+    G.add_nodes_from(parents.values())
+
+    for i, lev in enumerate(map(list, levels)):
+        for u, v in zip(lev[:-1], lev[1:]):
             G.add_edge(parents[(u, i)], parents[(v, i)])
             
-        if i > 0:
-            left = levels[i - 1]
-            for u in left:
-                if u in right:
-                    pl = parents[(u, i - 1)]
-                    pr = parents[(u, i)]
-                    if pl != pr:
-                        G.add_edge(pl, pr)
-
     return G    
 
 def draw_storyline(
