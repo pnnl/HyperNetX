@@ -18,6 +18,9 @@ class NetworkSimplex:
             mapping of each vertex in G to an integer level
 
         """
+
+        self.G = G
+        self.L = L
         for u,v in G.edges():
             assert L[u] > L[v], "(%s,%s) is not ordered: %d -> %d"%(repr(u),repr(v), L[u], L[v])
 
@@ -188,14 +191,14 @@ class NetworkSimplex:
                 u,v = v,u
                 assert G.has_edge(u,v)
                 
-            tree.remove_edge(u,v)
+            T.remove_edge(u,v)
             # determine the head and tail components (also works if the tree is really a forest)
-            for ci in map(set, nx.connected_components(tree)):
+            for ci in map(set, nx.connected_components(T)):
                 if u in ci:
                     tail = ci
                 if v in ci:
                     head = ci
-            tree.add_edge(u,v)
+            T.add_edge(u,v)
             
             cut_value = 0
             slack = {}
@@ -220,7 +223,7 @@ class NetworkSimplex:
 
         # get the levels of this tree (used to calculate slack)
         levels = self.feasible_tree_to_levels(G, tree)
-        
+
         # cycle through the edges in the tree until no changes are made
         n_iter = 0
         n_cuts = 1
