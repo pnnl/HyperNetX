@@ -1,10 +1,126 @@
 import networkx as nx
 
-class NetworkSimplex:
-    def __init__(self):
-        pass
+from warnings import warn
 
-    def validate_layers(self, G, L):
+def longest_path_levels(G):
+    """ Computes a feasible layering of the directed graph G
+
+    A layering is a mapping of vertices in G = (V,E) to integer levels L. A feasible
+    layering respects:
+        
+        L[u] < L[v] | (u, v) in E
+        
+    This algorithm uses longest path layering, which is essentially a direct
+    implementation of this constraint, using recursion and memoization to find
+    the result in O(|E|) time.
+
+    Parameters
+    ----------
+    G : DiGraph
+        directed acyclic graph
+        
+    Returns
+    -------
+    L : mapping of the vertices in G to integer levels
+
+    Notes
+    -----
+    By default, every source vertex is assigned to level 0 by default, which may 
+    result in a poor quality layering. Thus, this algorithm is used as a first
+    pass, and improved using other methods.
+
+
+    References
+    ----------
+    .. [1] Tamassia, Roberto, ed. Handbook of graph drawing and visualization. CRC press, 2013. 420-421.
+    """
+
+    L = {}
+    
+    def get_level(v):
+        if v in L:
+            return L[v]
+            
+        if G.in_degree(v) == 0:
+            lv = 0
+        else:
+            lv = 1 + max(
+                get_level(u)
+                for u, _ in G.in_edges(v)
+            )
+
+        L[v] = lv
+        return lv
+    
+    for v in G:
+        get_level(v)
+        
+    return L
+
+def induce_levels(G, T):
+    """ Given a DiGraph and Tree, computes a layering
+
+    Given the undirected digraph G and spanning tree T, traverses T starting at
+    an arbitrary node and assigns levels.  When edge (u,v) is traversed in the 
+    undirected tree T, assuming u is the vertex already visited, then the level
+    of v is either u + 1 or u - 1 depending on the direction of (u,v) in G.
+
+    Parameters
+    ----------
+    G : DiGraph
+        directed acyclic graph 
+        
+    T : Tree
+        an undirected spanning tree of G
+
+    Returns
+    -------
+    L : mapping of vertices in G to levels
+    """
+
+    # traverse the tree and propagate the level
+    L = {}
+    for u, v in nx.dfs_edges(T):
+        if not G.has_edge(u, v):
+            v, u = u, v
+        
+        if u in L and v not in L:
+            L[v] = L[u] + 1
+        elif u not in L and v in L:
+            L[u] = L[v] - 1
+        else:
+            L[u] = 0
+            L[v] = 1
+    
+    return L
+
+class NetworkSimplex:
+    def __init__(self, G, weight='weight'):
+        """
+        G : DiGraph
+            directed acyclic graph to compute the layering on
+
+        weight : string
+            name of weight property on edges
+        """
+
+        self.G = G
+        self.weight = weight
+
+        # calculate initial layering
+        self.L = self.L_init = longest_path_levels(G)
+
+        # initial feasible tree generated from initial layering
+        self.T = self.feasible_tree()
+        self.L = induce_levels(self.G, self.T)
+
+        # copy working tree from init
+        self.T_init = self.T.copy()
+
+        self.violations_initial = self.validate_layers()
+
+
+    def validate_layers(self):
         """ Ensures that the layering is valid.
 
         A layering is valid if for each directed edge (u,v) in E,  L(u) > L(v).
@@ -19,65 +135,47 @@ class NetworkSimplex:
 
         """
 
-        self.G = G
-        self.L = L
-        for u,v in G.edges():
-            assert L[u] > L[v], "(%s,%s) is not ordered: %d -> %d"%(repr(u),repr(v), L[u], L[v])
+        violations = []
 
-    def longest_path_levels(self, G):
-        """ Computes a layering of the directed graph G
+        for u, v in self.G.edges():
+            suv = self.slack(u, v)
+            if suv < 0:
+                violations.append((u, v, suv))
 
-        A layering is a mapping of vertices in G to integer levels L. The layering 
-        must be consistent--that is every source node in G is above every target.
-        This algorithm uses longest path layering, which is essentially a direct
-        implementation of this constraint, using recursion and memoization to find
-        the result in O(|E|) time.
+        if len(violations):
+            warn(f"Layering is not feasible. ({len(violations)} violations with slack < 0 found).")
+
+        return violations
+
+    def slack(self, u, v):
+        """
+        Finds the slack on the edge given the current layering
+
+        The slack is the amount of free space between two nodes.
 
         Parameters
         ----------
-        G : DiGraph
-            directed acyclic graph
+        u : hashable
+            tail node
+        v : hashable
+            head node
             
         Returns
         -------
-        L : mapping of the vertices in G to integer levels
-
+        slack : int
+            the slack of the edge
+        
         Notes
         -----
-        By default, every sink vertex is assigned to level 0 by default, which may 
-        result in a poor quality layering.  Thus, this algorithm is used as a first
-        pass, and improved using other methods.
+        Slack is defined as:
 
+            slack(u,v) = L[v] - L[u] - d(u, v)
 
-        References
-        ----------
-        .. [1] Graph Drawing Handbook p. 420
-        .. [2] Gansner / A Technique for Drawing Directed Graphs
+        where the minimum distance between nodes is d(u, v) = 1
         """
+        return self.L[v] - self.L[u] - 1
 
-        L = {}
-        
-        def get_level(u):
-            if u in L:
-                return L[u]
-                
-            if G.out_degree(u) == 0:
-                lu = 0
-            else:
-                lu = 1 + max(
-                    get_level(v)
-                    for u,v in G.out_edges(u)
-                )
-
-            L[u] = lu
-            return lu
-        
-        for v in G:
-            get_level(v)
-            
-        return L
-
-    def feasible_tree(self, G):
+    def feasible_tree(self):
         """ Generates a feasible tree given the directed graph G
 
         A feasible tree is a spanning tree whose traversal (in any order) produces
@@ -85,74 +183,126 @@ class NetworkSimplex:
         by generating an initial layering of G using longest path layering and then
         finding a minimum spanning tree, where the total slack is minimized.
 
-        Parameters
-        ----------
-        G : DiGraph
-            directed acyclic graph
-            
         Returns
         -------
-        T : an undirected spanning tree of G
+        T : nx.Graph
+            an undirected spanning tree of G
 
         Notes
         -----
-        The weight of each directed edge (u,v) in the graph is set to the slack of
-        the edge, given a layering L, which is defined as:
-
-            slack(u,v) = L[u] - L[v]
-
-        References
-        ----------
-        .. [1] Graph Drawing Handbook p. 420
-        .. [2] Gansner / A Technique for Drawing Directed Graphs
+        The weight of each directed edge (u,v) in the graph is set to the slack.
         """
 
-        L = self.longest_path_levels(G)
-        self.validate_layers(G,L)
+        G = nx.Graph()
         
         # compute a feasbile tree
-        for u,v,d in G.edges(data=True):
+        for u, v, d in self.G.edges(data=True):
             # compute the slack and save it as an edge property
-            d['slack'] = L[u] - L[v]
+            G.add_edge(u, v, slack=self.slack(u, v))
 
-        return nx.minimum_spanning_tree(G.to_undirected(), weight='slack')
+        # no guarantees here that this tree is tight (produces a feasible tree)
+        return nx.minimum_spanning_tree(G, weight='slack')
+    
+    def get_head_and_tail_components(self, u, v):
+        """ Returns the subgraphs of the tree containing the endpoints of the edge passed in
 
-    def feasible_tree_to_levels(self, G,T):
-        """ Given a DiGraph and Tree, computes a layering
-
-        Given the undirected digraph G and spanning tree T, traverses T starting at
-        an arbitrary node and assigns levels.  When edge (u,v) is traversed in the 
-        undirected tree T, assuming u is the vertex already visited, then the level
-        of v is either u + 1 or u - 1 depending on the direction of (u,v) in G.
+        Temporarily breaks the tree by removing the edge (u, v), then calculates the
+        connected components. Test each component for whether they contain the head
+        or the tail node.
 
         Parameters
         ----------
-        G : DiGraph
-            directed acyclic graph 
-            
-        T : Tree
-            an undirected spanning tree of G
+        u : hashable
+            tail node
+        v : hashable
+            head node
+        
+        Returns
+        -------
+        head : hashable
+            the component of T contianing v
+        tail : hashable
+            the component of T contianing u
+
+        Notes
+        -----
+        This method is not optimized for repeated calls.
+        """
+
+        # split the tree into 2 components by removing the edge
+        self.T.remove_edge(u, v)
+
+        # determine the head and tail components (also works if the tree is really a forest)
+        for ci in map(set, nx.connected_components(self.T)):
+            if u in ci:
+                tail = ci
+            if v in ci:
+                head = ci
+
+        # reassemble the tree
+        self.T.add_edge(u,v)
+
+        return head, tail
+        
+    def enter_edge(self, u, v):
+        """ Finds a feasible edge to replace (u, v) with
+
+        Determines the head and tail components of (u, v), then determines whether
+        there is more edge weight flowing from head to tail, versus tail to head, which
+        includes (u, v). If there is more weight, returns the edge pointing from head to
+        tail with the least non-negative slack.
+        
+        Parameters
+        ----------
+        u : hashable
+            tail of leaving edge
+        v : hashable
+            head of leaving node
 
         Returns
         -------
-        L : mapping of vertices in G to levels
+        e : (hashable, hashable) or None
+            entering edge
 
-        References
-        ----------
-        .. [1] Graph Drawing Handbook p. 420
-        .. [2] Gansner / A Technique for Drawing Directed Graphs
+        Notes
+        -----
+        This method is not optimized for repeated calls.
         """
-
-        # traverse the tree and propagate the level
-        L = {}
-        for u,v in nx.dfs_edges(T):
-            lu = L.setdefault(u, 0)
-            L[v] = lu + (1,-1)[G.has_edge(u,v)]
         
-        self.validate_layers(G,L)
-        return L
+        # fix direction of edge
+        if not self.G.has_edge(u,v):
+            u, v = v, u
+            assert self.G.has_edge(u,v), f'Edge ({u}, {v}) or its inverse not in G'
+            
+        head, tail = self.get_head_and_tail_components(u, v)
+        
+        cut_value = 0
+        slack = {}
+        
+        for i, j, d in self.G.edges(data=True):
+            # head to tail (pointing the opposite direction of (u, v))
+            if i in head and j in tail:
+                s = -1
+            # tail to head
+            elif i in tail and j in head:
+                s = 1
+            else:
+                continue
 
-    def __call__(self, G, weight='weight', max_iter=1000):
+            # candidate replacement edges must go between head and tail
+            sij = self.slack(i, j)
+            if sij > 0:
+                slack[i, j] = sij
+
+            cut_value += s*d.get(self.weight, 1.0)
+        
+        # if the cut value is negative and there is a replacement
+        if cut_value < 0 and len(slack):
+            e = min(slack, key=slack.get)
+            self.cuts.append((e, slack[e], cut_value))
+            return e
+    
+    def __call__(self, max_iter=1000):
         """Network simplex algorithm to compute a nice DiGraph layering
 
         First computes a feasible tree using longest path layering.  Then
@@ -162,19 +312,13 @@ class NetworkSimplex:
 
         Parameters
         ----------
-        G : DiGraph
-            directed acyclic graph to compute the layering on
-
-        weight : string
-            name of weight property on edges
-
         max_iter : int
             just in case of cycling, there is a cap on the maximum number of iterations
             
         Returns
         -------
-        levels : dict
-            a mapping of nodes in the aggragate graph G to heights
+        L : dict
+            an optimized layering of G
 
         Notes
         -----
@@ -182,47 +326,10 @@ class NetworkSimplex:
 
         References
         ----------
-        .. [1] Gansner / A Technique for Drawing Directed Graphs
+            [1] Gansner, Emden R., et al. "A technique for drawing directed graphs." IEEE Transactions on Software Engineering 19.3 (1993): 214-230.
         """
 
-        def get_cut_value(u,v,G,T,L):
-            # fix direction of edge
-            if not G.has_edge(u,v):
-                u,v = v,u
-                assert G.has_edge(u,v)
-                
-            T.remove_edge(u,v)
-            # determine the head and tail components (also works if the tree is really a forest)
-            for ci in map(set, nx.connected_components(T)):
-                if u in ci:
-                    tail = ci
-                if v in ci:
-                    head = ci
-            T.add_edge(u,v)
-            
-            cut_value = 0
-            slack = {}
-            
-            for i,j,d in G.edges(data=True):
-                s = 0
-                # head to tail
-                if i in head and j in tail:
-                    s = -1
-                    slack[i,j] = L[i] - L[j]
-                # tail to head
-                if i in tail and j in head:
-                    s = 1
-                cut_value += s*d.get(weight, 1.0)
-            
-            # if the cut value is negative and there is a replacement
-            if cut_value < 0 and slack:
-                return min(slack, key=slack.get)
-        
-        # get an initial feasible tree 
-        tree = self.feasible_tree(G)
-
-        # get the levels of this tree (used to calculate slack)
-        levels = self.feasible_tree_to_levels(G, tree)
+        self.cuts = []
 
         # cycle through the edges in the tree until no changes are made
         n_iter = 0
@@ -230,24 +337,23 @@ class NetworkSimplex:
         while n_cuts and n_iter < max_iter:
             n_cuts = 0
 
-            # for each edge in the tree
-            for u,v in tree.edges():
-
-                assert tree.has_edge(u,v)
-
-                # check if the edge should be cut
-                e = get_cut_value(u,v,G,tree,levels)
-                if e and e != (u,v):
-
-                    # if so, cut the edge and add in the new one
-                    tree.remove_edge(u,v)
-                    tree.add_edge(*e)
-                    
-                    # recalculate the levels
-                    levels = self.feasible_tree_to_levels(G, tree)
-                    
-                    # count the number of cuts made this round
-                    n_cuts += 1
+            # for each edge in the tree (listed, because tree may change)
+            for leave_edge in list(self.T.edges()):
+                
+                # check if tree has edge, because edge may have been replaced since tree edges were previously listed. Double check?
+                if self.T.has_edge(*leave_edge): 
+                    # check if the edge should be cut
+                    e = self.enter_edge(*leave_edge)
+                    if e is not None and e != leave_edge:
+                        # if so, cut the edge and add in the new one
+                        self.T.remove_edge(*leave_edge)
+                        self.T.add_edge(*e)
+                        
+                        # recalculate the levels
+                        self.L = induce_levels(self.G, self.T)
+                        
+                        # increment the number of cuts made this round
+                        n_cuts += 1
 
             # count the number of iterations (over tree edges)
             n_iter += 1
@@ -255,4 +361,53 @@ class NetworkSimplex:
         if n_iter == max_iter:
             print( "Maximum iterations reached!")
 
-        return levels    
+        # validate L
+        self.violations_final = self.validate_layers()
+
+        return self.L
+
+    def draw_layering(self, L, T=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
+        G = self.G
+
+        pos = {
+            v: (i, L[v])
+            for i, v in enumerate(nx.spectral_ordering(G))
+        }
+
+        # pos = {
+        #     v: (x, L[v])
+        #     for v, (x,) in nx.spectral_layout(G, dim=1).items()
+        # }
+
+        def is_negative(s):
+            return int(s < 0)
+        
+        slack = [
+            L[v] - L[u] - 1
+            for u, v in G.edges()
+        ]
+
+        nx.draw_networkx_labels(
+            G, pos,
+            labels={
+                v: f'({v})'
+                for v in G
+            }
+        )
+        nx.draw_networkx_edges(
+            G, pos,
+            edge_color=[
+                negative_slack_color[b]
+                for b in map(is_negative, slack)
+            ],
+            width=[
+                in_tree_width[int(T is not None and T.has_edge(u, v))]
+                for u, v in G.edges()
+            ]
+        )
+
+        nx.draw_networkx_edge_labels( 
+            G, pos,
+            edge_labels=dict(zip(G.edges(), slack))
+        )
+        

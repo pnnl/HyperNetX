@@ -381,8 +381,8 @@ class SvenStoryline:
             plt.figure(); self.draw_initial_layout()
             plt.figure(); self.draw_parent_graph()
 
-        solver = ns.NetworkSimplex()
-        self.yp = solver(self.Gp)
+        self.solver = ns.NetworkSimplex(self.Gp)
+        self.yp = self.solver()
         self.y = {
             v: self.yp[p]
             for v, p in self.parents.items()
