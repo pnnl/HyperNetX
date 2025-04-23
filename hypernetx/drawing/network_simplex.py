@@ -366,8 +366,14 @@ class NetworkSimplex:
 
         return self.L
 
-    def draw_layering(self, L, T=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
+    def draw_layering(self, L=None, T=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
         G = self.G
+
+        if L is None:
+            L = self.L
+
+        if T is None:
+            T = self.T
 
         pos = {
             v: (i, L[v])
