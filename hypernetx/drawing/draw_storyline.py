@@ -611,8 +611,9 @@ def draw_storyline(
     H,
     layout=None,
     ax=None,
-    y_spacing=1,
-    node_radius=None,
+    y_cap_scale=1,
+    y_spacing=1,      # unused
+    node_radius=None, # unused
     edge_order=None,
     node_order=None,
     node_labels=None,
@@ -626,7 +627,7 @@ def draw_storyline(
     edge_labels_kwargs={},
     node_labels_kwargs={},
     edge_labels_on_axis=True,
-    y_cap_scale=1
+    incidence_kwargs={}
 ):
     ax = ax or plt.gca()
 
@@ -643,6 +644,7 @@ def draw_storyline(
 
     edges = layout.get_edges(
         y_cap_scale=y_cap_scale,
+        zorder=1,
         **inflate_kwargs(H.edges, edges_kwargs)
     )
 
@@ -651,6 +653,7 @@ def draw_storyline(
         edges.set_facecolors(color)
     
     storylines = layout.get_storylines(
+        zorder=2,
         **inflate_kwargs(H, {
             'edgecolors': default_node_color,
             **nodes_kwargs,
@@ -658,17 +661,19 @@ def draw_storyline(
         })
     )
 
-    incidences = layout.get_incidences(ax=ax)
+    incidences = layout.get_incidences(
+        ax=ax,
+        zorder=3,
+        **inflate_kwargs(layout.incidence_order(), incidence_kwargs)
+    )
     
     node_edgecolor_dict = dict(zip(H.nodes, storylines.get_edgecolors()))
     
+    # override / set the incidence edgecolor to the node (storyline) color
     incidences.set_edgecolors([
         node_edgecolor_dict[v]
         for _, v in layout.incidence_order()
     ])
-
-    # todo: facecolors could be specified in nodes_kwargs
-    incidences.set_facecolors(incidences.get_edgecolors())
 
     for c in (edges, storylines, incidences):
         ax.add_collection(c)
