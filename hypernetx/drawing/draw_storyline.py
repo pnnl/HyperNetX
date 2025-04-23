@@ -334,10 +334,11 @@ class Storyline:
         ])
     
 class Layout:
-    def __init__(self, H, edge_order=None, node_order=None, debug=False):
+    def __init__(self, H, edge_order=None, node_order=None, seed=None):
         self.H = H
+        self.seed = seed
 
-        combined_order = nx.spectral_ordering(H.bipartite())
+        combined_order = nx.spectral_ordering(H.bipartite(), seed=seed)
         
         def create_order(entity_set, override):
             if override is None:
@@ -384,7 +385,7 @@ class SvenStoryline(Layout):
         self.G = self.get_storyline_graph()
 
 
-        order = nx.spectral_ordering(self.G, seed=123456)
+        order = nx.spectral_ordering(self.G, seed=self.seed)
         self.y_init = {
             v: i
             for i, v in enumerate(order)
@@ -400,7 +401,7 @@ class SvenStoryline(Layout):
                 v, i = k
                 self.levels[i][v] = len(self.levels[i])
 
-        self.parents = get_parents(self.levels)
+        self.parents, self.Gc = get_parents(self.levels)
         self.Gp = get_parent_graph(self.levels, self.parents)
 
         if debug:
@@ -584,7 +585,11 @@ def get_parents(levels):
         for v in l:
             G.add_node((v, i))
             
-    merges = nx.maximal_independent_set(get_crossing_graph(levels))    
+    Gc = get_crossing_graph(levels)
+    merges = nx.approximation.maximum_independent_set(Gc)
+    
+    for v in merges:
+        Gc.nodes[v]['mis'] = True
     
     for v, i in merges:
         G.add_edge((v, i), (v, i + 1))
@@ -593,7 +598,7 @@ def get_parents(levels):
         v: i
         for i, ci in enumerate(nx.connected_components(G))
         for v in ci
-    }
+    }, Gc
 
 
 def get_parent_graph(levels, parents):
