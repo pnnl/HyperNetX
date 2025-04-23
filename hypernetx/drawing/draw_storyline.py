@@ -333,8 +333,7 @@ class Storyline:
             for e in self.H.edges()
         ])
     
-
-class SvenStoryline:
+class Layout:
     def __init__(self, H, edge_order=None, node_order=None, debug=False):
         self.H = H
 
@@ -353,6 +352,34 @@ class SvenStoryline:
             e: i
             for i, e in enumerate(self.edge_order)
         }
+
+    def incidence_order(self):
+        return [
+            (e, v)
+            for e in self.H.edges()
+            for v in self.H.edges[e]
+        ]
+
+class SvenStoryline(Layout):
+    def __init__(self, *args, debug=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.H = H
+
+        # combined_order = nx.spectral_ordering(H.bipartite())
+        
+        # def create_order(entity_set, override):
+        #     if override is None:
+        #         return [v for v in combined_order if v in entity_set]
+        #     return override
+        
+        # self.node_order = create_order(self.H.nodes, node_order)
+        # self.edge_order = create_order(self.H.edges, edge_order)
+
+        # # mapping from edges to x-coordinate
+        # self.x = {
+        #     e: i
+        #     for i, e in enumerate(self.edge_order)
+        # }
         
         self.G = self.get_storyline_graph()
 
@@ -367,7 +394,6 @@ class SvenStoryline:
             OrderedDict()
             for i in range(len(self.edge_order))
         ]
-
 
         for k in order:
             if k not in self.x:
@@ -431,7 +457,7 @@ class SvenStoryline:
 
         nx.draw(
             self.Gp,
-            # pos=nx.kamada_kawai_layout(self.Gp),
+            pos=nx.kamada_kawai_layout(self.Gp),
             with_labels=True, labels=labels,
             node_color='white',
             node_size=500
@@ -490,8 +516,7 @@ class SvenStoryline:
 
         offsets = np.array([
             (self.x[e], self.y[v, self.x[e]])
-            for e in self.H.edges
-            for v in self.H.edges[e]
+            for e, v in self.incidence_order()
         ])
 
         sizes = 2*r
@@ -639,8 +664,7 @@ def draw_storyline(
     
     incidences.set_edgecolors([
         node_edgecolor_dict[v]
-        for e in H.edges()
-        for v in H.edges[e]
+        for _, v in layout.incidence_order()
     ])
 
     # todo: facecolors could be specified in nodes_kwargs
