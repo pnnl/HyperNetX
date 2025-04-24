@@ -750,20 +750,25 @@ def draw_storyline(
         })
     )
 
+    incidence_order = layout.incidence_order()
+
+    node_edgecolor_dict = dict(zip(H.nodes, storylines.get_edgecolors()))
+    default_incidence_color = [
+        node_edgecolor_dict[v]
+        for _, v in incidence_order
+    ]
+
+    default_incidence_kwargs = dict(
+        facecolor=default_incidence_color,
+        edgecolor=default_incidence_color           
+    )
+
     incidences = layout.get_incidences(
         ax=ax,
         zorder=3,
-        **inflate_kwargs(layout.incidence_order(), incidence_kwargs)
+        **{**default_incidence_kwargs, **inflate_kwargs(incidence_order, incidence_kwargs)}
     )
     
-    node_edgecolor_dict = dict(zip(H.nodes, storylines.get_edgecolors()))
-    
-    # override / set the incidence edgecolor to the node (storyline) color
-    incidences.set_edgecolors([
-        node_edgecolor_dict[v]
-        for _, v in layout.incidence_order()
-    ])
-
     for c in (edges, storylines, incidences):
         ax.add_collection(c)
 
