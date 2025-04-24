@@ -624,10 +624,10 @@ class SvenStoryline(Layout):
         ])
 
     def suggest_size(self, scale=.5):
-        return (
+        return np.array([
             scale*(len(self.x) + 2),
             scale*(max(self.y.values()) - min(self.y.values()) + 3)
-        )
+        ])
 
 def get_crossing_graph(levels):
 
