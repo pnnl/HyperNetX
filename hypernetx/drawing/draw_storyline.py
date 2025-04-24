@@ -561,7 +561,7 @@ class SvenStoryline(Layout):
             for v in self.H.nodes
         ], **kwargs)
 
-    def get_edges(self, r=.25, y_cap_scale=1, **kwargs):
+    def get_edges(self, r=.25, y_cap_scale=2, **kwargs):
         theta = np.linspace(0, np.pi, 21)
         half_circle = np.array([
             r*np.cos(theta),
@@ -623,10 +623,10 @@ class SvenStoryline(Layout):
             for e in self.H.edges()
         ])
 
-    def suggest_size(self, scale=.5):
+    def suggest_size(self, xscale=.5, yscale=.25):
         return np.array([
-            scale*(len(self.x) + 2),
-            scale*(max(self.y.values()) - min(self.y.values()) + 3)
+            xscale*(len(self.x) + 2),
+            yscale*(max(self.y.values()) - min(self.y.values()) + 3)
         ])
 
 def get_crossing_graph(levels):
@@ -700,7 +700,7 @@ def draw_storyline(
     H,
     layout=None,
     ax=None,
-    y_cap_scale=1,
+    y_cap_scale=2,
     y_spacing=1,      # unused
     node_radius=None, # unused
     edge_order=None,
