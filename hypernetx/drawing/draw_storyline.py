@@ -354,15 +354,109 @@ class Layout:
             for i, e in enumerate(self.edge_order)
         }
 
+        self.line_endpoints = {}
+        for v in self.H.nodes:
+            xs = list(map(self.x.get, self.H.nodes[v]))
+            self.line_endpoints[v] = (min(xs), max(xs))
+
     def incidence_order(self):
         return [
             (e, v)
             for e in self.H.edges()
             for v in self.H.edges[e]
         ]
+    
+    def get_storylines(self, r=.25, **kwargs):
+
+        def get_steps(v):
+            start, end = self.line_endpoints[v]
+            return range(start, end + 1)
+
+        def get_radii(v, i):
+            return (
+                -r*(self.line_endpoints[v][0] != i),
+                r*(self.line_endpoints[v][1] != i)
+            )
+                
+        return LineCollection([
+            [
+                (i + dx, self.y[v, i])
+                for i in get_steps(v)
+                for dx in get_radii(v, i)
+            ]
+            for v in self.H.nodes
+        ], **kwargs)
+
+    def get_edges(self, r=.25, y_cap_scale=2, **kwargs):
+        theta = np.linspace(0, np.pi, 21)
+        half_circle = np.array([
+            r*np.cos(theta),
+            r*y_cap_scale*np.sin(theta)
+        ]).T
+
+        def make_edge(e):
+            x = self.x[e]
+            ys = [
+                self.y[(v, x)]
+                for v in self.H.edges[e]
+            ]
+            
+            y1 = min(ys)
+            y2 = max(ys)
+
+            return np.vstack([
+                half_circle*np.array([1, -1]) + np.array([x, y1]),
+                (half_circle + np.array([x, y2]))[::-1]
+            ])
+        
+        return PolyCollection(map(make_edge, self.H.edges), **kwargs)
+    
+    def get_incidences(self, ax=None, r=.125, **kwargs):
+
+        ax = ax or plt.gca()
+
+        offsets = np.array([
+            (self.x[e], self.y[v, self.x[e]])
+            for e, v in self.incidence_order()
+        ])
+
+        sizes = 2*r
+
+        return EllipseCollection(
+            widths=sizes,
+            heights=sizes,
+            angles=0,
+            units="x",
+            offsets=offsets,
+            transOffset=ax.transData,
+            **kwargs
+        )
+    
+    def get_node_labels_xy(self):
+        
+        def get_left_coord(v):
+            start, _ = self.line_endpoints[v]
+
+            return (
+                start, self.y[v, start]
+            )
+        
+        return np.array(list(map(get_left_coord, self.H.nodes())))
+
+    def get_edge_labels_xy(self):
+        return np.array([
+            (self.x[e], min(self.y[v, self.x[e]] for v in self.H.edges[e]))
+            for e in self.H.edges()
+        ])
+
+    def suggest_size(self, xscale=.5, yscale=.25):
+        return np.array([
+            xscale*(len(self.x) + 2),
+            yscale*(max(self.y.values()) - min(self.y.values()) + 3)
+        ])    
 
 class SvenStoryline(Layout):
-    def __init__(self, *args, debug=False, **kwargs):
+    def __init__(self, *args, debug=False, allow_node_crossings=True, weight_func=lambda x: x, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.G = self.get_storyline_graph()
@@ -373,10 +467,33 @@ class SvenStoryline(Layout):
             for i, v in enumerate(order)
         }
 
-        self.levels = self.create_levels_direct(order)
+        if allow_node_crossings:
+            self.levels = self.create_levels_direct(order)
+        else:
+            self.levels = self.create_levels_global()
+
         self.parents, self.children = self.get_parents(self.levels)
         self.Gp = get_parent_graph(self.levels, self.parents)
 
+        # weight parent graph
+        def get_child_and_range(p):
+            c = self.children[p]
+            return c[0][0], c[0][1], c[-1][1]
+
+        for pu, pv, d in self.Gp.edges(data=True):
+            u, ustart, uend = get_child_and_range(pu)
+            v, vstart, vend = get_child_and_range(pv)
+
+            # overlapping range
+            start = max(ustart, vstart)
+            end = min(uend, vend)
+
+            s = {u, v}
+            d['weight'] = weight_func(sum(
+                len(s.intersection(self.H.edges[e])) == 2
+                for e in self.edge_order[start:end + 1]
+            ))
+                    
         if debug:
             plt.figure(); self.draw_initial_layout()
             plt.figure(); self.draw_parent_graph()
@@ -433,7 +550,7 @@ class SvenStoryline(Layout):
     def create_levels_direct(self, order):
         
         levels = [
-            OrderedDict([])
+            OrderedDict()
             for i in range(len(self.edge_order))
         ]
 
@@ -443,16 +560,26 @@ class SvenStoryline(Layout):
                 levels[i][v] = len(levels[i])
 
         return levels
+    
+    def create_levels_global(self):
+        levels = [
+            OrderedDict()
+            for i in range(len(self.edge_order))
+        ]
+
+        for v in self.node_order:
+            start, end = self.line_endpoints[v]
+            for i in range(start, end + 1):
+                levels[i][v] = len(levels[i])
+
+        return levels
 
     def get_storyline_graph(self):
 
-        self.line_endpoints = {}
-        
         G = nx.Graph()
         
         for v in self.H.nodes:
-            xs = list(map(self.x.get, self.H.nodes[v]))
-            self.line_endpoints[v] = start, end = (min(xs), max(xs))
+            start, end = self.line_endpoints[v]
         
             G.add_node((v, start)) # just in case start == end
             
@@ -549,94 +676,7 @@ class SvenStoryline(Layout):
 
     # implementing storyline interface
 
-    def get_storylines(self, r=.25, **kwargs):
 
-        def get_steps(v):
-            start, end = self.line_endpoints[v]
-            return range(start, end + 1)
-
-        def get_radii(v, i):
-            return (
-                -r*(self.line_endpoints[v][0] != i),
-                r*(self.line_endpoints[v][1] != i)
-            )
-                
-        return LineCollection([
-            [
-                (i + dx, self.y[v, i])
-                for i in get_steps(v)
-                for dx in get_radii(v, i)
-            ]
-            for v in self.H.nodes
-        ], **kwargs)
-
-    def get_edges(self, r=.25, y_cap_scale=2, **kwargs):
-        theta = np.linspace(0, np.pi, 21)
-        half_circle = np.array([
-            r*np.cos(theta),
-            r*y_cap_scale*np.sin(theta)
-        ]).T
-
-        def make_edge(e):
-            x = self.x[e]
-            ys = [
-                self.y[(v, x)]
-                for v in self.H.edges[e]
-            ]
-            
-            y1 = min(ys)
-            y2 = max(ys)
-
-            return np.vstack([
-                half_circle*np.array([1, -1]) + np.array([x, y1]),
-                (half_circle + np.array([x, y2]))[::-1]
-            ])
-        
-        return PolyCollection(map(make_edge, self.H.edges), **kwargs)
-    
-    def get_incidences(self, ax=None, r=.125, **kwargs):
-
-        ax = ax or plt.gca()
-
-        offsets = np.array([
-            (self.x[e], self.y[v, self.x[e]])
-            for e, v in self.incidence_order()
-        ])
-
-        sizes = 2*r
-
-        return EllipseCollection(
-            widths=sizes,
-            heights=sizes,
-            angles=0,
-            units="x",
-            offsets=offsets,
-            transOffset=ax.transData,
-            **kwargs
-        )
-    
-    def get_node_labels_xy(self):
-        
-        def get_left_coord(v):
-            start, _ = self.line_endpoints[v]
-
-            return (
-                start, self.y[v, start]
-            )
-        
-        return np.array(list(map(get_left_coord, self.H.nodes())))
-
-    def get_edge_labels_xy(self):
-        return np.array([
-            (self.x[e], min(self.y[v, self.x[e]] for v in self.H.edges[e]))
-            for e in self.H.edges()
-        ])
-
-    def suggest_size(self, xscale=.5, yscale=.25):
-        return np.array([
-            xscale*(len(self.x) + 2),
-            yscale*(max(self.y.values()) - min(self.y.values()) + 3)
-        ])
 
 def get_crossing_graph(levels):
 
