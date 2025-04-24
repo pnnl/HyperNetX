@@ -538,6 +538,17 @@ class SvenStoryline(Layout):
             node_size=500
         )
 
+    def draw_layering(self, initial=False):
+        if initial:
+            self.solver.draw_layering(self.solver.L_init, self.solver.T_init, x=self.xp)
+            violations = self.solver.violations_initial
+        else:
+            self.solver.draw_layering(x=self.xp)
+            violations = self.solver.violations_final
+
+        plt.title(f'Violations: {repr(violations) if len(violations) else "none"}')
+
+
     # implementing storyline interface
 
     def get_storylines(self, r=.25, **kwargs):
