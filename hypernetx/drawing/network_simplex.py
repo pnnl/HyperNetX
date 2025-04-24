@@ -57,43 +57,6 @@ def longest_path_levels(G):
         
     return L
 
-def induce_levels(G, T):
-    """ Given a DiGraph and Tree, computes a layering
-
-    Given the undirected digraph G and spanning tree T, traverses T starting at
-    an arbitrary node and assigns levels.  When edge (u,v) is traversed in the 
-    undirected tree T, assuming u is the vertex already visited, then the level
-    of v is either u + 1 or u - 1 depending on the direction of (u,v) in G.
-
-    Parameters
-    ----------
-    G : DiGraph
-        directed acyclic graph 
-        
-    T : Tree
-        an undirected spanning tree of G
-
-    Returns
-    -------
-    L : mapping of vertices in G to levels
-    """
-
-    # traverse the tree and propagate the level
-    L = {}
-    for u, v in nx.dfs_edges(T):
-        if not G.has_edge(u, v):
-            v, u = u, v
-        
-        if u in L and v not in L:
-            L[v] = L[u] + 1
-        elif u not in L and v in L:
-            L[u] = L[v] - 1
-        else:
-            L[u] = 0
-            L[v] = 1
-    
-    return L
-
 class NetworkSimplex:
     def __init__(self, G, weight='weight'):
         """
@@ -112,13 +75,48 @@ class NetworkSimplex:
 
         # initial feasible tree generated from initial layering
         self.T = self.feasible_tree()
-        self.L = induce_levels(self.G, self.T)
+        self.L = self.induce_levels(self.T)
 
         # copy working tree from init
         self.T_init = self.T.copy()
 
         self.violations_initial = self.validate_layers()
 
+    def induce_levels(self, T):
+        """ Given a DiGraph and Tree, computes a layering
+
+        Given the undirected digraph G and spanning tree T, traverses T starting at
+        an arbitrary node and assigns levels.  When edge (u,v) is traversed in the 
+        undirected tree T, assuming u is the vertex already visited, then the level
+        of v is either u + 1 or u - 1 depending on the direction of (u,v) in G.
+
+        Parameters
+        ----------
+        G : DiGraph
+            directed acyclic graph 
+            
+        T : Tree
+            an undirected spanning tree of G
+
+        Returns
+        -------
+        L : mapping of vertices in G to levels
+        """
+
+        # traverse the tree and propagate the level
+        L = {}
+        for e in nx.dfs_edges(T):
+            u, v = self.reorient_edge(e)
+            
+            if u in L and v not in L:
+                L[v] = L[u] + 1
+            elif u not in L and v in L:
+                L[u] = L[v] - 1
+            else:
+                L[u] = 0
+                L[v] = 1
+        
+        return L
 
     def validate_layers(self):
         """ Ensures that the layering is valid.
@@ -354,7 +352,7 @@ class NetworkSimplex:
                         self.T.add_edge(*e)
                         
                         # recalculate the levels
-                        self.L = induce_levels(self.G, self.T)
+                        self.L = self.induce_levels(self.T)
                         
                         # increment the number of cuts made this round
                         n_cuts += 1
@@ -379,6 +377,7 @@ class NetworkSimplex:
         if T is None:
             T = self.T
 
+        # todo: allow x to be passed in or calculate
         pos = {
             v: (i, L[v])
             for i, v in enumerate(nx.spectral_ordering(G))
