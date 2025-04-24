@@ -368,7 +368,7 @@ class NetworkSimplex:
 
         return self.L
 
-    def draw_layering(self, L=None, T=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
+    def draw_layering(self, L=None, T=None, x=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
         G = self.G
 
         if L is None:
@@ -377,22 +377,22 @@ class NetworkSimplex:
         if T is None:
             T = self.T
 
-        # todo: allow x to be passed in or calculate
-        pos = {
-            v: (i, L[v])
-            for i, v in enumerate(nx.spectral_ordering(G))
-        }
-
-        # pos = {
-        #     v: (x, L[v])
-        #     for v, (x,) in nx.spectral_layout(G, dim=1).items()
-        # }
+        if x is None:
+            pos = {
+                v: (xv, L[v])
+                for v, (xv,) in nx.spectral_layout(G, dim=1).items()
+            }
+        else:
+            pos = {
+                v: (x[v], L[v])
+                for v in G
+            }
 
         def is_negative(s):
             return int(s < 0)
         
         slack = [
-            L[v] - L[u] - 1
+            self.slack(u, v)
             for u, v in G.edges()
         ]
 
