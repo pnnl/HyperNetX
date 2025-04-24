@@ -334,7 +334,7 @@ class Storyline:
         ])
     
 class Layout:
-    def __init__(self, H, edge_order=None, node_order=None, seed=None):
+    def __init__(self, H, edge_order=None, node_order=None, seed=123456789):
         self.H = H
         self.seed = seed
 
@@ -364,26 +364,8 @@ class Layout:
 class SvenStoryline(Layout):
     def __init__(self, *args, debug=False, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.H = H
 
-        # combined_order = nx.spectral_ordering(H.bipartite())
-        
-        # def create_order(entity_set, override):
-        #     if override is None:
-        #         return [v for v in combined_order if v in entity_set]
-        #     return override
-        
-        # self.node_order = create_order(self.H.nodes, node_order)
-        # self.edge_order = create_order(self.H.edges, edge_order)
-
-        # # mapping from edges to x-coordinate
-        # self.x = {
-        #     e: i
-        #     for i, e in enumerate(self.edge_order)
-        # }
-        
         self.G = self.get_storyline_graph()
-
 
         order = nx.spectral_ordering(self.G, seed=self.seed)
         self.y_init = {
@@ -391,17 +373,8 @@ class SvenStoryline(Layout):
             for i, v in enumerate(order)
         }
 
-        self.levels = [
-            OrderedDict()
-            for i in range(len(self.edge_order))
-        ]
-
-        for k in order:
-            if k not in self.x:
-                v, i = k
-                self.levels[i][v] = len(self.levels[i])
-
-        self.parents, self.Gc = get_parents(self.levels)
+        self.levels = self.create_levels_direct(order)
+        self.parents, self.Gc = get_parents(self.levels, self.seed)
         self.Gp = get_parent_graph(self.levels, self.parents)
 
         if debug:
@@ -414,6 +387,59 @@ class SvenStoryline(Layout):
             v: self.yp[p]
             for v, p in self.parents.items()
         }
+
+    def create_levels(self, order):
+        levels = [
+            OrderedDict()
+            for i in range(len(self.edge_order))
+        ]
+
+        for k in order:
+            if k not in self.x:
+                v, i = k
+            else:
+                v = k
+                i = self.x[k]
+
+            levels[i][v] = len(levels[i])
+
+        sorted_levels = []
+        for e, level in zip(self.edge_order, levels):
+            ey = level[e]
+
+            def bundle_nodes_in_edge(v):
+                # if node should be bundled within edge
+                if v in self.H.edges[e]:
+                    return (ey, level[v])
+                elif v != e:
+                    return (level[v], 0)
+                else:
+                    return (ey, ey) # doesn't matter, will be filtered out
+
+            sorted_levels.append(
+                OrderedDict(
+                    (v, y)
+                    for y, v in enumerate(sorted(level, key=bundle_nodes_in_edge))
+                    if v != e
+                )
+            )
+            
+        return sorted_levels        
+
+
+    def create_levels_direct(self, order):
+        
+        levels = [
+            OrderedDict([])
+            for i in range(len(self.edge_order))
+        ]
+
+        for k in order:
+            if k not in self.x:
+                v, i = k
+                levels[i][v] = len(levels[i])
+
+        return levels
 
     def get_storyline_graph(self):
 
@@ -435,6 +461,30 @@ class SvenStoryline(Layout):
 
         return G
     
+    def get_parents(self, levels):
+        self.Gc = Gc = get_crossing_graph(levels)
+        
+        # merges = independent_set_maximal_resample(Gc, self.seed)
+        self.merges = merges = independent_set_maximum(Gc)
+        
+        G = nx.Graph()
+        
+        for i, l in enumerate(levels):
+            for v in l:
+                G.add_node((v, i))
+                
+        for v in merges:
+            Gc.nodes[v]['mis'] = True
+        
+        for v, i in merges:
+            G.add_edge((v, i), (v, i + 1))
+
+        return {
+            v: i
+            for i, ci in enumerate(nx.connected_components(G))
+            for v in ci
+        }
+
     # debug visualizations
     
     def draw_initial_layout(self):
@@ -578,27 +628,37 @@ def get_crossing_graph(levels):
 
     return G
 
-def get_parents(levels):
-    G = nx.Graph()
-    
-    for i, l in enumerate(levels):
-        for v in l:
-            G.add_node((v, i))
-            
-    Gc = get_crossing_graph(levels)
-    merges = nx.approximation.maximum_independent_set(Gc)
-    
-    for v in merges:
-        Gc.nodes[v]['mis'] = True
-    
-    for v, i in merges:
-        G.add_edge((v, i), (v, i + 1))
+def independent_set_maximal_resample(G, seed=123456789):
+    def retry_mis(Gi):
+        n = Gi.number_of_edges()
+        n_retries = max(1, int(np.ceil(np.log2(n + 1))))
 
-    return {
-        v: i
-        for i, ci in enumerate(nx.connected_components(G))
-        for v in ci
-    }, Gc
+        sets = [
+        nx.maximal_independent_set(Gi, seed=seed + i)
+            for i in range(n_retries)
+        ]
+
+        mis = max(sets, key=len)
+
+        if n_retries > 1:
+            lens = list(map(len, sets))            
+            print(f'R{n} = {n_retries} : {max(lens) - min(lens)}')
+            print(mis)
+            
+        return mis
+
+    return [
+        v
+        for ci in nx.connected_components(G)
+        for v in retry_mis(nx.subgraph(G, ci))
+    ]
+
+def independent_set_maximum(G):
+    return [
+        v
+        for ci in nx.connected_components(G)
+        for v in nx.approximation.maximum_independent_set(nx.subgraph(G, ci))
+    ]
 
 
 def get_parent_graph(levels, parents):
