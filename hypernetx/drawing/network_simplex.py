@@ -149,7 +149,7 @@ class NetworkSimplex:
             return e
         return v, u
         
-    def slack(self, u, v):
+    def slack(self, u, v, L=None):
         """
         Finds the slack on the edge given the current layering
 
@@ -161,6 +161,8 @@ class NetworkSimplex:
             tail node
         v : hashable
             head node
+        L : dict or None
+            layering (defaults to current layering, self.L)
             
         Returns
         -------
@@ -175,7 +177,10 @@ class NetworkSimplex:
 
         where the minimum distance between nodes is d(u, v) = 1
         """
-        return self.L[v] - self.L[u] - 1
+        if L is None:
+            L = self.L
+
+        return L[v] - L[u] - 1
 
     def feasible_tree(self):
         """ Generates a feasible tree given the directed graph G
@@ -390,7 +395,7 @@ class NetworkSimplex:
             return int(s < 0)
         
         slack = [
-            self.slack(u, v)
+            self.slack(u, v, L)
             for u, v in G.edges()
         ]
 
