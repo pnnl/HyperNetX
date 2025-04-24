@@ -147,6 +147,12 @@ class NetworkSimplex:
 
         return violations
 
+    def reorient_edge(self, e):
+        u, v = e
+        if self.G.has_edge(u, v):
+            return e
+        return v, u
+        
     def slack(self, u, v):
         """
         Finds the slack on the edge given the current layering
@@ -244,7 +250,7 @@ class NetworkSimplex:
 
         return head, tail
         
-    def enter_edge(self, u, v):
+    def enter_edge(self, e):
         """ Finds a feasible edge to replace (u, v) with
 
         Determines the head and tail components of (u, v), then determines whether
@@ -269,11 +275,9 @@ class NetworkSimplex:
         This method is not optimized for repeated calls.
         """
         
-        # fix direction of edge
-        if not self.G.has_edge(u,v):
-            u, v = v, u
-            assert self.G.has_edge(u,v), f'Edge ({u}, {v}) or its inverse not in G'
-            
+        # ensure edge points same direction as it does in self.G
+        u, v = self.reorient_edge(e)
+
         head, tail = self.get_head_and_tail_components(u, v)
         
         cut_value = 0
@@ -338,12 +342,12 @@ class NetworkSimplex:
             n_cuts = 0
 
             # for each edge in the tree (listed, because tree may change)
-            for leave_edge in list(self.T.edges()):
-                
+            for leave_edge in list(map(self.reorient_edge, self.T.edges())):
+
                 # check if tree has edge, because edge may have been replaced since tree edges were previously listed. Double check?
                 if self.T.has_edge(*leave_edge): 
                     # check if the edge should be cut
-                    e = self.enter_edge(*leave_edge)
+                    e = self.enter_edge(leave_edge)
                     if e is not None and e != leave_edge:
                         # if so, cut the edge and add in the new one
                         self.T.remove_edge(*leave_edge)
