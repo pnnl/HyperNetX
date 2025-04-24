@@ -71,14 +71,12 @@ class NetworkSimplex:
         self.weight = weight
 
         # calculate initial layering
-        self.L = self.L_init = longest_path_levels(G)
+        self.L = longest_path_levels(G)
 
         # initial feasible tree generated from initial layering
         self.T = self.feasible_tree()
-        self.L = self.induce_levels(self.T)
-
-        # copy working tree from init
         self.T_init = self.T.copy()
+        self.L_init = self.L = self.induce_levels(self.T)
 
         self.violations_initial = self.validate_layers()
 
