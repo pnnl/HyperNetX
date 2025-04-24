@@ -528,8 +528,6 @@ class SvenStoryline(Layout):
             for i, ci in self.children.items()
         }
 
-        print(labels)
-
         nx.draw(
             self.Gp,
             pos=pos,
