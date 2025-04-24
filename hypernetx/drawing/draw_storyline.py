@@ -716,7 +716,7 @@ def draw_storyline(
     edge_labels_kwargs={},
     node_labels_kwargs={},
     edge_labels_on_axis=True,
-    incidence_kwargs={}
+    incidences_kwargs={}
 ):
     ax = ax or plt.gca()
 
@@ -753,20 +753,20 @@ def draw_storyline(
     incidence_order = layout.incidence_order()
 
     node_edgecolor_dict = dict(zip(H.nodes, storylines.get_edgecolors()))
-    default_incidence_color = [
+    default_incidences_color = [
         node_edgecolor_dict[v]
         for _, v in incidence_order
     ]
 
-    default_incidence_kwargs = dict(
-        facecolor=default_incidence_color,
-        edgecolor=default_incidence_color           
+    default_incidences_kwargs = dict(
+        facecolor=default_incidences_color,
+        edgecolor=default_incidences_color           
     )
 
     incidences = layout.get_incidences(
         ax=ax,
         zorder=3,
-        **{**default_incidence_kwargs, **inflate_kwargs(incidence_order, incidence_kwargs)}
+        **{**default_incidences_kwargs, **inflate_kwargs(incidence_order, incidences_kwargs)}
     )
     
     for c in (edges, storylines, incidences):
