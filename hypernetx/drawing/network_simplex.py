@@ -133,15 +133,15 @@ class NetworkSimplex:
 
         """
 
-        violations = []
+        violations = {}
 
         for u, v in self.G.edges():
             suv = self.slack(u, v)
             if suv < 0:
-                violations.append((u, v, suv))
+                violations[u, v] = suv
 
         if len(violations):
-            warn(f"Layering is not feasible. ({len(violations)} violations with slack < 0 found).")
+            warn(f"Infeasible layering detected ({len(violations)} edges with slack < 0 exist). See NetworkSimplex.violations_*")
 
         return violations
 
