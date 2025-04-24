@@ -374,7 +374,7 @@ class SvenStoryline(Layout):
         }
 
         self.levels = self.create_levels_direct(order)
-        self.parents, self.Gc = get_parents(self.levels, self.seed)
+        self.parents, self.children = self.get_parents(self.levels)
         self.Gp = get_parent_graph(self.levels, self.parents)
 
         if debug:
@@ -382,7 +382,10 @@ class SvenStoryline(Layout):
             plt.figure(); self.draw_parent_graph()
 
         self.solver = ns.NetworkSimplex(self.Gp)
+
+        self.xp = self.get_parent_x()
         self.yp = self.solver()
+
         self.y = {
             v: self.yp[p]
             for v, p in self.parents.items()
@@ -479,10 +482,23 @@ class SvenStoryline(Layout):
         for v, i in merges:
             G.add_edge((v, i), (v, i + 1))
 
-        return {
-            v: i
+        children = {
+            i: sorted(ci, key=lambda d: d[1])
             for i, ci in enumerate(nx.connected_components(G))
+        }
+
+        parents = {
+            v: i
+            for i, ci in children.items()
             for v in ci
+        }
+
+        return parents, children
+    
+    def get_parent_x(self):
+        return {
+            i: np.mean([xk for k, xk in ci])
+            for i, ci in self.children.items()
         }
 
     # debug visualizations
@@ -501,14 +517,22 @@ class SvenStoryline(Layout):
         )
 
     def draw_parent_graph(self):
-        labels={
-            u: ' '.join(sorted(['-'.join(map(str, k)) for k, v in self.parents.items() if u == v]))
-            for u in self.parents.values()
+
+        pos = {
+            v: (self.xp[v], self.yp[v])
+            for v in self.Gp
         }
+
+        labels = {
+            i: ' '.join('-'.join(map(str, v)) for v in ci)
+            for i, ci in self.children.items()
+        }
+
+        print(labels)
 
         nx.draw(
             self.Gp,
-            pos=nx.kamada_kawai_layout(self.Gp),
+            pos=pos,
             with_labels=True, labels=labels,
             node_color='white',
             node_size=500
