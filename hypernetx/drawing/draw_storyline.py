@@ -574,7 +574,7 @@ class SvenStoryline(Layout):
         }
 
         y = {
-            v: i for i, v in enumerate(nx.spectral_ordering(Gc))
+            v: i for i, v in enumerate(nx.spectral_ordering(Gc, seed=self.seed))
         }
 
         return sorted(
