@@ -755,10 +755,41 @@ class SvenStoryline(Layout):
 
         plt.title(f'Violations: {repr(violations) if len(violations) else "none"}')
 
+    def evaluate_aesthetic_criteria(self):
+        self.node_wiggles = {
+            v: [abs(self.y[v, i + 1] - self.y[v, i]) for i in range(*self.line_endpoints[v])]
+            for v in self.H.nodes()
+        }
+        
+        self.node_wiggles_sum = np.hstack(list(self.node_wiggles.values())).sum()
 
-    # implementing storyline interface
+        self.node_crossing_sum = self.Gc.number_of_edges()
 
+        self.edge_whitespace = {
+            e: 1 + ymax - ymin - len(self.H.edges[e])
+            for e, (ymin, ymax) in self.edge_endpoints.items()
+        }
+        
+        self.edge_whitespace_sum = np.sum(list(self.edge_whitespace.values()))
 
+        def count_edge_crossings(e):
+            i = self.x[e]
+            
+            ymin, ymax = self.edge_endpoints[e]
+            return sum(
+                ymin < self.y[v, i] and self.y[v, i] < ymax
+                for v in self.levels[i]
+                if v not in self.H.edges[e]
+            )
+
+        self.edge_crossings = {
+            e: count_edge_crossings(e)
+            for e in self.H.edges
+        }
+
+        self.edge_crossings_sum = sum(self.edge_crossings.values())
+
+        self.aesthetic_str = f'Node Crossings: {self.node_crossing_sum}; Edge Crossings: {self.edge_crossings_sum}; Whitespace: {self.edge_whitespace_sum}; Wiggles: {self.node_wiggles_sum}'
 
 def get_crossing_graph(levels):
 
