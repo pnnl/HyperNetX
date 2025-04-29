@@ -478,9 +478,10 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
         vp = mapping[v]
 
         if up != vp:
-            Gc.add_edge(up, vp, **{weight: 0}) # does nothing if (up, vp exists)
+            if not Gc.has_edge(up, vp):
+                Gc.add_edge(up, vp, **{weight: 0})
             Gc.get_edge_data(up, vp)[weight] += d.get(weight, 1)
-
+            
     return Gc, mapping
 
 
@@ -506,27 +507,8 @@ class SvenStoryline(Layout):
             for i, v in enumerate(l)
         }
 
-        self.parents, self.children = self.get_parents(self.levels)
-        self.Gp = get_parent_graph(self.levels, self.parents)
-
-        # weight parent graph
-        def get_child_and_range(p):
-            c = self.children[p]
-            return c[0][0], c[0][1], c[-1][1]
-
-        for pu, pv, d in self.Gp.edges(data=True):
-            u, ustart, uend = get_child_and_range(pu)
-            v, vstart, vend = get_child_and_range(pv)
-
-            # overlapping range
-            start = max(ustart, vstart)
-            end = min(uend, vend)
-
-            s = {u, v}
-            d['weight'] = weight_func(sum(
-                len(s.intersection(self.H.edges[e])) == 2
-                for e in self.edge_order[start:end + 1]
-            ))
+        self.children = self.get_straightened_nodes()
+        self.Gp, self.parents = self.get_constraint_graph()
                     
         if debug:
             plt.figure(); self.draw_initial_layout()
@@ -589,45 +571,20 @@ class SvenStoryline(Layout):
         }
 
         return sorted(self.G, key=lambda v: y.get(v, 0))
+    
+    def get_constraint_graph(self):
+        G = nx.DiGraph()
+        
+        for i, lev in enumerate(map(list, self.levels)):
+            # handles singleton edges that wouldn't be covered by the loop below
+            G.add_node((lev[0], i)) 
 
-    # def create_levels(self, order):
-    #     levels = [
-    #         OrderedDict()
-    #         for i in range(len(self.edge_order))
-    #     ]
-
-    #     for k in order:
-    #         if k not in self.x:
-    #             v, i = k
-    #         else:
-    #             v = k
-    #             i = self.x[k]
-
-    #         levels[i][v] = len(levels[i])
-
-    #     sorted_levels = []
-    #     for e, level in zip(self.edge_order, levels):
-    #         ey = level[e]
-
-    #         def bundle_nodes_in_edge(v):
-    #             # if node should be bundled within edge
-    #             if v in self.H.edges[e]:
-    #                 return (ey, level[v])
-    #             elif v != e:
-    #                 return (level[v], 0)
-    #             else:
-    #                 return (ey, ey) # doesn't matter, will be filtered out
-
-    #         sorted_levels.append(
-    #             OrderedDict(
-    #                 (v, y)
-    #                 for y, v in enumerate(sorted(level, key=bundle_nodes_in_edge))
-    #                 if v != e
-    #             )
-    #         )
+            has_node = self.H.edges[self.edge_order[i]].__contains__
             
-    #     return sorted_levels        
+            for u, v in zip(lev[:-1], lev[1:]):
+                G.add_edge((u, i), (v, i), weight=int(has_node(u) and has_node(v)))
 
+        return collapse_graph(G, partition=self.children.values(), create_using=nx.DiGraph)    
 
     def create_levels(self, order):
         
@@ -643,19 +600,6 @@ class SvenStoryline(Layout):
 
         return levels
     
-    # def create_levels_global(self):
-    #     levels = [
-    #         OrderedDict()
-    #         for i in range(len(self.edge_order))
-    #     ]
-
-    #     for v in self.node_order:
-    #         start, end = self.line_endpoints[v]
-    #         for i in range(start, end + 1):
-    #             levels[i][v] = len(levels[i])
-
-    #     return levels
-
     def get_storyline_graph(self):
 
         G = nx.Graph()
@@ -673,15 +617,15 @@ class SvenStoryline(Layout):
 
         return G
     
-    def get_parents(self, levels):
-        self.Gc = Gc = get_crossing_graph(levels)
+    def get_straightened_nodes(self):
+        self.Gc = Gc = get_crossing_graph(self.levels)
         
         # merges = independent_set_maximal_resample(Gc, self.seed)
         self.merges = merges = independent_set_maximum(Gc)
         
         G = nx.Graph()
         
-        for i, l in enumerate(levels):
+        for i, l in enumerate(self.levels):
             for v in l:
                 G.add_node((v, i))
                 
@@ -691,18 +635,10 @@ class SvenStoryline(Layout):
         for v, i in merges:
             G.add_edge((v, i), (v, i + 1))
 
-        children = {
+        return {
             i: sorted(ci, key=lambda d: d[1])
             for i, ci in enumerate(nx.connected_components(G))
         }
-
-        parents = {
-            v: i
-            for i, ci in children.items()
-            for v in ci
-        }
-
-        return parents, children
     
     def get_parent_x(self):
         return {
