@@ -453,24 +453,58 @@ class Layout:
         return np.array([
             xscale*(len(self.x) + 2),
             yscale*(max(self.y.values()) - min(self.y.values()) + 3)
-        ])    
+        ])
+    
+def collapse_graph(G, mapping=None, partition=None, weight='weight', create_using=nx.Graph):
+    assert (mapping is not None) ^ (partition is not None), "Exactly one of mapping or partition must not be None."
+
+    if partition is not None:
+        mapping = {
+            v: i
+            for i, p in enumerate(partition)
+            for v in p
+        }
+
+        # ensure nodes left out of partition are included in mapping
+        n = max(mapping.values()) + 1
+        for v in G:
+            if v not in mapping:
+                mapping[v] = n
+                n += 1
+    
+    Gc = create_using()
+    for u, v, d in G.edges(data=True):
+        up = mapping[u]
+        vp = mapping[v]
+
+        if up != vp:
+            Gc.add_edge(up, vp, **{weight: 0}) # does nothing if (up, vp exists)
+            Gc.get_edge_data(up, vp)[weight] += d.get(weight, 1)
+
+    return Gc, mapping
+
 
 class SvenStoryline(Layout):
-    def __init__(self, *args, debug=False, allow_node_crossings=True, weight_func=lambda x: x, **kwargs):
+    def __init__(self, *args, debug=False, allow_node_crossings=True, allow_edge_crossings=True, weight_func=lambda x: x, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.G = self.get_storyline_graph()
 
-        order = nx.spectral_ordering(self.G, seed=self.seed)
-        self.y_init = {
-            v: i
-            for i, v in enumerate(order)
-        }
+        assert allow_node_crossings or allow_edge_crossings, "At least one of allow_node_crossings and allow_edge_crossings must be True."
 
         if allow_node_crossings:
-            self.levels = self.create_levels_direct(order)
+            if allow_edge_crossings:
+                self.levels = self.create_levels(self.get_combined_order())
+            else:
+                self.levels = self.create_levels(self.get_order_without_edge_crossings())
         else:
-            self.levels = self.create_levels_global()
+            self.levels = self.create_levels(self.get_order_without_node_crossings())
+
+        self.y_init = {
+            v: i
+            for l in self.levels
+            for i, v in enumerate(l)
+        }
 
         self.parents, self.children = self.get_parents(self.levels)
         self.Gp = get_parent_graph(self.levels, self.parents)
@@ -508,46 +542,94 @@ class SvenStoryline(Layout):
             for v, p in self.parents.items()
         }
 
-    def create_levels(self, order):
-        levels = [
-            OrderedDict()
-            for i in range(len(self.edge_order))
+        def get_edge_endpoints(e):
+            x = self.x[e]
+            
+            ys = [
+                self.y[(v, x)]
+                for v in self.H.edges[e]
+            ]
+        
+            return min(ys), max(ys)
+        
+        self.edge_endpoints = {
+            e: get_edge_endpoints(e)
+            for e in self.H.edges
+        }
+        
+    def get_combined_order(self):
+        return nx.spectral_ordering(self.G, seed=self.seed)
+    
+    def get_order_without_edge_crossings(self):
+        partition = [
+            [e, *[(v, i) for v in self.H.edges[e]]]
+            for i, e in enumerate(self.edge_order)
         ]
 
-        for k in order:
-            if k not in self.x:
-                v, i = k
-            else:
-                v = k
-                i = self.x[k]
+        Gc, mapping = collapse_graph(self.G, partition=partition)
 
-            levels[i][v] = len(levels[i])
+        y0 = {
+            v: i
+            for i, v in enumerate(self.node_order)
+        }
 
-        sorted_levels = []
-        for e, level in zip(self.edge_order, levels):
-            ey = level[e]
+        y = {
+            v: i for i, v in enumerate(nx.spectral_ordering(Gc))
+        }
 
-            def bundle_nodes_in_edge(v):
-                # if node should be bundled within edge
-                if v in self.H.edges[e]:
-                    return (ey, level[v])
-                elif v != e:
-                    return (level[v], 0)
-                else:
-                    return (ey, ey) # doesn't matter, will be filtered out
+        return sorted(
+            [v for v in self.G if v not in self.x],
+            key=lambda v: (y[mapping[v]], y0[v[0]])
+        )
+    
+    def get_order_without_node_crossings(self):
+        y = {
+            v: i
+            for i, v in enumerate(self.node_order)
+        }
 
-            sorted_levels.append(
-                OrderedDict(
-                    (v, y)
-                    for y, v in enumerate(sorted(level, key=bundle_nodes_in_edge))
-                    if v != e
-                )
-            )
+        return sorted(self.G, key=lambda v: y.get(v, 0))
+
+    # def create_levels(self, order):
+    #     levels = [
+    #         OrderedDict()
+    #         for i in range(len(self.edge_order))
+    #     ]
+
+    #     for k in order:
+    #         if k not in self.x:
+    #             v, i = k
+    #         else:
+    #             v = k
+    #             i = self.x[k]
+
+    #         levels[i][v] = len(levels[i])
+
+    #     sorted_levels = []
+    #     for e, level in zip(self.edge_order, levels):
+    #         ey = level[e]
+
+    #         def bundle_nodes_in_edge(v):
+    #             # if node should be bundled within edge
+    #             if v in self.H.edges[e]:
+    #                 return (ey, level[v])
+    #             elif v != e:
+    #                 return (level[v], 0)
+    #             else:
+    #                 return (ey, ey) # doesn't matter, will be filtered out
+
+    #         sorted_levels.append(
+    #             OrderedDict(
+    #                 (v, y)
+    #                 for y, v in enumerate(sorted(level, key=bundle_nodes_in_edge))
+    #                 if v != e
+    #             )
+    #         )
             
-        return sorted_levels        
+    #     return sorted_levels        
 
 
-    def create_levels_direct(self, order):
+    def create_levels(self, order):
         
         levels = [
             OrderedDict()
@@ -561,18 +643,18 @@ class SvenStoryline(Layout):
 
         return levels
     
-    def create_levels_global(self):
-        levels = [
-            OrderedDict()
-            for i in range(len(self.edge_order))
-        ]
+    # def create_levels_global(self):
+    #     levels = [
+    #         OrderedDict()
+    #         for i in range(len(self.edge_order))
+    #     ]
 
-        for v in self.node_order:
-            start, end = self.line_endpoints[v]
-            for i in range(start, end + 1):
-                levels[i][v] = len(levels[i])
+    #     for v in self.node_order:
+    #         start, end = self.line_endpoints[v]
+    #         for i in range(start, end + 1):
+    #             levels[i][v] = len(levels[i])
 
-        return levels
+    #     return levels
 
     def get_storyline_graph(self):
 
