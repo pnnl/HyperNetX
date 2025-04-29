@@ -697,16 +697,17 @@ class SvenStoryline(Layout):
             for v in self.H.nodes()
         }
         
-        self.node_wiggles_sum = np.hstack(list(self.node_wiggles.values())).sum()
+        self.node_efficiency_sum = np.hstack(list(self.node_wiggles.values())).sum()
+        self.node_wiggles_sum = (np.hstack(list(self.node_wiggles.values())) > 0).sum()
 
         self.node_crossing_sum = self.Gc.number_of_edges()
 
-        self.edge_whitespace = {
+        self.edge_efficiency = {
             e: 1 + ymax - ymin - len(self.H.edges[e])
             for e, (ymin, ymax) in self.edge_endpoints.items()
         }
         
-        self.edge_whitespace_sum = np.sum(list(self.edge_whitespace.values()))
+        self.edge_efficiency_sum = np.sum(list(self.edge_efficiency.values()))
 
         def count_edge_crossings(e):
             i = self.x[e]
@@ -725,7 +726,7 @@ class SvenStoryline(Layout):
 
         self.edge_crossings_sum = sum(self.edge_crossings.values())
 
-        self.aesthetic_str = f'Node Crossings: {self.node_crossing_sum}; Edge Crossings: {self.edge_crossings_sum}; Whitespace: {self.edge_whitespace_sum}; Wiggles: {self.node_wiggles_sum}'
+        self.aesthetic_str = f'Node Crossings: {self.node_crossing_sum}; Edge Crossings: {self.edge_crossings_sum}; Edge efficiency: {self.edge_efficiency_sum}; Node Efficiency: {self.node_efficiency_sum}'
 
 def get_crossing_graph(levels):
 
