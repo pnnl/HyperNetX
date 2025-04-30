@@ -361,6 +361,10 @@ class Layout:
             xs = list(map(self.x.get, self.H.nodes[v]))
             self.line_endpoints[v] = (min(xs), max(xs))
 
+    def get_line_coordinates(self, v):
+        start, end = self.line_endpoints[v]
+        return range(start, end + 1)
+
     def incidence_order(self):
         return [
             (e, v)
@@ -730,12 +734,11 @@ class SvenStoryline(Layout):
         )
     
     def get_order_without_node_crossings(self):
-        y = {
-            v: i
-            for i, v in enumerate(self.node_order)
-        }
-
-        return sorted(self.G, key=lambda v: y.get(v, 0))
+        return [
+            (v, i)
+            for v in self.node_order
+            for i in self.get_line_coordinates(v)
+        ]
     
     def get_constraint_graph(self):
         G = nx.DiGraph()
