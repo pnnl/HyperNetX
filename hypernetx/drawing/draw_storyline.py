@@ -18,6 +18,8 @@ from matplotlib.collections import LineCollection, PolyCollection, EllipseCollec
 from collections import defaultdict, OrderedDict
 from itertools import combinations
 
+from heapdict import heapdict
+
 EDGE_WIDTH = .5
 
 def get_storyline_graph(H, x):
@@ -484,6 +486,151 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
             
     return Gc, mapping
 
+class LocalCrossingReducer:
+    def __init__(self, order):
+        n_levels = max([x for _, x in order]) + 1
+        
+        self.levels = [
+            list()
+            for _ in range(n_levels)
+        ]
+
+        self.y = {}
+
+        for v, x in order:
+            self.y[x, v] = len(self.levels[x])
+            self.levels[x].append(v)
+
+        self.swaps = heapdict()
+        
+        for x, lev in enumerate(self.levels):
+            for u, v in zip(lev[:-1], lev[1:]):
+                self.update_swap(x, u, v)
+
+    def draw(self, ax=None):
+        ax = ax or plt.gca()
+        
+        self.G = nx.DiGraph()
+        for i in range(len(self.levels) - 1):
+            j = i + 1
+            for v in self.levels[i]:
+                if self.level_has_nodes(j, v):
+                    self.G.add_edge(
+                        (i, v),
+                        (j, v)
+                    )
+        
+        pos = {
+            (i, v): (i, self.y[i, v])
+            for i, lev in enumerate(self.levels)
+            for v in lev
+        }
+
+        nx.draw(
+            self.G, pos,
+            node_color='black',
+            node_size=25,
+            ax=ax
+        )
+
+        for (x, u, v), d in self.swaps.items():
+            if d < 0:
+                uy, vy = self.get_y(x, u, v)
+                ax.annotate(d, (x, (uy + vy)/2), ha='center', va='center')
+
+    def get_y(self, x, *args):
+        return (self.y[x, v] for v in args)
+    
+    def swap(self, x, u, v):
+        uy, vy = self.get_y(x, u, v)
+        
+        # swap in lists
+        l = self.levels[x]
+        l[uy], l[vy] = l[vy], l[uy]
+
+        # swap in dictionary of index
+        self.y[x, u], self.y[x, v] = vy, uy
+
+        self.update_swap(x, v, u)
+
+        # (..., t, u, v, w, ...) =>
+        # (..., t, v, u, w, ...)
+        # remove (t, u), (v, w) and
+        # add (t, v) and (u, w)
+
+        # handle updates within level
+        if uy > 0:
+            t = self.levels[x][uy - 1]
+            del self.swaps[x, t, u]
+            self.update_swap(x, t, v)
+            
+        if vy < len(self.levels[x]) - 1:
+            w = self.levels[x][vy + 1]
+            del self.swaps[x, v, w]
+            self.update_swap(x, u, w)
+
+        # handle updates to left and right levels
+        # only need to check if u and v are adjacent in the next and previous levels
+        for x2 in (x - 1, x + 1):
+            if self.level_has_nodes(self, x2, u, v):
+                uy2, vy2 = self.get_y(x2, u, v)
+                dy = vy2 - uy2
+
+                if dy == 1:
+                    self.update_swap(x2, u, v)
+                if dy == -1:
+                    self.update_swap(x2, v, u)
+
+    def level_has_nodes(self, x, *args):
+        return np.all([(x, u) in self.y for u in args])
+
+    def count_crossing(self, u1, v1, u2, v2):
+        return int((v1 - u1)*(v2 - u2) < 0)
+        
+    def crossings_decreased_if_swapped(self, x, u, v):
+        assert self.level_has_nodes(x, u, v), f'Level does not contain both {u} and {v}'
+        
+        left = None
+        right = None
+
+        uy, vy = self.get_y(x, u, v)
+        
+        if self.level_has_nodes(x - 1, u, v):
+            left = self.count_crossing(uy, vy, *self.get_y(x - 1, u, v))
+
+        if self.level_has_nodes(x + 1, u, v):
+            right = self.count_crossing(uy, vy, *self.get_y(x + 1, u, v))
+
+        if left is None and right is None:
+            return 0
+            
+        if left is None:
+            return -right
+
+        if right is None:
+            return -left
+
+        return -2*right*left
+
+    def assert_order(self, x, u, v):
+        uy, vy = self.get_y(x, u, v)
+        assert vy - uy == 1, f'Swap out of order. y({u}) = {uy}; y({v}) = {vy}'
+        
+    def update_swap(self, x, u, v):
+        self.assert_order(x, u, v)
+        self.swaps[x, u, v] = self.crossings_decreased_if_swapped(x, u, v)
+
+    def __call__(self):
+        while self.swaps.peekitem()[1] < 0:
+            self.swap(*self.swaps.popitem()[0])
+
+        return [
+            OrderedDict([
+                (v, i)
+                for i, v in enumerate(lev)
+            ])
+            for lev in self.levels
+        ]
 
 class SvenStoryline(Layout):
     def __init__(self, *args, debug=False, allow_node_crossings=True, allow_edge_crossings=True, weight_func=lambda x: x, **kwargs):
@@ -495,11 +642,14 @@ class SvenStoryline(Layout):
 
         if allow_node_crossings:
             if allow_edge_crossings:
-                self.levels = self.create_levels(self.get_combined_order())
+                self.order = self.get_combined_order()
             else:
-                self.levels = self.create_levels(self.get_order_without_edge_crossings())
+                self.order = self.get_order_without_edge_crossings()
         else:
-            self.levels = self.create_levels(self.get_order_without_node_crossings())
+            self.order = self.get_order_without_node_crossings()
+
+        self.crossing_reducer = LocalCrossingReducer(self.order)
+        self.levels = self.crossing_reducer()
 
         self.y_init = {
             v: i
@@ -540,7 +690,11 @@ class SvenStoryline(Layout):
         }
         
     def get_combined_order(self):
-        return nx.spectral_ordering(self.G, seed=self.seed)
+        return [
+            v
+            for v in nx.spectral_ordering(self.G, seed=self.seed)
+            if v not in self.x
+        ]
     
     def get_order_without_edge_crossings(self):
         partition = [
@@ -549,14 +703,16 @@ class SvenStoryline(Layout):
         ]
 
         Gc, mapping = collapse_graph(self.G, partition=partition)
+        self.G_without_edge_crossings = Gc
 
         y0 = {
             v: i
             for i, v in enumerate(self.node_order)
         }
 
+        self.order = order = nx.spectral_ordering(Gc, seed=self.seed)
         y = {
-            v: i for i, v in enumerate(nx.spectral_ordering(Gc, seed=self.seed))
+            v: i for i, v in enumerate(order)
         }
 
         return sorted(
@@ -649,13 +805,18 @@ class SvenStoryline(Layout):
     # debug visualizations
     
     def draw_initial_layout(self):
+        G = self.G.copy()
+        G.remove_nodes_from(self.H.edges())
+
         pos = {
-            v: (self.x[v] if v in self.x else v[1], self.y_init[v])
-            for v in self.G
+            (v, i): (i, j)
+            for i, lev in enumerate(self.levels)
+            for j, v in enumerate(lev)
+
         }
         
         nx.draw(
-            self.G, pos,
+            G, pos,
             with_labels=True,
             node_color='white',
             node_size=500
