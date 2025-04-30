@@ -451,7 +451,7 @@ class Layout:
 
     def suggest_size(self, xscale=.5, yscale=.25):
         return np.array([
-            xscale*(len(self.x) + 2),
+            xscale*(len(self.x) + 1),
             yscale*(max(self.y.values()) - min(self.y.values()) + 3)
         ])
     
@@ -799,6 +799,8 @@ def draw_storyline(
     H,
     layout=None,
     ax=None,
+    fig=None,
+    auto_size=True,
     y_cap_scale=2,
     y_spacing=1,      # unused
     node_radius=None, # unused
@@ -912,6 +914,9 @@ def draw_storyline(
     ax.autoscale_view()
 
     ax.yaxis.set_ticks([], [])
+
+    if auto_size:
+        (fig or plt.gcf()).set_size_inches(*layout.suggest_size())
 
     return layout
 
