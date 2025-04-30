@@ -487,9 +487,11 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
     return Gc, mapping
 
 class LocalCrossingReducer:
-    def __init__(self, order):
+    def __init__(self, order, weight=None):
         n_levels = max([x for _, x in order]) + 1
         
+        self.weight = weight or (lambda x, u, v: 1)
+
         self.levels = [
             list()
             for _ in range(n_levels)
@@ -618,7 +620,7 @@ class LocalCrossingReducer:
         
     def update_swap(self, x, u, v):
         self.assert_order(x, u, v)
-        self.swaps[x, u, v] = self.crossings_decreased_if_swapped(x, u, v)
+        self.swaps[x, u, v] = self.weight(x, u, v)*self.crossings_decreased_if_swapped(x, u, v)
 
     def __call__(self):
         while self.swaps.peekitem()[1] < 0:
@@ -640,15 +642,18 @@ class SvenStoryline(Layout):
 
         assert allow_node_crossings or allow_edge_crossings, "At least one of allow_node_crossings and allow_edge_crossings must be True."
 
+        kwargs = {}
+
         if allow_node_crossings:
             if allow_edge_crossings:
                 self.order = self.get_combined_order()
             else:
                 self.order = self.get_order_without_edge_crossings()
+                kwargs['weight'] = self.can_swap
         else:
             self.order = self.get_order_without_node_crossings()
 
-        self.crossing_reducer = LocalCrossingReducer(self.order)
+        self.crossing_reducer = LocalCrossingReducer(self.order, **kwargs)
         self.levels = self.crossing_reducer()
 
         self.y_init = {
@@ -688,7 +693,11 @@ class SvenStoryline(Layout):
             e: get_edge_endpoints(e)
             for e in self.H.edges
         }
-        
+
+    def can_swap(self, x, u, v):
+        e = self.edge_order[x]
+        return not ((e in self.H.nodes[u]) ^ (e in self.H.nodes[v]))
+       
     def get_combined_order(self):
         return [
             v
