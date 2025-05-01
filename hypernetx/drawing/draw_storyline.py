@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 import numpy as np
-from scipy.interpolate import PchipInterpolator
+from scipy.interpolate import PchipInterpolator, Akima1DInterpolator
 from matplotlib.collections import LineCollection, PolyCollection, EllipseCollection
 
 from collections import defaultdict, OrderedDict
@@ -392,7 +392,7 @@ class Layout:
             if start == end:
                 return points
 
-            func = PchipInterpolator(*points.T)
+            func = Akima1DInterpolator(*points.T)
 
             return np.vstack([
                 [(x1, y1), (x2, y2)] if y1 == y2 else smooth(func, x1, x2)
