@@ -155,12 +155,16 @@ class LocalCrossingReducer:
         self.left_bias = 0.1
         self.right_bias = 0.0
 
+        self.moves = [[], []]
 
         for i in range(2):
             self.init_swaps()
 
             while self.swaps.peekitem()[1] < 0:
-                self.swap(*self.swaps.popitem()[0])
+                k, v = self.swaps.popitem()
+                self.moves[i].append(v)
+
+                self.swap(*k)
 
                 self.num_iters += 1
                 if max_iters is not None and self.num_iters >= max_iters:
