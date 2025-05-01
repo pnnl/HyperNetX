@@ -943,6 +943,10 @@ def draw_storyline(
                 ax.annotate(s, xy + offset_xy,  **{**default_text_kwargs, **kwargs})
         
             ax.xaxis.set_ticks([], [])
+            ax.spines['bottom'].set_visible(False)
+
+    for i in ['left', 'right', 'top']:
+        ax.spines[i].set_visible(False)
 
     ax.autoscale_view()
 
