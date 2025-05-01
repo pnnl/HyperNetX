@@ -371,7 +371,7 @@ class NetworkSimplex:
 
         return self.L
 
-    def draw_layering(self, L=None, T=None, x=None, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
+    def draw_layering(self, L=None, T=None, x=None, labels={}, with_labels=True, negative_slack_color=('black', 'red'), in_tree_width=(1, 3)):
         G = self.G
 
         if L is None:
@@ -399,13 +399,15 @@ class NetworkSimplex:
             for u, v in G.edges()
         ]
 
-        nx.draw_networkx_labels(
-            G, pos,
-            labels={
-                v: f'({v})'
-                for v in G
-            }
-        )
+        if with_labels:
+            nx.draw_networkx_labels(
+                G, pos,
+                labels={
+                    v: f'({labels.get(v, v)})'
+                    for v in G
+                }
+            )
+
         nx.draw_networkx_edges(
             G, pos,
             edge_color=[
@@ -420,6 +422,10 @@ class NetworkSimplex:
 
         nx.draw_networkx_edge_labels( 
             G, pos,
-            edge_labels=dict(zip(G.edges(), slack))
+            edge_labels={
+                e: s
+                for e, s in zip(G.edges(), slack)
+                if s != 0
+            }
         )
         

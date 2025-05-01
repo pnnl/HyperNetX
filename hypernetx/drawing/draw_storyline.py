@@ -697,25 +697,13 @@ class SvenStoryline(Layout):
             node_size=500
         )
 
-    def draw_parent_graph(self):
-
-        pos = {
-            v: (self.xp[v], self.yp[v])
-            for v in self.Gp
-        }
-
+    def draw_parent_graph(self, **kwargs):
         labels = {
-            i: ' '.join('-'.join(map(str, v)) for v in ci)
+            i: f'{ci[0][0]} [{ci[0][1]}-{ci[-1][1]}]'
             for i, ci in self.children.items()
         }
 
-        nx.draw(
-            self.Gp,
-            pos=pos,
-            with_labels=True, labels=labels,
-            node_color='white',
-            node_size=500
-        )
+        self.solver.draw_layering(labels=labels, x=self.xp, **kwargs)
 
     def draw_layering(self, initial=False):
         if initial:
