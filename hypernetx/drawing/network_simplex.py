@@ -251,7 +251,7 @@ class NetworkSimplex:
 
         return head, tail
         
-    def enter_edge(self, e):
+    def enter_edge(self, leave_edge):
         """ Finds a feasible edge to replace (u, v) with
 
         Determines the head and tail components of (u, v), then determines whether
@@ -276,36 +276,32 @@ class NetworkSimplex:
         This method is not optimized for repeated calls.
         """
         
-        # ensure edge points same direction as it does in self.G
-        u, v = self.reorient_edge(e)
+        u, v = leave_edge
 
-        head, tail = self.get_head_and_tail_components(u, v)
+        head, tail = self.get_head_and_tail_components(*leave_edge)
+
         
         cut_value = 0
         slack = {}
         
         for i, j, d in self.G.edges(data=True):
-            # head to tail (pointing the opposite direction of (u, v))
-            if i in head and j in tail:
-                s = -1
-            # tail to head
-            elif i in tail and j in head:
-                s = 1
-            else:
-                continue
+            s = 0 # remains at 0 if edge is completely within head or tail component
 
-            # candidate replacement edges must go between head and tail
-            sij = self.slack(i, j)
-            if sij > 0:
-                slack[i, j] = sij
+            if i in head and j in tail:
+                # candidate replacement edges must go between head and tail
+                slack[i, j] = self.slack(i, j)
+                s = -1
+            elif i in tail and j in head:
+                # not a candidate for replacement, but counts against replacing leave_edge
+                s = 1
 
             cut_value += s*d.get(self.weight, 1.0)
         
         # if the cut value is negative and there is a replacement
         if cut_value < 0 and len(slack):
-            e = min(slack, key=slack.get)
-            self.cuts.append((e, slack[e], cut_value))
-            return e
+            enter_edge = min(slack, key=slack.get)
+            self.cuts.append((leave_edge, enter_edge, slack[enter_edge], cut_value))
+            return enter_edge
     
     def __call__(self, max_iter=1000):
         """Network simplex algorithm to compute a nice DiGraph layering
