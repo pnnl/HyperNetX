@@ -247,7 +247,7 @@ class NetworkSimplex:
                 head = ci
 
         # reassemble the tree
-        self.T.add_edge(u,v)
+        self.T.add_edge(u, v)
 
         return head, tail
         
@@ -276,10 +276,7 @@ class NetworkSimplex:
         This method is not optimized for repeated calls.
         """
         
-        u, v = leave_edge
-
         head, tail = self.get_head_and_tail_components(*leave_edge)
-
         
         cut_value = 0
         slack = {}
@@ -334,12 +331,13 @@ class NetworkSimplex:
 
         # cycle through the edges in the tree until no changes are made
         n_iter = 0
-        n_cuts = 1
-        while n_cuts and n_iter < max_iter:
+
+        while n_iter < max_iter:
             n_cuts = 0
 
             # for each edge in the tree (listed, because tree may change)
-            for leave_edge in list(map(self.reorient_edge, self.T.edges())):
+            # following recommendation in paper not to restart iteration from 
+            for leave_edge in map(self.reorient_edge, list(self.T.edges())):
 
                 # check if tree has edge, because edge may have been replaced since tree edges were previously listed. Double check?
                 if self.T.has_edge(*leave_edge): 
@@ -357,10 +355,14 @@ class NetworkSimplex:
                         n_cuts += 1
 
             # count the number of iterations (over tree edges)
-            n_iter += 1
-        
+            n_iter += n_cuts
+
+            # exit loop if no more cuts are possbile
+            if n_cuts == 0:
+                break
+
         if n_iter == max_iter:
-            print( "Maximum iterations reached!")
+            warn( "Maximum iterations reached!")
 
         # validate L
         self.violations_final = self.validate_layers()
