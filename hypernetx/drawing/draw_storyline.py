@@ -490,9 +490,17 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
     return Gc, mapping
 
 class SvenStoryline(Layout):
-    def __init__(self, *args, debug=False, allow_node_crossings=True, allow_edge_crossings=True, weight_func=lambda x: x, **kwargs):
+    def __init__(
+        self, *args,
+        debug=False,
+        allow_node_crossings=True,
+        allow_edge_crossings=True,
+        min_network_simplex_weight=0.01,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
 
+        self.min_network_simplex_weight = min_network_simplex_weight
         self.G = self.get_storyline_graph()
 
         assert allow_node_crossings or allow_edge_crossings, "At least one of allow_node_crossings and allow_edge_crossings must be True."
@@ -598,9 +606,16 @@ class SvenStoryline(Layout):
             has_node = self.H.edges[self.edge_order[i]].__contains__
             
             for u, v in zip(lev[:-1], lev[1:]):
-                G.add_edge((u, i), (v, i), weight=int(has_node(u) and has_node(v)))
+                G.add_edge(
+                    (u, i), (v, i),
+                    weight=float(has_node(u) and has_node(v))
+                )
 
-        return collapse_graph(G, partition=self.children.values(), create_using=nx.DiGraph)    
+        Gc, parents = collapse_graph(G, partition=self.children.values(), create_using=nx.DiGraph)
+        for _, _, d in Gc.edges(data=True):
+            d['weight'] = max(d['weight'], self.min_network_simplex_weight)
+
+        return Gc, parents
 
     def create_levels(self, order):
         
