@@ -371,27 +371,36 @@ class Layout:
             for v in self.H.edges[e]
         ]
     
-    def get_storylines(self, r=.25, **kwargs):
+    def get_storylines(self, r=.125, n=50, **kwargs):
 
-        def get_steps(v):
+        def smooth(func, x1, x2):
+            x = np.linspace(x1, x2, n)
+            return np.vstack((x, func(x))).T
+
+        def interpolate(v):
             start, end = self.line_endpoints[v]
-            return range(start, end + 1)
 
-        def get_radii(v, i):
-            return (
-                -r*(self.line_endpoints[v][0] != i),
-                r*(self.line_endpoints[v][1] != i)
-            )
+            points = np.array([
+                (i + dr, self.y[v, i])
+                for i in range(start, end + 1)
+                for dr in (-r, r)
+            ])
+
+            points[0, 0] += r
+            points[-1, 0] -= r
+
+            if start == end:
+                return points
+
+            func = PchipInterpolator(*points.T)
+
+            return np.vstack([
+                [(x1, y1), (x2, y2)] if y1 == y2 else smooth(func, x1, x2)
+                for (x1, y1), (x2, y2) in zip(points[:-1], points[1:])
+            ])
                 
-        return LineCollection([
-            [
-                (i + dx, self.y[v, i])
-                for i in get_steps(v)
-                for dx in get_radii(v, i)
-            ]
-            for v in self.H.nodes
-        ], **kwargs)
-
+        return LineCollection(map(interpolate, self.H.nodes), **kwargs)
+    
     def get_edges(self, r=.25, y_cap_scale=2, **kwargs):
         theta = np.linspace(0, np.pi, 21)
         half_circle = np.array([
