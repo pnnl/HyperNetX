@@ -23,8 +23,6 @@ class LocalCrossingReducer:
             self.y[x, v] = len(self.levels[x])
             self.levels[x].append(v)
 
-        self.init_swaps()
-
     def init_swaps(self):
         self.swaps = heapdict()
         
@@ -142,8 +140,7 @@ class LocalCrossingReducer:
         if right is None:
             return -left
 
-        return -2*(right + 0.1)*left
-        # return -2*right*left
+        return -2*(right + self.right_bias)*(left + self.left_bias)
 
     def assert_order(self, x, u, v):
         uy, vy = self.get_y(x, u, v)
@@ -155,13 +152,21 @@ class LocalCrossingReducer:
 
     def __call__(self, max_iters=None):
         self.num_iters = 0
+        self.left_bias = 0.1
+        self.right_bias = 0.0
 
-        while self.swaps.peekitem()[1] < 0:
-            self.swap(*self.swaps.popitem()[0])
 
-            self.num_iters += 1
-            if max_iters is not None and self.num_iters >= max_iters:
-                break
+        for i in range(2):
+            self.init_swaps()
+
+            while self.swaps.peekitem()[1] < 0:
+                self.swap(*self.swaps.popitem()[0])
+
+                self.num_iters += 1
+                if max_iters is not None and self.num_iters >= max_iters:
+                    break
+
+            self.left_bias, self.right_bias = self.right_bias, self.left_bias
 
         return [
             OrderedDict([
