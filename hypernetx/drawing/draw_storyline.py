@@ -19,6 +19,8 @@ from matplotlib.collections import LineCollection, PolyCollection, EllipseCollec
 from collections import defaultdict, OrderedDict
 from itertools import combinations
 
+from heapdict import heapdict
+
 EDGE_WIDTH = .5
 
 def get_storyline_graph(H, x):
@@ -661,7 +663,8 @@ class SvenStoryline(Layout):
         self.Gc = Gc = get_crossing_graph(self.levels)
         
         # merges = independent_set_maximal_resample(Gc, self.seed)
-        self.merges = merges = independent_set_maximum(Gc)
+        # self.merges = merges = independent_set_maximum(Gc)
+        self.merges = merges = greedy_mwis(Gc)
         
         G = nx.Graph()
         
@@ -816,6 +819,38 @@ def independent_set_maximum(G):
         for v in nx.approximation.maximum_independent_set(nx.subgraph(G, ci))
     ]
 
+def greedy_mwis(G, weight='weight', copy=True):
+    if copy:
+        G = G.copy()
+
+    def get_weight(v):
+        return G.nodes[v].get(weight, 1)
+    
+    scores = heapdict({
+        u: -(get_weight(u) - sum(map(get_weight, G[u])))
+        for u in G.nodes()
+    })
+    
+    s = set()
+    
+    while len(scores):
+        k, wk = scores.popitem()
+        s.add(k)
+        
+        nbrs = list(G[k])
+    
+        for u in nbrs:
+            wu = get_weight(u)
+            for v in G[u]:
+                if v != k:
+                    scores[v] -= wu
+    
+        for u in nbrs:
+            del scores[u]
+            
+        G.remove_nodes_from([k, *nbrs])
+
+    return s
 
 def get_parent_graph(levels, parents):
 
