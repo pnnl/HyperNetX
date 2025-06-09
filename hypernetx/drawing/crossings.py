@@ -23,6 +23,9 @@ class LocalCrossingReducer:
             self.y[x, v] = len(self.levels[x])
             self.levels[x].append(v)
 
+        self.left_bias = 0.1
+        self.right_bias = 0.0
+
     def init_swaps(self):
         self.swaps = heapdict()
         
@@ -152,8 +155,6 @@ class LocalCrossingReducer:
 
     def __call__(self, max_iters=None):
         self.num_iters = 0
-        self.left_bias = 0.1
-        self.right_bias = 0.0
 
         self.moves = [[], []]
 
