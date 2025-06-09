@@ -892,6 +892,7 @@ def get_parent_graph(levels, parents):
 def draw_storyline(
     H,
     layout=None,
+    layout_kwargs={},
     ax=None,
     fig=None,
     auto_size=True,
@@ -924,6 +925,7 @@ def draw_storyline(
             H,
             edge_order=edge_order,
             node_order=node_order,
+            **layout_kwargs
         )
 
     edges = layout.get_edges(
