@@ -102,7 +102,7 @@ class Storyline:
         self.H = H
         self.y_spacing = y_spacing
 
-        combined_order = nx.spectral_ordering(H.bipartite())
+        combined_order = spectral_ordering_with_collapse(H.bipartite())
         
         def create_order(entity_set, override):
             if override is None:
@@ -341,7 +341,7 @@ class Layout:
         self.H = H
         self.seed = seed
 
-        combined_order = nx.spectral_ordering(H.bipartite(), seed=seed)
+        combined_order = spectral_ordering_with_collapse(H.bipartite(), seed=seed)
         
         def create_order(entity_set, override):
             if override is None:
@@ -500,6 +500,32 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
             
     return Gc, mapping
 
+def spectral_ordering_with_collapse(G, **kwargs):
+    S = nx.Graph()
+    S.add_nodes_from(G)
+
+    # Finds cases that look like this: ( )--(u)--(v)--( )
+    # or special caes where u or v is an endpoint.
+    # These cases can be found just using the degree of u and v.
+    # If the degree of each is 2 or less, then there is at most
+    # 1 more edge that connects u and v to the rest of the graph,
+    # so we can collapse that edge.
+    
+    S.add_edges_from([
+        (u, v)
+        for u, v in G.edges()
+        if G.degree(u) <= 2 and G.degree(v) <= 2
+    ])
+
+    partition = list(nx.connected_components(S))
+    Gc, _ = collapse_graph(G, partition=partition)
+
+    return [
+        v
+        for i in nx.spectral_ordering(Gc, **kwargs)
+        for v in partition[i]
+    ]
+
 class SvenStoryline(Layout):
     def __init__(
         self, *args,
@@ -572,7 +598,7 @@ class SvenStoryline(Layout):
     def get_combined_order(self):
         return [
             v
-            for v in nx.spectral_ordering(self.G, seed=self.seed)
+            for v in spectral_ordering_with_collapse(self.G, seed=self.seed)
             if v not in self.x
         ]
     
@@ -590,7 +616,7 @@ class SvenStoryline(Layout):
             for i, v in enumerate(self.node_order)
         }
 
-        self.order = order = nx.spectral_ordering(Gc, seed=self.seed)
+        self.order = order = spectral_ordering_with_collapse(Gc, seed=self.seed)
         y = {
             v: i for i, v in enumerate(order)
         }
