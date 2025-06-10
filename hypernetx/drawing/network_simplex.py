@@ -64,6 +64,7 @@ class NetworkSimplex:
         self.weight = weight
 
         # calculate initial layering
+        self.components = list(nx.connected_components(G.to_undirected()))
         self.L = longest_path_levels(G)
 
         # initial feasible tree generated from initial layering
@@ -107,6 +108,10 @@ class NetworkSimplex:
                 L[u] = 0
                 L[v] = 1
         
+        # handle isolated nodes
+        for v in self.G:
+            L.setdefault(v, 0)
+
         return L
 
     def validate_layers(self):
@@ -194,6 +199,7 @@ class NetworkSimplex:
         """
 
         G = nx.Graph()
+        G.add_nodes_from(self.G)
         
         # compute a feasbile tree
         for u, v, d in self.G.edges(data=True):
@@ -201,7 +207,13 @@ class NetworkSimplex:
             G.add_edge(u, v, slack=self.slack(u, v))
 
         # no guarantees here that this tree is tight (produces a feasible tree)
-        return nx.minimum_spanning_tree(G, weight='slack')
+        T = nx.Graph()
+        for c in self.components:
+            Gc = nx.subgraph(G, c)
+            T.add_nodes_from(Gc)
+            T.add_edges_from(nx.minimum_spanning_tree(Gc, weight='slack').edges())
+
+        return T
     
     def get_head_and_tail_components(self, u, v):
         """ Returns the subgraphs of the tree containing the endpoints of the edge passed in
