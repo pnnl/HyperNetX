@@ -16,24 +16,32 @@ def from_bipartite(G):
     for v, e in G.edges():
         incidences[e].append(v)
 
-    return hnx.Hypergraph(incidences)
+    return incidences
+
+def create_ordered_hypergraph_with_kwargs(incidence_dict, sort_key=None, **kwargs):
+    H = hnx.Hypergraph(incidence_dict)
+    return H, dict(edge_order=sorted(H.edges, key=sort_key), **kwargs)
 
 def create_lesmis_small():
-    scenes = {
-        0: ('FN', 'TH'),
-        1: ('TH', 'JV'),
-        2: ('BM', 'FN', 'JA'),
-        3: ('JV', 'JU', 'CH', 'BM'),
-        4: ('JU', 'CH', 'BR', 'CN', 'CC', 'JV', 'BM'),
-        5: ('TH', 'GP'),
-        6: ('GP', 'MP'),
-        7: ('MA', 'GP')
-    }
-
-    return hnx.Hypergraph(scenes)
+    return create_ordered_hypergraph_with_kwargs(
+        {
+            0: ('FN', 'TH'),
+            1: ('TH', 'JV'),
+            2: ('BM', 'FN', 'JA'),
+            3: ('JV', 'JU', 'CH', 'BM'),
+            4: ('JU', 'CH', 'BR', 'CN', 'CC', 'JV', 'BM'),
+            5: ('TH', 'GP'),
+            6: ('GP', 'MP'),
+            7: ('MA', 'GP')
+        },
+        int
+    )
 
 def create_davis_southern_women():
-    return from_bipartite(nx.davis_southern_women_graph())
+    return create_ordered_hypergraph_with_kwargs(
+        from_bipartite(nx.davis_southern_women_graph()),
+        lambda e: int(e[1:])
+    )
 
 def create_star_wars():
     VADER = 'Vader'
@@ -74,8 +82,6 @@ def create_star_wars():
     def rgb(*args):
         return np.array(args)/255.
 
-    H = hnx.Hypergraph(dict(enumerate(events)))
-
     node_colors = defaultdict(
         lambda: rgb(158, 158, 158),
         **{
@@ -97,7 +103,8 @@ def create_star_wars():
     for k, v in labels:
         edge_labels[events.index(k)] = v
 
-    kwargs = dict(
+    return create_ordered_hypergraph_with_kwargs(
+        dict(enumerate(events)),
         nodes_kwargs={
             'edgecolor': node_colors
         },
@@ -107,8 +114,6 @@ def create_star_wars():
         },
         edge_labels=edge_labels
     )
-
-    return H, kwargs
 
 @lru_cache()
 def load_file(path_or_url, encoding='utf-8'):
@@ -156,49 +161,50 @@ def parse_play(
                 for v in nodes
             ])
 
-    H = hnx.Hypergraph(edges)
-    
     if return_text:
-        return H, txt
+        return edges, txt
         
-    return H
+    return edges
 
 def create_macbeth(path=None):
-    return parse_play(
-        path or 'https://www.gutenberg.org/cache/epub/1533/pg1533.txt',
-        start_str='ACT I\n\nSCENE I.',
-        end_str='*** END OF THE PROJECT GUTENBERG',
-        ignore = {
-            '',
-            'I',
-            'ALL',
-            'BOTH MURDERERS'
-        },
-        replace={
-            'MURDERER': 'FIRST MURDERER',
-            'LORDS': 'LORD'
-        }
+    return create_ordered_hypergraph_with_kwargs(
+        parse_play(
+            path or 'https://www.gutenberg.org/cache/epub/1533/pg1533.txt',
+            start_str='ACT I\n\nSCENE I.',
+            end_str='*** END OF THE PROJECT GUTENBERG',
+            ignore = {
+                '',
+                'I',
+                'ALL',
+                'BOTH MURDERERS'
+            },
+            replace={
+                'MURDERER': 'FIRST MURDERER',
+                'LORDS': 'LORD'
+            }
+        )
     )
 
 def create_hamlet(path=None):
-    return parse_play(
-        path or 'https://www.gutenberg.org/cache/epub/1524/pg1524.txt',
-        start_str='ACT I\n\nSCENE I.',
-        end_str='*** END OF THE PROJECT GUTENBERG',
-        ignore = {
-            '',
-            'I',
-            'T',
-            'ALL',
-            'BOTH'
-        },
-        replace={
-            'BARNARD': 'BARNARDO',
-            'LORD': 'LORDS',
-            'FIRST CLOWN': 'CLOWNS',
-            'SECOND CLOWN': 'CLOWNS',
-            'PLAYER KING': 'PLAYER KING & QUEEN',
-            'PLAYER QUEEN': 'PLAYER KING & QUEEN',
-        }
+    return create_ordered_hypergraph_with_kwargs(
+        parse_play(
+            path or 'https://www.gutenberg.org/cache/epub/1524/pg1524.txt',
+            start_str='ACT I\n\nSCENE I.',
+            end_str='*** END OF THE PROJECT GUTENBERG',
+            ignore = {
+                '',
+                'I',
+                'T',
+                'ALL',
+                'BOTH'
+            },
+            replace={
+                'BARNARD': 'BARNARDO',
+                'LORD': 'LORDS',
+                'FIRST CLOWN': 'CLOWNS',
+                'SECOND CLOWN': 'CLOWNS',
+                'PLAYER KING': 'PLAYER KING & QUEEN',
+                'PLAYER QUEEN': 'PLAYER KING & QUEEN',
+            }
+        )
     )
-    
