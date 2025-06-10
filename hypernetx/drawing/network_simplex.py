@@ -11,8 +11,8 @@ def longest_path_levels(G):
         L[u] < L[v] | (u, v) in E
         
     This algorithm uses longest path layering, which is essentially a direct
-    implementation of this constraint, using recursion and memoization to find
-    the result in O(|E|) time.
+    implementation of this constraint using topological sorting in O(|E|) time, 
+    which avoids a potentially deep recursive call stack.
 
     Parameters
     ----------
@@ -37,23 +37,16 @@ def longest_path_levels(G):
 
     L = {}
     
-    def get_level(v):
-        if v in L:
-            return L[v]
-            
+    # iterating over nodes in topological order guarantees that all the nodes above a
+    # given node will already have been added to the dictionary
+    for v in nx.topological_sort(G):
         if G.in_degree(v) == 0:
-            lv = 0
+            L[v] = 0
         else:
-            lv = 1 + max(
-                get_level(u)
+            L[v] = 1 + max(
+                L[u]
                 for u, _ in G.in_edges(v)
             )
-
-        L[v] = lv
-        return lv
-    
-    for v in G:
-        get_level(v)
         
     return L
 
