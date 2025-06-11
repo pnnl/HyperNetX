@@ -2,13 +2,13 @@ import networkx as nx
 
 from warnings import warn
 
-def longest_path_levels(G):
+def longest_path_levels(G, length='length'):
     """ Computes a feasible layering of the directed graph G
 
     A layering is a mapping of vertices in G = (V,E) to integer levels L. A feasible
     layering respects:
         
-        L[u] < L[v] | (u, v) in E
+        L[u] <= L[v] + length(u, v) for all (u, v) in E
         
     This algorithm uses longest path layering, which is essentially a direct
     implementation of this constraint using topological sorting in O(|E|) time, 
@@ -18,6 +18,9 @@ def longest_path_levels(G):
     ----------
     G : DiGraph
         directed acyclic graph
+        
+    length : str
+        key into edge dictionary indicating the minimum edge length
         
     Returns
     -------
@@ -43,15 +46,15 @@ def longest_path_levels(G):
         if G.in_degree(v) == 0:
             L[v] = 0
         else:
-            L[v] = 1 + max(
-                L[u]
-                for u, _ in G.in_edges(v)
+            L[v] = max(
+                L[u] + d.get(length, 1)
+                for u, _, d in G.in_edges(v, data=True)
             )
-        
+
     return L
 
 class NetworkSimplex:
-    def __init__(self, G, weight='weight'):
+    def __init__(self, G, weight='weight', length='length'):
         """
         G : DiGraph
             directed acyclic graph to compute the layering on
@@ -61,11 +64,12 @@ class NetworkSimplex:
         """
 
         self.G = G
-        self.weight = weight
+        self.weight_str = weight
+        self.length_str = length
 
         # calculate initial layering
         self.components = list(nx.connected_components(G.to_undirected()))
-        self.L = longest_path_levels(G)
+        self.L_longest = self.L = longest_path_levels(G, length)
 
         # initial feasible tree generated from initial layering
         self.T = self.feasible_tree()
@@ -99,14 +103,15 @@ class NetworkSimplex:
         L = {}
         for e in nx.dfs_edges(T):
             u, v = self.reorient_edge(e)
+            d = self.length(u, v)
             
             if u in L and v not in L:
-                L[v] = L[u] + 1
+                L[v] = L[u] + d
             elif u not in L and v in L:
-                L[u] = L[v] - 1
+                L[u] = L[v] - d
             else:
                 L[u] = 0
-                L[v] = 1
+                L[v] = d
         
         # handle isolated nodes
         for v in self.G:
@@ -147,6 +152,9 @@ class NetworkSimplex:
             return e
         return v, u
         
+    def length(self, u, v):
+        return self.G.get_edge_data(u, v).get(self.length_str, 1)
+    
     def slack(self, u, v, L=None):
         """
         Finds the slack on the edge given the current layering
@@ -171,14 +179,14 @@ class NetworkSimplex:
         -----
         Slack is defined as:
 
-            slack(u,v) = L[v] - L[u] - d(u, v)
+            slack(u,v) = L[v] - L[u] - length(u, v)
 
-        where the minimum distance between nodes is d(u, v) = 1
+        where the minimum distance between nodes is d(u, v) = 1, if not otherwise specified
         """
         if L is None:
             L = self.L
 
-        return L[v] - L[u] - 1
+        return L[v] - L[u] - self.length(u, v)
 
     def feasible_tree(self):
         """ Generates a feasible tree given the directed graph G
@@ -198,7 +206,7 @@ class NetworkSimplex:
         The weight of each directed edge (u,v) in the graph is set to the slack.
         """
 
-        G = nx.Graph()
+        self.G_mst = G = nx.Graph()
         G.add_nodes_from(self.G)
         
         # compute a feasbile tree
@@ -297,7 +305,7 @@ class NetworkSimplex:
                 # not a candidate for replacement, but counts against replacing leave_edge
                 s = 1
 
-            cut_value += s*d.get(self.weight, 1.0)
+            cut_value += s*d.get(self.weight_str, 1.0)
         
         # if the cut value is negative and there is a replacement
         if cut_value < 0 and len(slack):
