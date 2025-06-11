@@ -544,10 +544,12 @@ class SvenStoryline(Layout):
         allow_node_crossings=True,
         allow_edge_crossings=True,
         min_network_simplex_weight=0.01,
+        dummy_non_dummy_weight=0.01,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
 
+        self.dummy_non_dummy_weight = dummy_non_dummy_weight
         self.min_network_simplex_weight = min_network_simplex_weight
         self.G = self.get_storyline_graph()
 
@@ -703,13 +705,33 @@ class SvenStoryline(Layout):
 
         return G
     
+    def is_dummy_node(self, v):
+        name, idx = v
+        e = self.edge_order[idx]
+        return name not in self.H.edges[e]
+    
     def get_straightened_nodes(self):
         self.Gc = Gc = get_crossing_graph(self.levels)
+
+        # can set the weight to a small value, or to zero
+        for (v, i), d in self.Gc.nodes(data=True):
+            left = self.is_dummy_node((v, i))
+            right = self.is_dummy_node((v, i + 1))
+            d['weight'] = self.dummy_non_dummy_weight if (not left) and right else 1.0
+
+        # clear nodes with weight of zero, which could happen if `dummy_non_dummy_weight` is passed as 0.0
+        zero_weight = [
+            v
+            for v, d in self.Gc.nodes(data=True)
+            if d['weight'] == 0.0
+        ]
+
+        self.Gc.remove_nodes_from(zero_weight)
         
         # merges = independent_set_maximal_resample(Gc, self.seed)
         # self.merges = merges = independent_set_maximum(Gc)
         self.merges = merges = greedy_mwis(Gc)
-        
+
         G = nx.Graph()
         
         for i, l in enumerate(self.levels):
