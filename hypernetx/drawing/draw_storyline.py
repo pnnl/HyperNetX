@@ -471,7 +471,7 @@ class Layout:
             yscale*(max(self.y.values()) - min(self.y.values()) + 3)
         ])
     
-def collapse_graph(G, mapping=None, partition=None, weight='weight', create_using=nx.Graph):
+def collapse_graph(G, mapping=None, partition=None, create_using=nx.Graph, **kwargs):
     assert (mapping is not None) ^ (partition is not None), "Exactly one of mapping or partition must not be None."
 
     if partition is not None:
@@ -489,15 +489,26 @@ def collapse_graph(G, mapping=None, partition=None, weight='weight', create_usin
                 n += 1
     
     Gc = create_using()
+    Gc.add_nodes_from(set(mapping.values()))
+
     for u, v, d in G.edges(data=True):
         up = mapping[u]
         vp = mapping[v]
 
         if up != vp:
             if not Gc.has_edge(up, vp):
-                Gc.add_edge(up, vp, **{weight: 0})
-            Gc.get_edge_data(up, vp)[weight] += d.get(weight, 1)
+                Gc.add_edge(up, vp)
             
+            # add all the properties from the edge 
+            for key, value in d.items():
+                Gc.get_edge_data(up, vp).setdefault(key, [])\
+                    .append(value)
+    
+    # aggregate all the edge properties (kwargs defines the aggregator)
+    for _, _, d in Gc.edges(data=True):
+        for key, func in kwargs.items():
+            d[key] = func(d[key])
+
     return Gc, mapping
 
 def spectral_ordering_with_collapse(G, **kwargs):
