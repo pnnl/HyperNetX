@@ -549,6 +549,8 @@ class SvenStoryline(Layout):
     ):
         super().__init__(*args, **kwargs)
 
+        self.allow_node_crossings = allow_node_crossings
+        self.allow_edge_crossings = allow_edge_crossings
         self.dummy_non_dummy_weight = dummy_non_dummy_weight
         self.min_network_simplex_weight = min_network_simplex_weight
         self.G = self.get_storyline_graph()
@@ -658,10 +660,11 @@ class SvenStoryline(Layout):
             for u, v in zip(lev[:-1], lev[1:]):
                 u_in_edge = has_node(u)
                 v_in_edge = has_node(v)
+
                 G.add_edge(
                     (u, i), (v, i),
                     weight=max(float(u_in_edge and v_in_edge), self.min_network_simplex_weight),
-                    length=(u_in_edge ^ v_in_edge) + 1
+                    length=1 if self.allow_edge_crossings else (u_in_edge ^ v_in_edge) + 1
                 )
 
         Gc, parents = collapse_graph(
