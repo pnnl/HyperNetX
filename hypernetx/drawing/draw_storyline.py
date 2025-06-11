@@ -654,14 +654,21 @@ class SvenStoryline(Layout):
             has_node = self.H.edges[self.edge_order[i]].__contains__
             
             for u, v in zip(lev[:-1], lev[1:]):
+                u_in_edge = has_node(u)
+                v_in_edge = has_node(v)
                 G.add_edge(
                     (u, i), (v, i),
-                    weight=float(has_node(u) and has_node(v))
+                    weight=max(float(u_in_edge and v_in_edge), self.min_network_simplex_weight),
+                    length=(u_in_edge ^ v_in_edge) + 1
                 )
 
-        Gc, parents = collapse_graph(G, partition=self.children.values(), create_using=nx.DiGraph)
-        for _, _, d in Gc.edges(data=True):
-            d['weight'] = max(d['weight'], self.min_network_simplex_weight)
+        Gc, parents = collapse_graph(
+            G,
+            partition=self.children.values(),
+            create_using=nx.DiGraph,
+            weight=sum,
+            length=max
+        )
 
         return Gc, parents
 
