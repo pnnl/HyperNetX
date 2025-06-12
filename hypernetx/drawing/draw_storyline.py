@@ -1,7 +1,8 @@
 import hypernetx as hnx
 from hypernetx.drawing.util import (
     inflate_kwargs,
-    inflate_labels
+    inflate_labels,
+    inflate
 )
 
 from . import network_simplex as ns
@@ -373,15 +374,31 @@ class Layout:
             for v in self.H.edges[e]
         ]
     
+    def segment_order(self):
+        def iter_node_segments(v):
+            edges = sorted(self.H.nodes[v], key=self.x.get)
+            return zip(edges[:-1], edges[1:])
+        
+        return [
+            ((e1, v), (e2, v))
+            for v in self.H.nodes
+            for e1, e2 in iter_node_segments(v)
+        ]
+    
     def get_storylines(self, r=.125, n=50, **kwargs):
 
         def smooth(func, x1, x2):
             x = np.linspace(x1, x2, n)
             return np.vstack((x, func(x))).T
-
-        def interpolate(v):
-            start, end = self.line_endpoints[v]
-
+        
+        def interpolate(seg):
+            ((e1, v), (e2, v2)) = seg
+            assert v == v2
+        
+            start = self.x[e1]
+            end = self.x[e2]
+            assert start < end
+        
             points = np.array([
                 (i + dr, self.y[v, i])
                 for i in range(start, end + 1)
@@ -391,18 +408,15 @@ class Layout:
             points[0, 0] += r
             points[-1, 0] -= r
 
-            if start == end:
-                return points
-
             func = Akima1DInterpolator(*points.T)
 
             return np.vstack([
                 [(x1, y1), (x2, y2)] if y1 == y2 else smooth(func, x1, x2)
                 for (x1, y1), (x2, y2) in zip(points[:-1], points[1:])
             ])
-                
-        return LineCollection(map(interpolate, self.H.nodes), **kwargs)
-    
+            
+        return LineCollection(map(interpolate, self.segment_order()), **kwargs)
+
     def get_edges(self, r=.25, y_cap_scale=2, **kwargs):
         theta = np.linspace(0, np.pi, 21)
         half_circle = np.array([
@@ -952,6 +966,7 @@ def draw_storyline(
     fill_edge_alpha=-0.5,
     edges_kwargs={},
     nodes_kwargs={},
+    segments_kwargs={},
     edge_labels_kwargs={},
     node_labels_kwargs={},
     edge_labels_on_axis=True,
@@ -977,36 +992,59 @@ def draw_storyline(
         **inflate_kwargs(H.edges, edges_kwargs)
     )
 
-    if fill_edges:
-        color = edges.get_edgecolors() + np.array([0, 0, 0, fill_edge_alpha])
+    if fill_edges is not False:
+        if fill_edges is True:
+            color = edges.get_edgecolors() + np.array([0, 0, 0, fill_edge_alpha])
+        else:
+            alpha = np.array([
+                [0, 0, 0, fill_edge_alpha if a else -1]
+                for a in inflate(H.edges, fill_edges)
+            ])
+            color = edges.get_edgecolors() + alpha
         edges.set_facecolors(color)
+
+    # inflate nodes_kwargs to use for defaults for incidences and segments
+    nodes_kwargs_inflated = inflate_kwargs(H.nodes, {
+        'edgecolors': default_node_color,
+        'facecolors': default_node_color,
+        **nodes_kwargs
+    })
+
+    nodes_kwargs_dicts = {
+        key: dict(zip(H.nodes, values))
+        for key, values in nodes_kwargs_inflated.items()
+    }
+
+    segment_order = layout.segment_order()
+
+    default_segments_kwargs = {
+        k: [v[seg[0][1]] for seg in segment_order]
+        for k, v in nodes_kwargs_dicts.items()
+    }
     
     storylines = layout.get_storylines(
         zorder=2,
-        **inflate_kwargs(H, {
-            'edgecolors': default_node_color,
-            **nodes_kwargs,
+        **inflate_kwargs(segment_order, {
+            **default_segments_kwargs,
+            **segments_kwargs,
             'facecolors': 'none' # storylines should never have a face color
         })
     )
 
     incidence_order = layout.incidence_order()
 
-    node_edgecolor_dict = dict(zip(H.nodes, storylines.get_edgecolors()))
-    default_incidences_color = [
-        node_edgecolor_dict[v]
-        for _, v in incidence_order
-    ]
-
-    default_incidences_kwargs = dict(
-        facecolor=default_incidences_color,
-        edgecolor=default_incidences_color           
-    )
+    default_incidences_kwargs = {
+        k: [d[v] for _, v in incidence_order]
+        for k, d in nodes_kwargs_dicts.items()
+    }
 
     incidences = layout.get_incidences(
         ax=ax,
         zorder=3,
-        **{**default_incidences_kwargs, **inflate_kwargs(incidence_order, incidences_kwargs)}
+        **{
+            **default_incidences_kwargs,
+            **inflate_kwargs(incidence_order, incidences_kwargs)
+        }
     )
     
     for c in (edges, storylines, incidences):
