@@ -363,6 +363,13 @@ class Layout:
             xs = list(map(self.x.get, self.H.nodes[v]))
             self.line_endpoints[v] = (min(xs), max(xs))
 
+        # default y is just a straight line
+        self.y = {
+            (v, x): i
+            for i, v in enumerate(self.node_order)
+            for x in self.get_line_coordinates(v)
+        }
+
     def get_line_coordinates(self, v):
         start, end = self.line_endpoints[v]
         return range(start, end + 1)
@@ -946,7 +953,7 @@ def get_parent_graph(levels, parents):
             
     return G    
 
-def draw_storyline(
+def draw_incidence_storyline(
     H,
     layout=None,
     layout_kwargs={},
@@ -1101,3 +1108,9 @@ def draw_storyline(
 
     return layout
 
+def draw_incidence_upset(H, *, node_order=None, edge_order=None, **kwargs):
+    return draw_incidence_storyline(
+        H,
+        layout=Layout(H, node_order=node_order, edge_order=edge_order),
+        **kwargs
+    )
