@@ -67,28 +67,33 @@ def temporal_shortest_path(H, source, target, **kwargs):
         weight='weight'
     )
 
-def draw_path(H, edge_order, path, **kwargs):
+def encode_path(
+    path,
+    node_color='black',
+    node_endpoint_color='red',
+    node_linewidth=1,
+    node_path_linewidth=3,
+    edge_facecolor='white',
+    edge_edgecolor='darkgray'
+):
     endpoints = {path[0], path[-1]}
     segments = set(zip(path[:-1], path[1:]))
     
-    return ds.draw_storyline(
-        H,
-        edge_order=edge_order,
+    return dict(
         edges_kwargs=dict(
-            edgecolor='darkgray'
+            edgecolor=edge_edgecolor
         ),
         incidences_kwargs=dict(
             facecolor=defaultdict(
-                lambda: 'white', 
+                lambda: edge_facecolor, 
                 {
-                    i: 'red' if i in endpoints else 'black'
+                    i: node_endpoint_color if i in endpoints and node_endpoint_color is not None else node_color
                     for i in path
                 }
             ),
-            # edgecolor='pink'
         ),
         segments_kwargs=dict(
-            linewidths=lambda seg: 3 if seg in segments else 1
+            linewidths=lambda seg: node_path_linewidth if seg in segments else node_linewidth
         ),
         fill_edges=defaultdict(
             lambda: False,
@@ -96,6 +101,5 @@ def draw_path(H, edge_order, path, **kwargs):
                 i: True
                 for i in path
             }
-        ),
-        **kwargs
+        )
     )
