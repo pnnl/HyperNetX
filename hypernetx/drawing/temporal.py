@@ -34,6 +34,46 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by
     
     return G
 
+def draw_temporal_incidence_graph(G, show_weights=True):
+    G.graph = dict(rankdir='LR')
+
+    # pos = nx.kamada_kawai_layout(G)
+    pos = nx.nx_agraph.graphviz_layout(G, prog='neato')
+
+    def is_incidence(v):
+        return type(v) is tuple
+
+    nx.draw_networkx_nodes(
+        G, pos,
+        node_color='white',
+        edgecolors=[
+            'none' if is_incidence(v) else 'black'
+            for v in G
+        ],
+        node_size=300,
+    )
+    nx.draw_networkx_labels(
+        G, pos,
+        labels={
+            v: f'({v[0]}, {v[1]})' if is_incidence(v) else v
+            for v in G
+        },
+        bbox=dict(color='white', alpha=.25)
+    )
+    nx.draw_networkx_edges(
+        G, pos
+    )
+
+    if show_weights:
+        nx.draw_networkx_edge_labels(
+            G, pos,
+            edge_labels={
+                (u, v): str(d['weight']) if d['weight'] > 0 else ''
+                for u, v, d in G.edges(data=True)
+            },
+            rotate=False
+        )
+
 def multi_source_target_dijkstra(G, sources, targets, **kwargs):
     return min(
         [    
@@ -60,12 +100,25 @@ def find_incidences(H, x):
 def temporal_shortest_path(H, source, target, **kwargs):
     G = create_temporal_incidence_graph(H, **kwargs)
 
-    return multi_source_target_dijkstra(
+    cost, path = multi_source_target_dijkstra(
         G,
         sources=find_incidences(H, source),
         targets=find_incidences(H, target),
         weight='weight'
     )
+
+ 
+    # removes the hyper edges from the path so it is just a sequence of incidences
+
+    # Workaround for issue with `HypergraphView.__contains__` in `hyp_view.py` throwing
+    # ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all() 
+    edges = set(H.edges) 
+
+    return cost, [
+        i
+        for i in path
+        if i not in edges
+    ]
 
 def encode_path(
     path,
@@ -78,6 +131,11 @@ def encode_path(
 ):
     endpoints = {path[0], path[-1]}
     segments = set(zip(path[:-1], path[1:]))
+    edges = set([
+        e1
+        for (e1, _), (e2, _) in zip(path[:-1], path[1:])
+        if e1 == e2
+    ])
     
     return dict(
         edges_kwargs=dict(
@@ -99,7 +157,7 @@ def encode_path(
             lambda: False,
             {
                 i: True
-                for i in path
+                for i in edges
             }
         )
     )
