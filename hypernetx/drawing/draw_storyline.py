@@ -959,7 +959,7 @@ def draw_incidence_storyline(
     layout_kwargs={},
     ax=None,
     fig=None,
-    auto_size=True,
+    auto_size=1.0,
     y_cap_scale=2,
     y_spacing=1,      # unused
     node_radius=None, # unused
@@ -1104,7 +1104,7 @@ def draw_incidence_storyline(
     ax.yaxis.set_ticks([], [])
 
     if auto_size:
-        (fig or plt.gcf()).set_size_inches(*layout.suggest_size())
+        (fig or plt.gcf()).set_size_inches(*(auto_size*layout.suggest_size()))
 
     return layout
 
