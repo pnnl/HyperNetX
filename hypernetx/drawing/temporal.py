@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgb
 
 import hypernetx as hnx
 from hypernetx.drawing import draw_storyline as ds
@@ -6,6 +7,13 @@ from hypernetx.drawing import draw_storyline as ds
 import networkx as nx
 
 from collections import defaultdict
+
+NODE_COLOR = 'black'
+NODE_ENDPOINT_COLOR ='red'
+NODE_LINEWIDTH = 1
+NODE_PATH_LINEWIDTH = 3
+HYPER_EDGE_FACECOLOR = 'white'
+HYPER_EDGE_EDGECOLOR = 'darkgray'
 
 def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by_time=True):
     assert (edge_pos is None) ^ (edge_order is None),\
@@ -25,7 +33,7 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by
             w = 0 if weight_by_time else 1
             
             G.add_edge((e, v), e, weight=w)
-            G.add_edge(e, (e, v), weight=0)
+            G.add_edge(e, (e, v), weight=w)
     
         # temporal/directed edges connecting incidences
         for e1, e2 in zip(edges[:-1], edges[1:]):
@@ -34,44 +42,133 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by
     
     return G
 
-def draw_temporal_incidence_graph(G, show_weights=True):
+def draw_temporal_incidence_graph(
+    G,
+    *,
+    path=None,
+    show_weights=True,
+    show_zero_weight=False,
+    node_color=NODE_COLOR,
+    node_endpoint_color=NODE_ENDPOINT_COLOR,
+    width=NODE_LINEWIDTH,
+    path_width=NODE_PATH_LINEWIDTH,
+    hyper_edge_color=HYPER_EDGE_EDGECOLOR,
+    hyper_edge_font_color='black',
+    weight_font_color='red',
+    incidence_alpha=.85,
+    sm_font=8,
+    md_font=10,
+    lg_font=12,
+    hyper_edge_node_size=300,
+    incidence_node_size=500,
+    ax=None
+):
+    def is_incidence(v):
+        return type(v) is tuple
+    
+    ax = ax or plt.gca()
+        
+    path_nodes = set()
+    path_endpoints = set()
+    path_edges = set()
+    path_hyperedges = set()
+
+    if path is not None:
+        path_nodes = set(path)
+        path_endpoints = {path[0], path[-1]}
+        
+        for (e1, v1), (e2, v2) in zip(path[:-1], path[1:]):
+            if e1 == e2:
+                path_hyperedges.add(e1)
+
+            if v1 == v2:
+                path_edges.add(((e1, v1), (e2, v2)))
+            else:
+                path_edges.add(((e1, v1), e2))
+                path_edges.add((e2, (e2, v2)))
+
     G.graph = dict(rankdir='LR')
 
     # pos = nx.kamada_kawai_layout(G)
     pos = nx.nx_agraph.graphviz_layout(G, prog='neato')
 
-    def is_incidence(v):
-        return type(v) is tuple
+    sizes = [
+        incidence_node_size if is_incidence(v) else hyper_edge_node_size
+        for v in G
+    ]
 
     nx.draw_networkx_nodes(
         G, pos,
-        node_color='white',
-        edgecolors=[
-            'none' if is_incidence(v) else 'black'
+        node_color=[
+            hyper_edge_color if v in path_hyperedges else 'none'
             for v in G
         ],
-        node_size=300,
+        edgecolors=[
+            'none' if is_incidence(v) else hyper_edge_color
+            for v in G
+        ],
+        node_size=sizes,
+        ax=ax
     )
+
+    # edges
     nx.draw_networkx_labels(
         G, pos,
+        font_color=hyper_edge_font_color,
+        # font_weight='bold',
+        font_size=lg_font,
         labels={
-            v: f'({v[0]}, {v[1]})' if is_incidence(v) else v
+            v: v
             for v in G
+            if not is_incidence(v)
         },
-        bbox=dict(color='white', alpha=.25)
+        ax=ax
     )
+
+    def get_incidence_colors(v):
+        if v in path_endpoints:
+            return (node_endpoint_color, node_color)
+        elif v in path_nodes:
+            return (node_color, 'white')
+        return ('white', node_color)
+
+    # incidences
+    for v in G:
+        if is_incidence(v):
+            fc, ec  = get_incidence_colors(v)
+            ax.annotate(
+                ', '.join(map(str, v)), pos[v],
+                va='center', ha='center',
+                fontsize=md_font,
+                color=ec,
+                bbox=dict(
+                    facecolor=(*to_rgb(fc), incidence_alpha),
+                    edgecolor=ec
+                )
+            )
+
     nx.draw_networkx_edges(
-        G, pos
+        G, pos,
+        width=[
+            path_width if e in path_edges else width
+            for e in G.edges()
+        ],
+        node_size=sizes,
+        ax=ax
     )
 
     if show_weights:
         nx.draw_networkx_edge_labels(
             G, pos,
             edge_labels={
-                (u, v): str(d['weight']) if d['weight'] > 0 else ''
+                (u, v): str(d['weight']) if d['weight'] > 0 or show_zero_weight else ''
                 for u, v, d in G.edges(data=True)
             },
-            rotate=False
+            font_color=weight_font_color,
+            font_weight='bold',
+            font_size=sm_font,
+            rotate=False,
+            ax=ax
         )
 
 def multi_source_target_dijkstra(G, sources, targets, **kwargs):
@@ -97,7 +194,7 @@ def find_incidences(H, x):
         return [(e, x) for e in H.nodes[x]]
     return []
 
-def temporal_shortest_path(H, source, target, **kwargs):
+def temporal_shortest_path(H, source, target, return_graph=False, **kwargs):
     G = create_temporal_incidence_graph(H, **kwargs)
 
     cost, path = multi_source_target_dijkstra(
@@ -113,12 +210,16 @@ def temporal_shortest_path(H, source, target, **kwargs):
     # Workaround for issue with `HypergraphView.__contains__` in `hyp_view.py` throwing
     # ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all() 
     edges = set(H.edges) 
-
-    return cost, [
+    path = [
         i
         for i in path
         if i not in edges
     ]
+
+    if return_graph:
+        return cost, path, G
+    
+    return cost, path
 
 def encode_path(
     path,
