@@ -109,14 +109,11 @@ def create_star_wars():
 
     return create_ordered_hypergraph_with_kwargs(
         dict(enumerate(events)),
-        nodes_kwargs={
-            'edgecolor': node_colors
-        },
-        edges_kwargs={
-            'edgecolor': None,
-            'facecolor': rgb(211, 211, 211)
-        },
-        edge_labels=edge_labels
+        nodes_kwargs={'edgecolor': node_colors},
+        edges_kwargs={'edgecolor': None, 'facecolor': rgb(211, 211, 211)},
+        edge_labels=edge_labels,
+        edge_labels_on_axis=False,
+        edge_labels_kwargs=dict(fontsize=6, backgroundcolor=(1, 1, 1, 0.5)),
     )
 
 
