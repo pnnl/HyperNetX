@@ -15,15 +15,20 @@ NODE_PATH_LINEWIDTH = 3
 HYPER_EDGE_FACECOLOR = 'white'
 HYPER_EDGE_EDGECOLOR = 'darkgray'
 
-def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by_time=True):
+def get_edge_pos(edge_order, edge_pos):
     assert (edge_pos is None) ^ (edge_order is None),\
-        'Exactly one of edge_pos and edge_order must be specified'
-    
+            'Exactly one of edge_pos and edge_order must be specified'
+        
     if edge_pos is None:
         edge_pos = {
             v: i
             for i, v in enumerate(edge_order)
         }
+
+    return edge_pos
+
+def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by_time=True):
+    edge_pos = get_edge_pos(edge_order, edge_pos)
 
     G = nx.DiGraph()
     
@@ -42,9 +47,18 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by
     
     return G
 
+def default_layout(G):
+    try:
+        return nx.nx_agraph.graphviz_layout(G, prog='neato')
+    except:
+        return nx.kamada_kawai_layout(G, weight=None)
+
+
 def draw_temporal_incidence_graph(
     G,
     *,
+    pos=None,
+    layout=default_layout,
     path=None,
     show_weights=True,
     show_zero_weight=False,
@@ -89,8 +103,8 @@ def draw_temporal_incidence_graph(
 
     G.graph = dict(rankdir='LR')
 
-    # pos = nx.kamada_kawai_layout(G)
-    pos = nx.nx_agraph.graphviz_layout(G, prog='neato')
+    if pos is None:
+        pos = layout(G)
 
     sizes = [
         incidence_node_size if is_incidence(v) else hyper_edge_node_size
@@ -262,3 +276,53 @@ def encode_path(
             }
         )
     )
+
+def create_temporal_line_graph(H, edge_order=None, edge_pos=None, weight_by_time=True):
+    edge_pos = get_edge_pos(edge_order, edge_pos)
+
+    def create_edge(e):
+        u, v = sorted(e, key=edge_pos.get)
+        d = dict(
+            weight=edge_pos[v] - edge_pos[u] if weight_by_time else 1
+        )
+        
+        return u, v, d
+
+    L = nx.DiGraph()
+    L.add_edges_from(map(create_edge, H.get_linegraph().edges()))
+
+    return L
+
+def draw_temporal_line_graph(G, pos=None, layout=default_layout, path=[], labels={}):
+    if pos is None:
+        pos = layout(G)
+
+    path_edges = set(zip(path[:-1], path[1:]))
+    
+    nx.draw_networkx_nodes(G, pos)
+
+    nx.draw_networkx_labels(
+        G, pos,
+        labels={
+            v: labels.get(v, v)
+            for v in G
+        }
+    )
+
+    nx.draw_networkx_edges(
+        G, pos,
+        width=[
+            3 if e in path_edges else 1
+            for e in G.edges()
+        ]
+    )
+    
+    nx.draw_networkx_edge_labels(
+        G, pos,
+        edge_labels={
+            (u, v): d['weight']
+            for u, v, d in G.edges(data=True)
+        }
+    )
+
+    return pos
