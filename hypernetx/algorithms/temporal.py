@@ -27,23 +27,36 @@ def get_edge_pos(edge_order, edge_pos):
 
     return edge_pos
 
-def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, weight_by_time=True):
+def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='quick'):
     edge_pos = get_edge_pos(edge_order, edge_pos)
+
+    if method == 'quick':
+        def weight_func(u, v):
+            if u in edge_pos or v in edge_pos:
+                return 0
+            
+            return edge_pos[v[0]] - edge_pos[u[0]]
+
+    elif method == 'short':
+        def weight_func(u, v):
+            if u in edge_pos or v in edge_pos:
+                return 1
+            return 0
+    else:
+        assert True, 'Method must be "quick", "fast", or a function'
+        weight_func = method
 
     G = nx.DiGraph()
     
     for v in H.nodes():
         edges = sorted(H.nodes[v], key=edge_pos.get)
         for e in edges:
-            w = 0 if weight_by_time else 1
-            
-            G.add_edge((e, v), e, weight=w)
-            G.add_edge(e, (e, v), weight=w)
+            G.add_edge((e, v), e, weight=weight_func((e, v), e))
+            G.add_edge(e, (e, v), weight=weight_func(e, (e, v)))
     
         # temporal/directed edges connecting incidences
         for e1, e2 in zip(edges[:-1], edges[1:]):
-            w = edge_pos[e2] - edge_pos[e1] if weight_by_time else 0
-            G.add_edge((e1, v), (e2, v), weight=w)
+            G.add_edge((e1, v), (e2, v), weight=weight_func((e1, v), (e2, v)))
     
     return G
 
