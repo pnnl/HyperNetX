@@ -1104,7 +1104,9 @@ def draw_incidence_storyline(
     ax.yaxis.set_ticks([], [])
 
     if auto_size:
-        (fig or plt.gcf()).set_size_inches(*(auto_size*layout.suggest_size()))
+        suggested_size = layout.suggest_size()
+        actual_size = auto_size*suggested_size
+        (fig or plt.gcf()).set_size_inches(*actual_size)
 
     return layout
 
