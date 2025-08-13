@@ -17,6 +17,28 @@ HYPER_EDGE_EDGECOLOR = 'darkgray'
 
 
 def get_edge_pos(edge_order, edge_pos):
+    """
+    Helper function to convert edge_order into edge_pos
+
+    If edge_order is not None, each edge is assigned a position of
+        0, 1, ..., n - 1
+
+    If edge_pos is not None, edge_pos returned
+
+    Parameters
+    ----------
+    edge_pos: dict
+        mapping of hyper edges to an int/float representing the edge timestamp
+    edge_order: list
+        list specifying the temporal order of edges
+
+    Returns
+    ----------
+    dict
+        mapping of hyper edges to a numerical/temporal value
+
+    """
+
     assert (edge_pos is None) ^ (
         edge_order is None
     ), 'Exactly one of edge_pos and edge_order must be specified'
@@ -28,6 +50,39 @@ def get_edge_pos(edge_order, edge_pos):
 
 
 def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='quick'):
+    """
+    Convert an edge ordered hypergraph into a temporal incidence graph
+
+    This method constructs and weights a temporal incidence graph that is then
+    used to compute temporal shortest hypergraph paths. Nodes in this graph
+    are either incidences, i.e. (hyper edge, node) tuples, or hyper edges.
+
+    Edges are created between temporally adjacent incidences sharing the same
+    hyper node, or between incidences sharing the same hyper edge.
+
+    Exactly of edge_pos or edge_order must be provided. If edge_order is
+    provided, edge_pos is inferred from this.
+
+    Parameters
+    ----------
+    H: networkx.DiGraph
+        the edge ordered Hypergraph
+    edge_pos: dict
+        mapping of hyper edges to an int/float representing the edge timestamp
+    edge_order: list
+        list specifying the temporal order of edges
+    method: str or func
+        the weighting method; if a string is passed, should be either 'quick'
+        or 'fast'. If a func is passed, that function will find the weight
+        of each edge in the constructed graph.
+
+    Returns
+    ----------
+    networkx.DiGraph
+        the constructed graph
+
+    """
+
     edge_pos = get_edge_pos(edge_order, edge_pos)
 
     if method == 'quick':
@@ -65,6 +120,24 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='q
 
 
 def default_layout(G):
+    """
+    Default layout function used by `draw_temporal_incidence_graph`
+
+    Attempts to render using GraphViz layout. If that fails, e.g. due to the
+    package dependencies not being installed, defaults to using the NetworkX
+    `kamada_kawai_layout`.
+
+    Parameters
+    ----------
+    G: networkx.DiGraph
+        the graph to be positioned
+
+    Returns
+    ----------
+    dict
+        mapping of graph nodes to (x, y) coordinates
+    """
+
     try:
         return nx.nx_agraph.graphviz_layout(G, prog='neato')
     except:
@@ -94,6 +167,59 @@ def draw_temporal_incidence_graph(
     incidence_node_size=500,
     ax=None
 ):
+    """
+    Node-link visualization of temporal incidence graph
+
+    This is a visualization of the underlying graph structure used to solve
+    the temporal hypergraph shortest path problem. The intended use of this
+    visualization is to show the edge weights, direction, incidence
+    information, and path to help illustrate the concept of the temporal
+    hypergraph path.
+
+    Parameters
+    ----------
+    G: networkx.DiGraph
+        the temporal incidence graph to be drawn
+    pos: dict
+        the location of the nodes to be drawn
+    layout: func
+        the algorithm to layout the nodes if pos=None
+    path: list
+        the list of incidences to highlight in the drawing
+    show_weights: Boolean
+        if True, shows the edge weights in the drawing
+    show_zero_weight: Boolean
+        if False, weights with value of 0 are not shown
+    node_color: color
+        color for incidences, drawn as graph nodes
+    node_endpoint_color: color
+        color to indicate the beginning and end of the path
+    width: float
+        thickness of edges in the diagram
+    path_width: float
+        thickness of edges belonging to the path, overrides width
+    hyper_edge_color: color
+        color of hyper edges, drawn as graph nodes
+    hyper_edge_font_color: color
+        color of text label for hyper edges
+    weight_font_color: color
+        color of text labeling edges
+    incidence_alpha: float
+        transparency of incidence nodes
+    sm_font: int
+        small font size
+    md_font: int
+        medium font size
+    lg_font: int
+        large font size
+    hyper_edge_node_size: float
+        area of hyper edges drawn as graph nodes
+    incidence_node_size
+        area of incidences; used only for placement of edge endpoints
+    ax: matplotlib.axis.Axis
+        axis to render the visualization
+    """
+
     def is_incidence(v):
         return type(v) is tuple
 
@@ -193,6 +319,31 @@ def draw_temporal_incidence_graph(
 
 
 def multi_source_target_dijkstra(G, sources, targets, **kwargs):
+    """
+    Wrapper for networkx `multi_source_dijkstra` that allows multiple sources or targets
+
+    Calls `networkx.multi_source_dijkstra` in a loop over each target and
+    returns the path that minimizes cost. The result will be a path where the
+    starting node belongs to one of the specified sources and the ending node
+    belongs to one of the specified targets.
+
+    Parameters
+    ----------
+    G: networkx.DiGraph
+        the graph to be computed over
+
+    sources: list
+        starting nodes for the shortest path to consider
+
+    targets: list
+        ending nodes for the shortest path to consider
+
+    Returns
+    ----------
+    list, number
+        the shortest path and its cost
+    """
+
     return min(
         [
             nx.multi_source_dijkstra(G, sources=sources, target=t, **kwargs)
@@ -203,6 +354,31 @@ def multi_source_target_dijkstra(G, sources, targets, **kwargs):
 
 
 def find_incidences(H, x):
+    """
+    A flexible way to retrieve incidences for an object
+
+    If a node is passed, the function returns all incidences containing that
+    node. Likewise, if an edge is passed, the function returns all incidences
+    containing that edge. If an incidence is passed, that incidence is
+    returned in a list.
+
+    This function is used by `temporal_shortest_path` to allow flexible source
+    and target input parameters.
+
+    Parameters
+    ----------
+    H: hypernetx.Hypergraph
+        the hypergraph
+
+    x: node, edge, or incidence
+        The seed to find related incidences for
+
+    Returns
+    ----------
+    list
+        a list of incidences in the form of (edge, node) tuples
+    """
+
     if type(x) is tuple:
         return [x]
     elif x in H.edges:
@@ -213,6 +389,33 @@ def find_incidences(H, x):
 
 
 def temporal_shortest_path(H, source, target, return_graph=False, **kwargs):
+    """
+    Solves the temporal hypergraph shrotest path problem
+
+    Calls `create_temporal_incidence_graph` to construct the graph, then calls
+    `multi_source_target_dijkstra` to find the shortest path.
+
+    Parameters
+    ----------
+    H: hypernetx.Hypergraph
+        the hypergraph
+
+    source: edge, node, or incidence
+
+    target: edge, node or incidence
+
+    return_graph: Boolean
+        if True, the graph create by `create_temporal_incidence_graph` is also returned
+
+    **kwargs:
+        additional keyword arguments are passed through `create_temporal_incidence_graph`
+
+    Returns
+    ----------
+    list, number, [networkx.DiGraph]
+        the shortest path and its cost, and optionally, the temporal incidence graph
+    """
+
     G = create_temporal_incidence_graph(H, **kwargs)
 
     cost, path = multi_source_target_dijkstra(
@@ -244,6 +447,53 @@ def encode_path(
     edge_facecolor='white',
     edge_edgecolor='darkgray',
 ):
+    """
+    Create an object that defines `hypernetx.drawing.draw_incidence_*` the
+    keyword arguments to highlight the given path.
+
+    By default, the path will have red endpoints and the line representing the
+    path will be thicker. Incidences that are part of the path will be filled
+    with black, otherwise the fill will be white. Edges that are not part of
+    the path will not be filled.
+
+    Usage
+    ----------
+    The code snippet will find a the temporal shortest path given a hypergraph,
+    source, target, and edge order.
+
+        >>> from hypernetx.algorithms.temporal import encode_path, temporal_shortest_path
+        >>> from hypernetx import draw_incidence_storyline
+        >>> cost, path = temporal_shortest_path(H, source, target, edge_order=edge_order)
+        >>> draw_incidence_storyline(H,  edge_order=edge_order, **encode_path(path))
+
+    Parameters
+    ----------
+    path: list
+        list of incidences to highlight in the hypergraph
+
+    node_color: str
+
+    node_endpoint_color: color
+        The fill color for the start and end of the path
+
+    node_linewidth: number
+        The default width of lines representing nodes
+
+    node_path_linewidth: number
+        The widht of liens representing nodes that are in the path, overriding the above parameter
+
+    edge_facecolor: color
+        The fill color of edges (and incidences) not in the path
+
+    edge_edgecolor: color
+        The stroke color of all edges
+
+    Returns
+    ----------
+    list
+        a list of incidences in the form of (edge, node) tuples
+    """
+
     endpoints = {path[0], path[-1]}
     segments = set(zip(path[:-1], path[1:]))
     edges = set([e1 for (e1, _), (e2, _) in zip(path[:-1], path[1:]) if e1 == e2])
