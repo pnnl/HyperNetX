@@ -539,6 +539,36 @@ def encode_path(
 
 
 def create_temporal_line_graph(H, edge_order=None, edge_pos=None, weight_by_time=True):
+    """
+    Create a weighted directed line graph as an alternative for solving the
+    temporal hypergraph shortest path problem
+
+    The line graph contains an edge between each pair of hyperedges that share a
+    node. The line graph return is directed based on the edge order, such that
+    the source node in the line graph is a hyper edge that occurs before the
+    target node in the line graph (also a hyper edge), as defined by the
+    `edge_order` or `edge_pos` parameters.
+
+    This function calls `hypernetx.Hypergraph.get_linegraph` to retrieve the
+    edges and then directs these edges based on the hypergraph edge ordering.
+
+    Parameters
+    ----------
+    H: hypernetx.Hypergraph
+        The hypergraph to construct the line graph from
+    edge_pos: dict
+        mapping of hyper edges to an int/float representing the edge timestamp
+    edge_order: list
+        list specifying the temporal order of edges
+    weight_by_time: Boolean
+        if True, the edges in the line graph are weighted by the time difference in the hypergraph
+
+    Returns
+    ----------
+    networkx.DiGraph
+        a directed line graph used to solve the temporal hypergraph shortest path problem
+    """
+
     edge_pos = get_edge_pos(edge_order, edge_pos)
 
     def create_edge(e):
@@ -554,6 +584,30 @@ def create_temporal_line_graph(H, edge_order=None, edge_pos=None, weight_by_time
 
 
 def draw_temporal_line_graph(G, pos=None, layout=default_layout, path=[], labels={}):
+    """
+    Convenience functiocn to draw the temporal line graph
+
+    This function uses the `networkx.draw_networkx_*` functions to render the
+
+    Parameters
+    ----------
+    G: networkx.DiGraph
+        The line graph to draw
+    pos: dict
+        the (x, y) coordinates of the nodes in the line graph
+    layout: function
+        the layout algorithm to compute pos, if pos is None
+    path: list
+        list of hyper edges denoting a path to highlight in the drawing
+    labels: dict
+        mapping of nodes in the line graph (hyperedges) to their string labels to be used in the drawing
+
+    Returns
+    ----------
+    dict
+        the position of the nodes which may have been computed by the layout function passed in
+    """
+
     if pos is None:
         pos = layout(G)
 
