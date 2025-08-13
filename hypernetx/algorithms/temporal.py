@@ -440,12 +440,12 @@ def temporal_shortest_path(H, source, target, return_graph=False, **kwargs):
 
 def encode_path(
     path,
-    node_color='black',
-    node_endpoint_color='red',
-    node_linewidth=1,
-    node_path_linewidth=3,
-    edge_facecolor='white',
-    edge_edgecolor='darkgray',
+    node_color=NODE_COLOR,
+    node_endpoint_color=NODE_ENDPOINT_COLOR,
+    node_linewidth=NODE_LINEWIDTH,
+    node_path_linewidth=NODE_PATH_LINEWIDTH,
+    edge_facecolor=HYPER_EDGE_FACECOLOR,
+    edge_edgecolor=HYPER_EDGE_EDGECOLOR,
 ):
     """
     Create an object that defines `hypernetx.drawing.draw_incidence_*` the
