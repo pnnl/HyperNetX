@@ -170,6 +170,26 @@ class Layout:
 
 
 def collapse_graph(G, mapping=None, partition=None, create_using=nx.Graph, **kwargs):
+    """
+    Construct a new graph from an input graph where sets of nodes are collapsed into super nodes
+
+    Parameters
+    ----------
+    mapping: dict
+        node -> collapsed node mapping
+    partition: list
+        list of lists of nodes
+    create_using: nx.Graph, nx.DiGraph, etc.
+        how to construct the new collapsed graph
+    **kwargs: dict
+        aggregation functions to weight the collapsed graph
+
+    Returns
+    -------
+    networkx.Graph
+        the collapsed graph
+
+    """
     assert (mapping is not None) ^ (
         partition is not None
     ), "Exactly one of mapping or partition must not be None."
@@ -208,6 +228,27 @@ def collapse_graph(G, mapping=None, partition=None, create_using=nx.Graph, **kwa
 
 
 def spectral_ordering_with_collapse(G, **kwargs):
+    """
+    Order the nodes in the graph using the networkx.spectral_ordering on the collapsed graph
+
+    This collapses the input graph before ordering in order to better handle
+    certain cases where spectral ordering leads to obviously fix-able crossings or
+    other misorderings.
+
+    Parameters
+    ----------
+    G: networkx.Graph
+        the graph to order
+    **kwargs: dict
+        aggregators to pass to collapse_graph
+
+    Returns
+    -------
+    list
+        ordered nodes of G
+
+    """
+
     S = nx.Graph()
     S.add_nodes_from(G)
 
@@ -499,6 +540,23 @@ class SvenStoryline(Layout):
 
 
 def get_crossing_graph(levels):
+    """
+    Returns a graph where an edge in the graph represents a crossing.
+
+    A crossing is simply two nodes found in adjacent levels having a different
+    order in one level compared to the other.
+
+    Parameters
+    ----------
+    levels: list of lists
+        The levels to search for crossings in
+
+    Returns
+    -------
+    networkx.Graph
+        the crossing graph
+
+    """
 
     G = nx.Graph()
 
@@ -518,36 +576,63 @@ def get_crossing_graph(levels):
     return G
 
 
-def independent_set_maximal_resample(G, seed=123456789):
-    def retry_mis(Gi):
-        n = Gi.number_of_edges()
-        n_retries = max(1, int(np.ceil(np.log2(n + 1))))
+# def independent_set_maximal_resample(G, seed=123456789):
+#     def retry_mis(Gi):
+#         n = Gi.number_of_edges()
+#         n_retries = max(1, int(np.ceil(np.log2(n + 1))))
 
-        sets = [nx.maximal_independent_set(Gi, seed=seed + i) for i in range(n_retries)]
+#         sets = [nx.maximal_independent_set(Gi, seed=seed + i) for i in range(n_retries)]
 
-        mis = max(sets, key=len)
+#         mis = max(sets, key=len)
 
-        if n_retries > 1:
-            lens = list(map(len, sets))
-            print(f'R{n} = {n_retries} : {max(lens) - min(lens)}')
-            print(mis)
+#         if n_retries > 1:
+#             lens = list(map(len, sets))
+#             print(f'R{n} = {n_retries} : {max(lens) - min(lens)}')
+#             print(mis)
 
-        return mis
+#         return mis
 
-    return [
-        v for ci in nx.connected_components(G) for v in retry_mis(nx.subgraph(G, ci))
-    ]
+#     return [
+#         v for ci in nx.connected_components(G) for v in retry_mis(nx.subgraph(G, ci))
+#     ]
 
 
-def independent_set_maximum(G):
-    return [
-        v
-        for ci in nx.connected_components(G)
-        for v in nx.approximation.maximum_independent_set(nx.subgraph(G, ci))
-    ]
+# def independent_set_maximum(G):
+#     return [
+#         v
+#         for ci in nx.connected_components(G)
+#         for v in nx.approximation.maximum_independent_set(nx.subgraph(G, ci))
+#     ]
 
 
 def greedy_mwis(G, weight='weight', copy=True):
+    """
+    An approximate solution to the maximum weighted independent set (MWIS) problem.
+
+    The maximum weighted independent set problem aims to find the set of nodes
+    with the largest weight in a graph where no node in the set is connected to
+    any other node. Each node is assumed to have an arbitrary positive weight.
+
+    This algorithm uses a greedy heuristic based on the graph laplacian. The
+    node with the largest laplacian is added to the set first and removed from
+    the graph. Then the laplacian is recomputed and the next node is chosen.
+
+    Parameters
+    ----------
+    G: networkx.Graph
+        the graph to solve
+    weight: str
+        field where weights are stored on nodes in the graph
+    copy: bool
+        conststruct a copy of the input graph, because the algorithm destroys the graph during the optimization
+
+    Returns
+    -------
+    set
+        a subset of the nodes in G and an approximate solution to the MWIS problem
+
+    """
+
     if copy:
         G = G.copy()
 
@@ -580,18 +665,6 @@ def greedy_mwis(G, weight='weight', copy=True):
     return s
 
 
-def get_parent_graph(levels, parents):
-
-    G = nx.DiGraph()
-    G.add_nodes_from(parents.values())
-
-    for i, lev in enumerate(map(list, levels)):
-        for u, v in zip(lev[:-1], lev[1:]):
-            G.add_edge(parents[(u, i)], parents[(v, i)])
-
-    return G
-
-
 def draw_incidence_storyline(
     H,
     layout=None,
@@ -616,6 +689,95 @@ def draw_incidence_storyline(
     edge_labels_on_axis=True,
     incidences_kwargs={},
 ):
+    """
+    Draw a hypergraph as a Storyline with Matplotlib--useful for edge ordered hypergraphs
+
+    This drawing has four main elements:
+    * Nodes: drawn as horizontal-ish lines that can bend
+    * Edges: drawin as vertical rounded rectangles
+    * Incidences: the intersection of a node and an edge drawn as a circle
+    * Segments: the portion of a node beetween two incidences
+
+    These elements can be flexibly encoded using the same approach for the
+    `hypernetx.draw` method. For example, the following code will set the color
+    of all nodes to pink:
+
+    >>> hypernetx.draw_incidence_storyline(
+    >>>     H,
+    >>>     edges_kwargs=dict(color='pink')
+    >>> )
+
+    More on this can be found in the tutorials.
+
+    The default layout algorithm is SvenStoryline, which is based on "Storyline
+    Visualization of Events on a Network" (SVEN) [1]. This algorithm can be
+    controlled by passing parameters into the `layout_kwargs` parameter.
+
+    For example:
+    * allow_node_crossings: set to True to allow storylines to cross each other
+    * allow_edge_crossings: set to True to allow storylines to cross edges
+
+    One of the two above parameters must be true.
+
+    Custom layouts should inherit the Layout class and are passed in using the
+    layout parameter.
+
+    Parameters
+    ----------
+    H: hnx.Hypergraph
+        the entity to be drawn
+    layout: function
+        layout algorithm to compute
+    layout_kwargs: dict
+        keyword arguments passed to layout function
+    ax: matplotlib.axis.Axis
+        axis on which the plot is rendered; if None, uses plt.gca()
+    fig: matplotlib.figure.Figure
+        figure on which the plot is rendered; if None, uses plt.gcf()
+    auto_size: float
+        automatically size and scale the figure based on layout; if None, the figure is not resize
+    y_cap_scale: float
+        adjust pointy-ness of circles drawn on top of edges to adjust distortion caused by figure aspect ratio
+    edge_order: list
+        order to place edges on the x-axis
+    node_order: list
+        suggested ordering of nodes--not necessarily respected because nodes' lines can cross
+    node_labels: list, dict, or function
+        labels to use for nodes
+    edge_labels: list, dict, or function
+        labels to use for edges
+    with_edge_labels: bool
+        set to False to make edge labels invisible
+    with_node_labels: bool
+        set to False to make node labels invisible
+    fill_edges: bool
+        set to True to fill set the facecolor of edges to a lighter version of the edgecolor if no facecolor is otherwise specified
+    fill_edge_alpha: float
+        amount to add to the alpha channel when filling edges. Should be between -1 and 0, causing a decrease in alpha
+    edges_kwargs: dict
+        keyword arguments passed to matplotlib.collections.PolyCollection for edges
+    nodes_kwargs: dict
+        keyword arguments passed to matplotlib.collections.LineCollection for nodes
+    segments_kwargs: dict
+        keyword arguments passed to matplotlib.collections.LineCollection for segments (overrides nodes_kwargs)
+    edge_labels_kwargs: dict
+        keyword arguments passed to matplotlib.annotate for edge labels
+    node_labels_kwargs: dict
+        keyword argumetns passed to matplotlib.annotate for node labels
+    edge_labels_on_axis: bool
+        when True, draws edge labels on x-axis ticks; otherwise draws edge labels close to the bottom of the edge
+    incidences_kwargs: dict
+        keyword arguments passed to matplotlib.collections.EllipseCollection for incidences
+
+    Returns
+    -------
+    Layout
+        the layout object used to position the storylines
+
+    References
+    ----------
+    [1] Arendt, Dustin L., and Leslie M. Blaha. "SVEN: Informative visual representation of complex dynamic structure." arXiv preprint arXiv:1412.6706 (2014).
+    """
     ax = ax or plt.gca()
 
     edges_kwargs = add_edge_defaults(H, edges_kwargs)
@@ -754,6 +916,34 @@ def draw_incidence_storyline(
 
 
 def draw_incidence_upset(H, *, node_order=None, edge_order=None, **kwargs):
+    """
+    Draw a hypergraph as an UpSet [1] like diagram with Matplotlib
+
+    This uses a spectral ordering of the nodes and edges calculated by `Layout`
+    to determine the position of nodes and edges. It is similar to the UpSet
+    visulization technique, and is a special case of the storyline layout
+    technique.
+
+    Parameters
+    ----------
+    H: hypernetx.Hypergraph
+    node_order: list
+        order to place nodes on the y-axis
+    edge_order: list
+        order to place edges on the x-axis
+    **kwargs: dict
+        passed through to hypernetx.drawing.draw_incidence_storyline
+
+    Returns
+    -------
+    Layout
+        the layout object used to position the storylines
+
+    References
+    ----------
+    [1] Lex, Alexander, et al. "UpSet: visualization of intersecting sets." IEEE transactions on visualization and computer graphics 20.12 (2014): 1983-1992.
+
+    """
     return draw_incidence_storyline(
         H, layout=Layout(H, node_order=node_order, edge_order=edge_order), **kwargs
     )
