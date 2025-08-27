@@ -39,6 +39,27 @@ from collections import defaultdict
 import itertools as it
 from scipy.sparse import csr_matrix
 
+__all__ = [
+    'kchainbasis',
+    'bkMatrix',
+    'swap_rows',
+    'swap_columns',
+    'add_to_row',
+    'add_to_column',
+    'logical_dot',
+    'logical_matmul',
+    'matmulreduce',
+    'logical_matadd',
+    'smith_normal_form_mod2',
+    'reduced_row_echelon_form_mod2',
+    'boundary_group',
+    'chain_complex',
+    'betti',
+    'betti_numbers',
+    'homology_basis',
+    'hypergraph_homology_basis',
+    'interpret',
+]
 
 def kchainbasis(h, k):
     """
