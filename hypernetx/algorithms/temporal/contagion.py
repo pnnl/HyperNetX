@@ -3,7 +3,7 @@ import numpy as np
 from collections import defaultdict
 from collections import Counter
 import hypernetx as hnx
-from hypernetx.algorithms.modules import has_optional_dependency
+from ...algorithms.modules import has_optional_dependency
 
 __ALL__ = [
     'contagion_animation',
