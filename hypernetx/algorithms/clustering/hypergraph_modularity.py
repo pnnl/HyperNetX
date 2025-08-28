@@ -18,6 +18,18 @@ import pandas as pd
 import itertools
 from scipy.stats import binom
 
+__ALL__ = [
+    # 'dict2part',
+    # 'part2dict',
+    'linear',
+    'majority',
+    'strict',
+    'modularity',
+    'two_section',
+    'kumar',
+    'last_step',
+]
+
 ################################################################################
 
 # we use 2 representations for partitions (0-based part ids):

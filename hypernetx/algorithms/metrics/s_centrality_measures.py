@@ -22,6 +22,14 @@ import warnings
 import sys
 from functools import partial
 
+__all__ = [
+    's_betweenness_centrality',
+    's_harmonic_closeness_centrality',
+    's_harmonic_centrality',
+    's_closeness_centrality',
+    's_eccentricity',
+]
+
 try:
     import nwhy
 

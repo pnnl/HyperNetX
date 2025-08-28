@@ -13,6 +13,14 @@ import math
 import random
 from concurrent.futures import ThreadPoolExecutor
 
+__ALL__ = [
+    'greedy_matching',
+    'maximal_matching',
+    'iterated_sampling',
+    'HEDCS_matching',
+    'approximation_matching_checking',
+]
+
 
 def approximation_matching_checking(optimal: list, approx: list) -> bool:
     """

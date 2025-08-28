@@ -4,6 +4,17 @@ from collections import defaultdict
 from collections import Counter
 import hypernetx as hnx
 
+__ALL__ = [
+    'contagion_animation',
+    'collective_contagion',
+    'individual_contagion',
+    'threshold',
+    'majority_vote',
+    'discrete_SIR',
+    'discrete_SIS',
+    'Gillespie_SIR',
+    'Gillespie_SIS',
+]
 
 def contagion_animation(
     fig,
