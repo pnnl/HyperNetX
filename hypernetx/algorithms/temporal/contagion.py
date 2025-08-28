@@ -3,6 +3,7 @@ import numpy as np
 from collections import defaultdict
 from collections import Counter
 import hypernetx as hnx
+from hypernetx.algorithms.modules import has_optional_dependency
 
 __ALL__ = [
     'contagion_animation',
@@ -16,6 +17,7 @@ __ALL__ = [
     'Gillespie_SIS',
 ]
 
+@has_optional_dependency()
 def contagion_animation(
     fig,
     H,
@@ -76,13 +78,7 @@ def contagion_animation(
         >>> HTML(animation.to_jshtml())
     """
 
-    try:
-        from celluloid import Camera
-    except ModuleNotFoundError as e:
-        raise Exception(
-            f"If you need to use {__name__}, please install additional packages by running the "
-            f"following command: pip install celluloid"
-        ) from e
+    from celluloid import Camera
 
     nodeState = defaultdict(lambda: "S")
 
