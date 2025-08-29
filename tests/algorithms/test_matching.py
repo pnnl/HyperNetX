@@ -7,14 +7,13 @@ Date: 22.5.2024
 
 import pytest
 from hypernetx.classes.hypergraph import Hypergraph
-from hypernetx.algorithms.matching_algorithms import (
+from hypernetx.algorithms.matching.matching_algorithms import (
     greedy_matching,
     HEDCS_matching,
     MemoryLimitExceededError,
     approximation_matching_checking,
+    iterated_sampling
 )
-from hypernetx.algorithms.matching_algorithms import iterated_sampling
-
 
 def test_greedy_d_approximation_empty_input():
     """
