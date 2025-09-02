@@ -42,11 +42,8 @@ def transpose_inflated_kwargs(inflated):
     return [dict(zip(inflated, v)) for v in zip(*inflated.values())]
 
 
-
 def inflate_labels(entities, labels, labels_kwargs):
-    labels_inflated = (
-        entities if labels is None else inflate(entities, labels)
-    )
+    labels_inflated = entities if labels is None else inflate(entities, labels)
 
     if len(labels_kwargs) > 0:
         labels_kwargs_inflated = transpose_inflated_kwargs(
@@ -56,6 +53,7 @@ def inflate_labels(entities, labels, labels_kwargs):
         labels_kwargs_inflated = [{}] * len(entities)
 
     return zip(labels_inflated, labels_kwargs_inflated)
+
 
 def get_collapsed_size(v):
     try:

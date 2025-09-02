@@ -439,10 +439,10 @@ class SvenStoryline(Layout):
         for (v, i), d in self.Gc.nodes(data=True):
             left = self.is_dummy_node((v, i))
             right = self.is_dummy_node((v, i + 1))
-            d['weight'] = self.dummy_non_dummy_weight if (not left) and right else 1.0
+            d["weight"] = self.dummy_non_dummy_weight if (not left) and right else 1.0
 
         # clear nodes with weight of zero, which could happen if `dummy_non_dummy_weight` is passed as 0.0
-        zero_weight = [v for v, d in self.Gc.nodes(data=True) if d['weight'] == 0.0]
+        zero_weight = [v for v, d in self.Gc.nodes(data=True) if d["weight"] == 0.0]
 
         self.Gc.remove_nodes_from(zero_weight)
 
@@ -457,7 +457,7 @@ class SvenStoryline(Layout):
                 G.add_node((v, i))
 
         for v in merges:
-            Gc.nodes[v]['mis'] = True
+            Gc.nodes[v]["mis"] = True
 
         for v, i in merges:
             G.add_edge((v, i), (v, i + 1))
@@ -482,11 +482,11 @@ class SvenStoryline(Layout):
             for j, v in enumerate(lev)
         }
 
-        nx.draw(G, pos, with_labels=True, node_color='white', node_size=500)
+        nx.draw(G, pos, with_labels=True, node_color="white", node_size=500)
 
     def draw_parent_graph(self, **kwargs):
         labels = {
-            i: f'{ci[0][0]} [{ci[0][1]}-{ci[-1][1]}]' for i, ci in self.children.items()
+            i: f"{ci[0][0]} [{ci[0][1]}-{ci[-1][1]}]" for i, ci in self.children.items()
         }
 
         self.solver.draw_layering(labels=labels, x=self.xp, **kwargs)
@@ -536,7 +536,7 @@ class SvenStoryline(Layout):
 
         self.edge_crossings_sum = sum(self.edge_crossings.values())
 
-        self.aesthetic_str = f'Node Crossings: {self.node_crossing_sum}; Edge Crossings: {self.edge_crossings_sum}; Edge efficiency: {self.edge_efficiency_sum}; Node Efficiency: {self.node_efficiency_sum}'
+        self.aesthetic_str = f"Node Crossings: {self.node_crossing_sum}; Edge Crossings: {self.edge_crossings_sum}; Edge efficiency: {self.edge_efficiency_sum}; Node Efficiency: {self.node_efficiency_sum}"
 
 
 def get_crossing_graph(levels):
@@ -605,7 +605,7 @@ def get_crossing_graph(levels):
 #     ]
 
 
-def greedy_mwis(G, weight='weight', copy=True):
+def greedy_mwis(G, weight="weight", copy=True):
     """
     An approximate solution to the maximum weighted independent set (MWIS) problem.
 
@@ -810,8 +810,8 @@ def draw_incidence_storyline(
     nodes_kwargs_inflated = inflate_kwargs(
         H.nodes,
         {
-            'edgecolors': default_node_color,
-            'facecolors': default_node_color,
+            "edgecolors": default_node_color,
+            "facecolors": default_node_color,
             **nodes_kwargs,
         },
     )
@@ -834,7 +834,7 @@ def draw_incidence_storyline(
             {
                 **default_segments_kwargs,
                 **segments_kwargs,
-                'facecolors': 'none',  # storylines should never have a face color
+                "facecolors": "none",  # storylines should never have a face color
             },
         ),
     )
@@ -859,10 +859,10 @@ def draw_incidence_storyline(
 
     if with_node_labels:
         default_text_kwargs = {
-            'ha': 'right',
-            'va': 'center',
-            'xytext': (-3, 0),
-            'textcoords': 'offset pixels',
+            "ha": "right",
+            "va": "center",
+            "xytext": (-3, 0),
+            "textcoords": "offset pixels",
         }
         offset_xy = np.array([-0.5 * EDGE_WIDTH, 0])
         node_xy = layout.get_node_labels_xy()
@@ -875,10 +875,10 @@ def draw_incidence_storyline(
 
     if with_edge_labels:
         default_text_kwargs = {
-            'ha': 'center',
-            'va': 'top',
-            'xytext': (0, -2),
-            'textcoords': 'offset pixels',
+            "ha": "center",
+            "va": "top",
+            "xytext": (0, -2),
+            "textcoords": "offset pixels",
         }
 
         offset_xy = np.array([0, -y_cap_scale * EDGE_WIDTH / 2])
@@ -898,9 +898,9 @@ def draw_incidence_storyline(
                 ax.annotate(s, xy + offset_xy, **{**default_text_kwargs, **kwargs})
 
             ax.xaxis.set_ticks([], [])
-            ax.spines['bottom'].set_visible(False)
+            ax.spines["bottom"].set_visible(False)
 
-    for i in ['left', 'right', 'top']:
+    for i in ["left", "right", "top"]:
         ax.spines[i].set_visible(False)
 
     ax.autoscale_view()
