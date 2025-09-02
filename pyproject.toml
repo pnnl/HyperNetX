@@ -31,6 +31,7 @@ decorator = ">=5.1.1"
 scipy = ">=1.13"
 requests = "^2.32.3"
 fastjsonschema = ">=2.21.2"
+heapdict = ">=1.0.1"
 
 [tool.poetry.extras]
 embeddings = ["torch","torchvision"]
