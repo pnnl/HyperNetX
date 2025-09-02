@@ -36,13 +36,14 @@ except:
     nwhy_available = False
 
 __ALL__ = [
-    'prob_trans',
-    'get_pi',
-    'norm_lap',
-    'spec_clus',
+    "prob_trans",
+    "get_pi",
+    "norm_lap",
+    "spec_clus",
 ]
 
 sys.setrecursionlimit(10000)
+
 
 def prob_trans(H, weights=False, index=True, check_connected=True):
     r"""

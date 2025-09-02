@@ -14,11 +14,11 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 
 __ALL__ = [
-    'greedy_matching',
-    'maximal_matching',
-    'iterated_sampling',
-    'HEDCS_matching',
-    'approximation_matching_checking',
+    "greedy_matching",
+    "maximal_matching",
+    "iterated_sampling",
+    "HEDCS_matching",
+    "approximation_matching_checking",
 ]
 
 

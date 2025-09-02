@@ -21,13 +21,13 @@ from scipy.stats import binom
 __ALL__ = [
     # 'dict2part',
     # 'part2dict',
-    'linear',
-    'majority',
-    'strict',
-    'modularity',
-    'two_section',
-    'kumar',
-    'last_step',
+    "linear",
+    "majority",
+    "strict",
+    "modularity",
+    "two_section",
+    "kumar",
+    "last_step",
 ]
 
 ################################################################################

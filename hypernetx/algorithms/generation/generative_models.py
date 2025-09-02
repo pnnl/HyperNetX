@@ -8,10 +8,11 @@ from hypernetx import Hypergraph
 
 
 __ALL__ = [
-    'erdos_renyi_hypergraph',
-    'chung_lu_hypergraph',
-    'dcsbm_hypergraph',
+    "erdos_renyi_hypergraph",
+    "chung_lu_hypergraph",
+    "dcsbm_hypergraph",
 ]
+
 
 def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     """

@@ -12,8 +12,9 @@ from hypernetx.algorithms.matching.matching_algorithms import (
     HEDCS_matching,
     MemoryLimitExceededError,
     approximation_matching_checking,
-    iterated_sampling
+    iterated_sampling,
 )
+
 
 def test_greedy_d_approximation_empty_input():
     """

@@ -3,6 +3,7 @@ import hypernetx as hnx
 
 import numpy as np
 import warnings
+
 warnings.simplefilter("ignore")
 
 

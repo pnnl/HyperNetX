@@ -6,16 +6,17 @@ import hypernetx as hnx
 from ...algorithms.modules import has_optional_dependency
 
 __ALL__ = [
-    'contagion_animation',
-    'collective_contagion',
-    'individual_contagion',
-    'threshold',
-    'majority_vote',
-    'discrete_SIR',
-    'discrete_SIS',
-    'Gillespie_SIR',
-    'Gillespie_SIS',
+    "contagion_animation",
+    "collective_contagion",
+    "individual_contagion",
+    "threshold",
+    "majority_vote",
+    "discrete_SIR",
+    "discrete_SIS",
+    "Gillespie_SIR",
+    "Gillespie_SIS",
 ]
+
 
 @has_optional_dependency()
 def contagion_animation(
