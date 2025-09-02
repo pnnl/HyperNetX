@@ -6,16 +6,14 @@ from heapdict import heapdict
 
 import networkx as nx
 
+
 class LocalCrossingReducer:
     def __init__(self, order, weight=None):
         n_levels = max([x for _, x in order]) + 1
-        
+
         self.weight = weight or (lambda x, u, v: 1)
 
-        self.levels = [
-            list()
-            for _ in range(n_levels)
-        ]
+        self.levels = [list() for _ in range(n_levels)]
 
         self.y = {}
 
@@ -28,12 +26,12 @@ class LocalCrossingReducer:
 
     def init_swaps(self):
         self.swaps = heapdict()
-        
+
         for x, lev in enumerate(self.levels):
             for u, v in zip(lev[:-1], lev[1:]):
                 self.update_swap(x, u, v)
 
-    def draw(self, ax = None, **kwargs):
+    def draw(self, ax=None, **kwargs):
         ax = ax or plt.gca()
 
         self.G = nx.DiGraph()
@@ -41,42 +39,35 @@ class LocalCrossingReducer:
             j = i + 1
             for v in self.levels[i]:
                 if self.level_has_nodes(j, v):
-                    self.G.add_edge(
-                        (i, v),
-                        (j, v)
-                    )
-        
+                    self.G.add_edge((i, v), (j, v))
+
         pos = {
-            (i, v): (i, self.y[i, v])
-            for i, lev in enumerate(self.levels)
-            for v in lev
+            (i, v): (i, self.y[i, v]) for i, lev in enumerate(self.levels) for v in lev
         }
 
         nx.draw(
-            self.G, pos,
+            self.G,
+            pos,
             ax=ax,
-            labels={
-                v: v[1]
-                for v in self.G
-            },
+            labels={v: v[1] for v in self.G},
             **{
-                'node_color': 'black',
-                'node_size': 25,
+                "node_color": "black",
+                "node_size": 25,
                 **kwargs,
-            }
+            },
         )
 
         for (x, u, v), d in self.swaps.items():
             if d < 0:
                 uy, vy = self.get_y(x, u, v)
-                ax.annotate(d, (x, (uy + vy)/2), ha='center', va='center')
+                ax.annotate(d, (x, (uy + vy) / 2), ha="center", va="center")
 
     def get_y(self, x, *args):
         return (self.y[x, v] for v in args)
-    
+
     def swap(self, x, u, v):
         uy, vy = self.get_y(x, u, v)
-        
+
         # swap in lists
         l = self.levels[x]
         l[uy], l[vy] = l[vy], l[uy]
@@ -96,7 +87,7 @@ class LocalCrossingReducer:
             t = self.levels[x][uy - 1]
             del self.swaps[x, t, u]
             self.update_swap(x, t, v)
-            
+
         if vy < len(self.levels[x]) - 1:
             w = self.levels[x][vy + 1]
             del self.swaps[x, v, w]
@@ -118,16 +109,16 @@ class LocalCrossingReducer:
         return np.all([(x, u) in self.y for u in args])
 
     def count_crossing(self, u1, v1, u2, v2):
-        return int((v1 - u1)*(v2 - u2) < 0)
-        
+        return int((v1 - u1) * (v2 - u2) < 0)
+
     def crossings_decreased_if_swapped(self, x, u, v):
-        assert self.level_has_nodes(x, u, v), f'Level does not contain both {u} and {v}'
-        
+        assert self.level_has_nodes(x, u, v), f"Level does not contain both {u} and {v}"
+
         left = None
         right = None
 
         uy, vy = self.get_y(x, u, v)
-        
+
         if self.level_has_nodes(x - 1, u, v):
             left = self.count_crossing(uy, vy, *self.get_y(x - 1, u, v))
 
@@ -136,22 +127,24 @@ class LocalCrossingReducer:
 
         if left is None and right is None:
             return 0
-            
+
         if left is None:
             return -right
 
         if right is None:
             return -left
 
-        return -2*(right + self.right_bias)*(left + self.left_bias)
+        return -2 * (right + self.right_bias) * (left + self.left_bias)
 
     def assert_order(self, x, u, v):
         uy, vy = self.get_y(x, u, v)
-        assert vy - uy == 1, f'Swap out of order. y({u}) = {uy}; y({v}) = {vy}'
-        
+        assert vy - uy == 1, f"Swap out of order. y({u}) = {uy}; y({v}) = {vy}"
+
     def update_swap(self, x, u, v):
         self.assert_order(x, u, v)
-        self.swaps[x, u, v] = self.weight(x, u, v)*self.crossings_decreased_if_swapped(x, u, v)
+        self.swaps[x, u, v] = self.weight(
+            x, u, v
+        ) * self.crossings_decreased_if_swapped(x, u, v)
 
     def __call__(self, max_iters=None):
         self.num_iters = 0
@@ -173,10 +166,4 @@ class LocalCrossingReducer:
 
             self.left_bias, self.right_bias = self.right_bias, self.left_bias
 
-        return [
-            OrderedDict([
-                (v, i)
-                for i, v in enumerate(lev)
-            ])
-            for lev in self.levels
-        ]
+        return [OrderedDict([(v, i) for i, v in enumerate(lev)]) for lev in self.levels]

@@ -9,21 +9,21 @@ import networkx as nx
 from collections import defaultdict
 
 __ALL__ = [
-    'draw_temporal_incidence_graph',
-    'create_temporal_incidence_graph',
-    'multi_source_target_dijkstra',
-    'temporal_shortest_path',
-    'encode_path',
-    'create_temporal_line_graph',
-    'draw_temporal_line_graph',
+    "draw_temporal_incidence_graph",
+    "create_temporal_incidence_graph",
+    "multi_source_target_dijkstra",
+    "temporal_shortest_path",
+    "encode_path",
+    "create_temporal_line_graph",
+    "draw_temporal_line_graph",
 ]
 
-NODE_COLOR = 'black'
-NODE_ENDPOINT_COLOR = 'red'
+NODE_COLOR = "black"
+NODE_ENDPOINT_COLOR = "red"
 NODE_LINEWIDTH = 1
 NODE_PATH_LINEWIDTH = 3
-HYPER_EDGE_FACECOLOR = 'white'
-HYPER_EDGE_EDGECOLOR = 'darkgray'
+HYPER_EDGE_FACECOLOR = "white"
+HYPER_EDGE_EDGECOLOR = "darkgray"
 
 
 def get_edge_pos(edge_order, edge_pos):
@@ -51,7 +51,7 @@ def get_edge_pos(edge_order, edge_pos):
 
     assert (edge_pos is None) ^ (
         edge_order is None
-    ), 'Exactly one of edge_pos and edge_order must be specified'
+    ), "Exactly one of edge_pos and edge_order must be specified"
 
     if edge_pos is None:
         edge_pos = {v: i for i, v in enumerate(edge_order)}
@@ -59,7 +59,7 @@ def get_edge_pos(edge_order, edge_pos):
     return edge_pos
 
 
-def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='quick'):
+def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method="quick"):
     """
     Convert an edge ordered hypergraph into a temporal incidence graph
 
@@ -95,7 +95,7 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='q
 
     edge_pos = get_edge_pos(edge_order, edge_pos)
 
-    if method == 'quick':
+    if method == "quick":
 
         def weight_func(u, v):
             if u in edge_pos or v in edge_pos:
@@ -103,7 +103,7 @@ def create_temporal_incidence_graph(H, edge_pos=None, edge_order=None, method='q
 
             return edge_pos[v[0]] - edge_pos[u[0]]
 
-    elif method == 'short':
+    elif method == "short":
 
         def weight_func(u, v):
             if u in edge_pos or v in edge_pos:
@@ -149,7 +149,7 @@ def default_layout(G):
     """
 
     try:
-        return nx.nx_agraph.graphviz_layout(G, prog='neato')
+        return nx.nx_agraph.graphviz_layout(G, prog="neato")
     except:
         return nx.kamada_kawai_layout(G, weight=None)
 
@@ -167,8 +167,8 @@ def draw_temporal_incidence_graph(
     width=NODE_LINEWIDTH,
     path_width=NODE_PATH_LINEWIDTH,
     hyper_edge_color=HYPER_EDGE_EDGECOLOR,
-    hyper_edge_font_color='black',
-    weight_font_color='red',
+    hyper_edge_font_color="black",
+    weight_font_color="red",
     incidence_alpha=0.85,
     sm_font=8,
     md_font=10,
@@ -254,7 +254,7 @@ def draw_temporal_incidence_graph(
                 path_edges.add(((e1, v1), e2))
                 path_edges.add((e2, (e2, v2)))
 
-    G.graph = dict(rankdir='LR')
+    G.graph = dict(rankdir="LR")
 
     if pos is None:
         pos = layout(G)
@@ -266,8 +266,8 @@ def draw_temporal_incidence_graph(
     nx.draw_networkx_nodes(
         G,
         pos,
-        node_color=[hyper_edge_color if v in path_hyperedges else 'none' for v in G],
-        edgecolors=['none' if is_incidence(v) else hyper_edge_color for v in G],
+        node_color=[hyper_edge_color if v in path_hyperedges else "none" for v in G],
+        edgecolors=["none" if is_incidence(v) else hyper_edge_color for v in G],
         node_size=sizes,
         ax=ax,
     )
@@ -287,18 +287,18 @@ def draw_temporal_incidence_graph(
         if v in path_endpoints:
             return (node_endpoint_color, node_color)
         elif v in path_nodes:
-            return (node_color, 'white')
-        return ('white', node_color)
+            return (node_color, "white")
+        return ("white", node_color)
 
     # incidences
     for v in G:
         if is_incidence(v):
             fc, ec = get_incidence_colors(v)
             ax.annotate(
-                ', '.join(map(str, v)),
+                ", ".join(map(str, v)),
                 pos[v],
-                va='center',
-                ha='center',
+                va="center",
+                ha="center",
                 fontsize=md_font,
                 color=ec,
                 bbox=dict(facecolor=(*to_rgb(fc), incidence_alpha), edgecolor=ec),
@@ -317,11 +317,11 @@ def draw_temporal_incidence_graph(
             G,
             pos,
             edge_labels={
-                (u, v): str(d['weight']) if d['weight'] > 0 or show_zero_weight else ''
+                (u, v): str(d["weight"]) if d["weight"] > 0 or show_zero_weight else ""
                 for u, v, d in G.edges(data=True)
             },
             font_color=weight_font_color,
-            font_weight='bold',
+            font_weight="bold",
             font_size=sm_font,
             rotate=False,
             ax=ax,
@@ -432,7 +432,7 @@ def temporal_shortest_path(H, source, target, return_graph=False, **kwargs):
         G,
         sources=find_incidences(H, source),
         targets=find_incidences(H, target),
-        weight='weight',
+        weight="weight",
     )
 
     # removes the hyper edges from the path so it is just a sequence of incidences
@@ -632,7 +632,7 @@ def draw_temporal_line_graph(G, pos=None, layout=default_layout, path=[], labels
     )
 
     nx.draw_networkx_edge_labels(
-        G, pos, edge_labels={(u, v): d['weight'] for u, v, d in G.edges(data=True)}
+        G, pos, edge_labels={(u, v): d["weight"] for u, v, d in G.edges(data=True)}
     )
 
     return pos

@@ -23,5 +23,5 @@ __all__ = [
     "lesmis_hypergraph_from_df",
     "book_tour",
     "TransmissionProblem",
-    "storylines"
+    "storylines",
 ]

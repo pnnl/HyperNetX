@@ -75,14 +75,14 @@ def create_lesmis_small():
     """
     return create_ordered_hypergraph_with_kwargs(
         {
-            0: ('FN', 'TH'),
-            1: ('TH', 'JV'),
-            2: ('BM', 'FN', 'JA'),
-            3: ('JV', 'JU', 'CH', 'BM'),
-            4: ('JU', 'CH', 'BR', 'CN', 'CC', 'JV', 'BM'),
-            5: ('TH', 'GP'),
-            6: ('GP', 'MP'),
-            7: ('MA', 'GP'),
+            0: ("FN", "TH"),
+            1: ("TH", "JV"),
+            2: ("BM", "FN", "JA"),
+            3: ("JV", "JU", "CH", "BM"),
+            4: ("JU", "CH", "BR", "CN", "CC", "JV", "BM"),
+            5: ("TH", "GP"),
+            6: ("GP", "MP"),
+            7: ("MA", "GP"),
         },
         int,
     )
@@ -114,15 +114,15 @@ def create_star_wars():
 
     """
 
-    VADER = 'Vader'
-    LEIA = 'Leia'
-    R2 = 'R2-D2'
-    C3PO = 'C-3PO'
-    OBIWAN = 'Obi-Wan'
-    LUKE = 'Luke'
-    HAN = 'Han'
-    CHEWIE = 'Chewie'
-    JABBA = 'Jabba'
+    VADER = "Vader"
+    LEIA = "Leia"
+    R2 = "R2-D2"
+    C3PO = "C-3PO"
+    OBIWAN = "Obi-Wan"
+    LUKE = "Luke"
+    HAN = "Han"
+    CHEWIE = "Chewie"
+    JABBA = "Jabba"
 
     events = [
         {VADER},
@@ -164,19 +164,19 @@ def create_star_wars():
     )
 
     labels = [
-        ({LEIA, LUKE, HAN, CHEWIE}, 'Leia\nrescued'),
-        ({OBIWAN, VADER}, 'Duel'),
-        ({VADER, LUKE, R2}, 'Death\nStar'),
+        ({LEIA, LUKE, HAN, CHEWIE}, "Leia\nrescued"),
+        ({OBIWAN, VADER}, "Duel"),
+        ({VADER, LUKE, R2}, "Death\nStar"),
     ]
 
-    edge_labels = defaultdict(lambda: '')
+    edge_labels = defaultdict(lambda: "")
     for k, v in labels:
         edge_labels[events.index(k)] = v
 
     return create_ordered_hypergraph_with_kwargs(
         dict(enumerate(events)),
-        nodes_kwargs={'edgecolor': node_colors},
-        edges_kwargs={'edgecolor': None, 'facecolor': rgb(211, 211, 211)},
+        nodes_kwargs={"edgecolor": node_colors},
+        edges_kwargs={"edgecolor": None, "facecolor": rgb(211, 211, 211)},
         edge_labels=edge_labels,
         edge_labels_on_axis=False,
         edge_labels_kwargs=dict(fontsize=6, backgroundcolor=(1, 1, 1, 0.5)),
@@ -184,7 +184,7 @@ def create_star_wars():
 
 
 @lru_cache()
-def load_file(path_or_url, encoding='utf-8'):
+def load_file(path_or_url, encoding="utf-8"):
     """
     Cached retrieval of file from URL
 
@@ -201,7 +201,7 @@ def load_file(path_or_url, encoding='utf-8'):
         string representation of file contents
 
     """
-    print('Reading', path_or_url)
+    print("Reading", path_or_url)
 
     with urllib.request.urlopen(path_or_url) as fp:
         return fp.read().decode(encoding)
@@ -209,7 +209,7 @@ def load_file(path_or_url, encoding='utf-8'):
 
 def parse_play(
     path_or_url,
-    encoding='utf-8',
+    encoding="utf-8",
     start=None,
     end=None,
     start_str=None,
@@ -217,8 +217,8 @@ def parse_play(
     ignore=set(),
     replace=dict(),
     return_text=False,
-    split_act='ACT [IXV]+',
-    split_scene='SCENE [IXV]+',
+    split_act="ACT [IXV]+",
+    split_scene="SCENE [IXV]+",
 ):
     """
     Load and parse certain content from Project Gutenberg [1] into a hypergraph
@@ -264,7 +264,7 @@ def parse_play(
     [1] https://www.gutenberg.org/
 
     """
-    txt = load_file(path_or_url, encoding).replace('\r', '')
+    txt = load_file(path_or_url, encoding).replace("\r", "")
 
     if start_str:
         start = txt.index(start_str)
@@ -278,11 +278,11 @@ def parse_play(
 
     for i, act in enumerate(re.split(split_act, txt)[1:]):
         for j, scene in enumerate(re.split(split_scene, act)[1:]):
-            nodes = set(map(str.strip, re.findall('([A-Z ]+).\n', scene))).difference(
+            nodes = set(map(str.strip, re.findall("([A-Z ]+).\n", scene))).difference(
                 ignore
             )
 
-            edges[f'{i + 1}.{j + 1}'] = set([replace.get(v, v) for v in nodes])
+            edges[f"{i + 1}.{j + 1}"] = set([replace.get(v, v) for v in nodes])
 
     if return_text:
         return edges, txt
@@ -293,11 +293,11 @@ def parse_play(
 def create_macbeth(path=None):
     return create_ordered_hypergraph_with_kwargs(
         parse_play(
-            path or 'https://www.gutenberg.org/cache/epub/1533/pg1533.txt',
-            start_str='ACT I\n\nSCENE I.',
-            end_str='*** END OF THE PROJECT GUTENBERG',
-            ignore={'', 'I', 'ALL', 'BOTH MURDERERS'},
-            replace={'MURDERER': 'FIRST MURDERER', 'LORDS': 'LORD'},
+            path or "https://www.gutenberg.org/cache/epub/1533/pg1533.txt",
+            start_str="ACT I\n\nSCENE I.",
+            end_str="*** END OF THE PROJECT GUTENBERG",
+            ignore={"", "I", "ALL", "BOTH MURDERERS"},
+            replace={"MURDERER": "FIRST MURDERER", "LORDS": "LORD"},
         )
     )
 
@@ -305,17 +305,17 @@ def create_macbeth(path=None):
 def create_hamlet(path=None):
     return create_ordered_hypergraph_with_kwargs(
         parse_play(
-            path or 'https://www.gutenberg.org/cache/epub/1524/pg1524.txt',
-            start_str='ACT I\n\nSCENE I.',
-            end_str='*** END OF THE PROJECT GUTENBERG',
-            ignore={'', 'I', 'T', 'ALL', 'BOTH'},
+            path or "https://www.gutenberg.org/cache/epub/1524/pg1524.txt",
+            start_str="ACT I\n\nSCENE I.",
+            end_str="*** END OF THE PROJECT GUTENBERG",
+            ignore={"", "I", "T", "ALL", "BOTH"},
             replace={
-                'BARNARD': 'BARNARDO',
-                'LORD': 'LORDS',
-                'FIRST CLOWN': 'CLOWNS',
-                'SECOND CLOWN': 'CLOWNS',
-                'PLAYER KING': 'PLAYER KING & QUEEN',
-                'PLAYER QUEEN': 'PLAYER KING & QUEEN',
+                "BARNARD": "BARNARDO",
+                "LORD": "LORDS",
+                "FIRST CLOWN": "CLOWNS",
+                "SECOND CLOWN": "CLOWNS",
+                "PLAYER KING": "PLAYER KING & QUEEN",
+                "PLAYER QUEEN": "PLAYER KING & QUEEN",
             },
         )
     )
