@@ -14,8 +14,14 @@ import hypernetx as hnx
 import numpy as np
 import pandas as pd
 import copy
-import plotly.graph_objects as go
-import oat_python as oat
+
+from ...algorithms.modules import has_optional_dependency
+
+__ALL__ = [
+    "AssociatedSimplicialComplexHomology",
+    "get_homology",
+    "plot_cycle_representative",
+]
 
 
 class AssociatedSimplicialComplexHomology:
@@ -137,6 +143,7 @@ class AssociatedSimplicialComplexHomology:
         return df
 
 
+@has_optional_dependency()
 def get_homology(h, max_homology_dimension=0):
     """
     Computes the homology of the associated simplicial complex, with rational coefficients.
@@ -198,6 +205,9 @@ def get_homology(h, max_homology_dimension=0):
         [a, c]    -1
         [a, b]     1
     """
+
+    import oat_python as oat
+
     # format hypergraph as list of lists
     (csr, node_label_sequence, edge_labels) = h.incidence_matrix(index=True)
     csr = (
@@ -226,6 +236,7 @@ def get_homology(h, max_homology_dimension=0):
     )
 
 
+@has_optional_dependency()
 def plot_cycle_representative(cycle, coordinate_dictionary=None, embedding_dimension=3):
     """
     Plots a cycle representative in 2 or 3 dimensional Euclidean space.
@@ -263,6 +274,9 @@ def plot_cycle_representative(cycle, coordinate_dictionary=None, embedding_dimen
     >>> fig = plot_cycle_representative(cycle_rep, embedding_dimension=2)
     >>> fig.show()
     """
+
+    import plotly.graph_objects as go
+    import oat_python as oat
 
     #   EXTRACT A LIST OF EDGES WHERE THE CYCLE TAKES NONZERO COEFFICIENTS
     #   ---------------------------------------------------------------------

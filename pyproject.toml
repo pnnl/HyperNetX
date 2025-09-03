@@ -37,6 +37,7 @@ matplotlib = ">=3.10.6"
 [tool.poetry.extras]
 embeddings = ["torch","torchvision"]
 temporal = ["celluloid"]
+homology = ["plotly","oat_python"]
 
 [tool.poetry.group.widget]
 optional = true
