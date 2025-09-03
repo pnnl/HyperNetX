@@ -40,12 +40,12 @@ class AssociatedSimplicialComplexHomology:
         Parameters
         ----------
         numeric_node_labels : bool, optional
-            If `True`, then the label used for each node will be an integer 
-            corresponding to the position of that node in `list(H.nodes())`. 
-            Otherwise nodes retain the same labels they hold in the hypergraph. 
+            If `True`, then the label used for each node will be an integer
+            corresponding to the position of that node in `list(H.nodes())`.
+            Otherwise nodes retain the same labels they hold in the hypergraph.
             Defaults to `False`.
         count_simplices_per_cycle : bool, optional
-            If `True`, then the data frame returned will have a column labeled 
+            If `True`, then the data frame returned will have a column labeled
             `nnz`, which stores the number of simplices in each cycle representative.
             Defaults to `False`.
 
@@ -53,14 +53,14 @@ class AssociatedSimplicialComplexHomology:
         -------
         pandas.DataFrame
             A dataframe where each row corresponds to a cycle representative. The columns are:
-            
+
             - `dimension`: the homological dimension of the cycle representative
             - `cycle representative`: the cycle representative, formatted as a pandas.DataFrame
             - (optionally) `nnz`: the number of simplices in the cycle representative
 
         Examples
         --------
-        Here we define a hypergraph representing a three-edge cycle graph and an 
+        Here we define a hypergraph representing a three-edge cycle graph and an
         isolated vertex `d`, then compute its homology and cycle representatives.
 
         >>> import hypernetx
@@ -69,32 +69,32 @@ class AssociatedSimplicialComplexHomology:
         >>> homology                    =   oat_accelerator.get_homology(H, max_homology_dimension=2)
         >>> cycle_representatives       =   homology.cycle_representatives()
         >>> print(cycle_representatives)
-        
+
         Expected Output::
-        
+
             dimension    cycle representative
             0           simplex coefficient 0 [d] 1
             0           simplex coefficient 0 [a] 1
             1           simplex coefficient 0 [b, c] 1 1 ...
 
         >>> print(cycle_representatives["cycle representative"][0])
-        
+
         Expected Output::
-        
+
             simplex    coefficient
             [d]        1
 
         >>> print(cycle_representatives["cycle representative"][1])
-        
+
         Expected Output::
-        
+
             simplex    coefficient
             [a]        1
 
         >>> print(cycle_representatives["cycle representative"][2])
-        
+
         Expected Output::
-        
+
             simplex    coefficient
             [b, c]     1
             [a, c]    -1
@@ -141,7 +141,7 @@ def get_homology(h, max_homology_dimension=0):
     """
     Computes the homology of the associated simplicial complex, with rational coefficients.
 
-    Concretely, returns the homology of the abstract simplicial complex `S` whose 
+    Concretely, returns the homology of the abstract simplicial complex `S` whose
     simplices are the subsets of the hyperedges of the hypergraph.
 
     Parameters
@@ -158,7 +158,7 @@ def get_homology(h, max_homology_dimension=0):
 
     Examples
     --------
-    Here we define a hypergraph representing a three-edge cycle graph and an 
+    Here we define a hypergraph representing a three-edge cycle graph and an
     isolated vertex `d`, then compute its homology and cycle representatives.
 
     >>> import hypernetx
@@ -176,21 +176,21 @@ def get_homology(h, max_homology_dimension=0):
         1           simplex coefficient 0 [b, c] 1 1 ...
 
     >>> print(cycle_representatives["cycle representative"][0])
-    
+
     Expected Output::
 
         simplex    coefficient
         [d]        1
 
     >>> print(cycle_representatives["cycle representative"][1])
-    
+
     Expected Output::
 
         simplex    coefficient
         [a]        1
 
     >>> print(cycle_representatives["cycle representative"][2])
-    
+
     Expected Output::
 
         simplex    coefficient
@@ -235,7 +235,7 @@ def plot_cycle_representative(cycle, coordinate_dictionary=None, embedding_dimen
     cycle : pandas.DataFrame
         A cycle representative obtained from a `hypernetx.AssociatedSimplicialComplexHomology` object.
     coordinate_dictionary : dict, optional
-        A dictionary mapping nodes to coordinates. If no dictionary is provided then 
+        A dictionary mapping nodes to coordinates. If no dictionary is provided then
         coordinates are generated automatically using multidimensional scaling (MDS).
         Defaults to None.
     embedding_dimension : int, optional
@@ -244,17 +244,17 @@ def plot_cycle_representative(cycle, coordinate_dictionary=None, embedding_dimen
     Returns
     -------
     plotly.graph_objs._figure.Figure
-        A plotly figure representing the cycle. The `fig.data`, which contains a list 
+        A plotly figure representing the cycle. The `fig.data`, which contains a list
         of the figure's traces, takes the form::
-        
+
             [vertices, simplex_1, simplex_2, ..]
-        
-        where `vertices` is a Plotly trace for a 2d or 3d Plotly scatter plot trace, 
+
+        where `vertices` is a Plotly trace for a 2d or 3d Plotly scatter plot trace,
         and `simplex_1, simplex_2, ...` are traces representing each simplex in the cycle.
 
     Notes
     -----
-    The user can customize the traces in `fig.data`. For example, if `simplex_1` is a 
+    The user can customize the traces in `fig.data`. For example, if `simplex_1` is a
     triangle, it will be rendered as a filled polygon trace.
 
     Examples
