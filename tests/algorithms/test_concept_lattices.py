@@ -1,3 +1,5 @@
+import pytest
+
 import numpy as np
 import scipy
 import hypernetx as hnx
@@ -5,7 +7,8 @@ from hypernetx.algorithms.concepts import HypergraphLattice
 
 
 # Helper function to create a simple hypergraph for testing
-def test_lattice():
+@pytest.fixture
+def lat():
     # Example hypergraph lattice
     d = {
         "0": ("a", "b", "c"),
@@ -18,15 +21,12 @@ def test_lattice():
 
 
 # Test: Initialize HypergraphLattice and check properties
-def test_hypergraph_lattice_init():
-    lat = test_lattice()
+def test_hypergraph_lattice_init(lat):
     assert len(lat._concepts) == 16
     assert lat[-1] in lat[0].upset()
 
 
-def test_distance():
-    lat = test_lattice()
-
+def test_distance(lat):
     x = lat[2]
     y = lat[10]
 
@@ -48,8 +48,7 @@ def dist_matrix(dist_dict):
     return d
 
 
-def test_all_distances():
-    lat = test_lattice()
+def test_all_distances(lat):
     weights = {"a": 1, "b": 2, "c": 3, "d": 4}
 
     sp_mat = dist_matrix(lat.all_distances(metric="shortest_path"))
