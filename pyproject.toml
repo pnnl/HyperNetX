@@ -33,11 +33,14 @@ requests = "^2.32.3"
 fastjsonschema = ">=2.21.2"
 heapdict = ">=1.0.1"
 matplotlib = ">=3.10.6"
+plotly = ">=6.3.0"
+celluloid = ">=0.2.0"
+oat-python = ">=0.1.1"
 
 [tool.poetry.extras]
 embeddings = ["torch","torchvision"]
 temporal = ["celluloid"]
-homology = ["plotly","oat_python"]
+homology = ["plotly","oat-python"]
 
 [tool.poetry.group.widget]
 optional = true
