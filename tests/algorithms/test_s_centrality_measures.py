@@ -1,6 +1,6 @@
 import pytest
 
-from hypernetx.algorithms.s_centrality_measures import *
+from hypernetx.algorithms.metrics.s_centrality_measures import *
 
 import warnings
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hypernetx"
-version = "2.4.1"
+version = "2.4.2"
 description = "HyperNetX is a Python library for the creation and study of hypergraphs."
 authors = ["Brenda Praggastis <Brenda.Praggastis@pnnl.gov>", "Dustin Arendt <dustin.arendt@pnnl.gov>",
     "Sinan Aksoy <sinan.aksoy@pnnl.gov>", "Emilie Purvine <Emilie.Purvine@pnnl.gov>",
@@ -26,11 +26,23 @@ python = ">=3.10,<4.0.0"
 networkx = ">=3.3"
 pandas = ">=2.2.2"
 scikit-learn = ">=1.4.2"
-celluloid = ">=0.2.0"
 igraph = ">=0.11.4"
 decorator = ">=5.1.1"
 scipy = ">=1.13"
 requests = "^2.32.3"
+fastjsonschema = ">=2.21.2"
+heapdict = ">=1.0.1"
+matplotlib = ">=3.10.6"
+concepts = "^0.9.2"
+bitsets = ">0.8.0"
+plotly = ">=6.3.0"
+celluloid = ">=0.2.0"
+oat-python = ">=0.1.1"
+
+[tool.poetry.extras]
+embeddings = ["torch","torchvision"]
+temporal = ["celluloid"]
+homology = ["plotly","oat-python"]
 
 [tool.poetry.group.widget]
 optional = true

@@ -1,7 +1,7 @@
 import warnings
 import pytest
 
-from hypernetx.algorithms.hypergraph_modularity import conductance
+from hypernetx.algorithms.clustering.hypergraph_modularity import conductance
 
 warnings.simplefilter("ignore")
 
