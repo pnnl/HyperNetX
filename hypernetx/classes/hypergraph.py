@@ -2392,6 +2392,64 @@ class Hypergraph:
 
         return dist
 
+    def k_nearest_neighbors(self, node, k, s=1):
+        """
+        Return nodes nearest to ``node`` by shortest :term:`s-walk` distance.
+
+        This uses the same s-walk metric as :meth:`distance`, not the
+        s-edge-sharing definition in :meth:`neighbors`.
+
+        Parameters
+        ----------
+        node : hashable
+            A node in the hypergraph.
+
+        k : int
+            Consider the ``k``-th smallest s-walk distance among other nodes,
+            then return every other node at distance less than or equal to
+            that value. Ties at the cutoff may yield more than ``k`` nodes.
+
+        s : positive int, optional, default=1
+            Minimum number of shared edges between consecutive nodes in an
+            s-walk.
+
+        Returns
+        -------
+        list
+            Node uids of the k-nearest neighbors (including ties).
+
+        See Also
+        --------
+        distance
+        neighbors
+        get_linegraph
+
+        Notes
+        -----
+        Nodes in other s-components are omitted. Distances match
+        :meth:`distance` for each returned neighbor.
+        """
+        if k <= 0:
+            return []
+        if node not in self.nodes:
+            warnings.warn(f"{node} is not in hypergraph {self.name}.")
+            return []
+
+        g = self.get_linegraph(s=s, edges=False)
+        try:
+            lengths = nx.single_source_shortest_path_length(g, node)
+        except nx.NodeNotFound:
+            return []
+
+        candidates = [(u, d) for u, d in lengths.items() if u != node]
+        if not candidates:
+            return []
+
+        candidates.sort(key=lambda pair: (pair[1], pair[0]))
+        k_eff = min(k, len(candidates))
+        kth_dist = candidates[k_eff - 1][1]
+        return [u for u, d in candidates if d <= kth_dist]
+
     def edge_distance(self, source, target, s=1):
         """
         Returns the shortest :term:`s-walk` distance between two edges in the hypergraph.

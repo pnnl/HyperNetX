@@ -18,7 +18,7 @@ We want this community to be friendly and respectful to each other. Please read 
 1. Create a Python virtual environment. For convenience, our Makefile provides a target called 'venv' that will create a virtual environment for you. Run the following command: `make venv`
 1. Activate the virtual environment. If you used the Makefile target in the previous step, activate the virtual environment by the running the following command: `source venv-hnx/bin/activate`
 1. Install the library in development mode: `pip install -e .`
-1. Install testing dependencies: `pip install -e .['testing'] `
+1. Install testing dependencies: `pip install -e '.[testing]' `
 1. Do the changes you want and ensure all tests pass by running `python -m pytest` before sending a pull request.
 
 ### Commit message convention
