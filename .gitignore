@@ -10,6 +10,7 @@ logfiles/
 stashmerge.sh
 jacksnbs
 demos
+uv.lock
 
 __pycache__
 *.ipynb_checkpoints

@@ -1445,6 +1445,66 @@ def test_distance(lesmis):
     assert h.distance("ME", "FN", s=3) == np.inf
 
 
+def test_k_nearest_neighbors(lesmis):
+    h = Hypergraph(lesmis.edgedict)
+    knn1 = h.k_nearest_neighbors("ME", 1)
+    assert set(knn1) == {
+        "CL",
+        "CV",
+        "GE",
+        "GG",
+        "IS",
+        "JL",
+        "JV",
+        "MB",
+        "MC",
+        "MR",
+        "MT",
+        "MY",
+        "NP",
+        "PG",
+        "SN",
+    }
+    for u in knn1:
+        assert h.distance("ME", u) == 1
+
+    knn_s2 = h.k_nearest_neighbors("ME", 1, s=2)
+    assert set(knn_s2) == {"MB", "MY"}
+    for u in knn_s2:
+        assert h.distance("ME", u, s=2) == 1
+
+
+def test_k_nearest_neighbors_sevenbysix(sevenbysix):
+    hg = Hypergraph(sevenbysix.edgedict)
+    assert set(hg.k_nearest_neighbors("A", 1)) == {"C", "E", "K", "T2", "V"}
+
+
+def test_k_nearest_neighbors_ties():
+    h = Hypergraph({"e1": ["v", "a"], "e2": ["v", "b"], "e3": ["v", "c"]})
+    knn = h.k_nearest_neighbors("v", 1)
+    assert set(knn) == {"a", "b", "c"}
+    assert len(knn) > 1
+
+
+def test_k_nearest_neighbors_invalid_node(lesmis):
+    h = Hypergraph(lesmis.edgedict)
+    with pytest.warns(UserWarning, match="NEMO is not in hypergraph"):
+        assert h.k_nearest_neighbors("NEMO", 1) == []
+
+
+def test_k_nearest_neighbors_k_nonpositive(lesmis):
+    h = Hypergraph(lesmis.edgedict)
+    assert h.k_nearest_neighbors("ME", 0) == []
+    assert h.k_nearest_neighbors("ME", -1) == []
+
+
+def test_k_nearest_neighbors_k_large(lesmis):
+    h = Hypergraph(lesmis.edgedict)
+    knn = h.k_nearest_neighbors("ME", 1000)
+    assert len(knn) == len(h.nodes) - 1
+    assert "ME" not in knn
+
+
 def test_edge_distance(lesmis):
     h = Hypergraph(lesmis.edgedict)
     assert h.edge_distance(1, 4) == 2
