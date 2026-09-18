@@ -250,7 +250,7 @@ Edge Intersections Have Size
 ----------------------------
 
 As we’ve already seen, in a graph all the edges are size 2, whereas in a
-hypergarph edges can be arbitrary size :math:`1, 2, \ldots, n`. Our
+hypergraph edges can be arbitrary size :math:`1, 2, \ldots, n`. Our
 example shows a singleton, three “graph edge” pairs, and a 2-edge.
 
 In a gentle graph :math:`G` consider two edges
