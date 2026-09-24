@@ -209,9 +209,9 @@ def modularity(HG, A, wdc=linear):
 
     else:
         ## this is the bottleneck
-        VolA = np.repeat(0, 1 + np.max(list(d.values())))
+        VolA = np.zeros(1 + np.max(list(d.values())))
         m = np.max([HG.size(i) for i in HG.edges])
-        Ctr = np.repeat(0, 1 + m)
+        Ctr = np.zeros(1 + m)
         S = 0
         for e in HG.edges:
             w = HG.edges[e].weight
@@ -396,9 +396,9 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
 
     ## initialize
     ## this is the bottleneck
-    VolA = np.repeat(0, 1 + np.max(list(d.values())))
+    VolA = np.zeros(1 + np.max(list(d.values())))
     m = np.max([H.size(i) for i in H.edges])
-    ctr_sizes = np.repeat(0, 1 + m)
+    ctr_sizes = np.zeros(1 + m)
     S = 0
     for e in H.edges:
         w = H.edges[e].weight
@@ -481,7 +481,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
             if best_del_q > 0.1:  ## this avoids some precision issues
                 n_moves += 1
                 dct_A[v] = best
-                VolA[m] += str_v
+                VolA[best] += str_v
                 VolA[dct_A_v] -= str_v
                 VolV = np.sum(VolA)
             else:
@@ -564,7 +564,7 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
             if best_del_q > 0.1:  ## this avoids some numerical precision issues
                 n_moves += 1
                 dct_A[v] = best
-                VolA[m] += deg_v
+                VolA[best] += deg_v
                 VolA[dct_A_v] -= deg_v
                 VolV = np.sum(VolA)
             else:
