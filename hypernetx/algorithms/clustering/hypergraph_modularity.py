@@ -481,7 +481,7 @@ def _last_step_weighted(H, A, wdc, delta=0.01, verbose=False):
             if best_del_q > 0.1:  ## this avoids some precision issues
                 n_moves += 1
                 dct_A[v] = best
-                VolA[m] += str_v
+                VolA[best] += str_v
                 VolA[dct_A_v] -= str_v
                 VolV = np.sum(VolA)
             else:
@@ -564,7 +564,7 @@ def _last_step_unweighted(H, A, wdc, delta=0.01, verbose=False):
             if best_del_q > 0.1:  ## this avoids some numerical precision issues
                 n_moves += 1
                 dct_A[v] = best
-                VolA[m] += deg_v
+                VolA[best] += deg_v
                 VolA[dct_A_v] -= deg_v
                 VolV = np.sum(VolA)
             else:
