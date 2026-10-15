@@ -1,5 +1,5 @@
 import numpy as np
-from hypernetx.algorithms.contagion import (
+from hypernetx.algorithms.temporal.contagion import (
     Gillespie_SIR,
     Gillespie_SIS,
     discrete_SIR,

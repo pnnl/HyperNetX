@@ -19,14 +19,14 @@ import sys
 import os
 
 
-__version__ = "2.3.10"
+__version__ = "2.4.3"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath("../../hypernetx"))
-
+sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 

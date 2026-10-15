@@ -41,14 +41,6 @@ jobs:
     - name: Check out the repo
       uses: actions/checkout@v4
 
-    - name: Build and publish distribution 📦 to Test PyPI
-      uses: JRubics/poetry-publish@v2.0
-      with:
-        python_version: "3.11"
-        pypi_token: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_name: "testpypi"
-        repository_url: "https://test.pypi.org/legacy/"
-
     - name: Build and publish distribution 📦 to PyPI
       uses: JRubics/poetry-publish@v2.0
       with:

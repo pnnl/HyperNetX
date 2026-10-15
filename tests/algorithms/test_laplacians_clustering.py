@@ -1,5 +1,5 @@
 import warnings
-from hypernetx.algorithms.laplacians_clustering import *
+from hypernetx.algorithms.clustering.laplacians_clustering import *
 
 warnings.simplefilter("ignore")
 

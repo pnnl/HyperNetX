@@ -978,9 +978,8 @@ def test_remove_edges_nodes_incidences_inplace(triloop2):
 def test_remove_edges_nodes_incidences_not_inplace(triloop2):
     # triloop2 is a hypergraph of the following shape:
     # {AB: {A, B}, BC: {B, C}, ACD: {A, C, D, E}, ACD2: {A, C, D, E}}
-    hg = Hypergraph(triloop2.edgedict, name=triloop2.name)
+    original_hg = hg = Hypergraph(triloop2.edgedict, name=triloop2.name)
     assert hg.shape == (5, 4)
-    original_hg_id = id(hg)
     original_hg_name = hg.name
     new_name = f"{triloop2.name}_new"
 
@@ -988,35 +987,35 @@ def test_remove_edges_nodes_incidences_not_inplace(triloop2):
     duplicate_edge = ["ACD2"]
     hg = hg.remove_edges(duplicate_edge, name=new_name, inplace=False)
     assert hg.shape == (5, 3)
-    assert id(hg) != original_hg_id
+    assert id(hg) != id(original_hg)
     assert hg.name != original_hg_name
     assert hg.name == new_name
 
     # number of nodes should drop by 1
     hg = hg.remove_nodes(["E"], name=new_name, inplace=False)
     assert hg.shape == (4, 3)
-    assert id(hg) != original_hg_id
+    assert id(hg) != id(original_hg)
     assert hg.name != original_hg_name
     assert hg.name == new_name
 
     # number of edges should drop by 1
     hg = hg.remove_edges(["ACD"], name=new_name, inplace=False)
     assert hg.shape == (3, 2)
-    assert id(hg) != original_hg_id
+    assert id(hg) != id(original_hg)
     assert hg.name != original_hg_name
     assert hg.name == new_name
 
     # remove an incidence that no longer exists; no change
     hg = hg.remove_incidences([("ACD", "E")], name=new_name, inplace=False)
     assert hg.shape == (3, 2)
-    assert id(hg) != original_hg_id
+    assert id(hg) != id(original_hg)
     assert hg.name != original_hg_name
     assert hg.name == new_name
 
     # removing the last two remaining edges will remove all the nodes from the hypergraph
     hg = hg.remove_edges(["AB", "BC"], name=new_name, inplace=False)
     assert hg.shape == (0, 0)
-    assert id(hg) != original_hg_id
+    assert id(hg) != id(original_hg)
     assert hg.name != original_hg_name
     assert hg.name == new_name
 

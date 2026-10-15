@@ -54,10 +54,8 @@ Contents
    Home <self>
    overview/index
    install
-   Glossary <glossary>
+   introduction
    core
-   A Gentle Introduction to Hypergraph Mathematics <hypergraph101>
-   Hypergraph Constructors <hypconstructors>
    Visualization Widget <widget>
    Modules <modules>
    Publications <publications>

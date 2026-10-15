@@ -1,5 +1,5 @@
 import pandas as pd
-
+import copy
 from hypernetx import HyperNetXError
 
 
@@ -183,7 +183,7 @@ def dict_to_incidence_store_df(D):
 
 
 def dict_factory_method(
-    D,
+    Dct,
     level,
     use_indices=False,
     uid_cols=None,
@@ -199,7 +199,7 @@ def dict_factory_method(
     Parameters
     ----------
 
-    D : dictionary
+    Dct : dictionary
         dictionary of properties for either incidences, edges, or nodes
 
     level : int
@@ -233,7 +233,7 @@ def dict_factory_method(
     Pandas Dataframe of the property store in the correct format for HNX.
 
     '''
-
+    D = copy.deepcopy(Dct)
     # if no dictionary is provided set it to an empty dictionary.
     if D is None:
         DF = None

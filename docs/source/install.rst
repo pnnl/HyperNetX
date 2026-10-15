@@ -5,6 +5,10 @@ Installing HyperNetX
 The recommended installation method for most users is to create a virtual environment
 and install HyperNetX from PyPi.
 
+.. code-block:: bash
+
+    pip install hypernetx
+
 .. _Github:  https://github.com/pnnl/HyperNetX
 
 HyperNetX may be cloned or forked from Github_.
