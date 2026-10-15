@@ -1,5 +1,6 @@
 hypernetx
 fastjsonschema
+shapely
 # autocommand==2.2.2 # Installed as dependency for jaraco.text
 # celluloid==0.2.0 # Installed as dependency for hypernetx
 # certifi==2025.8.3 # Installed as dependency for requests

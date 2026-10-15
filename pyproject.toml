@@ -38,6 +38,7 @@ bitsets = ">0.8.0"
 plotly = ">=6.3.0"
 celluloid = ">=0.2.0"
 oat-python = ">=0.1.1"
+shapely = ">=2.0"
 
 [tool.poetry.extras]
 embeddings = ["torch","torchvision"]
